@@ -1,0 +1,78 @@
+@use '../../../../styles/variables' as *;
+@use '../../../../styles/mixins/flex' as *;
+
+.terms-container {
+  background: var(--bg-main);
+  border-radius: 16px;
+  padding: 20px;
+  font-family: 'Medium';
+
+  .terms-header {
+    @include flex-column(nowrap, flex-start, flex-start);
+    gap: 4px;
+    margin-bottom: 20px;
+
+    h3 {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--table-header-color);
+    }
+    p {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--table-header-color);
+    }
+  }
+  .form-header-left {
+    @include flex-row(nowrap, space-between, center);
+    gap: $SmSize;
+    margin-bottom: 20px;
+    p {
+      @include flex-row(nowrap, flex-start, center);
+      gap: 4px;
+      font-size: 20px;
+      font-weight: 600;
+      color: #121212;
+    }
+
+    .form-title {
+      color: $BgBlack;
+      font-size: $MdSize;
+      font-weight: $BaseFontWeightBold;
+    }
+  }
+
+  .terms-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .btn-container {
+    margin-top: 1rem;
+    @include flex-row(nowrap, center, center);
+    gap: 5px;
+    .btn-cancel {
+      background-color: var(--background-btn-outline-color);
+      color: var(--danger-color);
+      border: 1px solid rgba(245, 194, 192, 1);
+      border-radius: 50px;
+      width: 20%;
+
+      @media (max-width: 768px) {
+        width: 50%;
+      }
+    }
+
+    .btn-primary {
+      width: 80%;
+
+      @media (max-width: 768px) {
+        width: 50%;
+      }
+    }
+  }
+}

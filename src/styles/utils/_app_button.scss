@@ -1,0 +1,180 @@
+@use '../variables' as *;
+@use '../mixins/flex' as *;
+@use '../mixins/border' as *;
+@use 'button';
+@use 'primary_btn';
+@use 'secondary_btn';
+@use 'third_btn';
+@use 'danger_btn';
+
+/* ── Sizes ─────────────────────────────────────────────────────── */
+.btn--sm {
+  padding: var(--xs-size-4) var(--sm-size);
+  font-size: var(--xs-size);
+  gap: var(--xs-size-4);
+}
+
+.btn--md {
+  padding: var(--xs-size) var(--xl-size-base);
+  font-size: var(--sm-size);
+  gap: var(--xs-size);
+}
+
+.btn--lg {
+  padding: var(--sm-size) var(--xl-size-1);
+  font-size: var(--md-size);
+  gap: var(--xs-size);
+}
+
+/* ── Block ─────────────────────────────────────────────────────── */
+.btn--block {
+  width: 100%;
+  justify-content: center;
+}
+
+/* ── Disabled ──────────────────────────────────────────────────── */
+.btn--disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ── Loading ───────────────────────────────────────────────────── */
+.btn--loading {
+  opacity: 0.7;
+  cursor: wait;
+  pointer-events: none;
+}
+
+.btn__spinner {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: btn-spin 0.6s linear infinite;
+}
+
+@keyframes btn-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ── Icon ──────────────────────────────────────────────────────── */
+.btn__icon {
+  @include flex-center;
+
+  flex-shrink: 0;
+  width: 1em;
+  height: 1em;
+
+  svg {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.btn__icon--left {
+  margin-inline-end: var(--xs-size-4);
+}
+
+.btn__icon--right {
+  margin-inline-start: var(--xs-size-4);
+}
+
+.btn--icon-only {
+  padding: var(--xs-size);
+  aspect-ratio: 1;
+  justify-content: center;
+
+  .btn__icon {
+    margin: 0;
+  }
+}
+
+/* ── Outline ───────────────────────────────────────────────────── */
+.btn--outline {
+  background-color: transparent;
+  border-width: $BaseBorderWidth;
+  border-style: solid;
+
+  &.btn-primary {
+    border-color: var(--PrimaryColor);
+    color: var(--PrimaryColor);
+
+    &:hover {
+      background-color: var(--PrimaryColor);
+      color: var(--BgWhite);
+    }
+  }
+
+  &.btn-secondary {
+    border-color: var(--third-color);
+    color: var(--third-color);
+
+    &:hover {
+      background-color: var(--third-color);
+      color: var(--BgWhite);
+    }
+  }
+
+  &.btn-third {
+    border-color: var(--gray-400);
+    color: var(--gray-400);
+
+    &:hover {
+      background-color: var(--gray-400);
+      color: var(--BgWhite);
+    }
+  }
+
+  &.btn-danger {
+    border-color: var(--Red);
+    color: var(--Red);
+
+    &:hover {
+      background-color: var(--Red);
+      color: var(--BgWhite);
+    }
+  }
+}
+
+/* ── Ghost ─────────────────────────────────────────────────────── */
+.btn--ghost {
+  background-color: transparent;
+  border: none;
+
+  &.btn-primary {
+    color: var(--PrimaryColor);
+
+    &:hover {
+      background-color: var(--gray-50);
+    }
+  }
+
+  &.btn-secondary {
+    color: var(--third-color);
+
+    &:hover {
+      background-color: var(--gray-50);
+    }
+  }
+
+  &.btn-third {
+    color: var(--gray-400);
+
+    &:hover {
+      background-color: var(--gray-50);
+    }
+  }
+
+  &.btn-danger {
+    color: var(--Red);
+
+    &:hover {
+      background-color: var(--danger-light);
+    }
+  }
+}

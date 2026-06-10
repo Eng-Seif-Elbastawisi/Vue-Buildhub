@@ -1,0 +1,218 @@
+@use '../../../../styles/variables' as *;
+@use '../../../../styles/mixins/flex' as *;
+@use '../../../../styles/mixins/grid' as *;
+
+.employee-details-form-card {
+  border: none !important;
+  box-shadow: none !important;
+  font-family: 'Medium';
+  min-height: 75vh;
+
+  .form-header {
+    @include flex-row(nowrap, stretch, center);
+
+    gap: $SmSize;
+    padding: $XsSize3 0;
+
+    .form-title {
+      width: 100%;
+      display: flex;
+
+      @include flex-row(nowrap, space-between, center);
+
+      .employee-status {
+        @include flex-row(nowrap, stretch, center);
+
+        gap: $XlSize;
+        background-color: $BackgroundColorSoftLight;
+        padding: $MdSize;
+        border-radius: $XlSize2;
+
+        .title {
+          h6 {
+            color: $TitleColor;
+            font-size: $SmSize;
+            font-weight: $BaseFontSemiBoldWeight;
+          }
+
+          p {
+            color: $PrimaryColor;
+            font-size: $SmSize;
+            font-weight: $BaseFontSemiBoldWeight;
+
+            &.warn {
+              color: $DangerAlt;
+            }
+          }
+        }
+      }
+    }
+
+    .header-text {
+      h3 {
+        font-size: $XlSize2;
+        font-weight: $BaseFontWeightBold;
+        color: $Gray900;
+        margin: 0;
+      }
+
+      .header-subtitle {
+        font-size: $MdSize;
+        font-weight: $BaseFontWeight;
+        color: $InputLabelText;
+      }
+    }
+
+    .p-toggleswitch .p-toggleswitch-handle {
+      background-color: var(--white);
+    }
+  }
+
+  .employee-details-form {
+    @include flex-row(wrap, space-between, center);
+
+    margin-bottom: $XlSize;
+
+    p {
+      @include flex-row(wrap, flex-start, center);
+
+      gap: $XsSize3;
+      font-size: $XlSize;
+      font-weight: $BaseFontSemiBoldWeight;
+      color: var(--title-color);
+    }
+
+    h6 {
+      font-size: $SmSize;
+      font-weight: $BaseFontSemiBoldWeight;
+      color: $DangerColor;
+      cursor: pointer;
+      border-bottom: 2px solid $DangerColor;
+    }
+  }
+
+  .upload-image-employee {
+    padding: 0 $XlSize2 $XlSize2;
+  }
+
+  .genders-inputs {
+    @include flex-row(nowrap, stretch, center);
+
+    gap: $XlSize;
+  }
+
+  .form-fields {
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+
+    @include grid(
+      2,
+      $XlSize,
+      (
+        600: 1,
+      )
+    );
+
+    .field-group {
+      @include flex-column(nowrap, flex-start, flex-start);
+
+      gap: $XsSize2;
+      &.disabled {
+        cursor: not-allowed;
+        pointer-events: none;
+        opacity: 0.7;
+      }
+
+      &.col-span-2 {
+        grid-column: span 2;
+      }
+
+      .gender-group {
+        @include flex-row(nowrap, flex-start, center);
+
+        gap: $XlSize3;
+
+        .input-field {
+          @include flex-row(nowrap, flex-start, center);
+
+          gap: $XsSize4;
+
+          .p-radiobutton-box {
+            background: none !important;
+          }
+
+          .p-radiobutton-checked .p-radiobutton-icon {
+            background-color: $PrimaryColor !important;
+          }
+        }
+      }
+
+      .image-input {
+        width: 100%;
+
+        .upload-area {
+          background-color: $StandardWhite !important;
+        }
+
+        .add-imaegs-data {
+          @include flex-column(nowrap, center, center);
+
+          gap: $XsSize5;
+
+          .first-text {
+            color: $Gray-5;
+            font-size: $XsSize;
+            font-weight: $BaseFontSemiBoldWeight;
+
+            span {
+              color: $PrimaryColor;
+              padding-inline: $XsSize5;
+            }
+          }
+
+          .second-text {
+            color: $SecondText;
+            font-size: $XsSize;
+            font-weight: $BaseFontWeight;
+          }
+        }
+      }
+
+      .field-label {
+        font-size: $MdSize;
+        color: $InputLabelText !important;
+        text-transform: none;
+        font-weight: $BaseFontSemiBoldWeight !important;
+      }
+
+      .input-wrap {
+        width: 100%;
+
+        .field-input {
+          width: 100%;
+          padding: $XsSize $MdSize;
+          border: 1px solid $InputBorder !important;
+          border-radius: $XlSize4 !important;
+          font-size: $SmSize;
+          color: $Gray-6;
+          background: $White !important;
+          outline: none;
+          transition: all 0.25s ease;
+
+          &:focus {
+            border-color: var(--PrimaryColor);
+            background: var(--bg-main);
+            box-shadow: 0 0 0 3px var(--PrimaryColor-light);
+          }
+        }
+      }
+    }
+  }
+
+  @media (max-width: 600px) {
+    .form-fields {
+      grid-template-columns: 1fr;
+    }
+  }
+}

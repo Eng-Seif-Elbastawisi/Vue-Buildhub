@@ -1,0 +1,31 @@
+@font-face {
+  /* stylelint-disable-next-line declaration-property-value-allowed-list */
+  font-family: 'Thin';
+  src: url('./fonts/URW/URW\ DIN\ Arabic\ Thin.ttf') format('truetype');
+  // font-weight: 100;
+}
+
+@font-face {
+  font-family: 'Light';
+  src: url('./fonts/URW/URW\ DIN\ Arabic\ Light.ttf') format('truetype');
+  // font-weight: 300;
+}
+
+@font-face {
+  font-family: 'Medium';
+  src: url('./fonts/URW/URW\ DIN\ Arabic\ Medium.ttf') format('truetype');
+  // font-weight: 500;
+}
+
+@font-face {
+  font-family: 'Bold';
+  src: url('./fonts/URW/URW\ DIN\ Arabic\ Bold.ttf') format('truetype');
+  // font-weight: 700;
+}
+
+@font-face {
+  /* stylelint-disable-next-line declaration-property-value-allowed-list */
+  font-family: 'Demi';
+  src: url('../assets/fonts/URW/URW\ DIN\ Arabic\ Demi.ttf') format('truetype');
+  font-weight: 600;
+}

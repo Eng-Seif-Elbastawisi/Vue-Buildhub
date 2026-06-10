@@ -1,0 +1,280 @@
+@use '../../../../styles/variables' as *;
+@use '../../../../styles/mixins/flex' as *;
+
+.education-classification-configuration-form-container {
+  display: flex;
+  gap: 10px;
+  flex-direction: column;
+  width: 100%;
+
+  .save-btn {
+    background-color: var(--PrimaryColor);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--white);
+    padding: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 50px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 20%;
+    margin-top: 25px;
+
+    @media (max-width: 1000px) {
+      width: 100%;
+    }
+  }
+
+  .education-classification-form-card {
+    background: var(--bg-main);
+    border-radius: 24px;
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+    padding: 16px;
+    background-color: $GraySoft;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.15), transparent);
+      pointer-events: none;
+    }
+  }
+
+  /* ── Form Header ────────────────────────── */
+  .form-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 20px 24px 16px;
+
+    .header-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-md);
+      background: linear-gradient(135deg, var(--PrimaryColor-light), rgba(238, 242, 255, 0.4));
+      color: var(--PrimaryColor);
+      flex-shrink: 0;
+      box-shadow:
+        0 2px 6px rgba(99, 102, 241, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    }
+
+    .header-text {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      color: var(--title-color);
+      font-size: 20px;
+      font-weight: $BaseFontSemiBoldWeight;
+      font-family: 'Medium';
+
+      svg {
+        width: 26px;
+        height: 26px;
+      }
+
+      h3 {
+        color: var(--title-color);
+        font-size: $XlSize;
+        font-weight: $BaseFontSemiBoldWeight;
+        font-family: 'Medium';
+        margin: 0;
+        letter-spacing: -0.01em;
+        padding-top: 6px;
+      }
+
+      .header-subtitle {
+        margin-top: 2px;
+        font-size: 0.8rem;
+        color: var(--gray-400);
+        margin-bottom: 0;
+      }
+    }
+
+    .edit-badge {
+      padding: 4px 12px;
+      border-radius: var(--radius-full);
+      background: linear-gradient(135deg, var(--warning-light), rgba(254, 243, 199, 0.5));
+      color: var(--warning-dark);
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      white-space: nowrap;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    }
+  }
+
+  /* ── Divider ────────────────────────────── */
+  .form-divider {
+    height: 1px;
+    margin: 0 24px;
+    background: linear-gradient(90deg, var(--border-weak), rgba(226, 232, 240, 0.3), transparent);
+  }
+
+  /* ── Form Fields ────────────────────────── */
+  .education-classification-form-fields {
+    padding: 0 24px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    width: 100%;
+    gap: 20px;
+    border-bottom: 1px dashed var(--sidebar-group-text-color);
+
+    &.disabled {
+      opacity: 0.5;
+      pointer-events: none;
+      cursor: not-allowed;
+    }
+
+    @media (max-width: 1000px) {
+      flex-direction: column;
+    }
+  }
+
+  .field-group {
+    display: flex;
+    flex-direction: column;
+    grid-column: span 3;
+    gap: 8px;
+    width: 80%;
+
+    &:nth-child(3) {
+      margin-top: 10px;
+    }
+
+    @media (max-width: 1000px) {
+      width: 100%;
+    }
+  }
+
+  .field-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: $SmSize;
+    font-weight: $BaseFontSemiBoldWeight;
+    font-family: 'medium';
+    color: var(--title-header-color);
+    text-transform: none;
+    letter-spacing: 0.04em;
+
+    svg {
+      color: var(--PrimaryColor);
+      flex-shrink: 0;
+    }
+  }
+
+  .input-wrap {
+    position: relative;
+  }
+
+  .field-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid var(--border-weak);
+    border-radius: 50px;
+    font-size: 0.9rem;
+    color: var(--gray-800);
+    background: var(--white);
+    outline: none;
+    transition: all 0.25s ease;
+    font-family: 'Medium';
+
+    &::placeholder {
+      color: var(--gray-400);
+    }
+
+    &:focus {
+      border-color: var(--PrimaryColor);
+      background: var(--bg-main);
+      box-shadow:
+        0 0 0 3px var(--PrimaryColor-light),
+        0 2px 8px rgba(99, 102, 241, 0.06);
+    }
+
+    &:hover:not(:focus) {
+      border-color: var(--gray-300);
+      background: var(--bg-main);
+    }
+  }
+
+  /* ── Deep: Custom Input Select ──────────── */
+  :deep(.myacc) {
+    border: none;
+  }
+
+  :deep(.AccordionPanel) {
+    border: 1px solid var(--border-weak) !important;
+    border-radius: var(--radius-md) !important;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: var(--gray-50);
+
+    &:hover {
+      border-color: var(--PrimaryColor) !important;
+    }
+  }
+
+  :deep(.AccordionHeader) {
+    padding: 12px 16px;
+    background: transparent;
+    border: none;
+    font-weight: 600;
+    color: var(--gray-800);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    font-size: 0.9rem;
+
+    &:hover {
+      background: var(--PrimaryColor-light);
+      color: var(--PrimaryColor);
+    }
+  }
+
+  :deep(.AccordionContent) {
+    background: var(--bg-main);
+    color: var(--gray-600);
+    padding: 12px 16px;
+    font-size: 0.875rem;
+    line-height: 1.6;
+  }
+
+  /* ── Responsive ─────────────────────────── */
+  @media (max-width: 600px) {
+    .form-header {
+      padding: 16px;
+      flex-wrap: wrap;
+    }
+
+    .form-fields {
+      padding: 16px;
+      gap: 16px;
+    }
+
+    .form-divider {
+      margin: 0 16px;
+    }
+
+    .edit-badge {
+      display: none;
+    }
+  }
+}

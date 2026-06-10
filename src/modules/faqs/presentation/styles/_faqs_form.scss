@@ -1,0 +1,47 @@
+@use '../../../../styles/variables' as *;
+@use '../../../../styles/mixins/flex' as *;
+@use '../../../../styles/mixins/border' as *;
+
+.faq-form-card {
+  width: 100%;
+  background-color: $StandardWhite;
+  border-radius: $MdSize;
+  overflow: hidden;
+  font-family: 'Medium';
+
+  .faq-form-header {
+    @include flex-row(nowrap, space-between, center);
+
+    padding: 0;
+
+    .form-header-left {
+      @include flex-row(nowrap, flex-start, center);
+      gap: $SmSize;
+
+      .form-title {
+        color: $BgBlack;
+        font-size: $MdSize;
+        font-weight: $BaseFontWeightBold;
+      }
+    }
+  }
+
+  .faq-form-fields {
+    @include flex-column(nowrap, flex-start, flex-start);
+
+    gap: 0;
+    padding: 0;
+
+    .field-group {
+      width: 100%;
+      padding-top: $MdSize;
+
+      .field-label {
+        color: $InputLabelText;
+        text-transform: none;
+        font-size: $MdSize;
+        font-weight: $BaseFontSemiBoldWeight;
+      }
+    }
+  }
+}

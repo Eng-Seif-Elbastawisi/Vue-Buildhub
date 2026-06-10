@@ -1,0 +1,127 @@
+@use '../variables' as *;
+@use '../mixins/flex' as *;
+
+.employee-form-card {
+  background: var(--bg-main);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border-strong);
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.04),
+    0 8px 32px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+  position: relative;
+
+  .form-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 20px 24px 16px;
+
+    .header-text {
+      flex: 1;
+
+      h3 {
+        font-size: 1.1rem;
+        font-weight: 800;
+        color: var(--gray-900);
+        margin: 0;
+        letter-spacing: -0.01em;
+      }
+
+      .header-subtitle {
+        margin-top: 2px;
+        font-size: 0.8rem;
+        color: var(--gray-400);
+        margin-bottom: 0;
+      }
+    }
+
+    .edit-badge {
+      padding: 4px 12px;
+      border-radius: var(--radius-full);
+      background: linear-gradient(135deg, var(--warning-light), rgba(254, 243, 199, 0.5));
+      color: var(--warning-dark);
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+  }
+
+  .form-divider {
+    height: 1px;
+    margin: 0 24px;
+    background: linear-gradient(90deg, var(--border-weak), rgba(226, 232, 240, 0.3), transparent);
+  }
+
+  .form-fields {
+    padding: 20px 24px 24px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  .field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .checkbox-group {
+    grid-column: span 2;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .field-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--gray-700);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .field-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid var(--border-weak);
+    border-radius: var(--radius-md);
+    font-size: 0.9rem;
+    color: var(--gray-800);
+    background: var(--gray-50);
+    outline: none;
+    transition: all 0.25s ease;
+
+    &:focus {
+      border-color: var(--PrimaryColor);
+      background: var(--bg-main);
+      box-shadow: 0 0 0 3px var(--PrimaryColor-light);
+    }
+  }
+
+  .checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--gray-700);
+
+    input {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--PrimaryColor);
+    }
+  }
+
+  @media (max-width: 600px) {
+    .form-fields {
+      grid-template-columns: 1fr;
+    }
+
+    .checkbox-group {
+      grid-column: span 1;
+    }
+  }
+}

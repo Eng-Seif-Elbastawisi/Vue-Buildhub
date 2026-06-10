@@ -1,0 +1,24 @@
+@use "../../../styles/variables" as *;
+@use "../../../styles/mixins/flex" as *;
+@use "../../../styles/mixins/grid" as *;
+
+.footer {
+  padding: var(--md-size);
+  background-color: var(--BgWhite);
+  border-top: 1px solid var(--gray-100);
+  color: var(--gray-500);
+  font-size: var(--sm-size);
+  font-family: var(--font-family);
+
+  @include flex-row(nowrap, space-between, center);
+
+  a {
+    color: var(--PrimaryColor);
+    text-decoration: none;
+    transition: var(--transition-fast);
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}

@@ -1,0 +1,17 @@
+@use '../variables' as *;
+
+.btn-primary {
+  background-color: var(--PrimaryColor);
+  color: var(--BgWhite);
+  border-color: var(--PrimaryColor);
+  font-family: var(--font-family);
+  font-size: var(--xs-size);
+  font-weight: $BaseFontSemiBoldWeight;
+  border-radius: 50px;
+
+  &:hover {
+    background-color: var(--BgWhite);
+    color: var(--PrimaryColor);
+    box-shadow: var(--shadow);
+  }
+}

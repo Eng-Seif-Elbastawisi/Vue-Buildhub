@@ -1,0 +1,229 @@
+@use '../../../../styles/variables' as *;
+@use '../../../../styles/mixins/flex' as *;
+@use '../../../../styles/mixins/border' as *;
+
+.faqs-page {
+  @include flex-column(nowrap, flex-start, flex-start);
+
+  gap: $XlSize;
+  font-family: var(--font-family);
+  min-height: 80vh;
+
+  // ── Header — matches .header-container pattern ─────────────────────────
+  .header-container {
+    width: 100%;
+
+    @include flex-row(nowrap, space-between, center);
+
+    .about-header {
+      @include flex-column(nowrap, flex-start, flex-start);
+
+      gap: $BorderRadiusXs;
+
+      .title {
+        color: var(--gray-900-std);
+        font-size: $XlSize2;
+        font-weight: $BaseFontWeightBold;
+        margin: 0;
+      }
+
+      .description {
+        color: var(--color-dark-gray);
+        font-size: $MdSize;
+        font-weight: $BaseFontSemiBoldWeight;
+        margin: 0;
+      }
+    }
+
+    .header-actions {
+      @include flex-row(nowrap, flex-end, center);
+
+      gap: $XsSize;
+    }
+  }
+
+  // ── Filled button — matches system btn-filled-green ───────────────────
+  .btn-filled-green {
+    display: inline-flex;
+    align-items: center;
+    gap: $SmSize;
+    padding: $XsSize3 calc($XlSize + 2px);
+    background-color: var(--PrimaryColor);
+    color: var(--standard-white);
+    border: none;
+    border-radius: var(--radius-full);
+    font-size: $SmSize;
+    font-weight: $BaseFontSemiBoldWeight;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color var(--transition-fast);
+    white-space: nowrap;
+
+    &:hover {
+      background-color: $SuccessGreenHover-std;
+    }
+  }
+
+  // ── FAQ list — matches .sections-list container pattern ────────────────
+  .sections-list {
+    width: 100%;
+    padding: $XlSize;
+
+    @include flex-column(nowrap, flex-start, flex-start);
+
+    gap: $XsSize;
+    background-color: $GraySoftAlpha50;
+  }
+
+  // ── Individual FAQ card — matches .support-section-card pattern ────────
+  .faq-card {
+    width: 100%;
+    background-color: var(--standard-white);
+    // border: $BaseBorderWidth solid $Gray-200-std;
+    border-radius: $BorderRadiusLg;
+    overflow: hidden;
+
+    .faq-row-header {
+      @include flex-row(nowrap, space-between, center);
+
+      padding: $MdSize $XlSize;
+      cursor: pointer;
+      transition: background-color var(--transition-fast);
+
+      &:hover {
+        background-color: $GraySoftAlpha50;
+      }
+
+      .faq-row-left {
+        @include flex-row(nowrap, flex-start, center);
+
+        gap: $XsSize;
+        flex: 1;
+        min-width: 0;
+
+        .expand-btn {
+          background: none;
+          border: none;
+          cursor: pointer;
+          padding: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: $XlSize;
+          height: $XlSize;
+
+          @include border($BaseBorderWidth, var(--PrimaryColor));
+
+          border-radius: 50%;
+          color: var(--PrimaryColor);
+          // font-size: 14px;
+          // font-weight: 700;
+          // line-height: 100%;
+          transition: transform var(--transition);
+
+          &.expanded {
+            transform: rotate(45deg);
+          }
+        }
+
+        .faq-question {
+          font-size: $MdSize;
+          font-weight: $BaseFontSemiBoldWeight;
+          white-space: nowrap;
+          color: $GrayTextQuestion;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+      }
+
+      .faq-row-actions {
+        @include flex-row(nowrap, flex-end, center);
+
+        gap: $XsSize2;
+        flex-shrink: 0;
+        margin-inline-start: $MdSize;
+
+        .action-btn {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: calc($XlSize2 + 2px);
+          height: calc($XlSize2 + 2px);
+
+          @include border($BaseBorderWidth, $Gray-200-std);
+
+          border-radius: $BorderRadiusSm;
+          background: var(--standard-white);
+          cursor: pointer;
+          color: $Gray-400-std;
+          transition: all var(--transition-fast);
+
+          &.edit-btn:hover {
+            border-color: var(--PrimaryColor);
+            color: var(--PrimaryColor);
+          }
+
+          &.delete-btn:hover {
+            border-color: var(--danger);
+            color: var(--danger);
+            background-color: var(--danger-light);
+          }
+        }
+      }
+    }
+
+    // Answer panel with slide-down transition
+    .faq-answer {
+      padding: 0 $MdSize $XlSize $XlSize4;
+      // border-top: $BaseBorderWidth dashed $Gray-200-std;
+
+      p {
+        color: $Gray-500-std;
+        font-size: $MdSize;
+        font-weight: $BaseFontWeight;
+        line-height: 1.7;
+        margin: $SmSize 0 0;
+      }
+    }
+  }
+
+  // ── Answer slide transition ────────────────────────────────────────────
+  .faq-answer-enter-active,
+  .faq-answer-leave-active {
+    transition:
+      opacity var(--transition),
+      transform var(--transition);
+    transform-origin: top;
+  }
+
+  .faq-answer-enter-from,
+  .faq-answer-leave-to {
+    opacity: 0;
+    transform: scaleY(0.95) translateY(-4px);
+  }
+
+  // ── Empty state — matches .empty-data pattern ─────────────────────────
+  .empty-data {
+    @include flex-column(nowrap, center, center);
+
+    width: 100%;
+    flex: 1;
+    padding: calc($XlSize4 - 10px) $XlSize;
+    text-align: center;
+    gap: 12px;
+
+    h5 {
+      color: var(--black-soft);
+      font-size: $XlSize;
+      font-weight: $BaseFontMediumWeight;
+      margin: 0;
+    }
+
+    p {
+      color: var(--color-dark-gray);
+      font-size: $MdSize;
+      font-weight: $BaseFontSemiBoldWeight;
+      margin: 0;
+    }
+  }
+}

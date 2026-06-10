@@ -1,0 +1,196 @@
+@use '../../../../styles/variables' as *;
+@use '../../../../styles/mixins/flex' as *;
+
+.about-page {
+  @include flex-column(nowrap, flex-start, flex-start);
+
+  gap: $MdSize;
+  font-family: 'Medium';
+  min-height: 80vh;
+
+  .header-container {
+    width: 100%;
+
+    @include flex-row(nowrap, space-between, center);
+
+    .about-header {
+      @include flex-column(nowrap, flex-start, flex-start);
+
+      gap: $XsSize5;
+
+      .title {
+        color: $Gray900;
+        font-size: $XlSize2;
+        font-weight: $BaseFontWeightBold;
+      }
+
+      .description {
+        color: $ColorDarkGray;
+        font-size: $MdSize;
+        font-weight: $BaseFontMediumWeight;
+      }
+    }
+  }
+
+  .sections-list {
+    width: 100%;
+    @include flex-column(nowrap, flex-start, flex-start);
+    gap: $XlSize3;
+    background-color: white;
+
+    .support-section-card {
+      width: 100%;
+      border-radius: $MdSize;
+      background-color: #fafafa;
+      @include flex-column(nowrap, flex-start, flex-start);
+      gap: $MdSize;
+      padding: 20px;
+
+      .support-section-header {
+        width: 100%;
+        @include flex-row(nowrap, space-between, center);
+
+        .support-section-label {
+          color: $Gray900;
+          font-size: $MdSize;
+          font-weight: $BaseFontWeightBold;
+        }
+
+        .delete-section-btn {
+          background: none;
+          border: none;
+          cursor: pointer;
+          padding: 4px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 6px;
+          transition: background-color 0.2s;
+
+          &:hover {
+            background-color: var(--danger-light);
+          }
+        }
+      }
+
+      .support-section-divider {
+        width: 100%;
+        border-top: 1.5px dashed #e5e7eb;
+      }
+
+      .support-field-group {
+        width: 100%;
+
+        .field-label {
+          color: $InputLabelText;
+          font-size: $MdSize;
+          font-weight: $BaseFontSemiBoldWeight;
+          text-transform: none;
+        }
+      }
+
+      .contact-group {
+        width: 100%;
+
+        @include flex-column(nowrap, flex-start, flex-start);
+
+        gap: $XsSize2;
+
+        .contact-label {
+          color: $Gray-700-std;
+          font-size: calc($SmSize + 1px);
+          font-weight: $BaseFontSemiBoldWeight;
+        }
+
+        .chip-input-row {
+          width: 100%;
+
+          @include flex-row(nowrap, flex-start, center);
+
+          gap: 10px;
+          padding-bottom: $XsSize2;
+
+          .contact-input {
+            flex: 1;
+            outline: none;
+            font-size: 14px;
+            color: $Gray-700-std;
+            background: transparent;
+            border: 1px solid #eceff3;
+            padding: 14px 8px;
+            border-radius: 50px;
+            width: 100%;
+
+            &::placeholder {
+              color: var(--gray-400-std);
+            }
+          }
+
+          .sm-add-btn {
+            flex-shrink: 0;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 2px solid #4faf7c;
+            color: var(--PrimaryColor);
+            background: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 20px;
+            line-height: 1;
+            transition:
+              background-color 0.2s,
+              transform 0.15s;
+
+            &:hover {
+              background-color: var(--PrimaryColor);
+              color: var(--standard-white);
+              transform: scale(1.08);
+            }
+          }
+        }
+
+        .chips-row {
+          @include flex-row(nowrap, flex-start, center);
+
+          flex-wrap: wrap;
+          gap: 8px;
+          border: 1px solid #eceff3;
+          padding: 5px;
+          border-radius: 50px;
+          width: 100%;
+
+          .chip {
+            @include flex-row(nowrap, flex-start, center);
+
+            gap: 6px;
+            background-color: var(--PrimaryColor-alpha-10);
+            border-radius: 25px;
+            padding: 12px;
+            font-size: 13px;
+            color: var(--standard-black);
+            font-weight: 500;
+
+            .chip-remove {
+              background: none;
+              border: none;
+              cursor: pointer;
+              color: var(--gray-500-std);
+              font-size: 16px;
+              line-height: 1;
+              padding: 0;
+              display: flex;
+              align-items: center;
+
+              &:hover {
+                color: var(--danger);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

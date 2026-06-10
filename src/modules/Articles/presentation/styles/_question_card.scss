@@ -1,0 +1,158 @@
+@use '../../../../styles/variables' as *;
+@use '../../../../styles/mixins/flex' as *;
+@use '../../../../styles/mixins/grid' as *;
+
+.question_card {
+  .num-question {
+    background-color: var(--bg-main);
+    padding: $MdSize $XsSize;
+    border-radius: $XlSize;
+    margin: $XlSize2 0;
+    box-shadow:
+      0 4px 6px -1px rgba(0, 0, 0, 0.1),
+      0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    .contant-card {
+      .header-card {
+        border-bottom: 1px dashed #d0d0d0;
+        padding-bottom: $XsSize3;
+        @include flex(row, wrap, space-between, center);
+        margin-bottom: $XlSize2;
+        .title {
+          h6 {
+            font-size: $MdSize2;
+            font-family: 'medium';
+            font-weight: $BaseFontSemiBoldWeight;
+            color: #303030;
+          }
+        }
+        .actions {
+          icon {
+            cursor: pointer;
+          }
+        }
+      }
+    }
+    .types-date {
+      @include flex(row, wrap, space-between, center);
+      gap: $XsSize3;
+      .date {
+        .label {
+          color: var(--second-text);
+          font-family: 'medium';
+          font-weight: $BaseFontMediumWeight;
+          font-size: $SmSize;
+        }
+        .value {
+          color: var(--gray-5);
+          font-family: 'medium';
+          font-weight: $BaseFontMediumWeight;
+          font-size: $SmSize;
+        }
+      }
+      .type {
+        @include flex(row, wrap, end, center);
+        gap: $XsSize3;
+        .value {
+          padding: $XsSize5 $XlSize2;
+          border-radius: $XlSize4;
+          font-size: $MdSize;
+          font-family: 'medium';
+          font-weight: $BaseFontMediumWeight;
+        }
+        .easy {
+          background-color: #e9f9ee;
+          color: #18a957;
+          border: 1px solid #b7e9c9;
+        }
+        .medium {
+          background-color: rgba(255, 247, 230, 1);
+          color: rgba(217, 145, 0, 1);
+          border: 1px solid rgba(242, 213, 156, 1);
+        }
+        .hard {
+          background-color: var(--background-btn-outline-color);
+          color: var(--btn-red);
+          border: 1px solid rgba(245, 194, 192, 1);
+        }
+        .value-status {
+          padding: $XsSize5 $XlSize2;
+          border-radius: $XlSize4;
+          font-size: $MdSize;
+          font-family: 'medium';
+          font-weight: $BaseFontMediumWeight;
+          border: 1px solid #6155f51a;
+          background-color: #6155f51a;
+          color: #6155f5;
+        }
+      }
+    }
+    .question_text {
+      margin: $XsSize2 0;
+      p {
+        color: var(--standard-black);
+        font-family: 'bold';
+        font-weight: $BaseFontWeightBold;
+        font-size: $XlSize2;
+      }
+    }
+    .all_answers {
+      border: 1px solid var(--border-color);
+      border-radius: $XlSize2;
+      padding: $MdSize;
+      .answer {
+        display: grid;
+        grid-template-columns: 5fr 1fr;
+        gap: $MdSize;
+        margin-bottom: $XsSize2;
+        .imge-text {
+          @include flex(row, wrap, space-between, center);
+          width: 100%;
+          gap: $MdSize;
+          .text {
+            .label {
+              font-size: $SmSize;
+              font-family: 'medium';
+              font-weight: $BaseFontMediumWeight;
+              color: var(--second-text);
+            }
+            .answer_text {
+              font-size: $MdSize;
+              font-family: 'medium';
+              font-weight: $BaseFontMediumWeight;
+              color: var(--Gray-6);
+            }
+          }
+          .imge {
+            width: 70px;
+            height: 60px;
+            img {
+              width: 100%;
+              height: 100%;
+              object-fit: contain;
+            }
+          }
+        }
+        .count-answer {
+          text-align: center;
+          background-color: var(--gray-soft);
+          border-radius: $XsSize3;
+          margin: auto;
+          padding: $XsSize;
+          width: 100%;
+          .corret {
+            font-size: $MdSize;
+            font-family: 'bold';
+            font-weight: $BaseFontWeightBold;
+            color: var(--standard-black);
+          }
+          .student {
+            font-size: $XsSize;
+            font-family: 'medium';
+            font-weight: $BaseFontMediumWeight;
+            color: var(--gray-5);
+          }
+        }
+      }
+    }
+  }
+}

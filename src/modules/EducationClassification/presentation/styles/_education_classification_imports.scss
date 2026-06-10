@@ -1,0 +1,13 @@
+@use 'education_classification_index';
+@use 'education_classification_form';
+@use './EducationTree/education_classification_tree';
+@use './EducationTree/education_type_item';
+@use './EducationTree/education_type_dilaog';
+@use './EducationTree/add_branch_dialog';
+@use './EducationTree/add_pricing_dialog';
+@use './education_classification_configuration_form';
+@use './rename_classification_dialog';
+@use './EducationSubjectsPanel/education_subject_panel';
+@use './single_plur_form';
+@use './statge_tree_node';
+@use './eduction_statge_tree';

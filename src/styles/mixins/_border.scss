@@ -1,0 +1,36 @@
+@use '../variables' as *;
+
+@mixin border($width: $BaseBorderWidth, $color: $TextGray5, $style: solid, $radius: 0) {
+  border: $width $style $color;
+  border-radius: $radius;
+}
+
+@mixin border-top($width: $BaseBorderWidth, $color: $TextGray5, $style: solid, $radius: 0) {
+  border-top: $width $style $color;
+  border-radius: $radius;
+}
+
+@mixin border-bottom($width: $BaseBorderWidth, $color: $TextGray5, $style: solid, $radius: 0) {
+  border-bottom: $width $style $color;
+  border-radius: $radius;
+}
+
+@mixin border-left($width: $BaseBorderWidth, $color: $TextGray5, $style: solid, $radius: 0) {
+  border-left: $width $style $color;
+  border-radius: $radius;
+}
+
+@mixin border-right($width: $BaseBorderWidth, $color: $TextGray5, $style: solid, $radius: 0) {
+  border-right: $width $style $color;
+  border-radius: $radius;
+}
+
+@mixin border-end($width: $BaseBorderWidth, $color: $TextGray5, $style: solid, $radius: 0) {
+  border-inline-end: $width $style $color;
+  border-radius: $radius;
+}
+
+@mixin border-start($width: $BaseBorderWidth, $color: $TextGray5, $style: solid, $radius: 0) {
+  border-inline-start: $width $style $color;
+  border-radius: $radius;
+}

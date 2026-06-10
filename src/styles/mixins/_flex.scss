@@ -1,0 +1,63 @@
+@mixin flex($direction: row, $wrap: nowrap, $justify: flex-start, $align: stretch) {
+  display: flex;
+  flex-direction: $direction;
+  flex-wrap: $wrap;
+  justify-content: $justify;
+  align-items: $align;
+}
+
+@mixin flex-column($wrap: nowrap, $justify: flex-start, $align: stretch) {
+  @include flex(column, $wrap, $justify, $align);
+}
+
+@mixin flex-row($wrap: nowrap, $justify: flex-start, $align: stretch) {
+  @include flex(row, $wrap, $justify, $align);
+}
+
+@mixin flex-column-reverse($wrap: nowrap, $justify: flex-start, $align: stretch) {
+  @include flex(column-reverse, $wrap, $justify, $align);
+}
+
+@mixin flex-row-reverse($wrap: nowrap, $justify: flex-start, $align: stretch) {
+  @include flex(row-reverse, $wrap, $justify, $align);
+}
+
+@mixin flex-wrap($direction: row, $justify: flex-start, $align: stretch) {
+  @include flex($direction, wrap, $justify, $align);
+}
+
+@mixin flex-wrap-reverse($direction: row, $justify: flex-start, $align: stretch) {
+  @include flex($direction, wrap-reverse, $justify, $align);
+}
+
+@mixin flex-justify($direction: row, $wrap: nowrap, $align: start) {
+  @include flex($direction, $wrap, space-between, $align);
+}
+
+@mixin flex-justify-reverse($direction: row, $wrap: nowrap, $align: stretch) {
+  @include flex($direction, $wrap, space-around, $align);
+}
+
+@mixin flex-justify-center($direction: row, $wrap: nowrap, $align: stretch) {
+  @include flex($direction, $wrap, center, $align);
+}
+
+@mixin flex-justify-end($direction: row, $wrap: nowrap, $align: stretch) {
+  @include flex($direction, $wrap, flex-end, $align);
+}
+
+@mixin flex-align($direction: row, $wrap: nowrap, $justify: flex-start) {
+  @include flex($direction, $wrap, $justify, center);
+}
+
+@mixin flex-align-start($direction: row, $wrap: nowrap, $justify: flex-start) {
+  @include flex($direction, $wrap, $justify, flex-start);
+}
+
+@mixin flex-align-end($direction: row, $wrap: nowrap, $justify: flex-start) {
+  @include flex($direction, $wrap, $justify, flex-end);
+}
+
+@mixin flex-center($direction: row, $wrap: nowrap) {
+  @include flex($direction, $wrap, center, center);
+}

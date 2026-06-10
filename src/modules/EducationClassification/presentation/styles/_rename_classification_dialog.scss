@@ -1,0 +1,76 @@
+@use '../../../../styles/variables' as *;
+@use '../../../../styles/mixins/flex' as *;
+
+.p-dialog.rename-dialog {
+  background-color: $StandardWhite;
+
+  .dialog-header {
+    .header-container {
+      @include flex-row(nowrap, flex-start, center);
+
+      gap: 1rem;
+
+      .icon-dialog {
+        width: 70px;
+        height: 40px;
+      }
+
+      .header-text-content {
+        @include flex-column(nowrap, flex-start, flex-start);
+
+        .header-title {
+          color: $StandardBlack;
+          font-weight: $BaseFontSemiBoldWeight;
+          font-size: $XlSize;
+          font-family: 'medium';
+        }
+
+        .header-message {
+          font-weight: $BaseFontMediumWeight;
+          font-size: $MdSize;
+          color: var(--title-header-color);
+          font-family: 'Medium';
+          margin-top: $XsSize2;
+        }
+      }
+    }
+  }
+
+  .content {
+    @include flex-column(nowrap, flex-start, flex-start);
+
+    width: 100%;
+    gap: 10px;
+
+    .input-wrap {
+      width: 100%;
+      border-radius: 50px;
+      // margin-bottom: $XlSize3;
+
+      .field-input {
+        background-color: var(--standard-white);
+        border: 1px solid var(--input-border-color);
+        border-radius: $XlSize3;
+      }
+    }
+
+    .btns {
+      @include flex-row(nowrap, flex-start, flex-start);
+
+      width: 100%;
+      gap: 5px;
+
+      button {
+        font-family: 'Medium';
+
+        &:first-child {
+          width: 70%;
+        }
+
+        &:last-child {
+          width: 30%;
+        }
+      }
+    }
+  }
+}

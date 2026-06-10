@@ -1,0 +1,67 @@
+@use '../../../../styles/variables' as *;
+@use '../../../../styles/mixins/flex' as *;
+@use '../../../../styles/mixins/grid' as *; 
+
+.article_question{
+    background-color: var(--gray-soft);
+    padding: $MdSize;
+    border-radius: $XlSize;
+    .form-header{
+        background-color: var(--color-light-gray);
+        padding: $XsSize5;
+        border-radius: $MdSize $XsSize3;
+        margin-bottom: $XlSize2;
+        .header-text{
+            @include flex(row, nowrap, start, center);
+            gap: $XsSize3;
+            h6 {
+                font-family: "medium";
+                font-size: $MdSize2;
+                color: #303030;
+                font-weight: $BaseFontSemiBoldWeight;
+
+            }
+
+            p {
+                font-family: "medium";
+                font-size: $MdSize;
+                color: var(--gray-5);
+                font-weight: $BaseFontMediumWeight;
+                margin: $XsSize3 0 0 0;
+            }
+        }
+        .btn-add-question{
+            .btn-add{
+                background-color: var(--PrimaryColor);
+                color: var(--bg-main);
+                border-radius: $XlSize4;
+                &:hover{
+                    background-color: var(--bg-main);
+                    color: var(--PrimaryColor);
+                }
+            }
+        }
+    }
+    .fillters-search{
+        @include flex(row, nowrap, center, end);
+        gap: $MdSize;
+         @media (max-width: 1200px) {
+            flex-wrap: wrap;
+                justify-content: space-between;
+         } 
+        .fillters{
+            @include flex(row, nowrap, end, center);
+            gap: $XsSize3;
+            width: 100%;
+             @media (max-width: 1000px) {
+                    flex-wrap: wrap;
+            }
+            .input-select{ 
+             @media (max-width: 1200px) {
+                    width: 100%;
+            }
+           
+         } 
+        }
+    }
+}

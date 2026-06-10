@@ -1,0 +1,1223 @@
+
+> new-base@0.0.0 lint
+> eslint . --ext .ts,.vue --fix
+
+
+/home/techlab/projects/eduhub-exams/file.ts
+  140:2  error  Parsing error: Declaration or statement expected
+
+/home/techlab/projects/eduhub-exams/src/base/Core/Config/environment.manager.ts
+  139:5   warning  Unexpected console statement              no-console
+  155:9   warning  Unexpected console statement              no-console
+  182:33  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  184:7   warning  Unexpected console statement              no-console
+  191:34  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  200:35  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/base/Core/Constants/exceptionConstants.ts
+   64:23  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   65:23  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   79:30  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  241:32  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/base/Core/Models/baseModel.ts
+  18:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  18:55  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  19:11  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  37:26  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/base/Core/Models/descriptionModel.ts
+  10:25  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/base/Core/Models/fullDescriptionModel.ts
+  10:25  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/base/Core/Models/pagination.types.ts
+   80:30  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  191:20  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/base/Core/Models/paginationModel.ts
+  59:38  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/base/Core/NavigateParams/navigateParams.ts
+  9:47  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/base/Core/NetworkStructure/DataSource/serviceCaller.ts
+  13:30  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  14:22  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/base/Core/NetworkStructure/Resources/dataState/dataState.ts
+  279:60  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+
+/home/techlab/projects/eduhub-exams/src/base/Core/NetworkStructure/Resources/errors/errorModel.ts
+  198:28  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/base/Core/NetworkStructure/errors/errorHandler.ts
+   96:53  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  220:54  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  308:54  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  323:41  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/base/Core/NetworkStructure/networking/networkService.ts
+  108:20  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  109:20  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  113:11  warning  Unexpected console statement              no-console
+  132:47  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  133:47  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  138:11  warning  Unexpected console statement              no-console
+  146:44  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  147:44  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  225:23  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  247:11  warning  Unexpected console statement              no-console
+  265:34  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  276:13  warning  Forbidden non-null assertion              @typescript-eslint/no-non-null-assertion
+  286:13  warning  Forbidden non-null assertion              @typescript-eslint/no-non-null-assertion
+
+/home/techlab/projects/eduhub-exams/src/base/Core/NetworkStructure/networking/utils/errorHandler.ts
+  8:28  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/base/Core/NetworkStructure/networking/utils/headerHandler.ts
+  10:25  warning  Unexpected empty constructor  @typescript-eslint/no-empty-function
+
+/home/techlab/projects/eduhub-exams/src/base/Core/Params/baseIdParams.ts
+  15:29  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  16:33  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/base/Core/Params/callParamsInterface.ts
+  14:28  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/base/Core/Params/getParams.ts
+  4:32  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/base/Core/Params/postParams.ts
+  5:32  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/base/Core/Params/wordParams.ts
+  10:29  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  11:34  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/base/Core/Testing/mockData.ts
+   80:13  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+  123:11  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+  124:13  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+  163:15  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+
+/home/techlab/projects/eduhub-exams/src/base/Core/Testing/testDataFactory.ts
+  60:21  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/base/Data/ApiService/apiServiceInterface.ts
+   69:34  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  119:9   warning  Unexpected console statement              no-console
+
+/home/techlab/projects/eduhub-exams/src/base/Data/ApiService/baseApiService.ts
+   45:32  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   65:28  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  292:20  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  317:23  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  319:34  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  328:24  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  374:23  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  389:23  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  400:13  warning  Unexpected console statement              no-console
+
+/home/techlab/projects/eduhub-exams/src/base/Domain/Repositories/baseRepository.ts
+  253:20  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  285:20  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  288:20  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  295:23  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  319:53  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  444:35  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/base/Presentation/Controller/baseController.ts
+   58:12  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  240:21  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  316:21  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  356:21  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  393:21  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  433:21  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  448:49  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  477:44  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  493:37  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  493:60  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  496:34  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  642:52  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/base/Presentation/Controller/selectControllerInterface.ts
+   7:37  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  11:22  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  13:40  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/base/Presentation/Dialogs/LoaderDialogs/LoaderDialog.vue
+   9:16  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  10:26  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/base/Presentation/Dialogs/LoaderDialogs/loader.ts
+  3:25  warning  Unexpected empty constructor  @typescript-eslint/no-empty-function
+
+/home/techlab/projects/eduhub-exams/src/base/Presentation/Dialogs/UnifiedDialog.vue
+  128:39  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/base/Presentation/Dialogs/dialog.manager.ts
+   89:25  warning  Unexpected empty constructor  @typescript-eslint/no-empty-function
+  122:12  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+
+/home/techlab/projects/eduhub-exams/src/base/Presentation/Dialogs/dialog.selector.ts
+  7:25  warning  Unexpected empty constructor  @typescript-eslint/no-empty-function
+
+/home/techlab/projects/eduhub-exams/src/base/Presentation/Utils/classValidation.ts
+   12:20  warning  Unexpected any. Specify a different type                   @typescript-eslint/no-explicit-any
+   15:18  warning  Unsafe declaration merging between classes and interfaces  @typescript-eslint/no-unsafe-declaration-merging
+   65:17  warning  Unexpected any. Specify a different type                   @typescript-eslint/no-explicit-any
+  162:24  warning  Unexpected any. Specify a different type                   @typescript-eslint/no-explicit-any
+  174:26  warning  Unexpected any. Specify a different type                   @typescript-eslint/no-explicit-any
+  182:14  warning  Unsafe declaration merging between classes and interfaces  @typescript-eslint/no-unsafe-declaration-merging
+
+/home/techlab/projects/eduhub-exams/src/base/Presentation/Utils/form_data_maker.ts
+  2:36  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/base/Presentation/Utils/notification.ts
+  34:9  warning  Unexpected console statement  no-console
+
+/home/techlab/projects/eduhub-exams/src/base/Presentation/Utils/permission_handler.ts
+  18:18  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+  34:18  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+
+/home/techlab/projects/eduhub-exams/src/base/Presentation/Utils/validate_required_fields.ts
+  1:48  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/DeleteReasons/__tests__/country.test-factory.ts
+  34:10  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  59:58  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  72:62  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  85:70  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  86:50  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  98:40  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/DeleteReasons/core/models/country.model.spec.ts
+  13:33  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  26:33  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  36:33  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  47:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  58:33  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/DeleteReasons/core/models/delete.accountes.model.ts
+  24:25  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/DeleteReasons/core/models/delete.reasons.model.ts
+  34:25  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/DeleteReasons/core/params/add.delete.reasons.params.ts
+  17:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  18:33  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/DeleteReasons/core/params/country.params.spec.ts
+  10:64  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  17:70  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  22:70  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  31:55  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  39:78  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  44:78  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/DeleteReasons/core/params/delete.delete.reasons.params.ts
+  16:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  17:33  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/DeleteReasons/core/params/edit.delete.reasons.params.ts
+  19:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  20:33  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/DeleteReasons/core/params/idnex.delete.reasons.params.ts
+  10:17  warning  Unexpected empty constructor              @typescript-eslint/no-empty-function
+  12:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  13:33  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/DeleteReasons/core/params/show.delete.accounts.params.ts
+  10:17  warning  Unexpected empty constructor              @typescript-eslint/no-empty-function
+  12:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  13:33  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/DeleteReasons/core/params/show.delete.reasons.params.ts
+  10:17  warning  Unexpected empty constructor              @typescript-eslint/no-empty-function
+  12:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  13:33  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/DeleteReasons/core/utils/country.validation.spec.ts
+  24:41  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  25:46  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  55:43  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  56:48  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/DeleteReasons/data/api/country.api-service.spec.ts
+  21:42  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  26:42  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  31:42  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  36:42  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  41:42  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/DeleteReasons/data/repositories/DeleteAccounts/delete.accounts.repository.ts
+  48:29  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  52:29  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/DeleteReasons/data/repositories/country.repository.spec.ts
+   6:23  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  19:28  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/DeleteReasons/data/repositories/delete.reasons.repository.ts
+  48:29  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  52:29  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/DeleteReasons/presentation/components/__tests__/DeletedAccountsIndex.test.ts
+  70:33  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/DeleteReasons/presentation/components/__tests__/StageEdit.test.ts
+  21:42  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/DeleteReasons/presentation/components/__tests__/StageForm.test.ts
+   6:23  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  19:28  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/DeleteReasons/presentation/components/__tests__/StageIndex.test.ts
+   21:43  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   85:43  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  157:10  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  169:10  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/DeleteReasons/presentation/controllers/country.controller.spec.ts
+  15:23  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  28:28  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/DeleteReasons/presentation/subComponent/DeletedReasonesDialog.vue
+  25:16  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+
+/home/techlab/projects/eduhub-exams/src/modules/EducationClassification/__tests__/educationClassification.test-factory.ts
+   34:6   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   58:72  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   71:62  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   89:45  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   92:21  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  108:54  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/EducationClassification/core/models/EducationConfiguration/education.configuration.model.ts
+  21:25  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  31:20  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/EducationClassification/core/models/EducationConfiguration/education.subject.configuration.model.ts
+  24:25  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  38:20  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/EducationClassification/core/models/EducationStage/education.stages.model.test.ts
+  54:57  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  60:62  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/EducationClassification/core/models/education.classification.model.test.ts
+  34:66  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  40:71  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/EducationClassification/core/params/EducationConfiguration/Configuration.params.ts
+  21:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  22:33  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/EducationClassification/core/params/EducationConfiguration/add.educationConfiguration.params.ts
+  29:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  30:33  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/EducationClassification/core/params/EducationStages/add.education.stage.params.ts
+  19:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  20:33  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/EducationClassification/core/params/EducationStages/fetch.education.stage.params.ts
+  17:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/EducationClassification/core/params/EducationSubjects/add.educationSubject.params.ts
+  31:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  32:33  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/EducationClassification/core/params/EducationSubjects/add.subject.item.params.ts
+  19:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  20:33  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/EducationClassification/core/params/EducationSubjects/education.subject.params.ts
+  21:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  22:33  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/EducationClassification/core/params/EducationSubjects/fetch.subject.params.ts
+  15:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/EducationClassification/core/params/EducationTree/add.education.configuration.tree.params.ts
+  27:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/EducationClassification/core/params/EducationTree/fetch.tree.configuration.params.ts
+  21:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/EducationClassification/core/params/add.educationClassification.params.ts
+  18:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  19:33  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/EducationClassification/core/params/edit.educationClassification.params.ts
+  21:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/EducationClassification/core/params/educationClassificationParams.ts
+  18:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  19:33  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/EducationClassification/core/params/show.educationClassification.params.ts
+  18:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  19:33  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/EducationClassification/core/params/toggle.educationClassification.status.params.ts
+  18:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  19:33  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/EducationClassification/core/params/translation.params.ts
+  23:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  24:33  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/EducationClassification/core/utils/education.classification.validation.test.ts
+  23:41  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  24:46  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  54:43  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  55:48  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/EducationClassification/data/api/country.api-service.test.ts
+  25:44  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  30:44  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  35:44  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  40:44  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  45:44  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/EducationClassification/data/repositories/EducationStage/education.stages.repository.test.ts
+   35:23  warning  Unexpected any. Specify a different type   @typescript-eslint/no-explicit-any
+   48:28  warning  Unexpected any. Specify a different type   @typescript-eslint/no-explicit-any
+   76:16  warning  Forbidden non-null assertion               @typescript-eslint/no-non-null-assertion
+   77:16  warning  Forbidden non-null assertion               @typescript-eslint/no-non-null-assertion
+   78:16  warning  Forbidden non-null assertion               @typescript-eslint/no-non-null-assertion
+  108:32  warning  Unexpected empty method 'validateOrThrow'  @typescript-eslint/no-empty-function
+  110:56  warning  Unexpected any. Specify a different type   @typescript-eslint/no-explicit-any
+  115:16  warning  Forbidden non-null assertion               @typescript-eslint/no-non-null-assertion
+  116:16  warning  Forbidden non-null assertion               @typescript-eslint/no-non-null-assertion
+  131:16  warning  Forbidden non-null assertion               @typescript-eslint/no-non-null-assertion
+  132:16  warning  Forbidden non-null assertion               @typescript-eslint/no-non-null-assertion
+  139:29  warning  Unexpected any. Specify a different type   @typescript-eslint/no-explicit-any
+  143:29  warning  Unexpected any. Specify a different type   @typescript-eslint/no-explicit-any
+  144:29  warning  Unexpected any. Specify a different type   @typescript-eslint/no-explicit-any
+  150:35  warning  Unexpected any. Specify a different type   @typescript-eslint/no-explicit-any
+  156:35  warning  Unexpected any. Specify a different type   @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/EducationClassification/data/repositories/educationClassification.repository.test.ts
+   14:23  warning  Unexpected any. Specify a different type   @typescript-eslint/no-explicit-any
+   27:28  warning  Unexpected any. Specify a different type   @typescript-eslint/no-explicit-any
+  102:32  warning  Unexpected empty method 'validateOrThrow'  @typescript-eslint/no-empty-function
+  104:54  warning  Unexpected any. Specify a different type   @typescript-eslint/no-explicit-any
+  125:56  warning  Unexpected any. Specify a different type   @typescript-eslint/no-explicit-any
+  148:32  warning  Unexpected empty method 'validateOrThrow'  @typescript-eslint/no-empty-function
+  150:56  warning  Unexpected any. Specify a different type   @typescript-eslint/no-explicit-any
+  171:32  warning  Unexpected empty method 'validateOrThrow'  @typescript-eslint/no-empty-function
+  173:56  warning  Unexpected any. Specify a different type   @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/EducationClassification/data/repositories/educationConfiguration/education.configuration.repository.test.ts
+   13:23  warning  Unexpected any. Specify a different type   @typescript-eslint/no-explicit-any
+   26:28  warning  Unexpected any. Specify a different type   @typescript-eslint/no-explicit-any
+  121:32  warning  Unexpected empty method 'validateOrThrow'  @typescript-eslint/no-empty-function
+  123:56  warning  Unexpected any. Specify a different type   @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/EducationClassification/data/repositories/educationConfiguration/education.configuration.repository.ts
+  38:29  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  42:29  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/EducationClassification/data/repositories/educationSubject/education.subject.repository.test.ts
+   13:23  warning  Unexpected any. Specify a different type   @typescript-eslint/no-explicit-any
+   26:28  warning  Unexpected any. Specify a different type   @typescript-eslint/no-explicit-any
+  127:32  warning  Unexpected empty method 'validateOrThrow'  @typescript-eslint/no-empty-function
+  129:56  warning  Unexpected any. Specify a different type   @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/EducationClassification/presentation/components/EducationStages/Dialogs/AddEducationStageDialog.vue
+   6:5  warning  Prop "ClassificationId" is not in camelCase  vue/prop-name-casing
+   7:5  warning  Prop "parent_id" is not in camelCase         vue/prop-name-casing
+  24:5  warning  Unexpected console statement                 no-console
+
+/home/techlab/projects/eduhub-exams/src/modules/EducationClassification/presentation/components/EducationStages/StageTreeNode.vue
+  19:20  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+  20:20  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+  21:22  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+
+/home/techlab/projects/eduhub-exams/src/modules/EducationClassification/presentation/components/EducationStages/__tests__/EducationStagesTree.test.ts
+  8:46  warning  `import()` type annotations are forbidden  @typescript-eslint/consistent-type-imports
+
+/home/techlab/projects/eduhub-exams/src/modules/EducationClassification/presentation/components/EducationSubjects/SubjectTreeNode.vue
+  19:20  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+  20:20  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+  21:22  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+
+/home/techlab/projects/eduhub-exams/src/modules/EducationClassification/presentation/controllers/educationClassification.controller.test.ts
+  22:23  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  35:28  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/EducationClassification/presentation/controllers/educationConfiguration/education.configuration.controller.test.ts
+  23:23  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  36:28  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/EducationClassification/presentation/controllers/educationSubject/education.subject.controller.test.ts
+  23:23  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  36:28  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/EducationClassification/subComponent/__tests__/RenameClassificationDialog.test.ts
+  53:11  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+  55:12  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+  62:11  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+  64:12  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+
+/home/techlab/projects/eduhub-exams/src/modules/EducationClassification/subComponent/__tests__/SingularPluralForm.test.ts
+   63:31  warning  Forbidden non-null assertion              @typescript-eslint/no-non-null-assertion
+   63:67  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   96:31  warning  Forbidden non-null assertion              @typescript-eslint/no-non-null-assertion
+   96:67  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  110:23  warning  Forbidden non-null assertion              @typescript-eslint/no-non-null-assertion
+  110:59  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/Stages/__tests__/country.test-factory.ts
+  34:10  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  59:58  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  72:62  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  85:70  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  86:50  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  98:40  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/Stages/core/models/stage.model.ts
+  29:25  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/Stages/core/params/add.stges.params.ts
+  28:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  29:33  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/Stages/core/params/delete.stage.params.ts
+  18:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  19:33  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/Stages/core/params/edit.stage.params.ts
+  25:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/Stages/core/params/show.stage.params.ts
+  18:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  19:33  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/Stages/core/utils/country.validation.spec.ts
+  24:41  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  25:46  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  55:43  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  56:48  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/Stages/data/api/country.api-service.spec.ts
+  21:42  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  26:42  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  31:42  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  36:42  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/Stages/data/repositories/country.repository.spec.ts
+   6:23  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  19:28  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/Stages/data/repositories/stage.repository.ts
+  72:29  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  76:29  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/Stages/presentation/components/StageForm.vue
+  21:45  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+  23:35  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+  50:27  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+  70:41  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+
+/home/techlab/projects/eduhub-exams/src/modules/Stages/presentation/components/StageIndex.vue
+  36:3   warning  Unexpected console statement  no-console
+  95:19  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+
+/home/techlab/projects/eduhub-exams/src/modules/Stages/presentation/components/__tests__/StageIndex.test.ts
+  24:18  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  38:37  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/Stages/presentation/controllers/country.controller.spec.ts
+  15:23  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  28:28  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/Stages/subComponent/ContentItem.vue
+  3:11  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/Stages/subComponent/HeaderItem.vue
+  3:11  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/Subjects/core/models/subject.model.ts
+  28:25  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/Subjects/core/params/add.subject.params.ts
+  23:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  24:33  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/Subjects/core/params/delete.subject.params.ts
+  18:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  19:33  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/Subjects/core/params/edit.subject.params.ts
+  24:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/Subjects/core/params/show.subject.params.ts
+  18:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  19:33  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/Subjects/data/repositories/__tests__/subject.repository.test.ts
+  9:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/Subjects/data/repositories/subject.repository.ts
+  66:29  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  70:29  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/Subjects/presentation/components/SubjectForm.vue
+  21:45  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+  23:35  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+  49:27  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+  69:41  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+
+/home/techlab/projects/eduhub-exams/src/modules/Subjects/presentation/components/SubjectIndex.vue
+  39:5   warning  Unexpected console statement  no-console
+  98:21  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+
+/home/techlab/projects/eduhub-exams/src/modules/Subjects/presentation/components/__tests__/SubjectIndex.test.ts
+  24:18  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  38:39  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/Subjects/presentation/controllers/subject.controller.spec.ts
+  15:23  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  28:28  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/Subjects/subComponent/ContentItem.vue
+  3:11  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/Subjects/subComponent/HeaderItem.vue
+  3:11  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/SupportContacts/core/models/support.contatcts.model.ts
+  37:25  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/SupportContacts/core/params/add.support.params.ts
+  17:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/SupportContacts/core/params/contacts.paras.ts
+  31:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/SupportContacts/core/params/delete.about.params.ts
+  18:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/SupportContacts/core/params/edit.support.params.ts
+  34:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/SupportContacts/core/params/show.support.params.ts
+  10:17  warning  Unexpected empty constructor              @typescript-eslint/no-empty-function
+  12:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/SupportContacts/data/repositories/support.repository.ts
+  38:29  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  42:29  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/SupportContacts/presentation/components/SupportIndex.vue
+  20:61  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  26:37  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/SupportContacts/presentation/components/__tests__/SupportForm.test.ts
+  99:12  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+
+/home/techlab/projects/eduhub-exams/src/modules/SupportContacts/presentation/controllers/__tests__/support.controller.test.ts
+  15:22  warning  Unexpected empty method 'setItemLoading'       @typescript-eslint/no-empty-function
+  16:20  warning  Unexpected empty method 'setItemState'         @typescript-eslint/no-empty-function
+  17:26  warning  Unexpected empty method 'handleItemResponse'   @typescript-eslint/no-empty-function
+  18:27  warning  Unexpected empty method 'handleErrorResponse'  @typescript-eslint/no-empty-function
+  19:25  warning  Unexpected empty method 'showLoadingDialog'    @typescript-eslint/no-empty-function
+  20:25  warning  Unexpected empty method 'hideLoadingDialog'    @typescript-eslint/no-empty-function
+  40:35  warning  Unexpected any. Specify a different type       @typescript-eslint/no-explicit-any
+  59:51  warning  Unexpected any. Specify a different type       @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/about/core/models/__tests__/about.model.test.ts
+  79:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/about/core/models/about.model.ts
+  36:25  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  45:47  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/about/core/models/social.model.ts
+  20:25  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/about/core/models/translation.model.ts
+  20:25  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/about/core/params/Socail.params.ts
+  18:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/about/core/params/add.about.params.ts
+  28:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/about/core/params/delete.about.params.ts
+  18:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/about/core/params/edit.about.params.ts
+  28:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/about/core/params/show.about.params.ts
+  10:17  warning  Unexpected empty constructor              @typescript-eslint/no-empty-function
+  12:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/about/core/params/translation.params.ts
+  18:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/about/data/repositories/about.repository.ts
+  35:29  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  39:29  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/about/presentation/components/AboutForm.vue
+   90:15  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+  114:19  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+
+/home/techlab/projects/eduhub-exams/src/modules/about/presentation/components/__tests__/AboutForm.test.ts
+  55:57  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/auth/__tests__/email.test-factory.ts
+   43:10  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   69:56  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   81:56  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   89:63  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   90:44  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   97:38  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  109:41  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  120:40  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  184:45  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/auth/core/models/user.model.ts
+  49:25  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  71:13  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/auth/core/params/login.params.ts
+  21:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  22:33  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/auth/presentation/components/__tests__/ChooseCountry.test.ts
+  28:18  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  32:22  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  37:39  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/auth/presentation/components/__tests__/CountryCard.test.ts
+  67:12  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+
+/home/techlab/projects/eduhub-exams/src/modules/auth/presentation/components/__tests__/LoginForm.test.ts
+  20:18  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  24:37  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/auth/presentation/controllers/__tests__/login.controller.test.ts
+   40:22  warning  Unexpected empty method 'setItemLoading'       @typescript-eslint/no-empty-function
+   41:20  warning  Unexpected empty method 'setItemState'         @typescript-eslint/no-empty-function
+   42:26  warning  Unexpected empty method 'handleItemResponse'   @typescript-eslint/no-empty-function
+   43:27  warning  Unexpected empty method 'handleErrorResponse'  @typescript-eslint/no-empty-function
+   44:25  warning  Unexpected empty method 'showLoadingDialog'    @typescript-eslint/no-empty-function
+   45:25  warning  Unexpected empty method 'hideLoadingDialog'    @typescript-eslint/no-empty-function
+   63:25  warning  Unexpected any. Specify a different type       @typescript-eslint/no-explicit-any
+   80:51  warning  Unexpected any. Specify a different type       @typescript-eslint/no-explicit-any
+   90:51  warning  Unexpected any. Specify a different type       @typescript-eslint/no-explicit-any
+  100:51  warning  Unexpected any. Specify a different type       @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/country/__tests__/country.test-factory.ts
+   38:6   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   63:56  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   76:60  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   92:68  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   94:26  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  110:38  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/country/core/models/country.model.ts
+  17:25  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/country/core/params/add.country.params.ts
+  24:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  25:33  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/country/core/params/deleteParams.ts
+  18:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  19:33  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/country/core/params/edit.country.params.ts
+  27:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/country/core/params/show.country.params.ts
+  18:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  19:33  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/country/core/utils/country.validation.spec.ts
+  24:41  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  25:46  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  55:43  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  56:48  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/country/data/api/country.api-service.spec.ts
+  25:44  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  30:44  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  35:44  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  40:44  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  45:44  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/country/data/repositories/country.repository.spec.ts
+   10:23  warning  Unexpected any. Specify a different type   @typescript-eslint/no-explicit-any
+   25:28  warning  Unexpected any. Specify a different type   @typescript-eslint/no-explicit-any
+   96:32  warning  Unexpected empty method 'validateOrThrow'  @typescript-eslint/no-empty-function
+   98:54  warning  Unexpected any. Specify a different type   @typescript-eslint/no-explicit-any
+  119:56  warning  Unexpected any. Specify a different type   @typescript-eslint/no-explicit-any
+  144:32  warning  Unexpected empty method 'validateOrThrow'  @typescript-eslint/no-empty-function
+  146:56  warning  Unexpected any. Specify a different type   @typescript-eslint/no-explicit-any
+  167:32  warning  Unexpected empty method 'validateOrThrow'  @typescript-eslint/no-empty-function
+  169:56  warning  Unexpected any. Specify a different type   @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/country/data/repositories/country.repository.ts
+  82:29  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  86:29  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/country/presentation/components/CountryForm.vue
+  18:45  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+  21:35  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+  45:27  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+  52:14  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+  67:41  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+
+/home/techlab/projects/eduhub-exams/src/modules/country/presentation/components/CountryIndex.vue
+  101:21  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+
+/home/techlab/projects/eduhub-exams/src/modules/country/presentation/components/__tests__/CountryIndex.test.ts
+  33:12  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  34:12  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/country/presentation/controllers/country.controller.spec.ts
+  30:23  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  45:28  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/country/subComponent/ContentItem.vue
+  3:11  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/country/subComponent/HeaderItem.vue
+  3:11  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/document/core/models/document.model.ts
+  39:25  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/document/core/params/__tests__/delete.document.params.test.ts
+  35:28  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/document/core/params/__tests__/show.document.params.test.ts
+  35:28  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/document/core/params/add.document.params.ts
+  39:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/document/core/params/delete.document.params.ts
+  15:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/document/core/params/documntType/add.document.type.params.ts
+  21:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/document/core/params/edit.document.params.ts
+  39:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/document/core/params/show.document.params.ts
+  15:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/document/core/params/translation.params.ts
+  15:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/document/data/repositories/DocumentType/document.type.repository.ts
+  39:29  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  43:29  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/document/data/repositories/document.repository.ts
+  44:29  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  48:29  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/document/presentation/components/DocumentAdd.vue
+  16:5  warning  Unexpected console statement  no-console
+
+/home/techlab/projects/eduhub-exams/src/modules/document/presentation/components/DocumentForm.vue
+  75:43  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  76:44  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/document/presentation/components/__tests__/DocumentForm.test.ts
+  33:12  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  34:12  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/document/presentation/components/__tests__/DocumentIndex.test.ts
+  33:12  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  34:12  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/document/presentation/controllers/__tests__/document.controller.test.ts
+   38:29  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   41:29  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   44:32  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   55:28  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   67:48  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   71:47  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   82:48  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   86:47  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   97:48  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  101:47  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/employee/core/models/employee.model.ts
+  49:25  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/employee/core/params/add.employee.params.ts
+  48:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/employee/core/params/delete.employee.params.ts
+  18:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/employee/core/params/edit.employee.params.ts
+  52:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/employee/core/params/show.employee.params.ts
+  18:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/employee/data/repositories/employee.repository.ts
+  35:29  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  39:29  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/employee/presentation/components/EmployeeForm.vue
+   22:45  warning  Forbidden non-null assertion              @typescript-eslint/no-non-null-assertion
+   24:35  warning  Forbidden non-null assertion              @typescript-eslint/no-non-null-assertion
+   79:27  warning  Forbidden non-null assertion              @typescript-eslint/no-non-null-assertion
+   81:17  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  108:41  warning  Forbidden non-null assertion              @typescript-eslint/no-non-null-assertion
+
+/home/techlab/projects/eduhub-exams/src/modules/faqs/__tests__/faqs.test-factory.ts
+   38:6   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   63:56  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   76:60  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   92:68  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   94:26  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  110:38  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/faqs/core/models/faqs.model.ts
+  18:25  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  88:12  warning  Forbidden non-null assertion              @typescript-eslint/no-non-null-assertion
+
+/home/techlab/projects/eduhub-exams/src/modules/faqs/core/params/__tests__/delete.faqs.params.test.ts
+  21:55  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/faqs/core/params/__tests__/edit.faqs.params.test.ts
+  41:45  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/faqs/core/params/__tests__/faqs.details.params.test.ts
+  35:49  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  40:51  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/faqs/core/params/add.faqs.params.ts
+  18:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  19:33  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/faqs/core/params/delete.faqs.params.ts
+  13:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/faqs/core/params/edit.faqs.params.ts
+  24:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/faqs/core/params/faqs.details.params.ts
+  21:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/faqs/core/utils/faqs.validation.spec.ts
+  20:41  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  21:46  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/faqs/data/api/faqs.api-service.spec.ts
+  21:28  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  26:28  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  31:28  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  36:28  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/faqs/data/repositories/faqs.repository.ts
+  45:29  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  49:29  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/privacy/core/models/privacy.model.ts
+  18:25  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/privacy/core/params/add.privacy.params.ts
+  17:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  18:33  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/privacy/core/utils/privacy.validation.spec.ts
+  24:41  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  25:46  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  55:43  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  56:48  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/privacy/data/api/privacy.api-service.spec.ts
+  21:28  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  26:28  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  31:28  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  36:28  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/privacy/data/repositories/privacy.repository.spec.ts
+   6:23  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  19:28  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/privacy/data/repositories/privacy.repository.ts
+  50:29  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  54:29  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/privacy/presentation/components/PrivacyForm.vue
+  26:18  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+
+/home/techlab/projects/eduhub-exams/src/modules/privacy/presentation/controllers/privacy.controller.spec.ts
+  15:23  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  28:28  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/privacy/subComponent/ContentItem.vue
+  3:11  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/privacy/subComponent/HeaderItem.vue
+  3:11  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/terms-conditions/core/models/terms-conditions.model.ts
+  20:25  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/terms-conditions/core/params/__tests__/add.terms-conditions.params.test.ts
+  41:29  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/terms-conditions/core/params/add.terms-conditions.params.ts
+  19:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  20:33  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/terms-conditions/core/utils/country.validation.spec.ts
+  24:41  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  25:46  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  55:43  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  56:48  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/terms-conditions/data/api/country.api-service.spec.ts
+  21:28  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  26:28  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  31:28  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  36:28  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/terms-conditions/data/repositories/country.repository.spec.ts
+   6:23  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  19:28  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/terms-conditions/data/repositories/terms-conditions.repository.ts
+  50:29  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  54:29  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/terms-conditions/presentation/controllers/__tests__/terms-conditions.controller.test.ts
+  15:23  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  28:28  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/terms-conditions/subComponent/ContentItem.vue
+  3:11  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/terms-conditions/subComponent/HeaderItem.vue
+  3:11  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/unit/core/models/unit.model.ts
+  31:25  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/unit/core/params/add.unit.params.ts
+  25:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  26:33  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/unit/core/params/delete.unit.params.ts
+  18:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  19:33  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/unit/core/params/edit.unit.params.ts
+  27:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/unit/core/params/show.unit.params.ts
+  18:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  19:33  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/unit/data/repositories/unit.repository.ts
+  71:29  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  75:29  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/unit/presentation/components/UnitForm.vue
+  19:45  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+  21:35  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+  53:27  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+  74:41  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+
+/home/techlab/projects/eduhub-exams/src/modules/unit/presentation/components/UnitIndex.vue
+  36:5   warning  Unexpected console statement  no-console
+  95:18  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+
+/home/techlab/projects/eduhub-exams/src/modules/unit/presentation/components/__tests__/UnitIndex.test.ts
+  24:18  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  38:36  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/unit/presentation/controllers/unit.controller.spec.ts
+  15:23  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  28:28  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/unit/subComponent/ContentItem.vue
+  3:11  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/modules/unit/subComponent/HeaderItem.vue
+  3:11  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/shared/Accordion/CustomAccordion.vue
+  18:12  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/shared/Checkbox/CheckBoxButton.vue
+  14:29  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/shared/DataStatues/DataStatusBuilder.vue
+   35:42  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   42:42  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   43:38  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  112:15  warning  Forbidden non-null assertion              @typescript-eslint/no-non-null-assertion
+  117:15  warning  Forbidden non-null assertion              @typescript-eslint/no-non-null-assertion
+
+/home/techlab/projects/eduhub-exams/src/shared/DataStatues/ProgressState.vue
+  12:7  warning  Prop 'total' requires default value to be set    vue/require-default-prop
+  13:7  warning  Prop 'loaded' requires default value to be set   vue/require-default-prop
+  14:7  warning  Prop 'message' requires default value to be set  vue/require-default-prop
+
+/home/techlab/projects/eduhub-exams/src/shared/DataStatues/__tests__/DataStatusBuilder.test.ts
+   7:25  warning  Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+   9:13  warning  Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  11:25  warning  Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  13:13  warning  Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  15:25  warning  Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  17:13  warning  Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  22:24  warning  Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  24:12  warning  Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  25:25  warning  Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  29:23  warning  Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  31:13  warning  Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  33:23  warning  Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  34:18  warning  Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  36:13  warning  Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  38:22  warning  Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  40:13  warning  Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  45:25  warning  Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  47:13  warning  Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  50:27  warning  Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  52:13  warning  Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  55:27  warning  Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  57:13  warning  Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  59:26  warning  Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  61:13  warning  Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  69:29  warning  Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  71:13  warning  Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  74:35  warning  Unexpected empty async method 'retryAfterDelay'  @typescript-eslint/no-empty-function
+
+/home/techlab/projects/eduhub-exams/src/shared/DataStatues/__tests__/TimeoutState.test.ts
+  69:5  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+
+/home/techlab/projects/eduhub-exams/src/shared/FormInputs/HandleFilesUpload.vue
+   18:5   warning  Prop 'className' requires default value to be set   vue/require-default-prop
+   20:5   warning  Prop 'index' requires default value to be set       vue/require-default-prop
+   22:5   warning  Prop 'file' requires default value to be set        vue/require-default-prop
+   23:5   warning  Prop 'base64File' requires default value to be set  vue/require-default-prop
+  151:37  warning  Forbidden non-null assertion                        @typescript-eslint/no-non-null-assertion
+
+/home/techlab/projects/eduhub-exams/src/shared/FormInputs/SwitchInput.vue
+  15:5  warning  Prop "switch_title" is not in camelCase    vue/prop-name-casing
+  16:5  warning  Prop "switch_reverse" is not in camelCase  vue/prop-name-casing
+
+/home/techlab/projects/eduhub-exams/src/shared/FormInputs/TablePopover.vue
+  11:12  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  12:5   warning  Prop "data_img" is not in camelCase       vue/prop-name-casing
+
+/home/techlab/projects/eduhub-exams/src/shared/FormInputs/UpdatedCustomInputSelect.vue
+  15:5   warning  Prop 'label' requires default value to be set       vue/require-default-prop
+  16:5   warning  Prop 'options' requires default value to be set     vue/require-default-prop
+  20:5   warning  Prop 'controller' requires default value to be set  vue/require-default-prop
+  20:33  warning  Unexpected any. Specify a different type            @typescript-eslint/no-explicit-any
+  21:5   warning  Prop 'params' requires default value to be set      vue/require-default-prop
+  30:5   warning  Prop 'onclick' requires default value to be set     vue/require-default-prop
+
+/home/techlab/projects/eduhub-exams/src/shared/FormInputs/__tests__/HandleFilesUpload.test.ts
+  104:12  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+
+/home/techlab/projects/eduhub-exams/src/shared/FormInputs/__tests__/UpdatedCustomInputSelect.test.ts
+  33:46  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/shared/HelpersComponents/AppButton.vue
+  14:5  warning  Prop 'title' requires default value to be set   vue/require-default-prop
+  18:5  warning  Prop 'icon' requires default value to be set    vue/require-default-prop
+  22:5  warning  Prop 'to' requires default value to be set      vue/require-default-prop
+  23:5  warning  Prop 'href' requires default value to be set    vue/require-default-prop
+  24:5  warning  Prop 'target' requires default value to be set  vue/require-default-prop
+
+/home/techlab/projects/eduhub-exams/src/shared/HelpersComponents/AppTable.vue
+  84:26  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/shared/HelpersComponents/DropList.vue
+  9:11  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/shared/HelpersComponents/FilterDialog/__tests__/FilterDialog.test.ts
+  36:12  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+
+/home/techlab/projects/eduhub-exams/src/shared/HelpersComponents/LangTitleInput.vue
+    7:54  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  121:32  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  145:32  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/shared/HelpersComponents/RadioSection.vue
+  13:5  warning  Prop "images_selections" is not in camelCase  vue/prop-name-casing
+  14:5  warning  Prop "Customize" is not in camelCase          vue/prop-name-casing
+
+/home/techlab/projects/eduhub-exams/src/shared/HelpersComponents/TabsSelection.vue
+  13:5  warning  Prop "ProjectId" is not in camelCase  vue/prop-name-casing
+  16:5  warning  Unexpected console statement          no-console
+
+/home/techlab/projects/eduhub-exams/src/shared/HelpersComponents/Tree/TreeView.vue
+  30:5  warning  Unexpected console statement  no-console
+
+/home/techlab/projects/eduhub-exams/src/shared/HelpersComponents/__tests__/AppTable.test.ts
+   95:12  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+   96:12  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+  130:12  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+  141:21  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+
+/home/techlab/projects/eduhub-exams/src/shared/HelpersComponents/__tests__/LangTitleInput.test.ts
+  121:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  126:20  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/shared/HelpersComponents/__tests__/Pagination.test.ts
+  64:12  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+  73:12  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+
+/home/techlab/projects/eduhub-exams/src/shared/HelpersComponents/__tests__/ValidationDialog.test.ts
+  7:19  warning  Require statement not part of import statement  @typescript-eslint/no-var-requires
+
+/home/techlab/projects/eduhub-exams/src/shared/Language/LangInput.vue
+  14:35  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+
+/home/techlab/projects/eduhub-exams/src/shared/Language/__tests__/LangInput.test.ts
+  70:26  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+
+/home/techlab/projects/eduhub-exams/src/shared/LayoutComponents/SubComponents/ChangeLanguage.vue
+   30:14  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   90:53  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  104:52  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/shared/LayoutComponents/SubComponents/RouteHelper.ts
+   8:40  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   8:53  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  11:61  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  30:47  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  31:48  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/shared/LayoutComponents/SubComponents/__tests__/RouteHelper.test.ts
+  4:61  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  9:29  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/techlab/projects/eduhub-exams/src/shared/MultiLangInput.vue
+  43:36  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+  45:27  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+
+/home/techlab/projects/eduhub-exams/src/stores/formsStore.ts
+   8:41  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  10:45  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  19:44  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+✖ 676 problems (1 error, 675 warnings)
+

@@ -1,0 +1,45 @@
+@use '../../../../styles/variables' as *;
+@use '../../../../styles/mixins/flex' as *;
+@use '../../../../styles/mixins/grid' as *;
+
+.parent_tabs {
+  h5 {
+    color: var(--title-header-color);
+    font-weight: $BaseFontSemiBoldWeight;
+    font-size: $SmSize;
+    font-family: 'Medium';
+    margin-bottom: $XsSize4;
+  }
+  .all_tabs {
+    @include flex-row(nowrap, space-between, center);
+    gap: $MdSize;
+    margin-bottom: $XlSize2;
+    .tab-item {
+      background-color: var(--bg-main);
+      color: var(--table-data-color);
+      border: 1px solid var(--input-border-color);
+      padding: $XlSize2;
+      width: 100%;
+      border-radius: $XlSize4;
+      display: flex;
+      gap: $XsSize4;
+      cursor: pointer;
+      input[type='radio'] {
+        accent-color: white;
+      }
+    }
+    .tab-item.active {
+      background-color: var(--PrimaryColor-alpha-10);
+      color: var(--primary-green);
+      border: 1px solid var(--primary-green);
+      padding: $XlSize2;
+      width: 100%;
+      border-radius: $XlSize4;
+      cursor: pointer;
+      input[type='radio'] {
+        background-color: green;
+        accent-color: green;
+      }
+    }
+  }
+}

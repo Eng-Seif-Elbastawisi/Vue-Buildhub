@@ -1,0 +1,9 @@
+services:
+  eduhub-exams:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: eduhub-exams
+    ports:
+      - "8080:80"
+    restart: unless-stopped

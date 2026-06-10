@@ -1,0 +1,73 @@
+@use '../../variables' as *;
+@use '../../mixins/flex' as *;
+
+.delete-dialog {
+  padding: 3rem;
+  text-align: center;
+  background-color: var(--BgWhite) !important;
+  color: var(--gray-900) !important;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xl);
+
+  @include flex-column(nowrap, center, center);
+
+  font-family: 'Medium';
+  gap: 10px;
+
+  img {
+    width: 350px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-right: 25px;
+  }
+
+  .dialog-title {
+    font-family: 'Bold';
+    font-size: 1.5rem;
+    color: var(--gray-900);
+  }
+
+  p {
+    font-family: 'Medium';
+    color: var(--gray-500);
+    margin-bottom: var(--space-sm);
+    max-width: 100%;
+  }
+
+  .btn-third {
+    border: 1px solid var(--gray-400);
+    color: var(--gray-700);
+
+    &:hover {
+      border-color: var(--gray-900);
+      color: var(--gray-900);
+    }
+  }
+
+  .btns {
+    display: flex;
+    gap: 1rem;
+    width: 100%;
+    margin-top: 1.2rem;
+    align-items: center;
+
+    .btn-delete-danger {
+      background-color: $DangerAlt;
+      color: white;
+      transition: 0.3s all linear;
+
+      &:hover {
+        background-color: white;
+        color: $DangerAlt;
+        border: 1px solid $DangerAlt;
+      }
+    }
+
+    button {
+      width: 50%;
+      border-radius: 50px;
+      padding: 16px;
+      font-family: 'Medium';
+    }
+  }
+}

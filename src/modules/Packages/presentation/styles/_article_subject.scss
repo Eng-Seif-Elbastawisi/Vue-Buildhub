@@ -1,0 +1,53 @@
+@use '../../../../styles/variables' as *;
+@use '../../../../styles/mixins/flex' as *;
+
+.subject-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 13px;
+  line-height: 1.5;
+
+  .subject-curriculum {
+    color: var(--gray-5, #888);
+    font-size: 12px;
+    position: relative;
+
+    .arrow-icon {
+      position: absolute;
+      left: -20px;
+      top: 100%;
+      transform: translateY(-50%);
+    }
+  }
+
+  .subject-cycle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 5px;
+    font-weight: 500;
+    color: var(--color-text-primary);
+
+    .subject-lang {
+      color: var(--PrimaryColor, #1d9e75);
+      font-weight: 500;
+    }
+  }
+
+  .subject-grade {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: var(--gray-5, #888);
+    font-size: 12px;
+    position: relative;
+
+    .arrow-icon {
+      position: absolute;
+      left: -20px;
+      top: 20%;
+      transform: translateY(-50%);
+    }
+  }
+}

@@ -1,0 +1,150 @@
+@use '../../../../styles/variables' as *;
+@use '../../../../styles/mixins/flex' as *;
+
+.p-dialog.add-document-type-dialog {
+  font-family: 'Medium';
+  background-color: $StandardWhite;
+
+  .header-container {
+    @include flex-row(nowrap, flex-start, center);
+
+    gap: 10px;
+
+    .header-text {
+      @include flex-column(nowrap, flex-start, flex-start);
+
+      gap: 5px;
+
+      h4 {
+        color: var(--table-header-color);
+        font-size: $XlSize;
+        font-weight: $BaseFontWeightBold;
+        font-family: 'medium';
+      }
+
+      p {
+        color: var(--title-header-color);
+        font-size: $MdSize;
+        font-weight: $BaseFontMediumWeight;
+        font-family: 'medium';
+      }
+    }
+  }
+
+  .document-type-content {
+    @include flex-column(nowrap, flex-start, flex-start);
+
+    width: 100%;
+    gap: 10px;
+
+    .document-type-row {
+      width: 100%;
+      background-color: $ColorLightGray;
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 1rem;
+
+      @include flex-row(nowrap, space-between, center);
+
+      .item-title,
+      .item-statics {
+        @include flex-column(nowrap, flex-start, flex-start);
+
+        .item-small-title {
+          color: var(--bread-crumb-color-span);
+          font-size: $SmSize;
+          font-weight: $BaseFontWeight;
+          font-family: 'medium';
+        }
+
+        .item-main-title {
+          color: var(--table-header-color);
+          font-size: $MdSize;
+          font-weight: $BaseFontMediumWeight;
+          font-family: 'medium';
+        }
+      }
+
+      .item-actions {
+        @include flex-row(nowrap, center, center);
+
+        gap: 3px;
+
+        svg {
+          cursor: pointer;
+        }
+      }
+    }
+
+    .input-wrapper {
+      width: 100%;
+
+      @include flex-column(nowrap, flex-start, flex-start);
+
+      gap: 5px;
+      margin-top: 15px;
+      padding: 0 !important;
+
+      label {
+        color: var(--title-header-color);
+        font-size: $MdSize;
+        font-weight: $BaseFontSemiBoldWeight;
+        font-family: 'medium';
+      }
+
+      input {
+        padding: 10px;
+
+        &::placeholder {
+          font-family: 'Medium';
+          font-weight: $BaseFontMediumWeight;
+          padding-inline: 10px;
+          color: var(--bread-crumb-color-span);
+        }
+      }
+    }
+
+    .is-master {
+      width: 100%;
+
+      @include flex-row(nowrap, space-between, center);
+
+      margin: $MdSize2 0;
+
+      span {
+        color: var(--title-header-color);
+        font-size: $MdSize;
+        font-weight: $BaseFontSemiBoldWeight;
+        font-family: 'medium';
+      }
+    }
+
+    .btns {
+      @include flex-row(nowrap, center, center);
+
+      width: 100%;
+      gap: 3px;
+      font-family: 'Medium';
+
+      button {
+        &:first-child {
+          width: 80%;
+          font-weight: $BaseFontSemiBoldWeight;
+        }
+
+        &:last-child {
+          width: 20%;
+          font-weight: $BaseFontSemiBoldWeight;
+        }
+      }
+    }
+  }
+
+  .p-toggleswitch .p-toggleswitch-handle {
+    background-color: var(--white);
+  }
+
+  .p-toggleswitch-slider {
+    background: $GrayLightBorder;
+  }
+}

@@ -1,0 +1,123 @@
+@use "../variables" as *;
+
+.pagination-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sm-size);
+  margin: var(--sm-size) 0;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: start;
+  }
+
+  .show-results,
+  .count-per-page {
+    font-family: var(--font-family);
+    font-size: var(--md-size);
+    color: var(--gray-500);
+
+    @media (max-width: 768px) {
+      font-size: 0.9rem;
+    }
+  }
+
+  .pagination {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--xs-size);
+
+    .pagination-item {
+      font-family: var(--font-family);
+      font-size: var(--md-size);
+      color: var(--gray-500);
+      padding: var(--xs-size) var(--sm-size);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: var(--transition-fast);
+
+      &:hover {
+        background-color: var(--gray-100);
+        color: var(--gray-800);
+      }
+
+      &.active {
+        color: var(--BgWhite);
+        background-color: var(--PrimaryColor);
+        font-weight: $BaseFontSemiBoldWeight;
+      }
+    }
+
+    .count-per-page-select {
+      padding: var(--xs-size) var(--sm-size);
+      background-color: var(--gray-100);
+      border-radius: var(--radius-sm);
+      border: var(--BaseBorderWidth) solid var(--main-border);
+      font-family: var(--font-family);
+      font-size: var(--md-size);
+      color: var(--gray-600);
+      transition: var(--transition-fast);
+
+      &:hover {
+        border-color: var(--PrimaryColor);
+      }
+    }
+  }
+
+  .count-per-page {
+    display: flex;
+    align-items: center;
+    gap: var(--xs-size);
+  }
+
+  .pagination-btn {
+    display: flex;
+    align-items: center;
+    gap: var(--xs-size);
+    font-family: var(--font-family);
+    font-size: var(--md-size);
+    padding: var(--xs-size) var(--sm-size);
+    color: var(--gray-600);
+    background-color: var(--gray-100);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: var(--transition-fast);
+
+    &:hover {
+      background-color: var(--PrimaryColor);
+      color: var(--BgWhite);
+    }
+
+    @media (max-width: 768px) {
+      font-size: 0.8rem;
+    }
+  }
+}
+
+.p-popover-content {
+  padding: 0 !important;
+}
+
+.per-page {
+  display: flex;
+  align-items: center;
+  gap: var(--xs-size);
+  flex-direction: column;
+
+  span {
+    padding: var(--xs-size) var(--xl-size-1);
+    font-family: var(--font-family);
+    font-size: var(--md-size);
+    color: var(--gray-500);
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+    transition: var(--transition-fast);
+
+    &:hover {
+      color: var(--PrimaryColor);
+      background-color: var(--PrimaryColor-light);
+    }
+  }
+}

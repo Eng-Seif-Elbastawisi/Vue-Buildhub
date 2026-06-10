@@ -1,0 +1,19 @@
+@use '../abstracts' as *;
+@use '../variables' as *;
+
+.country-grid {
+  display: grid;
+  width: fit-content;
+  margin-inline: auto;
+  font-family: 'Medium';
+  /* 2 col */
+  @include respond-to(md) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  /* 3 cols */
+  @include respond-to(lg) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  gap: $MdSize;
+}

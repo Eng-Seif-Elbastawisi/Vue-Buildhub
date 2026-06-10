@@ -1,0 +1,21 @@
+@use '../variables' as *;
+
+.p-accordionheader {
+  background: transparent !important;
+  padding: 15px !important;
+}
+
+.p-accordioncontent-content {
+  background: transparent !important;
+  color: var(--gray-600) !important;
+  border: none !important;
+}
+
+.p-accordionpanel:not(.p-disabled).p-accordionpanel-active > .p-accordionheader,
+.p-accordionpanel:not(.p-accordionpanel-active, .p-disabled) > .p-accordionheader:hover {
+  color: var(--PrimaryColor) !important;
+
+  svg path {
+    fill: white !important;
+  }
+}

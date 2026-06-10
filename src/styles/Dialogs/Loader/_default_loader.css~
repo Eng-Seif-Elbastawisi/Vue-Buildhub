@@ -1,0 +1,58 @@
+/*loader container*/
+.loader-dialog {
+  animation: fade-out 0.7s ease-out;
+  border: none;
+  border-radius: 5px;
+  background: #ffffff;
+
+  .loader-container {
+    padding: 5re ;
+  }
+}
+
+.loader-dialog[open] {
+  animation: fade-in 0.7s ease-out;
+}
+
+.loader-dialog[open]::backdrop {
+  animation: backdrop-fade-in 0.7s ease-out forwards;
+  backdrop-filter: blur(5px);
+}
+
+/* Animation keyframes */
+/* HTML: <div class="loader"></div> */
+.loader {
+  width: 120px;
+  height: 22px;
+  border-radius: 20px;
+  color: #000;
+  border: 2px solid;
+  position: relative;
+}
+.loader::before {
+  content: '';
+  position: absolute;
+  margin: 2px;
+  inset: 0 100% 0 0;
+  border-radius: inherit;
+  background: currentColor;
+  animation: l6 2s infinite;
+}
+@keyframes l6 {
+  100% {
+    inset: 0;
+  }
+}
+
+/*
+  .loader {
+    width: 120px;
+    height: 20px;
+    -webkit-mask: radial-gradient(circle closest-side,#000 94%,#0000) left/20% 100%;
+    background: linear-gradient(#000 0 0) left/0% 100% no-repeat #ddd;
+    animation: l17 2s infinite steps(6);
+  }
+  @keyframes l17 {
+    100% {background-size:120% 100%}
+  }
+ */

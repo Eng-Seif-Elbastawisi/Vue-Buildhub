@@ -1,0 +1,31 @@
+@use '../variables' as *;
+@use '../mixins/flex' as *;
+
+.section-title-wrapper {
+  @include flex-justify(row, nowrap, center);
+
+  @media screen and (max-width: 768px) {
+    @include flex-column();
+
+    gap: $XsSize2;
+  }
+
+  .section-title {
+    .main-title {
+      @include flex-align(row, nowrap, center);
+
+      font-size: $XlSize4;
+      font-weight: $BaseFontSemiBoldWeight;
+      text-transform: capitalize;
+      color: $PrimaryColor;
+      gap: $XsSize4;
+    }
+
+    .subtitle {
+      font-size: $XlSize;
+      font-weight: $BaseFontMediumWeight;
+      text-transform: capitalize;
+      color: $TextGray3;
+    }
+  }
+}

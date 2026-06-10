@@ -1,0 +1,277 @@
+.app-table-wrapper {
+  border-radius: 10px 10px 0 0;
+  overflow: hidden;
+  position: relative;
+
+  .table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+
+    &::-webkit-scrollbar {
+      height: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: var(--gray-100);
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: var(--gray-300);
+      border-radius: var(--radius-full);
+
+      &:hover {
+        background: var(--gray-400);
+      }
+    }
+  }
+
+  /* ── Table ─────────────────────────────────────────────────── */
+  .app-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-family: var(--font-family);
+    position: relative;
+
+    /* ── Header ──────────────────────────────────────────────── */
+    thead {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+
+      tr th {
+        background: var(--color-light-gray);
+        padding: 24px;
+        text-align: left;
+        color: var(--table-header-color);
+        font-weight: 600;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        border-bottom: 2px solid var(--border-weak);
+        white-space: nowrap;
+        user-select: none;
+        font-family: 'Medium';
+
+        &:first-child {
+          padding-left: 20px;
+        }
+
+        &:last-child {
+          padding-right: 20px;
+        }
+
+        &.sortable {
+          cursor: pointer;
+          transition: all 0.2s ease;
+        }
+
+        .th-content {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 8px;
+
+          .sort-icon {
+            font-size: 0.65rem;
+            opacity: 0.4;
+            transition: all 0.2s ease;
+          }
+
+          &:hover .sort-icon {
+            opacity: 0.8;
+          }
+        }
+      }
+    }
+
+    /* ── Body ────────────────────────────────────────────────── */
+    tbody {
+      tr {
+        transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        position: relative;
+
+        &::after {
+          content: '';
+          position: absolute;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          height: 1px;
+          background: var(--border-weak);
+          opacity: 0.6;
+          pointer-events: none;
+        }
+
+        &:not(:last-child)::after {
+          opacity: 1;
+        }
+
+        &.hoverable {
+          &:hover {
+            background: linear-gradient(
+              90deg,
+              var(--PrimaryColor-light) 0%,
+              var(--PrimaryColor-alpha-12) 30%,
+              transparent 100%
+            );
+            transform: scale(1.001);
+            box-shadow:
+              inset 0 0 0 1px var(--PrimaryColor-alpha-8),
+              0 2px 8px var(--PrimaryColor-alpha-8);
+
+            td {
+              color: var(--gray-900);
+            }
+          }
+        }
+
+        &.striped:nth-child(even) {
+          background: var(--gray-50);
+
+          &:hover {
+            background: linear-gradient(
+              90deg,
+              var(--PrimaryColor-light) 0%,
+              var(--PrimaryColor-alpha-12) 30%,
+              transparent 100%
+            );
+          }
+        }
+
+        &.selected {
+          background: linear-gradient(
+            90deg,
+            var(--PrimaryColor-light) 0%,
+            var(--PrimaryColor-alpha-20) 50%,
+            transparent 100%
+          ) !important;
+
+          td {
+            color: var(--PrimaryColor);
+            font-weight: 600;
+          }
+        }
+
+        td {
+          padding: 14px 16px;
+          color: var(--table-data-color);
+          font-size: 15px;
+          font-weight: 500;
+          font-family: 'Medium';
+          line-height: 1.5;
+          transition: all 0.2s ease;
+
+          &:first-child {
+            padding-left: 20px;
+          }
+
+          &:last-child {
+            padding-right: 20px;
+          }
+
+          &.td-data {
+            cursor: pointer;
+            position: relative;
+
+            &::before {
+              content: '';
+              position: absolute;
+              inset: 0;
+              background: transparent;
+              border-radius: var(--radius-sm);
+              transition: background 0.2s ease;
+            }
+
+            &:hover::before {
+              background: var(--PrimaryColor-alpha-4);
+            }
+
+            &:active::before {
+              background: var(--PrimaryColor-alpha-8);
+            }
+          }
+
+          &.td-index {
+            font-weight: 700;
+            color: var(--gray-400);
+            font-size: 0.8rem;
+            font-variant-numeric: tabular-nums;
+            width: 40px;
+            text-align: center;
+          }
+        }
+
+        .empty-row {
+          text-align: center;
+          padding: 48px 20px;
+          color: var(--gray-400);
+          font-size: 0.95rem;
+          font-style: italic;
+        }
+      }
+    }
+
+    /* ── Checkbox ────────────────────────────────────────────── */
+    .th-checkbox,
+    .td-checkbox {
+      width: 44px;
+      text-align: center;
+
+      input[type='checkbox'] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 18px;
+        height: 18px;
+        border: 2px solid var(--gray-300);
+        border-radius: var(--radius-xs);
+        cursor: pointer;
+        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        position: relative;
+        background: var(--bg-main);
+
+        &:checked {
+          background: linear-gradient(
+            135deg,
+            var(--PrimaryColor) 0%,
+            var(--PrimaryColor-hover) 100%
+          );
+          border-color: var(--PrimaryColor);
+          box-shadow: 0 2px 6px var(--PrimaryColor-alpha-20);
+
+          &::after {
+            content: '';
+            position: absolute;
+            left: 5px;
+            top: 1px;
+            width: 6px;
+            height: 10px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+          }
+        }
+
+        &:hover:not(:checked) {
+          border-color: var(--PrimaryColor);
+          box-shadow: 0 0 0 3px var(--PrimaryColor-light);
+        }
+      }
+    }
+
+    /* ── Actions ─────────────────────────────────────────────── */
+    .th-actions,
+    .td-actions {
+      width: 1%;
+      white-space: nowrap;
+      text-align: center;
+    }
+  }
+/* ---- Checkbox ---- */
+.app-table input[type='checkbox'] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: var(--table-checkbox-color, #6366f1);
+}
+}

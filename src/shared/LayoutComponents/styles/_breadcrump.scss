@@ -1,0 +1,101 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins/flex' as *;
+
+.breadcrump-container {
+  @include flex-row(nowrap, space-between, center);
+  @include flex-column(nowrap, flex-start, flex-start);
+
+  width: 100%;
+  margin-bottom: 12px;
+  background-image: var(
+    --breadcrumb-bg,
+    linear-gradient(to right, #59ab7f3d 0 2%, #fafafa 5% 100%)
+  );
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-family: 'Regular';
+
+  .breadcrump {
+    width: 100%;
+
+    @include flex-row(nowrap, flex-start, flex-start);
+
+    .info-dialog {
+      width: 30px;
+      height: 30px;
+    }
+
+    .sidebar-back {
+      @include flex-row(nowrap, flex-start, center);
+
+      gap: var(--xs-size-3);
+      color: var(--gray-600);
+      font-size: var(--sm-size);
+      font-weight: $BaseFontSemiBoldWeight;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: var(--transition-fast);
+
+      .icon {
+        border-radius: 50%;
+        padding: var(--xs-size-4);
+        width: 30px;
+        height: 30px;
+      }
+    }
+
+    .p-breadcrumb {
+      width: 100%;
+      text-transform: capitalize;
+      padding: 0 !important;
+      background-color: transparent !important;
+
+      .p-breadcrumb-list {
+        @include flex-row(nowrap, flex-start, center);
+
+        width: 100%;
+        gap: 12px;
+
+        .p-breadcrumb-item {
+          // .breadcrumb-link {
+          span {
+            text-transform: capitalize;
+            color: var(--PrimaryColor) !important;
+            font-size: 15px;
+            font-weight: 600;
+            font-family: 'Light';
+            cursor: pointer;
+
+            &.mode-2 {
+              color: var(--Black) !important;
+            }
+          }
+
+          &:first-child {
+            span {
+              color: var(--breadcrumb-first-text, var(--green)) !important;
+              font-size: 14px;
+              font-weight: 500;
+            }
+          }
+
+          &:last-child {
+            span {
+              font-size: 16px;
+              color: var(--PrimaryColor) !important;
+            }
+          }
+        }
+
+        .p-breadcrumb-separator {
+          color: var(--breadcrumb-separator, var(--breadcrumb-separator)) !important;
+
+          svg {
+            width: 15px;
+            height: 15px;
+          }
+        }
+      }
+    }
+  }
+}

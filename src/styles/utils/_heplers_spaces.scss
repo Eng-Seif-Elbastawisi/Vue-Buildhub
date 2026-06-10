@@ -1,0 +1,48 @@
+@use "sass:map";
+
+$space: (
+  0: 0,
+  1: 4px,
+  2: 8px,
+  3: 12px,
+  4: 16px,
+  5: 20px,
+  6: 24px,
+  7: 28px,
+);
+
+@for $i from 0 through 7 {
+  .m-#{$i} {
+    margin: map.get($space, $i);
+  }
+  .mt-#{$i} {
+    margin-top: map.get($space, $i);
+  }
+  .mb-#{$i} {
+    margin-bottom: map.get($space, $i);
+  }
+  .ml-#{$i} {
+    margin-left: map.get($space, $i);
+  }
+  .mr-#{$i} {
+    margin-right: map.get($space, $i);
+  }
+}
+
+@for $i from 0 through 7 {
+  .p-#{$i} {
+    padding: map.get($space, $i);
+  }
+  .pt-#{$i} {
+    padding-top: map.get($space, $i);
+  }
+  .pb-#{$i} {
+    padding-bottom: map.get($space, $i);
+  }
+  .pl-#{$i} {
+    padding-left: map.get($space, $i);
+  }
+  .pr-#{$i} {
+    padding-right: map.get($space, $i);
+  }
+}

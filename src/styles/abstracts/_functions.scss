@@ -1,0 +1,32 @@
+// abstracts/_functions.scss
+// Pure SCSS functions — no CSS output
+@use 'sass:map';
+
+// ── rem conversion ──────────────────────────────────────────────────────────
+@use 'sass:math';
+
+@function rem($px, $base: 16) {
+  @return math.div($px, $base) * 1rem;
+}
+
+// ── z-index lookup ──────────────────────────────────────────────────────────
+
+$_z-index: (
+  'dropdown': 100,
+  'sticky': 200,
+  'fixed': 300,
+  'modal-backdrop': 400,
+  'modal': 500,
+  'popover': 600,
+  'tooltip': 700,
+);
+
+@function z($key) {
+  @if map.has-key($_z-index, $key) {
+    @return map.get($_z-index, $key);
+  }
+
+  @warn "z-index key `#{$key}` not found. Available keys: #{map.keys($_z-index)}";
+
+  @return null;
+}

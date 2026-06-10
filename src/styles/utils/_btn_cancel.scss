@@ -1,0 +1,21 @@
+@use '../variables' as *;
+@use '../mixins/flex' as *;
+
+.btn-cancel {
+  background-color: var(--danger-light);
+  color: var(--Red);
+  padding-inline: calc(var(--xl-size-base) + 2px);
+  // padding-block: var(--xs-size-3);
+  font-family: var(--font-family);
+  font-size: var(--xs-size);
+  font-weight: $BaseFontWeightBold;
+  border-radius: var(--radius-full);
+  transition: var(--transition);
+
+  &:hover {
+    color: var(--BgWhite);
+    background-color: var(--Red);
+    border: 1px solid var(--Red);
+    box-shadow: var(--shadow);
+  }
+}

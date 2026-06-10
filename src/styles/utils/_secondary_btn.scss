@@ -1,0 +1,18 @@
+@use '../variables' as *;
+
+.btn-secondary {
+  background-color: transparent;
+  border: 1px solid var(--gray-200);
+  color: var(--gray-700);
+  font-weight: $BaseFontSemiBoldWeight;
+  font-size: var(--xs-size);
+  font-family: var(--font-family);
+  border-radius: 50px;
+
+  &:hover {
+    background-color: var(--PrimaryColor);
+    color: var(--BgWhite);
+    border-color: var(--PrimaryColor);
+    box-shadow: var(--shadow);
+  }
+}

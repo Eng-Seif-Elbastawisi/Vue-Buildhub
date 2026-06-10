@@ -1,0 +1,217 @@
+{
+  "extends": ["stylelint-config-standard", "stylelint-config-recommended-vue"],
+  "plugins": ["stylelint-scss"],
+  "rules": {
+    "at-rule-no-unknown": null,
+    "scss/at-rule-no-unknown": true,
+    "media-query-no-invalid": null,
+    "color-no-invalid-hex": true,
+    "declaration-property-value-disallowed-list": [
+      {
+        "color": ["/^#/", "/^rgb/", "/^hsl/"],
+        "background-color": ["/^#/", "/^rgb/", "/^hsl/"],
+        "background": ["/^#/", "/^rgb/", "/^hsl/"],
+        "border-color": ["/^#/", "/^rgb/", "/^hsl/"],
+        "border": ["/^#[0-9a-fA-F]/"],
+        "outline-color": ["/^#/", "/^rgb/", "/^hsl/"],
+        "fill": ["/^#/", "/^rgb/", "/^hsl/"],
+        "stroke": ["/^#/", "/^rgb/", "/^hsl/"],
+        "box-shadow": ["/^#/", "/^rgb(?!a\\(26,\\s*28,\\s*28)/"],
+        "caret-color": ["/^#/", "/^rgb/", "/^hsl/"]
+      },
+      {
+        "severity": "warning"
+      }
+    ],
+    "declaration-property-value-allowed-list": [
+      {
+        "font-family": [
+          "/^\\$/",
+          "/var\\(--font-/",
+          "/var\\(--/",
+          "inherit",
+          "sans-serif",
+          "serif",
+          "monospace",
+          "/['\"]?Light['\"]?/",
+          "/['\"]?light['\"]?/",
+          "/['\"]?Regular['\"]?/",
+          "/['\"]?regular['\"]?/",
+          "/['\"]?Medium['\"]?/",
+          "/['\"]?medium['\"]?/",
+          "/['\"]?SemiBold['\"]?/",
+          "/['\"]?Bold['\"]?/",
+          "/['\"]?bold['\"]?/",
+          "/['\"]?Heavy['\"]?/",
+          "/['\"]?extra-bold['\"]?/",
+          "/URW/",
+          "/-apple-system/",
+          "/BlinkMacSystemFont/",
+          "/Segoe UI/",
+          "/Roboto/",
+          "/Oxygen/",
+          "/Ubuntu/",
+          "/Cantarell/",
+          "/Fira Sans/",
+          "/Droid Sans/",
+          "/Helvetica Neue/",
+          "/Arial/",
+          "/Helvetica/"
+        ],
+        "font-weight": [
+          "/^\\$/",
+          "/var\\(--/",
+          "inherit",
+          "normal",
+          "bold",
+          "bolder",
+          "lighter",
+          "100",
+          "200",
+          "300",
+          "400",
+          "500",
+          "600",
+          "700",
+          "800",
+          "900"
+        ]
+      },
+      {
+        "severity": "warning"
+      }
+    ],
+    "comment-empty-line-before": null,
+    "no-descending-specificity": null,
+    "alpha-value-notation": null,
+    "color-function-notation": null,
+    "import-notation": null,
+    "selector-class-pattern": null,
+    "custom-property-pattern": null,
+    "no-empty-source": null,
+    "no-invalid-double-slash-comments": null,
+    "property-no-deprecated": null,
+    "property-no-vendor-prefix": null,
+    "color-function-alias-notation": null,
+    "color-hex-length": null,
+    "nesting-selector-no-missing-scoping-root": null,
+    "shorthand-property-no-redundant-values": null,
+    "declaration-block-no-redundant-longhand-properties": null,
+    "no-duplicate-selectors": null,
+    "value-no-vendor-prefix": null,
+    "selector-no-vendor-prefix": null,
+    "media-feature-range-notation": null,
+    "font-family-name-quotes": null,
+    "font-family-no-missing-generic-family-keyword": null,
+    "declaration-block-single-line-max-declarations": null,
+    "keyframes-name-pattern": null,
+    "annotation-no-unknown": null,
+    "declaration-property-value-no-unknown": null,
+    "property-no-unknown": [
+      true,
+      {
+        "ignoreProperties": ["font-smooth", "-webkit-font-smoothing", "-moz-osx-font-smoothing"]
+      }
+    ],
+    "selector-pseudo-class-no-unknown": [
+      true,
+      {
+        "ignorePseudoClasses": [
+          "deep",
+          "slotted",
+          "global",
+          "local",
+          "v-deep",
+          "v-slotted",
+          "v-global"
+        ]
+      }
+    ],
+    "selector-type-no-unknown": [
+      true,
+      {
+        "ignore": ["custom-elements"]
+      }
+    ],
+    "unit-no-unknown": [
+      true,
+      {
+        "ignoreUnits": ["x"]
+      }
+    ],
+    "value-keyword-case": [
+      "lower",
+      {
+        "camelCaseSvgKeywords": true,
+        "ignoreKeywords": [
+          "BlinkMacSystemFont",
+          "Roboto",
+          "Oxygen",
+          "Ubuntu",
+          "Cantarell",
+          "Fira Sans",
+          "Droid Sans",
+          "Helvetica Neue",
+          "Segoe UI",
+          "optimizeLegibility",
+          "Arial",
+          "Helvetica",
+          "Light",
+          "Regular",
+          "Medium",
+          "SemiBold",
+          "Bold",
+          "Heavy",
+          "URW"
+        ]
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": ["**/*.scss"],
+      "customSyntax": "postcss-scss",
+      "rules": {
+        "scss/at-rule-no-unknown": true,
+        "at-rule-no-unknown": null,
+        "declaration-property-value-no-unknown": null,
+        "annotation-no-unknown": null,
+        "property-no-unknown": null,
+        "function-no-unknown": null,
+        "value-keyword-case": null,
+        "unit-no-unknown": null
+      }
+    },
+    {
+      "files": ["**/*.vue"],
+      "rules": {
+        "selector-pseudo-class-no-unknown": [
+          true,
+          {
+            "ignorePseudoClasses": [
+              "deep",
+              "slotted",
+              "global",
+              "local",
+              "v-deep",
+              "v-slotted",
+              "v-global"
+            ]
+          }
+        ],
+        "declaration-property-value-no-unknown": null,
+        "function-no-unknown": null
+      }
+    }
+  ],
+  "ignoreFiles": [
+    "node_modules/**",
+    ".nuxt/**",
+    "dist/**",
+    "src/style.css",
+    "src/styles/main.css",
+    "src/styles/main.css.map",
+    "src/styles/main.min.css",
+    "src/styles/main.min.css.map"
+  ]
+}

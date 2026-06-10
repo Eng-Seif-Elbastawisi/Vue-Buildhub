@@ -1,0 +1,39 @@
+@use '../variables' as *;
+@use '../mixins/flex' as *;
+
+.fast-route-container {
+  font-family: var(--font-family);
+
+  @media (min-width: 768px) {
+    display: none;
+  }
+
+  .fast-route {
+    @include flex-row(wrap, center, center);
+
+    gap: var(--xs-size-2);
+    padding-block: 12px;
+
+    .route {
+      background-color: var(--BgWhite);
+      color: var(--gray-800);
+      padding: var(--xs-size-2);
+      border-radius: var(--xl-size-1);
+      cursor: pointer;
+      transition: var(--transition-slow);
+      text-transform: capitalize;
+      border: 1px solid var(--gray-200);
+      font-weight: $BaseFontMediumWeight;
+
+      &:hover {
+        background-color: var(--PrimaryColor);
+        color: var(--BgWhite);
+        border-color: var(--PrimaryColor);
+      }
+
+      &.active {
+        opacity: 0.6;
+      }
+    }
+  }
+}

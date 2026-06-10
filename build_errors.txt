@@ -1,0 +1,208 @@
+src/base/Core/NetworkStructure/networking/utils/headerHandler.ts(22,11): error TS6133: 'countryStore' is declared but its value is never read.
+src/base/Core/Params/wordParams.ts(3,22): error TS2420: Class 'WordParams' incorrectly implements interface 'Params'.
+  Type 'WordParams' is missing the following properties from type 'Params': validate, validateOrThrow
+src/base/Presentation/Controller/baseController.ts(636,11): error TS6133: 'Message' is declared but its value is never read.
+src/base/Presentation/Dialogs/LoaderDialogs/LoaderDialog.vue(3,20): error TS2307: Cannot find module 'lottie-web' or its corresponding type declarations.
+src/base/Presentation/Dialogs/LoaderDialogs/LoaderDialog.vue(4,27): error TS2307: Cannot find module '@/assets/images/Craftsman.json' or its corresponding type declarations.
+src/base/Presentation/Dialogs/LoaderDialogs/LoaderDialog.vue(5,24): error TS2307: Cannot find module '@/assets/images/DotsLoader.json' or its corresponding type declarations.
+src/base/Presentation/Dialogs/MainDialogs/MainDialog.vue(4,40): error TS2551: Property 'close' does not exist on type 'Element'. Did you mean 'closest'?
+src/base/Presentation/Utils/classValidation.ts(73,21): error TS2345: Argument of type '{ field: string; message: string; }' is not assignable to parameter of type 'ValidationError'.
+  Type '{ field: string; message: string; }' is missing the following properties from type 'ValidationError': errors, openDialog, name
+src/base/Presentation/Utils/classValidation.ts(88,21): error TS2345: Argument of type '{ field: string; message: string; }' is not assignable to parameter of type 'ValidationError'.
+  Type '{ field: string; message: string; }' is missing the following properties from type 'ValidationError': errors, openDialog, name
+src/base/Presentation/Utils/classValidation.ts(100,21): error TS2345: Argument of type '{ field: string; message: string; }' is not assignable to parameter of type 'ValidationError'.
+  Type '{ field: string; message: string; }' is missing the following properties from type 'ValidationError': errors, openDialog, name
+src/base/Presentation/Utils/classValidation.ts(108,21): error TS2345: Argument of type '{ field: string; message: string; }' is not assignable to parameter of type 'ValidationError'.
+  Type '{ field: string; message: string; }' is missing the following properties from type 'ValidationError': errors, openDialog, name
+src/base/Presentation/Utils/classValidation.ts(116,21): error TS2345: Argument of type '{ field: string; message: string; }' is not assignable to parameter of type 'ValidationError'.
+  Type '{ field: string; message: string; }' is missing the following properties from type 'ValidationError': errors, openDialog, name
+src/base/Presentation/Utils/classValidation.ts(121,21): error TS2345: Argument of type '{ field: string; message: string; }' is not assignable to parameter of type 'ValidationError'.
+  Type '{ field: string; message: string; }' is missing the following properties from type 'ValidationError': errors, openDialog, name
+src/base/Presentation/Utils/classValidation.ts(129,23): error TS2345: Argument of type '{ field: string; message: string; }' is not assignable to parameter of type 'ValidationError'.
+  Type '{ field: string; message: string; }' is missing the following properties from type 'ValidationError': errors, openDialog, name
+src/base/Presentation/Utils/classValidation.ts(169,15): error TS1294: This syntax is not allowed when 'erasableSyntaxOnly' is enabled.
+src/base/Presentation/Utils/file_to_base_64.ts(36,19): error TS2345: Argument of type 'FileBase64 | FileBase64[] | undefined' is not assignable to parameter of type 'FileBase64 | FileBase64[] | PromiseLike<FileBase64 | FileBase64[]>'.
+  Type 'undefined' is not assignable to type 'FileBase64 | FileBase64[] | PromiseLike<FileBase64 | FileBase64[]>'.
+src/base/Presentation/Utils/get_day_form_date.ts(19,3): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/base/Presentation/Utils/get_name_enum.ts(2,32): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(o: ArrayLike<unknown> | { [s: string]: unknown; }): [string, unknown][]', gave the following error.
+    Argument of type 'T' is not assignable to parameter of type 'ArrayLike<unknown> | { [s: string]: unknown; }'.
+      Type 'T' is not assignable to type '{ [s: string]: unknown; }'.
+  Overload 2 of 2, '(o: {}): [string, any][]', gave the following error.
+    Argument of type 'T' is not assignable to parameter of type '{}'.
+src/base/Presentation/Utils/notification.ts(14,7): error TS2353: Object literal may only specify known properties, and 'timestamp' does not exist in type 'NotificationOptions'.
+src/base/Presentation/Utils/permission_handler.ts(2,38): error TS2307: Cannot find module '@/features/dashboard/users/employee/Core/Enum/permission_enum' or its corresponding type declarations.
+src/base/Presentation/Utils/permission_handler.ts(21,16): error TS2339: Property 'isMaster' does not exist on type '{ readonly id?: number | undefined; readonly name: string; readonly email: string; readonly type: EmailType; readonly employeeId?: number | undefined; readonly createdAt?: string | undefined; ... 10 more ...; toString: () => string; }'.
+src/base/Presentation/Utils/permission_handler.ts(25,47): error TS2339: Property 'permission' does not exist on type '{ readonly id?: number | undefined; readonly name: string; readonly email: string; readonly type: EmailType; readonly employeeId?: number | undefined; readonly createdAt?: string | undefined; ... 10 more ...; toString: () => string; }'.
+src/base/Presentation/Utils/permission_handler.ts(37,16): error TS2339: Property 'isMaster' does not exist on type '{ readonly id?: number | undefined; readonly name: string; readonly email: string; readonly type: EmailType; readonly employeeId?: number | undefined; readonly createdAt?: string | undefined; ... 10 more ...; toString: () => string; }'.
+src/base/Presentation/Utils/permission_handler.ts(40,22): error TS2339: Property 'permission' does not exist on type '{ readonly id?: number | undefined; readonly name: string; readonly email: string; readonly type: EmailType; readonly employeeId?: number | undefined; readonly createdAt?: string | undefined; ... 10 more ...; toString: () => string; }'.
+src/base/Presentation/Utils/validationService.ts(62,9): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/base/Presentation/Utils/validationService.ts(69,33): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/base/Presentation/Utils/validationService.ts(74,9): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/base/Presentation/Utils/validationService.ts(80,33): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/base/Presentation/Utils/validation_enum.ts(1,13): error TS1294: This syntax is not allowed when 'erasableSyntaxOnly' is enabled.
+src/modules/DeleteReasons/presentation/subComponent/DeletedReasonesDialog.vue(10,35): error TS2307: Cannot find module '@/shared/icons/DeletedAccountsIcon.vue' or its corresponding type declarations.
+src/modules/EducationClassification/core/models/EducationConfiguration/configuration.branch.model.ts(45,7): error TS2353: Object literal may only specify known properties, and 'en' does not exist in type 'Record<string, string>[]'.
+src/modules/EducationClassification/core/models/EducationConfiguration/configuration.branch.model.ts(49,7): error TS2353: Object literal may only specify known properties, and 'en' does not exist in type 'Record<string, string>[]'.
+src/modules/EducationClassification/core/models/EducationConfiguration/education.configuration.model.ts(27,7): error TS2322: Type 'unknown' is not assignable to type 'TitleInterface<number>'.
+src/modules/EducationClassification/core/models/EducationConfiguration/education.configuration.model.ts(28,7): error TS2322: Type 'unknown' is not assignable to type 'number'.
+src/modules/EducationClassification/core/models/EducationConfiguration/education.configuration.model.ts(43,26): error TS2353: Object literal may only specify known properties, and 'en' does not exist in type 'Record<string, string>[]'.
+src/modules/EducationClassification/core/models/EducationConfiguration/education.configuration.model.ts(44,24): error TS2353: Object literal may only specify known properties, and 'en' does not exist in type 'Record<string, string>[]'.
+src/modules/EducationClassification/core/models/EducationConfiguration/education.configuration.model.ts(49,26): error TS2353: Object literal may only specify known properties, and 'en' does not exist in type 'Record<string, string>[]'.
+src/modules/EducationClassification/core/models/EducationConfiguration/education.configuration.model.ts(50,24): error TS2353: Object literal may only specify known properties, and 'en' does not exist in type 'Record<string, string>[]'.
+src/modules/EducationClassification/core/models/EducationConfiguration/education.configuration.model.ts(55,26): error TS2353: Object literal may only specify known properties, and 'en' does not exist in type 'Record<string, string>[]'.
+src/modules/EducationClassification/core/models/EducationConfiguration/education.configuration.model.ts(56,24): error TS2353: Object literal may only specify known properties, and 'en' does not exist in type 'Record<string, string>[]'.
+src/modules/EducationClassification/presentation/components/EducationClassificationConfigurationForm.vue(161,47): error TS2345: Argument of type 'Record<string, string>' is not assignable to parameter of type 'any[]'.
+  Type 'Record<string, string>' is missing the following properties from type 'any[]': length, pop, push, concat, and 28 more.
+src/modules/EducationClassification/presentation/components/EducationClassificationConfigurationForm.vue(162,45): error TS2345: Argument of type 'Record<string, string>' is not assignable to parameter of type 'any[]'.
+  Type 'Record<string, string>' is missing the following properties from type 'any[]': length, pop, push, concat, and 28 more.
+src/modules/EducationClassification/presentation/components/EducationClassificationForm.vue(39,9): error TS2322: Type 'string' is not assignable to type 'Record<string, string>'.
+src/modules/EducationClassification/presentation/components/EducationClassificationForm.vue(112,25): error TS2322: Type 'Date' is not assignable to type 'Date | Date[] | (Date | null)[] | null | undefined'.
+src/modules/EducationClassification/presentation/components/EducationClassificationIndex.vue(14,1): error TS6133: 'ToggleSwitch' is declared but its value is never read.
+src/modules/EducationClassification/presentation/components/EducationClassificationIndex.vue(22,1): error TS6133: 'RenameClassificationDialog' is declared but its value is never read.
+src/modules/EducationClassification/presentation/components/EducationClassificationIndex.vue(109,7): error TS6133: 'ToggleStatus' is declared but its value is never read.
+src/modules/EducationClassification/presentation/components/EducationStages/EducationStagesTree.vue(28,26): error TS2307: Cannot find module '@/shared/icons/Skillsicon.vue' or its corresponding type declarations.
+src/modules/EducationClassification/presentation/components/EducationStages/EducationStagesTree.vue(51,22): error TS7053: Element implicitly has an 'any' type because expression of type '0' can't be used to index type '{ readonly educationClassificatioId: { id: number; title?: string | undefined; subtitle?: number | undefined; kpi?: string | undefined; decodedData?: string | undefined; }; readonly numberOfBranches: number; readonly branches: { ...; }[]; }'.
+  Property '0' does not exist on type '{ readonly educationClassificatioId: { id: number; title?: string | undefined; subtitle?: number | undefined; kpi?: string | undefined; decodedData?: string | undefined; }; readonly numberOfBranches: number; readonly branches: { ...; }[]; }'.
+src/modules/EducationClassification/presentation/components/EducationStages/EducationStagesTree.vue(52,35): error TS7006: Parameter 'b' implicitly has an 'any' type.
+src/modules/EducationClassification/presentation/components/EducationStages/EducationStagesTree.vue(150,33): error TS7053: Element implicitly has an 'any' type because expression of type '0' can't be used to index type 'EducationConfigurationModel'.
+  Property '0' does not exist on type 'EducationConfigurationModel'.
+src/modules/EducationClassification/presentation/components/EducationStages/EducationStagesTree.vue(194,9): error TS2304: Cannot find name 'toggleStatus'.
+src/modules/EducationClassification/presentation/components/EducationStages/EducationStagesTree.vue(393,18): error TS2345: Argument of type '{ itemId: number; visable: boolean; 'onUpdate:name': any; }' is not assignable to parameter of type '{ readonly visable: boolean; readonly itemId: number; readonly parentId: number; readonly "onUpdate:visable"?: ((...args: any[]) => any) | undefined; readonly "onUpdate:name"?: ((...args: any[]) => any) | undefined; } & VNodeProps & AllowedComponentProps & ComponentCustomProps & Record<...>'.
+  Property 'parentId' is missing in type '{ itemId: number; visable: boolean; 'onUpdate:name': any; }' but required in type '{ readonly visable: boolean; readonly itemId: number; readonly parentId: number; readonly "onUpdate:visable"?: ((...args: any[]) => any) | undefined; readonly "onUpdate:name"?: ((...args: any[]) => any) | undefined; }'.
+src/modules/EducationClassification/presentation/components/EducationStages/EducationStagesTree.vue(447,8): error TS2345: Argument of type '{ class: string; onClick: boolean; }' is not assignable to parameter of type 'ButtonHTMLAttributes & ReservedProps & Record<string, unknown>'.
+  Type '{ class: string; onClick: boolean; }' is not assignable to type 'ButtonHTMLAttributes'.
+    Types of property 'onClick' are incompatible.
+      Type 'boolean' is not assignable to type '(payload: PointerEvent) => void'.
+src/modules/EducationClassification/presentation/components/EducationStages/EducationStagesTree.vue(497,8): error TS2345: Argument of type '{ class: string; onClick: boolean; }' is not assignable to parameter of type 'ButtonHTMLAttributes & ReservedProps & Record<string, unknown>'.
+  Type '{ class: string; onClick: boolean; }' is not assignable to type 'ButtonHTMLAttributes'.
+    Types of property 'onClick' are incompatible.
+      Type 'boolean' is not assignable to type '(payload: PointerEvent) => void'.
+src/modules/EducationClassification/presentation/components/EducationStages/StageTreeNode.vue(3,22): error TS6196: 'ComputedRef' is declared but never used.
+src/modules/EducationClassification/presentation/components/EducationStages/StageTreeNode.vue(10,3): error TS6133: 'ToggleSwitch' is declared but its value is never read.
+src/modules/EducationClassification/presentation/components/EducationStages/StageTreeNode.vue(111,12): error TS6133: 'toggleStatus' is declared but its value is never read.
+src/modules/EducationClassification/presentation/components/EducationSubjects/SubjectsPanel.vue(46,33): error TS7015: Element implicitly has an 'any' type because index expression is not of type 'number'.
+src/modules/EducationClassification/presentation/components/EducationSubjects/SubjectsPanel.vue(46,63): error TS7015: Element implicitly has an 'any' type because index expression is not of type 'number'.
+src/modules/EducationClassification/presentation/components/EducationSubjects/SubjectsPanel.vue(50,11): error TS6133: 'lang' is declared but its value is never read.
+src/modules/EducationClassification/presentation/components/EducationSubjects/SubjectsPanel.vue(53,12): error TS7053: Element implicitly has an 'any' type because expression of type '0' can't be used to index type '{ readonly educationClassification: { id: number; title?: string | undefined; subtitle?: number | undefined; kpi?: string | undefined; decodedData?: string | undefined; }; readonly numberOfBranches: number; readonly pluralTitle: Record<...>; readonly SingluarTitle: Record<...>; readonly branches: { ...; }[]; }'.
+  Property '0' does not exist on type '{ readonly educationClassification: { id: number; title?: string | undefined; subtitle?: number | undefined; kpi?: string | undefined; decodedData?: string | undefined; }; readonly numberOfBranches: number; readonly pluralTitle: Record<...>; readonly SingluarTitle: Record<...>; readonly branches: { ...; }[]; }'.
+src/modules/EducationClassification/presentation/components/EducationSubjects/SubjectsPanel.vue(230,34): error TS7053: Element implicitly has an 'any' type because expression of type '0' can't be used to index type '{ readonly educationClassification: { id: number; title?: string | undefined; subtitle?: number | undefined; kpi?: string | undefined; decodedData?: string | undefined; }; readonly numberOfBranches: number; readonly pluralTitle: Record<...>; readonly SingluarTitle: Record<...>; readonly branches: { ...; }[]; }'.
+  Property '0' does not exist on type '{ readonly educationClassification: { id: number; title?: string | undefined; subtitle?: number | undefined; kpi?: string | undefined; decodedData?: string | undefined; }; readonly numberOfBranches: number; readonly pluralTitle: Record<...>; readonly SingluarTitle: Record<...>; readonly branches: { ...; }[]; }'.
+src/modules/EducationClassification/presentation/components/EducationSubjects/SubjectsPanel.vue(253,26): error TS7053: Element implicitly has an 'any' type because expression of type '0' can't be used to index type '{ readonly educationClassification: { id: number; title?: string | undefined; subtitle?: number | undefined; kpi?: string | undefined; decodedData?: string | undefined; }; readonly numberOfBranches: number; readonly pluralTitle: Record<...>; readonly SingluarTitle: Record<...>; readonly branches: { ...; }[]; }'.
+  Property '0' does not exist on type '{ readonly educationClassification: { id: number; title?: string | undefined; subtitle?: number | undefined; kpi?: string | undefined; decodedData?: string | undefined; }; readonly numberOfBranches: number; readonly pluralTitle: Record<...>; readonly SingluarTitle: Record<...>; readonly branches: { ...; }[]; }'.
+src/modules/EducationClassification/presentation/components/EducationTree/EducationClassificationTree.vue(238,8): error TS2322: Type '(name: string) => Promise<void>' is not assignable to type '(name: Record<string, string>) => any'.
+  Types of parameters 'name' and 'name' are incompatible.
+    Type 'Record<string, string>' is not assignable to type 'string'.
+src/modules/EducationClassification/presentation/components/EducationTree/EducationClassificationTree.vue(242,6): error TS2345: Argument of type '{ visible: true; level: number; branchId: number | undefined; onConfirm: any; }' is not assignable to parameter of type '{ readonly visible: boolean; readonly level: number; readonly branchName: string; readonly branchId?: number | undefined; readonly onConfirm?: ((data: { name: Record<string, string>; level: number; branchId?: number | undefined; }) => any) | undefined; readonly "onUpdate:visible"?: ((val: boolean) => any) | undefine...'.
+  Property 'branchName' is missing in type '{ visible: true; level: number; branchId: number | undefined; onConfirm: any; }' but required in type '{ readonly visible: boolean; readonly level: number; readonly branchName: string; readonly branchId?: number | undefined; readonly onConfirm?: ((data: { name: Record<string, string>; level: number; branchId?: number | undefined; }) => any) | undefined; readonly "onUpdate:visible"?: ((val: boolean) => any) | undefine...'.
+src/modules/EducationClassification/presentation/components/EducationTree/EducationClassificationTree.vue(247,8): error TS2322: Type '(data: { name: string; level: number; branchId?: number | undefined; }) => Promise<void>' is not assignable to type '(data: { name: Record<string, string>; level: number; branchId?: number | undefined; }) => any'.
+  Types of parameters 'data' and 'data' are incompatible.
+    Type '{ name: Record<string, string>; level: number; branchId?: number | undefined; }' is not assignable to type '{ name: string; level: number; branchId?: number | undefined; }'.
+      Types of property 'name' are incompatible.
+        Type 'Record<string, string>' is not assignable to type 'string'.
+src/modules/EducationClassification/presentation/controllers/educationConfiguration/education.configuration.controller.ts(17,17): error TS2416: Property 'repository' in type 'EducationConfigurationController' is not assignable to the same property in base type 'BaseController<EducationConfigurationModel, EducationConfigurationModel>'.
+  Type 'EducationConfigurationRepository' is not assignable to type 'BaseRepository<EducationConfigurationModel, EducationConfigurationModel>'.
+    The types returned by 'parseList(...)' are incompatible between these types.
+      Type 'EducationConfigurationModel[]' is missing the following properties from type 'EducationConfigurationModel': educationClassificatioId, numberOfBranches, branches
+src/modules/EducationClassification/presentation/controllers/educationSubject/education.subject.controller.ts(17,17): error TS2416: Property 'repository' in type 'EducationSubjectController' is not assignable to the same property in base type 'BaseController<EducationSubjectConfigurationModel, EducationSubjectConfigurationModel>'.
+  Type 'EducationSubjectRepository' is not assignable to type 'BaseRepository<EducationSubjectConfigurationModel, EducationSubjectConfigurationModel>'.
+    The types returned by 'parseList(...)' are incompatible between these types.
+      Type 'EducationSubjectConfigurationModel[]' is missing the following properties from type 'EducationSubjectConfigurationModel': educationClassification, numberOfBranches, pluralTitle, SingluarTitle, branches
+src/modules/EducationClassification/presentation/controllers/educationSubject/education.subject.controller.ts(73,36): error TS2339: Property 'isLocale' does not exist on type 'Params'.
+src/modules/EducationClassification/subComponent/EducationTree/AddEducationTypeDialog.vue(2,33): error TS2307: Cannot find module '@/shared/icons/EducationTypeIcon.vue' or its corresponding type declarations.
+src/modules/EducationClassification/subComponent/EducationTree/SkillsDialog.vue(6,32): error TS2307: Cannot find module '@/shared/icons/SubjectSkllsIcon.vue' or its corresponding type declarations.
+src/modules/EducationClassification/subComponent/EducationTree/SkillsDialog.vue(94,12): error TS2322: Type 'TitleInterface<number> | undefined' is not assignable to type 'TitleInterface<string | number> | TitleInterface<string | number>[] | null'.
+  Type 'undefined' is not assignable to type 'TitleInterface<string | number> | TitleInterface<string | number>[] | null'.
+src/modules/EducationClassification/subComponent/RenameClassificationDialog.vue(4,26): error TS2307: Cannot find module '@/shared/icons/RenameIcon.vue' or its corresponding type declarations.
+src/modules/EducationClassification/subComponent/RenameEducatuinClassificationDialog.vue(4,26): error TS2307: Cannot find module '@/shared/icons/RenameIcon.vue' or its corresponding type declarations.
+src/modules/EducationClassification/subComponent/RenameSubjectDialog.vue(4,26): error TS2307: Cannot find module '@/shared/icons/RenameIcon.vue' or its corresponding type declarations.
+src/modules/Skills/presentation/components/SkillsAdd.vue(3,3): error TS6133: 'AppButton' is declared but its value is never read.
+src/modules/Skills/presentation/components/SkillsAdd.vue(4,3): error TS6133: 'IconAccept' is declared but its value is never read.
+src/modules/Skills/presentation/components/SkillsForm.vue(35,11): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/modules/Skills/presentation/components/SkillsIndex.vue(93,46): error TS2345: Argument of type '(item: Record<string, unknown>) => { name: any; email: any; phone: any; password: string; }' is not assignable to parameter of type '(value: SkillModel, index: number, array: SkillModel[]) => { name: any; email: any; phone: any; password: string; }'.
+  Types of parameters 'item' and 'value' are incompatible.
+    Type 'SkillModel' is not assignable to type 'Record<string, unknown>'.
+      Index signature for type 'string' is missing in type 'SkillModel'.
+src/modules/Skills/presentation/components/SkillsIndex.vue(110,7): error TS6133: 't' is declared but its value is never read.
+src/modules/Skills/presentation/controllers/skills.controller.ts(53,36): error TS2339: Property 'AllLocale' does not exist on type 'Params'.
+src/modules/Stages/index.ts(6,45): error TS2307: Cannot find module './core/constants/emailType.enum' or its corresponding type declarations.
+src/modules/Stages/index.ts(9,39): error TS2307: Cannot find module './core/models/email.model' or its corresponding type declarations.
+src/modules/Stages/index.ts(12,40): error TS2307: Cannot find module './core/params/email.params' or its corresponding type declarations.
+src/modules/Stages/index.ts(15,44): error TS2307: Cannot find module './data/repositories/country.repository' or its corresponding type declarations.
+src/modules/Stages/index.ts(18,44): error TS2307: Cannot find module './presentation/controllers/country.controller' or its corresponding type declarations.
+src/modules/Stages/index.ts(21,44): error TS2307: Cannot find module './data/api/email.api-service' or its corresponding type declarations.
+src/modules/SupportContacts/core/params/edit.support.params.ts(3,36): error TS2307: Cannot find module './translation.params' or its corresponding type declarations.
+src/modules/about/presentation/components/AboutEdit.vue(10,9): error TS6133: 'router' is declared but its value is never read.
+src/modules/about/presentation/components/AboutForm.vue(85,7): error TS6133: '_removeSocialMediaEntry' is declared but its value is never read.
+src/modules/about/presentation/components/AboutForm.vue(109,25): error TS2304: Cannot find name 'SocialParams'.
+src/modules/about/presentation/components/AboutIndex.vue(67,28): error TS2339: Property 'loading' does not exist on type 'DataState<AboutModel[]>'.
+src/modules/country/presentation/components/CountryForm.vue(34,9): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/modules/document/core/models/document.model.ts(71,50): error TS2345: Argument of type '{ description: { ar: string; en: string; }; }' is not assignable to parameter of type '{ description: Record<string, string>; title: Record<string, string>; }'.
+  Property 'title' is missing in type '{ description: { ar: string; en: string; }; }' but required in type '{ description: Record<string, string>; title: Record<string, string>; }'.
+src/modules/document/core/params/add.document.params.ts(17,21): error TS2353: Object literal may only specify known properties, and 'title' does not exist in type 'ValidationRule'.
+src/modules/document/data/repositories/document.repository.ts(32,42): error TS2353: Object literal may only specify known properties, and 'title' does not exist in type 'DocumentModel'.
+src/modules/document/data/repositories/document.repository.ts(33,42): error TS2353: Object literal may only specify known properties, and 'title' does not exist in type 'DocumentModel'.
+src/modules/document/presentation/components/DocumentEdit.vue(26,28): error TS2339: Property 'title' does not exist on type 'AddDocumentParams'.
+src/modules/document/presentation/components/DocumentEdit.vue(27,33): error TS2551: Property 'subject_id' does not exist on type 'AddDocumentParams'. Did you mean 'subjects'?
+src/modules/document/presentation/components/DocumentEdit.vue(29,31): error TS2339: Property 'unit_ids' does not exist on type 'AddDocumentParams'.
+src/modules/document/presentation/components/DocumentEdit.vue(30,39): error TS2551: Property 'document_type_id' does not exist on type 'AddDocumentParams'. Did you mean 'documentTypeId'?
+src/modules/document/presentation/components/DocumentEdit.vue(31,33): error TS2339: Property 'isAllUnits' does not exist on type 'AddDocumentParams'.
+src/modules/document/presentation/components/DocumentForm.vue(241,12): error TS2322: Type '(files: []) => void' is not assignable to type '(files: UploadedFile[]) => any'.
+  Types of parameters 'files' and 'files' are incompatible.
+    Type 'UploadedFile[]' is not assignable to type '[]'.
+      Target allows only 0 element(s) but source may have more.
+src/modules/document/presentation/components/DocumentForm.vue(264,12): error TS2322: Type '(files: []) => void' is not assignable to type '(files: UploadedFile[]) => any'.
+  Types of parameters 'files' and 'files' are incompatible.
+    Type 'UploadedFile[]' is not assignable to type '[]'.
+      Target allows only 0 element(s) but source may have more.
+src/modules/document/presentation/components/DocumentIndex.vue(169,18): error TS2322: Type 'TitleInterface<number> | undefined' is not assignable to type 'TitleInterface<string | number> | TitleInterface<string | number>[] | null'.
+  Type 'undefined' is not assignable to type 'TitleInterface<string | number> | TitleInterface<string | number>[] | null'.
+src/modules/document/presentation/components/DocumentIndex.vue(180,18): error TS2322: Type 'TitleInterface<number> | undefined' is not assignable to type 'TitleInterface<string | number> | TitleInterface<string | number>[] | null'.
+  Type 'undefined' is not assignable to type 'TitleInterface<string | number> | TitleInterface<string | number>[] | null'.
+src/modules/document/presentation/controllers/DocumentType/document.type.controller.ts(49,33): error TS2339: Property 'isLocale' does not exist on type 'Params'.
+src/modules/document/presentation/subComponent/DocumentTypeDialog.vue(8,30): error TS2307: Cannot find module '@/shared/icons/DocaumentType/DocumentTypeIcon.vue' or its corresponding type declarations.
+src/modules/document/presentation/subComponent/DocumentTypeDialog.vue(16,1): error TS6133: 'DocumentModel' is declared but its value is never read.
+src/modules/document/presentation/subComponent/DocumentTypeDialog.vue(88,3): error TS2322: Type 'string | undefined' is not assignable to type 'Record<string, string>'.
+  Type 'undefined' is not assignable to type 'Record<string, string>'.
+src/modules/document/presentation/subComponent/DocumentTypeDialog.vue(89,9): error TS6133: 'res2' is declared but its value is never read.
+src/modules/employee/presentation/components/EmployeeIndex.vue(98,46): error TS2345: Argument of type '(item: Record<string, unknown>) => { name: any; email: any; phone: any; password: string; }' is not assignable to parameter of type '(value: EmployeeModel, index: number, array: EmployeeModel[]) => { name: any; email: any; phone: any; password: string; }'.
+  Types of parameters 'item' and 'value' are incompatible.
+    Type 'EmployeeModel' is not assignable to type 'Record<string, unknown>'.
+      Index signature for type 'string' is missing in type 'EmployeeModel'.
+src/modules/faqs/core/params/faqs.details.params.ts(16,5): error TS2322: Type 'boolean | undefined' is not assignable to type 'boolean'.
+  Type 'undefined' is not assignable to type 'boolean'.
+src/modules/faqs/data/repositories/faqs.repository.ts(27,22): error TS2339: Property 'example' does not exist on type 'typeof FaqsModel'.
+src/modules/faqs/data/repositories/faqs.repository.ts(31,22): error TS2339: Property 'examples' does not exist on type 'typeof FaqsModel'.
+src/modules/faqs/presentation/components/faqsAdd.vue(6,1): error TS6133: 'FaqsDetailsParams' is declared but its value is never read.
+src/modules/faqs/presentation/components/faqsEdit.vue(7,1): error TS6133: 'FaqsModel' is declared but its value is never read.
+src/modules/faqs/presentation/components/faqsEdit.vue(50,51): error TS2322: Type '(params: EditFaqsParams) => void' is not assignable to type '(value: AddFaqsParams | EditFaqsParams) => any'.
+  Types of parameters 'params' and 'value' are incompatible.
+    Type 'AddFaqsParams | EditFaqsParams' is not assignable to type 'EditFaqsParams'.
+      Property 'id' is missing in type 'AddFaqsParams' but required in type 'EditFaqsParams'.
+src/modules/faqs/presentation/components/faqsIndex.vue(54,22): error TS2554: Expected 1-2 arguments, but got 0.
+src/modules/faqs/presentation/components/faqsIndex.vue(58,22): error TS2554: Expected 1-2 arguments, but got 0.
+src/modules/faqs/presentation/controllers/faqs.controller.ts(69,38): error TS2339: Property 'isLocale' does not exist on type 'Params'.
+src/modules/faqs/presentation/controllers/faqs.controller.ts(75,38): error TS2339: Property 'isLocale' does not exist on type 'Params'.
+src/modules/privacy/presentation/components/PrivacyForm.vue(3,3): error TS6133: 'DataSuccess' is declared but its value is never read.
+src/modules/privacy/presentation/components/PrivacyForm.vue(46,7): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/modules/privacy/presentation/components/PrivacyForm.vue(50,7): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/modules/privacy/presentation/controllers/privacy.controller.ts(53,58): error TS6133: 'formKey' is declared but its value is never read.
+src/modules/privacy/presentation/controllers/privacy.controller.ts(70,44): error TS2339: Property 'allLocales' does not exist on type 'Params'.
+src/modules/terms-conditions/presentation/components/TermsConditionsForm.vue(43,23): error TS2532: Object is possibly 'undefined'.
+src/modules/terms-conditions/presentation/components/TermsConditionsForm.vue(43,53): error TS2339: Property 'reduce' does not exist on type 'string'.
+src/modules/terms-conditions/presentation/components/TermsConditionsForm.vue(43,61): error TS7006: Parameter 'acc' implicitly has an 'any' type.
+src/modules/terms-conditions/presentation/components/TermsConditionsForm.vue(43,66): error TS7006: Parameter 'item' implicitly has an 'any' type.
+src/modules/terms-conditions/presentation/components/TermsConditionsForm.vue(47,29): error TS2532: Object is possibly 'undefined'.
+src/modules/terms-conditions/presentation/components/TermsConditionsForm.vue(47,65): error TS2339: Property 'reduce' does not exist on type 'string'.
+src/modules/terms-conditions/presentation/components/TermsConditionsForm.vue(47,73): error TS7006: Parameter 'acc' implicitly has an 'any' type.
+src/modules/terms-conditions/presentation/components/TermsConditionsForm.vue(47,78): error TS7006: Parameter 'item' implicitly has an 'any' type.
+src/shared/HelpersComponents/DropList.vue(2,17): error TS6133: 'watch' is declared but its value is never read.

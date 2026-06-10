@@ -1,0 +1,50 @@
+@use '../../../../styles/variables' as *;
+@use '../../../../styles/mixins/flex' as *;
+
+.p-dialog.filter-dialog {
+  background-color: white;
+
+  .filter-document {
+    .filter-title {
+      font-size: $MdSize2;
+      font-weight: $BaseFontSemiBoldWeight;
+      font-family: 'Medium';
+      color: var(--Title-input-Color);
+    }
+  }
+}
+
+.fillter-button {
+  border: 1px solid var(--input-border-color);
+  border-radius: 30px;
+  font-family: 'Medium';
+}
+
+.filter-action {
+  @include flex(row, wrap, justify-content, center);
+
+  gap: 10px;
+  margin-top: $XlSize3;
+
+  .btn-cancel {
+    width: 30%;
+    padding: 14px;
+    background-color: $DangerLightAlt;
+    color: $Red;
+    border: 1.5px solid $DangerBorderLight;
+    border-radius: 50px;
+    font-size: 15px;
+    font-weight: $BaseFontSemiBoldWeight;
+    font-family: 'medium';
+    cursor: pointer;
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: $BgRed;
+    }
+  }
+
+  .btn-primary {
+    width: 65%;
+  }
+}

@@ -1,0 +1,56 @@
+@use '../../../../styles/variables' as *;
+@use '../../../../styles/mixins/flex' as *;
+
+.privacy-container {
+  min-height: 80vh;
+  .header-container {
+    @include flex-row(nowrap, space-between, center);
+    width: 100%;
+  }
+  .privacy-content {
+    @include flex-column(nowrap, flex-start, flex-start);
+    gap: 5px;
+    font-family: 'Medium';
+    padding: 24px;
+    background-color: #fafafa;
+    border-radius: 20px;
+    h2 {
+      color: #4faf7c;
+      font-weight: 700;
+      font-size: 20px;
+    }
+
+    p {
+      color: #4b4b4b;
+      font-weight: 600;
+      font-size: 16px;
+    }
+  }
+
+  .empty-data {
+    @include flex-column(nowrap, center, center);
+    margin-top: auto;
+    margin-bottom: auto;
+    height: 100%;
+    width: 100%;
+    flex: 1;
+    padding: calc($XlSize4 - 10px) $XlSize;
+    text-align: center;
+    gap: 12px;
+    font-family: 'Medium';
+    h5 {
+      color: var(--black-soft);
+      font-size: $XlSize;
+      font-weight: $BaseFontMediumWeight;
+      margin: 0;
+    }
+
+    p {
+      color: var(--color-dark-gray);
+      font-size: $MdSize;
+      font-weight: $BaseFontSemiBoldWeight;
+      margin: 0;
+      max-width: 500px;
+    }
+  }
+}

@@ -1,0 +1,13 @@
+// Main Page
+@use './question_show_page';
+
+//Main Components
+@use './question_show_header';
+@use './question_show_info';
+@use './question_show_Answers';
+@use './question_clerification';
+@use './question_review';
+//Side Components
+@use './_question_tree_card';
+@use './question_status_box';
+@use './question_log_history';

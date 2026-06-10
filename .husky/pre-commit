@@ -1,0 +1,38 @@
+echo "--- [pre-commit] lint-staged (ESLint + Prettier) ---"
+npx lint-staged
+if [ $? -ne 0 ]; then
+  echo ""
+  echo "[pre-commit] FAILED: ESLint/Prettier errors in staged files (see above)."
+  echo "  Fix all errors — unused variables are now treated as errors."
+  exit 1
+fi
+
+echo ""
+echo "--- [pre-commit] TypeScript type-check ---"
+npx tsc --noEmit
+if [ $? -ne 0 ]; then
+  echo ""
+  echo "[pre-commit] FAILED: TypeScript errors found (see above)."
+  exit 1
+fi
+
+echo ""
+echo "--- [pre-commit] Stylelint ---"
+npx stylelint "src/**/*.{vue,css,scss}"
+if [ $? -ne 0 ]; then
+  echo ""
+  echo "[pre-commit] FAILED: Style errors found (see above)."
+  exit 1
+fi
+
+echo ""
+echo "--- [pre-commit] Test coverage check ---"
+node scripts/check-test-coverage.mjs
+if [ $? -ne 0 ]; then
+  echo ""
+  echo "[pre-commit] FAILED: Staged files are missing companion test files (see above)."
+  exit 1
+fi
+
+echo ""
+echo "[pre-commit] All checks passed."

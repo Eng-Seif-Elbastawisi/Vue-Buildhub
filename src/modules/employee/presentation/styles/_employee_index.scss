@@ -1,0 +1,82 @@
+@use '../../../../styles/variables' as *;
+@use '../../../../styles/mixins/flex' as *;
+
+.employee-page {
+  @include flex-column(nowrap, flex-start, flex-start);
+
+  gap: $XlSize2;
+
+  .index-header {
+    width: 100%;
+
+    @include flex-row(nowrap, space-between, center);
+
+    gap: $MdSize;
+
+    .search-input {
+      &::placeholder {
+        font-family: 'Medium';
+      }
+    }
+
+    .btns-container {
+      @include flex-row(nowrap, flex-start, center);
+
+      gap: $XsSize4;
+    }
+  }
+
+  .employee-status {
+    font-size: $SmSize;
+    font-weight: $BaseFontWeightBold;
+    font-family: 'Bold';
+    color: var(--success);
+
+    &.dis-active {
+      color: $InActiveColor;
+    }
+  }
+
+  .employee-name {
+    @include flex-row(nowrap, flex-start, center);
+
+    gap: $MdSize;
+
+    img {
+      width: 30px;
+      height: 30px;
+    }
+  }
+
+  .row-actions {
+    @include flex-row(nowrap, center, center);
+
+    gap: $XsSize3;
+  }
+
+  .action-btn {
+    @include flex-row(nowrap, center, center);
+
+    width: calc($XlSize3 + 2px);
+    height: calc($XlSize3 + 2px);
+    border-radius: $XsSize2;
+    border: 1px solid $WeakBorder;
+    background: var(--white);
+    color: $TextGray3;
+    transition: all 0.2s ease;
+
+    &:hover {
+      transform: translateY(-1px);
+    }
+
+    &.edit:hover {
+      border-color: var(--PrimaryColor);
+      color: var(--PrimaryColor);
+    }
+
+    &.delete:hover {
+      border-color: var(--Red);
+      color: var(--Red);
+    }
+  }
+}

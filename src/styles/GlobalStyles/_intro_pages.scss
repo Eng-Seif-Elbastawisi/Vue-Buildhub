@@ -1,0 +1,125 @@
+@use '../variables' as *;
+@use '../mixins/flex' as *;
+
+.faq-container {
+  .btn-container {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+
+    .btn-primary {
+      width: 50%;
+    }
+  }
+
+  .faq-container {
+    background: var(--bg-main);
+    border: 1px solid var(--border-weak);
+    border-radius: 16px;
+    padding: 20px;
+  }
+
+  /* Header */
+  .faq-header {
+    margin-bottom: 16px;
+
+    h3 {
+      font-size: $MdSize;
+      font-weight: $BaseFontWeightBold;
+      font-family: 'bold';
+      margin: 0;
+    }
+
+    p {
+      font-size: $SmSize;
+      font-weight: $BaseFontMediumWeight;
+      font-family: 'medium';
+      color: var(--title-color);
+      margin-top: $XsSize3;
+    }
+  }
+
+  /* List */
+  .faq-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  /* Card */
+  .faq-card {
+    border: 1px solid var(--border-weak);
+    border-radius: 12px;
+    padding: 16px;
+    background: var(--gray-50);
+    transition: 0.25s;
+
+    &:hover {
+      border-color: var(--PrimaryColor);
+      background: var(--bg-main);
+    }
+  }
+
+  /* Header inside card */
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: $XlSize;
+    font-weight: $BaseFontSemiBoldWeight;
+    font-family: 'medium';
+    font-size: $SmSize;
+  }
+
+  /* Fields */
+  .field {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+
+    label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    textarea {
+      resize: none;
+      min-height: 80px;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid var(--border-weak);
+      background: white;
+      transition: 0.2s;
+
+      &:focus {
+        outline: none;
+        border-color: var(--PrimaryColor);
+        box-shadow: 0 0 0 2px var(--PrimaryColor-light);
+      }
+    }
+  }
+
+  /* Buttons */
+  .add-btn {
+    margin-top: 16px;
+    width: 50%;
+    padding: 10px;
+    border-radius: 10px;
+    background: var(--PrimaryColor);
+    color: white;
+    font-family: 'medium';
+    font-size: $SmSize;
+    font-weight: $BaseFontSemiBoldWeight;
+    cursor: pointer;
+  }
+
+  .delete-btn {
+    background: transparent;
+    border: none;
+    color: red;
+    cursor: pointer;
+    font-family: 'medium';
+    font-size: $SmSize;
+    font-weight: $BaseFontSemiBoldWeight;
+  }
+}

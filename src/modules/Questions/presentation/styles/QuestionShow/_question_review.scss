@@ -1,0 +1,66 @@
+@use '../../../../../styles/variables' as *;
+@use '../../../../../styles/mixins/flex' as *;
+@use '../../../../../styles/mixins/grid' as *;
+
+.question-review-procedures-wrapper {
+  width: 100%;
+  padding: $XsSize3;
+  background-color: var(--gray-soft);
+  border-radius: $MdSize;
+
+  .card-content {
+    @include flex-column();
+
+    gap: $XlSize2;
+  }
+
+  .question-review-procedures-header {
+    @include flex-column(wrap, start, start);
+
+    gap: $XsSize2;
+
+    h2 {
+      color: var(--Gray-6);
+      font-size: $MdSize2;
+      font-family: 'Medium';
+    }
+
+    p {
+      color: var(--second-text);
+      font-size: $SmSize;
+      font-family: 'Light';
+    }
+  }
+
+  .question-review-procedures-body {
+    @include flex-column();
+
+    gap: $XsSize2;
+  }
+
+  .caution-item {
+    @include flex-row(nowrap, start, center);
+
+    gap: $XsSize2;
+    background-color: var(--caution-bg);
+    padding: $XsSize;
+    border-radius: $XlSize;
+
+    p {
+      color: var(--in-active-color);
+      word-break: break-all;
+      font-family: 'Light';
+    }
+  }
+
+  .actions {
+    @include flex-row(nowrap, start, center);
+
+    gap: $XsSize2;
+
+    .btn {
+      cursor: pointer;
+      width: 100%;
+    }
+  }
+}

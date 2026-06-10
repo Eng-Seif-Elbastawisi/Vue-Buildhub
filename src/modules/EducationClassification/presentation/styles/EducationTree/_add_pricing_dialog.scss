@@ -1,0 +1,197 @@
+@use '../../../../../styles/variables' as *;
+@use '../../../../../styles/mixins/flex' as *;
+
+.p-dialog {
+  &.pricing-dialog {
+    background: $StandardWhite !important;
+    border-radius: 16px;
+    width: 100%;
+    // max-width: 380px;
+    overflow: hidden;
+    font-family: 'Medium';
+
+    .input-label label {
+      color: #5d5d5d !important;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .dialog-footer {
+      display: flex !important;
+      gap: 10px;
+      width: 100%;
+      padding-block: 10px;
+
+      button {
+        width: 50%;
+      }
+    }
+  }
+
+  font-family: 'Regular';
+
+  .dialog-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 20px 20px 16px;
+  }
+
+  .dialog-icon {
+    flex-shrink: 0;
+  }
+  .field-group {
+    &.select-group {
+      gap: 0 !important;
+      align-items: start;
+    }
+  }
+
+  .dialog-header-text {
+    @include flex-column(nowrap, flex-start, flex-start);
+
+    .dialog-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: $StandardBlack;
+      margin: 0 0 4px;
+    }
+
+    .dialog-subtitle {
+      font-size: 13px;
+      font-weight: 500;
+      color: $ColorDarkGray;
+
+      .dialog-title {
+        font-size: 20px;
+        font-weight: 600;
+        color: $StandardBlack;
+        margin: 0 0 4px;
+      }
+
+      .dialog-subtitle {
+        font-size: 13px;
+        font-weight: 500;
+        color: $ColorDarkGray;
+        margin: 0;
+        line-height: 1.4;
+      }
+    }
+
+    .dialog-body {
+      padding: 20px !important;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .field-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: $Gray-700-std;
+      text-transform: none;
+    }
+
+    .field-input {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1.5px solid $Gray-200-std;
+      border-radius: 10px;
+      font-size: 13px;
+      color: $Gray-900-std;
+      outline: none;
+      background: $Gray-5;
+      transition:
+        border-color 0.2s,
+        box-shadow 0.2s;
+      box-sizing: border-box;
+    }
+
+    .field-input:focus {
+      border-color: $SuccessGreen-std;
+      box-shadow: 0 0 0 3px rgba($SuccessGreen-std, 0.12);
+      background: $StandardWhite;
+    }
+
+    .field-input::placeholder {
+      color: $ColorPlaceholder;
+    }
+
+    .btn-confirm {
+      flex: 1;
+      background: $SuccessGreen-std;
+      color: $StandardWhite;
+      border: none;
+      border-radius: 10px;
+      padding: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition:
+        background 0.2s,
+        transform 0.1s;
+    }
+
+    .btn-confirm:hover:not(:disabled) {
+      background: $SuccessGreenHover-std;
+    }
+
+    .btn-confirm:active:not(:disabled) {
+      transform: scale(0.98);
+    }
+
+    .btn-confirm:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn-cancel {
+      flex: 1;
+      background: $Gray-100-std;
+      color: $Gray-700-std;
+      border: none;
+      border-radius: 10px;
+      padding: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-cancel:hover {
+      background: $Gray-200-std;
+    }
+
+    .overlay-fade-enter-active,
+    .overlay-fade-leave-active {
+      transition: opacity 0.22s ease;
+    }
+
+    .overlay-fade-enter-from,
+    .overlay-fade-leave-to {
+      opacity: 0;
+    }
+
+    .dialog-pop-enter-active {
+      transition:
+        transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+        opacity 0.2s ease;
+    }
+
+    .dialog-pop-leave-active {
+      transition:
+        transform 0.18s ease,
+        opacity 0.18s ease;
+    }
+
+    .dialog-pop-enter-from {
+      transform: scale(0.88) translateY(10px);
+      opacity: 0;
+    }
+
+    .dialog-pop-leave-to {
+      transform: scale(0.94) translateY(6px);
+      opacity: 0;
+    }
+  }
+}

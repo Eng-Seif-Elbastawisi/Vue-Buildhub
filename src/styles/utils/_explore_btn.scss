@@ -1,0 +1,11 @@
+@use "../variables" as *;
+
+.btn-explore {
+  background-color: $YellowColor;
+  color: $PrimaryColor;
+
+  &:hover {
+    background-color: $BgBlack;
+    color: $BgWhite;
+  }
+}

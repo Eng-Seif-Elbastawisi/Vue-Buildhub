@@ -1,0 +1,103 @@
+@use '../variables' as *;
+@use '../mixins/flex' as *;
+@use '../mixins/grid' as *;
+
+.multi-image-uploader {
+  @include flex-column(nowrap, center, center);
+
+  gap: var(--xl-size-base);
+  width: 100%;
+
+  .input-image {
+    @include flex-row(nowrap, center, center);
+
+    width: 100%;
+    border: 2px dashed var(--gray-200);
+    border-radius: var(--xl-size-1);
+    padding: var(--xl-size-base);
+    cursor: pointer;
+    transition: var(--transition);
+    background-color: var(--gray-50);
+
+    &:hover {
+      border-color: var(--PrimaryColor);
+      background-color: var(--PrimaryColor-light);
+    }
+
+    @include flex-column(nowrap, center, center);
+
+    .input-label-images {
+      cursor: pointer;
+
+      @include flex-row(nowrap, center, center);
+
+      gap: 10px;
+
+      span {
+        color: var(--gray-500);
+        font-size: var(--sm-size);
+        font-weight: $BaseFontMediumWeight;
+      }
+    }
+
+    input {
+      cursor: pointer;
+      display: none;
+    }
+  }
+
+  .image-gallery {
+    width: 100%;
+    border: 1px solid var(--gray-200);
+    border-radius: var(--xl-size-1);
+    padding: var(--xl-size-base);
+    background-color: var(--BgWhite);
+
+    .image-item {
+      width: 100px;
+      position: relative;
+      overflow: hidden;
+      border-radius: var(--radius-sm);
+      box-shadow: var(--shadow-sm);
+
+      &:hover {
+        .overlay {
+          transform: translateY(0);
+        }
+      }
+
+      .preview-img {
+        border: 1px solid var(--gray-200);
+        border-radius: var(--xs-size);
+        cursor: pointer;
+      }
+
+      .overlay {
+        transform: translateY(100%);
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border-radius: var(--xs-size);
+        z-index: 10000;
+        background-color: var(--black-alpha-60);
+        -webkit-backdrop-filter: blur(2px);
+        -moz-backdrop-filter: blur(2px);
+        -o-backdrop-filter: blur(2px);
+        -ms-backdrop-filter: blur(2px);
+        backdrop-filter: blur(2px);
+        transition: var(--transition);
+        cursor: pointer;
+
+        @include flex-column(nowrap, center, center);
+
+        span {
+          color: var(--BgWhite);
+          font-size: var(--md-size);
+          font-weight: $BaseFontSemiBoldWeight;
+        }
+      }
+    }
+  }
+}

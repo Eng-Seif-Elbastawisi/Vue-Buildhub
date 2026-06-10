@@ -1,0 +1,50 @@
+@use '../variables' as *;
+@use '../mixins/flex' as *;
+
+.input-search {
+  position: relative;
+
+  input {
+    width: 100%;
+    border: 1px solid var(--main-border);
+
+    @include flex-row(nowrap, flex-start, center);
+
+    padding: var(--xs-size) var(--md-size);
+    border-radius: calc(var(--xl-size-2) + 10px);
+    font-family: var(--font-family);
+    padding-inline-start: calc(#{var(--md-size)} + calc(#{var(--xl-size-2)} - 4px));
+    color: var(--gray-800);
+    transition: var(--transition-fast);
+
+    &:focus {
+      border-color: var(--PrimaryColor);
+      box-shadow: 0 0 0 3px var(--PrimaryColor-light);
+    }
+
+    &::placeholder {
+      color: var(--gray-400);
+    }
+  }
+
+  .icon-remove {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: var(--md-size);
+    cursor: pointer;
+    color: var(--gray-500);
+    transition: var(--transition-fast);
+
+    &:hover {
+      color: var(--Red);
+    }
+  }
+}
+
+html[dir='rtl'] .input-search {
+  .icon-remove {
+    left: auto;
+    right: var(--md-size);
+  }
+}

@@ -1,0 +1,142 @@
+@use '../../../../../styles/variables' as *;
+@use '../../../../../styles/mixins/flex' as *;
+@use '../../../../../styles/mixins/grid' as *;
+
+.question-status-card {
+  padding: $MdSize2;
+  border-radius: $XlSize;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: $BaseBorderWidth;
+  }
+
+  .status-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: $MdSize2;
+  }
+
+  .status-item {
+    @include flex(column, nowrap, center, center);
+    gap: $XsSize5;
+
+    &:nth-child(1),
+    &:nth-child(3) {
+      border-right: $BaseBorderWidth solid;
+      padding-right: $XsSize;
+    }
+
+    label {
+      font-size: $XsSize;
+      color: var(--second-text);
+    }
+
+    h3 {
+      font-size: $MdSize;
+      color: var(--standard-black);
+    }
+  }
+
+  /* =========================
+     Waiting Review
+  ========================= */
+
+  &.waiting {
+    background: var(--bg-waiting);
+    border: $BaseBorderWidth solid var(--border-waiting);
+
+    &::before {
+      background: var(--border-waiting);
+    }
+
+    .status-item {
+      &:nth-child(1),
+      &:nth-child(3) {
+        border-color: var(--border-waiting);
+      }
+
+      &:first-child h3 {
+        color: var(--StandardBlue);
+      }
+    }
+  }
+
+  /* =========================
+     Drafting
+  ========================= */
+
+  &.drafting {
+    background: var(--bg-drafting);
+    border: $BaseBorderWidth solid var(--border-drafting);
+
+    &::before {
+      background: var(--border-drafting);
+    }
+
+    .status-item {
+      &:nth-child(1),
+      &:nth-child(3) {
+        border-color: var(--border-drafting);
+      }
+
+      &:first-child h3 {
+        color: var(--color-dark-gray);
+      }
+    }
+  }
+
+  /* =========================
+     Rejected
+  ========================= */
+
+  &.rejected {
+    background: var(--bg-rejected);
+    border: $BaseBorderWidth solid var(--border-rejected);
+
+    &::before {
+      background: var(--border-rejected);
+    }
+
+    .status-item {
+      &:nth-child(1),
+      &:nth-child(3) {
+        border-color: var(--border-rejected);
+      }
+
+      &:first-child h3 {
+        color: var(--danger-alt);
+      }
+    }
+  }
+
+  /* =========================
+     Approved
+  ========================= */
+
+  &.approved {
+    background: var(--bg-approved);
+    border: $BaseBorderWidth solid var(--border-approved);
+
+    &::before {
+      background: var(--border-approved);
+    }
+
+    .status-item {
+      &:nth-child(1),
+      &:nth-child(3) {
+        border-color: var(--border-approved);
+      }
+
+      &:first-child h3 {
+        color: var(--success-alt);
+      }
+    }
+  }
+}

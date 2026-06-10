@@ -1,0 +1,122 @@
+@use '../../../../styles/variables' as *;
+@use '../../../../styles/mixins/flex' as *;
+
+.about-page {
+  @include flex-column(nowrap, flex-start, flex-start);
+
+  gap: 10px;
+  font-family: 'Medium';
+  min-height: 80vh;
+
+  .header-container {
+    width: 100%;
+
+    @include flex-row(nowrap, space-between, center);
+
+    .about-header {
+      @include flex-column(nowrap, flex-start, flex-start);
+
+      gap: $XsSize4;
+
+      .title {
+        color: $BgBlack;
+        font-size: $XlSize2;
+        font-weight: $BaseFontWeightBold;
+      }
+
+      .description {
+        color: $InputLabelText;
+        font-size: $MdSize2;
+        font-weight: $BaseFontMediumWeight;
+      }
+    }
+  }
+
+  .about-content {
+    background-color: $ColorLightGray;
+    padding: $XlSize2;
+    border-radius: $XlSize2;
+    width: 100%;
+
+    @include flex-column(nowrap, flex-start, flex-start);
+
+    gap: $XsSize3;
+
+    .text-content {
+      @include flex-column(nowrap, flex-start, flex-start);
+
+      gap: $XsSize5;
+
+      h5 {
+        color: $StandardBlack;
+        font-size: $MdSize2;
+        font-weight: $BaseFontWeightBold;
+      }
+
+      p {
+        color: $InputLabelText;
+        font-size: $MdSize;
+        font-weight: $BaseFontMediumWeight;
+      }
+    }
+
+    .image-content {
+      width: 100%;
+      max-height: 350px;
+      overflow-y: hidden;
+
+      img {
+        object-fit: cover;
+        width: 100%;
+        height: 100%;
+      }
+    }
+
+    .social-content {
+      @include flex-column(nowrap, flex-start, flex-start);
+
+      gap: $XsSize3;
+      margin-top: $XlSize;
+
+      .socail-header {
+        @include flex-row(nowrap, flex-start, flex-start);
+
+        gap: $XsSize4;
+
+        h5 {
+          color: $InputLabelText;
+          font-size: $SmSize;
+          font-weight: $BaseFontSemiBoldWeight;
+        }
+      }
+
+      .social-icons {
+        @include flex-row(nowrap, flex-start, flex-start);
+
+        gap: $XsSize;
+      }
+    }
+  }
+
+  .empty-data {
+    @include flex-column(nowrap, center, center);
+
+    width: 100%;
+    align-self: center;
+    margin-top: auto;
+    margin-bottom: auto;
+    gap: $XsSize;
+
+    h5 {
+      color: $BlackSoft;
+      font-size: $XlSize2;
+      font-weight: $BaseFontSemiBoldWeight;
+    }
+
+    p {
+      color: $Gray-6;
+      font-size: $MdSize2;
+      font-weight: $BaseFontMediumWeight;
+    }
+  }
+}

@@ -1,0 +1,41 @@
+
+@use '../../../../styles/variables' as *;
+@use '../../../../styles/mixins/flex' as *;
+@use '../../../../styles/mixins/grid' as *;
+
+.form-header-question{
+.header-text{
+    @include flex-row(nowrap, start, center); 
+    margin-bottom: $XlSize2;
+    gap: $XsSize4;
+    h3{
+     color: var(--title-color);
+    font-weight: $BaseFontSemiBoldWeight;
+    font-size: $XlSize;
+    font-family: 'Medium';    
+    }
+}
+.basic-header-actions{
+    @include flex-row(nowrap, start, center);
+    gap: $XsSize;
+    position: relative;
+    z-index: 2;
+    &::after{
+        content: '';
+        position: absolute;
+        top: 10px;
+        right: 0;
+        width: 80%;
+        height: 2%;
+        background-color: var(--bg-main);
+        border-radius: $XlSize4;
+        border: 1px dashed var(--input-border-color);
+    }
+    h5{
+    color: var(--primary-green);
+    font-weight: $BaseFontSemiBoldWeight;
+    font-size: $SmSize;
+    font-family: 'Medium';
+    }
+}
+}

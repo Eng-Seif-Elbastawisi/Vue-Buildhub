@@ -1,0 +1,54 @@
+@use '../../variables' as *;
+
+/* ── Loader Dialog ─────────────────────────────────────────────── */
+.loader-dialog {
+  animation: fade-out 0.7s ease-out;
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 20px 60px;
+  margin: auto;
+  background: var(--BgWhite);
+  background-color: transparent !important;
+
+  .loader-container {
+    padding: 20px 60px;
+  }
+}
+
+.loader-dialog[open] {
+  animation: fade-in 0.7s ease-out;
+}
+
+.loader-dialog[open]::backdrop {
+  animation: backdrop-fade-in 0.7s ease-out forwards;
+  -webkit-backdrop-filter: blur(5px);
+  -moz-backdrop-filter: blur(5px);
+  -o-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
+}
+
+/* ── Loader Animation ──────────────────────────────────────────── */
+.loader {
+  width: 120px;
+  height: 22px;
+  border-radius: 20px;
+  color: var(--PrimaryColor);
+  border: 2px solid;
+  position: relative;
+}
+
+.loader::before {
+  content: '';
+  position: absolute;
+  margin: 2px;
+  inset: 0 100% 0 0;
+  border-radius: inherit;
+  background: currentColor;
+  animation: l6 2s infinite;
+}
+
+@keyframes l6 {
+  100% {
+    inset: 0;
+  }
+}

@@ -1,0 +1,7 @@
+// abstracts/_index.scss
+// Barrel file — @forward everything so components can @use 'abstracts' as *
+// Zero CSS output from this file or any of its forwards
+
+@forward 'variables';
+@forward 'functions';
+@forward 'mixins';

@@ -1,0 +1,109 @@
+@use '../../../../styles/variables' as *;
+@use '../../../../styles/mixins/flex' as *;
+
+.deleted-accounts-page {
+  gap: $XsSize3;
+
+  @include flex-column(nowrap, flex-start, flex-start);
+
+  font-family: 'Medium';
+
+  .header-container {
+    width: 100%;
+
+    @include flex-row(nowrap, space-between, center);
+
+    .header-container-text {
+      @include flex-column(nowrap, flex-start, flex-start);
+
+      gap: $XsSize5;
+      margin-block: $XsSize;
+
+      h5 {
+        font-size: $XlSize2;
+        font-weight: $BaseFontWeightBold;
+        color: $Gray900;
+      }
+
+      p {
+        font-size: $MdSize;
+        font-weight: $BaseFontMediumWeight;
+        color: $ColorDarkGray;
+      }
+    }
+  }
+
+  .index-header {
+    width: 100%;
+
+    @include flex-row(nowrap, space-between, center);
+  }
+
+  .badge {
+    background-color: $BadgeBg;
+    color: $PrimaryColor;
+    width: 25%;
+    padding: $XsSize3;
+    position: relative;
+
+    &::after {
+      content: '';
+      position: absolute;
+      border-width: $XsSize4 0 calc($XlSize3 + 7px) $XlSize2;
+      border-style: solid;
+      border-color: transparent transparent white transparent;
+      right: 0;
+      top: 0;
+      height: 100%;
+      width: 30px;
+    }
+  }
+
+  .toolbar {
+    gap: $XsSize;
+
+    @include flex-row(wrap, stretch, center);
+
+    .search-input {
+      &::placeholder {
+        font-family: 'Medium';
+      }
+    }
+  }
+
+  .table-frame {
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+
+  .data-status-builder {
+    height: 100%;
+    margin-top: auto;
+
+    .empty-state {
+      @include flex-column(nowrap, center, center);
+
+      text-align: center;
+      padding: $XlSize4 $XlSize;
+      height: 100%;
+
+      svg {
+        color: $TextGray5;
+        margin-bottom: $MdSize;
+      }
+
+      h3 {
+        font-size: $XlSize2;
+        font-weight: $BaseFontWeightBold;
+        color: $SoftBlack;
+        margin: 0 0 $XsSize4;
+      }
+
+      p {
+        font-size: $MdSize2;
+        color: $TextGray6;
+        margin: 0 0 $XlSize;
+      }
+    }
+  }
+}

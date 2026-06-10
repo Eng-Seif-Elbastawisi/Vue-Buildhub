@@ -1,0 +1,91 @@
+.close-icon {
+  svg {
+    width: 20px;
+  }
+}
+
+.file-append {
+  position: relative;
+  width: 100%;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-full);
+  padding: 7px;
+  font-family: var(--font-family);
+  background-color: var(--BgWhite);
+  transition: var(--transition-fast);
+
+  &:focus-within {
+    border-color: var(--PrimaryColor);
+    box-shadow: 0 0 0 3px var(--PrimaryColor-light);
+  }
+}
+
+.file-preview {
+  width: 100%;
+}
+
+.image-gallery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.image-item {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition-fast);
+
+  &:hover {
+    box-shadow: var(--shadow);
+  }
+}
+
+.preview-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--black-alpha-60);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--BgWhite);
+  opacity: 0;
+  transition: var(--transition);
+  cursor: pointer;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+.file-info {
+  padding: 2px 5px;
+}
+
+.file-name {
+  font-weight: 500;
+  margin-bottom: 4px;
+  word-break: break-all;
+  font-size: 14px;
+  color: var(--gray-800);
+}
+
+.file-size {
+  font-size: 0.875rem;
+  color: var(--gray-500);
+}

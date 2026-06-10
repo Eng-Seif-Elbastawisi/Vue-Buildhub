@@ -1,0 +1,94 @@
+@use '../variables' as *;
+@use '../mixins/border' as *;
+@use '../mixins/flex' as *;
+
+.not-found {
+  @include flex-column(nowrap, center, center);
+
+  position: relative;
+  z-index: 0;
+  overflow: hidden;
+  // padding: 0px 169px 190px 169px;
+  background-color: var(--gray-950);
+  width: 100%;
+  height: 100vh;
+  gap: calc($MdSize2 + 1px);
+
+  @media (max-width: 768px) {
+    padding: 50px;
+  }
+
+  .error-media {
+    @include flex-column(nowrap, flex-start, center);
+    // width: 100%;
+    .not-found-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      aspect-ratio: 16 / 9;
+    }
+  }
+
+  .error-text {
+    @include flex-column(nowrap, flex-start, center);
+
+    gap: $MdSize;
+
+    .not-found-title {
+      font-size: calc($XlSize2 + 4px);
+      font-weight: $BaseFontWeightBold;
+      color: white;
+      text-align: center;
+    }
+
+    .not-found-description {
+      font-size: $MdSize;
+      font-weight: $BaseFontWeight;
+      color: var(--gray-50);
+      max-width: clamp(calc(688px * 0.8), 688px, calc(688px * 1.2));
+      text-align: center;
+    }
+  }
+
+  .btn-explore {
+    color: var(--gray-900);
+    font-size: $MdSize;
+    font-weight: $BaseFontSemiBoldWeight;
+    padding: $MdSize2 calc($XlSize3 + 5px);
+
+    &:hover {
+      // background-color: #f7f4fb;
+      color: $BgWhite;
+
+      .explore-icon {
+        path {
+          stroke: $BgWhite;
+        }
+      }
+    }
+
+    .explore-icon {
+      // fill: black;
+      path {
+        stroke: $BgBlack;
+      }
+    }
+  }
+}
+
+.spotlight-overlay {
+  pointer-events: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(
+    circle at var(--x, 30%) var(--y, 30%),
+    var(--white-alpha-80) 0%,
+    transparent 20%
+  );
+  z-index: 5;
+  transition: background 0.05s ease;
+  mix-blend-mode: overlay;
+}

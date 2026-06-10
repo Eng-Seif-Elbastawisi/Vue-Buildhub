@@ -1,0 +1,58 @@
+@use '../../../../styles/variables' as *;
+@use '../../../../styles/mixins/flex' as *;
+@use '../../../../styles/mixins/grid' as *;
+
+.faqs-add-page {
+  @include flex-column(nowrap, flex-start, flex-start);
+
+  gap: $XlSize;
+  font-family: 'Medium';
+
+  .faqs-header {
+    @include flex-column(nowrap, flex-start, flex-start);
+
+    gap: $XsSize5;
+
+    .faqs-title {
+      color: $BgBlack;
+      font-size: 24px;
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .faqs-description {
+      color: $InputLabelText;
+      font-size: $SmSize;
+      font-weight: $BaseFontMediumWeight;
+      margin: 0;
+    }
+  }
+
+  .form-actions {
+    width: 100%;
+
+    @include flex-row(nowrap, flex-start, flex-start);
+
+    gap: $XsSize5;
+
+    button {
+      &:first-child {
+        width: 70%;
+      }
+
+      &:last-child {
+        width: 30%;
+      }
+    }
+  }
+
+  .error-toast {
+    padding: 12px 16px;
+    background-color: var(--error-light);
+    color: var(--error-dark);
+    border: 1px solid var(--error-border);
+    border-radius: var(--radius-md);
+    font-size: 0.9rem;
+    width: 100%;
+  }
+}

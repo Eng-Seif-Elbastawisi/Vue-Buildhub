@@ -1,0 +1,44 @@
+@mixin grid($columns, $gap, $breakpoints: null) {
+  display: grid;
+  grid-template-columns: repeat($columns, 1fr);
+  gap: $gap;
+  width: 100%;
+
+  // Handle responsive breakpoints
+  @if $breakpoints {
+    @each $breakpoint, $cols in $breakpoints {
+      /* stylelint-disable-next-line media-query-no-invalid */
+      @media (max-width: #{$breakpoint}) {
+        grid-template-columns: repeat($cols, 1fr);
+      }
+    }
+  }
+}
+
+@mixin grid-item($column, $row) {
+  grid-column: $column;
+  grid-row: $row;
+}
+
+@mixin grid-item-span($column, $row) {
+  grid-column: span $column;
+  grid-row: span $row;
+}
+
+@mixin grid-item-start($column, $row) {
+  grid-column-start: $column;
+  grid-row-start: $row;
+}
+
+@mixin grid-item-end($column, $row) {
+  grid-column-end: $column;
+  grid-row-end: $row;
+}
+
+@mixin grid-item-area($area) {
+  grid-area: $area;
+}
+
+@mixin grid-item-area-span($area) {
+  grid-area: span $area;
+}

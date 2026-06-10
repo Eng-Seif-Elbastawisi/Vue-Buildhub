@@ -1,0 +1,30 @@
+@use '../../../../styles/variables' as *;
+@use '../../../../styles/mixins/flex' as *;
+
+.answers-data-form {
+  .toggll-container {
+    @include flex-row(nowrap, flex-start, center);
+    gap: $XsSize4;
+    .title {
+      color: $PrimaryColor;
+      font-size: $MdSize2;
+      font-weight: $BaseFontSemiBoldWeight;
+    }
+    svg {
+      transition: all 0.3s ease-in-out;
+      &.rotate-180 {
+        transform: rotate(180deg);
+      }
+    }
+  }
+
+  .dashed-border {
+    flex: 1;
+    height: 1px;
+    border-bottom: 1px dashed #d0d0d0;
+  }
+
+  .p-accordionpanel:last-child > .p-accordionheader {
+    padding-left: 0 !important;
+  }
+}

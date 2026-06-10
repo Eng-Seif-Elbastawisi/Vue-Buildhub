@@ -1,0 +1,146 @@
+@use '../../../../styles/variables' as *;
+@use '../../../../styles/mixins/flex' as *;
+
+.p-dialog.delete-reason-dialog {
+  font-family: 'Medium';
+  background-color: $StandardWhite;
+
+  .header-container {
+    @include flex-row(nowrap, flex-start, center);
+
+    gap: $XsSize3;
+
+    .header-text {
+      @include flex-column(nowrap, flex-start, flex-start);
+
+      gap: $XsSize5;
+
+      h4 {
+        color: $StandardBlack;
+        font-size: $XlSize;
+        font-weight: $BaseFontSemiBoldWeight;
+      }
+
+      p {
+        color: $GrayTextQuestion;
+        font-size: $MdSize;
+        font-weight: $BaseFontMediumWeight;
+      }
+    }
+  }
+
+  .document-type-content {
+    @include flex-column(nowrap, flex-start, flex-start);
+
+    width: 100%;
+    gap: $XsSize3;
+
+    .document-type-row {
+      width: 100%;
+     
+      background-color: $ColorLightGray;
+      border-radius: $MdSize;
+      padding: $MdSize;
+
+      @include flex-row(nowrap, space-between, center);
+
+      .item-title,
+      .item-statics {
+        @include flex-column(nowrap, flex-start, flex-start);
+
+        .item-small-title {
+          color: $GrayTextQuestion !important;
+          font-size: $SmSize;
+          font-weight: $BaseFontWeight;
+        }
+
+        .item-main-title {
+          color: $StandardBlack;
+          font-size: $MdSize;
+          font-weight: $BaseFontMediumWeight;
+        }
+      }
+
+      .item-actions {
+        @include flex-row(nowrap, center, center);
+
+        gap: $XsSize5;
+
+        svg {
+          width: $XlSize2;
+          height: $XlSize2;
+
+          &:last-child {
+            margin-top: $XsSize4;
+          }
+        }
+      }
+    }
+
+    .input-wrapper {
+      width: 100%;
+
+      @include flex-column(nowrap, flex-start, flex-start);
+
+      gap: $XsSize4;
+      margin-top: calc($SmSize + 1px);
+      padding: 0 !important;
+
+      label {
+        color: $TextGray3;
+        font-size: 16px;
+        font-weight: 600;
+        text-transform: capitalize !important;
+      }
+
+      input {
+        padding: 10px;
+
+        &::placeholder {
+          font-family: 'Medium';
+          font-weight: 500;
+          padding-inline: 10px;
+        }
+      }
+    }
+
+    .is-master {
+      width: 100%;
+      margin-top: 15px;
+
+      @include flex-row(nowrap, space-between, center);
+
+      span {
+        color: $Gray-5;
+        font-size: 16px;
+        font-weight: 600;
+      }
+    }
+
+    .btns {
+      @include flex-row(nowrap, center, center);
+
+      width: 100%;
+      gap: 3px;
+      font-family: 'Medium';
+
+      button {
+        &:first-child {
+          width: 80%;
+        }
+
+        &:last-child {
+          width: 20%;
+        }
+      }
+    }
+  }
+
+  .p-toggleswitch .p-toggleswitch-handle {
+    background-color: var(--white);
+  }
+
+  .p-toggleswitch-slider {
+    background: $GrayLightBorder;
+  }
+}

@@ -1,0 +1,244 @@
+/* =============================================================================
+   MAIN STYLESHEET — Organized Import Hub
+   ============================================================================= */
+
+/* ── Core ──────────────────────────────────────────────────────── */
+@use 'variables' as *;
+@use 'normalize';
+@use 'fonts' as *;
+
+/* ── Utilities ─────────────────────────────────────────────────── */
+@use 'utils/hidden';
+@use 'utils/heplers_spaces';
+@use 'utils/container';
+@use 'utils/bread_crumb';
+@use 'utils/app_button';
+@use 'utils/loader';
+@use 'utils/app_input';
+@use 'utils/input_serach';
+@use 'utils/custom_checkbox';
+@use 'utils/custom_select';
+@use 'utils/switch_input';
+@use 'utils/single_file_input';
+@use 'utils/data_empty';
+@use 'utils/popover';
+@use 'utils/tabs_selections';
+@use 'utils/permission';
+@use 'utils/crop';
+@use 'utils/search_input';
+@use 'Droplist/lists';
+@use 'utils/table';
+@use 'utils/btn_cancel';
+@use 'utils/reset_btn';
+
+/* ── Layout ────────────────────────────────────────────────────── */
+@use '../shared/LayoutComponents/styles/layout_imports';
+
+/* ── Components ────────────────────────────────────────────────── */
+@use 'tables/main_table';
+@use 'Pagination/pagination';
+@use 'skeleton/skeleton';
+@use 'ActionsButtons/actions_buttons';
+@use 'FileUpload/file_upload';
+@use 'Dialogs/imports';
+@use 'HomeBreadCrump/fast_routes';
+
+/* ── Modules ───────────────────────────────────────────────────── */
+@use '../modules/country/presentation/styles/country_imports';
+@use '../modules/employee/presentation/styles/employee_imports';
+@use '../modules/EducationClassification/presentation/styles/education_classification_imports';
+@use '../shared/FeatureHeader/styles/_feature_header';
+@use '../modules/document/presentation/styles/document_imports';
+@use '../modules/about/presentation/styles/about_imports';
+@use '../modules/SupportContacts/presentation/styles/support_imports';
+@use '../modules/DeleteReasons/presentation/styles/deleted_accounts_imports';
+@use '../modules/faqs/presentation/styles/faqs_imports';
+@use '../modules/privacy/presentation/styles/privacy_imports';
+@use '../modules/terms-conditions/presentation/styles/terms_imports';
+@use '../modules/Questions/presentation/styles/questions_imports';
+@use '../modules/Articles/presentation/styles/artical_imports';
+/* ── Pages ─────────────────────────────────────────────────────── */
+@use '../modules/auth/presentation/styles/login';
+@use 'error/error';
+@use 'toast/tosat';
+
+/* ── Auth ─────────────────────────────────────────────────────── */
+@use 'auth/auth_imports';
+
+/* ── Intro Pages ───────────────────────────────────────────────── */
+@use 'GlobalStyles/import';
+// helpers components styles
+@use '../shared/HelpersComponents/FilterDialog/styles/filter_dialog';
+/* =============================================================================
+   GLOBAL OVERRIDES & BASE STYLES
+   ============================================================================= */
+
+html {
+  scroll-behavior: smooth;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+
+  @media (prefers-reduced-motion: reduce) {
+    scroll-behavior: auto;
+    transition: none;
+  }
+}
+
+*,
+*::before,
+*::after {
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease,
+    color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+body {
+  font-family: var(--font-family);
+  color: var(--gray-900);
+  background-color: var(--bg-body);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  p,
+  span,
+  div {
+    text-transform: capitalize;
+  }
+}
+
+/* ── PrimeVue Accordion Overrides ─────────────────────────────── */
+.p-accordionheader {
+  background: transparent !important;
+  padding: 15px !important;
+}
+
+.p-accordioncontent-content {
+  background: transparent !important;
+  color: var(--gray-600) !important;
+  border: none !important;
+}
+
+.p-accordionpanel:not(.p-disabled).p-accordionpanel-active > .p-accordionheader,
+.p-accordionpanel:not(.p-accordionpanel-active, .p-disabled) > .p-accordionheader:hover {
+  color: var(--PrimaryColor) !important;
+}
+
+// .p-accordionpanel:not(.p-disabled).p-accordionpanel-active > .p-accordionheader svg path, .p-accordionpanel:not(.p-accordionpanel-active, .p-disabled) > .p-accordionheader:hover svg path {
+//   fill: red !important;
+// }
+
+/* ── PrimeVue Toggle Switch ───────────────────────────────────── */
+.p-toggleswitch.p-toggleswitch-checked .p-toggleswitch-slider {
+  background-color: var(--PrimaryColor) !important;
+}
+
+/* ── PrimeVue Radio / Checkbox ────────────────────────────────── */
+.p-radiobutton-box {
+  border: 1px solid var(--gray-300) !important;
+}
+
+.factor-item .p-radiobutton-checked .p-radiobutton-box {
+  border: none !important;
+}
+
+/* ── Sidebar Link Overrides ───────────────────────────────────── */
+.sidebar .links ul {
+  border: none !important;
+}
+
+/* ── Layout Spacing ───────────────────────────────────────────── */
+.pt-15 {
+  padding-top: 15px !important;
+}
+
+.content .p-accordioncontent-content {
+  margin: 0 !important;
+  padding-inline: 14px;
+}
+
+/* ── Language Icon Nav ────────────────────────────────────────── */
+.icon-lng-nav {
+  width: 25px !important;
+  height: 25px !important;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--gray-900);
+}
+
+/* ── PrimeVue Galleria ────────────────────────────────────────── */
+.p-galleria {
+  border: none !important;
+  outline: none !important;
+}
+
+.p-galleria-indicator-list .p-galleria-indicator button {
+  transition: all 0.3s ease;
+}
+
+.p-galleria-indicator-active button {
+  background-color: var(--PrimaryColor) !important;
+  width: 30px !important;
+  height: 8px !important;
+  border-radius: 50px !important;
+}
+
+.p-drawer .p-drawer-header {
+  background-color: var(--sidebar-bg) !important;
+  display: none;
+}
+
+.p-drawer .p-drawer-content {
+  background-color: var(--sidebar-bg) !important;
+  padding: 0 !important;
+
+  .sidebar {
+    width: 100% !important;
+  }
+}
+
+.questions-details-form-card {
+  .p-accordionpanel:not(.p-disabled).p-accordionpanel-active > .p-accordionheader svg path,
+  .p-accordionpanel:not(.p-accordionpanel-active, .p-disabled) > .p-accordionheader:hover svg path {
+    stroke: var(--PrimaryColor) !important;
+    fill: var(--white) !important;
+  }
+}
+
+.is-correct-section,
+.question-clarification-header,
+.question-solution-steps-header,
+.question-solution-hints-header {
+  .p-checkbox-box {
+    border-radius: 5px !important;
+    z-index: 999;
+  }
+}
+
+.article-solution-steps-header-explain,
+.p-checkbox-box {
+  border-radius: 5px !important;
+  z-index: 999;
+}
+
+.question-clarification,
+.answers-data-form {
+  .p-accordioncontent-content {
+    padding: 0 !important;
+  }
+  .p-accordionpanel {
+    border: none !important;
+  }
+}
+
+.questions-details-form-card {
+  .p-accordioncontent-content {
+    padding: 0 !important;
+  }
+}

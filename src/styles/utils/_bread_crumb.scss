@@ -1,0 +1,27 @@
+@use '../variables' as *;
+@use '../mixins/flex' as *;
+
+.breadcrumbs {
+  width: 100%;
+
+  ul {
+    @include flex(row, nowrap, flex-start, center);
+
+    gap: var(--xs-size);
+
+    li {
+      @include flex(row, nowrap, flex-start, center);
+
+      gap: var(--xs-size);
+      color: var(--gray-500);
+      font-weight: $BaseFontMediumWeight;
+      font-size: var(--sm-size);
+      text-transform: capitalize;
+
+      &:first-child {
+        color: var(--PrimaryColor);
+        font-weight: $BaseFontSemiBoldWeight;
+      }
+    }
+  }
+}

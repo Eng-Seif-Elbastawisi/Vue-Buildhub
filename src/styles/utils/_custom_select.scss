@@ -1,0 +1,261 @@
+@use '../variables' as *;
+@use '../mixins/border' as *;
+
+.p-accordionpanel {
+  border-color: var(--gray-100) !important;
+  font-size: var(--sm-size);
+  font-weight: $BaseFontSemiBoldWeight;
+}
+
+.p-select {
+  border-color: var(--gray-300) !important;
+  font-family: var(--font-family);
+  font-size: var(--sm-size);
+  font-weight: $BaseFontSemiBoldWeight;
+  padding: 12px 9px !important;
+  margin-top: var(--xs-size-3);
+
+  &:focus {
+    border-color: var(--PrimaryColor) !important;
+    box-shadow: 0 0 0 3px var(--PrimaryColor-light);
+  }
+}
+
+.p-select-overlay {
+  background-color: var(--BgWhite) !important;
+  border: none !important;
+  font-size: var(--sm-size);
+  font-weight: $BaseFontSemiBoldWeight;
+
+  .p-inputtext {
+    color: var(--gray-900) !important;
+    background-color: var(--BgWhite) !important;
+    border: 1px solid var(--gray-200) !important;
+  }
+}
+
+.p-select-option {
+  font-family: var(--font-family);
+  font-size: var(--sm-size);
+  font-weight: $BaseFontSemiBoldWeight;
+  background-color: var(--BgWhite) !important;
+  color: var(--gray-900) !important;
+
+  &:hover {
+    background-color: var(--PrimaryColor-light) !important;
+  }
+}
+
+.p-select-empty-message {
+  color: var(--gray-900) !important;
+}
+
+.p-multiselect-overlay {
+  font-family: var(--font-family);
+  font-size: var(--sm-size);
+  font-weight: $BaseFontSemiBoldWeight;
+  background-color: var(--BgWhite) !important;
+  border: none !important;
+  color: var(--gray-900) !important;
+  margin-top: var(--xl-size-base) !important;
+
+  .p-inputtext {
+    color: var(--gray-900) !important;
+    background-color: var(--BgWhite) !important;
+    border: 1px solid var(--gray-200) !important;
+  }
+}
+
+.p-multiselect-option {
+  font-family: var(--font-family);
+  font-size: var(--sm-size) !important;
+  font-weight: $BaseFontSemiBoldWeight !important;
+  background-color: var(--BgWhite) !important;
+  color: var(--gray-800) !important;
+  display: flex !important;
+  flex-direction: row-reverse !important;
+  justify-content: space-between !important;
+  padding: 20px !important;
+
+  &:hover {
+    background-color: var(--PrimaryColor-light) !important;
+  }
+}
+
+.p-checkbox-input {
+  font-family: var(--font-family);
+  font-size: var(--sm-size);
+  font-weight: $BaseFontSemiBoldWeight;
+  background-color: var(--BgWhite) !important;
+
+  &:focus {
+    border: 1px solid var(--gray-200) !important;
+  }
+}
+
+.p-multiselect {
+  font-family: var(--font-family);
+  font-size: var(--sm-size);
+  font-weight: $BaseFontSemiBoldWeight;
+  border-color: var(--gray-200) !important;
+  padding: 4px;
+  margin-top: var(--xs-size-3);
+
+  &:focus {
+    border-color: var(--PrimaryColor) !important;
+    box-shadow: 0 0 0 3px var(--PrimaryColor-light);
+  }
+}
+
+.p-multiselect-label {
+  color: var(--gray-800) !important;
+  margin-inline: 5px;
+  border-radius: var(--radius-full);
+  width: fit-content;
+
+  &.p-placeholder {
+    color: var(--gray-400) !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+  }
+}
+
+.p-checkbox-box {
+  background-color: var(--BgWhite) !important;
+  border: 1px solid var(--gray-400) !important;
+  transition: var(--transition-fast);
+  border-radius: 50% !important;
+  width: var(--xl-size-base) !important;
+  height: var(--xl-size-base) !important;
+}
+
+.p-checkbox-checked .p-checkbox-box {
+  background-color: var(--PrimaryColor) !important;
+  border: none !important;
+
+  svg {
+    display: none !important;
+  }
+}
+
+.p-checkbox-box.p-highlight {
+  background-color: var(--PrimaryColor) !important;
+  border-color: var(--PrimaryColor) !important;
+  color: var(--BgWhite) !important;
+
+  .p-checkbox-icon {
+    color: var(--BgWhite) !important;
+  }
+}
+
+.p-multiselect-header .p-checkbox-box {
+  display: none !important;
+}
+
+.optionlabel {
+  font-family: var(--font-family);
+  font-size: var(--sm-size);
+  font-weight: $BaseFontSemiBoldWeight;
+}
+
+.p-multiselect-chip-item {
+  background-color: var(--PrimaryColor-light) !important;
+  border-radius: var(--radius-sm) !important;
+
+  .p-chip {
+    background-color: var(--BgWhite) !important;
+    color: var(--PrimaryColor) !important;
+    padding: var(--xs-size-2) var(--xs-size) !important;
+    border-radius: var(--radius-sm) !important;
+    font-size: var(--sm-size) !important;
+    font-weight: $BaseFontSemiBoldWeight !important;
+    box-shadow: inset 3px 2px 13px rgba(37, 99, 235, 0.15) !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    border: 1px solid var(--gray-200) !important;
+    flex-shrink: 0 !important;
+    height: 32px !important;
+    line-height: 1 !important;
+  }
+
+  svg path {
+    fill: var(--PrimaryColor) !important;
+  }
+}
+
+.p-select-label {
+  font-size: var(--sm-size) !important;
+  font-weight: $BaseFontMediumWeight !important;
+  border-radius: var(--radius-full) !important;
+  width: fit-content !important;
+  color: var(--PrimaryColor) !important;
+  padding: 0 !important;
+
+  &.p-placeholder {
+    font-weight: 300 !important;
+    font-size: 14px !important;
+    color: var(--gray-400) !important;
+  }
+}
+
+.input-label {
+  width: 100%;
+  justify-content: space-between;
+  display: flex;
+  flex-direction: row-reverse;
+  gap: 5px;
+
+  label {
+    width: fit-content;
+    text-align: start;
+    font-family: 'Medium';
+    color: $Gray-5;
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  span {
+    width: fit-content;
+  }
+}
+
+.p-datepicker-input,
+.text-input,
+.ql-editor,
+/* stylelint-disable-next-line selector-id-pattern */
+#SerialNumber {
+  &::placeholder {
+    font-weight: 300 !important;
+    font-size: 14px !important;
+    color: var(--gray-400) !important;
+  }
+}
+
+.ql-editor.ql-blank::before {
+  content: attr(data-placeholder);
+  position: absolute;
+  top: 10px;
+  left: 12px;
+  color: var(--gray-400) !important;
+  font-weight: 400 !important;
+  font-size: 14px !important;
+  font-style: normal !important;
+  pointer-events: none;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+:deep(.ql-editor:not(.ql-blank)::before) {
+  opacity: 0;
+}
+
+.p-checkbox {
+  width: 28px !important;
+  height: 20px !important;
+}
+
+// to  make inputtext color black
+.p-inputtext.p-component.p-filled.p-select-filter {
+  color: black !important;
+}

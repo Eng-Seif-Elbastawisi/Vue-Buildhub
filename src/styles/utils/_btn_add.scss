@@ -1,0 +1,21 @@
+@use "../variables" as *;
+@use "../mixins/flex" as *;
+
+.add-btn {
+  font-family: var(--font-family);
+  background-color: var(--gray-900);
+  color: var(--BgWhite);
+  padding-inline: calc(var(--xl-size-base) + 2px);
+  padding-block: var(--xs-size-3);
+  font-size: var(--sm-size);
+  font-weight: $BaseFontSemiBoldWeight;
+  border-radius: var(--radius-full);
+  transition: var(--transition);
+
+  &:hover {
+    color: var(--gray-900);
+    background-color: var(--BgWhite);
+    border: 1px solid var(--gray-900);
+    box-shadow: var(--shadow);
+  }
+}

@@ -1,0 +1,1 @@
+export const base64Flag = "data:image/svg+xml;base64,";

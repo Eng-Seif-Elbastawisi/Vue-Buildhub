@@ -1,0 +1,41 @@
+@use '../variables' as *;
+
+.country-card {
+  border: 1px solid $BorderColor;
+  border-radius: $XlSize2;
+  padding: $MdSize;
+  cursor: pointer;
+  width: fit-content;
+
+  &:hover {
+    border-color: $PrimaryColor;
+  }
+
+  &.active {
+    border-color: $PrimaryColor;
+    box-shadow: 0 1px 2px 0 #0000000d;
+  }
+
+  .flag-container {
+    position: relative;
+
+    .flag {
+      width: calc($XlSize3 * 8);
+      height: calc($XlSize3 * 6);
+      object-fit: cover;
+    }
+
+    .flag-selected-icon {
+      position: absolute;
+      top: 0;
+      right: 0;
+    }
+  }
+
+  .title {
+    font-weight: $BaseFontSemiBoldWeight;
+    color: $Gray-6;
+    font-family: 'Medium';
+    font-style: normal;
+  }
+}

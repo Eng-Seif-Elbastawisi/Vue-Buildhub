@@ -1,0 +1,172 @@
+@use '../../../../styles/variables' as *;
+@use '../../../../styles/mixins/flex' as *;
+@use '../../../../styles/mixins/grid' as *;
+
+.artical-details-form-card {
+  .form-header {
+    padding-left: 0 !important;
+  }
+
+  .form-fields {
+    padding: 0 !important;
+  }
+
+  .form-fields {
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+
+    @include grid(
+      2,
+      $XlSize,
+      (
+        600: 1,
+      )
+    );
+
+    .field-group {
+      @include flex-column(nowrap, flex-start, flex-start);
+
+      gap: 6px;
+
+      &.disabled {
+        cursor: not-allowed;
+        pointer-events: none;
+        opacity: 0.7;
+      }
+
+      &.col-span-2 {
+        grid-column: span 2;
+      }
+
+      .gender-group {
+        @include flex-row(nowrap, flex-start, center);
+
+        gap: $XlSize3;
+
+        .input-field {
+          @include flex-row(nowrap, flex-start, center);
+
+          gap: $XsSize4;
+          padding: 14px !important;
+
+          .p-radiobutton-box {
+            background: none !important;
+          }
+
+          .p-radiobutton-checked .p-radiobutton-icon {
+            background-color: $PrimaryColor !important;
+          }
+        }
+      }
+
+      .image-input {
+        width: 100%;
+
+        .upload-area {
+          background-color: $StandardWhite !important;
+        }
+
+        .add-imaegs-data {
+          @include flex-column(nowrap, center, center);
+
+          gap: $XsSize5;
+
+          .first-text {
+            color: $Gray-5;
+            font-size: $XsSize;
+            font-weight: $BaseFontSemiBoldWeight;
+
+            span {
+              color: $PrimaryColor;
+              padding-inline: $XsSize5;
+            }
+          }
+
+          .second-text {
+            color: $SecondText;
+            font-size: $XsSize;
+            font-weight: $BaseFontWeight;
+          }
+        }
+      }
+
+      .field-label {
+        font-size: $MdSize;
+        color: $InputLabelText !important;
+        text-transform: none;
+        font-weight: $BaseFontSemiBoldWeight !important;
+      }
+
+      .input-wrap {
+        width: 100%;
+
+        .field-input {
+          width: 100%;
+          padding: $XsSize $MdSize;
+          border: 1px solid $InputBorder !important;
+          border-radius: $XlSize4 !important;
+          font-size: $SmSize;
+          color: $Gray-6;
+          background: $White !important;
+          outline: none;
+          transition: all 0.25s ease;
+
+          &:focus {
+            border-color: var(--PrimaryColor);
+            background: var(--bg-main);
+            box-shadow: 0 0 0 3px var(--PrimaryColor-light);
+          }
+        }
+      }
+    }
+  }
+
+  .all_tabs {
+    @include flex-row(nowrap, space-between, center);
+
+    flex-direction: row !important;
+    gap: $MdSize;
+    margin-bottom: $XlSize2;
+    width: 100% !important;
+
+    .tab-item {
+      background-color: var(--bg-main);
+      color: var(--table-data-color);
+      border: 1px solid var(--input-border-color);
+      padding: $XlSize2;
+      width: 100%;
+      border-radius: $XlSize4;
+      display: flex;
+      gap: $XsSize4;
+      cursor: pointer;
+
+      input[type='radio'] {
+        accent-color: white;
+      }
+    }
+
+    .tab-item.active {
+      background-color: var(--PrimaryColor-alpha-10);
+      color: var(--primary-green);
+      border: 1px solid var(--primary-green);
+      padding: $XlSize2;
+      width: 100%;
+      border-radius: $XlSize4;
+      cursor: pointer;
+
+      input[type='radio'] {
+        background-color: green;
+        accent-color: green;
+      }
+    }
+
+    .p-radiobutton-box {
+      background: none !important;
+    }
+
+    .p-radiobutton-checked .p-radiobutton-icon {
+      background-color: $PrimaryColor !important;
+    }
+  }
+}

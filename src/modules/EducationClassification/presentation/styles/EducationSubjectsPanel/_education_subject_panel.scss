@@ -1,0 +1,217 @@
+@use '../../../../../styles/variables' as *;
+@use '../../../../../styles/mixins/flex' as *;
+
+.subjects-panel {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  width: 100%;
+  gap: 0;
+  font-family: 'Medium';
+
+  .subjects-left {
+    flex: 0 0 100%;
+    border-right: 1px solid var(--gray-200-std);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    background: $StandardWhite;
+  }
+
+  .subjects-right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    padding: 16px 20px;
+    display: none;
+  }
+
+  /* Stage root node (the deepest stage acts as the first subject branch) */
+  .stage-root-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 14px;
+    cursor: pointer;
+    background: var(--light-green-bg);
+    border-bottom: 1px solid var(--gray-200-std);
+    transition: background 0.15s;
+
+    &:hover {
+      background: $SuccessGreenLight-std;
+    }
+  }
+
+  .stage-root-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: $StandardBlack;
+    flex: 1;
+  }
+
+  .toggle-btn {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 2px;
+    display: flex;
+    align-items: center;
+    color: $SuccessGreen-std;
+    flex-shrink: 0;
+  }
+
+  .stage-children-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+
+  .subject-tree-list {
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  .subjects-bottom-bar {
+    // padding: 10px 12px;
+    // border-top: 1px solid var(--gray-200-std);
+    margin-top: auto;
+  }
+
+  .level-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--gray-500-std);
+    background: var(--gray-100-std);
+    border-radius: 4px;
+    padding: 1px 5px;
+    white-space: nowrap;
+  }
+
+  .spacer {
+    flex: 1;
+  }
+
+  .icon-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    color: $Gray-500-std;
+    flex-shrink: 0;
+    transition: background 0.15s;
+
+    &:hover {
+      background: $Gray-100-std;
+    }
+  }
+
+  .hint-text {
+    color: var(--gray-400-std);
+    font-size: 13px;
+    text-align: center;
+    padding: 24px 16px;
+  }
+
+  /* Right panel mirrors .education-tree right panel styles */
+  .right-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: $StandardWhite;
+    border: 1px solid $Gray-200-std;
+    border-radius: $XlSize4;
+    padding: 12px 16px;
+    margin-bottom: 12px;
+  }
+
+  .right-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--table-data-color);
+    font-weight: $BaseFontSemiBoldWeight;
+    font-family: 'medium';
+    font-size: $MdSize;
+    direction: rtl;
+  }
+
+  .btn-add-branch {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    transition: background 0.15s;
+
+    &:hover {
+      background: $SuccessGreenLight-std;
+    }
+  }
+
+  .right-children {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    overflow-y: auto;
+    flex: 1;
+  }
+
+  .right-child-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    background: $StandardWhite;
+    border: 1px solid $Gray-200-std;
+    border-radius: $SmSize;
+    margin: 0 0 8px;
+    transition: box-shadow 0.15s;
+
+    &:hover {
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    }
+  }
+
+  .child-icon {
+    flex-shrink: 0;
+  }
+
+  .child-name {
+    color: var(--table-data-color) !important;
+    font-weight: $BaseFontSemiBoldWeight !important;
+    font-family: 'medium' !important;
+    font-size: $SmSize !important;
+    text-align: right;
+  }
+
+  .right-empty {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .right-placeholder {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    color: $Gray-400-std;
+  }
+
+  .btn-full {
+    width: 100%;
+  }
+}

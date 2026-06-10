@@ -1,0 +1,38 @@
+@use '../variables' as *;
+@use '../mixins/flex' as *;
+
+.auth-layout {
+  min-height: calc(100vh - 108px);
+  width: 100%;
+  margin-inline: auto;
+  font-family: 'Medium';
+
+  @include flex-column(nowrap, center, center);
+
+  gap: $MdSize;
+
+  > * {
+    flex: 0 0 auto;
+  }
+
+  .auth-header {
+    @include flex-column(nowrap, center, center);
+
+    gap: $MdSize;
+    width: 100%;
+
+    .title {
+      color: $PrimaryColorHover;
+      font-size: $XlSize3;
+      font-weight: $BaseFontWeightBold;
+      font-family: 'Bold';
+    }
+
+    .sub-title {
+      color: $Gray-5;
+      font-size: $MdSize;
+      font-weight: $BaseFontMediumWeight;
+      font-family: 'Medium';
+    }
+  }
+}

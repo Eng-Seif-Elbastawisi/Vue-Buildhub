@@ -1,0 +1,27 @@
+// abstracts/_variables.scss
+// Re-exports SCSS variable aliases from the main _variables.scss
+// for use via @use 'abstracts' as *
+
+// ── This file is intentionally minimal ─────────────────────────────────────
+// All CSS custom properties (design tokens) live in _variables.scss (:root).
+// SCSS variable aliases ($PrimaryColor, $Gray-1, etc.) are forwarded from there.
+// Add new pure-SCSS variables here only (e.g., breakpoint maps, z-index scales).
+
+// ── Breakpoints ─────────────────────────────────────────────────────────────
+$breakpoints: (
+  'xs': 480px,
+  'sm': 640px,
+  'md': 768px,
+  'lg': 1024px,
+  'xl': 1280px,
+  '2xl': 1536px,
+) !default;
+
+// ── Z-index scale ───────────────────────────────────────────────────────────
+$z-dropdown: 100 !default;
+$z-sticky: 200 !default;
+$z-fixed: 300 !default;
+$z-modal-backdrop: 400 !default;
+$z-modal: 500 !default;
+$z-popover: 600 !default;
+$z-tooltip: 700 !default;

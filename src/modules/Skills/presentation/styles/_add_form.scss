@@ -1,0 +1,7 @@
+@use '../../../../styles/variables' as *;
+@use '../../../../styles/mixins/flex' as *;
+@use '../../../../styles/mixins/grid' as *;
+
+.employee-add-page {
+  min-height: 100vh;
+}

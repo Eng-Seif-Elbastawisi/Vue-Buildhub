@@ -1,0 +1,149 @@
+@use '../../../../../styles/variables' as *;
+@use '../../../../../styles/mixins/flex' as *;
+@use '../../../../../styles/mixins/grid' as *;
+
+.action-row-wrapper {
+  padding: $MdSize;
+  background-color: var(--gray-soft);
+  border-radius: $XlSize;
+  margin-bottom: $XlSize2;
+
+  @include flex(row, wrap, space-between, start);
+  width: 100%;
+  gap: $XlSize;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+}
+
+.info {
+  @include flex(row, center, start);
+  gap: $MdSize;
+  min-width: 0;
+
+  img {
+    width: calc($XlSize4 + $XsSize2);
+    object-fit: contain;
+    flex-shrink: 0;
+  }
+
+  .name {
+    @include flex(column, center, start);
+
+    gap: $XsSize4;
+    min-width: 0;
+
+    h3 {
+      font-size: $XlSize;
+      line-height: $XlSize3;
+      font-family: 'Medium';
+      color: var(--gray-7);
+    }
+
+    p {
+      font-size: $MdSize;
+      font-family: 'Light';
+      line-height: $MdSize;
+      color: var(--gray-5);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .approved-case-info {
+      @include flex(row, nowrap, center, start);
+      gap: $MdSize;
+      width: 100%;
+
+      h4 {
+        @include flex(row, nowrap, center, center);
+        font-size: $SmSize;
+        font-family: 'Light';
+        color: var(--gray-7);
+        gap: $XsSize4;
+        span {
+          color: var(--gray-text);
+        }
+      }
+    }
+  }
+}
+
+.question-actions {
+  @include flex-row(nowrap, center, center);
+
+  gap: $XsSize3;
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
+
+  button {
+    border: none;
+    outline: none;
+    cursor: pointer;
+    transition:
+      background-color 0.2s ease,
+      border-color 0.2s ease,
+      transform 0.2s ease,
+      opacity 0.2s ease;
+
+    &:active {
+      transform: scale(0.97);
+    }
+  }
+
+  .btn-primary {
+    @include flex-row(nowrap, center, center);
+
+    gap: $XsSize2;
+    min-width: calc($XlSize4 * 3);
+    height: calc($XlSize3 + $XsSize);
+    padding: 0 $MdSize;
+    border: 1px solid var(--PrimaryColor);
+    border-radius: $XlSize;
+    background: transparent;
+    color: var(--PrimaryColor);
+    font-size: $MdSize;
+
+    @media (max-width: 768px) {
+      flex: 1;
+    }
+
+    svg {
+      width: $MdSize;
+      height: $MdSize;
+
+      path {
+        stroke: currentColor;
+      }
+    }
+  }
+
+  .action-btn {
+    @include flex-row(nowrap, center, center);
+
+    width: calc($XlSize3 + $XsSize);
+    height: calc($XlSize3 + $XsSize);
+    border-radius: 50%;
+    background: var(--BgWhite);
+  }
+
+  .delete {
+    border: 1px solid var(--border-color);
+    color: var(--gray-5);
+
+    &:hover {
+      border-color: var(--danger-color);
+      color: var(--danger-color);
+    }
+
+    svg {
+      width: $MdSize;
+      height: $MdSize;
+    }
+  }
+}

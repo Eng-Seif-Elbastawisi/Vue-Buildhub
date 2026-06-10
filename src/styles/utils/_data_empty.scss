@@ -1,0 +1,11 @@
+@use '../variables' as *;
+@use '../mixins/flex' as *;
+
+.data-empty {
+  @include flex-column(nowrap, center, center);
+
+  .data-empty-image {
+    margin-left: auto;
+    margin-right: auto;
+  }
+}

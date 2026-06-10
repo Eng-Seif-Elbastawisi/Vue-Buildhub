@@ -1,0 +1,155 @@
+// abstracts/_mixins.scss
+// All shared mixins — 4 existing + 5 new (from SCSS-ARCHITECTURE.md)
+// Zero CSS output — pure tools only
+@use 'sass:map';
+
+// ── Existing ──────────────────────────────────────────────────────────────
+
+@mixin glass {
+  background: var(--white-alpha-85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin ambient-shadow {
+  box-shadow: 0 12px 32px var(--black-alpha-5);
+}
+
+@mixin micro-chip {
+  padding: 2px 6px;
+  border-radius: 2px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+// ── New (extracted from repeated patterns) ────────────────────────────────
+
+/// Gradient background matching --PrimaryColor → --PrimaryColor-container
+/// Replaces repeated gradient background + color: var(--color-on-primary) blocks
+/// Found in 8+ components
+@mixin button-gradient($direction: 135deg) {
+  background: linear-gradient(#{$direction}, var(--PrimaryColor) 0%, var(--PrimaryColor-dark) 100%);
+  color: var(--BgWhite);
+}
+
+/// Focus-visible ring for accessibility
+/// Replaces repeated :focus-visible outline blocks (40+ instances)
+/// @param {color} $color - outline color (default: --PrimaryColor)
+/// @param {length} $offset - outline-offset (default: 2px)
+/// @param {length|null} $radius - optional border-radius override
+@mixin focus-ring($color: var(--PrimaryColor), $offset: 2px, $radius: null) {
+  &:focus-visible {
+    outline: 2px solid #{$color};
+    outline-offset: #{$offset};
+
+    @if $radius {
+      border-radius: #{$radius};
+    }
+  }
+}
+
+/// Small uppercase label text style
+/// Replaces repeated font + transform + tracking combos (20+ instances)
+/// @param {length} $letter-spacing - letter spacing (default: 0.05em)
+@mixin label-xs($letter-spacing: 0.05em) {
+  font-family: var(--font-family);
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: #{$letter-spacing};
+}
+
+/// Base badge/chip styling
+/// Replaces repeated inline-flex badge patterns (10+ instances)
+/// @param {string} $variant - 'default' or 'gradient'
+@mixin badge-base($variant: default) {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  font-family: var(--font-family);
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+
+  @if $variant == gradient {
+    @include button-gradient;
+  }
+}
+
+/// Interactive icon-link with gap animation on hover
+/// Replaces repeated link + icon-shift patterns (12+ instances)
+/// @param {length} $shift - horizontal icon shift on hover (default: 3px)
+@mixin link-interactive($shift: 3px) {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  text-decoration: none;
+  transition: gap var(--transition);
+
+  .material-symbols-outlined {
+    transition: transform var(--transition);
+  }
+
+  &:hover {
+    gap: 0.5rem;
+
+    @if $shift != 0 {
+      .material-symbols-outlined {
+        transform: translateX(#{$shift});
+      }
+    }
+  }
+}
+
+// ── Responsive ────────────────────────────────────────────────────────────
+
+/// Responsive breakpoint (min-width)
+/// @param {string} $breakpoint - xs | sm | md | lg | xl | 2xl
+
+@mixin respond-to($breakpoint) {
+  $breakpoints: (
+    xs: 480px,
+    sm: 640px,
+    md: 768px,
+    lg: 1024px,
+    xl: 1280px,
+    2xl: 1536px,
+  );
+
+  $value: map.get($breakpoints, $breakpoint);
+
+  @media (min-width: $value) {
+    @content;
+  }
+}
+
+// ── Layout helpers ────────────────────────────────────────────────────────
+
+@mixin visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+@mixin card-surface {
+  background-color: var(--bg-card);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border-weak);
+}
