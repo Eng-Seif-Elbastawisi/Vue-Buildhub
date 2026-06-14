@@ -99,7 +99,7 @@ const updateData = () => {
 
 <style scoped>
 .disabled-input {
-  pointer-events: none;
+  pointer-events: none; 
   opacity: 0.5;
 }
 </style>
