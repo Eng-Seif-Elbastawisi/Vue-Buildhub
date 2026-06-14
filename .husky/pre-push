@@ -1,2 +1,109 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Get the remote and URL from husky's push arguments
+remote="$1"
+url="$2"
+
+# Find files changed between local branch and remote (what's about to be pushed)
+CHANGED_FILES=$(git diff --name-only @{u} 2>/dev/null || git diff --name-only HEAD~1 2>/dev/null || git diff --name-only HEAD)
+
+if [ -z "$CHANGED_FILES" ]; then
+  echo "✅ No changed files detected, skipping checks."
+  exit 0
+fi
+
+echo "📋 Changed files:"
+echo "$CHANGED_FILES"
+echo ""
+
+# Filter to TS/TSX/JS/JSX files + Vue component files (exclude view pages)
+CHANGED_SRC=$(echo "$CHANGED_FILES" | grep -E '\.(ts|tsx|js|jsx|vue)$' | grep -v -E '(views?|pages?)/.*\.vue$' || true)
+
+if [ -z "$CHANGED_SRC" ]; then
+  echo "✅ No source files changed, skipping checks."
+  exit 0
+fi
+
+# Show which Vue components were picked up (for transparency)
+CHANGED_VUE=$(echo "$CHANGED_SRC" | grep '\.vue$' || true)
+if [ -n "$CHANGED_VUE" ]; then
+  echo "🧩 Vue components detected:"
+  echo "$CHANGED_VUE"
+  echo ""
+fi
+
+# ── Type Check ────────────────────────────────────────────────────────────────
+echo "🔍 Running type-check..."
 npm run type-check
-npm run test:run
+
+if [ $? -ne 0 ]; then
+  echo "❌ Type-check failed. Push aborted."
+  exit 1
+fi
+echo "✅ Type-check passed."
+echo ""
+
+# ── Tests (only files with a corresponding test file) ─────────────────────────
+# Collect test files that correspond to changed source files
+TEST_FILES=""
+
+for file in $CHANGED_SRC; do
+  # For .vue files, strip the .vue extension before looking for tests
+  # e.g. src/components/MyButton.vue -> look for MyButton.test.ts etc.
+  case "$file" in
+    *.vue) base="${file%.vue}" ;;
+    *)     base="${file%.*}" ;;
+  esac
+
+  # Derive the directory and filename separately
+  dir=$(dirname "$file")
+  filename=$(basename "$base")
+
+  # Look for test counterparts in:
+  #   1. Same folder          → src/components/Foo.test.ts
+  #   2. __tests__ subfolder  → src/components/__tests__/Foo.test.ts  ✅ your convention
+  for tests_dir in "$dir" "${dir}/__tests__"; do
+    for ext in test.ts test.tsx test.js test.jsx spec.ts spec.tsx spec.js spec.jsx; do
+      pattern="${tests_dir}/${filename}.${ext}"
+      if [ -f "$pattern" ]; then
+        TEST_FILES="$TEST_FILES $pattern"
+      fi
+      # Also try with .vue kept before the test suffix: Foo.vue.test.ts
+      pattern="${tests_dir}/${filename}.vue.${ext}"
+      if [ -f "$pattern" ]; then
+        TEST_FILES="$TEST_FILES $pattern"
+      fi
+    done
+  done
+
+  # Also include the file itself if it IS a test file
+  case "$file" in
+    *.test.ts|*.test.tsx|*.test.js|*.test.jsx|\
+    *.spec.ts|*.spec.tsx|*.spec.js|*.spec.jsx)
+      TEST_FILES="$TEST_FILES $file"
+      ;;
+  esac
+done
+
+# Deduplicate
+TEST_FILES=$(echo "$TEST_FILES" | tr ' ' '\n' | sort -u | tr '\n' ' ' | xargs)
+
+if [ -z "$TEST_FILES" ]; then
+  echo "✅ No test files found for changed sources, skipping tests."
+  exit 0
+fi
+
+echo "🧪 Running tests for:"
+echo "$TEST_FILES" | tr ' ' '\n'
+echo ""
+
+npx vitest run $TEST_FILES
+
+if [ $? -ne 0 ]; then
+  echo "❌ Tests failed. Push aborted."
+  exit 1
+fi
+
+echo "✅ All tests passed. Pushing..."
+exit 0

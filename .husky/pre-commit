@@ -1,38 +1,75 @@
-echo "--- [pre-commit] lint-staged (ESLint + Prettier) ---"
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# ── Collect staged source files ───────────────────────────────────────────────
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACMR)
+
+if [ -z "$STAGED_FILES" ]; then
+  echo "✅ [pre-commit] No staged files, skipping all checks."
+  exit 0
+fi
+
+STAGED_SRC=$(echo "$STAGED_FILES" | grep -E '\.(ts|tsx|js|jsx|vue)$' || true)
+STAGED_STYLES=$(echo "$STAGED_FILES" | grep -E '\.(vue|css|scss)$' || true)
+
+# ── 1. ESLint + Prettier (lint-staged) ───────────────────────────────────────
+echo "--- [pre-commit] ESLint + Prettier (lint-staged) ---"
 npx lint-staged
 if [ $? -ne 0 ]; then
   echo ""
-  echo "[pre-commit] FAILED: ESLint/Prettier errors in staged files (see above)."
-  echo "  Fix all errors — unused variables are now treated as errors."
+  echo "❌ [pre-commit] FAILED: ESLint/Prettier errors in staged files (see above)."
+  echo "   Fix all errors — unused variables are treated as errors."
   exit 1
 fi
-
+echo "✅ lint-staged passed."
 echo ""
-echo "--- [pre-commit] TypeScript type-check ---"
-npx tsc --noEmit
-if [ $? -ne 0 ]; then
+
+# ── 2. TypeScript type-check ──────────────────────────────────────────────────
+if [ -n "$STAGED_SRC" ]; then
+  echo "--- [pre-commit] TypeScript type-check ---"
+  npm run type-check
+  if [ $? -ne 0 ]; then
+    echo ""
+    echo "❌ [pre-commit] FAILED: TypeScript errors found (see above)."
+    exit 1
+  fi
+  echo "✅ Type-check passed."
   echo ""
-  echo "[pre-commit] FAILED: TypeScript errors found (see above)."
-  exit 1
-fi
-
-echo ""
-echo "--- [pre-commit] Stylelint ---"
-npx stylelint "src/**/*.{vue,css,scss}"
-if [ $? -ne 0 ]; then
+else
+  echo "⏭️  [pre-commit] No TS/JS/Vue files staged, skipping type-check."
   echo ""
-  echo "[pre-commit] FAILED: Style errors found (see above)."
-  exit 1
 fi
 
-echo ""
-echo "--- [pre-commit] Test coverage check ---"
-node scripts/check-test-coverage.mjs
-if [ $? -ne 0 ]; then
+# ── 3. Stylelint (staged .vue / .css / .scss only) ───────────────────────────
+if [ -n "$STAGED_STYLES" ]; then
+  echo "--- [pre-commit] Stylelint (staged files only) ---"
+  echo "$STAGED_STYLES" | xargs npx stylelint --allow-empty-input
+  if [ $? -ne 0 ]; then
+    echo ""
+    echo "❌ [pre-commit] FAILED: Style errors found (see above)."
+    exit 1
+  fi
+  echo "✅ Stylelint passed."
   echo ""
-  echo "[pre-commit] FAILED: Staged files are missing companion test files (see above)."
-  exit 1
+else
+  echo "⏭️  [pre-commit] No style files staged, skipping Stylelint."
+  echo ""
 fi
 
-echo ""
-echo "[pre-commit] All checks passed."
+# ── 4. Test coverage / companion file check ───────────────────────────────────
+if [ -n "$STAGED_SRC" ]; then
+  echo "--- [pre-commit] Test coverage check ---"
+  node scripts/check-test-coverage.mjs
+  if [ $? -ne 0 ]; then
+    echo ""
+    echo "❌ [pre-commit] FAILED: Staged files are missing companion test files (see above)."
+    exit 1
+  fi
+  echo "✅ Coverage check passed."
+  echo ""
+else
+  echo "⏭️  [pre-commit] No source files staged, skipping coverage check."
+  echo ""
+fi
+
+echo "✅ [pre-commit] All checks passed."
