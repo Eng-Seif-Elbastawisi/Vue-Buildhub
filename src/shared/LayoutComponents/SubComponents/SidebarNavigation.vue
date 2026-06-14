@@ -138,6 +138,16 @@ const baseMenu: MenuSection[] = [
 
     ],
   },
+  {
+    group: 'Suppliers',
+    items: [
+      {
+        link: '/suppliers',
+        name: 'suppliers',
+        icon: ArticleIcon,
+      },
+    ],
+  },
 ];
 
 const menu = computed<MenuSection[]>(() => baseMenu);

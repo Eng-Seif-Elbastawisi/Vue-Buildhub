@@ -1,0 +1,343 @@
+@use '../../../../styles/variables' as *;
+@use '../../../../styles/mixins/flex' as *;
+
+/* =============================================================================
+   EMAIL FORM — Luxury Card Design
+   ============================================================================= */
+
+/* ── Form Card ─────────────────────────────────────────────── */
+.document-form-card {
+  background: var(--bg-main);
+  overflow: hidden; 
+  position: relative;
+  font-family: 'Medium';
+
+  .ref-number-group{
+    justify-content: end
+  }
+  .document-form-header {
+    @include flex-row(nowrap, flex-start, flex-start);
+
+    gap: 5px;
+
+    .document-form-header-text {
+      @include flex-column(nowrap, flex-start, flex-start);
+
+      gap: 5px;
+
+      h4 {
+        color: var(--title-card-color);
+        font-size: $MdSize2;
+        font-weight: $BaseFontWeightBold;
+        font-family: 'bold';
+      }
+
+      p {
+        color: var(--title-header-color);
+        font-weight: $BaseFontMediumWeight;
+        font-family: 'Medium';
+        font-size: $MdSize;
+      }
+    }
+  }
+  /* ── Form Header ───────────────────────────────────────────── */
+  .form-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 20px 24px 16px;
+
+    .header-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-md);
+      background: linear-gradient(135deg, var(--PrimaryColor-light), rgba(238, 242, 255, 0.4));
+      color: var(--PrimaryColor);
+      flex-shrink: 0;
+      box-shadow:
+        0 2px 6px rgba(99, 102, 241, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    }
+
+    .header-text {
+      flex: 1;
+
+      h3 {
+        font-size: 1.1rem;
+        font-weight: 800;
+        color: var(--gray-900);
+        margin: 0;
+        letter-spacing: -0.01em;
+      }
+
+      .header-subtitle {
+        margin-top: 2px;
+        font-size: 0.8rem;
+        color: var(--gray-400);
+        margin-bottom: 0;
+      }
+    }
+
+    .edit-badge {
+      padding: 4px 12px;
+      border-radius: var(--radius-full);
+      background: linear-gradient(135deg, var(--warning-light), rgba(254, 243, 199, 0.5));
+      color: var(--warning-dark);
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      white-space: nowrap;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    }
+  }
+
+  /* ── Divider ───────────────────────────────────────────────── */
+  .form-divider {
+    height: 1px;
+    margin: 0 24px;
+    background: linear-gradient(90deg, var(--border-weak), rgba(226, 232, 240, 0.3), transparent);
+  }
+
+  /* ── Form Fields ───────────────────────────────────────────── */
+  .form-fields {
+    // padding: 20px 24px 24px;
+    display: grid;
+    grid-template-columns: repeat(2, 1rf);
+    gap: 20px;
+       &.disabled {
+      opacity: 0.5;
+      pointer-events: none;
+      cursor: not-allowed;
+    }
+  }
+
+  .col-span-2 {
+    grid-column: span 2;
+  }
+
+  .col-span-1 {
+    grid-column: span 1;
+  }
+
+  .field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    &.tags-group {
+      .input-wrap {
+        border: 1px solid var(--input-border-color);
+
+        @include flex-row(nowrap, space-between, center);
+
+        border-radius: 50px;
+        padding: $XsSize5 $MdSize;
+
+        button {
+          padding: 10px 12px;
+          width: 20%;
+        }
+
+        input {
+          width: 80%;
+
+          &:focus {
+            box-shadow: none !important;
+          }
+        }
+      }
+
+      input {
+        border: none !important;
+      }
+    }
+
+    .image-input {
+      .upload-area {
+        background-color: $StandardWhite !important;
+      }
+
+      .add-imaegs-data {
+        @include flex-column(nowrap, center, center);
+
+        gap: 3px;
+
+        .first-text {
+          color: $Gray-5;
+          font-size: 12px;
+          font-weight: 600;
+
+          span {
+            color: $PrimaryColor;
+            padding-inline: 5px;
+          }
+        }
+
+        .second-text {
+          color: var(--gray-300);
+          font-size: 11px;
+          font-weight: 400;
+        }
+      }
+    }
+  }
+
+  .field-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--table-data-color);
+    font-size: $MdSize;
+    font-family: 'Medium';
+    font-weight: $BaseFontSemiBoldWeight;
+    letter-spacing: 0.04em;
+    text-transform: none;
+
+    svg {
+      color: var(--PrimaryColor);
+      flex-shrink: 0;
+    }
+  }
+
+  .input-wrap {
+    position: relative;
+  }
+
+  .field-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid var(--border-weak);
+    border-radius: 50px;
+    font-size: 0.9rem;
+    color: var(--gray-800);
+    background: var(--white);
+    outline: none;
+    transition: all 0.25s ease;
+    font-family: 'Medium';
+    font-weight: 500 !important;
+
+    &::placeholder {
+      color: var(--bread-crumb-color-span);
+      font-weight: $BaseFontMediumWeight;
+      font-family: 'Medium';
+      font-size: $SmSize;
+    }
+
+    &:focus {
+      border-color: var(--PrimaryColor);
+      background: var(--bg-main);
+      box-shadow:
+        0 0 0 3px var(--PrimaryColor-light),
+        0 2px 8px rgba(99, 102, 241, 0.06);
+    }
+
+    &:hover:not(:focus) {
+      border-color: var(--gray-300);
+      background: var(--bg-main);
+    }
+  }
+
+  .p-placeholder {
+    color: var(--bread-crumb-color-span) !important;
+    font-weight: $BaseFontMediumWeight !important;
+    font-family: 'Medium';
+    font-size: $SmSize;
+  }
+
+  /* ── Deep: Custom Input Select (Accordion) ─────────────────── */
+  :deep(.myacc) {
+    border: none;
+  }
+
+  :deep(.AccordionPanel) {
+    border: 1px solid var(--border-weak) !important;
+    border-radius: var(--radius-md) !important;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: var(--gray-50);
+
+    &:hover {
+      border-color: var(--PrimaryColor) !important;
+    }
+  }
+
+  :deep(.AccordionHeader) {
+    padding: 12px 16px;
+    background: transparent;
+    border: none;
+    font-weight: 600;
+    color: var(--gray-800);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    font-size: 0.9rem;
+
+    &:hover {
+      background: var(--PrimaryColor-light);
+      color: var(--PrimaryColor);
+    }
+  }
+
+  :deep(.AccordionContent) {
+    background: var(--bg-main);
+    color: var(--gray-600);
+    padding: 12px 16px;
+    font-size: 0.875rem;
+    line-height: 1.6;
+  }
+
+  /* ── Responsive ────────────────────────────────────────────── */
+  @media (max-width: 600px) {
+    .form-header {
+      padding: 16px;
+      flex-wrap: wrap;
+    }
+
+    .form-fields {
+      // padding: 16px;
+      gap: 16px;
+    }
+
+    .form-divider {
+      margin: 0 16px;
+    }
+
+    .edit-badge {
+      display: none;
+    }
+  }
+
+  .tags-container {
+    @include flex-row(nowrap, flex-start, center);
+
+    gap: 8px;
+
+    &.border {
+      border: 1px solid $BorderColor;
+      padding: 16px;
+      border-radius: 24px;
+    }
+
+    .tag {
+      @include flex-row(nowrap, center, center);
+
+      gap: 2px;
+      background-color: $ColorLightGray;
+      padding: 8px 10px;
+      border-radius: 50px;
+      color: $StandardBlack;
+      font-size: 14px;
+      font-weight: 500;
+
+      .delete {
+        cursor: pointer;
+      }
+    }
+  }
+}
