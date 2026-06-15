@@ -80,7 +80,7 @@ import { useUserStore } from '@/stores/user';
           striped
         >
           <template #cell-projectType="{ item }">{{
-            $t(`project.types.${typeNames[item.projectType]}`)
+            $t(`project.types.${typeNames[item.projectType]}`) 
           }}</template>
           <template #actions="{ item }"
             ><div class="row-actions">
