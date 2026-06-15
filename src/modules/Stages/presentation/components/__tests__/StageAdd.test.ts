@@ -1,7 +1,19 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { mount } from '@vue/test-utils';
+import { flushPromises, mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
 import StageAdd from '../StageAdd.vue';
+import StageModel from '../../../core/models/stage.model';
+import EditStageParams from '../../../core/params/edit.stage.params';
+
+const mockController = vi.hoisted(() => ({
+  create: vi.fn(),
+  update: vi.fn(),
+  errorMessage: { value: null },
+}));
+
+vi.mock('../../controllers/stage.controller', () => ({
+  default: { getInstance: () => mockController },
+}));
 
 vi.mock('vue-router', () => ({
   onBeforeRouteLeave: vi.fn(),
@@ -71,6 +83,8 @@ describe('StageAdd', () => {
   beforeEach(() => {
     setActivePinia(createPinia());
     vi.clearAllMocks();
+    mockController.create.mockResolvedValue({});
+    mockController.update.mockResolvedValue({});
   });
 
   it('renders without crashing', () => {
@@ -86,5 +100,23 @@ describe('StageAdd', () => {
   it('renders the AppButton for saving', () => {
     const wrapper = mount(StageAdd, { global: globalConfig });
     expect(wrapper.find('app-button-stub').exists()).toBe(true);
+  });
+
+  it('calls update with edit params when a fetched stage is saved', async () => {
+    const wrapper = mount(StageAdd, {
+      global: {
+        ...globalConfig,
+        stubs: { ...globalConfig.stubs, StageForm: false },
+      },
+      props: { stage: StageModel.example },
+    });
+
+    await wrapper.find('app-button-stub').trigger('click');
+    await flushPromises();
+
+    expect(mockController.update).toHaveBeenCalledTimes(1);
+    expect(mockController.update.mock.calls[0]?.[0]).toBeInstanceOf(EditStageParams);
+    expect(mockController.update.mock.calls[0]?.[0].id).toBe(StageModel.example.id);
+    expect(mockController.create).not.toHaveBeenCalled();
   });
 });

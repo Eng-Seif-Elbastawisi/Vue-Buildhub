@@ -1,6 +1,5 @@
-import type Params from "@/base/Core/Params/params";
-import { ClassValidation } from "@/base/Presentation/Utils/classValidation";
-import type { EducationType } from "../constants/educationtype.enum";
+import type Params from '@/base/Core/Params/params';
+import { ClassValidation } from '@/base/Presentation/Utils/classValidation';
 
 /**
  * Parameters for updating an existing country
@@ -8,25 +7,21 @@ import type { EducationType } from "../constants/educationtype.enum";
 export default class EditStageParams implements Params {
   public id: number;
   public title: string;
-  public educationType: EducationType;
 
   public static readonly validation = new ClassValidation().setRules({
     id: { required: true, minLength: 1, maxLength: 100 },
     title: { required: true, minLength: 2, maxLength: 100 },
-    educationType: { required: true },
   });
 
-  constructor(id: number, title: string, educationType: EducationType) {
+  constructor(id: number, title: string) {
     this.id = id;
     this.title = title;
-    this.educationType = educationType;
   }
 
   toMap(): { [p: string]: any } {
     return {
       id: this.id,
       title: this.title,
-      education_type: this.educationType,
     };
   }
 

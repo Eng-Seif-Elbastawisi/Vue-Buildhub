@@ -5,14 +5,14 @@
   import Pagination from '@/shared/HelpersComponents/Pagination.vue';
   import { useRoute, useRouter } from 'vue-router';
   import { debounce } from '@/base/Presentation/Utils/debouced';
-  import DeleteDialog from '@/shared/HelpersComponents/dialog/DeleteDialog.vue';
   import IndexStageParams from '../../core/params/index.stage.params';
   import StageController from '../controllers/stage.controller';
   import DeleteStageParams from '../../core/params/delete.stage.params';
   import type StageModel from '../../core/models/stage.model'; // eslint-disable-line @typescript-eslint/no-unused-vars
   import StageAdd from './StageAdd.vue';
   import ShowStageParams from '../../core/params/show.stage.params';
-import StageEdit from './StageEdit.vue';
+  import EditIcon from '@/shared/icons/EditIcon.vue';
+  import DeleteDialog from '@/base/Presentation/Dialogs/MainDialogs/DeleteDialog.vue';
 
   // Controller instance
   const controller = StageController.getInstance();
@@ -87,10 +87,18 @@ import StageEdit from './StageEdit.vue';
     });
   };
   const EditMode = ref(false);
+  const selectedStage = computed(() =>
+    EditMode.value ? (controller.itemData.value ?? undefined) : undefined,
+  );
 
   const ShowStage = async (id: number) => {
     await controller.fetchOne(new ShowStageParams(id));
     EditMode.value = true;
+  };
+
+  const onStageSaved = async () => {
+    EditMode.value = false;
+    await fetchStages();
   };
 </script>
 
@@ -128,7 +136,7 @@ import StageEdit from './StageEdit.vue';
         </button>
       </div>
     </div>
-    <StageAdd  />
+    <StageAdd :stage="selectedStage" @saved="onStageSaved" />
 
     <!-- ═══ Table ═══ -->
     <DataStatusBuilder :controller="state" :on-retry="async () => await fetchStages()">
@@ -150,22 +158,15 @@ import StageEdit from './StageEdit.vue';
             <template #actions="{ item }">
               <div class="row-actions">
                 <button class="action-btn edit" title="Edit" @click="ShowStage(item.id!)">
-                  <svg
-                    width="15"
-                    height="15"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  >
-                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                  </svg>
+                  <EditIcon />
                 </button>
-                <DeleteDialog @delete="deleteCountry(item.id!)">
-                  <template #Dialog>
+                <DeleteDialog
+                  @delete="deleteCountry(item.id!)"
+                  :title="$t('Are you sure you want to remove this stage?')"
+                  :message="$t('This action cannot be undone.')"
+                  :hasbtn="true"
+                >
+                  <template #btn>
                     <button class="action-btn delete" title="Delete">
                       <svg
                         width="15"

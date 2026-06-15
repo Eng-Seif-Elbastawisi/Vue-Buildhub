@@ -481,5 +481,6 @@
   "select_difficulty": "Select Difficulty",
   "similar_percentage": "Similar Percentage",
   "update_question": "Update Question",
-  "save_question": "Save Question"
+  "save_question": "Save Question",
+  "stage_title": "Stage Title"
 }

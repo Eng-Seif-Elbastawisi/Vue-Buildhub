@@ -49,6 +49,7 @@ describe('StageIndex.vue', () => {
       stubs: {
         DataStatusBuilder: { template: '<div><slot name="empty" /></div>' },
         AppTable: true,
+        StageAdd: true,
         Pagination: true,
         DeleteDialog: true,
         'router-link': { template: '<a><slot /></a>', props: ['to'] },
@@ -58,7 +59,7 @@ describe('StageIndex.vue', () => {
 
   it('renders the index wrapper', () => {
     const wrapper = mount(StageIndex, mountOptions);
-    expect(wrapper.find('.email-page').exists()).toBe(true);
+    expect(wrapper.find('.stage-page').exists()).toBe(true);
   });
 
   it('renders the search input', () => {

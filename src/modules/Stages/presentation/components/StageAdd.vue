@@ -6,11 +6,21 @@
   import StageForm from './StageForm.vue';
   import StageController from '../controllers/stage.controller';
   import type AddStageParams from '../../core/params/add.stges.params';
+  import EditStageParams from '../../core/params/edit.stage.params';
+  import type StageModel from '../../core/models/stage.model';
+
+  const { stage } = defineProps<{
+    stage?: StageModel;
+  }>();
+
+  const emit = defineEmits<{
+    saved: [];
+  }>();
 
   const controller = StageController.getInstance();
   const route = useRoute();
   const formKey = route.fullPath;
-  const params = ref<AddStageParams | null>(null);
+  const params = ref<AddStageParams | EditStageParams | null>(null);
   const loading = ref(false);
 
   const saveStage = async () => {
@@ -23,7 +33,14 @@
 
       const paramsToSave = params.value;
 
-      await controller.create(paramsToSave, undefined, formKey);
+      const result =
+        paramsToSave instanceof EditStageParams
+          ? await controller.update(paramsToSave, undefined, formKey)
+          : await controller.create(paramsToSave, undefined, formKey);
+
+      if (result) {
+        emit('saved');
+      }
     } catch (error) {
       console.error('Error saving email:', error);
     } finally {
@@ -31,25 +48,19 @@
     }
   };
 
-  const updateData = (updatedParams: AddStageParams) => {
+  const updateData = (updatedParams: AddStageParams | EditStageParams) => {
     params.value = updatedParams;
-    // saveEmail();
   };
 </script>
 
 <template>
   <div class="email-crud-example">
     <div class="email-form-card">
-      <StageForm
-        :form-key="formKey"
-        :email="controller.itemData.value!"
-        :loading="loading"
-        @update-data="updateData"
-      />
+      <StageForm :form-key="formKey" :stage="stage" :loading="loading" @update-data="updateData" />
 
       <div class="actions" :class="{ disabled: loading }">
-        <AppButton title="Save Stage" size="sm" icon="right" type="submit" @click="saveStage">
-          Save Stage
+        <AppButton :title="$t('save')" size="sm" icon="right" type="submit" @click="saveStage">
+          {{ $t('save') }}
 
           <template #icon>
             <IconAccept />

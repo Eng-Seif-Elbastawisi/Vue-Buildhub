@@ -2,6 +2,8 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
 import StageForm from '../StageForm.vue';
+import StageModel from '../../../core/models/stage.model';
+import EditStageParams from '../../../core/params/edit.stage.params';
 
 vi.mock('vue-router', () => ({
   onBeforeRouteLeave: vi.fn(),
@@ -77,9 +79,9 @@ describe('StageForm', () => {
     expect(wrapper.exists()).toBe(true);
   });
 
-  it('renders the form card', () => {
+  it('renders the form fields', () => {
     const wrapper = mount(StageForm, { global: globalConfig });
-    expect(wrapper.find('.email-form-card').exists()).toBe(true);
+    expect(wrapper.find('.form-fields').exists()).toBe(true);
   });
 
   it('renders the title input field', () => {
@@ -87,14 +89,18 @@ describe('StageForm', () => {
     expect(wrapper.find('input#title').exists()).toBe(true);
   });
 
-  it('shows the Add header when no id param', () => {
-    const wrapper = mount(StageForm, { global: globalConfig });
-    expect(wrapper.find('h3').text()).toContain('Add New');
-  });
+  it('fills the title input and emits edit params when a stage is provided', () => {
+    const wrapper = mount(StageForm, {
+      global: globalConfig,
+      props: { stage: StageModel.example },
+    });
 
-  it('does not show edit-badge in add mode', () => {
-    const wrapper = mount(StageForm, { global: globalConfig });
-    expect(wrapper.find('.edit-badge').exists()).toBe(false);
+    expect(wrapper.find<HTMLInputElement>('input#title').element.value).toBe(
+      StageModel.example.title,
+    );
+    const emittedParams = wrapper.emitted('updateData')?.[0]?.[0];
+    expect(emittedParams).toBeInstanceOf(EditStageParams);
+    expect((emittedParams as EditStageParams).id).toBe(StageModel.example.id);
   });
 
   it('emits updateData when title input changes', async () => {
