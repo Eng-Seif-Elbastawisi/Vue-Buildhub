@@ -7,19 +7,24 @@ export function authGuard(
   next: NavigationGuardNext,
 ): void {
   const userData = useUserStore();
+  const isLoginPage = to.path === '/login';
 
   if (to.path === '/choose-country' || to.path === '/not-found') {
     return next();
   }
 
-  const isLoginPage = to.path === '/login';
-
-  if (!userData.isAuth && !isLoginPage) {
-    return next({ name: 'Choose Country' });
+  if (!userData.isAuth) {
+    return isLoginPage ? next() : next({ name: 'Choose Country' });
   }
 
-  if (isLoginPage && userData.isAuth) {
-    return next({ name: 'About' });
+  const appPath = userData.user?.isMaster ? '/admin' : '/organization';
+
+  if (
+    isLoginPage ||
+    (to.path.startsWith('/admin') && appPath !== '/admin') ||
+    (to.path.startsWith('/organization') && appPath !== '/organization')
+  ) {
+    return next({ path: appPath });
   }
 
   next();
