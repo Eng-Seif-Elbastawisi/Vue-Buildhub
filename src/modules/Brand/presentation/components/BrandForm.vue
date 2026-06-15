@@ -3,17 +3,17 @@ import { ref, watch, onMounted } from 'vue';
 import { onBeforeRouteLeave } from 'vue-router';
 import { useFormsStore } from '@/stores/formsStore';
 import DocumentIcon from '@/shared/icons/DocaumentType/DocumentIcon.vue';
-import type SuppliersShowModel from '../../core/models/brand.show.model';
-import AddSuppliersParams from '../../core/params/add.brand.params';
+import AddBrandParams from '../../core/params/add.brand.params';
+import type BrandShowModel from '../../core/models/brand.show.model';
+import type { EquipmentTypeEnum } from '../../core/constant/equipment.type.enum';
+import UpdatedCustomInputSelect from '@/shared/FormInputs/UpdatedCustomInputSelect.vue';
 const emit = defineEmits(['updateData']);
 
-const { Suppliers, formKey, loading } = defineProps<{
-  Suppliers?: SuppliersShowModel;
+const { brand, formKey, loading } = defineProps<{
+  brand?: BrandShowModel;
   formKey?: string;
   loading?: boolean;
 }>();
-const tag = ref<string>('');
-const tags = ref<string[]>([]);
 const FormStore = useFormsStore();
 
 onBeforeRouteLeave((to, from) => {
@@ -25,38 +25,32 @@ onBeforeRouteLeave((to, from) => {
 });
 
 
-const phone = ref<string>('');
-const materials = ref<string>('');
-const supplier = ref<string>('');
-const spacification = ref<string>('');
+const title = ref<string>();
+const equipment = ref<EquipmentTypeEnum>();
 
 
 onMounted(async () => {
-  if (Suppliers) {
-    phone.value = Suppliers.phone;
-    materials.value = Suppliers.materials;
-    supplier.value = Suppliers.Supplier;
-    spacification.value = Suppliers.spacification;
+  if (brand) {
+    title.value = brand.title;
+    equipment.value = brand.equipment;
   }
 });
 
 watch(
-  () => Suppliers,
-  (newSuppliers) => {
-    if (newSuppliers) {
-      phone.value = newSuppliers.phone;
-      materials.value = newSuppliers.materials;
-      supplier.value = newSuppliers.Supplier;
-      spacification.value = newSuppliers.spacification;
+  () => brand,
+  (newBrand) => {
+    if (newBrand) {
+      title.value = newBrand.title;
+      equipment.value = newBrand.equipment;
     }
   },
   { immediate: true },
 );
 
 const updateData = () => {
-  const params = new AddSuppliersParams({
-    phone: phone.value,
-    materials: materials.value,
+  const params = new AddBrandParams({
+    name: title.value,
+    equipment: equipment.value,
   });
 
   emit('updateData', params);
@@ -76,23 +70,23 @@ const updateData = () => {
     </div>
 
     <div class="form-fields" :class="{ disabled: loading }">
-      <div class="field-group tags-group col-span-2">
-        <label class="field-label" for="tag">{{ $t('Tag') }}</label>
+       <div class="all_inputs">
+            <div class="group">
 
-        <div class="input-wrap input-tag-wrap">
-          <input id="tags" v-model="tag" type="text" :placeholder="$t('Add Tag....')" class="field-input"
-            @input="updateData" />
-
-          <button class="btn btn-primary" @click="setTags">{{ $t('Add Tag') }}</button>
-        </div>
-
-        <div class="tags-container" :class="tags.length > 0 ? `border` : ``">
-          <div v-for="(tagItem, tagIndex) in tags" :key="tagIndex" class="tag">
-            <span>{{ tagItem }}</span>
-
+              <div class="field-group col-span-2">
+                <label class="field-label" for="name">{{ $t(`brand title`) }}</label>
+                <div class="input-wrap">
+                  <input id="title" v-model="title" type="text" placeholder="Enter brand title" class="field-input"
+                    @input="updateData" />
+                </div>
+              </div>
+              <div class="field-group">
+                <UpdatedCustomInputSelect id="doc-branch" :label="`Equipment type`"
+                    :static-options="equipmentOptions" v-model="equipment" :placeholder="$t('Enter equipment type')"
+                  :reload="true" @update:model-value="handleBranchChange($event)" />
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
     </div>
   </div>
 </template>
