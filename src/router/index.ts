@@ -1,7 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import { dashboardRoutes } from './routes/modules';
 import { authGuard } from './guards';
-import HomeIcon from '@/shared/icons/BreadcrumbIcons/HomeIcon.vue';
+import { adminRoutes } from './routes/admin';
+import { addSuffix } from './helpers';
+import { sharedRoutes } from './routes/shared';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -23,11 +25,19 @@ const router = createRouter({
     },
     {
       path: '/',
-      name: 'Home App',
+      redirect: '/organization',
+    },
+    {
+      path: '/admin',
+      name: 'dashboard',
       component: () => import('@/views/AppLayout.vue'),
-      // { path: '', redirect: { name: 'Countries' } },
-      children: [ ...dashboardRoutes],
-      meta: { icon: HomeIcon },
+      children: [...adminRoutes, ...addSuffix(sharedRoutes, 'Admin')],
+    },
+    {
+      path: '/organization',
+      name: 'Organization App',
+      component: () => import('@/views/AppLayout.vue'),
+      children: [...dashboardRoutes, ...addSuffix(sharedRoutes, 'Organization')],
     },
     {
       path: '/:pathMatch(.*)*',
