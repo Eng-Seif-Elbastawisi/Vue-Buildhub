@@ -1,6 +1,9 @@
 @use '../../../../styles/variables' as *;
 @use '../../../../styles/mixins/flex' as *;
 
+.p-dialog.supplier-dialog {
+  background-color: white;
+}
 .document-page {
   display: flex;
   flex-direction: column;

@@ -14,6 +14,8 @@ import type SuppliersModel from '../../core/models/Suppliers.model.ts';
 import DeleteDialog from '@/shared/HelpersComponents/dialog/DeleteDialog.vue';
 import IndexDelete from '@/shared/icons/DocaumentType/IndexDelete.vue';
 import Dialog from 'primevue/dialog';
+import MultiLangInput from '@/shared/MultiLangInput.vue';
+import UpdatedCustomInputSelect from '@/shared/FormInputs/UpdatedCustomInputSelect.vue';
 
 
 const controller = SuppliersController.getInstance();
@@ -98,20 +100,9 @@ const deleteDialogTitle = ref('Are you sure you want to remove this Supplier?');
 const deleteDialogMessage = ref(
   'Deleting this Supplier will remove all related data. This action is irreversible, and the Supplier must be created again if needed.',
 );
-// const selectedSuppliers = ref<TitleInterface<number> | null>(null);
-// const FilterDialogShow = ref<boolean>(false);
-// const ApplayFilter = () => {
-//   if (date.value || selectedSuppliers.value?.id) {
-//     fetchSuppliers(1, word.value, date.value, selectedSuppliers.value?.id);
-//   }
-//   FilterDialogShow.value = false;
-// };
-// const CloseFiletrDialog = () => {
-//   FilterDialogShow.value = false;
-// };
 
 const visible = ref(false);
-const supplier = ref('');
+const supplierName = ref('');
 const Specialization = ref('');
 const phone = ref('');
 const materials = ref('');
@@ -139,62 +130,50 @@ const materials = ref('');
         </div> -->
       </div>
       <div class="btns">
-        <!-- <FilterDialog v-model="FilterDialogShow">
-          <template #content>
-            <div class="date-remove">
-              <h6>{{ $t('date of remove') }}</h6>
-              <DatePicker v-model="date" class="date-model" :placeholder="$t('Date Remove')" />
-            </div>
-            <div class="filter-action">
-              <button class="btn btn-cancel" @click="CloseFiletrDialog">{{ $t('Reset') }}</button>
-              <button class="btn btn-primary" @click="ApplayFilter">{{ $t('apply') }}</button>
-            </div>
+        <button class="btn btn-secondary" @click="visible = true">{{ $t('add_Supplier') }}</button>
+        <Dialog v-model:visible="visible"
+          :pt="{ root: 'filter-dialog', header: 'dialog-header', content: 'dialog-body', }" modal
+          :style="{ width: '45rem' }">
+          <template #header>
+            <h6> {{ $t('add_Supplier') }}</h6>
           </template>
-        </FilterDialog> -->
-        <!-- <router-link :to="formRoute" class="btn btn-secondary">
-          <IndexAddIcon />
-          <span>{{ isDraft ? $t('add_Supplier') : $t('continue_adding') }}</span>
-        </router-link> -->
+          <div class="all_inputs">
+            <div class="group">
 
-        <button class="btn btn-secondary" @click="visible = true" >{{ $t('add_Supplier') }}</button>
-        <Dialog v-model:visible="visible" modal :header="$t('add_Supplier')" :style="{ width: '45rem' }">
-    <!-- <span class="text-surface-500 dark:text-surface-400 block mb-8">{{ $t('Upload your Suppliers and fill in its details') }}</span>
-    <div class="flex items-center gap-4 mb-4">
-        <label for="username" class="font-semibold w-24">{{ $t('Supplier') }}</label>
-        <InputText id="username" class="flex-auto" autocomplete="off" />
-    </div>
-    <div class="flex items-center gap-4 mb-8">
-        <label for="email" class="font-semibold w-24">Email</label>
-        <InputText id="email" class="flex-auto" autocomplete="off" />
-    </div>
-    <div class="flex justify-end gap-2">
-        <Button type="button" label="Cancel" severity="secondary" @click="visible = false"></Button>
-        <Button type="button" label="Save" @click="visible = false"></Button>
-    </div> -->
-    <div class="all_inputs"> 
-      <div class="group">
-        <div class="form_group">
-          <label for="Supplier">{{ $t('Supplier Name') }}</label>
-          <input v-model="supplier" type="text" >
-        </div>
-        <div class="form_group">
-          <label for="Phone">{{ $t('Specialization') }}</label>
-          <input v-model="Specialization" type="text">
-        </div>
-      </div>
-       <div class="group">
-
-         <div class="form_group">
-           <label for="materials">{{ $t('phone') }}</label>
-           <input v-model="phone" type="text">
-         </div>
-         <div class="form_group">
-           <label for="spacification">{{ $t('Related material') }}</label>
-           <input v-model="materials" type="text">
-         </div>
-       </div>
-    </div>
-</Dialog>
+              <div class="field-group col-span-2">
+                <label class="field-label" for="name">{{ $t(`question title`) }}</label>
+                <div class="input-wrap">
+                  <input id="title" v-model="title" type="text" placeholder="Enter question title" class="field-input"
+                    @input="updateData" />
+                </div>
+              </div>
+              <div class="field-group">
+                <UpdatedCustomInputSelect id="doc-branch" :label="`Specialization`" :static-options="branchOptions"
+                  v-model="Specialization" :placeholder="$t('Enter subject name')" :reload="true"
+                  @update:model-value="handleBranchChange($event)" />
+              </div>
+            </div>
+            <div class="group">
+              <div class="field-group col-span-1 ref-number-group">
+                <label class="field-label" for="doc-ref">{{ $t('phone') }}</label>
+                <div class="input-wrap">
+                  <input id="phone" v-model="phone" type="text" :placeholder="$t('enter_phone')" class="field-input"
+                    @input="updateData" />
+                </div>
+              </div>
+              <div class="field-group col-span-2">
+                <label class="field-label" for="name">{{ $t(`question title`) }}</label>
+                <div class="input-wrap">
+                  <input id="title" v-model="title" type="text" placeholder="Enter question title" class="field-input"
+                    @input="updateData" />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="save_button">
+            <button> {{ $t('Save') }}</button>
+          </div>
+        </Dialog>
       </div>
     </div>
 
@@ -260,21 +239,82 @@ const materials = ref('');
 </template>
 
 <style scoped>
-.p-dialog.filter-dialog{
-  
+.filter-dialog {
+  color: black;
 }
-.all_inputs{
-  .group{
+.field-group{
+  label{
+    color: black;
+    font-weight: 600;
+    font-family: "Medium";
+  color: var(--gray-5);
+  }
+}
+.input-wrap{
+  input{
+    width: 100%;
+  padding: 13px var(--md-size);
+  border: 1px solid var(--input-border-color) !important;
+  border-radius: var(--xl-size-3) !important;
+  font-size: var(--sm-size);
+  color: var(--Gray-6);
+  background: var(--BgWhite) !important;
+  outline: none;
+  transition: all .25s ease;
+  }
+}
+
+.save_button {
+  button {
+    background-color: #2563eb;
+    color: white;
+    padding: 1rem;
+    border-radius: var(--xl-size-3);
+  }
+}
+
+.dialog-header {
+  h6 {
+    color: black;
+    font-size: 18px;
+    font-weight: 600;
+  }
+}
+
+.p-dialog-title {
+  color: black !important;
+}
+
+.all_inputs {
+  .group {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
     margin-bottom: 1.5rem;
+    align-items: end;
   }
-.form_group{
-display: flex;
-flex-direction: column;
-gap: 1rem;
-}
+
+  .form_group {
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+
+    label {
+      color: black;
+    }
+
+    input {
+      width: 100%;
+      padding: var(--xs-size) var(--md-size);
+      border: 1px solid var(--input-border-color) !important;
+      border-radius: var(--xl-size-3) !important;
+      font-size: var(--sm-size);
+      color: var(--Gray-6);
+      background: var(--BgWhite) !important;
+      outline: none;
+      transition: all .25s ease;
+    }
+  }
 }
 
 
