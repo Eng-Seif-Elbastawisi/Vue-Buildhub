@@ -15,11 +15,11 @@ import { questionsRoutes } from './question';
 import { ArticlesRoutes } from './Articles';
 import { PackagesRoutes } from './package';
 import { SuppliersRoutes } from './Suppliers';
+import { BrandRoutes } from './brand';
 
 export const dashboardRoutes: RouteRecordRaw[] = [
   // ...countryRoutes,
   ...employeeRoutes,
-
   ...privacyRoutes,
   ...termsConditionsRoutes,
   ...stagesRoutes,
@@ -34,4 +34,5 @@ export const dashboardRoutes: RouteRecordRaw[] = [
   ...ArticlesRoutes,
   ...PackagesRoutes,
   ...SuppliersRoutes,
+  ...BrandRoutes,
 ];

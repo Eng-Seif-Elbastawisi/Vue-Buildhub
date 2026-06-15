@@ -1,18 +1,18 @@
 // Models
-export { default as SuppliersModel } from "./core/models/brand.model";
+export { default as BrandModel } from "./core/models/brand.model";
 
 // Params
-export { default as AddSuppliersParams } from "./core/params/add.Suppliers.params";
-export { default as EditSuppliersParams } from "./core/params/edit.Suppliers.params";
-export { default as DeleteSuppliersParams } from "./core/params/delete.Suppliers.params";
-export { default as ShowSuppliersParams } from "./core/params/show.Suppliers.params";
-export { default as IndexSuppliersParams } from "./core/params/index.Suppliers.params";
+export { default as AddBrandParams } from "./core/params/add.brand.params";
+export { default as EditBrandParams } from "./core/params/edit.brand.params";
+export { default as DeleteBrandParams } from "./core/params/delete.brand.params";
+export { default as ShowBrandParams } from "./core/params/show.brand.params";
+export { default as IndexBrandParams } from "./core/params/index.brand.params";
 
 // Repository
-export { default as SuppliersRepository } from "./data/repositories/Suppliers.repository";
+export { default as BrandRepository } from "./data/repositories/brand.repository";
 
 // Controller
-export { default as SuppliersController } from "./presentation/controllers/Suppliers.controller";
+export { default as BrandController } from "./presentation/controllers/brand.controller";
 
 // API Service
-export { default as SuppliersApiService } from "./data/api/Suppliers.api-service";
+export { default as BrandApiService } from "./data/api/brand.api-service";
