@@ -5,13 +5,14 @@
   import Pagination from '@/shared/HelpersComponents/Pagination.vue';
   import { useRoute, useRouter } from 'vue-router';
   import { debounce } from '@/base/Presentation/Utils/debouced';
-  import { useFormsStore } from '@/stores/formsStore';
   import DeleteDialog from '@/shared/HelpersComponents/dialog/DeleteDialog.vue';
   import IndexStageParams from '../../core/params/index.stage.params';
   import StageController from '../controllers/stage.controller';
   import DeleteStageParams from '../../core/params/delete.stage.params';
   import type StageModel from '../../core/models/stage.model'; // eslint-disable-line @typescript-eslint/no-unused-vars
-  import { EducationType } from '../../core/constants/educationtype.enum';
+  import StageAdd from './StageAdd.vue';
+  import ShowStageParams from '../../core/params/show.stage.params';
+import StageEdit from './StageEdit.vue';
 
   // Controller instance
   const controller = StageController.getInstance();
@@ -20,10 +21,7 @@
   const route = useRoute();
 
   // Table headers
-  const headers: TableHeader[] = [
-    { key: 'title', label: 'Title', width: '50%', sortable: true },
-    { key: 'EducationType', label: 'Education Type', width: '50%' },
-  ];
+  const headers: TableHeader[] = [{ key: 'title', label: 'Title', width: '95%', sortable: true }];
 
   // Pagination state
   const perPage = ref(10);
@@ -63,7 +61,6 @@
     fetchStages(1);
   };
 
-  // Fetch emails on component mount
   onMounted(async () => {
     if (route.query.word) {
       word.value = String(route.query.word);
@@ -77,13 +74,8 @@
     await fetchStages();
   };
 
-  const FormStore = useFormsStore();
   const formRoute = computed(() => '/stages/add');
 
-  const isDraft = computed(() => {
-    const data = FormStore?.formData[formRoute.value] ?? {};
-    return Object.keys(data).length === 0 || Object.values(data).every((v) => v == null);
-  });
   const SelectedRow = ref<StageModel[]>([]);
   const setSelectef = (items: StageModel[]) => {
     SelectedRow.value = items;
@@ -94,21 +86,16 @@
       deleteCountry(item.id!);
     });
   };
+  const EditMode = ref(false);
 
-  const GetEducationType = (Type: EducationType) => {
-    switch (Type) {
-      case EducationType.General:
-        return 'General';
-      case EducationType.Technical:
-        return 'Technical';
-      default:
-        return 'Unknown';
-    }
+  const ShowStage = async (id: number) => {
+    await controller.fetchOne(new ShowStageParams(id));
+    EditMode.value = true;
   };
 </script>
 
 <template>
-  <div class="email-page">
+  <div class="stage-page">
     <div class="index-header">
       <div class="toolbar">
         <div class="search-field">
@@ -136,25 +123,12 @@
         </div>
       </div>
       <div class="flex gap-10">
-        <router-link :to="formRoute" class="btn-add">
-          <span>{{ isDraft ? 'Add Stage' : 'Continue Adding' }}</span>
-          <svg
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.5"
-            stroke-linecap="round"
-          >
-            <path d="M12 5v14M5 12h14" />
-          </svg>
-        </router-link>
         <button v-if="SelectedRow.length > 0" class="btn-add" @click="deleteSelected">
           <span>delete</span>
         </button>
       </div>
     </div>
+    <StageAdd  />
 
     <!-- ═══ Table ═══ -->
     <DataStatusBuilder :controller="state" :on-retry="async () => await fetchStages()">
@@ -173,16 +147,9 @@
               {{ item.title }}
             </template>
 
-            <template #cell-EducationType="{ item }">
-              {{ GetEducationType(item.EducationType.id as EducationType) }}
-            </template>
             <template #actions="{ item }">
               <div class="row-actions">
-                <router-link
-                  class="action-btn edit"
-                  :to="`/stages/edit/${item.id}`"
-                  title="Edit"
-                >
+                <button class="action-btn edit" title="Edit" @click="ShowStage(item.id!)">
                   <svg
                     width="15"
                     height="15"
@@ -196,7 +163,7 @@
                     <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
                     <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
                   </svg>
-                </router-link>
+                </button>
                 <DeleteDialog @delete="deleteCountry(item.id!)">
                   <template #Dialog>
                     <button class="action-btn delete" title="Delete">

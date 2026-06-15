@@ -3,7 +3,7 @@ import type { ControllerConfig } from '@/base/Presentation/Controller/baseContro
 import type { ApiCallOptions } from '@/base/Data/ApiService/baseApiService';
 import type Params from '@/base/Core/Params/params';
 import TitleInterface from '@/base/Data/Models/titleInterface';
-import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
+import { DataState, DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
 import router from '@/router';
 import { useFormsStore } from '@/stores/formsStore';
 import type StageModel from '../../core/models/stage.model';
@@ -74,6 +74,13 @@ export default class StageController extends BaseController<StageModel, StageMod
       if (formKey) {
         FormStore.clearFormData(formKey);
       }
+    }
+    return result;
+  }
+
+  async fetchOne(params: Params, options?: ApiCallOptions): Promise<DataState<StageModel>> {
+    const result = await super.fetchOne(params, { ...options, useStaticData: false });
+    if (result instanceof DataSuccess) {
     }
     return result;
   }

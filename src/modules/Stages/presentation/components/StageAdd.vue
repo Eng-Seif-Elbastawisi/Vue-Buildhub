@@ -7,21 +7,17 @@
   import StageController from '../controllers/stage.controller';
   import type AddStageParams from '../../core/params/add.stges.params';
 
-  // Controller instance
   const controller = StageController.getInstance();
   const route = useRoute();
   const formKey = route.fullPath;
-  // Form state
   const params = ref<AddStageParams | null>(null);
   const loading = ref(false);
-  /**
-   * Save (create or update) email
-   */
-  const saveEmail = async () => {
+
+  const saveStage = async () => {
     loading.value = true;
     try {
       if (!params.value) {
-        console.error('No email parameters to save');
+        console.error('No stage parameters to save');
         return;
       }
 
@@ -43,31 +39,45 @@
 
 <template>
   <div class="email-crud-example">
-    <StageForm :form-key="formKey" :email="controller.itemData.value!" :loading="loading" @update-data="updateData" />
+    <div class="email-form-card">
+      <StageForm
+        :form-key="formKey"
+        :email="controller.itemData.value!"
+        :loading="loading"
+        @update-data="updateData"
+      />
 
-    <div class="actions" :class="{ disabled: loading }">
-      <AppButton title="Save Email" size="sm" icon="right" type="submit" @click="saveEmail">
-        Save Country
+      <div class="actions" :class="{ disabled: loading }">
+        <AppButton title="Save Stage" size="sm" icon="right" type="submit" @click="saveStage">
+          Save Stage
 
-        <template #icon>
-          <IconAccept />
-        </template>
-      </AppButton>
-    </div>
+          <template #icon>
+            <IconAccept />
+          </template>
+        </AppButton>
+      </div>
 
-    <!-- Error Display -->
-    <div v-if="controller.errorMessage.value" class="error">
-      {{ controller.errorMessage.value }}
+      <!-- Error Display -->
+      <div v-if="controller.errorMessage.value" class="error">
+        {{ controller.errorMessage.value }}
+      </div>
     </div>
   </div>
 </template>
 
 <style scoped lang="scss">
+  .email-crud-example {
+    padding: 0;
+    padding-block: 20px;
+  }
   :deep(.input-file) {
     border: 1px solid var(--input-file-border) !important;
     padding: 11px;
     border-radius: 20px !important;
     cursor: pointer;
+  }
+  .actions {
+    padding: 0px 0 10px 20px;
   }
 
   .actions {
@@ -77,77 +87,4 @@
       opacity: 0.7;
     }
   }
-
-  /* .email-crud-example {
-    padding: 20px;
-    margin: 0 auto;
-  }
-
-  .email-list {
-    margin-bottom: 30px;
-  }
-
-  .email-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    border: 1px solid var(--crud-border);
-    border-radius: 4px;
-    margin-bottom: 10px;
-  }
-
-  .email-type {
-    color: var(--crud-muted-text);
-    font-size: 0.9em;
-  }
-
-  .actions {
-    display: flex;
-    gap: 10px;
-  }
-
-  .email-form {
-    padding: 20px;
-    border: 1px solid var(--border-weak);
-    border-radius: 4px;
-    background-color: var(--bg-section);
-  }
-
-  .email-form input,
-  .email-form select {
-    width: 100%;
-    padding: 8px;
-    margin-bottom: 10px;
-    border: 1px solid var(--border-weak);
-    border-radius: 4px;
-  }
-
-  .form-actions {
-    display: flex;
-    gap: 10px;
-  }
-
-  button {
-    padding: 8px 16px;
-    background-color: var(--btn-action-bg);
-    color: var(--BgWhite);
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-top: 10px;
-  }
-
-  button:hover {
-    background-color: var(--btn-action-hover);
-  }
-
-  .error {
-    margin-top: 20px;
-    padding: 10px;
-    background-color: var(--error-bg);
-    color: var(--error-text);
-    border: 1px solid var(--error-border);
-    border-radius: 4px;
-  } */
 </style>

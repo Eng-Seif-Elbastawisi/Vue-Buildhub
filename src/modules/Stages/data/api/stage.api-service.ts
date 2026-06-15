@@ -27,7 +27,5 @@ export default class StageApiService extends BaseApiService {
     };
   }
 
-  // executeCountryAction(params: Params): Promise<ApiResponse> {
-  //   return this.customPost(this.endpoints.create || "", params);
-  // }
+ 
 }

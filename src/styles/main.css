@@ -12775,10 +12775,21 @@ body::-webkit-scrollbar-thumb:hover {
 /* ── Core ──────────────────────────────────────────────────────── */
 .subject-cell {
   display: flex;
-  flex-direction: column;
-  gap: 3px;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: center;
+  gap: var(--xl-size-base);
   font-size: 13px;
   line-height: 1.5;
+}
+.subject-cell .parent-subject-curriculum {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: start;
+  gap: var(--xs-size-3);
 }
 .subject-cell .subject-curriculum {
   color: var(--gray-5, #888);
@@ -12816,6 +12827,750 @@ body::-webkit-scrollbar-thumb:hover {
   left: -20px;
   top: 20%;
   transform: translateY(-50%);
+}
+
+/* =============================================================================
+   MAIN STYLESHEET — Organized Import Hub
+   ============================================================================= */
+/* ── Core ──────────────────────────────────────────────────────── */
+.All_over_view {
+  background-color: var(--background-color-soft-light);
+  padding: var(--md-size);
+  border-radius: var(--xl-size-base);
+}
+.All_over_view .buttons {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: start;
+  align-items: center;
+  gap: var(--xs-size-2);
+}
+.All_over_view .form-header .btn-action {
+  background-color: var(--input-border-color);
+  color: rgb(26, 26, 26);
+  border: none;
+  border-radius: var(--xl-size-3);
+}
+.All_over_view .form-header .btn-delet {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid var(--input-border-color);
+}
+.All_over_view .form-header .btn-edit {
+  background: white;
+  border: 1px solid var(--primary-green);
+  color: var(--primary-green);
+  border-radius: var(--xl-size-3);
+}
+.All_over_view .form-header .btn-edit:hover {
+  background-color: var(--primary-green) !important;
+  color: white !important;
+}
+.All_over_view .form-header .btn-edit:hover :deep(svg) {
+  color: white;
+}
+.All_over_view .form-header .btn-edit:hover :deep(path) {
+  stroke: white;
+}
+.All_over_view .form-header .header-text {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: start;
+  align-items: center;
+  gap: var(--xs-size-3);
+}
+.All_over_view .form-header .header-text h6 {
+  font-family: "medium";
+  font-size: var(--xl-size-base);
+  color: var(--title-color);
+  font-weight: 600;
+}
+.All_over_view .cards_details {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: var(--md-size);
+}
+.All_over_view .cards_details .card_one {
+  border: 1px solid var(--input-border-color);
+  background-color: var(--bg-header);
+  border-radius: var(--xl-size-base);
+  padding: var(--md-size);
+  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.06);
+}
+.All_over_view .cards_details .card_one .details {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: start;
+  align-items: center;
+  gap: var(--xl-size-1);
+}
+.All_over_view .cards_details .card_one .head {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: start;
+  align-items: center;
+  gap: var(--xs-size-4);
+}
+.All_over_view .cards_details .card_one .head h6 {
+  color: var(--bread-crumb-color-span);
+  font-family: "medium";
+  font-size: var(--sm-size);
+  font-weight: 500;
+}
+.All_over_view .cards_details .card_one .head p {
+  font-family: "medium";
+  font-size: var(--sm-size);
+  font-weight: 500;
+  color: var(--blue-opacit);
+}
+.All_over_view .cards_details .card_one .head .title {
+  font-family: "bold";
+  font-size: var(--xl-size-1);
+  font-weight: 700;
+  color: var(--table-header-color);
+  margin: var(--xs-size-4) 0;
+}
+.All_over_view .cards_details .card_one .head .description {
+  font-family: "medium";
+  font-size: var(--md-size);
+  font-weight: 500;
+  color: var(--table-data-color);
+  margin-bottom: var(--xs-size-4);
+}
+.All_over_view .cards_details .card_one .head .question {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: start;
+  align-items: center;
+  gap: var(--xs-size-4);
+}
+.All_over_view .cards_details .card_one .head .number_of_questions {
+  color: var(--primary-green);
+  background-color: var(--PrimaryColor-alpha-10);
+  padding: var(--xs-size-5) var(--xs-size-4);
+  border-radius: var(--xs-size-4);
+  font-family: "bold";
+  font-size: var(--md-size);
+  font-weight: 700;
+}
+.All_over_view .cards_details .card_two {
+  border: 1px solid var(--input-border-color);
+  background-color: var(--bg-header);
+  border-radius: var(--xl-size-base);
+  padding: var(--md-size);
+  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.06);
+}
+.All_over_view .cards_details .card_two .title h6 {
+  font-family: "medium";
+  font-size: var(--xl-size-base);
+  color: var(--bread-crumb-color-span);
+  font-weight: 500;
+}
+.All_over_view .cards_details .card_two .Subjects {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: left;
+  align-items: center;
+  gap: var(--xl-size-base);
+}
+.All_over_view .cards_details .card_two .Subjects .sub_subject {
+  color: var(--primary-green);
+  font-family: "bold";
+  font-size: var(--sm-size);
+  color: var(--primary-green);
+  font-weight: 700;
+}
+.All_over_view .cards_details .card_two .Subjects .contant {
+  padding: var(--xs-size);
+}
+.All_over_view .cards_details .card_two .Subjects .contant .govermental {
+  position: relative;
+  margin: var(--xs-size-2) 0;
+}
+.All_over_view .cards_details .card_two .Subjects .contant .govermental p {
+  font-family: "medium";
+  font-size: var(--xs-size);
+  color: var(--table-data-color);
+  font-weight: 400;
+}
+.All_over_view .cards_details .card_two .Subjects .contant .govermental .arrow-icon {
+  position: absolute;
+  top: 130%;
+  left: -35%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+}
+.All_over_view .cards_details .card_two .source {
+  border-top: 1px solid var(--input-border-color);
+  padding-top: var(--xs-size);
+}
+.All_over_view .cards_details .card_two .source .title {
+  margin-bottom: var(--xs-size-4);
+}
+.All_over_view .cards_details .card_two .source .title h6 {
+  font-family: "medium";
+  font-size: var(--sm-size);
+  color: var(--bread-crumb-color-span);
+  font-weight: 600;
+}
+.All_over_view .cards_details .card_two .source .artical_document {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: start;
+  align-items: center;
+  position: relative;
+  margin-bottom: var(--xs-size-3);
+  padding: 0 var(--xs-size);
+}
+.All_over_view .cards_details .card_two .source .artical_document .arrow-icon {
+  position: absolute;
+  top: 25px;
+  left: 8px;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+}
+.All_over_view .cards_details .card_two .source .artical_document h6 {
+  font-family: "medium";
+  font-size: var(--xs-size);
+  color: var(--bread-crumb-color-span);
+  font-weight: 500;
+}
+.All_over_view .cards_details .card_two .source .artical_document p {
+  font-family: "medium";
+  font-size: var(--xs-size);
+  color: var(--table-data-color);
+  font-weight: 600;
+}
+
+/* =============================================================================
+   MAIN STYLESHEET — Organized Import Hub
+   ============================================================================= */
+/* ── Core ──────────────────────────────────────────────────────── */
+.article-solution-steps-explain {
+  border: 1px solid var(--PrimaryColor);
+  border-radius: 50px;
+  padding: 10px !important;
+  margin-block: 20px !important;
+}
+.article-solution-steps-explain.active {
+  border-radius: 12px;
+}
+.article-solution-steps-explain .p-accordionheader {
+  padding: 5px 0 !important;
+}
+.article-solution-steps-explain .p-accordioncontent-content {
+  padding: 10px !important;
+}
+
+.article-details-form-card {
+  margin-block: 20px !important;
+}
+.article-details-form-card .article-solution-steps-header {
+  position: relative;
+  width: 100%;
+}
+.article-details-form-card .toggll-container {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+.article-details-form-card .dashed-border {
+  width: 85%;
+  height: 1px;
+  border-bottom: 1px dashed #d0d0d0;
+  position: absolute;
+  right: 0;
+  bottom: 10px;
+}
+.article-details-form-card .article-solution-steps-header {
+  gap: 5px;
+  margin-bottom: var(--xl-size-1);
+}
+.article-details-form-card .form-header {
+  padding-left: 0 !important;
+}
+.article-details-form-card .field-group {
+  margin-bottom: var(--xl-size-base);
+}
+.article-details-form-card .input {
+  margin-bottom: var(--xl-size-base);
+}
+.article-details-form-card .field-label {
+  font-size: var(--md-size);
+  color: var(--title-header-color) !important;
+  text-transform: none;
+  font-weight: 600 !important;
+  font-family: "medium";
+}
+.article-details-form-card .input-label {
+  font-size: var(--md-size);
+  color: var(--title-header-color) !important;
+  text-transform: none;
+  font-weight: 600 !important;
+  font-family: "medium";
+}
+.article-details-form-card .document-tab .form-group-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--md-size);
+}
+.article-details-form-card .document-tab .field-input {
+  width: 100%;
+  background-color: transparent;
+  border-radius: 50px;
+}
+.article-details-form-card.active {
+  border-radius: 12px;
+}
+.article-details-form-card .p-accordionheader {
+  padding: 5px 0 !important;
+}
+.article-details-form-card .p-accordioncontent-content {
+  padding: 0 !important;
+}
+.article-details-form-card .article-clarification-header {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  color: var(--PrimaryColor);
+  padding: 0 !important;
+}
+.article-details-form-card .form-group {
+  padding: 0;
+}
+.article-details-form-card .input-wrapper {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-items: stretch;
+  gap: 5px;
+  width: 100%;
+  padding: 0 !important;
+}
+.article-details-form-card .input-wrapper .description-container {
+  width: 100%;
+  border: 1px solid #e6e6e6;
+  border-radius: 12px;
+  margin-bottom: var(--xl-size-base);
+}
+.article-details-form-card .input-wrapper .description-container .description-header {
+  background-color: #e6e6e6;
+  width: 100%;
+  border-radius: 12px 12px 0 0;
+  padding: 10px;
+  color: #000000;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: center;
+}
+.article-details-form-card .input-wrapper .description-container textarea {
+  background-color: white !important;
+  padding: 10px;
+  border: 1px solid #848484;
+  width: 100%;
+  border: none;
+}
+.article-details-form-card .input-wrapper .description-container textarea:active, .article-details-form-card .input-wrapper .description-container textarea:focus {
+  border: none;
+  outline: none;
+  box-shadow: none;
+  border: none;
+}
+.article-details-form-card .image-input :deep(.upload-area) {
+  padding: 10px !important;
+  border-radius: 50px;
+  background-color: white;
+}
+.article-details-form-card .image-input .upload-attachment-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 10px;
+}
+.article-details-form-card .image-input .upload-attachment-container .upload-attachment {
+  color: var(--PrimaryColor);
+}
+
+.article-solution-steps-header-explain {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  color: var(--PrimaryColor);
+  padding: 0 !important;
+}
+
+/* =============================================================================
+   MAIN STYLESHEET — Organized Import Hub
+   ============================================================================= */
+/* ── Core ──────────────────────────────────────────────────────── */
+.Analysis_Report {
+  background-color: var(--background-color-soft-light);
+  padding: var(--md-size);
+  border-radius: var(--xl-size-base);
+  margin: var(--md-size) 0;
+}
+.Analysis_Report .fillter_contant {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--xs-size-3);
+  margin-bottom: var(--xl-size-base);
+}
+.Analysis_Report .fillter_contant .contant {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: start;
+  align-items: start;
+  gap: var(--xs-size-3);
+}
+.Analysis_Report .fillter_contant .contant h6 {
+  font-family: "medium";
+  font-size: var(--md-size-2);
+  color: var(--color-gray-soft-1);
+  font-weight: 600;
+}
+.Analysis_Report .fillter_contant .contant p {
+  font-family: "medium";
+  font-size: var(--md-size);
+  color: var(--title-header-color);
+  font-weight: 500;
+  margin: var(--xs-size-3) 0 0 0;
+}
+.Analysis_Report .cards_Exams {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--xs-size-3);
+}
+.Analysis_Report .cards_Exams .items-card {
+  background-color: var(--bg-main);
+  border-radius: var(--xl-size-base);
+  border: 1px solid var(--input-border-color);
+  padding: var(--xs-size-3) var(--md-size);
+}
+.Analysis_Report .cards_Exams .items-card .card {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--xs-size-3);
+}
+.Analysis_Report .cards_Exams .items-card .card .title_value h6 {
+  font-family: "medium";
+  font-size: var(--sm-size);
+  color: var(--title-header-color);
+  font-weight: 500;
+}
+.Analysis_Report .cards_Exams .items-card .card .title_value p {
+  font-family: "medium";
+  font-size: var(--md-size);
+  color: var(--color-gray-soft-1);
+  font-weight: 600;
+}
+.Analysis_Report .cards_Exams .items-card .card .imge {
+  width: 55px;
+  height: 55px;
+}
+.Analysis_Report .cards_Exams .items-card .card .imge img {
+  width: 100%;
+  height: 100%;
+  -o-object-fit: contain;
+     object-fit: contain;
+}
+.Analysis_Report .cards_Exams .items-card .progress {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--xs-size-3);
+}
+.Analysis_Report .cards_Exams .items-card .progress .p-progressbar-determinate {
+  width: 100%;
+}
+.Analysis_Report .cards_Exams .progress-card {
+  background-color: rgb(255, 247, 230);
+}
+.Analysis_Report .cards_Exams .progress-card .p-progressbar-determinate {
+  background-color: white !important;
+}
+.Analysis_Report .cards_Exams .progress-card .title_value p {
+  color: rgb(217, 145, 0) !important;
+}
+.Analysis_Report .cards_Exams .progress-card .progress p {
+  font-family: "medium";
+  font-size: var(--xs-size);
+  color: var(--color-gray-soft-1);
+  font-weight: 600;
+}
+
+/* =============================================================================
+   MAIN STYLESHEET — Organized Import Hub
+   ============================================================================= */
+/* ── Core ──────────────────────────────────────────────────────── */
+.article_question {
+  background-color: var(--gray-soft);
+  padding: var(--md-size);
+  border-radius: var(--xl-size-base);
+}
+.article_question .form-header {
+  background-color: var(--color-light-gray);
+  padding: var(--xs-size-5);
+  border-radius: var(--md-size) var(--xs-size-3);
+  margin-bottom: var(--xl-size-1);
+}
+.article_question .form-header .header-text {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: start;
+  align-items: center;
+  gap: var(--xs-size-3);
+}
+.article_question .form-header .header-text h6 {
+  font-family: "medium";
+  font-size: var(--md-size-2);
+  color: #303030;
+  font-weight: 600;
+}
+.article_question .form-header .header-text p {
+  font-family: "medium";
+  font-size: var(--md-size);
+  color: var(--gray-5);
+  font-weight: 500;
+  margin: var(--xs-size-3) 0 0 0;
+}
+.article_question .form-header .btn-add-question .btn-add {
+  background-color: var(--PrimaryColor);
+  color: var(--bg-main);
+  border-radius: var(--xl-size-3);
+}
+.article_question .form-header .btn-add-question .btn-add:hover {
+  background-color: var(--bg-main);
+  color: var(--PrimaryColor);
+}
+.article_question .fillters-search {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: end;
+  gap: var(--md-size);
+}
+@media (max-width: 1200px) {
+  .article_question .fillters-search {
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+}
+.article_question .fillters-search .fillters {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: end;
+  align-items: center;
+  gap: var(--xs-size-3);
+  width: 100%;
+}
+@media (max-width: 1000px) {
+  .article_question .fillters-search .fillters {
+    flex-wrap: wrap;
+  }
+}
+@media (max-width: 1200px) {
+  .article_question .fillters-search .fillters .input-select {
+    width: 100%;
+  }
+}
+
+/* =============================================================================
+   MAIN STYLESHEET — Organized Import Hub
+   ============================================================================= */
+/* ── Core ──────────────────────────────────────────────────────── */
+.question_card .num-question {
+  background-color: var(--bg-main);
+  padding: var(--md-size) var(--xs-size);
+  border-radius: var(--xl-size-base);
+  margin: var(--xl-size-1) 0;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+.question_card .num-question .contant-card .header-card {
+  border-bottom: 1px dashed #d0d0d0;
+  padding-bottom: var(--xs-size-3);
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--xl-size-1);
+}
+.question_card .num-question .contant-card .header-card .title h6 {
+  font-size: var(--md-size-2);
+  font-family: "medium";
+  font-weight: 600;
+  color: #303030;
+}
+.question_card .num-question .contant-card .header-card .actions icon {
+  cursor: pointer;
+}
+.question_card .num-question .types-date {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--xs-size-3);
+}
+.question_card .num-question .types-date .date .label {
+  color: var(--second-text);
+  font-family: "medium";
+  font-weight: 500;
+  font-size: var(--sm-size);
+}
+.question_card .num-question .types-date .date .value {
+  color: var(--gray-5);
+  font-family: "medium";
+  font-weight: 500;
+  font-size: var(--sm-size);
+}
+.question_card .num-question .types-date .type {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: end;
+  align-items: center;
+  gap: var(--xs-size-3);
+}
+.question_card .num-question .types-date .type .value {
+  padding: var(--xs-size-5) var(--xl-size-1);
+  border-radius: var(--xl-size-3);
+  font-size: var(--md-size);
+  font-family: "medium";
+  font-weight: 500;
+}
+.question_card .num-question .types-date .type .easy {
+  background-color: #e9f9ee;
+  color: #18a957;
+  border: 1px solid #b7e9c9;
+}
+.question_card .num-question .types-date .type .medium {
+  background-color: rgb(255, 247, 230);
+  color: rgb(217, 145, 0);
+  border: 1px solid rgb(242, 213, 156);
+}
+.question_card .num-question .types-date .type .hard {
+  background-color: var(--background-btn-outline-color);
+  color: var(--btn-red);
+  border: 1px solid rgb(245, 194, 192);
+}
+.question_card .num-question .types-date .type .value-status {
+  padding: var(--xs-size-5) var(--xl-size-1);
+  border-radius: var(--xl-size-3);
+  font-size: var(--md-size);
+  font-family: "medium";
+  font-weight: 500;
+  border: 1px solid rgba(97, 85, 245, 0.1019607843);
+  background-color: rgba(97, 85, 245, 0.1019607843);
+  color: #6155f5;
+}
+.question_card .num-question .question_text {
+  margin: var(--xs-size-2) 0;
+}
+.question_card .num-question .question_text p {
+  color: var(--standard-black);
+  font-family: "bold";
+  font-weight: 700;
+  font-size: var(--xl-size-1);
+}
+.question_card .num-question .all_answers {
+  border: 1px solid var(--border-color);
+  border-radius: var(--xl-size-1);
+  padding: var(--md-size);
+}
+.question_card .num-question .all_answers .answer {
+  display: grid;
+  grid-template-columns: 5fr 1fr;
+  gap: var(--md-size);
+  margin-bottom: var(--xs-size-2);
+}
+.question_card .num-question .all_answers .answer .imge-text {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  gap: var(--md-size);
+}
+.question_card .num-question .all_answers .answer .imge-text .text .label {
+  font-size: var(--sm-size);
+  font-family: "medium";
+  font-weight: 500;
+  color: var(--second-text);
+}
+.question_card .num-question .all_answers .answer .imge-text .text .answer_text {
+  font-size: var(--md-size);
+  font-family: "medium";
+  font-weight: 500;
+  color: var(--Gray-6);
+}
+.question_card .num-question .all_answers .answer .imge-text .imge {
+  width: 70px;
+  height: 60px;
+}
+.question_card .num-question .all_answers .answer .imge-text .imge img {
+  width: 100%;
+  height: 100%;
+  -o-object-fit: contain;
+     object-fit: contain;
+}
+.question_card .num-question .all_answers .answer .count-answer {
+  text-align: center;
+  background-color: var(--gray-soft);
+  border-radius: var(--xs-size-3);
+  margin: auto;
+  padding: var(--xs-size);
+  width: 100%;
+}
+.question_card .num-question .all_answers .answer .count-answer .corret {
+  font-size: var(--md-size);
+  font-family: "bold";
+  font-weight: 700;
+  color: var(--standard-black);
+}
+.question_card .num-question .all_answers .answer .count-answer .student {
+  font-size: var(--xs-size);
+  font-family: "medium";
+  font-weight: 500;
+  color: var(--gray-5);
 }
 
 /* ── Pages ─────────────────────────────────────────────────────── */
@@ -13902,6 +14657,83 @@ body::-webkit-scrollbar-thumb:hover {
 }
 
 /* =============================================================================
+   MAIN STYLESHEET — Organized Import Hub
+   ============================================================================= */
+/* ── Core ──────────────────────────────────────────────────────── */
+.stage-page {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: var(--xl-size-1);
+}
+.stage-page .email-crud-example {
+  margin: 0;
+  width: 100%;
+}
+.stage-page .index-header {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--md-size);
+}
+.stage-page .index-header .search-input::-moz-placeholder {
+  font-family: "Medium";
+}
+.stage-page .index-header .search-input::placeholder {
+  font-family: "Medium";
+}
+.stage-page .index-header .btns-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-items: center;
+  gap: var(--xs-size-4);
+}
+.stage-page .row-actions {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: center;
+  gap: var(--xs-size-3);
+}
+.stage-page .action-btn {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: center;
+  width: calc(var(--xl-size-2) + 2px);
+  height: calc(var(--xl-size-2) + 2px);
+  border-radius: var(--xs-size-2);
+  border: 1px solid var(--border-weak);
+  background: var(--white);
+  color: var(--gray-500);
+  transition: all 0.2s ease;
+}
+.stage-page .action-btn:hover {
+  transform: translateY(-1px);
+}
+.stage-page .action-btn.edit:hover {
+  border-color: var(--PrimaryColor);
+  color: var(--PrimaryColor);
+}
+.stage-page .action-btn.show:hover {
+  border-color: var(--info-dark) !important;
+  color: var(--info-dark) !important;
+}
+.stage-page .action-btn.delete:hover {
+  border-color: var(--Red);
+  color: var(--Red);
+}
+
+/* =============================================================================
    GLOBAL OVERRIDES & BASE STYLES
    ============================================================================= */
 html {
@@ -13950,10 +14782,6 @@ body div {
 .p-accordionpanel:not(.p-disabled).p-accordionpanel-active > .p-accordionheader,
 .p-accordionpanel:not(.p-accordionpanel-active, .p-disabled) > .p-accordionheader:hover {
   color: var(--PrimaryColor) !important;
-}
-.p-accordionpanel:not(.p-disabled).p-accordionpanel-active > .p-accordionheader svg path,
-.p-accordionpanel:not(.p-accordionpanel-active, .p-disabled) > .p-accordionheader:hover svg path {
-  fill: var(--PrimaryColor) !important;
 }
 
 /* ── PrimeVue Toggle Switch ───────────────────────────────────── */

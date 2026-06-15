@@ -69,6 +69,8 @@
 @use 'GlobalStyles/import';
 // helpers components styles
 @use '../shared/HelpersComponents/FilterDialog/styles/filter_dialog';
+@use '../modules/Stages/presentation/styles/stages_imports';
+
 /* =============================================================================
    GLOBAL OVERRIDES & BASE STYLES
    ============================================================================= */
