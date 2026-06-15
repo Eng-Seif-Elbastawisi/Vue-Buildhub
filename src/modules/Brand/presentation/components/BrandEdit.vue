@@ -2,11 +2,11 @@
 import { onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import IconAccept from '@/shared/icons/IconAccept.vue';
-import SuppliersController from '../controllers/Suppliers.controller.ts';
-import EditSuppliersParams from '../../core/params/edit.Suppliers.params.ts';
-import ShowSuppliersParams from '../../core/params/show.Suppliers.params.ts';
+import SuppliersController from '../controllers/brand.controller.ts';
+import EditSuppliersParams from '../../core/params/edit.brand.params.ts';
+import ShowSuppliersParams from '../../core/params/show.brand.params.ts';
 // import type AddSuppliersParams from '../../core/params/add.Suppliers.params.ts';
-import SuppliersForm from './SuppliersForm.vue';
+import SuppliersForm from './BrandForm.vue/index.js';
 
 const controller = SuppliersController.getInstance();
 const route = useRoute();
@@ -44,7 +44,8 @@ onMounted(async () => {
 
 <template>
   <div class="document-crud-example">
-    <SuppliersForm :Suppliers="controller.itemData.value!" :form-key="formKey" :loading="loading" @update-data="updateData" />
+    <SuppliersForm :Suppliers="controller.itemData.value!" :form-key="formKey" :loading="loading"
+      @update-data="updateData" />
 
     <!-- <div class="actions" :class="{ disabled: loading }">
       <AppButton

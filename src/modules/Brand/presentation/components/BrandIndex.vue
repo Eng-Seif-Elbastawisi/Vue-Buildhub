@@ -4,21 +4,19 @@ import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
 import AppTable, { type TableHeader } from '@/shared/HelpersComponents/AppTable.vue';
 import Pagination from '@/shared/HelpersComponents/Pagination.vue';
 import { useRoute, useRouter } from 'vue-router';
-import { debounce } from '@/base/Presentation/Utils/debouced';
-import { useFormsStore } from '@/stores/formsStore';
 import TableSkelaton from '@/shared/HelpersComponents/TableSkelaton.vue';
-import SuppliersController from '../controllers/Suppliers.controller.ts';
-import IndexSuppliersParams from '../../core/params/index.Suppliers.params.ts';
-import DeleteSuppliersParams from '../../core/params/delete.Suppliers.params.ts';
 import type SuppliersModel from '../../core/models/brand.model.ts';
 import DeleteDialog from '@/shared/HelpersComponents/dialog/DeleteDialog.vue';
 import IndexDelete from '@/shared/icons/DocaumentType/IndexDelete.vue';
 import Dialog from 'primevue/dialog';
-import MultiLangInput from '@/shared/MultiLangInput.vue';
 import UpdatedCustomInputSelect from '@/shared/FormInputs/UpdatedCustomInputSelect.vue';
+import BrandController from '../controllers/brand.controller.ts';
+import IndexBrandParams from '../../core/params/index.brand.params.ts';
+import DeleteBrandParams from '../../core/params/delete.brand.params.ts';
+import { EquipmentTypeEnum } from '../../core/constant/equipment.type.enum.ts';
 
 
-const controller = SuppliersController.getInstance();
+const controller = BrandController.getInstance();
 const state = computed(() => controller.listState.value);
 const router = useRouter();
 const route = useRoute();
@@ -26,30 +24,23 @@ const route = useRoute();
 
 
 const headers: TableHeader[] = [
-  { key: 'Suppliers', label: 'Suppliers', width: '30%', sortable: true },
-  { key: 'Specialization', label: 'Specialization', width: '30%' },
-  { key: 'phone', label: 'Phone', width: '20%' },
-  { key: 'materials', label: 'Materials', width: '20%' },
+  { key: 'title', label: 'title', width: '40%', sortable: true },
+  { key: 'equipment', label: 'equipment', width: '50%' },
 ];
 
 const perPage = ref(10);
 const word = ref('');
 
-const fetchSuppliers = async (
+const fetchBrand = async (
   page: number = 1,
   searchWord: string = '',
-  date?: string,
-  documentTypeId?: number,
 ) => {
-  // console.log(`vvvvvvvvvvvvvvvvv`, date, documentTypeId);
   await controller.fetchList(
-    new IndexSuppliersParams(
+    new IndexBrandParams(
       searchWord,
       route.query.page ? Number(route.query.page) : page,
       perPage.value,
       1,
-      date ? date : undefined,
-      documentTypeId ? documentTypeId : undefined,
     ),
   );
 };
@@ -66,7 +57,7 @@ const fetchSuppliers = async (
 // });
 
 const onPageChange = (page: number) => {
-  fetchSuppliers(page);
+  fetchBrand(page);
   router.push({
     query: { ...route.query, page: String(page), word: word.value },
   });
@@ -74,19 +65,19 @@ const onPageChange = (page: number) => {
 
 const onPerPageChange = (count: number) => {
   perPage.value = count;
-  fetchSuppliers(1);
+  fetchBrand(1);
 };
 
 onMounted(async () => {
   if (route.query.word) {
     word.value = String(route.query.word);
   }
-  await fetchSuppliers(route.query.page ? Number(route.query.page) : 1, word.value);
+  await fetchBrand(route.query.page ? Number(route.query.page) : 1, word.value);
 });
 
-const deleteSupplier = async (id: number) => {
-  await controller.delete(new DeleteSuppliersParams({ suppliers_id: id }));
-  await fetchSuppliers();
+const deleteBrand = async (id: number) => {
+  await controller.delete(new DeleteBrandParams({ brand_id: id }));
+  await fetchBrand();
 };
 
 // const FormStore = useFormsStore();
@@ -102,10 +93,14 @@ const deleteDialogMessage = ref(
 );
 
 const visible = ref(false);
-const supplierName = ref('');
-const Specialization = ref('');
-const phone = ref('');
-const materials = ref('');
+const title = ref('');
+const equipment = ref(null);
+const equipmentOptions = Object.entries(EquipmentTypeEnum).map(
+  ([title, id]) => ({
+    id,
+    title,
+  }),
+);
 </script>
 
 <template>
@@ -141,32 +136,16 @@ const materials = ref('');
             <div class="group">
 
               <div class="field-group col-span-2">
-                <label class="field-label" for="name">{{ $t(`question title`) }}</label>
+                <label class="field-label" for="name">{{ $t(`brand title`) }}</label>
                 <div class="input-wrap">
-                  <input id="title" v-model="title" type="text" placeholder="Enter question title" class="field-input"
+                  <input id="title" v-model="title" type="text" placeholder="Enter brand title" class="field-input"
                     @input="updateData" />
                 </div>
               </div>
               <div class="field-group">
-                <UpdatedCustomInputSelect id="doc-branch" :label="`Specialization`" :static-options="branchOptions"
-                  v-model="Specialization" :placeholder="$t('Enter subject name')" :reload="true"
-                  @update:model-value="handleBranchChange($event)" />
-              </div>
-            </div>
-            <div class="group">
-              <div class="field-group col-span-1 ref-number-group">
-                <label class="field-label" for="doc-ref">{{ $t('phone') }}</label>
-                <div class="input-wrap">
-                  <input id="phone" v-model="phone" type="text" :placeholder="$t('enter_phone')" class="field-input"
-                    @input="updateData" />
-                </div>
-              </div>
-              <div class="field-group col-span-2">
-                <label class="field-label" for="name">{{ $t(`question title`) }}</label>
-                <div class="input-wrap">
-                  <input id="title" v-model="title" type="text" placeholder="Enter question title" class="field-input"
-                    @input="updateData" />
-                </div>
+                <UpdatedCustomInputSelect id="doc-branch" :label="`Equipment type`"
+                    :static-options="equipmentOptions" v-model="equipment" :placeholder="$t('Enter equipment type')"
+                  :reload="true" @update:model-value="handleBranchChange($event)" />
               </div>
             </div>
           </div>
@@ -177,16 +156,16 @@ const materials = ref('');
       </div>
     </div>
 
-    <DataStatusBuilder :controller="state" :on-retry="async () => await fetchSuppliers()">
+    <DataStatusBuilder :controller="state" :on-retry="async () => await fetchBrand()">
       <template #success="{ data }">
         <div class="table-frame">
           <AppTable :headers="headers" :items="data as SuppliersModel[]" selectable show-index hoverable striped>
             <template #cell-Suppliers="{ item }">
-              {{ item.Suppliers ?? 'N/A' }}
+              {{ item.title ?? 'N/A' }}
             </template>
             <template #actions="{ item }">
               <div class="row-actions">
-                <router-link class="action-btn edit" :to="`/Suppliers/edit/${item.id}`" title="Edit">
+                <router-link class="action-btn edit" :to="`/Brand/edit/${item.id}`" title="Edit">
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                     stroke-linecap="round" stroke-linejoin="round">
                     <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
@@ -195,7 +174,7 @@ const materials = ref('');
                 </router-link>
 
                 <DeleteDialog :title="deleteDialogTitle" :message="deleteDialogMessage" :hasbtn="true"
-                  @delete="deleteSupplier(item.id!)">
+                  @delete="deleteBrand(item.id!)">
                   <template #btn>
                     <IndexDelete />
                   </template>

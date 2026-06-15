@@ -1,19 +1,20 @@
 import IndexParams from '@/base/Core/Params/indexParams';
+import { EquipmentTypeEnum } from '../constant/equipment.type.enum';
 
-export default class IndexSuppliersParams extends IndexParams {
+export default class IndexBrandParams extends IndexParams {
   dateRemove: string | null | undefined;
-  supplierTypeId: number | null | undefined;
+  equipmentType: EquipmentTypeEnum | null | undefined;
   constructor(
     word: string = '',
     pageNumber: number = 1,
     perPage: number = 10,
     withPage: number = 1,
     dateRemove?: string | null,
-    supplierTypeId?: number | null,
+    equipmentType?: EquipmentTypeEnum | null,
   ) {
     super(word, pageNumber, perPage, withPage);
     this.dateRemove = dateRemove;
-    this.supplierTypeId = supplierTypeId;
+    this.equipmentType = equipmentType;
   }
 
   toMap(): Record<string, string | number | number[] | null> {
@@ -21,8 +22,8 @@ export default class IndexSuppliersParams extends IndexParams {
     if (this.dateRemove) {
       data['date_remove'] = this.dateRemove;
     }
-    if (this.supplierTypeId) {
-      data['supplier_type_id'] = this.supplierTypeId;
+    if (this.equipmentType) {
+      data['equipment_type'] = this.equipmentType;
     }
 
     return data;

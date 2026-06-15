@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useRoute } from 'vue-router';
-import SuppliersController from '../controllers/Suppliers.controller.ts';
-import SuppliersForm from './SuppliersForm.vue';
-import type AddSuppliersParams from '../../core/params/add.Suppliers.params.ts';
+import SuppliersController from '../controllers/brand.controller.ts';
+import SuppliersForm from './BrandForm.vue/index.js';
+import type AddSuppliersParams from '../../core/params/add.brand.params.ts';
 
 const controller = SuppliersController.getInstance();
 const route = useRoute();

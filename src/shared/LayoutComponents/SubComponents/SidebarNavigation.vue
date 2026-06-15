@@ -146,6 +146,11 @@ const baseMenu: MenuSection[] = [
         name: 'suppliers',
         icon: ArticleIcon,
       },
+        {
+        link: '/brand',
+        name: 'brand',
+        icon: ArticleIcon,
+      },
     ],
   },
 ];

@@ -1,24 +1,17 @@
-import type TitleInterface from '@/base/Data/Models/titleInterface';
+import { EquipmentTypeEnum } from "../constant/equipment.type.enum";
 
 export default class SuppliersModel {
   public readonly id?: number;
-  public readonly Suppliers: string;
-  public readonly Specialization: string;
-  public readonly phone: string;
-  public readonly materials: string;
+  public readonly title: string;
+  public readonly equipment: EquipmentTypeEnum;
   constructor(data: {
     id?: number;
-    Suppliers: string;
-    Specialization: string;
-    phone: string;
-    materials: string;
+    title: string;
+    equipment: EquipmentTypeEnum;
   }) {
     this.id = data.id;
-    this.Suppliers = data.Suppliers;
-    this.Specialization = data.Specialization;
-    this.phone = data.phone;
-    this.materials = data.materials;
-
+    this.title = data.title;
+    this.equipment = data.equipment;
     Object.freeze(this);
   }
 
@@ -29,18 +22,14 @@ export default class SuppliersModel {
 
     return new SuppliersModel({
       id: json.id,
-      Suppliers: json.Suppliers,
-      Specialization: json.Specialization,
-      phone: json.phone,
-      materials: json.materials,
+      title: json.title,
+      equipment: json.equipment,
     });
   }
 
   static example: SuppliersModel = new SuppliersModel({
     id: 10,
-    Suppliers: 'Geberit',
-    Specialization: ' سباكة ',
-    phone: '01112',
-    materials: 'القطاع المدنى-القطاع الصحى-القطاع الصناعى',
+    title: 'Geberit',
+    equipment: EquipmentTypeEnum.equipment,
   });
 }

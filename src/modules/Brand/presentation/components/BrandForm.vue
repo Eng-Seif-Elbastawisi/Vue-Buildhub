@@ -4,7 +4,7 @@ import { onBeforeRouteLeave } from 'vue-router';
 import { useFormsStore } from '@/stores/formsStore';
 import DocumentIcon from '@/shared/icons/DocaumentType/DocumentIcon.vue';
 import type SuppliersShowModel from '../../core/models/brand.show.model';
-import AddSuppliersParams from '../../core/params/add.Suppliers.params';
+import AddSuppliersParams from '../../core/params/add.brand.params';
 const emit = defineEmits(['updateData']);
 
 const { Suppliers, formKey, loading } = defineProps<{

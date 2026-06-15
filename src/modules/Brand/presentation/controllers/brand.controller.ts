@@ -5,19 +5,18 @@ import type { ApiCallOptions } from '@/base/Data/ApiService/baseApiService';
 import { DataSuccess, type DataState } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
 import router from '@/router';
 import { useFormsStore } from '@/stores/formsStore';
-import type SuppliersShowModel from '../../core/models/brand.show.model';
-import type ShowSuppliersParams from '../../core/params/show.Suppliers.params';
-import type SuppliersModel from '../../core/models/brand.model';
-import SuppliersRepository from '../../data/repositories/Suppliers.repository';
+import type BrandShowModel from '../../core/models/brand.show.model';
+import type BrandModel from '../../core/models/brand.model';
+import BrandRepository from '../../data/repositories/brand.repository';
 
-export default class SuppliersController extends BaseController<
-  SuppliersShowModel,
-  SuppliersModel[]
+export default class BrandController extends BaseController<
+  BrandShowModel,
+  BrandModel[]
 > {
-  private static instance: SuppliersController;
+  private static instance: BrandController;
 
   protected get repository() {
-    return SuppliersRepository.getInstance();
+    return BrandRepository.getInstance();
   }
 
   protected get config(): ControllerConfig {
@@ -36,11 +35,11 @@ export default class SuppliersController extends BaseController<
     super();
   }
 
-  static getInstance(): SuppliersController {
-    if (!SuppliersController.instance) {
-      SuppliersController.instance = new SuppliersController();
+  static getInstance(): BrandController {
+    if (!BrandController.instance) {
+      BrandController.instance = new BrandController();
     }
-    return SuppliersController.instance;
+    return BrandController.instance;
   }
 
   async create(params: Params, options?: ApiCallOptions, formKey?: string) {
@@ -49,7 +48,7 @@ export default class SuppliersController extends BaseController<
     const result = await super.create(params, { ...options, useJson: true });
 
     if (result instanceof DataSuccess) {
-      router.push({ name: 'Suppliers' });
+      router.push({ name: 'Brand' });
       if (formKey) FormStore.clearFormData(formKey);
     }
 
@@ -62,24 +61,24 @@ export default class SuppliersController extends BaseController<
     const result = await super.update(params, { ...options, useJson: true });
 
     if (result instanceof DataSuccess) {
-      router.push({ name: 'Suppliers' });
+      router.push({ name: 'Brand' });
       if (formKey) FormStore.clearFormData(formKey);
     }
 
     return result;
   }
 
-  async fetchList(params: Params, options?: ApiCallOptions): Promise<DataState<SuppliersModel[]>> {
+  async fetchList(params: Params, options?: ApiCallOptions): Promise<DataState<BrandModel[]>> {
     return await super.fetchList(params, { ...options, useJson: true });
   }
 
-  async fetchOne(params: Params, options?: ApiCallOptions) {
-    return await super.fetchOne(params, {
-      ...options,
-      useJson: true,
-      headers: {
-        'Accept-Language': (params as ShowSuppliersParams).allLocales ? '*' : 'en',
-      },
-    });
-  }
+  // async fetchOne(params: Params, options?: ApiCallOptions) {
+  //   return await super.fetchOne(params, {
+  //     ...options,
+  //     useJson: true,
+  //     headers: {
+  //       'Accept-Language': (params as ShowBrandParams).allLocales ? '*' : 'en',
+  //     },
+  //   });
+  // }
 }
