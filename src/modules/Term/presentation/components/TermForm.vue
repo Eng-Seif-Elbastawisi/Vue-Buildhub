@@ -4,8 +4,6 @@
   import EditTermParams from '../../core/params/edit.term.params';
   import type TermModel from '../../core/models/term.model';
   import UpdatedCustomInputSelect from '@/shared/FormInputs/UpdatedCustomInputSelect.vue';
-  import IndexStageParams from '@/modules/Stages/core/params/index.stage.params';
-  import StageController from '@/modules/Stages/presentation/controllers/stage.controller';
   import TitleInterface from '@/base/Data/Models/titleInterface';
   import IndexDepartmentParams from '@/modules/Department/core/params/index.department.params';
   import DepartmentController from '@/modules/Department/presentation/controllers/department.controller';

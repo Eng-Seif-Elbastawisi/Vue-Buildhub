@@ -6,7 +6,7 @@ import { createPinia, setActivePinia } from 'pinia';
 // Mock vue-router
 vi.mock('vue-router', () => ({
   useRoute: () => ({
-    path: '/employees',
+    path: '/organization/stages',
     params: {},
   }),
   useRouter: () => ({
@@ -27,7 +27,7 @@ describe('SidebarNavigation.vue', () => {
       plugins: [pinia],
       stubs: {
         'router-link': {
-          template: '<a><slot /></a>',
+          template: '<a v-bind="$attrs"><slot /></a>',
         },
         SettingIcon: true,
         DocumentIcon: true,
@@ -50,19 +50,17 @@ describe('SidebarNavigation.vue', () => {
     // Check for Overview group
     expect(wrapper.text()).toContain('Overview');
 
-    // Check for some menu items
-    expect(wrapper.text()).toContain('Employees');
-    expect(wrapper.text()).toContain('Documents');
-    expect(wrapper.text()).toContain('Countries');
+    expect(wrapper.text()).toContain('Stages');
+    expect(wrapper.text()).toContain('Departments');
+    expect(wrapper.text()).toContain('Terms');
   });
 
   it('applies active class based on current route', () => {
     const wrapper = mount(SidebarNavigation, mountOptions);
 
-    // According to our mock, path is '/employees'
     const activeLink = wrapper.find('a.active');
     expect(activeLink.exists()).toBe(true);
-    expect(activeLink.text()).toContain('Employees');
+    expect(activeLink.text()).toContain('Stages');
   });
 
   it('emits clickItem event when a menu item is clicked', async () => {
