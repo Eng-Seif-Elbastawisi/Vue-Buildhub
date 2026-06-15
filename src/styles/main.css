@@ -14793,6 +14793,42 @@ body::-webkit-scrollbar-thumb:hover {
 }
 
 /* =============================================================================
+   MAIN STYLESHEET — Organized Import Hub
+   ============================================================================= */
+/* ── Core ──────────────────────────────────────────────────────── */
+.department-page {
+  width: 100%;
+  background: var(--bg-main);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border-strong);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 8px 32px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+  position: relative;
+}
+.department-page::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.15), transparent);
+  pointer-events: none;
+}
+.department-page .form-fields {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 30px;
+}
+.department-page .form-fields .field-group {
+  width: 50%;
+}
+
+/* =============================================================================
    GLOBAL OVERRIDES & BASE STYLES
    ============================================================================= */
 html {

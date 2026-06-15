@@ -31,13 +31,18 @@
       group: 'Overview',
       items: [
         {
-          link: user?.isMaster ? '/organization/stages' : '/organization/stages',
+          link: user?.isMaster ? '/admin/stages' : '/organization/stages',
           name: 'Stages',
           icon: EducationClassificationIcon,
         },
         {
-          link: '/organization/departments',
+          link: user?.isMaster ? '/admin/departments' : '/organization/departments',
           name: 'Departments',
+          icon: EducationClassificationIcon,
+        },
+        {
+          link: user?.isMaster ? '/admin/terms' : '/organization/terms',
+          name: 'Terms',
           icon: EducationClassificationIcon,
         },
         // {

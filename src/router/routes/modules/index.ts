@@ -17,6 +17,7 @@ import { PackagesRoutes } from './package';
 import { SuppliersRoutes } from './Suppliers';
 import { BrandRoutes } from './brand';
 import { departmentRoutes } from './department';
+import { termRoutes } from './term';
 
 export const dashboardRoutes: RouteRecordRaw[] = [
   // ...countryRoutes,
@@ -37,4 +38,5 @@ export const dashboardRoutes: RouteRecordRaw[] = [
   ...SuppliersRoutes,
   ...BrandRoutes,
   ...departmentRoutes,
+  ...termRoutes,
 ];
