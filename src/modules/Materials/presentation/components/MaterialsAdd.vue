@@ -1,49 +1,35 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { useRoute } from 'vue-router';
-import BrandController from '../controllers/materials.controller.ts';
-import type AddBrandParams from '../../core/params/add.materials.params.ts';
-import BrandForm from './MaterialsForm.vue/index.js';
+  import { ref } from 'vue';
+  import { useRoute } from 'vue-router';
+  import type AddMaterialsParams from '../../core/params/add.materials.params';
+  import MaterialController from '../controllers/materials.controller';
+  import MaterialsForm from './MaterialsForm.vue';
 
-const controller = BrandController.getInstance();
-const route = useRoute();
-const formKey = route.fullPath;
+  const controller = MaterialController.getInstance();
+  const route = useRoute();
+  const formKey = route.fullPath;
+  const params = ref<AddMaterialsParams | null>(null);
+  const loading = ref(false);
 
-const params = ref<AddBrandParams | null>(null);
-const loading = ref(false);
-
-const saveBrand = async () => {
-  if (!params.value) return;
-  loading.value = true;
-  try {
-    console.log(params, 'params');
-    await controller.create(params.value, undefined, formKey);
-  } finally {
-    loading.value = false;
-  }
-};
-
-const updateData = (updatedParams: AddBrandParams) => {
-  params.value = updatedParams;
-};
+  const saveMaterial = async () => {
+    if (!params.value) return;
+    loading.value = true;
+    try {
+      await controller.create(params.value, undefined, formKey);
+    } finally {
+      loading.value = false;
+    }
+  };
 </script>
 
 <template>
-  <div class="document-crud-example">
-    <BrandForm :form-key="formKey" :loading="loading" @update-data="updateData" />
+  <div class="material-crud-page">
+    <MaterialsForm :form-key="formKey" :loading="loading" @update-data="params = $event" />
 
-    <!-- <AppButton :title="$t('save_document')" size="sm" icon="right" type="submit" @click="saveDocument">
-      {{ $t('save_document') }}
-      <template #icon>
-        <IconAccept />
-      </template>
-</AppButton> -->
     <div class="actions" :class="{ disabled: loading }">
-      <button class="btn btn-primary w-full" type="submit" @click="saveBrand">
+      <button class="btn btn-primary w-full" type="button" @click="saveMaterial">
         <span v-if="loading" class="loader"></span>
-        <span v-else>
-          {{ $t('save_brand') }}
-        </span>
+        <span v-else>{{ $t('material.save') }}</span>
       </button>
     </div>
 
@@ -54,24 +40,18 @@ const updateData = (updatedParams: AddBrandParams) => {
 </template>
 
 <style scoped lang="scss">
-.document-crud-example {
-  margin: 0 auto;
-}
+  .material-crud-page {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
 
-.actions {
-  &.disabled {
-    cursor: not-allowed;
+  .actions.disabled {
     pointer-events: none;
     opacity: 0.7;
   }
-}
 
-.error {
-  margin-top: 20px;
-  padding: 10px;
-  background-color: var(--danger-light);
-  color: var(--danger-dark);
-  border: 1px solid #f5c6cb;
-  border-radius: 4px;
-}
+  .error {
+    color: var(--danger-dark);
+  }
 </style>

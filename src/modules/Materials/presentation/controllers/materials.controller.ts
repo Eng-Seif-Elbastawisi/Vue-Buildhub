@@ -2,17 +2,18 @@ import BaseController from '@/base/Presentation/Controller/baseController';
 import type { ControllerConfig } from '@/base/Presentation/Controller/baseController';
 import type Params from '@/base/Core/Params/params';
 import type { ApiCallOptions } from '@/base/Data/ApiService/baseApiService';
-import { DataSuccess, type DataState } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
+import {
+  DataSuccess,
+  type DataState,
+} from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
 import router from '@/router';
 import { useFormsStore } from '@/stores/formsStore';
 import type MaterialShowModel from '../../core/models/materials.show.model';
 import type MaterialModel from '../../core/models/materials.model';
+import type ShowMaterialParams from '../../core/params/show.materials.params';
 import MaterialRepository from '../../data/repositories/materials.repository';
 
-export default class MaterialController extends BaseController<
-  MaterialShowModel,
-  MaterialModel[]
-> {
+export default class MaterialController extends BaseController<MaterialShowModel, MaterialModel[]> {
   private static instance: MaterialController;
 
   protected get repository() {
@@ -72,13 +73,13 @@ export default class MaterialController extends BaseController<
     return await super.fetchList(params, { ...options, useJson: true });
   }
 
-  // async fetchOne(params: Params, options?: ApiCallOptions) {
-  //   return await super.fetchOne(params, {
-  //     ...options,
-  //     useJson: true,
-  //     headers: {
-  //       'Accept-Language': (params as ShowBrandParams).allLocales ? '*' : 'en',
-  //     },
-  //   });
-  // }
+  async fetchOne(params: Params, options?: ApiCallOptions) {
+    return await super.fetchOne(params, {
+      ...options,
+      useJson: true,
+      headers: {
+        'Accept-Language': (params as ShowMaterialParams).allLocales ? '*' : 'en',
+      },
+    });
+  }
 }

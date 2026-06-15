@@ -1,13 +1,9 @@
 import BaseRepository, { type RepositoryConfig } from '@/base/Domain/Repositories/baseRepository';
-import BrandModel from '../../core/models/materials.model';
 import MaterialApiService from '../api/materials.api-service';
 import MaterialModel from '../../core/models/materials.model';
 import MaterialShowModel from '../../core/models/materials.show.model';
 
-export default class MaterialRepository extends BaseRepository<
-  MaterialShowModel,
-  MaterialModel[]
-> {
+export default class MaterialRepository extends BaseRepository<MaterialShowModel, MaterialModel[]> {
   private static instance: MaterialRepository;
 
   protected get apiService() {
@@ -27,9 +23,8 @@ export default class MaterialRepository extends BaseRepository<
   }
 
   protected get mockList(): MaterialModel[] {
-    return [{...MaterialModel.example }, { ...MaterialModel.example}];
+    return [{ ...MaterialModel.example }, { ...MaterialModel.example }];
   }
-
 
   static getInstance(): MaterialRepository {
     if (!MaterialRepository.instance) {

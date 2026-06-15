@@ -1,5 +1,5 @@
 import type { RouteRecordRaw } from '@/router/types';
-
+ 
 export const MaterialRoutes: RouteRecordRaw[] = [
   {
     path: 'material',
@@ -11,7 +11,7 @@ export const MaterialRoutes: RouteRecordRaw[] = [
   },
   {
     path: 'material/add',
-    name: 'Add Material',
+    name: 'Add Material', 
     component: () => import('@/views/Material/AddMaterial.vue'),
     meta: {
       breadcrumb: 'Add Material',
