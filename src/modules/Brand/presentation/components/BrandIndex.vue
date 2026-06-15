@@ -87,9 +87,9 @@ const deleteBrand = async (id: number) => {
 //   const data = FormStore?.formData[formRoute.value] ?? {};
 //   return Object.keys(data).length === 0 || Object.values(data).every((v) => v == null);
 // });
-const deleteDialogTitle = ref('Are you sure you want to remove this Supplier?');
+const deleteDialogTitle = ref('Are you sure you want to remove this Brand?');
 const deleteDialogMessage = ref(
-  'Deleting this Supplier will remove all related data. This action is irreversible, and the Supplier must be created again if needed.',
+  'Deleting this Brand will remove all related data. This action is irreversible, and the Brand must be created again if needed.',
 );
 
 const visible = ref(false);
@@ -105,11 +105,11 @@ const equipmentOptions = Object.entries(EquipmentTypeEnum).map(
 
 <template>
   <div class="document-page">
-    <h4 class="document-index-title">{{ $t('Suppliers') }}</h4>
+    <h4 class="document-index-title">{{ $t('Brands') }}</h4>
     <p class="document-index-dexription">
       {{ $t('Manage and organize all uploaded documents in one place') }}
     </p>
-    <div class="badge">{{ $t('All Suppliers') }}</div>
+    <div class="badge">{{ $t('All Brands') }}</div>
     <div class="index-header">
       <div class="toolbar">
         <!-- <div class="search-field">
@@ -125,12 +125,12 @@ const equipmentOptions = Object.entries(EquipmentTypeEnum).map(
         </div> -->
       </div>
       <div class="btns">
-        <button class="btn btn-secondary" @click="visible = true">{{ $t('add_Supplier') }}</button>
+        <button class="btn btn-secondary" @click="visible = true">{{ $t('add_Brand') }}</button>
         <Dialog v-model:visible="visible"
           :pt="{ root: 'filter-dialog', header: 'dialog-header', content: 'dialog-body', }" modal
           :style="{ width: '45rem' }">
           <template #header>
-            <h6> {{ $t('add_Supplier') }}</h6>
+            <h6> {{ $t('add_Brand') }}</h6>
           </template>
           <div class="all_inputs">
             <div class="group">

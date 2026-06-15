@@ -2,20 +2,20 @@
 import { onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import IconAccept from '@/shared/icons/IconAccept.vue';
-import SuppliersController from '../controllers/brand.controller.ts';
-import EditSuppliersParams from '../../core/params/edit.brand.params.ts';
-import ShowSuppliersParams from '../../core/params/show.brand.params.ts';
 // import type AddSuppliersParams from '../../core/params/add.Suppliers.params.ts';
-import SuppliersForm from './BrandForm.vue/index.js';
+import BrandForm from './BrandForm.vue';
+import EditBrandParams from '../../core/params/edit.brand.params.ts';
+import ShowBrandParams from '../../core/params/show.brand.params.ts';
+import BrandController from '../controllers/brand.controller.ts';
 
-const controller = SuppliersController.getInstance();
+const controller = BrandController.getInstance();
 const route = useRoute();
 const formKey = route.fullPath;
 
-const params = ref<EditSuppliersParams | null>(null);
+const params = ref<EditBrandParams | null>(null);
 const loading = ref(false);
 
-const saveDocument = async () => {
+const saveBrand = async () => {
   if (!params.value) return;
   loading.value = true;
   try {
@@ -25,26 +25,22 @@ const saveDocument = async () => {
   }
 };
 
-const updateData = (updatedParams: any) => {
-  params.value = new EditSuppliersParams({
-    suppliers_id: Number(route.params.id),
-    name: updatedParams.name,
-    Specialization: updatedParams.Specialization,
-    phone: updatedParams.phone,
-    materials: updatedParams.materials,
+const updateData = () => {
+  params.value = new EditBrandParams({
+    brand_id: Number(route.params.id),
   });
 };
 
 onMounted(async () => {
   await controller.fetchOne(
-    new ShowSuppliersParams({ suppliers_id: Number(route.params.id), allLocales: true }),
+    new ShowBrandParams({ brand_id: Number(route.params.id) }),
   );
 });
 </script>
 
 <template>
   <div class="document-crud-example">
-    <SuppliersForm :Suppliers="controller.itemData.value!" :form-key="formKey" :loading="loading"
+    <BrandForm :brand="controller.itemData.value!" :form-key="formKey" :loading="loading"
       @update-data="updateData" />
 
     <!-- <div class="actions" :class="{ disabled: loading }">
@@ -62,7 +58,7 @@ onMounted(async () => {
 </AppButton>
 </div> -->
     <div class="actions" :class="{ disabled: loading }">
-      <button class="btn btn-primary w-full" type="submit" @click="saveDocument">
+      <button class="btn btn-primary w-full" type="submit" @click="saveBrand">
         <span v-if="loading" class="loader"></span>
         <span v-else>
           {{ $t('save_document') }}

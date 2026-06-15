@@ -1,18 +1,18 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useRoute } from 'vue-router';
-import SuppliersController from '../controllers/brand.controller.ts';
-import SuppliersForm from './BrandForm.vue/index.js';
-import type AddSuppliersParams from '../../core/params/add.brand.params.ts';
+import BrandController from '../controllers/brand.controller.ts';
+import type AddBrandParams from '../../core/params/add.brand.params.ts';
+import BrandForm from './BrandForm.vue';
 
-const controller = SuppliersController.getInstance();
+const controller = BrandController.getInstance();
 const route = useRoute();
 const formKey = route.fullPath;
 
-const params = ref<AddSuppliersParams | null>(null);
+const params = ref<AddBrandParams | null>(null);
 const loading = ref(false);
 
-const saveDocument = async () => {
+const saveBrand = async () => {
   if (!params.value) return;
   loading.value = true;
   try {
@@ -23,14 +23,14 @@ const saveDocument = async () => {
   }
 };
 
-const updateData = (updatedParams: AddSuppliersParams) => {
+const updateData = (updatedParams: AddBrandParams) => {
   params.value = updatedParams;
 };
 </script>
 
 <template>
   <div class="document-crud-example">
-    <SuppliersForm :form-key="formKey" :loading="loading" @update-data="updateData" />
+    <BrandForm :form-key="formKey" :loading="loading" @update-data="updateData" />
 
     <!-- <AppButton :title="$t('save_document')" size="sm" icon="right" type="submit" @click="saveDocument">
       {{ $t('save_document') }}
@@ -39,10 +39,10 @@ const updateData = (updatedParams: AddSuppliersParams) => {
       </template>
 </AppButton> -->
     <div class="actions" :class="{ disabled: loading }">
-      <button class="btn btn-primary w-full" type="submit" @click="saveDocument">
+      <button class="btn btn-primary w-full" type="submit" @click="saveBrand">
         <span v-if="loading" class="loader"></span>
         <span v-else>
-          {{ $t('save_suppliers') }}
+          {{ $t('save_brand') }}
         </span>
       </button>
     </div>

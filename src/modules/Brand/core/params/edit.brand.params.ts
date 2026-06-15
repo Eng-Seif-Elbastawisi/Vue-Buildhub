@@ -3,17 +3,16 @@ import { ClassValidation } from '@/base/Presentation/Utils/classValidation';
 import { EquipmentTypeEnum } from '../constant/equipment.type.enum';
 
 export default class EditBrandParams implements Params {
-  public brand_id: number;
-  public equipment: EquipmentTypeEnum;
+  public brand_id?: number;
+  public equipment?: EquipmentTypeEnum;
 
   public static readonly validation = new ClassValidation().setRules({
     brand_id: { required: true },
-    translations: { required: true },
   });
 
   constructor(data: {
-    brand_id: number;
-    equipment: EquipmentTypeEnum;
+    brand_id?: number;
+    equipment?: EquipmentTypeEnum;
   }) {
     this.brand_id = data.brand_id;
     this.equipment = data.equipment;
