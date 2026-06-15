@@ -151,9 +151,15 @@
           name: 'brand',
           icon: ArticleIcon,
         },
-          {
+        {
           link: user?.isMaster ? '/material' : '/organization/material',
           name: 'material',
+          icon: ArticleIcon,
+        },
+
+        {
+          link: user?.isMaster ? '/project' : '/organization/project',
+          name: 'Projects',
           icon: ArticleIcon,
         },
       ],
