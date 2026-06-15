@@ -11,7 +11,7 @@ export default class AddBrandParams implements Params {
   });
   constructor(data: {
     name?: string;
-    equipment?: EquipmentTypeEnum;
+    equipment?: EquipmentTypeEnum; 
   }) {
     this.name = data.name;
     this.equipment = data.equipment;
