@@ -137,8 +137,18 @@
       group: 'Suppliers',
       items: [
         {
-          link: '/suppliers',
+          link: user?.isMaster ? '/suppliers' : '/organization/suppliers',
           name: 'suppliers',
+          icon: ArticleIcon,
+        },
+        {
+          link: user?.isMaster ? '/brand' : '/organization/brand',
+          name: 'brand',
+          icon: ArticleIcon,
+        },
+          {
+          link: user?.isMaster ? '/material' : '/organization/material',
+          name: 'material',
           icon: ArticleIcon,
         },
       ],
