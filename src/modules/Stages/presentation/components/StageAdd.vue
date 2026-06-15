@@ -35,8 +35,8 @@
 
       const result =
         paramsToSave instanceof EditStageParams
-          ? await controller.update(paramsToSave, undefined, formKey)
-          : await controller.create(paramsToSave, undefined, formKey);
+          ? await controller.update(paramsToSave, undefined)
+          : await controller.create(paramsToSave, undefined);
 
       if (result) {
         emit('saved');

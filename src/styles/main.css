@@ -7684,327 +7684,6 @@ body::-webkit-scrollbar-thumb:hover {
    MAIN STYLESHEET — Organized Import Hub
    ============================================================================= */
 /* ── Core ──────────────────────────────────────────────────────── */
-/* =============================================================================
-   EMAIL FORM — Luxury Card Design
-   ============================================================================= */
-/* ── Form Card ─────────────────────────────────────────────── */
-.document-form-card {
-  background: var(--bg-main);
-  overflow: hidden;
-  position: relative;
-  font-family: "Medium";
-}
-.document-form-card .ref-number-group {
-  justify-content: end;
-}
-.document-form-card .document-form-header {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  justify-content: flex-start;
-  align-items: flex-start;
-  gap: 5px;
-}
-.document-form-card .document-form-header .document-form-header-text {
-  display: flex;
-  flex-direction: column;
-  flex-wrap: nowrap;
-  justify-content: flex-start;
-  align-items: flex-start;
-  gap: 5px;
-}
-.document-form-card .document-form-header .document-form-header-text h4 {
-  color: var(--title-card-color);
-  font-size: var(--md-size-2);
-  font-weight: 700;
-  font-family: "bold";
-}
-.document-form-card .document-form-header .document-form-header-text p {
-  color: var(--title-header-color);
-  font-weight: 500;
-  font-family: "Medium";
-  font-size: var(--md-size);
-}
-.document-form-card {
-  /* ── Form Header ───────────────────────────────────────────── */
-}
-.document-form-card .form-header {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 20px 24px 16px;
-}
-.document-form-card .form-header .header-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  border-radius: var(--radius-md);
-  background: linear-gradient(135deg, var(--PrimaryColor-light), rgba(238, 242, 255, 0.4));
-  color: var(--PrimaryColor);
-  flex-shrink: 0;
-  box-shadow: 0 2px 6px rgba(99, 102, 241, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.5);
-}
-.document-form-card .form-header .header-text {
-  flex: 1;
-}
-.document-form-card .form-header .header-text h3 {
-  font-size: 1.1rem;
-  font-weight: 800;
-  color: var(--gray-900);
-  margin: 0;
-  letter-spacing: -0.01em;
-}
-.document-form-card .form-header .header-text .header-subtitle {
-  margin-top: 2px;
-  font-size: 0.8rem;
-  color: var(--gray-400);
-  margin-bottom: 0;
-}
-.document-form-card .form-header .edit-badge {
-  padding: 4px 12px;
-  border-radius: var(--radius-full);
-  background: linear-gradient(135deg, var(--warning-light), rgba(254, 243, 199, 0.5));
-  color: var(--warning-dark);
-  font-size: 0.7rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  white-space: nowrap;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
-}
-.document-form-card {
-  /* ── Divider ───────────────────────────────────────────────── */
-}
-.document-form-card .form-divider {
-  height: 1px;
-  margin: 0 24px;
-  background: linear-gradient(90deg, var(--border-weak), rgba(226, 232, 240, 0.3), transparent);
-}
-.document-form-card {
-  /* ── Form Fields ───────────────────────────────────────────── */
-}
-.document-form-card .form-fields {
-  display: grid;
-  grid-template-columns: repeat(2, 1rf);
-  gap: 20px;
-}
-.document-form-card .form-fields.disabled {
-  opacity: 0.5;
-  pointer-events: none;
-  cursor: not-allowed;
-}
-.document-form-card .col-span-2 {
-  grid-column: span 2;
-}
-.document-form-card .col-span-1 {
-  grid-column: span 1;
-}
-.document-form-card .field-group {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-.document-form-card .field-group.tags-group .input-wrap {
-  border: 1px solid var(--input-border-color);
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  justify-content: space-between;
-  align-items: center;
-  border-radius: 50px;
-  padding: var(--xs-size-5) var(--md-size);
-}
-.document-form-card .field-group.tags-group .input-wrap button {
-  padding: 10px 12px;
-  width: 20%;
-}
-.document-form-card .field-group.tags-group .input-wrap input {
-  width: 80%;
-}
-.document-form-card .field-group.tags-group .input-wrap input:focus {
-  box-shadow: none !important;
-}
-.document-form-card .field-group.tags-group input {
-  border: none !important;
-}
-.document-form-card .field-group .image-input .upload-area {
-  background-color: var(--standard-white) !important;
-}
-.document-form-card .field-group .image-input .add-imaegs-data {
-  display: flex;
-  flex-direction: column;
-  flex-wrap: nowrap;
-  justify-content: center;
-  align-items: center;
-  gap: 3px;
-}
-.document-form-card .field-group .image-input .add-imaegs-data .first-text {
-  color: var(--gray-5);
-  font-size: 12px;
-  font-weight: 600;
-}
-.document-form-card .field-group .image-input .add-imaegs-data .first-text span {
-  color: var(--PrimaryColor);
-  padding-inline: 5px;
-}
-.document-form-card .field-group .image-input .add-imaegs-data .second-text {
-  color: var(--gray-300);
-  font-size: 11px;
-  font-weight: 400;
-}
-.document-form-card .field-label {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--table-data-color);
-  font-size: var(--md-size);
-  font-family: "Medium";
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: none;
-}
-.document-form-card .field-label svg {
-  color: var(--PrimaryColor);
-  flex-shrink: 0;
-}
-.document-form-card .input-wrap {
-  position: relative;
-}
-.document-form-card .field-input {
-  width: 100%;
-  padding: 12px 16px;
-  border: 1px solid var(--border-weak);
-  border-radius: 50px;
-  font-size: 0.9rem;
-  color: var(--gray-800);
-  background: var(--white);
-  outline: none;
-  transition: all 0.25s ease;
-  font-family: "Medium";
-  font-weight: 500 !important;
-}
-.document-form-card .field-input::-moz-placeholder {
-  color: var(--bread-crumb-color-span);
-  font-weight: 500;
-  font-family: "Medium";
-  font-size: var(--sm-size);
-}
-.document-form-card .field-input::placeholder {
-  color: var(--bread-crumb-color-span);
-  font-weight: 500;
-  font-family: "Medium";
-  font-size: var(--sm-size);
-}
-.document-form-card .field-input:focus {
-  border-color: var(--PrimaryColor);
-  background: var(--bg-main);
-  box-shadow: 0 0 0 3px var(--PrimaryColor-light), 0 2px 8px rgba(99, 102, 241, 0.06);
-}
-.document-form-card .field-input:hover:not(:focus) {
-  border-color: var(--gray-300);
-  background: var(--bg-main);
-}
-.document-form-card .p-placeholder {
-  color: var(--bread-crumb-color-span) !important;
-  font-weight: 500 !important;
-  font-family: "Medium";
-  font-size: var(--sm-size);
-}
-.document-form-card {
-  /* ── Deep: Custom Input Select (Accordion) ─────────────────── */
-}
-.document-form-card :deep(.myacc) {
-  border: none;
-}
-.document-form-card :deep(.AccordionPanel) {
-  border: 1px solid var(--border-weak) !important;
-  border-radius: var(--radius-md) !important;
-  overflow: hidden;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  background: var(--gray-50);
-}
-.document-form-card :deep(.AccordionPanel):hover {
-  border-color: var(--PrimaryColor) !important;
-}
-.document-form-card :deep(.AccordionHeader) {
-  padding: 12px 16px;
-  background: transparent;
-  border: none;
-  font-weight: 600;
-  color: var(--gray-800);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  transition: background 0.2s ease;
-  font-size: 0.9rem;
-}
-.document-form-card :deep(.AccordionHeader):hover {
-  background: var(--PrimaryColor-light);
-  color: var(--PrimaryColor);
-}
-.document-form-card :deep(.AccordionContent) {
-  background: var(--bg-main);
-  color: var(--gray-600);
-  padding: 12px 16px;
-  font-size: 0.875rem;
-  line-height: 1.6;
-}
-.document-form-card {
-  /* ── Responsive ────────────────────────────────────────────── */
-}
-@media (max-width: 600px) {
-  .document-form-card .form-header {
-    padding: 16px;
-    flex-wrap: wrap;
-  }
-  .document-form-card .form-fields {
-    gap: 16px;
-  }
-  .document-form-card .form-divider {
-    margin: 0 16px;
-  }
-  .document-form-card .edit-badge {
-    display: none;
-  }
-}
-.document-form-card .tags-container {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  justify-content: flex-start;
-  align-items: center;
-  gap: 8px;
-}
-.document-form-card .tags-container.border {
-  border: 1px solid var(--border-color);
-  padding: 16px;
-  border-radius: 24px;
-}
-.document-form-card .tags-container .tag {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  justify-content: center;
-  align-items: center;
-  gap: 2px;
-  background-color: var(--color-light-gray);
-  padding: 8px 10px;
-  border-radius: 50px;
-  color: var(--standard-black);
-  font-size: 14px;
-  font-weight: 500;
-}
-.document-form-card .tags-container .tag .delete {
-  cursor: pointer;
-}
-
-/* =============================================================================
-   MAIN STYLESHEET — Organized Import Hub
-   ============================================================================= */
-/* ── Core ──────────────────────────────────────────────────────── */
 .document-page {
   display: flex;
   flex-direction: column;
@@ -14731,6 +14410,42 @@ body::-webkit-scrollbar-thumb:hover {
 .stage-page .action-btn.delete:hover {
   border-color: var(--Red);
   color: var(--Red);
+}
+
+/* =============================================================================
+   MAIN STYLESHEET — Organized Import Hub
+   ============================================================================= */
+/* ── Core ──────────────────────────────────────────────────────── */
+.department-page {
+  width: 100%;
+  background: var(--bg-main);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border-strong);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 8px 32px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+  position: relative;
+}
+.department-page::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.15), transparent);
+  pointer-events: none;
+}
+.department-page .form-fields {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 30px;
+}
+.department-page .form-fields .field-group {
+  width: 50%;
 }
 
 /* =============================================================================

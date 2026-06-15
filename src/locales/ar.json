@@ -115,5 +115,13 @@
   "easy": "سهل",
   "medium": "متوسط",
   "hard": "صعب",
-  "select_difficulty": "اختر درجة الصعوبة"
+  "select_difficulty": "اختر درجة الصعوبة",
+  "departments": "الأقسام",
+  "add_department": "إضافة قسم",
+  "edit_department": "تعديل قسم",
+  "department_title": "اسم القسم",
+  "department_title_placeholder": "أدخل اسم القسم",
+  "stage": "المرحلة",
+  "select_stage": "اختر المرحلة",
+  "search_departments": "البحث في الأقسام"
 }
