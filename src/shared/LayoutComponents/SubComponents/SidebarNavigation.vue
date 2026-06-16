@@ -162,6 +162,11 @@
           name: 'Projects',
           icon: ArticleIcon,
         },
+        {
+          link: user?.isMaster ? '/client' : '/organization/client',
+          name: 'Clients',
+          icon: ArticleIcon,
+        },
       ],
     },
   ];
