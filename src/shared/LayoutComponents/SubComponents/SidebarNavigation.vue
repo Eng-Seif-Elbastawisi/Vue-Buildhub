@@ -167,6 +167,11 @@
           name: 'Clients',
           icon: ArticleIcon,
         },
+        {
+          link: user?.isMaster ? '/location' : '/organization/location',
+          name: 'location',
+          icon: ArticleIcon,
+        },
       ],
     },
   ];
