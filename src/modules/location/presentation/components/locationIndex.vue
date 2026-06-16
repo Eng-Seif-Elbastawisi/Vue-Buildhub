@@ -40,7 +40,7 @@ const fetchLocations = async (page: number = 1, searchWord: string = '') => {
   await controller.fetchList(
     new IndexLocationParams(
       searchWord,
-      route.query.page ? Number(route.query.page) : page,
+      route.query.page ? Number(route.query.page) : page, 
       perPage.value,
       1,
     ),
