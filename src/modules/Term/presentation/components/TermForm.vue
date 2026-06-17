@@ -1,33 +1,40 @@
 <script setup lang="ts">
   import { ref, watch } from 'vue';
+  import TitleInterface from '@/base/Data/Models/titleInterface';
+  import TranslationParams from '@/base/Core/Params/translationParams';
+  import MultiLangInput from '@/shared/MultiLangInput.vue';
+  import UpdatedCustomInputSelect from '@/shared/FormInputs/UpdatedCustomInputSelect.vue';
+  import IndexDepartmentParams from '@/modules/Department/core/params/index.department.params';
+  import DepartmentController from '@/modules/Department/presentation/controllers/department.controller';
   import AddTermParams from '../../core/params/add.term.params';
   import EditTermParams from '../../core/params/edit.term.params';
   import type TermModel from '../../core/models/term.model';
-  import UpdatedCustomInputSelect from '@/shared/FormInputs/UpdatedCustomInputSelect.vue';
-  import TitleInterface from '@/base/Data/Models/titleInterface';
-  import IndexDepartmentParams from '@/modules/Department/core/params/index.department.params';
-  import DepartmentController from '@/modules/Department/presentation/controllers/department.controller';
 
   const emit = defineEmits<{
     updateData: [params: AddTermParams | EditTermParams];
   }>();
-  const SelectedStage = ref<TitleInterface<number>>();
 
-  const { term, loading } = defineProps<{
+  const props = defineProps<{
     term?: TermModel;
     loading?: boolean;
   }>();
 
-  const title = ref<string>('');
+  const title = ref<Record<string, string>>({});
+  const selectedDepartment = ref<TitleInterface<number>>();
+  const indexDepartmentParams = new IndexDepartmentParams('');
+  const indexDepartmentController = DepartmentController.getInstance();
 
   const updateData = () => {
-    if (term?.id) {
+    const translations = new TranslationParams({ title: title.value });
+    const departmentId = Number(selectedDepartment.value?.id);
+
+    if (props.term?.id) {
       emit(
         'updateData',
         new EditTermParams({
-          id: term.id,
-          title: title.value,
-          departmentId: Number(SelectedStage.value?.id),
+          id: props.term.id,
+          translations,
+          departmentId,
         }),
       );
       return;
@@ -36,57 +43,61 @@
     emit(
       'updateData',
       new AddTermParams({
-        title: title.value,
-        departmentId: Number(SelectedStage.value?.id),
+        translations,
+        departmentId,
       }),
     );
   };
 
+  const updateTitle = (value: Record<string, string>) => {
+    title.value = value;
+    updateData();
+  };
+
+  const updateDepartment = (data: TitleInterface<number>) => {
+    selectedDepartment.value = data;
+    updateData();
+  };
+
   watch(
-    () => term,
-    (newStage) => {
-      title.value = newStage?.title ?? '';
-      SelectedStage.value = new TitleInterface({
-        id: Number(newStage?.department.id),
-        title: newStage?.department.title,
+    () => props.term,
+    (term) => {
+      if (!term) return;
+
+      title.value = { ...term.translations.title };
+      selectedDepartment.value = new TitleInterface({
+        id: Number(term.department.id),
+        title: term.department.title,
       });
       updateData();
     },
     { immediate: true },
   );
-  const indexDepartmentParams = new IndexDepartmentParams('');
-  const indexDepartmentController = DepartmentController.getInstance();
-  const updateStage = (data: TitleInterface<number>) => {
-    SelectedStage.value = data;
-    updateData();
-  };
 </script>
 
 <template>
   <div class="form-fields">
-    <div class="field-group" :class="{ disabled: loading }">
-      <label class="field-label" for="title"> {{ $t('stage_title') }} </label>
-      <div class="input-wrap">
-        <input
-          id="title"
-          v-model="title"
-          type="text"
-          :placeholder="$t('stage_title')"
-          class="field-input"
-          @input="updateData"
-        />
-      </div>
+    <div class="field-group col-span-2" :class="{ disabled: props.loading }">
+      <MultiLangInput
+        field-key="title"
+        :label="$t('title')"
+        :languages="['en', 'ar']"
+        :model-value="title"
+        type="title"
+        @update:model-value="updateTitle"
+      />
     </div>
-    <div class="field-group" :class="{ disabled: loading }">
+
+    <div class="field-group" :class="{ disabled: props.loading }">
       <UpdatedCustomInputSelect
         id="doc-branch"
-        :label="`department name`"
+        v-model="selectedDepartment"
+        :label="$t('department name')"
         :params="indexDepartmentParams"
         :controller="indexDepartmentController"
-        v-model="SelectedStage"
         :placeholder="$t('Enter department name')"
         :reload="true"
-        @update:model-value="updateStage"
+        @update:model-value="updateDepartment"
       />
     </div>
   </div>
@@ -95,6 +106,7 @@
 <style scoped lang="scss">
   .form-fields {
     padding: 20px;
+
     .field-group {
       &.disabled {
         cursor: not-allowed;

@@ -1,22 +1,23 @@
 import type Params from '@/base/Core/Params/params';
+import type TranslationParams from '@/base/Core/Params/translationParams';
 import { ClassValidation } from '@/base/Presentation/Utils/classValidation';
 
 export default class AddTermParams implements Params {
-  public readonly title: string;
+  public readonly translations: TranslationParams;
   public readonly departmentId: number;
 
   public static readonly validation = new ClassValidation().setRules({
-    title: { required: true, minLength: 2, maxLength: 100 },
+    translations: { required: true },
     departmentId: { required: true },
   });
 
-  constructor(data: { title: string; departmentId: number }) {
-    this.title = data.title;
+  constructor(data: { translations: TranslationParams; departmentId: number }) {
+    this.translations = data.translations;
     this.departmentId = data.departmentId;
   }
 
-  toMap(): Record<string, string | number> {
-    return { title: this.title, department_id: this.departmentId };
+  toMap(): Record<string, TranslationParams | number> {
+    return { translations: this.translations, department_id: this.departmentId };
   }
 
   validate() {

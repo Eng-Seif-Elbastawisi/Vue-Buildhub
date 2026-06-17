@@ -1,25 +1,31 @@
 import type Params from '@/base/Core/Params/params';
 import { ClassValidation } from '@/base/Presentation/Utils/classValidation';
+import type TranslationParams from '@/base/Core/Params/translationParams';
 
 export default class EditDepartmentParams implements Params {
   public readonly id: number;
-  public readonly title: string;
+  public readonly translations: TranslationParams;
   public readonly stageId: number;
 
   public static readonly validation = new ClassValidation().setRules({
     id: { required: true },
-    title: { required: true, minLength: 2, maxLength: 100 },
+    translations: { required: true },
     stageId: { required: true },
   });
 
-  constructor(data: { id: number; title: string; stageId: number }) {
+  
+  constructor(data: { id: number; translations: TranslationParams; stageId: number }) {
     this.id = data.id;
-    this.title = data.title;
+    this.translations = data.translations;
     this.stageId = data.stageId;
   }
 
-  toMap(): Record<string, string | number> {
-    return { id: this.id, title: this.title, stage_id: this.stageId };
+  toMap(): { [p: string]: any } {
+    return { 
+      id: this.id, 
+      translations: this.translations, 
+      stage_id: this.stageId 
+    };
   }
 
   validate() {

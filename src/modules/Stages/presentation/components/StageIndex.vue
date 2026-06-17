@@ -22,7 +22,7 @@
 
   // Table headers
   const headers: TableHeader[] = [
-    { key: 'translations', label: 'Title', width: '95%', sortable: true },
+    { key: 'title', label: 'Title', width: '95%', sortable: true },
   ];
 
   // Pagination state

@@ -5,7 +5,6 @@
   import Pagination from '@/shared/HelpersComponents/Pagination.vue';
   import { useRoute, useRouter } from 'vue-router';
   import { debounce } from '@/base/Presentation/Utils/debouced';
-
   import EditIcon from '@/shared/icons/EditIcon.vue';
   import DeleteDialog from '@/base/Presentation/Dialogs/MainDialogs/DeleteDialog.vue';
   import DepartmentController from '@/modules/Department/presentation/controllers/department.controller';
@@ -157,7 +156,7 @@
             @selection-change="setSelectef"
           >
             <template #cell-name="{ item }">
-              {{ item.title }}
+              {{ item.translations }}
             </template>
 
             <template #actions="{ item }">
