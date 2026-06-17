@@ -140,7 +140,7 @@
         </button>
       </div>
     </div>
-    <DepartmentAdd :department="selectedDepartment" @updateData="onStageSaved" />
+    <DepartmentAdd :department="selectedDepartment" @update-data="onStageSaved" />
 
     <!-- ═══ Table ═══ -->
     <DataStatusBuilder :controller="state" :on-retry="async () => await fetchDepartments()">
@@ -165,10 +165,10 @@
                   <EditIcon />
                 </button>
                 <DeleteDialog
-                  @delete="deleteCountry(item.id!)"
                   :title="$t('Are you sure you want to remove this stage?')"
                   :message="$t('This action cannot be undone.')"
                   :hasbtn="true"
+                  @delete="deleteCountry(item.id!)"
                 >
                   <template #btn>
                     <button class="action-btn delete" title="Delete">
