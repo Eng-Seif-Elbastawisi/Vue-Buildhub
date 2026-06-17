@@ -208,5 +208,17 @@
   "location.types.wareHouse": "مخزن",
   "location.types.store": "متجر",
   "location.types.building": "مبنى",
-  "location.types.apartment": "شقة"
+  "location.types.apartment": "شقة",
+  "supplier.form_title": "بيانات المورد",
+  "supplier.form_description": "أدخل بيانات التواصل والتخصص والمواد الخاصة بالمورد",
+  "supplier.name": "اسم المورد",
+  "supplier.name_placeholder": "أدخل اسم المورد",
+  "supplier.specialization": "التخصص",
+  "supplier.specialization_placeholder": "أدخل التخصص",
+  "supplier.phone": "الهاتف",
+  "supplier.phone_placeholder": "أدخل رقم الهاتف",
+  "supplier.materials": "المواد",
+  "supplier.materials_placeholder": "أدخل المواد الموردة",
+  "supplier.save": "حفظ المورد",
+  "supplier.update": "تحديث المورد"
 }

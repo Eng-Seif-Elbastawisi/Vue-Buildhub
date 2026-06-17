@@ -70,28 +70,50 @@ const updateData = () => {
     </div>
 
     <div class="form-fields" :class="{ disabled: loading }">
-       <div class="all_inputs">
-            <div class="group">
-
-              <div class="field-group col-span-2">
-                <label class="field-label" for="name">{{ $t(`brand title`) }}</label>
-                <div class="input-wrap">
-                  <input id="title" v-model="title" type="text" placeholder="Enter brand title" class="field-input"
-                    @input="updateData" />
-                </div>
-              </div>
-              <div class="field-group">
-                <UpdatedCustomInputSelect id="doc-branch" :label="`Equipment type`"
-                    :static-options="equipmentOptions" v-model="equipment" :placeholder="$t('Enter equipment type')"
-                  :reload="true" @update:model-value="handleBranchChange($event)" />
-              </div>
-            </div>
+      <div class="all_inputs">
+        <div class="field-group col-span-2">
+          <label class="field-label" for="name">{{ $t(`brand title`) }}</label>
+          <div class="input-wrap">
+            <input id="title" v-model="title" type="text" placeholder="Enter brand title" class="field-input"
+              @input="updateData" />
           </div>
+        </div>
+        <div class="field-group">
+          <UpdatedCustomInputSelect id="doc-branch" :label="`Equipment type`" :static-options="equipmentOptions"
+            v-model="equipment" :placeholder="$t('Enter equipment type')" :reload="true"
+            @update:model-value="handleBranchChange($event)" />
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <style scoped>
+.form-fields {
+  .all_inputs{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    align-items: end;
+  }
+}
+.field-input {
+  width: 100%;
+  padding: 12px 16px;
+    padding-right: 16px;
+  padding-right: 50px;
+  border: 1px solid var(--border-weak);
+  border-radius: 28px;
+  background: var(--white);
+  outline: none;
+  transition: all 0.25s ease;
+  font-family: "Medium";
+  font-weight: 400;
+  font-size: var(--sm-size);
+  color: var(--bread-crumb-color-span);
+  max-height: 200px;
+  max-width: 100%;
+}
 .disabled-input {
   pointer-events: none;
   opacity: 0.5;

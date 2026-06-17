@@ -13,6 +13,7 @@
   import IndexBrandParams from '../../core/params/index.brand.params.ts';
   import DeleteBrandParams from '../../core/params/delete.brand.params.ts';
   import { EquipmentTypeEnum } from '../../core/constant/equipment.type.enum.ts';
+import { useUserStore } from '@/stores/user.ts';
 
   const controller = BrandController.getInstance();
   const state = computed(() => controller.listState.value);
@@ -88,6 +89,7 @@
     id,
     title,
   }));
+    const { user } = useUserStore();
 </script>
 
 <template>
@@ -112,8 +114,14 @@
         </div> -->
       </div>
       <div class="btns">
-        <button class="btn btn-secondary" @click="visible = true">{{ $t('add_Brand') }}</button>
-        <Dialog
+        <router-link
+          class="btn btn-primary"
+          :to="user?.isMaster ? '/brand/add' : '/organization/brand/add'"
+        >
+          {{ $t('brand.add') }}
+        </router-link>
+        <!-- <button class="btn btn-secondary" @click="visible = true">{{ $t('add_Brand') }}</button> -->
+        <!-- <Dialog
           v-model:visible="visible"
           :pt="{ root: 'filter-dialog', header: 'dialog-header', content: 'dialog-body' }"
           modal
@@ -153,7 +161,7 @@
           <div class="save_button">
             <button>{{ $t('Save') }}</button>
           </div>
-        </Dialog>
+        </Dialog> -->
       </div>
     </div>
 
@@ -173,7 +181,11 @@
             </template>
             <template #actions="{ item }">
               <div class="row-actions">
-                <router-link class="action-btn edit" :to="`/brand/edit/${item.id}`" title="Edit">
+                <router-link
+                  class="action-btn edit"
+                  :to="user?.isMaster ? `/brand/edit/${item.id}` : `/organization/brand/edit/${item.id}`"
+                  title="Edit"
+                >
                   <svg
                     width="15"
                     height="15"

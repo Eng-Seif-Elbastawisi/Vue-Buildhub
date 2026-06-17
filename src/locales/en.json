@@ -380,5 +380,17 @@
   "location.types.wareHouse": "Warehouse",
   "location.types.store": "Store",
   "location.types.building": "Building",
-  "location.types.apartment": "Apartment"
+  "location.types.apartment": "Apartment",
+  "supplier.form_title": "Supplier details",
+  "supplier.form_description": "Enter supplier contact, specialization, and materials",
+  "supplier.name": "Supplier name",
+  "supplier.name_placeholder": "Enter supplier name",
+  "supplier.specialization": "Specialization",
+  "supplier.specialization_placeholder": "Enter specialization",
+  "supplier.phone": "Phone",
+  "supplier.phone_placeholder": "Enter phone number",
+  "supplier.materials": "Materials",
+  "supplier.materials_placeholder": "Enter supplied materials",
+  "supplier.save": "Save supplier",
+  "supplier.update": "Update supplier"
 }

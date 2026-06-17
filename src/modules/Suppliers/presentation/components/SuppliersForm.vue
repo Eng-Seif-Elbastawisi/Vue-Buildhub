@@ -1,66 +1,61 @@
 <script setup lang="ts">
-import { ref, watch, onMounted } from 'vue';
-import { onBeforeRouteLeave } from 'vue-router';
-import { useFormsStore } from '@/stores/formsStore';
-import DocumentIcon from '@/shared/icons/DocaumentType/DocumentIcon.vue';
-import type SuppliersShowModel from '../../core/models/Suppliers.show.model';
-import AddSuppliersParams from '../../core/params/add.Suppliers.params';
-const emit = defineEmits(['updateData']);
+  import { ref, watch } from 'vue';
+  import { onBeforeRouteLeave } from 'vue-router';
+  import { useFormsStore } from '@/stores/formsStore';
+  import DocumentIcon from '@/shared/icons/DocaumentType/DocumentIcon.vue';
+  import type SuppliersShowModel from '../../core/models/Suppliers.show.model';
+  import AddSuppliersParams from '../../core/params/add.Suppliers.params';
 
-const { Suppliers, formKey, loading } = defineProps<{
-  Suppliers?: SuppliersShowModel;
-  formKey?: string;
-  loading?: boolean;
-}>();
-const tag = ref<string>('');
-const tags = ref<string[]>([]);
-const FormStore = useFormsStore();
+  const emit = defineEmits<{
+    updateData: [params: AddSuppliersParams];
+  }>();
 
-onBeforeRouteLeave((to, from) => {
-  const savedData = formKey ? FormStore.getFormData(formKey) : null;
+  const props = defineProps<{
+    supplier?: SuppliersShowModel;
+    formKey?: string;
+    loading?: boolean;
+  }>();
 
-  if (savedData && to.path !== from.path && formKey) {
-    FormStore.showReturnWarning(formKey);
-  }
-});
+  const formStore = useFormsStore();
 
+  const name = ref<string>('');
+  const Specialization = ref<string>('');
+  const phone = ref<string>('');
+  const materials = ref<string>('');
 
-const phone = ref<string>('');
-const materials = ref<string>('');
-const supplier = ref<string>('');
-const spacification = ref<string>('');
+  onBeforeRouteLeave((to, from) => {
+    const savedData = props.formKey ? formStore.getFormData(props.formKey) : null;
 
-
-onMounted(async () => {
-  if (Suppliers) {
-    phone.value = Suppliers.phone;
-    materials.value = Suppliers.materials;
-    supplier.value = Suppliers.Supplier;
-    spacification.value = Suppliers.spacification;
-  }
-});
-
-watch(
-  () => Suppliers,
-  (newSuppliers) => {
-    if (newSuppliers) {
-      phone.value = newSuppliers.phone;
-      materials.value = newSuppliers.materials;
-      supplier.value = newSuppliers.Supplier;
-      spacification.value = newSuppliers.spacification;
+    if (savedData && to.path !== from.path && props.formKey) {
+      formStore.showReturnWarning(props.formKey);
     }
-  },
-  { immediate: true },
-);
-
-const updateData = () => {
-  const params = new AddSuppliersParams({
-    phone: phone.value,
-    materials: materials.value,
   });
 
-  emit('updateData', params);
-};
+  const updateData = () => {
+    emit(
+      'updateData',
+      new AddSuppliersParams({
+        name: name.value,
+        Specialization: Specialization.value,
+        phone: phone.value,
+        materials: materials.value,
+      }),
+    );
+  };
+
+  watch(
+    () => props.supplier,
+    (supplier) => {
+      if (!supplier) return;
+
+      name.value = supplier.Supplier ?? '';
+      Specialization.value = supplier.spacification ?? '';
+      phone.value = supplier.phone ?? '';
+      materials.value = supplier.materials ?? '';
+      updateData();
+    },
+    { immediate: true },
+  );
 </script>
 
 <template>
@@ -69,37 +64,102 @@ const updateData = () => {
       <DocumentIcon />
 
       <div class="document-form-header-text">
-        <h4>{{ $t('add_Suppliers') }}</h4>
-
-        <p>{{ $t('Upload your Suppliers and fill in its details') }}</p>
+        <h4>{{ $t('supplier.form_title') }}</h4>
+        <p>{{ $t('supplier.form_description') }}</p>
       </div>
     </div>
 
     <div class="form-fields" :class="{ disabled: loading }">
-      <div class="field-group tags-group col-span-2">
-        <label class="field-label" for="tag">{{ $t('Tag') }}</label>
-
-        <div class="input-wrap input-tag-wrap">
-          <input id="tags" v-model="tag" type="text" :placeholder="$t('Add Tag....')" class="field-input"
-            @input="updateData" />
-
-          <button class="btn btn-primary" @click="setTags">{{ $t('Add Tag') }}</button>
+      <div class="field-group">
+        <label class="field-label" for="supplier-name">{{ $t('supplier.name') }}</label>
+        <div class="input-wrap">
+          <input
+            id="supplier-name"
+            v-model="name"
+            type="text"
+            :placeholder="$t('supplier.name_placeholder')"
+            class="field-input"
+            @input="updateData"
+          />
         </div>
+      </div>
 
-        <div class="tags-container" :class="tags.length > 0 ? `border` : ``">
-          <div v-for="(tagItem, tagIndex) in tags" :key="tagIndex" class="tag">
-            <span>{{ tagItem }}</span>
+      <div class="field-group">
+        <label class="field-label" for="supplier-specialization">
+          {{ $t('supplier.specialization') }}
+        </label>
+        <div class="input-wrap">
+          <input
+            id="supplier-specialization"
+            v-model="Specialization"
+            type="text"
+            :placeholder="$t('supplier.specialization_placeholder')"
+            class="field-input"
+            @input="updateData"
+          />
+        </div>
+      </div>
 
-          </div>
+      <div class="field-group">
+        <label class="field-label" for="supplier-phone">{{ $t('supplier.phone') }}</label>
+        <div class="input-wrap">
+          <input
+            id="supplier-phone"
+            v-model="phone"
+            type="text"
+            :placeholder="$t('supplier.phone_placeholder')"
+            class="field-input"
+            @input="updateData"
+          />
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="supplier-materials">{{ $t('supplier.materials') }}</label>
+        <div class="input-wrap">
+          <input
+            id="supplier-materials"
+            v-model="materials"
+            type="text"
+            :placeholder="$t('supplier.materials_placeholder')"
+            class="field-input"
+            @input="updateData"
+          />
         </div>
       </div>
     </div>
   </div>
 </template>
 
-<style scoped>
-.disabled-input {
-  pointer-events: none; 
-  opacity: 0.5;
-}
+<style scoped lang="scss">
+  .form-fields {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+
+    &.disabled {
+      pointer-events: none;
+      opacity: 0.7;
+    }
+  }
+
+  .field-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid var(--border-weak);
+    border-radius: 28px;
+    background: var(--white);
+    outline: none;
+    transition: all 0.25s ease;
+    font-family: 'Medium';
+    font-weight: 400;
+    font-size: var(--sm-size);
+    color: var(--bread-crumb-color-span);
+  }
+
+  @media (max-width: 768px) {
+    .form-fields {
+      grid-template-columns: 1fr;
+    }
+  }
 </style>

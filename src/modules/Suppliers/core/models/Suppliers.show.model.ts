@@ -47,10 +47,10 @@ export default class SuppliersShowModel {
 
   static example: SuppliersShowModel = new SuppliersShowModel({
     id: 1,
-    phone: 'phone',
-    materials: 'materials',
-    Supplier: 'Supplier',
-    spacification: 'spacification',
+    phone: '+966 50 123 4567',
+    materials: 'Steel, Cement, Bricks',
+    Supplier: 'ABC Suppliers Ltd',
+    spacification: 'General Building Materials',
   });
 
   static getLocalizedData<T extends Record<string, any>>(

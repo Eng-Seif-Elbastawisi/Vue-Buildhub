@@ -10,8 +10,7 @@
   import DeleteSuppliersParams from '../../core/params/delete.Suppliers.params.ts';
   import type SuppliersModel from '../../core/models/Suppliers.model.ts';
   import DeleteDialog from '@/shared/HelpersComponents/dialog/DeleteDialog.vue';
-  import Dialog from 'primevue/dialog';
-  import UpdatedCustomInputSelect from '@/shared/FormInputs/UpdatedCustomInputSelect.vue';
+import { useUserStore } from '@/stores/user.ts';
 
   const controller = SuppliersController.getInstance();
   const state = computed(() => controller.listState.value);
@@ -91,9 +90,9 @@
   //   return Object.keys(data).length === 0 || Object.values(data).every((v) => v == null);
   // });
 
-  const visible = ref(false);
-  const Specialization = ref('');
-  const phone = ref('');
+
+    const { user } = useUserStore();
+
 </script>
 
 <template>
@@ -118,8 +117,11 @@
         </div> -->
       </div>
       <div class="btns">
-        <button class="btn btn-secondary" @click="visible = true">{{ $t('add_Supplier') }}</button>
-        <Dialog
+        <router-link class="btn btn-primary" :to="user?.isMaster ? '/suppliers/add' : '/organization/suppliers/add'">
+          {{ $t('suppliers.add') }}
+        </router-link>
+        <!-- <button class="btn btn-secondary" @click="visible = true">{{ $t('add_Supplier') }}</button> -->
+        <!-- <Dialog
           v-model:visible="visible"
           :pt="{ root: 'filter-dialog', header: 'dialog-header', content: 'dialog-body' }"
           modal
@@ -187,7 +189,7 @@
           <div class="save_button">
             <button>{{ $t('Save') }}</button>
           </div>
-        </Dialog>
+        </Dialog> -->
       </div>
     </div>
 
@@ -209,7 +211,7 @@
               <div class="row-actions">
                 <router-link
                   class="action-btn edit"
-                  :to="`/Suppliers/edit/${item.id}`"
+                  :to="user?.isMaster ? `/suppliers/edit/${item.id}` : `/organization/suppliers/edit/${item.id}`"
                   title="Edit"
                 >
                   <svg
@@ -286,7 +288,7 @@
           </svg>
           <h3>{{ $t('no_Suppliers_yet') }}</h3>
           <p>{{ $t('add_first_Supplier') }}</p>
-          <router-link :to="formRoute" class="btn-add empty-cta">
+          <router-link :to="user?.isMaster ? '/suppliers/add' : '/organization/suppliers/add'" class="btn-add empty-cta">
             <svg
               width="18"
               height="18"
