@@ -7,13 +7,12 @@
   import Pagination from '@/shared/HelpersComponents/Pagination.vue';
   import TableSkelaton from '@/shared/HelpersComponents/TableSkelaton.vue';
   import DeleteDialog from '@/shared/HelpersComponents/dialog/DeleteDialog.vue';
-  import IndexDelete from '@/shared/icons/DocaumentType/IndexDelete.vue';
   import { UnitTypeEnum } from '../../core/constant/unit.type.enum';
   import type MaterialsModel from '../../core/models/materials.model';
   import DeleteMaterialParams from '../../core/params/delete.materials.params';
   import IndexMaterialParams from '../../core/params/index.materials.params';
   import MaterialController from '../controllers/materials.controller';
-import { useUserStore } from '@/stores/user';
+  import { useUserStore } from '@/stores/user';
 
   const controller = MaterialController.getInstance();
   const state = computed(() => controller.listState.value);
@@ -69,7 +68,7 @@ import { useUserStore } from '@/stores/user';
     word.value = route.query.word ? String(route.query.word) : '';
     await fetchMaterials(route.query.page ? Number(route.query.page) : 1, word.value);
   });
-    const { user } = useUserStore();
+  const { user } = useUserStore();
 </script>
 
 <template>
@@ -79,9 +78,12 @@ import { useUserStore } from '@/stores/user';
         <h4>{{ $t('material.list_title') }}</h4>
         <p>{{ $t('material.list_description') }}</p>
       </div>
-      <router-link class="btn btn-primary" :to="user?.isMaster ? '/material/add' : '/organization/material/add'">
-        
-        {{ $t('material.add') }}</router-link>
+      <router-link
+        class="btn btn-primary"
+        :to="user?.isMaster ? '/material/add' : '/organization/material/add'"
+      >
+        {{ $t('material.add') }}</router-link
+      >
     </div>
 
     <DataStatusBuilder :controller="state" :on-retry="async () => await fetchMaterials()">
@@ -100,19 +102,61 @@ import { useUserStore } from '@/stores/user';
             <div class="row-actions">
               <router-link
                 class="action-btn edit"
-                :to="user?.isMaster ? `/material/edit/${item.id}` : `/organization/material/edit/${item.id}`"
+                :to="
+                  user?.isMaster
+                    ? `/material/edit/${item.id}`
+                    : `/organization/material/edit/${item.id}`
+                "
                 :title="$t('material.edit')"
               >
-                {{ $t('material.edit') }}
+                <svg
+                  width="15"
+                  height="15"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                </svg>
               </router-link>
+
               <DeleteDialog
+                :title="$t('Are you sure you want to remove this Material?')"
+                :message="$t('This action cannot be undone.')"
+                :hasbtn="true"
+                @delete="deleteMaterial(item.id!)"
+              >
+                <template #Dialog>
+                  <button class="action-btn delete" title="Delete">
+                    <svg
+                      width="15"
+                      height="15"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path d="M3 6h18" />
+                      <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+                      <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+                    </svg>
+                  </button>
+                </template>
+              </DeleteDialog>
+              <!-- <DeleteDialog
                 :title="$t('material.delete_title')"
                 :message="$t('material.delete_message')"
                 :hasbtn="true"
                 @delete="deleteMaterial(item.id!)"
               >
                 <template #btn><IndexDelete /></template>
-              </DeleteDialog>
+              </DeleteDialog> -->
             </div>
           </template>
         </AppTable>

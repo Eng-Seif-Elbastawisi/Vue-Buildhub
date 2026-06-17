@@ -59,4 +59,8 @@
   .error {
     color: var(--danger-dark);
   }
+
+  .btn-primary {
+    width: 100%;
+  }
 </style>

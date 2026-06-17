@@ -58,6 +58,10 @@
 @use '../modules/Questions/presentation/styles/questions_imports';
 @use '../modules/Articles/presentation/styles/artical_imports';
 @use '../modules/Suppliers/presentation/styles/supplier_imports';
+@use '../modules/client/presentation/styles/client_imports';
+@use '../modules/location/presentation/styles/location_imports';
+@use '../modules/ProjectType/presentation/styles/project_type_imports';
+@use '../modules/Materials/presentation/styles/material_imports';
 /* ── Pages ─────────────────────────────────────────────────────── */
 @use '../modules/auth/presentation/styles/login';
 @use 'error/error';
@@ -236,6 +240,7 @@ body {
   .p-accordioncontent-content {
     padding: 0 !important;
   }
+
   .p-accordionpanel {
     border: none !important;
   }

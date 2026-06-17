@@ -7,8 +7,8 @@ import BranchesModel from './branches.model';
  */
 export default class StageModel {
   public readonly id?: number;
-  public readonly title: string;
-  public readonly full_title: string;
+  public readonly translations: { title: Record<string, string> };
+  // public readonly full_title: string;
   public readonly e_c_subject_id?: number;
 
   public readonly branches: BranchesModel[];
@@ -17,16 +17,14 @@ export default class StageModel {
 
   constructor(data: {
     id?: number;
-    title: string;
-    full_title: string;
+    translations: { title: Record<string, string> };
     e_c_subject_id?: number;
     branches: BranchesModel[];
     EducationType: TitleInterface<EducationType>;
     children: StageModel[];
   }) {
     this.id = data.id;
-    this.title = data.title;
-    this.full_title = data.full_title;
+    this.translations = data.translations;
     this.e_c_subject_id = data.e_c_subject_id;
     this.branches = data.branches;
     this.EducationType = data.EducationType;
@@ -47,8 +45,7 @@ export default class StageModel {
 
     return new StageModel({
       id: json.id,
-      title: json.title,
-      full_title: json.full_title,
+      translations: { title: json.translations.title },
       e_c_subject_id: json.e_c_subject_id,
       branches: json.branches?.map((branch: any) => BranchesModel.fromJson(branch)) ?? [],
       EducationType: json.education_type,
@@ -57,14 +54,13 @@ export default class StageModel {
   }
 
   static example: StageModel = new StageModel({
-  id: 1,
-  title: 'المرحلة الثانوية',
-  full_title: 'المرحلة الثانوية',
-  branches: [BranchesModel.example],
-  EducationType: new TitleInterface({
-    id: EducationType.General,
-    title: 'General',
-  }),
-  children: [],
-});
+    id: 1,
+    translations: { title: { en: 'title', ar: 'title' } },
+    branches: [BranchesModel.example],
+    EducationType: new TitleInterface({
+      id: EducationType.General,
+      title: 'General',
+    }),
+    children: [],
+  });
 }

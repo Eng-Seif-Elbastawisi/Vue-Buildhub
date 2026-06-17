@@ -7,7 +7,6 @@
   import Pagination from '@/shared/HelpersComponents/Pagination.vue';
   import TableSkelaton from '@/shared/HelpersComponents/TableSkelaton.vue';
   import DeleteDialog from '@/shared/HelpersComponents/dialog/DeleteDialog.vue';
-  import IndexDelete from '@/shared/icons/DocaumentType/IndexDelete.vue';
   import type LocationModel from '../../core/models/location.model';
   import DeleteLocationParams from '../../core/params/delete.location.params';
   import { useUserStore } from '@/stores/user';
@@ -25,7 +24,7 @@
 
   const headers: TableHeader[] = [
     { key: 'translations', label: 'location.title', width: '35%', sortable: true },
-    { key: 'code', label: 'location.code', width: '20%' },
+    { key: 'code', label: 'location.code', width: '30%' },
     { key: 'type', label: 'location.type', width: '30%' },
   ];
 
@@ -72,8 +71,8 @@
 </script>
 
 <template>
-  <div class="material-page">
-    <div class="material-header">
+  <div class="location-page">
+    <div class="location-header">
       <div>
         <h4>{{ $t('location.list_title') }}</h4>
         <p>{{ $t('location.list_description') }}</p>
@@ -109,16 +108,43 @@
                 "
                 :title="$t('location.edit')"
               >
-                {{ $t('location.edit') }}
+                <svg
+                  width="15"
+                  height="15"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                </svg>
               </router-link>
               <DeleteDialog
-                :title="$t('location.delete_title')"
-                :message="$t('location.delete_message')"
+                :title="$t('Are you sure you want to remove this location?')"
+                :message="$t('This action cannot be undone.')"
                 :hasbtn="true"
                 @delete="deleteLocation(item.id!)"
               >
-                <template #btn>
-                  <IndexDelete />
+                <template #Dialog>
+                  <button class="action-btn delete" title="Delete">
+                    <svg
+                      width="15"
+                      height="15"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path d="M3 6h18" />
+                      <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+                      <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+                    </svg>
+                  </button>
                 </template>
               </DeleteDialog>
             </div>

@@ -21,7 +21,9 @@
   const route = useRoute();
 
   // Table headers
-  const headers: TableHeader[] = [{ key: 'title', label: 'Title', width: '95%', sortable: true }];
+  const headers: TableHeader[] = [
+    { key: 'translations', label: 'Title', width: '95%', sortable: true },
+  ];
 
   // Pagination state
   const perPage = ref(10);
@@ -152,7 +154,7 @@
             @selection-change="setSelectef"
           >
             <template #cell-name="{ item }">
-              {{ item.title }}
+              {{ item?.title }}
             </template>
 
             <template #actions="{ item }">
@@ -161,10 +163,10 @@
                   <EditIcon />
                 </button>
                 <DeleteDialog
-                  @delete="deleteCountry(item.id!)"
                   :title="$t('Are you sure you want to remove this stage?')"
                   :message="$t('This action cannot be undone.')"
                   :hasbtn="true"
+                  @delete="deleteCountry(item.id!)"
                 >
                   <template #btn>
                     <button class="action-btn delete" title="Delete">

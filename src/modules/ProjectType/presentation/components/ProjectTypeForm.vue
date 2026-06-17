@@ -71,23 +71,45 @@
 </template>
 
 <style scoped lang="scss">
+  .field-input {
+    width: 100%;
+    padding: 12px 16px;
+    padding-right: 50px;
+    border: 1px solid var(--border-weak);
+    border-radius: 28px;
+    background: var(--white);
+    outline: none;
+    transition: all 0.25s ease;
+    font-family: 'Medium';
+    font-weight: 400;
+    font-size: var(--sm-size);
+    color: var(--bread-crumb-color-span);
+    max-height: 200px;
+    max-width: 100%;
+  }
+
   .project-form-card {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
   }
+
   header p {
     color: var(--gray-5);
   }
+
   .form-fields {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 1rem;
+    align-items: end;
   }
+
   .form-fields.disabled {
     pointer-events: none;
     opacity: 0.7;
   }
+
   @media (max-width: 768px) {
     .form-fields {
       grid-template-columns: 1fr;

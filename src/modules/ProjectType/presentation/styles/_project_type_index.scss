@@ -4,7 +4,8 @@
 .p-dialog.supplier-dialog {
   background-color: white;
 }
-.document-page {
+
+.project-page {
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -42,7 +43,7 @@
     }
   }
 
-  .index-header {
+  .project-header {
     @include flex-row(nowrap, space-between, center);
 
     width: 100%;

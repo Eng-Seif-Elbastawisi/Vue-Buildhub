@@ -6,22 +6,22 @@ import { ClassValidation } from '@/base/Presentation/Utils/classValidation';
  */
 export default class EditStageParams implements Params {
   public id: number;
-  public title: string;
+  public translations?: { title: Record<string, string> };
 
   public static readonly validation = new ClassValidation().setRules({
     id: { required: true, minLength: 1, maxLength: 100 },
-    title: { required: true, minLength: 2, maxLength: 100 },
+    translations: { required: true, minLength: 2, maxLength: 100 },
   });
 
-  constructor(id: number, title: string) {
-    this.id = id;
-    this.title = title;
+  constructor(data: { id: number; translations?: { title: Record<string, string> } }) {
+    this.id = data.id;
+    this.translations = data.translations;
   }
 
   toMap(): { [p: string]: any } {
     return {
       id: this.id,
-      title: this.title,
+      translations: this.translations,
     };
   }
 

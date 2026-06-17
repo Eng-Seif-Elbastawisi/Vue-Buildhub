@@ -2,21 +2,21 @@ import type Params from '@/base/Core/Params/params';
 import { ClassValidation } from '@/base/Presentation/Utils/classValidation';
 
 export default class AddStageParams implements Params {
-  public title: string;
+  public translations?: { title: Record<string, string> };
   public parentId?: number;
 
   public static readonly validation = new ClassValidation().setRules({
-    title: { required: true, minLength: 2, maxLength: 100 },
+    translations: { required: true },
   });
 
-  constructor(data: { title: string; parentId?: number }) {
-    this.title = data.title;
+  constructor(data: { translations?: { title: Record<string, string> }; parentId?: number }) {
+    this.translations = data.translations;
     this.parentId = data.parentId;
   }
 
   toMap(): { [p: string]: any } {
     const map: { [key: string]: any } = {
-      title: this.title,
+      translations: this.translations,
     };
     if (this.parentId) {
       map.parent_id = this.parentId;

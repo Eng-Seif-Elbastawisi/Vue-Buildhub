@@ -113,6 +113,23 @@
 </template>
 
 <style scoped lang="scss">
+  .field-input {
+    width: 100%;
+    padding: 12px 16px;
+    padding-right: 50px;
+    border: 1px solid var(--border-weak);
+    border-radius: 28px;
+    background: var(--white);
+    outline: none;
+    transition: all 0.25s ease;
+    font-family: 'Medium';
+    font-weight: 400;
+    font-size: var(--sm-size);
+    color: var(--bread-crumb-color-span);
+    max-height: 200px;
+    max-width: 100%;
+  }
+
   .material-form-card {
     display: flex;
     flex-direction: column;
@@ -127,6 +144,7 @@
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 1rem;
+    align-items: end;
 
     &.disabled {
       pointer-events: none;

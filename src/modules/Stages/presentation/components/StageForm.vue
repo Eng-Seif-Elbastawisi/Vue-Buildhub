@@ -3,6 +3,7 @@
   import type StageModel from '../../core/models/stage.model';
   import AddStageParams from '../../core/params/add.stges.params';
   import EditStageParams from '../../core/params/edit.stage.params';
+  import MultiLangInput from '@/shared/MultiLangInput.vue';
 
   const emit = defineEmits<{
     updateData: [params: AddStageParams | EditStageParams];
@@ -12,19 +13,20 @@
     stage?: StageModel;
     loading?: boolean;
   }>();
-
-  const title = ref<string>('');
-
+  const translations = ref<{ [key: string]: string }>({});
   const updateData = () => {
     if (stage?.id) {
-      emit('updateData', new EditStageParams(stage.id, title.value));
+      emit(
+        'updateData',
+        new EditStageParams({ id: stage?.id, translations: { title: translations.value } }),
+      );
       return;
     }
 
     emit(
       'updateData',
       new AddStageParams({
-        title: title.value,
+        translations: { title: translations.value },
       }),
     );
   };
@@ -32,7 +34,7 @@
   watch(
     () => stage,
     (newStage) => {
-      title.value = newStage?.title ?? '';
+      translations.value = newStage?.translations?.title ?? {};
       updateData();
     },
     { immediate: true },
@@ -41,8 +43,8 @@
 
 <template>
   <div class="form-fields">
-    <div class="field-group" :class="{ disabled: loading }">
-      <label class="field-label" for="title"> {{ $t('stage_title') }} </label>
+    <!-- <div class="field-group" :class="{ disabled: loading }">
+      <label class="field-label" for="title"> {{ $t('stage_title') }} </label> 
       <div class="input-wrap">
         <input
           id="title"
@@ -53,6 +55,16 @@
           @input="updateData"
         />
       </div>
+    </div> -->
+    <div class="field-group" :class="{ disabled: loading }">
+      <MultiLangInput
+        v-model="translations"
+        field-key="title"
+        :label="$t('stage_title')"
+        :languages="['en', 'ar']"
+        type="title"
+        @update:model-value="updateData"
+      />
     </div>
   </div>
 </template>
@@ -60,6 +72,7 @@
 <style scoped lang="scss">
   .form-fields {
     padding: 20px;
+
     .field-group {
       &.disabled {
         cursor: not-allowed;
@@ -68,4 +81,26 @@
       }
     }
   }
+
+  // .field-input{
+  //   width: 100%;
+  //   padding: 12px 16px;
+  //     padding-right: 16px;
+  //   padding-right: 16px;
+  //   padding-right: 50px;
+  //   border: 1px solid var(--border-weak);
+  //   border-radius: 28px;
+  //   background: var(--white);
+  //   outline: none;
+  //   transition: all 0.25s ease;
+  //   font-family: "Medium";
+  //   font-weight: 400;
+  //   font-size: var(--sm-size);
+  //   color: var(--bread-crumb-color-span);
+  //   max-height: 200px;
+  //   max-width: 100%;
+  // }
+  // .email-crud-example .:hover{
+  //   background-color: transparent !important;
+  // }
 </style>
