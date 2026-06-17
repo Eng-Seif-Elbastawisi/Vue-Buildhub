@@ -158,8 +158,8 @@
         },
 
         {
-          link: user?.isMaster ? '/project' : '/organization/project',
-          name: 'Projects',
+          link: user?.isMaster ? '/projectType' : '/organization/projectType',
+          name: 'Project Types',
           icon: ArticleIcon,
         },
         {

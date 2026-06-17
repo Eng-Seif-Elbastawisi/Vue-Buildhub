@@ -33,11 +33,11 @@ export default class ClientRepository extends BaseRepository<ClientShowModel, Cl
     return ClientRepository.instance;
   }
 
-  protected parseItem(data: any): ClientShowModel {
+  protected parseItem(data: Record<string, unknown>): ClientShowModel {
     return ClientShowModel.fromJson(data);
   }
 
-  protected parseList(data: any): ClientModel[] {
+  protected parseList(data: unknown): ClientModel[] {
     if (!Array.isArray(data)) return [];
 
     return data.map((item) => ClientModel.fromJson(item));

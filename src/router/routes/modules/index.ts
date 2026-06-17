@@ -19,7 +19,7 @@ import { BrandRoutes } from './brand';
 import { departmentRoutes } from './department';
 import { termRoutes } from './term';
 import { MaterialRoutes } from './material';
-import { ProjectRoutes } from './project';
+import { ProjectTypeRoutes } from './projectType';
 import { ClientRoutes } from './client';
 import { LocationRoutes } from './location';
 
@@ -44,7 +44,7 @@ export const dashboardRoutes: RouteRecordRaw[] = [
   ...departmentRoutes,
   ...termRoutes,
   ...MaterialRoutes,
-  ...ProjectRoutes,
+  ...ProjectTypeRoutes,
   ...ClientRoutes,
   ...LocationRoutes,
 ];

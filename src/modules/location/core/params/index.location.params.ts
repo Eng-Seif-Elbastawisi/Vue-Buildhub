@@ -1,5 +1,5 @@
 import IndexParams from '@/base/Core/Params/indexParams';
-import { LocationTypeEnum } from '../constant/location.type.enum';
+import { type LocationTypeEnum } from '../constant/location.type.enum';
 
 export default class IndexLocationParams extends IndexParams {
   dateRemove: string | null | undefined;

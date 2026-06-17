@@ -33,11 +33,11 @@ export default class LocationRepository extends BaseRepository<LocationShowModel
     return LocationRepository.instance;
   }
 
-  protected parseItem(data: any): LocationShowModel {
+  protected parseItem(data: Record<string, unknown>): LocationShowModel {
     return LocationShowModel.fromJson(data);
   }
 
-  protected parseList(data: any): LocationModel[] {
+  protected parseList(data: unknown): LocationModel[] {
     if (!Array.isArray(data)) return [];
 
     return data.map((item) => LocationModel.fromJson(item));
