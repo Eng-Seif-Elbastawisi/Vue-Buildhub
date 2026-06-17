@@ -9,8 +9,8 @@
   import IndexSuppliersParams from '../../core/params/index.Suppliers.params.ts';
   import DeleteSuppliersParams from '../../core/params/delete.Suppliers.params.ts';
   import type SuppliersModel from '../../core/models/Suppliers.model.ts';
-  import DeleteDialog from '@/shared/HelpersComponents/dialog/DeleteDialog.vue';
-import { useUserStore } from '@/stores/user.ts';
+  import { useUserStore } from '@/stores/user.ts';
+  import DeleteDialog from '@/base/Presentation/Dialogs/MainDialogs/DeleteDialog.vue';
 
   const controller = SuppliersController.getInstance();
   const state = computed(() => controller.listState.value);
@@ -90,9 +90,7 @@ import { useUserStore } from '@/stores/user.ts';
   //   return Object.keys(data).length === 0 || Object.values(data).every((v) => v == null);
   // });
 
-
-    const { user } = useUserStore();
-
+  const { user } = useUserStore();
 </script>
 
 <template>
@@ -117,7 +115,10 @@ import { useUserStore } from '@/stores/user.ts';
         </div> -->
       </div>
       <div class="btns">
-        <router-link class="btn btn-primary" :to="user?.isMaster ? '/suppliers/add' : '/organization/suppliers/add'">
+        <router-link
+          class="btn btn-primary"
+          :to="user?.isMaster ? '/suppliers/add' : '/organization/suppliers/add'"
+        >
           {{ $t('suppliers.add') }}
         </router-link>
         <!-- <button class="btn btn-secondary" @click="visible = true">{{ $t('add_Supplier') }}</button> -->
@@ -211,7 +212,11 @@ import { useUserStore } from '@/stores/user.ts';
               <div class="row-actions">
                 <router-link
                   class="action-btn edit"
-                  :to="user?.isMaster ? `/suppliers/edit/${item.id}` : `/organization/suppliers/edit/${item.id}`"
+                  :to="
+                    user?.isMaster
+                      ? `/suppliers/edit/${item.id}`
+                      : `/organization/suppliers/edit/${item.id}`
+                  "
                   title="Edit"
                 >
                   <svg
@@ -235,7 +240,7 @@ import { useUserStore } from '@/stores/user.ts';
                   :hasbtn="true"
                   @delete="deleteSupplier(item.id!)"
                 >
-                  <template #Dialog>
+                  <template #btn>
                     <button class="action-btn delete" title="Delete">
                       <svg
                         width="15"
@@ -288,7 +293,10 @@ import { useUserStore } from '@/stores/user.ts';
           </svg>
           <h3>{{ $t('no_Suppliers_yet') }}</h3>
           <p>{{ $t('add_first_Supplier') }}</p>
-          <router-link :to="user?.isMaster ? '/suppliers/add' : '/organization/suppliers/add'" class="btn-add empty-cta">
+          <router-link
+            :to="user?.isMaster ? '/suppliers/add' : '/organization/suppliers/add'"
+            class="btn-add empty-cta"
+          >
             <svg
               width="18"
               height="18"

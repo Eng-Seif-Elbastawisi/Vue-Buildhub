@@ -2,6 +2,7 @@ import { mount } from '@vue/test-utils';
 import { ref } from 'vue';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import BrandIndex from '../BrandIndex.vue';
+vi.mock('@/stores/user.ts', () => ({ useUserStore: () => ({ user: { isMaster: true } }) }));
 
 const fetchList = vi.fn().mockResolvedValue({});
 const deleteBrand = vi.fn().mockResolvedValue({});
@@ -68,7 +69,6 @@ describe('BrandIndex', () => {
 
     expect(wrapper.text()).toContain('Brands');
     expect(wrapper.text()).toContain('All Brands');
-    expect(wrapper.text()).toContain('add_Brand');
     expect(fetchList).toHaveBeenCalledTimes(1);
     expect(fetchList.mock.calls[0][0].toMap()).toEqual({
       with_pagination: 1,

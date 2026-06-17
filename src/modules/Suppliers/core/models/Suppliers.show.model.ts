@@ -1,4 +1,4 @@
-import TitleInterface from '@/base/Data/Models/titleInterface';
+import type TitleInterface from '@/base/Data/Models/titleInterface';
 export default class SuppliersShowModel {
   public readonly id?: number;
   public readonly phone?: string;
@@ -58,7 +58,7 @@ export default class SuppliersShowModel {
     locale: string,
   ): TitleInterface<number> {
     const result: TitleInterface<number> = {
-      id: obj.id,
+      /*  */ id: obj.id,
     };
 
     Object.keys(obj).forEach((key) => {

@@ -6,13 +6,13 @@
   import AppTable, { type TableHeader } from '@/shared/HelpersComponents/AppTable.vue';
   import Pagination from '@/shared/HelpersComponents/Pagination.vue';
   import TableSkelaton from '@/shared/HelpersComponents/TableSkelaton.vue';
-  import DeleteDialog from '@/shared/HelpersComponents/dialog/DeleteDialog.vue';
   import { UnitTypeEnum } from '../../core/constant/unit.type.enum';
   import type MaterialsModel from '../../core/models/materials.model';
   import DeleteMaterialParams from '../../core/params/delete.materials.params';
   import IndexMaterialParams from '../../core/params/index.materials.params';
   import MaterialController from '../controllers/materials.controller';
   import { useUserStore } from '@/stores/user';
+  import DeleteDialog from '@/base/Presentation/Dialogs/MainDialogs/DeleteDialog.vue';
 
   const controller = MaterialController.getInstance();
   const state = computed(() => controller.listState.value);
@@ -130,7 +130,7 @@
                 :hasbtn="true"
                 @delete="deleteMaterial(item.id!)"
               >
-                <template #Dialog>
+                <template #btn>
                   <button class="action-btn delete" title="Delete">
                     <svg
                       width="15"

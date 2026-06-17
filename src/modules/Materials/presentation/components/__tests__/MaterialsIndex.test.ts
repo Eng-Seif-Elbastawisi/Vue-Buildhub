@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { ref } from 'vue';
 import MaterialsIndex from '../MaterialsIndex.vue';
+vi.mock('@/stores/user', () => ({ useUserStore: () => ({ user: { isMaster: true } }) }));
 
 const fetchList = vi.fn().mockResolvedValue({});
 vi.mock('vue-router', () => ({

@@ -6,7 +6,7 @@
   import AppTable, { type TableHeader } from '@/shared/HelpersComponents/AppTable.vue';
   import Pagination from '@/shared/HelpersComponents/Pagination.vue';
   import TableSkelaton from '@/shared/HelpersComponents/TableSkelaton.vue';
-  import DeleteDialog from '@/shared/HelpersComponents/dialog/DeleteDialog.vue';
+  import DeleteDialog from '@/base/Presentation/Dialogs/MainDialogs/DeleteDialog.vue';
   import type LocationModel from '../../core/models/location.model';
   import DeleteLocationParams from '../../core/params/delete.location.params';
   import { useUserStore } from '@/stores/user';
@@ -128,7 +128,7 @@
                 :hasbtn="true"
                 @delete="deleteLocation(item.id!)"
               >
-                <template #Dialog>
+                <template #btn>
                   <button class="action-btn delete" title="Delete">
                     <svg
                       width="15"

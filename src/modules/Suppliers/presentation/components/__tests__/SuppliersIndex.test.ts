@@ -2,6 +2,7 @@ import { mount } from '@vue/test-utils';
 import { ref } from 'vue';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import SuppliersIndex from '../SuppliersIndex.vue';
+vi.mock('@/stores/user.ts', () => ({ useUserStore: () => ({ user: { isMaster: true } }) }));
 
 const fetchList = vi.fn().mockResolvedValue({});
 const deleteSupplier = vi.fn().mockResolvedValue({});
@@ -68,7 +69,6 @@ describe('SuppliersIndex', () => {
 
     expect(wrapper.text()).toContain('Suppliers');
     expect(wrapper.text()).toContain('All Suppliers');
-    expect(wrapper.text()).toContain('add_Supplier');
     expect(fetchList).toHaveBeenCalledTimes(1);
     expect(fetchList.mock.calls[0][0].toMap()).toEqual({
       with_pagination: 1,

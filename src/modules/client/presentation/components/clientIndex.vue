@@ -5,7 +5,7 @@
   import AppTable, { type TableHeader } from '@/shared/HelpersComponents/AppTable.vue';
   import Pagination from '@/shared/HelpersComponents/Pagination.vue';
   import TableSkelaton from '@/shared/HelpersComponents/TableSkelaton.vue';
-  import DeleteDialog from '@/shared/HelpersComponents/dialog/DeleteDialog.vue';
+  import DeleteDialog from '@/base/Presentation/Dialogs/MainDialogs/DeleteDialog.vue';
   import DeleteClientParams from '../../core/params/delete.client.params';
   import IndexClientParams from '../../core/params/index.client.params';
   import ClientController from '../controllers/client.controller';
@@ -126,7 +126,7 @@
                 :hasbtn="true"
                 @delete="deleteClient(item.id!)"
               >
-                <template #Dialog>
+                <template #btn>
                   <button class="action-btn delete" title="Delete">
                     <svg
                       width="15"

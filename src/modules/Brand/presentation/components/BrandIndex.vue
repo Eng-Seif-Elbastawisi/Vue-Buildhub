@@ -6,14 +6,12 @@
   import { useRoute, useRouter } from 'vue-router';
   import TableSkelaton from '@/shared/HelpersComponents/TableSkelaton.vue';
   import type SuppliersModel from '../../core/models/brand.model.ts';
-  import DeleteDialog from '@/shared/HelpersComponents/dialog/DeleteDialog.vue';
-  import Dialog from 'primevue/dialog';
-  import UpdatedCustomInputSelect from '@/shared/FormInputs/UpdatedCustomInputSelect.vue';
   import BrandController from '../controllers/brand.controller.ts';
   import IndexBrandParams from '../../core/params/index.brand.params.ts';
   import DeleteBrandParams from '../../core/params/delete.brand.params.ts';
-  import { EquipmentTypeEnum } from '../../core/constant/equipment.type.enum.ts';
-import { useUserStore } from '@/stores/user.ts';
+  // import { EquipmentTypeEnum } from '../../core/constant/equipment.type.enum.ts';
+  import { useUserStore } from '@/stores/user.ts';
+  import DeleteDialog from '@/base/Presentation/Dialogs/MainDialogs/DeleteDialog.vue';
 
   const controller = BrandController.getInstance();
   const state = computed(() => controller.listState.value);
@@ -82,14 +80,14 @@ import { useUserStore } from '@/stores/user.ts';
   //   const data = FormStore?.formData[formRoute.value] ?? {};
   //   return Object.keys(data).length === 0 || Object.values(data).every((v) => v == null);
   // });
-  const visible = ref(false);
-  const title = ref('');
-  const equipment = ref(null);
-  const equipmentOptions = Object.entries(EquipmentTypeEnum).map(([title, id]) => ({
-    id,
-    title,
-  }));
-    const { user } = useUserStore();
+  // const visible = ref(false);
+  // const title = ref('');
+  // const equipment = ref(null);
+  // const equipmentOptions = Object.entries(EquipmentTypeEnum).map(([title, id]) => ({
+  //   id,
+  //   title,
+  // }));
+  const { user } = useUserStore();
 </script>
 
 <template>
@@ -183,7 +181,11 @@ import { useUserStore } from '@/stores/user.ts';
               <div class="row-actions">
                 <router-link
                   class="action-btn edit"
-                  :to="user?.isMaster ? `/brand/edit/${item.id}` : `/organization/brand/edit/${item.id}`"
+                  :to="
+                    user?.isMaster
+                      ? `/brand/edit/${item.id}`
+                      : `/organization/brand/edit/${item.id}`
+                  "
                   title="Edit"
                 >
                   <svg
@@ -207,7 +209,7 @@ import { useUserStore } from '@/stores/user.ts';
                   :hasbtn="true"
                   @delete="deleteBrand(item.id!)"
                 >
-                  <template #Dialog>
+                  <template #btn>
                     <button class="action-btn delete" title="Delete">
                       <svg
                         width="15"
