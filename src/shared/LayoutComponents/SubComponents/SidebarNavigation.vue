@@ -60,6 +60,12 @@
           name: 'item',
           icon: EducationClassificationIcon,
         },
+        {
+          link: user?.isMaster ? '/admin/admin' : '/organization/admin',
+          name: 'admin',
+          icon: EducationClassificationIcon,
+        },
+
         // {
         //   link: '/employees',
         //   name: 'Employees',

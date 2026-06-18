@@ -41,7 +41,7 @@ export default class AdminController extends BaseController<AdminModel, AdminMod
 
     const result = await super.create(params, options);
     if (result instanceof DataSuccess) {
-      router.push({ name: 'Admins' });
+      router.push({ name: 'Admin' });
       if (formKey) {
         FormStore.clearFormData(formKey);
       }
@@ -54,7 +54,7 @@ export default class AdminController extends BaseController<AdminModel, AdminMod
 
     const result = await super.update(params, options);
     if (result instanceof DataSuccess) {
-      router.push({ name: 'Admins' });
+      router.push({ name: 'Admin' });
       if (formKey) {
         FormStore.clearFormData(formKey);
       }
