@@ -55,6 +55,11 @@
           name: 'Organization',
           icon: EducationClassificationIcon,
         },
+        {
+          link: user?.isMaster ? '/admin/item' : '/organization/item',
+          name: 'item',
+          icon: EducationClassificationIcon,
+        },
         // {
         //   link: '/employees',
         //   name: 'Employees',
