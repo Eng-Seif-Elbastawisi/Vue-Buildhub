@@ -5,6 +5,7 @@
   import MeasurementController from '../controllers/measurement.controller.ts';
   import type EditMeasurementParams from '../../core/params/edit.measurement.params.ts';
   import ShowMeasurementParams from '../../core/params/show.measurement.params.ts';
+  import type AddMeasurementParams from '../../core/params/add.measurement.params.ts';
 
   // Controller instance
   const controller = MeasurementController.getInstance();
@@ -29,9 +30,12 @@
     }
   };
 
-  const updateData = (updatedParams: EditMeasurementParams) => {
-    params.value = updatedParams;
-    // saveEmail();
+  // const updateData = (updatedParams: EditMeasurementParams ) => {
+  //   params.value = updatedParams;
+  //   // saveEmail();
+  // };
+  const updateData = (updatedParams: AddMeasurementParams | EditMeasurementParams) => {
+    params.value = updatedParams as EditMeasurementParams;
   };
 
   const route = useRoute();
