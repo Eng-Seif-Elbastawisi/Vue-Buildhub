@@ -22,6 +22,7 @@ import { MaterialRoutes } from './material';
 import { ProjectTypeRoutes } from './projectType';
 import { ClientRoutes } from './client';
 import { LocationRoutes } from './location';
+import { measurementRoutes } from './measurement';
 
 export const dashboardRoutes: RouteRecordRaw[] = [
   // ...countryRoutes,
@@ -47,4 +48,5 @@ export const dashboardRoutes: RouteRecordRaw[] = [
   ...ProjectTypeRoutes,
   ...ClientRoutes,
   ...LocationRoutes,
+  ...measurementRoutes,
 ];

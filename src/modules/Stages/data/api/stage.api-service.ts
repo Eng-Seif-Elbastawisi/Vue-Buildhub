@@ -1,6 +1,6 @@
-import BaseApiService from "@/base/Data/ApiService/baseApiService";
-import type { ApiEndpoints } from "@/base/Data/ApiService/baseApiService";
-import { StageEndpoints } from "./stage.api.endpoints";
+import BaseApiService from '@/base/Data/ApiService/baseApiService';
+import type { ApiEndpoints } from '@/base/Data/ApiService/baseApiService';
+import { StageEndpoints } from './stage.api.endpoints';
 
 export default class StageApiService extends BaseApiService {
   private static instance: StageApiService;
@@ -26,6 +26,4 @@ export default class StageApiService extends BaseApiService {
       delete: this.stageEndpoints.delete,
     };
   }
-
- 
 }

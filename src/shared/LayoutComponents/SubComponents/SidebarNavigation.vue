@@ -45,6 +45,11 @@
           name: 'Terms',
           icon: EducationClassificationIcon,
         },
+        {
+          link: user?.isMaster ? '/admin/measurement' : '/organization/measurement',
+          name: 'Measurement',
+          icon: EducationClassificationIcon,
+        },
         // {
         //   link: '/employees',
         //   name: 'Employees',

@@ -14072,6 +14072,75 @@ body::-webkit-scrollbar-thumb:hover {
     transform: rotate(0.5turn);
   }
 }
+.measurement-page {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: var(--xl-size-1);
+}
+.measurement-page .email-crud-example {
+  margin: 0;
+  width: 100%;
+}
+.measurement-page .index-header {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--md-size);
+}
+.measurement-page .index-header .search-input::placeholder {
+  font-family: 'Medium';
+}
+.measurement-page .index-header .btns-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-items: center;
+  gap: var(--xs-size-4);
+}
+.measurement-page .row-actions {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: center;
+  gap: var(--xs-size-3);
+}
+.measurement-page .action-btn {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: center;
+  width: calc(var(--xl-size-2) + 2px);
+  height: calc(var(--xl-size-2) + 2px);
+  border-radius: var(--xs-size-2);
+  border: 1px solid var(--border-weak);
+  background: var(--white);
+  color: var(--gray-500);
+  transition: all 0.2s ease;
+}
+.measurement-page .action-btn:hover {
+  transform: translateY(-1px);
+}
+.measurement-page .action-btn.edit:hover {
+  border-color: var(--PrimaryColor);
+  color: var(--PrimaryColor);
+}
+.measurement-page .action-btn.show:hover {
+  border-color: var(--info-dark) !important;
+  color: var(--info-dark) !important;
+}
+.measurement-page .action-btn.delete:hover {
+  border-color: var(--Red);
+  color: var(--Red);
+}
 .login {
   width: 100%;
   min-height: 100vh;
