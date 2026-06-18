@@ -116,7 +116,7 @@
         </div> -->
       </div>
       <div class="btns">
-        <router-link
+        <router-link 
           class="btn btn-primary"
           :to="user?.isMaster ? '/organization/add' : '/organization/organization/add'"
         >

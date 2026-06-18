@@ -79,7 +79,7 @@
       <template #success="{ data }">
         <AppTable
           :headers="headers"
-          :items="data as AdminModel[]"
+          :items="data as AdminModel[]" 
           selectable
           show-index
           hoverable
