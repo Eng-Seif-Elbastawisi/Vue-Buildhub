@@ -50,6 +50,11 @@
           name: 'Measurement',
           icon: EducationClassificationIcon,
         },
+        {
+          link: user?.isMaster ? '/admin/organization' : '/organization/organization',
+          name: 'Organization',
+          icon: EducationClassificationIcon,
+        },
         // {
         //   link: '/employees',
         //   name: 'Employees',
@@ -147,33 +152,33 @@
       group: 'Suppliers',
       items: [
         {
-          link: user?.isMaster ? '/suppliers' : '/organization/suppliers',
+          link: user?.isMaster ? '/admin/suppliers' : '/organization/suppliers',
           name: 'suppliers',
           icon: ArticleIcon,
         },
         {
-          link: user?.isMaster ? '/brand' : '/organization/brand',
+          link: user?.isMaster ? '/admin/brand' : '/organization/brand',
           name: 'brand',
           icon: ArticleIcon,
         },
         {
-          link: user?.isMaster ? '/material' : '/organization/material',
+          link: user?.isMaster ? '/admin/material' : '/organization/material',
           name: 'material',
           icon: ArticleIcon,
         },
 
         {
-          link: user?.isMaster ? '/projectType' : '/organization/projectType',
+          link: user?.isMaster ? '/admin/projectType' : '/organization/projectType',
           name: 'Project Types',
           icon: ArticleIcon,
         },
         {
-          link: user?.isMaster ? '/client' : '/organization/client',
+          link: user?.isMaster ? '/admin/client' : '/organization/client',
           name: 'Clients',
           icon: ArticleIcon,
         },
         {
-          link: user?.isMaster ? '/location' : '/organization/location',
+          link: user?.isMaster ? '/admin/location' : '/organization/location',
           name: 'location',
           icon: ArticleIcon,
         },

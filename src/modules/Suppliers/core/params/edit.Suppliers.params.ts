@@ -9,8 +9,7 @@ export default class EditSuppliersParams implements Params {
   public materials: string;
 
   public static readonly validation = new ClassValidation().setRules({
-    document_id: { required: true },
-    translations: { required: true },
+    // translations: { required: true },
   });
 
   constructor(data: {
@@ -26,7 +25,6 @@ export default class EditSuppliersParams implements Params {
     this.phone = data.phone;
     this.materials = data.materials;
   }
-
 
   toMap(): { [p: string]: any } {
     const map: { [key: string]: any } = {
