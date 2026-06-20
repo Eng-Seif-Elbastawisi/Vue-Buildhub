@@ -5,8 +5,9 @@ import { useFormsStore } from '@/stores/formsStore';
 import DocumentIcon from '@/shared/icons/DocaumentType/DocumentIcon.vue';
 import AddBrandParams from '../../core/params/add.brand.params';
 import type BrandShowModel from '../../core/models/brand.show.model';
-import type { EquipmentTypeEnum } from '../../core/constant/equipment.type.enum';
+import { EquipmentTypeEnum } from '../../core/constant/equipment.type.enum';
 import UpdatedCustomInputSelect from '@/shared/FormInputs/UpdatedCustomInputSelect.vue';
+import type TitleInterface from '@/base/Data/Models/titleInterface';
 const emit = defineEmits(['updateData']);
 
 const { brand, formKey, loading } = defineProps<{
@@ -24,15 +25,29 @@ onBeforeRouteLeave((to, from) => {
   }
 });
 
+const equipment = ref<TitleInterface<number> | null>(null);
+ const equipmentOptions = ref<TitleInterface<number>[]>([
+    {
+      id: EquipmentTypeEnum.equipment,
+      title: 'Equipment',
+    },
+    {
+      id: EquipmentTypeEnum.materials,
+      title: 'Materials',
+    },
+    {
+      id: EquipmentTypeEnum.services,
+      title: 'Services',
+    },
+  ]);
 
 const title = ref<string>();
-const equipment = ref<EquipmentTypeEnum>();
 
 
 onMounted(async () => {
   if (brand) {
     title.value = brand.title;
-    equipment.value = brand.equipment;
+    equipment.value = equipmentOptions.value.find((item) => item.id === brand.equipment) || null;
   }
 });
 
@@ -41,7 +56,7 @@ watch(
   (newBrand) => {
     if (newBrand) {
       title.value = newBrand.title;
-      equipment.value = newBrand.equipment;
+      equipment.value = equipmentOptions.value.find((item) => item.id === newBrand.equipment) || null;
     }
   },
   { immediate: true },
@@ -50,7 +65,7 @@ watch(
 const updateData = () => {
   const params = new AddBrandParams({
     name: title.value,
-    equipment: equipment.value,
+    equipment: equipment.value?.id as EquipmentTypeEnum,
   });
 
   emit('updateData', params);
@@ -79,9 +94,13 @@ const updateData = () => {
           </div>
         </div>
         <div class="field-group">
-          <UpdatedCustomInputSelect id="doc-branch" :label="`Equipment type`" :static-options="equipmentOptions"
-            v-model="equipment" :placeholder="$t('Enter equipment type')" :reload="true"
-            @update:model-value="handleBranchChange($event)" />
+          <UpdatedCustomInputSelect
+           id="doc-branch"
+            :label="`Equipment type`"
+             :static-options="equipmentOptions as TitleInterface<number>[]"
+             v-model="equipment"
+             :placeholder="$t('Enter equipment type')"
+            @update:model-value="updateData" />
         </div>
       </div>
     </div>
