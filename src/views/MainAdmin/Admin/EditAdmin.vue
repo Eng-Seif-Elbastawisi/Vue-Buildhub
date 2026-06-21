@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import AdminEdit from '@/modules/admin/presentation/components/AdminEdit.vue';
+  import AdminEdit from '@/modules/MainAdmin/admin/presentation/components/AdminEdit.vue';
 </script>
 
 <template>

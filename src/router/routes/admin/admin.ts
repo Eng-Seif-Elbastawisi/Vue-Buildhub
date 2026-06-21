@@ -4,7 +4,7 @@ export const adminCrudRoutes: RouteRecordRaw[] = [
   {
     path: 'admin',
     name: 'Admin',
-    component: () => import('@/views/Admin/IndexAdmin.vue'),
+    component: () => import('@/views/MainAdmin/Admin/IndexAdmin.vue'),
     meta: {
       breadcrumb: 'Admin',
     },
@@ -12,7 +12,7 @@ export const adminCrudRoutes: RouteRecordRaw[] = [
   {
     path: 'admin/add',
     name: 'Add Admin',
-    component: () => import('@/views/Admin/AddAdmin.vue'),
+    component: () => import('@/views/MainAdmin/Admin/AddAdmin.vue'),
     meta: {
       breadcrumb: 'Add Admin',
       parent: 'Admin',
@@ -21,7 +21,7 @@ export const adminCrudRoutes: RouteRecordRaw[] = [
   {
     path: 'admin/edit/:id',
     name: 'Edit Admin',
-    component: () => import('@/views/Admin/EditAdmin.vue'),
+    component: () => import('@/views/MainAdmin/Admin/EditAdmin.vue'),
     props: true,
     meta: {
       breadcrumb: 'Edit Admin',

@@ -4,7 +4,7 @@ export const ClientRoutes: RouteRecordRaw[] = [
   {
     path: 'client',
     name: 'Client',
-    component: () => import('@/views/Client/IndexClient.vue'),
+    component: () => import('@/views/MainOrganization/Client/IndexClient.vue'),
     meta: {
       breadcrumb: 'Client',
     },
@@ -12,7 +12,7 @@ export const ClientRoutes: RouteRecordRaw[] = [
   {
     path: 'client/add',
     name: 'Add Client',
-    component: () => import('@/views/Client/AddClient.vue'),
+    component: () => import('@/views/MainOrganization/Client/AddClient.vue'),
     meta: {
       breadcrumb: 'Add Client',
       parent: 'Client',
@@ -21,7 +21,7 @@ export const ClientRoutes: RouteRecordRaw[] = [
   {
     path: 'client/edit/:client_id',
     name: 'Edit Client',
-    component: () => import('@/views/Client/EditClient.vue'),
+    component: () => import('@/views/MainOrganization/Client/EditClient.vue'),
     props: true,
     meta: {
       breadcrumb: 'Edit Client',

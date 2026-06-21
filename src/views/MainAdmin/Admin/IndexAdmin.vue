@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import AdminIndex from '@/modules/admin/presentation/components/AdminIndex.vue';
+  import AdminIndex from '@/modules/MainAdmin/admin/presentation/components/AdminIndex.vue';
 </script>
 
 <template>
