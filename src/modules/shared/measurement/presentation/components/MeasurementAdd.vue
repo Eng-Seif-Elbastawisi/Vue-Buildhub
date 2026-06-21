@@ -81,7 +81,7 @@
   </div>
 </template>
 
-<style scoped lang="scss">
+<style scoped lang="scss"> 
   .email-crud-example {
     padding: 0;
     padding-block: 20px;

@@ -1,5 +1,5 @@
-@use '../../../../styles/variables' as *;
-@use '../../../../styles/mixins/flex' as *;
+@use '../../../../../styles/variables' as *;
+@use '../../../../../styles/mixins/flex' as *;
 
 .stage-page {
   @include flex-column(nowrap, flex-start, flex-start);

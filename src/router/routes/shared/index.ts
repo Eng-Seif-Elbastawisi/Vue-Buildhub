@@ -10,6 +10,7 @@ import { termRoutes } from './term';
 import { MaterialRoutes } from './material';
 import { LocationRoutes } from './location';
 import { measurementRoutes } from './measurement';
+import { ClientSourceRoutes } from './clientsource';
 
 export const sharedRoutes: RouteRecordRaw[] = [
   ...organizationRoutes,
@@ -23,4 +24,5 @@ export const sharedRoutes: RouteRecordRaw[] = [
   ...MaterialRoutes,
   ...LocationRoutes,
   ...measurementRoutes,
+  ...ClientSourceRoutes,
 ];

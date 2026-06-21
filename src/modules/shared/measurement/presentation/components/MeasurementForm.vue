@@ -60,7 +60,7 @@
       <MultiLangInput
         v-model="translations"
         field-key="title"
-        :label="$t('stage_title')"
+        :label="$t('measurement_title')"
         :languages="['en', 'ar']"
         type="title"
         @update:model-value="updateData"
@@ -80,7 +80,7 @@
         opacity: 0.7;
       }
     }
-  }
+  } 
 
   // .field-input{
   //   width: 100%;

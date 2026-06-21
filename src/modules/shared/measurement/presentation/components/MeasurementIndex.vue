@@ -139,7 +139,7 @@
           <span>delete</span>
         </button>
       </div>
-    </div>
+    </div> 
     <MeasurementAdd :stage="selectedMeasurement" @saved="onMeasurementSaved" />
 
     <!-- ═══ Table ═══ -->

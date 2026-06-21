@@ -65,6 +65,11 @@
           name: 'admin',
           icon: EducationClassificationIcon,
         },
+        {
+          link: user?.isMaster ? '/admin/client-source' : '/organization/client-source',
+          name: 'Client Source',
+          icon: EducationClassificationIcon,
+        },
 
         // {
         //   link: '/employees',
