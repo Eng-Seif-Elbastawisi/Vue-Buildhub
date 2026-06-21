@@ -1,17 +1,17 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useRoute } from 'vue-router';
-import type AddAdminParams from '../../core/params/add.employee.params.ts';
-import AdminController from '../controllers/admin.controller.ts';
-import AdminForm from './AdminForm.vue';
+import type AddEmployeeParams from '../../core/params/add.employee.params.ts';
+import EmployeeController from '../controllers/employee.controller.ts';
+import EmployeeForm from './EmployeeForm.vue';
 
-const controller = AdminController.getInstance();
+const controller = EmployeeController.getInstance();
 const route = useRoute();
 const formKey = route.fullPath;
-const params = ref<AddAdminParams | null>(null);
+const params = ref<AddEmployeeParams | null>(null);
 const loading = ref(false);
 
-const saveAdmin = async () => {
+const saveEmployee = async () => {
   if (!params.value) return;
   loading.value = true;
   try {
@@ -23,13 +23,13 @@ const saveAdmin = async () => {
 </script>
 
 <template>
-  <div class="admin-crud-page">
-    <AdminForm :form-key="formKey" :loading="loading" @update-data="params = $event" />
+  <div class="employee-crud-page">
+    <EmployeeForm :form-key="formKey" :loading="loading" @update-data="params = $event" />
 
     <div class="actions" :class="{ disabled: loading }">
-      <button class="btn btn-primary w-full" type="button" @click="saveAdmin">
+      <button class="btn btn-primary w-full" type="button" @click="saveEmployee">
         <span v-if="loading" class="loader"></span>
-        <span v-else>{{ $t('admin.save') }}</span>
+        <span v-else>{{ $t('employee.save') }}</span>
       </button>
     </div>
 

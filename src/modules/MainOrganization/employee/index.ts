@@ -1,18 +1,18 @@
 // Models
-export { default as AdminModel } from './core/models/employee.model';
+export { default as EmployeeModel } from './core/models/employee.model';
 
 // Params
-export { default as AddAdminParams } from './core/params/add.employee.params';
-export { default as EditAdminParams } from './core/params/edit.employee.params';
-export { default as DeleteAdminParams } from './core/params/delete.employee.params';
-export { default as ShowAdminParams } from './core/params/show.employee.params';
-export { default as IndexAdminParams } from './core/params/index.employee.params';
+export { default as AddEmployeeParams } from './core/params/add.employee.params';
+export { default as EditEmployeeParams } from './core/params/edit.employee.params';
+export { default as DeleteEmployeeParams } from './core/params/delete.employee.params';
+export { default as ShowEmployeeParams } from './core/params/show.employee.params';
+export { default as IndexEmployeeParams } from './core/params/index.employee.params';
 
 // Repository
-export { default as AdminRepository } from './data/repositories/admin.repository';
+export { default as EmployeeRepository } from './data/repositories/employee.repository';
 
 // Controller
-export { default as AdminController } from './presentation/controllers/admin.controller';
+export { default as EmployeeController } from './presentation/controllers/employee.controller';
 
 // API Service
-export { default as AdminApiService } from './data/api/admin.api-service';
+export { default as EmployeeApiService } from './data/api/employee.api-service';

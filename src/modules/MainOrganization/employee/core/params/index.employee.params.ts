@@ -1,6 +1,6 @@
 import IndexParams from '@/base/Core/Params/indexParams';
 
-export default class IndexAdminParams extends IndexParams {
+export default class IndexEmployeeParams extends IndexParams {
   constructor(
     word: string = '',
     pageNumber: number = 1,

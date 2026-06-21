@@ -2,9 +2,9 @@ import type Params from '@/base/Core/Params/params';
 import { ClassValidation } from '@/base/Presentation/Utils/classValidation';
 
 /**
- * Parameters for adding a new admin
+ * Parameters for adding a new employee
  */
-export default class AddAdminParams implements Params {
+export default class AddEmployeeParams implements Params {
   public name: string;
   public email: string;
   public phone: string;
@@ -34,10 +34,10 @@ export default class AddAdminParams implements Params {
   }
 
   validate() {
-    return AddAdminParams.validation.validate(this);
+    return AddEmployeeParams.validation.validate(this);
   }
 
   validateOrThrow() {
-    return AddAdminParams.validation.validateOrThrow(this);
+    return AddEmployeeParams.validation.validateOrThrow(this);
   }
 }

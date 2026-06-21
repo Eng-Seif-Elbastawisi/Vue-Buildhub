@@ -3,15 +3,15 @@ import { ref, watch } from 'vue';
 import { onBeforeRouteLeave, useRoute } from 'vue-router';
 import { useFormsStore } from '@/stores/formsStore';
 import DocumentIcon from '@/shared/icons/DocaumentType/DocumentIcon.vue';
-import type AdminModel from '../../core/models/employee.model';
-import AddAdminParams from '../../core/params/add.employee.params';
+import type EmployeeModel from '../../core/models/employee.model';
+import AddEmployeeParams from '../../core/params/add.employee.params';
 
 const emit = defineEmits<{
-  updateData: [params: AddAdminParams];
+  updateData: [params: AddEmployeeParams];
 }>();
 
 const props = defineProps<{
-  admin?: AdminModel;
+  admin?: EmployeeModel;
   formKey?: string;
   loading?: boolean;
 }>();
@@ -26,7 +26,7 @@ const password = ref('');
 const updateData = () => {
   emit(
     'updateData',
-    new AddAdminParams({
+    new AddEmployeeParams({
       name: name.value,
       email: email.value,
       phone: phone.value,
@@ -70,7 +70,7 @@ watch(
 
     <div class="form-fields" :class="{ disabled: loading }">
       <div class="field-group">
-        <label class="field-label" for="admin-name">{{ $t('admin.name') }}</label>
+        <label class="field-label" for="admin-name">{{ $t('name') }}</label>
         <div class="input-wrap">
           <input id="admin-name" v-model="name" type="text" :placeholder="$t('admin.name_placeholder')"
             class="field-input" @input="updateData" />
@@ -78,25 +78,25 @@ watch(
       </div>
 
       <div class="field-group">
-        <label class="field-label" for="admin-email">{{ $t('admin.email') }}</label>
+        <label class="field-label" for="admin-email">{{ $t('email') }}</label>
         <div class="input-wrap">
-          <input id="admin-email" v-model="email" type="email" :placeholder="$t('admin.email_placeholder')"
+          <input id="admin-email" v-model="email" type="email" :placeholder="$t('email_placeholder')"
             class="field-input" @input="updateData" />
         </div>
       </div>
 
       <div class="field-group">
-        <label class="field-label" for="admin-phone">{{ $t('admin.phone') }}</label>
+        <label class="field-label" for="admin-phone">{{ $t('phone') }}</label>
         <div class="input-wrap">
-          <input id="admin-phone" v-model="phone" type="text" :placeholder="$t('admin.phone_placeholder')"
+          <input id="admin-phone" v-model="phone" type="text" :placeholder="$t('phone_placeholder')"
             class="field-input" @input="updateData" />
         </div>
       </div>
 
       <div v-if="!route.params.id" class="field-group">
-        <label class="field-label" for="admin-password">{{ $t('admin.password') }}</label>
+        <label class="field-label" for="admin-password">{{ $t('password') }}</label>
         <div class="input-wrap">
-          <input id="admin-password" v-model="password" type="password" :placeholder="$t('admin.password_placeholder')"
+          <input id="admin-password" v-model="password" type="password" :placeholder="$t('password_placeholder')"
             class="field-input" @input="updateData" />
         </div>
       </div>

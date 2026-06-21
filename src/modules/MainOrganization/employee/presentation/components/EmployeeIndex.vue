@@ -6,13 +6,13 @@ import DeleteDialog from '@/base/Presentation/Dialogs/MainDialogs/DeleteDialog.v
 import AppTable, { type TableHeader } from '@/shared/HelpersComponents/AppTable.vue';
 import Pagination from '@/shared/HelpersComponents/Pagination.vue';
 import TableSkelaton from '@/shared/HelpersComponents/TableSkelaton.vue';
-import type AdminModel from '../../core/models/employee.model';
-import DeleteAdminParams from '../../core/params/delete.employee.params';
-import IndexAdminParams from '../../core/params/index.employee.params';
-import AdminController from '../controllers/admin.controller';
+import type EmployeeModel from '../../core/models/employee.model';
+import DeleteEmployeeParams from '../../core/params/delete.employee.params';
+import IndexEmployeeParams from '../../core/params/index.employee.params';
+import EmployeeController from '../controllers/employee.controller';
 import { useUserStore } from '@/stores/user';
 
-const controller = AdminController.getInstance();
+const controller = EmployeeController.getInstance();
 const state = computed(() => controller.listState.value);
 const router = useRouter();
 const route = useRoute();
@@ -25,9 +25,9 @@ const headers: TableHeader[] = [
   { key: 'phone', label: 'admin.phone', width: '25%' },
 ];
 
-const fetchAdmins = async (page: number = 1, searchWord: string = '') => {
+const fetchEmployees = async (page: number = 1, searchWord: string = '') => {
   await controller.fetchList(
-    new IndexAdminParams(
+    new IndexEmployeeParams(
       searchWord,
       route.query.page ? Number(route.query.page) : page,
       perPage.value,
@@ -37,7 +37,7 @@ const fetchAdmins = async (page: number = 1, searchWord: string = '') => {
 };
 
 const onPageChange = (page: number) => {
-  void fetchAdmins(page);
+  void fetchEmployees(page);
   void router.push({
     query: { ...route.query, page: String(page), word: word.value || undefined },
   });
@@ -45,17 +45,17 @@ const onPageChange = (page: number) => {
 
 const onPerPageChange = (count: number) => {
   perPage.value = count;
-  void fetchAdmins(1);
+  void fetchEmployees(1);
 };
 
-const deleteAdmin = async (id: number) => {
-  await controller.delete(new DeleteAdminParams(id));
-  await fetchAdmins();
+const deleteEmployee = async (id: number) => {
+  await controller.delete(new DeleteEmployeeParams(id));
+  void fetchEmployees();
 };
 
 onMounted(async () => {
   word.value = route.query.word ? String(route.query.word) : '';
-  await fetchAdmins(route.query.page ? Number(route.query.page) : 1, word.value);
+  await fetchEmployees(route.query.page ? Number(route.query.page) : 1, word.value);
 });
 const { user } = useUserStore();
 </script>
@@ -64,17 +64,17 @@ const { user } = useUserStore();
   <div class="admin-page">
     <div class="admin-header">
       <div>
-        <h4>{{ $t('admin.index.title') }}</h4>
-        <p>{{ $t('admin.index.description') }}</p>
+        <h4>{{ $t('employee.index.title') }}</h4>
+        <p>{{ $t('employee.index.description') }}</p>
       </div>
-      <router-link class="btn btn-primary" :to="user?.isMaster ? '/admin/add' : '/organization/admin/add'">
-        {{ $t('admin.add') }}
+      <router-link class="btn btn-primary" :to="user?.isMaster ? '/admin/employee/add' : '/organization/employee/add'">
+        {{ $t('employee.add') }}
       </router-link>
     </div>
 
-    <DataStatusBuilder :controller="state" :on-retry="async () => await fetchAdmins()">
+    <DataStatusBuilder :controller="state" :on-retry="async () => await fetchEmployees()">
       <template #success="{ data }">
-        <AppTable :headers="headers" :items="data as AdminModel[]" selectable show-index hoverable striped>
+        <AppTable :headers="headers" :items="data as EmployeeModel[]" selectable show-index hoverable striped>
           <template #actions="{ item }">
             <div class="row-actions">
               <router-link class="action-btn edit" :to="user?.isMaster ? `/admin/edit/${item.id}` : `/organization/admin/edit/${item.id}`
@@ -86,7 +86,7 @@ const { user } = useUserStore();
                 </svg>
               </router-link>
               <DeleteDialog :title="$t('admin.delete_title')" :message="$t('admin.delete_message')" :hasbtn="true"
-                @delete="deleteAdmin(item.id!)">
+                @delete="deleteEmployee(item.id!)">
                 <template #btn>
                   <button class="action-btn delete" :title="$t('Delete')">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"

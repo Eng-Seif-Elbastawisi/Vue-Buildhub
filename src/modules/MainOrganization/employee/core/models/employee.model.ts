@@ -1,7 +1,7 @@
 /**
  * Admin model representing an admin entity
  */
-export default class AdminModel {
+export default class EmployeeModel {
   public readonly id?: number;
   public readonly name: string;
   public readonly email: string;
@@ -29,12 +29,12 @@ export default class AdminModel {
    * @param json - Raw JSON data from API
    * @returns AdminModel instance
    */
-  static fromJson(json: any): AdminModel {
+  static fromJson(json: any): EmployeeModel {
     if (!json) {
       throw new Error('Cannot create AdminModel from null or undefined');
     }
 
-    return new AdminModel({
+    return new EmployeeModel({
       id: json.id || json.admin_id,
       name: json.name || '',
       email: json.email || '',
@@ -43,7 +43,7 @@ export default class AdminModel {
     });
   }
 
-  static example: AdminModel = new AdminModel({
+  static example: EmployeeModel = new EmployeeModel({
     id: 1,
     name: 'Mohamed Saad',
     email: 'mohamed2@example.com',

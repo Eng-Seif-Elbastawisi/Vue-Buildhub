@@ -193,6 +193,11 @@
           name: 'location',
           icon: ArticleIcon,
         },
+        {
+          link: user?.isMaster ? '/admin/employee' : '/organization/employee',
+          name: 'employee',
+          icon: ArticleIcon,
+        },
       ],
     },
   ];

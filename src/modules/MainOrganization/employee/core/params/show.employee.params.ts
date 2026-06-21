@@ -2,9 +2,9 @@ import type Params from '@/base/Core/Params/params';
 import { ClassValidation } from '@/base/Presentation/Utils/classValidation';
 
 /**
- * Parameters for showing an admin
+ * Parameters for showing an employee
  */
-export default class ShowAdminParams implements Params {
+export default class ShowEmployeeParams implements Params {
   public id: number;
 
   public static readonly validation = new ClassValidation().setRules({
@@ -17,15 +17,15 @@ export default class ShowAdminParams implements Params {
 
   toMap(): { [p: string]: any } {
     return {
-      admin_id: this.id,
+      employee_id: this.id,
     };
   }
 
   validate() {
-    return ShowAdminParams.validation.validate(this);
+    return ShowEmployeeParams.validation.validate(this);
   }
 
   validateOrThrow() {
-    return ShowAdminParams.validation.validateOrThrow(this);
+    return ShowEmployeeParams.validation.validateOrThrow(this);
   }
 }

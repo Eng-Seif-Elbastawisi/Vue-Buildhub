@@ -1,21 +1,21 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
-import type AddAdminParams from '../../core/params/add.employee.params.ts';
-import EditAdminParams from '../../core/params/edit.employee.params.ts';
-import ShowAdminParams from '../../core/params/show.employee.params.ts';
-import AdminController from '../controllers/admin.controller.ts';
-import AdminForm from './AdminForm.vue';
+import type AddEmployeeParams from '../../core/params/add.employee.params.ts';
+import EditEmployeeParams from '../../core/params/edit.employee.params.ts';
+import ShowEmployeeParams from '../../core/params/show.employee.params.ts';
+import EmployeeController from '../controllers/employee.controller.ts';
+import EmployeeForm from './EmployeeForm.vue';
 
-const controller = AdminController.getInstance();
+const controller = EmployeeController.getInstance();
 const route = useRoute();
 const formKey = route.fullPath;
 const adminId = Number(route.params.id);
-const params = ref<EditAdminParams | null>(null);
+const params = ref<EditEmployeeParams | null>(null);
 const loading = ref(false);
 
-const updateData = (data: AddAdminParams) => {
-  params.value = new EditAdminParams({
+const updateData = (data: AddEmployeeParams) => {
+  params.value = new EditEmployeeParams({
     id: adminId,
     name: data.name,
     email: data.email,
@@ -35,18 +35,18 @@ const saveAdmin = async () => {
 };
 
 onMounted(async () => {
-  await controller.fetchOne(new ShowAdminParams(adminId));
+  await controller.fetchOne(new ShowEmployeeParams(adminId));
 });
 </script>
 
 <template>
-  <div class="admin-crud-page">
-    <AdminForm :admin="controller.itemData.value!" :form-key="formKey" :loading="loading" @update-data="updateData" />
+  <div class="employee-crud-page">
+    <EmployeeForm :admin="controller.itemData.value!" :form-key="formKey" :loading="loading" @update-data="updateData" />
 
     <div class="actions" :class="{ disabled: loading }">
       <button class="btn btn-primary w-full" type="button" @click="saveAdmin">
         <span v-if="loading" class="loader"></span>
-        <span v-else>{{ $t('admin.update') }}</span>
+        <span v-else>{{ $t('employee.update') }}</span>
       </button>
     </div>
 
