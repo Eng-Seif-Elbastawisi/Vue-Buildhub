@@ -90,7 +90,7 @@ watch(
   .field-group {
     width: 50%;
 
-    &.disabled {
+    &.disabled { 
       cursor: not-allowed;
       pointer-events: none;
       opacity: 0.7;
