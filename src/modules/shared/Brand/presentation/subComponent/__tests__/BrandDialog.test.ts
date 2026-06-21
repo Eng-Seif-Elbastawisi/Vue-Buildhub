@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 describe('BrandDialog source', () => {
   it('declares a visible v-model contract for the dialog', () => {
     const source = readFileSync(
-      'src/modules/Brand/presentation/subComponent/BrandDialog.vue',
+      'src/modules/shared/Brand/presentation/subComponent/BrandDialog.vue',
       'utf8',
     );
     expect(source).toContain('visible: boolean');
