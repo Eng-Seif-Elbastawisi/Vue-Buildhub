@@ -23,7 +23,7 @@ const headers: TableHeader[] = [
   { key: 'name', label: 'admin.name', width: '30%', sortable: true },
   { key: 'email', label: 'admin.email', width: '35%' },
   { key: 'phone', label: 'admin.phone', width: '25%' },
-];
+];   
 
 const fetchEmployees = async (page: number = 1, searchWord: string = '') => {
   await controller.fetchList(
