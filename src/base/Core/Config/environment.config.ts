@@ -17,7 +17,7 @@ export const environments: Record<EnvironmentStage, EnvironmentConfig> = {
    */
   development: {
     stage: 'development',
-    apiBaseUrl: 'http://api.buildhub.techlabeg.com/supervision/',
+    apiBaseUrl: 'https://api.buildhub.techlabeg.com/supervision/',
     timeout: 30000,
     enableLogging: true,
     useStaticData: false,
@@ -34,7 +34,7 @@ export const environments: Record<EnvironmentStage, EnvironmentConfig> = {
    */
   production: {
     stage: 'production',
-    apiBaseUrl: 'http://api.buildhub.techlabeg.com/supervision/',
+    apiBaseUrl: 'https://api.buildhub.techlabeg.com/supervision/',
     timeout: 15000,
     enableLogging: false,
     useStaticData: false,
