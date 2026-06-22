@@ -37,7 +37,7 @@
     );
   };
 
-  const Search = debounce(() => {
+  const Search = debounce(() => {    
     router.push({
       query: {
         ...route.query,
