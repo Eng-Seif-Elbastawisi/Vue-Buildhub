@@ -1,7 +1,10 @@
 import { BaseEndpoints } from '@/base/Data/Endpoints/BaseEndpoints';
-
+import { useUserStore } from '@/stores/user';
 export class BrandApiEndpoints extends BaseEndpoints {
-  protected readonly prefix = 'dashboard/';
+  
+  protected get prefix(): string {
+    return useUserStore().user?.type === 'supervision' ? 'dashboard/' : 'organization/';
+  }
 
   readonly index = this.url('fetch_brand');
   readonly show = this.url('show_brand');

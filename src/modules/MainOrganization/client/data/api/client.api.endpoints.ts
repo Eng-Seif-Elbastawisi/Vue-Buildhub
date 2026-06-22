@@ -1,7 +1,7 @@
 import { BaseEndpoints } from "@/base/Data/Endpoints/BaseEndpoints";
 
 export class ClientApiEndpoints extends BaseEndpoints {
-  protected readonly prefix = "dashboard/";
+  protected readonly prefix = "organization/";
 
   readonly index = this.url("fetch_client");
   readonly show = this.url("show_client");

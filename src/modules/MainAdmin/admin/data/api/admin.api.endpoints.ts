@@ -1,7 +1,7 @@
 import { BaseEndpoints } from '@/base/Data/Endpoints/BaseEndpoints';
 
 export class AdminEndpoints extends BaseEndpoints {
-  protected readonly prefix = 'organization/';
+  protected readonly prefix = 'mainportal/';
 
   readonly index = this.url('fetch_admins');
   readonly show = this.url('show_admin');

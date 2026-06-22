@@ -10,7 +10,7 @@ export default class AdminApiService extends BaseApiService {
   /**
    * Singleton instance
    */
-  static getInstance(): AdminApiService {
+   static getInstance(): AdminApiService {
     if (!AdminApiService.instance) {
       AdminApiService.instance = new AdminApiService();
     }
