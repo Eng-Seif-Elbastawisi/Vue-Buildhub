@@ -50,7 +50,7 @@ export default class LocationModel {
   static example: LocationModel = new LocationModel({
     id: 10,
     translations: { title: { ar: 'مادة', en: 'Material' } },
-    type: LocationTypeEnum.building,
+    type: LocationTypeEnum.COUNTRY,
     parentId: 10,
     code: 'vvvv10',
   });

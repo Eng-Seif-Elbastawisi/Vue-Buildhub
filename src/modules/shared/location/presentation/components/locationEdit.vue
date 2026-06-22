@@ -12,11 +12,11 @@
   const formKey = route.fullPath;
   const params = ref<EditLocationParams | null>(null);
   const loading = ref(false);
-  const locationId = Number(route.params.location_id);
+  const location_id = Number(route.params.id);
 
   const updateData = (data: AddLocationParams) => {
     params.value = new EditLocationParams({
-      location_id: locationId,
+      location_id: location_id,
       parentId: data.parentId,
       code: data.code,
       type: data.type,
@@ -36,7 +36,7 @@
 
   onMounted(async () => {
     await controller.fetchOne(
-      new ShowLocationParams({ location_id: locationId, allLocales: true }),
+      new ShowLocationParams({ location_id: location_id, allLocales: true }),
     );
   });
 </script>

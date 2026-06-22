@@ -23,9 +23,9 @@
   const word = ref('');
 
   const headers: TableHeader[] = [
-    { key: 'translations', label: 'location.title', width: '35%', sortable: true },
-    { key: 'code', label: 'location.code', width: '30%' },
-    { key: 'type', label: 'location.type', width: '30%' },
+    { key: 'translations', label: 'title', width: '55%', sortable: true },
+    // { key: 'code', label: 'code', width: '30%' },
+    { key: 'type', label: 'type', width: '40%' },
   ];
 
   const typeLabels = Object.fromEntries(
@@ -79,7 +79,7 @@
       </div>
       <router-link
         class="btn btn-primary"
-        :to="user?.isMaster ? '/location/add' : '/organization/location/add'"
+        :to="user?.type === 1 ? '/mainportal/location/add' : '/organization/location/add'"
       >
         {{ $t('location.add') }}</router-link
       >
@@ -102,8 +102,8 @@
               <router-link
                 class="action-btn edit"
                 :to="
-                  user?.isMaster
-                    ? `/location/edit/${item.id}`
+                  user?.type === 1
+                    ? `/mainportal/location/edit/${item.id}`
                     : `/organization/location/edit/${item.id}`
                 "
                 :title="$t('location.edit')"

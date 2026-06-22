@@ -79,7 +79,7 @@
       </div>
       <router-link
         class="btn btn-primary"
-        :to="user?.isMaster ? '/item/add' : '/organization/item/add'"
+        :to="user?.type === 1 ? '/mainportal/item/add' : '/organization/item/add'"
       >
         {{ $t('item.add') }}</router-link
       >

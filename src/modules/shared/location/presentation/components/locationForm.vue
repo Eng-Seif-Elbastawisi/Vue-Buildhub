@@ -8,6 +8,7 @@
   import AddLocationParams from '../../core/params/add.location.params';
   import { LocationTypeEnum } from '../../core/constant/location.type.enum';
   import type locationShowModel from '../../core/models/location.show.model';
+import TranslationParams from '@/base/Core/Params/translationParams';
 
   const emit = defineEmits<{
     updateData: [params: AddLocationParams];
@@ -47,6 +48,7 @@
   );
 
   const updateData = () => {
+    const translations = new TranslationParams({ title: title.value });
     emit(
       'updateData',
       new AddLocationParams({
@@ -74,6 +76,7 @@
 
     <div class="form-fields" :class="{ disabled: loading }">
       <div class="field-group">
+        {{ translations }}
         <MultiLangInput
           field-key="title"
           :label="$t('location.title')"
@@ -84,18 +87,18 @@
         />
       </div>
 
-      <div class="field-group">
-        <label class="field-label" for="location-code">{{ $t('location.code') }}</label>
-        <div class="input-wrap">
-          <input
-            id="location-code"
-            v-model="code"
-            class="field-input"
-            :placeholder="$t('location.code_placeholder')"
-            @input="updateData"
-          />
-        </div>
-      </div>
+        <!-- <div class="field-group">
+          <label class="field-label" for="location-code">{{ $t('location.code') }}</label>
+          <div class="input-wrap">
+            <input
+              id="location-code"
+              v-model="code"
+              class="field-input"
+              :placeholder="$t('location.code_placeholder')"
+              @input="updateData"
+            />
+          </div>
+        </div> -->
 
       <div class="field-group">
         <UpdatedCustomInputSelect

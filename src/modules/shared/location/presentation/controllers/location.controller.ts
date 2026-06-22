@@ -12,6 +12,8 @@ import type LocationShowModel from '../../core/models/location.show.model';
 import type LocationModel from '../../core/models/location.model';
 import type ShowLocationParams from '../../core/params/show.location.params';
 import LocationRepository from '../../data/repositories/location.repository';
+import { useUserStore } from '@/stores/user';
+const userStore = useUserStore();
 
 export default class LocationController extends BaseController<LocationShowModel, LocationModel[]> {
   private static instance: LocationController;
@@ -49,7 +51,10 @@ export default class LocationController extends BaseController<LocationShowModel
     const result = await super.create(params, { ...options, useJson: true });
 
     if (result instanceof DataSuccess) {
-      router.push({ name: 'Location' });
+      // router.push({ name: 'Location' });
+
+      router.push(userStore.user?.type === 1 ? '/mainportal/location' : '/organization/location');
+
       if (formKey) FormStore.clearFormData(formKey);
     }
 
@@ -62,7 +67,9 @@ export default class LocationController extends BaseController<LocationShowModel
     const result = await super.update(params, { ...options, useJson: true });
 
     if (result instanceof DataSuccess) {
-      router.push({ name: 'Location' });
+      // router.push({ name: 'Location' });
+      router.push(userStore.user?.type === 1 ? '/mainportal/location' : '/organization/location');
+
       if (formKey) FormStore.clearFormData(formKey);
     }
 

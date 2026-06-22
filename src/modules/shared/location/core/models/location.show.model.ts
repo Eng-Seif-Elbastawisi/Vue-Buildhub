@@ -38,7 +38,7 @@ export default class LocationShowModel {
   static example: LocationShowModel = new LocationShowModel({
     id: 1,
     parentId: 10,
-    type: LocationTypeEnum.building,
+    type: LocationTypeEnum.CITY,
     code: 'vvvv10',
     translations: { title: { ar: 'مادة', en: 'Material' } },
   });

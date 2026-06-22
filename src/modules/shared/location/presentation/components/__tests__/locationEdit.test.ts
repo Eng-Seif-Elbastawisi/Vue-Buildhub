@@ -7,14 +7,14 @@ import LocationEdit from '../locationEdit.vue';
 const fetchOne = vi.fn().mockResolvedValue({});
 const update = vi.fn().mockResolvedValue({});
 const addParams = {
-  parentId: 2,
+  parent_id: 2,
   code: 'B-01',
   type: LocationTypeEnum.building,
   translations: { title: { en: 'Building', ar: 'مبنى' } },
 };
 
 vi.mock('vue-router', () => ({
-  useRoute: () => ({ fullPath: '/location/edit/7', params: { location_id: '7' } }),
+  useRoute: () => ({ fullPath: '/location/edit/7', params: { id: '7' } }),
 }));
 vi.mock('../../controllers/location.controller.ts', () => ({
   default: {

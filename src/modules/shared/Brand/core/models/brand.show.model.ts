@@ -15,7 +15,7 @@ export default class BrandShowModel {
     this.translations = data.translations;
     this.type = data.type;
     Object.freeze(this);
-  }
+  } 
 
   static fromJson(json: any): BrandShowModel {
     if (!json) throw new Error('Invalid BrandShowModel data');
