@@ -1,5 +1,6 @@
 import type Params from '@/base/Core/Params/params';
 import { ClassValidation } from '@/base/Presentation/Utils/classValidation';
+import type { ClientTypeEnum } from '../constant/client.type.enum';
 
 export default class EditClientParams implements Params {
   public client_id?: number;
@@ -7,6 +8,7 @@ export default class EditClientParams implements Params {
   public name?: string;
   public email?: string;
   public address?: string;
+  public type?: ClientTypeEnum;
 
   public static readonly validation = new ClassValidation().setRules({
     client_id: { required: true },
@@ -22,12 +24,14 @@ export default class EditClientParams implements Params {
     name?: string;
     email?: string;
     address?: string;
+    type?: ClientTypeEnum;
   }) {
     this.client_id = data.client_id;
     this.phone = data.phone;
     this.name = data.name;
     this.email = data.email;
     this.address = data.address;
+    this.type = data.type;
   }
 
   toMap(): { [p: string]: any } {
@@ -37,6 +41,7 @@ export default class EditClientParams implements Params {
       name: this.name,
       email: this.email,
       address: this.address,
+      type: this.type,
     };
 
     return map;

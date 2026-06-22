@@ -17,9 +17,11 @@ export default class EmployeeController extends BaseController<EmployeeModel, Em
 
   protected get config(): ControllerConfig {
     return {
-      showLoadingDialog: true,
-      showSuccessDialog: true,
-      showErrorDialog: true,
+      showLoadingDialog: false,
+      showSuccessDialog: false,
+      showErrorDialog: false,
+      showErrorTosat: true,
+      showSuccessTosat: true,
       autoRetry: false,
       maxAutoRetries: 1,
     };

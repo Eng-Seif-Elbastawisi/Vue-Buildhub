@@ -7,16 +7,24 @@ import CloseEyeIcon from '@/shared/icons/Login/CloseEyeIcon.vue';
 import OpenEyeIcon from '@/shared/icons/Login/OpenEyeIcon.vue';
 // import ChangeLanguage from '@/shared/LayoutComponents/SubComponents/ChangeLanguage.vue';
 import LoadingIcon from '@/assets/images/loading.webp';
+import { useUserStore } from '@/stores/user';
+import { useRouter } from 'vue-router';
 
 const email = ref('');
 const password = ref('');
-
+const router = useRouter();
 const controller = LoginController.getInstance();
 const loading = ref(false);
 const login = async () => {
   loading.value = true;
   const params = new LoginParams(email.value, password.value);
   await controller.login(params);
+
+  if (useUserStore().user?.type === 1) {
+    router.push({ name: 'Admin' });
+  } else {
+    router.push({ name: 'Employee' });
+  }
   loading.value = false;
 };
 
@@ -42,41 +50,19 @@ const isPasswordVisible = ref(false);
       <div class="inputs">
         <div class="input-wrapper">
           <label for="email">Email</label>
-          <input
-            id="email"
-            v-model="email"
-            class="input"
-            :placeholder="$t('Enter Your Mail')"
-            type="text"
-          />
+          <input id="email" v-model="email" class="input" :placeholder="$t('Enter Your Mail')" type="text" />
         </div>
         <div class="input-wrapper">
           <label for="password">{{ $t('Password') }}</label>
-          <input
-            id="password"
-            v-model="password"
-            :type="isPasswordVisible ? 'text' : 'password'"
-            :placeholder="$t('Enter Your Password')"
-            class="input py"
-          />
-          <CloseEyeIcon
-            v-if="isPasswordVisible"
-            class="icon-eye"
-            @click="isPasswordVisible = !isPasswordVisible"
-          />
+          <input id="password" v-model="password" :type="isPasswordVisible ? 'text' : 'password'"
+            :placeholder="$t('Enter Your Password')" class="input py" />
+          <CloseEyeIcon v-if="isPasswordVisible" class="icon-eye" @click="isPasswordVisible = !isPasswordVisible" />
           <OpenEyeIcon v-else class="icon-eye" @click="isPasswordVisible = !isPasswordVisible" />
         </div>
       </div>
 
       <button type="submit" :class="{ disabled: loading }" class="btn btn-primary">
-        <img
-          v-if="loading"
-          :src="LoadingIcon"
-          class="loader-skills"
-          alt="loading"
-          width="30"
-          height="30"
-        />
+        <img v-if="loading" :src="LoadingIcon" class="loader-skills" alt="loading" width="30" height="30" />
         <span v-else>
           {{ $t('Log In') }}
         </span>
@@ -91,6 +77,7 @@ const isPasswordVisible = ref(false);
   opacity: 0.6;
   pointer-events: none;
 }
+
 .login {
   background-image: url('../../../../assets/images/LoginBg.png');
   background-size: cover;

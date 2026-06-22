@@ -1,5 +1,5 @@
 import IndexParams from '@/base/Core/Params/indexParams';
-import { type EquipmentTypeEnum } from '../constant/equipment.type.enum';
+import { type EquipmentTypeEnum } from '../constant/Brand.type.enum';
 
 export default class IndexBrandParams extends IndexParams {
   dateRemove: string | null | undefined;

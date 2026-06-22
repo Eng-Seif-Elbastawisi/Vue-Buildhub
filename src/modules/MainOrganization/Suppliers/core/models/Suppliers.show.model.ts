@@ -3,20 +3,20 @@ export default class SuppliersShowModel {
   public readonly id?: number;
   public readonly phone?: string;
   public readonly materials?: string;
-  public readonly Supplier?: string;
+  public readonly name?: string;
   public readonly spacification?: string;
 
   constructor(data: {
     id?: number;
     phone?: string;
     materials?: string;
-    Supplier?: string;
+    name?: string;
     spacification?: string;
   }) {
     this.id = data.id;
     this.phone = data.phone;
     this.materials = data.materials;
-    this.Supplier = data.Supplier;
+    this.name = data.name;
     this.spacification = data.spacification;
     Object.freeze(this);
   }
@@ -40,7 +40,7 @@ export default class SuppliersShowModel {
       id: json.id,
       phone: json.phone,
       materials: json.materials,
-      Supplier: json.Supplier,
+      name: json.name,
       spacification: json.spacification,
     });
   }
@@ -49,7 +49,7 @@ export default class SuppliersShowModel {
     id: 1,
     phone: '+966 50 123 4567',
     materials: 'Steel, Cement, Bricks',
-    Supplier: 'ABC Suppliers Ltd',
+    name: 'ABC Suppliers Ltd',
     spacification: 'General Building Materials',
   });
 

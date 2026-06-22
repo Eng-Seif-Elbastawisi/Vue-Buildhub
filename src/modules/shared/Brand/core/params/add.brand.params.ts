@@ -1,22 +1,23 @@
 import type Params from '@/base/Core/Params/params';
 import { ClassValidation } from '@/base/Presentation/Utils/classValidation';
-import { type EquipmentTypeEnum } from '../constant/equipment.type.enum';
+import { type BrandTypeEnum } from '../constant/Brand.type.enum';
+import type TranslationParams from '@/base/Core/Params/translationParams';
 
 export default class AddBrandParams implements Params {
-  public name?: string;
-  public equipment?: EquipmentTypeEnum;
+  public translations: TranslationParams;
+  public type?: BrandTypeEnum;
   public static readonly validation = new ClassValidation().setRules({
-    name: { required: false },
-    equipment: { required: false },
+    translations: { required: true },
+    type: { required: false },
   });
-  constructor(data: { name?: string; equipment?: EquipmentTypeEnum }) {
-    this.name = data.name;
-    this.equipment = data.equipment;
+  constructor(data: { translations: TranslationParams; type?: BrandTypeEnum }) {
+    this.translations = data.translations;
+    this.type = data.type;
   }
   toMap(): { [p: string]: any } {
     return {
-      name: this.name,
-      equipment: this.equipment,
+      translations: this.translations,
+      type: this.type,
     };
   }
   validate() {

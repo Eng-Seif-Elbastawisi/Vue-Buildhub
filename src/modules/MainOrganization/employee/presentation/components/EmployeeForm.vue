@@ -93,7 +93,7 @@ watch(
         </div>
       </div>
 
-      <div v-if="!route.params.id" class="field-group">
+      <div v-if="!route.params.employee_id" class="field-group">
         <label class="field-label" for="admin-password">{{ $t('password') }}</label>
         <div class="input-wrap">
           <input id="admin-password" v-model="password" type="password" :placeholder="$t('password_placeholder')"

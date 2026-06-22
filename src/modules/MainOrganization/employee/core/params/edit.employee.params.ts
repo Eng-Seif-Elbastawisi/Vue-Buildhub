@@ -29,7 +29,7 @@ export default class EditEmployeeParams implements Params {
 
   toMap(): { [p: string]: any } {
     return {
-      admin_id: this.id,
+      employee_id: this.id,
       name: this.name,
       email: this.email,
       phone: this.phone,

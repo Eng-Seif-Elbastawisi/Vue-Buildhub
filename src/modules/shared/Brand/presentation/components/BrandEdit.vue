@@ -2,8 +2,8 @@
   import { onMounted, ref } from 'vue';
   import { useRoute } from 'vue-router';
   import IconAccept from '@/shared/icons/IconAccept.vue';
-  // import type AddSuppliersParams from '../../core/params/add.Suppliers.params.ts';
   import BrandForm from './BrandForm.vue';
+  import type AddBrandParams from '../../core/params/add.brand.params.ts';
   import EditBrandParams from '../../core/params/edit.brand.params.ts';
   import ShowBrandParams from '../../core/params/show.brand.params.ts';
   import BrandController from '../controllers/brand.controller.ts';
@@ -14,6 +14,7 @@
 
   const params = ref<EditBrandParams | null>(null);
   const loading = ref(false);
+  const brandId = Number(route.params.id);
 
   const saveBrand = async () => {
     if (!params.value) return;
@@ -25,14 +26,16 @@
     }
   };
 
-  const updateData = () => {
+  const updateData = (data: AddBrandParams) => {
     params.value = new EditBrandParams({
-      brand_id: Number(route.params.id),
+      brand_id: brandId,
+      translations: data.translations,
+      type: data.type,
     });
   };
 
   onMounted(async () => {
-    await controller.fetchOne(new ShowBrandParams({ brand_id: Number(route.params.id) }));
+    await controller.fetchOne(new ShowBrandParams({ brand_id: brandId, allLocales: true }));
   });
 </script>
 
@@ -60,7 +63,7 @@
 </AppButton>
 </div> -->
     <div class="actions" :class="{ disabled: loading }">
-      <button class="btn btn-primary w-full" type="submit" @click="saveBrand">
+      <button class="btn btn-primary w-full" type="button" @click="saveBrand">
         <span v-if="loading" class="loader"></span>
         <span v-else>
           {{ $t('save_document') }}

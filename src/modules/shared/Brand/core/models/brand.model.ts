@@ -1,13 +1,17 @@
-import { EquipmentTypeEnum } from '../constant/equipment.type.enum';
+import { BrandTypeEnum } from '../constant/Brand.type.enum';
 
 export default class SuppliersModel {
   public readonly id?: number;
-  public readonly title: string;
-  public readonly equipment: EquipmentTypeEnum;
-  constructor(data: { id?: number; title: string; equipment: EquipmentTypeEnum }) {
+  public readonly translations: { title: Record<string, string> };
+  public readonly type: BrandTypeEnum;
+  constructor(data: {
+    id?: number;
+    translations: { title: Record<string, string> };
+    type: BrandTypeEnum;
+  }) {
     this.id = data.id;
-    this.title = data.title;
-    this.equipment = data.equipment;
+    this.translations = data.translations;
+    this.type = data.type;
     Object.freeze(this);
   }
 
@@ -18,14 +22,42 @@ export default class SuppliersModel {
 
     return new SuppliersModel({
       id: json.id,
-      title: json.title,
-      equipment: json.equipment,
+      translations: {
+        title: SuppliersModel.mapTranslations(json.translations, json.title),
+      },
+      type: json.type,
     });
+  }
+
+  static mapTranslations(translations: unknown, fallbackTitle?: unknown): Record<string, string> {
+    const source = translations ?? fallbackTitle;
+    const nestedTitle =
+      source && typeof source === 'object' && 'title' in source
+        ? (source as { title?: unknown }).title
+        : source;
+
+    if (Array.isArray(nestedTitle)) {
+      return nestedTitle.reduce<Record<string, string>>((result, translation) => {
+        const item = translation as { locale?: string; title?: string };
+        if (item.locale && item.title) result[item.locale] = item.title;
+        return result;
+      }, {});
+    }
+
+    if (nestedTitle && typeof nestedTitle === 'object') {
+      return Object.fromEntries(
+        Object.entries(nestedTitle).filter(
+          (entry): entry is [string, string] => typeof entry[1] === 'string',
+        ),
+      );
+    }
+
+    return typeof nestedTitle === 'string' ? { en: nestedTitle } : {};
   }
 
   static example: SuppliersModel = new SuppliersModel({
     id: 10,
-    title: 'Geberit',
-    equipment: EquipmentTypeEnum.equipment,
+    translations: { title: { en: 'Geberit' } },
+    type: BrandTypeEnum.SUPPLIES,
   });
 }

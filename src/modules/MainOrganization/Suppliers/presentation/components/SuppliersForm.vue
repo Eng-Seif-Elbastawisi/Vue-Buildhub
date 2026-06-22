@@ -19,9 +19,7 @@
   const formStore = useFormsStore();
 
   const name = ref<string>('');
-  const Specialization = ref<string>('');
   const phone = ref<string>('');
-  const materials = ref<string>('');
 
   onBeforeRouteLeave((to, from) => {
     const savedData = props.formKey ? formStore.getFormData(props.formKey) : null;
@@ -36,9 +34,9 @@
       'updateData',
       new AddSuppliersParams({
         name: name.value,
-        Specialization: Specialization.value,
+
         phone: phone.value,
-        materials: materials.value,
+
       }),
     );
   };
@@ -48,10 +46,8 @@
     (supplier) => {
       if (!supplier) return;
 
-      name.value = supplier.Supplier ?? '';
-      Specialization.value = supplier.spacification ?? '';
+      name.value = supplier.name ?? '';
       phone.value = supplier.phone ?? '';
-      materials.value = supplier.materials ?? '';
       updateData();
     },
     { immediate: true },
@@ -83,7 +79,7 @@
           />
         </div>
       </div>
-
+<!-- 
       <div class="field-group">
         <label class="field-label" for="supplier-specialization">
           {{ $t('supplier.specialization') }}
@@ -98,7 +94,7 @@
             @input="updateData"
           />
         </div>
-      </div>
+      </div> -->
 
       <div class="field-group">
         <label class="field-label" for="supplier-phone">{{ $t('supplier.phone') }}</label>
@@ -114,7 +110,7 @@
         </div>
       </div>
 
-      <div class="field-group">
+      <!-- <div class="field-group">
         <label class="field-label" for="supplier-materials">{{ $t('supplier.materials') }}</label>
         <div class="input-wrap">
           <input
@@ -126,7 +122,7 @@
             @input="updateData"
           />
         </div>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>

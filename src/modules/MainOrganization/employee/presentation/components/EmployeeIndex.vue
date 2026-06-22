@@ -20,10 +20,10 @@ const perPage = ref(10);
 const word = ref('');
 
 const headers: TableHeader[] = [
-  { key: 'name', label: 'admin.name', width: '30%', sortable: true },
-  { key: 'email', label: 'admin.email', width: '35%' },
-  { key: 'phone', label: 'admin.phone', width: '25%' },
-];   
+  { key: 'name', label: 'name', width: '30%', sortable: true },
+  { key: 'email', label: 'email', width: '35%' },
+  { key: 'phone', label: 'phone', width: '25%' },
+];
 
 const fetchEmployees = async (page: number = 1, searchWord: string = '') => {
   await controller.fetchList(
@@ -67,7 +67,7 @@ const { user } = useUserStore();
         <h4>{{ $t('employee.index.title') }}</h4>
         <p>{{ $t('employee.index.description') }}</p>
       </div>
-      <router-link class="btn btn-primary" :to="user?.isMaster ? '/admin/employee/add' : '/organization/employee/add'">
+      <router-link class="btn btn-primary" :to="user?.type === 1 ? '/admin/employee/add' : '/organization/employee/add'">
         {{ $t('employee.add') }}
       </router-link>
     </div>
@@ -77,7 +77,7 @@ const { user } = useUserStore();
         <AppTable :headers="headers" :items="data as EmployeeModel[]" selectable show-index hoverable striped>
           <template #actions="{ item }">
             <div class="row-actions">
-              <router-link class="action-btn edit" :to="user?.isMaster ? `/admin/edit/${item.id}` : `/organization/admin/edit/${item.id}`
+              <router-link class="action-btn edit" :to="user?.type === 1 ? `/admin/edit/${item.id}` : `/organization/employee/edit/${item.id}`
                 " :title="$t('admin.edit')">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                   stroke-linecap="round" stroke-linejoin="round">

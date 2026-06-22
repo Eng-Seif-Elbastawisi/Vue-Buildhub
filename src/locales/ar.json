@@ -273,5 +273,12 @@
   "admin.empty_title": "لا يوجد مشرفون حتى الآن",
   "admin.empty_description": "أضف أول مشرف لبدء إدارة الوصول",
   "admin.delete_title": "حذف هذا المشرف؟",
-  "admin.delete_message": "لا يمكن التراجع عن حذف هذا المشرف."
+  "admin.delete_message": "لا يمكن التراجع عن حذف هذا المشرف.",
+  "brand.form_title": "بيانات العلامة التجارية",
+  "brand.form_description": "أدخل اسم العلامة التجارية واختر نوعها",
+  "brand.title": "اسم العلامة التجارية",
+  "brand.type": "نوع العلامة التجارية",
+  "brand.type_placeholder": "اختر نوع العلامة التجارية",
+  "brand.types.materials": "خامات",
+  "brand.types.supplies": "توريدات"
 }

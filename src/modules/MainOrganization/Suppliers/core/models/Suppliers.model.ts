@@ -2,19 +2,19 @@ import type TitleInterface from '@/base/Data/Models/titleInterface';
 
 export default class SuppliersModel {
   public readonly id?: number;
-  public readonly Suppliers: string;
+  public readonly name: string;
   public readonly Specialization: string;
   public readonly phone: string;
   public readonly materials: string;
   constructor(data: {
     id?: number;
-    Suppliers: string;
+    name: string;
     Specialization: string;
     phone: string;
     materials: string;
   }) {
     this.id = data.id;
-    this.Suppliers = data.Suppliers;
+    this.name = data.name;
     this.Specialization = data.Specialization;
     this.phone = data.phone;
     this.materials = data.materials;
@@ -29,7 +29,7 @@ export default class SuppliersModel {
 
     return new SuppliersModel({
       id: json.id,
-      Suppliers: json.Suppliers,
+      name: json.name,
       Specialization: json.Specialization,
       phone: json.phone,
       materials: json.materials,
@@ -38,7 +38,7 @@ export default class SuppliersModel {
 
   static example: SuppliersModel = new SuppliersModel({
     id: 10,
-    Suppliers: 'Geberit',
+    name: 'Geberit',
     Specialization: ' سباكة ',
     phone: '01112',
     materials: 'القطاع المدنى-القطاع الصحى-القطاع الصناعى',

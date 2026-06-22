@@ -1,21 +1,28 @@
 import { describe, expect, it } from 'vitest';
-import { EquipmentTypeEnum } from '../../constant/equipment.type.enum';
+import { BrandTypeEnum } from '../../constant/Brand.type.enum';
 import BrandShowModel from '../brand.show.model';
 
 describe('BrandShowModel', () => {
-  it('maps brand show JSON and freezes the instance', () => {
+  it('maps all brand translations and freezes the instance', () => {
     const model = BrandShowModel.fromJson({
       id: 2,
-      title: 'Acme',
-      equipment: EquipmentTypeEnum.services,
+      title: [
+        { locale: 'ar', title: 'أكمي' },
+        { locale: 'en', title: 'Acme' },
+      ],
+      type: BrandTypeEnum.MATERIALS,
     });
 
-    expect(model).toMatchObject({ id: 2, title: 'Acme', equipment: EquipmentTypeEnum.services });
+    expect(model).toMatchObject({
+      id: 2,
+      translations: { title: { en: 'Acme', ar: 'أكمي' } },
+      type: BrandTypeEnum.MATERIALS,
+    });
     expect(Object.isFrozen(model)).toBe(true);
   });
 
-  it('throws for empty JSON and exposes an example', () => {
+  it('falls back to the localized title and rejects empty JSON', () => {
+    expect(BrandShowModel.fromJson({ title: 'Acme' }).translations.title).toEqual({ en: 'Acme' });
     expect(() => BrandShowModel.fromJson(null)).toThrow('Invalid BrandShowModel data');
-    expect(BrandShowModel.example).toBeInstanceOf(BrandShowModel);
   });
 });

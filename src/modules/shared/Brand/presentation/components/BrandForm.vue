@@ -1,96 +1,104 @@
 <script setup lang="ts">
-  import { ref, watch, onMounted } from 'vue';
+  import { computed, ref, watch } from 'vue';
   import { onBeforeRouteLeave } from 'vue-router';
-  import { useFormsStore } from '@/stores/formsStore';
-  import DocumentIcon from '@/shared/icons/DocaumentType/DocumentIcon.vue';
-  import AddBrandParams from '../../core/params/add.brand.params';
-  import type BrandShowModel from '../../core/models/brand.show.model';
-  import type { EquipmentTypeEnum } from '../../core/constant/equipment.type.enum';
+  import { useI18n } from 'vue-i18n';
+  import TranslationParams from '@/base/Core/Params/translationParams';
+  import type TitleInterface from '@/base/Data/Models/titleInterface';
   import UpdatedCustomInputSelect from '@/shared/FormInputs/UpdatedCustomInputSelect.vue';
-  const emit = defineEmits(['updateData']);
+  import MultiLangInput from '@/shared/MultiLangInput.vue';
+  import DocumentIcon from '@/shared/icons/DocaumentType/DocumentIcon.vue';
+  import { useFormsStore } from '@/stores/formsStore';
+  import { BrandTypeEnum } from '../../core/constant/Brand.type.enum';
+  import type BrandShowModel from '../../core/models/brand.show.model';
+  import AddBrandParams from '../../core/params/add.brand.params';
 
-  const { brand, formKey, loading } = defineProps<{
+  const emit = defineEmits<{ updateData: [params: AddBrandParams] }>();
+  const props = defineProps<{
     brand?: BrandShowModel;
     formKey?: string;
     loading?: boolean;
   }>();
-  const FormStore = useFormsStore();
+
+  const { t } = useI18n();
+  const formStore = useFormsStore();
+  const selectedType = ref<TitleInterface<number> | null>(null);
+  const title = ref<Record<string, string>>({});
+  const typeOptions = computed<TitleInterface<number>[]>(() => [
+    { id: BrandTypeEnum.MATERIALS, title: t('brand.types.materials') },
+    { id: BrandTypeEnum.SUPPLIES, title: t('brand.types.supplies') },
+  ]);
+
+  const updateData = () => {
+    const translations = new TranslationParams({ title: title.value });
+    emit(
+      'updateData',
+      new AddBrandParams({
+        translations,
+        type: selectedType.value?.id as BrandTypeEnum | undefined,
+      }),
+    );
+  };
+
+  const updateTitle = (value: Record<string, string>) => {
+    title.value = value;
+    updateData();
+  };
+
+  const updateType = (value: TitleInterface<number> | null) => {
+    selectedType.value = value;
+    updateData();
+  };
 
   onBeforeRouteLeave((to, from) => {
-    const savedData = formKey ? FormStore.getFormData(formKey) : null;
-
-    if (savedData && to.path !== from.path && formKey) {
-      FormStore.showReturnWarning(formKey);
-    }
-  });
-
-  const title = ref<string>();
-  const equipment = ref<EquipmentTypeEnum>();
-
-  onMounted(async () => {
-    if (brand) {
-      title.value = brand.title;
-      equipment.value = brand.equipment;
+    const savedData = props.formKey ? formStore.getFormData(props.formKey) : null;
+    if (savedData && to.path !== from.path && props.formKey) {
+      formStore.showReturnWarning(props.formKey);
     }
   });
 
   watch(
-    () => brand,
-    (newBrand) => {
-      if (newBrand) {
-        title.value = newBrand.title;
-        equipment.value = newBrand.equipment;
-      }
+    () => props.brand,
+    (brand) => {
+      if (!brand) return;
+      title.value = { ...brand.translations.title };
+      selectedType.value = typeOptions.value.find((option) => option.id === brand.type) ?? null;
+      updateData();
     },
     { immediate: true },
   );
-
-  const updateData = () => {
-    const params = new AddBrandParams({
-      name: title.value,
-      equipment: equipment.value,
-    });
-
-    emit('updateData', params);
-  };
 </script>
 
 <template>
   <div class="document-form-card">
     <div class="document-form-header">
       <DocumentIcon />
-
       <div class="document-form-header-text">
-        <h4>{{ $t('add_Suppliers') }}</h4>
-
-        <p>{{ $t('Upload your Suppliers and fill in its details') }}</p>
+        <h4>{{ $t('brand.form_title') }}</h4>
+        <p>{{ $t('brand.form_description') }}</p>
       </div>
     </div>
 
-    <div class="form-fields" :class="{ disabled: loading }">
+    <div class="form-fields" :class="{ disabled: props.loading }">
       <div class="all_inputs">
         <div class="field-group col-span-2">
-          <label class="field-label" for="name">{{ $t(`brand title`) }}</label>
-          <div class="input-wrap">
-            <input
-              id="title"
-              v-model="title"
-              type="text"
-              placeholder="Enter brand title"
-              class="field-input"
-              @input="updateData"
-            />
-          </div>
+          <MultiLangInput
+            field-key="title"
+            :label="$t('brand.title')"
+            :languages="['en', 'ar']"
+            :model-value="title"
+            type="title"
+            @update:model-value="updateTitle"
+          />
         </div>
         <div class="field-group">
           <UpdatedCustomInputSelect
-            id="doc-branch"
-            v-model="equipment"
-            :label="`Equipment type`"
-            :static-options="equipmentOptions"
-            :placeholder="$t('Enter equipment type')"
-            :reload="true"
-            @update:model-value="handleBranchChange($event)"
+            id="type"
+            :model-value="selectedType"
+            :label="$t('brand.type')"
+            :placeholder="$t('brand.type_placeholder')"
+            :static-options="typeOptions"
+            required
+            @update:model-value="updateType"
           />
         </div>
       </div>
@@ -110,19 +118,19 @@
 
   .field-input {
     width: 100%;
+    max-width: 100%;
+    max-height: 200px;
     padding: 12px 16px;
     padding-right: 50px;
     border: 1px solid var(--border-weak);
     border-radius: 28px;
-    background: var(--white);
     outline: none;
-    transition: all 0.25s ease;
-    font-family: 'Medium';
-    font-weight: 400;
-    font-size: var(--sm-size);
+    background: var(--white);
     color: var(--bread-crumb-color-span);
-    max-height: 200px;
-    max-width: 100%;
+    font-family: 'Medium';
+    font-size: var(--sm-size);
+    font-weight: 400;
+    transition: all 0.25s ease;
   }
 
   .disabled-input {

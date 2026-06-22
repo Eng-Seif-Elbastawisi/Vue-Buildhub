@@ -14,7 +14,7 @@ export default class DeleteSuppliersParams implements Params {
 
   toMap(): { [p: string]: any } {
     return {
-      suppliers_id: this.suppliers_id,
+      supplier_id: this.suppliers_id,
     };
   }
 

@@ -1,9 +1,13 @@
 <script setup lang="ts">
-  import { ref, watch } from 'vue';
+  import { computed, ref, watch } from 'vue';
   import { onBeforeRouteLeave } from 'vue-router';
   import { useFormsStore } from '@/stores/formsStore';
   import type ClientShowModel from '../../core/models/client.show.model';
   import AddClientParams from '../../core/params/add.client.params';
+  import { ClientTypeEnum } from '../../core/constant/client.type.enum';
+import UpdatedCustomInputSelect from '@/shared/FormInputs/UpdatedCustomInputSelect.vue';
+import TitleInterface from '@/base/Data/Models/titleInterface';
+import { useI18n } from 'vue-i18n';
 
   const emit = defineEmits<{
     updateData: [params: AddClientParams];
@@ -21,9 +25,26 @@
   // const unitOptions = Object.entries(UnitTypeEnum).map(([title, id]) => ({ id, title }));
 
   const name = ref<string | undefined>('');
-  const phone = ref<number | undefined>(undefined);
+  const phone = ref<string>('');
   const email = ref<string | undefined>('');
   const address = ref<string | undefined>('');
+  const selectedType = ref<TitleInterface<number> | null>(null);
+  // const typeOptions = Object.entries(ClientTypeEnum).map(([title, id]) => ({ id: Number(id), title }));
+  const { t } = useI18n();
+  const typeOptions = computed<TitleInterface<number>[]>(() => [
+  new TitleInterface({
+    id: ClientTypeEnum.INDIVIDUAL,
+    title: t('INDIVIDUAL'),
+  }),
+  new TitleInterface({
+    id: ClientTypeEnum.COMPANY,
+    title: t('COMPANY'),
+  }),
+  new TitleInterface({
+    id: ClientTypeEnum.DEVELOPER,
+    title: t('DEVELOPER'),
+  }),
+]);
 
   onBeforeRouteLeave((to, from) => {
     const savedData = props.formKey ? formStore.getFormData(props.formKey) : null;
@@ -32,29 +53,34 @@
     }
   });
 
-  watch(
-    () => props.client,
-    (client) => {
-      if (!client) return;
-      name.value = client.name;
-      phone.value = client.phone;
-      email.value = client.email;
-      address.value = client.address;
-    },
-    { immediate: true },
-  );
+watch(
+  () => props.client,
+  (client) => {
+    if (!client) return;
+
+    name.value = client.name;
+    phone.value = String(client.phone ?? '');
+    email.value = client.email;
+    address.value = client.address;
+
+    selectedType.value =
+      typeOptions.value.find((item) => item.id === client.type) ?? null;
+  },
+  { immediate: true },
+);
 
   const updateData = () => {
-    emit(
-      'updateData',
-      new AddClientParams({
-        phone: phone.value,
-        name: name.value,
-        email: email.value,
-        address: address.value,
-      }),
-    );
-  };
+  emit(
+    'updateData',
+    new AddClientParams({
+      phone: String(phone.value ?? ''),
+      name: name.value,
+      email: email.value,
+      address: address.value,
+      type: selectedType.value?.id as ClientTypeEnum,
+    }),
+  );
+};
 </script>
 
 <template>
@@ -88,11 +114,11 @@
         <div class="input-wrap">
           <input
             id="material-price"
-            v-model.number="phone"
+            v-model="phone"
             class="field-input"
             min="0"
             step="0.01"
-            type="number"
+            type="tel"
             :placeholder="$t('client.phone_placeholder')"
             @input="updateData"
           />
@@ -125,6 +151,17 @@
             @input="updateData"
           />
         </div>
+      </div>
+       <div class="field-group">
+        <UpdatedCustomInputSelect
+          id="type"
+          v-model="selectedType"
+          :label="$t('client.type')"
+          :placeholder="$t('client.type_placeholder')"
+          :static-options="typeOptions"
+          required
+          @update:model-value="updateData"
+        />
       </div>
     </div>
   </div>

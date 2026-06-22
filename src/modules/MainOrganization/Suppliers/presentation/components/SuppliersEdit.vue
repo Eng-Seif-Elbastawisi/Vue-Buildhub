@@ -29,9 +29,7 @@
     params.value = new EditSuppliersParams({
       suppliers_id: Number(route.params.id),
       name: updatedParams.name ?? '',
-      Specialization: updatedParams.Specialization ?? '',
       phone: updatedParams.phone ?? '',
-      materials: updatedParams.materials ?? '',
     });
   };
 

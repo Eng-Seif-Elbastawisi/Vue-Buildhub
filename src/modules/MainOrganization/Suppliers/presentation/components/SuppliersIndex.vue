@@ -19,10 +19,10 @@
   // const date = ref();
 
   const headers: TableHeader[] = [
-    { key: 'Suppliers', label: 'Suppliers', width: '30%', sortable: true },
-    { key: 'Specialization', label: 'Specialization', width: '30%' },
-    { key: 'phone', label: 'Phone', width: '20%' },
-    { key: 'materials', label: 'Materials', width: '20%' },
+    { key: 'name', label: 'Name', width: '40%', sortable: true },
+    // { key: 'Specialization', label: 'Specialization', width: '30%' },
+    { key: 'phone', label: 'Phone', width: '40%' },
+    // { key: 'materials', label: 'Materials', width: '20%' },
   ];
 
   const perPage = ref(10);
@@ -205,8 +205,8 @@
             hoverable
             striped
           >
-            <template #cell-Suppliers="{ item }">
-              {{ item.Suppliers ?? 'N/A' }}
+            <template #cell-name="{ item }">
+              {{ item.name ?? 'N/A' }}
             </template>
             <template #actions="{ item }">
               <div class="row-actions">

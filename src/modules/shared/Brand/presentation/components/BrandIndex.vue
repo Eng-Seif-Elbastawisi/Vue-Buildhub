@@ -20,8 +20,8 @@
   // const date = ref();
 
   const headers: TableHeader[] = [
-    { key: 'title', label: 'title', width: '40%', sortable: true },
-    { key: 'equipment', label: 'equipment', width: '50%' },
+    { key: 'title', label: 'title', width: '90%', sortable: true },
+    // { key: 'type', label: 'type', width: '50%' },
   ];
 
   const perPage = ref(10);
@@ -114,7 +114,7 @@
       <div class="btns">
         <router-link
           class="btn btn-primary"
-          :to="user?.isMaster ? '/brand/add' : '/organization/brand/add'"
+          :to="user?.type === 1 ? '/mainportal/brand/add' : '/organization/brand/add'"
         >
           {{ $t('brand.add') }}
         </router-link>
@@ -174,18 +174,14 @@
             hoverable
             striped
           >
-            <template #cell-Suppliers="{ item }">
-              {{ item.title ?? 'N/A' }}
+            <template #cell-title="{ item }">
+              {{ item.translations?.title?.en ?? 'N/A' }}
             </template>
             <template #actions="{ item }">
               <div class="row-actions">
                 <router-link
                   class="action-btn edit"
-                  :to="
-                    user?.isMaster
-                      ? `/brand/edit/${item.id}`
-                      : `/organization/brand/edit/${item.id}`
-                  "
+                  :to="user?.type === 1 ? `/brand/edit/${item.id}` : `/organization/brand/edit/${item.id}`"
                   title="Edit"
                 >
                   <svg

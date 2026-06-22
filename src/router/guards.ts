@@ -1,31 +1,48 @@
 import type { NavigationGuardNext, RouteLocationNormalized } from 'vue-router';
 import { useUserStore } from '@/stores/user';
 
+const ROLE_PATHS: Record<number, string> = {
+  1: '/admin',
+  2: '/organization',
+  3: '/supervision', // غيرها حسب اسم route بتاع النوع التالت
+};
+
+const PROTECTED_PREFIXES = ['/admin', '/organization', '/supervision'];
+
 export function authGuard(
   to: RouteLocationNormalized,
   _from: RouteLocationNormalized,
   next: NavigationGuardNext,
 ): void {
-  const userData = useUserStore();
+  const userStore = useUserStore();
+
+  const userType = Number(userStore.user?.type);
+  const appPath = ROLE_PATHS[userType];
+
   const isLoginPage = to.path === '/login';
+  const isProtectedPage = PROTECTED_PREFIXES.some((path) => to.path.startsWith(path));
 
-  if (to.path === '/choose-country' || to.path === '/not-found') {
-    return next();
+  // مش عامل login أو type مش معروف
+  if (!appPath) {
+    if (isLoginPage) {
+      return next();
+    }
+
+    return next({
+      path: '/login',
+      query: { redirect: to.fullPath },
+    });
   }
 
-  if (!userData.isAuth) {
-    return isLoginPage ? next() : next({ name: 'Choose Country' });
-  }
-
-  const appPath = userData.user?.isMaster ? '/admin' : '/organization';
-
-  if (
-    isLoginPage ||
-    (to.path.startsWith('/admin') && appPath !== '/admin') ||
-    (to.path.startsWith('/organization') && appPath !== '/organization')
-  ) {
+  // لو عامل login وفتح login رجعه للداشبورد بتاعه
+  if (isLoginPage) {
     return next({ path: appPath });
   }
 
-  next();
+  // لو داخل على protected route مش بتاع نوعه
+  if (isProtectedPage && !to.path.startsWith(appPath)) {
+    return next({ path: appPath });
+  }
+
+  return next();
 }

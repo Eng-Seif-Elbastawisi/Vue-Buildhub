@@ -445,5 +445,12 @@
   "admin.empty_title": "No admins yet",
   "admin.empty_description": "Add the first admin to start managing access",
   "admin.delete_title": "Remove this admin?",
-  "admin.delete_message": "Deleting this admin cannot be undone."
+  "admin.delete_message": "Deleting this admin cannot be undone.",
+  "brand.form_title": "Brand details",
+  "brand.form_description": "Enter the brand name and select its type",
+  "brand.title": "Brand name",
+  "brand.type": "Brand type",
+  "brand.type_placeholder": "Select brand type",
+  "brand.types.materials": "Materials",
+  "brand.types.supplies": "Supplies"
 }

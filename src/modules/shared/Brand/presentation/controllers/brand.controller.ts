@@ -8,10 +8,12 @@ import {
 } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
 import router from '@/router';
 import { useFormsStore } from '@/stores/formsStore';
+import { useUserStore } from '@/stores/user';
 import type BrandShowModel from '../../core/models/brand.show.model';
 import type BrandModel from '../../core/models/brand.model';
+import type ShowBrandParams from '../../core/params/show.brand.params';
 import BrandRepository from '../../data/repositories/brand.repository';
-
+const userStore = useUserStore();
 export default class BrandController extends BaseController<BrandShowModel, BrandModel[]> {
   private static instance: BrandController;
 
@@ -44,11 +46,10 @@ export default class BrandController extends BaseController<BrandShowModel, Bran
 
   async create(params: Params, options?: ApiCallOptions, formKey?: string) {
     const FormStore = useFormsStore();
-
     const result = await super.create(params, { ...options, useJson: true });
 
     if (result instanceof DataSuccess) {
-      router.push({ name: 'Brand' });
+      router.push(userStore.user?.type === 1 ? '/mainportal/brand' : '/organization/brand');
       if (formKey) FormStore.clearFormData(formKey);
     }
 
@@ -61,7 +62,7 @@ export default class BrandController extends BaseController<BrandShowModel, Bran
     const result = await super.update(params, { ...options, useJson: true });
 
     if (result instanceof DataSuccess) {
-      router.push({ name: 'Brand' });
+      router.push(userStore.user?.type === 1 ? '/mainportal/brand' : '/organization/brand');
       if (formKey) FormStore.clearFormData(formKey);
     }
 
@@ -72,13 +73,13 @@ export default class BrandController extends BaseController<BrandShowModel, Bran
     return await super.fetchList(params, { ...options, useJson: true });
   }
 
-  // async fetchOne(params: Params, options?: ApiCallOptions) {
-  //   return await super.fetchOne(params, {
-  //     ...options,
-  //     useJson: true,
-  //     headers: {
-  //       'Accept-Language': (params as ShowBrandParams).allLocales ? '*' : 'en',
-  //     },
-  //   });
-  // }
+  async fetchOne(params: Params, options?: ApiCallOptions) {
+    return await super.fetchOne(params, {
+      ...options,
+      useJson: true,
+      headers: {
+        'Accept-Language': (params as ShowBrandParams).allLocales ? '*' : 'en',
+      },
+    });
+  }
 }

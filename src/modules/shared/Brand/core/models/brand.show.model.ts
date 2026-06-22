@@ -1,13 +1,19 @@
-import { EquipmentTypeEnum } from '../constant/equipment.type.enum';
+import { BrandTypeEnum } from '../constant/Brand.type.enum';
+import BrandModel from './brand.model';
+
 export default class BrandShowModel {
   public readonly id?: number;
-  public readonly title?: string;
-  public readonly equipment?: EquipmentTypeEnum;
+  public readonly translations: { title: Record<string, string> };
+  public readonly type?: BrandTypeEnum;
 
-  constructor(data: { id?: number; title?: string; equipment?: EquipmentTypeEnum }) {
+  constructor(data: {
+    id?: number;
+    translations: { title: Record<string, string> };
+    type?: BrandTypeEnum;
+  }) {
     this.id = data.id;
-    this.title = data.title;
-    this.equipment = data.equipment;
+    this.translations = data.translations;
+    this.type = data.type;
     Object.freeze(this);
   }
 
@@ -16,14 +22,16 @@ export default class BrandShowModel {
 
     return new BrandShowModel({
       id: json.id,
-      title: json.title,
-      equipment: json.equipment,
+      translations: {
+        title: BrandModel.mapTranslations(json.translations, json.title),
+      },
+      type: json.type,
     });
   }
 
   static example: BrandShowModel = new BrandShowModel({
     id: 1,
-    title: 'title',
-    equipment: EquipmentTypeEnum.materials,
+    translations: { title: { en: 'Brand', ar: 'علامة تجارية' } },
+    type: BrandTypeEnum.SUPPLIES,
   });
 }
