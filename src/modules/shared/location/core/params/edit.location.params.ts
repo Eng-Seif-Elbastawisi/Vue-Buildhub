@@ -1,17 +1,18 @@
 import type Params from '@/base/Core/Params/params';
 import { ClassValidation } from '@/base/Presentation/Utils/classValidation';
 import { type LocationTypeEnum } from '../constant/location.type.enum';
+import type TranslationParams from '@/base/Core/Params/translationParams';
 
 export default class EditLocationParams implements Params {
   public location_id?: number;
   public parentId?: number;
   public code?: string;
   public type?: LocationTypeEnum;
-  public translations?: { title: Record<string, string> };
+  public translations?: TranslationParams;
 
   public static readonly validation = new ClassValidation().setRules({
-    location_id: { required: true },
-    code: { required: true },
+    // location_id: { required: true },
+    // code: { required: true },
     type: { required: true },
     translations: { required: true },
   });
@@ -21,7 +22,7 @@ export default class EditLocationParams implements Params {
     parentId?: number;
     code?: string;
     type?: LocationTypeEnum;
-    translations?: { title: Record<string, string> };
+    translations?: TranslationParams;
   }) {
     this.location_id = data.location_id;
     this.parentId = data.parentId;
@@ -36,7 +37,7 @@ export default class EditLocationParams implements Params {
       parent_id: this.parentId,
       code: this.code,
       type: this.type,
-      translations: this.translations,
+      translations: this.translations?.toMap(),
     };
 
     return map;

@@ -24,16 +24,17 @@ export default class LocationShowModel {
   }
 
   static fromJson(json: Record<string, unknown>): LocationShowModel {
-    if (!json) throw new Error('Invalid LocationShowModel data');
+  return new LocationShowModel({
+    id: json.id as number,
+    parentId: json.parent_id as number | undefined,
+    type: json.type as LocationTypeEnum,
+    code: json.code as string | undefined,
 
-    return new LocationShowModel({
-      id: json.id as number | undefined,
-      parentId: json.parent_id as number | undefined,
-      type: json.type as LocationTypeEnum | undefined,
-      code: json.code as string | undefined,
-      translations: { title: LocationModel.mapTranslations(json.translations) },
-    });
-  }
+    translations: {
+      title: LocationModel.mapTranslations(json.title),
+    },
+  });
+}
 
   static example: LocationShowModel = new LocationShowModel({
     id: 1,

@@ -3,6 +3,7 @@ import { LocationTypeEnum } from '../constant/location.type.enum';
 export default class LocationModel {
   public readonly id?: number;
   public readonly parentId?: number;
+  public readonly title?: string;
   public readonly type: LocationTypeEnum;
   public readonly code?: string;
   public readonly translations: { title: Record<string, string> };
@@ -12,11 +13,13 @@ export default class LocationModel {
     translations: { title: Record<string, string> };
     type: LocationTypeEnum;
     parentId?: number;
+    title?: string;
     code?: string;
   }) {
     this.id = data.id;
     this.translations = data.translations;
     this.type = data.type;
+    this.title = data.title;
     this.parentId = data.parentId;
     this.code = data.code;
     Object.freeze(this);
@@ -41,6 +44,7 @@ export default class LocationModel {
     return new LocationModel({
       id: json.id as number | undefined,
       translations: { title: LocationModel.mapTranslations(json.translations) },
+      title: json.title as string | undefined,
       type: json.type as LocationTypeEnum,
       parentId: json.parent_id as number | undefined,
       code: json.code as string | undefined,

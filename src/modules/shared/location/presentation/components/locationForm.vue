@@ -43,12 +43,13 @@ import TranslationParams from '@/base/Core/Params/translationParams';
       locationType.value = location.type
         ? (locationOptions.find((option) => option.id === location.type) ?? null)
         : null;
+      updateData();
     },
     { immediate: true },
   );
 
   const updateData = () => {
-    const translations = new TranslationParams({ title: title.value });
+    const translationParams = new TranslationParams({ title: translations.value });
     emit(
       'updateData',
       new AddLocationParams({
@@ -56,7 +57,7 @@ import TranslationParams from '@/base/Core/Params/translationParams';
         type: locationType.value?.id as
           | (typeof LocationTypeEnum)[keyof typeof LocationTypeEnum]
           | undefined,
-        translations: { title: translations.value },
+        translations: translationParams,
       }),
     );
   };
@@ -73,10 +74,8 @@ import TranslationParams from '@/base/Core/Params/translationParams';
       <h3>{{ $t('location.form_title') }}</h3>
       <p>{{ $t('location.form_description') }}</p>
     </header>
-
     <div class="form-fields" :class="{ disabled: loading }">
       <div class="field-group">
-        {{ translations }}
         <MultiLangInput
           field-key="title"
           :label="$t('location.title')"
@@ -87,18 +86,18 @@ import TranslationParams from '@/base/Core/Params/translationParams';
         />
       </div>
 
-        <!-- <div class="field-group">
-          <label class="field-label" for="location-code">{{ $t('location.code') }}</label>
-          <div class="input-wrap">
-            <input
-              id="location-code"
-              v-model="code"
-              class="field-input"
-              :placeholder="$t('location.code_placeholder')"
-              @input="updateData"
-            />
-          </div>
-        </div> -->
+      <!-- <div class="field-group">
+        <label class="field-label" for="location-code">{{ $t('location.code') }}</label>
+        <div class="input-wrap">
+          <input
+            id="location-code"
+            v-model="code"
+            class="field-input"
+            :placeholder="$t('location.code_placeholder')"
+            @input="updateData"
+          />
+        </div>
+      </div> -->
 
       <div class="field-group">
         <UpdatedCustomInputSelect

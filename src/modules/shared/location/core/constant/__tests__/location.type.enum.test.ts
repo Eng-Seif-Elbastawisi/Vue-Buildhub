@@ -3,6 +3,12 @@ import { LocationTypeEnum } from '../location.type.enum';
 
 describe('LocationTypeEnum', () => {
   it('exposes stable location type identifiers', () => {
-    expect(LocationTypeEnum).toEqual({ wareHouse: 1, store: 2, building: 3, apartment: 4 });
+    expect(LocationTypeEnum).toEqual({
+      COUNTRY: 1,
+      GOVERNORATE: 2,
+      CITY: 3,
+      REGION: 4,
+      PLACE: 5,
+    });
   });
 });

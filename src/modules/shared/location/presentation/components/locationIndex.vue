@@ -23,7 +23,7 @@
   const word = ref('');
 
   const headers: TableHeader[] = [
-    { key: 'translations', label: 'title', width: '55%', sortable: true },
+    { key: 'title', label: 'title', width: '55%', sortable: true },
     // { key: 'code', label: 'code', width: '30%' },
     { key: 'type', label: 'type', width: '40%' },
   ];
@@ -33,7 +33,7 @@
   );
   const titleFor = (item: LocationModel) =>
     item.translations.title[locale.value] ?? item.translations.title.en ?? '-';
-  const typeFor = (item: LocationModel) => t(`location.types.${typeLabels[item.type]}`);
+  const typeFor = (item: LocationModel) => t(`${typeLabels[item.type]}`);
 
   const fetchLocations = async (page: number = 1, searchWord: string = '') => {
     await controller.fetchList(

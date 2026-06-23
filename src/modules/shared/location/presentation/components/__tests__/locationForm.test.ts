@@ -47,7 +47,7 @@ describe('LocationForm', () => {
     expect(params.toMap()).toEqual({
       parent_id: undefined,
       code: 'B-01',
-      type: LocationTypeEnum.building,
+      type: LocationTypeEnum.CITY,
       translations: { title: { en: 'Building', ar: 'مبنى' } },
     });
   });

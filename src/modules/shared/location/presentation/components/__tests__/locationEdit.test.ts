@@ -3,14 +3,15 @@ import { mount } from '@vue/test-utils';
 import { defineComponent, h, onMounted } from 'vue';
 import { LocationTypeEnum } from '../../../core/constant/location.type.enum';
 import LocationEdit from '../locationEdit.vue';
+import TranslationParams from '@/base/Core/Params/translationParams';
 
 const fetchOne = vi.fn().mockResolvedValue({});
 const update = vi.fn().mockResolvedValue({});
 const addParams = {
-  parent_id: 2,
+  parentId: 2,
   code: 'B-01',
-  type: LocationTypeEnum.building,
-  translations: { title: { en: 'Building', ar: 'مبنى' } },
+  type: LocationTypeEnum.CITY,
+  translations: new TranslationParams({ title: { en: 'Building', ar: 'مبنى' } }),
 };
 
 vi.mock('vue-router', () => ({
@@ -48,7 +49,7 @@ describe('LocationEdit', () => {
       location_id: 7,
       parent_id: 2,
       code: 'B-01',
-      type: LocationTypeEnum.building,
+      type: LocationTypeEnum.CITY,
       translations: { title: { en: 'Building', ar: 'مبنى' } },
     });
   });
