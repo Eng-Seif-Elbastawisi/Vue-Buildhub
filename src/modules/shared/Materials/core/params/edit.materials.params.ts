@@ -35,7 +35,7 @@ export default class EditMaterialParams implements Params {
     const map: { [key: string]: any } = {
       material_id: this.material_id,
       price: this.price,
-      brandId: this.brandId,
+      brand_id: this.brandId,
       unit: this.unit,
       translations: this.translations,
     };

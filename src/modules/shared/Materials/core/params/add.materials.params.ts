@@ -27,7 +27,7 @@ export default class AddMaterialsParams implements Params {
   toMap(): { [p: string]: any } {
     return {
       price: this.price,
-      brandId: this.brandId,
+      brand_id: this.brandId,
       unit: this.unit,
       translations: this.translations,
     };
