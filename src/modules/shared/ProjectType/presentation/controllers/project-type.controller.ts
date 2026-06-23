@@ -10,12 +10,18 @@ import { useFormsStore } from '@/stores/formsStore';
 import type ProjectTypeModel from '../../core/models/project-type.model';
 import type ProjectTypeShowModel from '../../core/models/project-type.show.model';
 import ProjectTypeRepository from '../../data/repositories/project-type.repository';
+import { useUserStore } from '@/stores/user';
+
 
 export default class ProjectTypeController extends BaseController<
   ProjectTypeShowModel,
   ProjectTypeModel[]
 > {
   private static instance: ProjectTypeController;
+  
+  private get userStore() {
+    return useUserStore();
+  }
   protected get repository() {
     return ProjectTypeRepository.getInstance();
   }
@@ -43,7 +49,9 @@ export default class ProjectTypeController extends BaseController<
   async create(params: Params, options?: ApiCallOptions, formKey?: string) {
     const result = await super.create(params, { ...options, useJson: true });
     if (result instanceof DataSuccess) {
-      await router.push({ name: 'Projects' });
+      // await router.push({ name: 'Projects' });
+      router.push(this.userStore.user?.type === 1 ? '/mainportal/projectType' : '/organization/projectType');
+
       if (formKey) useFormsStore().clearFormData(formKey);
     }
     return result;
@@ -52,7 +60,9 @@ export default class ProjectTypeController extends BaseController<
   async update(params: Params, options?: ApiCallOptions, formKey?: string) {
     const result = await super.update(params, { ...options, useJson: true });
     if (result instanceof DataSuccess) {
-      await router.push({ name: 'Projects' });
+      // await router.push({ name: 'Projects' });
+            router.push(this.userStore.user?.type === 1 ? '/mainportal/projectType' : '/organization/projectType');
+
       if (formKey) useFormsStore().clearFormData(formKey);
     }
     return result;

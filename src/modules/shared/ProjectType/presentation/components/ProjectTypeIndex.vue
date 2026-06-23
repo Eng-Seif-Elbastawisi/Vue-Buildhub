@@ -20,8 +20,8 @@
   const perPage = ref(10);
   const typeNames = Object.fromEntries(Object.entries(ProjectType).map(([name, id]) => [id, name]));
   const headers: TableHeader[] = [
-    { key: 'title', label: 'project.name', width: '55%', sortable: true },
-    { key: 'projectType', label: 'project.type', width: '35%' },
+    { key: 'title', label: 'title', width: '90%', sortable: true },
+    // { key: 'projectType', label: 'project.type', width: '35%' },
   ];
   const fetchProjects = async (page: number = 1) =>
     controller.fetchList(

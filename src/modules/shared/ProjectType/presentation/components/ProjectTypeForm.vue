@@ -1,38 +1,71 @@
 <script setup lang="ts">
-  import { ref, watch } from 'vue';
-  import type TitleInterface from '@/base/Data/Models/titleInterface';
-  import UpdatedCustomInputSelect from '@/shared/FormInputs/UpdatedCustomInputSelect.vue';
-  import type ProjectTypeShowModel from '../../core/models/project-type.show.model';
-  import AddProjectTypeParams from '../../core/params/add.project-type.params';
-  import { ProjectType } from '../../core/constant/project-type.enum';
+import { ref, watch } from 'vue';
 
-  const emit = defineEmits<{ updateData: [params: AddProjectTypeParams] }>();
-  const props = defineProps<{ project?: ProjectTypeShowModel; loading?: boolean }>();
-  const name = ref('');
-  const projectType = ref<TitleInterface<string | number> | null>(null);
-  const projectTypeOptions = Object.entries(ProjectType).map(([title, id]) => ({ id, title }));
+import TranslationParams from '@/base/Core/Params/translationParams';
+import type TitleInterface from '@/base/Data/Models/titleInterface';
 
-  watch(
-    () => props.project,
-    (project) => {
-      if (!project) return;
-      name.value = project.title;
-      projectType.value =
-        projectTypeOptions.find((option) => option.id === project.projectType) ?? null;
-    },
-    { immediate: true },
-  );
+import UpdatedCustomInputSelect from '@/shared/FormInputs/UpdatedCustomInputSelect.vue';
+import MultiLangInput from '@/shared/MultiLangInput.vue';
 
-  const updateData = () =>
-    emit(
-      'updateData',
-      new AddProjectTypeParams({
-        name: name.value,
-        projectType: projectType.value?.id as
-          | (typeof ProjectType)[keyof typeof ProjectType]
-          | undefined,
+import { ProjectType } from '../../core/constant/project-type.enum';
+import type ProjectTypeShowModel from '../../core/models/project-type.show.model';
+import AddProjectTypeParams from '../../core/params/add.project-type.params';
+
+const emit = defineEmits<{
+  updateData: [params: AddProjectTypeParams];
+}>();
+
+const props = defineProps<{
+  project?: ProjectTypeShowModel;
+  loading?: boolean;
+}>();
+
+const projectTypeOptions = Object.entries(ProjectType).map(([title, id]) => ({
+  id,
+  title,
+}));
+
+const translations = ref<Record<string, string>>({});
+const projectType = ref<TitleInterface<string | number> | null>(null);
+
+const updateData = () => {
+  emit(
+    'updateData',
+    new AddProjectTypeParams({
+      translations: new TranslationParams({
+        title: translations.value,
       }),
-    );
+
+      projectType: projectType.value?.id as
+        | (typeof ProjectType)[keyof typeof ProjectType]
+        | undefined,
+    }),
+  );
+};
+
+const updateTranslations = (value: Record<string, string>) => {
+  translations.value = value;
+  updateData();
+};
+
+watch(
+  () => props.project,
+  (project) => {
+    if (!project) return;
+
+    translations.value = {
+      ...(project.translations?.title ?? {}),
+    };
+
+    projectType.value =
+      projectTypeOptions.find(
+        (option) => option.id === project.projectType,
+      ) ?? null;
+
+    updateData();
+  },
+  { immediate: true },
+);
 </script>
 
 <template>
@@ -41,21 +74,20 @@
       <h3>{{ $t('project.form_title') }}</h3>
       <p>{{ $t('project.form_description') }}</p>
     </header>
+
     <div class="form-fields" :class="{ disabled: loading }">
       <div class="field-group">
-        <label class="field-label" for="project-name">{{ $t('project.name') }}</label>
-        <div class="input-wrap">
-          <input
-            id="project-name"
-            v-model="name"
-            class="field-input"
-            type="text"
-            :placeholder="$t('project.name_placeholder')"
-            @input="updateData"
-          />
-        </div>
+        <MultiLangInput
+          field-key="title"
+          :label="$t('title')"
+          :languages="['ar', 'en']"
+          :model-value="translations"
+          type="title"
+          @update:model-value="updateTranslations"
+        />
       </div>
-      <div class="field-group">
+
+      <!-- <div class="field-group">
         <UpdatedCustomInputSelect
           id="project-type"
           v-model="projectType"
@@ -65,54 +97,37 @@
           required
           @update:model-value="updateData"
         />
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
 
 <style scoped lang="scss">
-  .field-input {
-    width: 100%;
-    padding: 12px 16px;
-    padding-right: 50px;
-    border: 1px solid var(--border-weak);
-    border-radius: 28px;
-    background: var(--white);
-    outline: none;
-    transition: all 0.25s ease;
-    font-family: 'Medium';
-    font-weight: 400;
-    font-size: var(--sm-size);
-    color: var(--bread-crumb-color-span);
-    max-height: 200px;
-    max-width: 100%;
-  }
+.project-form-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
 
-  .project-form-card {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
+header p {
+  color: var(--gray-5);
+}
 
-  header p {
-    color: var(--gray-5);
-  }
+.form-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  align-items: end;
 
-  .form-fields {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1rem;
-    align-items: end;
-  }
-
-  .form-fields.disabled {
+  &.disabled {
     pointer-events: none;
     opacity: 0.7;
   }
+}
 
-  @media (max-width: 768px) {
-    .form-fields {
-      grid-template-columns: 1fr;
-    }
+@media (max-width: 768px) {
+  .form-fields {
+    grid-template-columns: 1fr;
   }
+}
 </style>

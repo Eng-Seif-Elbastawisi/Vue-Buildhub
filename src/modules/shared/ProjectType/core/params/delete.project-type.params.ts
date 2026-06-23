@@ -11,7 +11,7 @@ export default class DeleteProjectTypeParams implements Params {
     this.projectId = data.projectId;
   }
   toMap(): Record<string, number> {
-    return { project_id: this.projectId };
+    return { project_type_id: this.projectId };
   }
   validate() {
     return DeleteProjectTypeParams.validation.validate(this);

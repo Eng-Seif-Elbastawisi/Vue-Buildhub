@@ -47,7 +47,7 @@ export default class LocationModel {
       title: json.title as string | undefined,
       type: json.type as LocationTypeEnum,
       parentId: json.parent_id as number | undefined,
-      code: json.code as string | undefined,
+      code: json.code as string | undefined, 
     });
   }
 

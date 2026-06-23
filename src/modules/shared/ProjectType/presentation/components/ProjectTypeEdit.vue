@@ -12,13 +12,14 @@
   const projectId = Number(route.params.project_id);
   const params = ref<EditProjectTypeParams | null>(null);
   const loading = ref(false);
-  const updateData = (data: AddProjectTypeParams) => {
-    params.value = new EditProjectTypeParams({
-      projectId,
-      name: data.name,
-      projectType: data.projectType,
-    });
-  };
+ const updateData = (data: AddProjectTypeParams) => {
+  params.value = new EditProjectTypeParams({
+    projectId,
+    name: data.name,
+    projectType: data.projectType,
+    translations: data.translations,
+  });
+};
   const saveProject = async () => {
     if (!params.value) return;
     loading.value = true;
