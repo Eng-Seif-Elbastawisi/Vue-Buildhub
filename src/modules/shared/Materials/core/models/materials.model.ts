@@ -4,6 +4,7 @@ export default class MaterialsModel {
   public readonly id?: number;
   public readonly brandId?: number;
   public readonly price: number;
+  public readonly title:string;
   public readonly unit: UnitTypeEnum;
   public readonly translations: { title: Record<string, string> };
 
@@ -11,6 +12,7 @@ export default class MaterialsModel {
     id?: number;
     translations: { title: Record<string, string> };
     unit: UnitTypeEnum;
+    title:string;
     price: number;
     brandId?: number;
   }) {
@@ -19,6 +21,7 @@ export default class MaterialsModel {
     this.unit = data.unit;
     this.price = data.price;
     this.brandId = data.brandId;
+    this.title = data.title;
     Object.freeze(this);
   }
 
@@ -42,6 +45,7 @@ export default class MaterialsModel {
       id: json.id as number | undefined,
       translations: { title: MaterialsModel.mapTranslations(json.translations) },
       unit: json.unit as UnitTypeEnum,
+      title: json.title as string,
       price: Number(json.price),
       brandId: (json.brandId ?? json.brand_id) as number | undefined,
     });
@@ -51,6 +55,7 @@ export default class MaterialsModel {
     id: 10,
     translations: { title: { ar: 'مادة', en: 'Material' } },
     unit: UnitTypeEnum.meter,
+    title:'m',
     price: 100,
     brandId: 10,
   });

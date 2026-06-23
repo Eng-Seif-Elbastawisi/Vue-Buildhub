@@ -9,7 +9,8 @@
   import { useFormsStore } from '@/stores/formsStore';
   import type MaterialsShowModel from '../../core/models/materials.show.model';
   import AddMaterialsParams from '../../core/params/add.materials.params';
-  import { UnitTypeEnum } from '../../core/constant/unit.type.enum';
+import MeasurementController from '@/modules/shared/measurement/presentation/controllers/measurement.controller';
+import IndexMeasurementParams from '@/modules/shared/measurement/core/params/index.measurement.params';
 
   const emit = defineEmits<{
     updateData: [params: AddMaterialsParams];
@@ -24,12 +25,13 @@
   const formStore = useFormsStore();
   const brandController = BrandController.getInstance();
   const brandParams = new IndexBrandParams('', 1, 100, 0, undefined, 1);
-  const unitOptions = Object.entries(UnitTypeEnum).map(([title, id]) => ({ id, title }));
+  const measurementController = MeasurementController.getInstance();
+  const measurementParams = new IndexMeasurementParams('', 1, 100, 0, undefined, 1);
 
   const translations = ref<Record<string, string>>({});
   const price = ref<number>();
   const brand = ref<TitleInterface<string | number> | null>(null);
-  const unit = ref<TitleInterface<string | number> | null>(null);
+  const measurement = ref<TitleInterface<string | number> | null>(null);
 
   onBeforeRouteLeave((to, from) => {
     const savedData = props.formKey ? formStore.getFormData(props.formKey) : null;
@@ -45,10 +47,10 @@
       translations.value = { ...material.translations.title };
       price.value = material.price;
       brand.value = material.brandId
-        ? { id: material.brandId, title: String(material.brandId) }
+        ? { id: material.brandId.id, title: String(material.brandId.title) }
         : null;
-      unit.value = material.unit
-        ? (unitOptions.find((option) => option.id === material.unit) ?? null)
+      measurement.value = material.measurementId
+        ? { id: material.measurementId.id, title: String(material.measurementId.title) }
         : null;
     },
     { immediate: true },
@@ -60,7 +62,7 @@
       new AddMaterialsParams({
         price: price.value,
         brandId: brand.value?.id,
-        unit: unit.value?.id as (typeof UnitTypeEnum)[keyof typeof UnitTypeEnum] | undefined,
+        measurementId: measurement.value?.id,
         translations: { title: translations.value },
       }),
     );
@@ -119,18 +121,19 @@
           @update:model-value="updateData"
         />
       </div>
-
-      <div class="field-group">
+       <div class="field-group">
         <UpdatedCustomInputSelect
-          id="material-unit"
-          v-model="unit"
-          :label="$t('material.unit')"
-          :placeholder="$t('material.unit_placeholder')"
-          :static-options="unitOptions"
+          id="material-measurement"
+          v-model="measurement"
+          :controller="measurementController"
+          :label="$t('measurement')"
+          :params="measurementParams"
+          :placeholder="$t('measurement.unit_placeholder')"
           required
           @update:model-value="updateData"
         />
       </div>
+
     </div>
   </div>
 </template>

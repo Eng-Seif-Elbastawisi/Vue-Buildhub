@@ -23,10 +23,10 @@
   const word = ref('');
 
   const headers: TableHeader[] = [
-    { key: 'translations', label: 'material.title', width: '35%', sortable: true },
-    { key: 'brandId', label: 'material.brand', width: '20%' },
-    { key: 'price', label: 'material.price', width: '20%' },
-    { key: 'unit', label: 'material.unit', width: '20%' },
+    { key: 'title', label: 'title', width: '35%', sortable: true },
+    { key: 'brandId', label: 'brand', width: '20%' },
+    { key: 'price', label: 'price', width: '20%' },
+    // { key: 'unit', label: 'unit', width: '20%' },
   ];
 
   const unitLabels = Object.fromEntries(
@@ -96,8 +96,9 @@
           hoverable
           striped
         >
-          <template #cell-translations="{ item }">{{ titleFor(item) }}</template>
-          <template #cell-unit="{ item }">{{ unitFor(item) }}</template>
+          <template #cell-title="{ item }">{{ item.title }}</template>
+          <!-- <template #cell-brandId="{ item }">{{ brandFor(item) }}</template> -->
+          <template #cell-price="{ item }">{{ item.price }}</template>
           <template #actions="{ item }">
             <div class="row-actions">
               <router-link

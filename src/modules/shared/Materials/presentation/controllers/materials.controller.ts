@@ -12,6 +12,7 @@ import type MaterialShowModel from '../../core/models/materials.show.model';
 import type MaterialModel from '../../core/models/materials.model';
 import type ShowMaterialParams from '../../core/params/show.materials.params';
 import MaterialRepository from '../../data/repositories/materials.repository';
+import { useUserStore } from '@/stores/user';
 
 export default class MaterialController extends BaseController<MaterialShowModel, MaterialModel[]> {
   private static instance: MaterialController;
@@ -20,6 +21,10 @@ export default class MaterialController extends BaseController<MaterialShowModel
     return MaterialRepository.getInstance();
   }
 
+    get userStore() {
+    return useUserStore();
+  }
+  
   protected get config(): ControllerConfig {
     return {
       showLoadingDialog: false,
@@ -49,7 +54,9 @@ export default class MaterialController extends BaseController<MaterialShowModel
     const result = await super.create(params, { ...options, useJson: true });
 
     if (result instanceof DataSuccess) {
-      router.push({ name: 'Material' });
+      // router.push({ name: 'Material' });
+      router.push(this.userStore.user?.type === 1 ? '/mainportal/material' : '/organization/material');
+
       if (formKey) FormStore.clearFormData(formKey);
     }
 
@@ -62,7 +69,9 @@ export default class MaterialController extends BaseController<MaterialShowModel
     const result = await super.update(params, { ...options, useJson: true });
 
     if (result instanceof DataSuccess) {
-      router.push({ name: 'Material' });
+      // router.push({ name: 'Material' });
+      router.push(this.userStore.user?.type === 1 ? '/mainportal/material' : '/organization/material');
+
       if (formKey) FormStore.clearFormData(formKey);
     }
 

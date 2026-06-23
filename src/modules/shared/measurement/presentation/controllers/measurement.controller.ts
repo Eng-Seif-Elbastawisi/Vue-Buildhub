@@ -7,7 +7,7 @@ import type { ApiCallOptions } from '@/base/Data/ApiService/baseApiService';
 import type ShowMeasurementParams from '../../core/params/show.measurement.params';
 
 export default class MeasurementController extends BaseController<
-  measurementModel,
+  measurementModel, 
   measurementModel[]
 > {
   private static instance: MeasurementController;

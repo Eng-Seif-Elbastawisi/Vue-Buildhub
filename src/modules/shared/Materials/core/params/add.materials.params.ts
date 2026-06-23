@@ -5,30 +5,30 @@ import { type UnitTypeEnum } from '../constant/unit.type.enum';
 export default class AddMaterialsParams implements Params {
   public price?: number;
   public brandId?: number;
-  public unit?: UnitTypeEnum;
+  public measurementId?: number;
   public translations?: { title: Record<string, string> };
   public static readonly validation = new ClassValidation().setRules({
     price: { required: true },
     brandId: { required: true },
-    unit: { required: true },
+    measurementId: { required: true },
     translations: { required: true },
   });
   constructor(data: {
     price?: number;
     brandId?: number;
-    unit?: UnitTypeEnum;
+    measurementId?: number;
     translations?: { title: Record<string, string> };
   }) {
     this.price = data.price;
     this.brandId = data.brandId;
-    this.unit = data.unit;
+    this.measurementId = data.measurementId;
     this.translations = data.translations;
   }
   toMap(): { [p: string]: any } {
     return {
       price: this.price,
       brand_id: this.brandId,
-      unit: this.unit,
+      measurement_unit_id: this.measurementId,
       translations: this.translations,
     };
   }

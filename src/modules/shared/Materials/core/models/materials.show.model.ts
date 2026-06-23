@@ -1,3 +1,4 @@
+import measurementModel from '@/modules/shared/measurement/core/models/measurement.model';
 import { UnitTypeEnum } from '../constant/unit.type.enum';
 import MaterialsModel from './materials.model';
 
@@ -5,7 +6,8 @@ export default class MaterialsShowModel {
   public readonly id?: number;
   public readonly price?: number;
    public readonly title?: string;
-  public readonly brandId?: number;
+  public readonly brandId?: measurementModel;
+  public readonly measurementId?: measurementModel;
   public readonly translations: { title: Record<string, string> };
   public readonly unit?: UnitTypeEnum;
 
@@ -13,7 +15,8 @@ export default class MaterialsShowModel {
     id?: number;
     price?: number;
      title?: string;
-    brandId?: number;
+    brandId?: measurementModel;
+     measurementId?: measurementModel;
     unit?: UnitTypeEnum;
     translations: { title: Record<string, string> };
   }) {
@@ -21,6 +24,7 @@ export default class MaterialsShowModel {
     this.price = data.price;
      this.title = data.title;
     this.brandId = data.brandId;
+     this.measurementId = data.measurementId;
     this.unit = data.unit;
     this.translations = data.translations;
     Object.freeze(this);
@@ -32,7 +36,9 @@ export default class MaterialsShowModel {
     return new MaterialsShowModel({
       id: json.id as number | undefined,
       price: Number(json.price),
-      brandId: (json.brandId ?? json.brand_id) as number | undefined,
+      // brandId: (json.brandId ?? json.brand_id) as measurementModel | undefined,
+      brandId: json.brandId as measurementModel | undefined,
+      measurementId: json.measurementId as measurementModel | undefined,
       unit: json.unit as UnitTypeEnum | undefined,
        title: json.title as string | undefined,
       translations: { title: MaterialsModel.mapTranslations(json.translations) },
@@ -43,8 +49,9 @@ export default class MaterialsShowModel {
     id: 1,
     price: 100,
     title: 'مادة',
-    brandId: 1,
+    brandId: measurementModel.example,
     unit: UnitTypeEnum.meter,
+     measurementId: measurementModel.example,
     translations: { title: { ar: 'مادة', en: 'Material' } },
   });
 }
