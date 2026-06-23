@@ -2,6 +2,9 @@ import BaseController from '@/base/Presentation/Controller/baseController';
 import type { ControllerConfig } from '@/base/Presentation/Controller/baseController';
 import type ClientSourceModel from '../../core/models/client.source.model';
 import ClientSourceRepository from '../../data/repositories/client.source.repository';
+import type Params from '@/base/Core/Params/params';
+import type { ApiCallOptions } from '@/base/Data/ApiService/baseApiService';
+import type ShowClientSourceParams from '../../core/params/show.client.source.params';
 
 export default class ClientSourceController extends BaseController<ClientSourceModel, ClientSourceModel[]> {
   private static instance: ClientSourceController;
@@ -32,4 +35,13 @@ export default class ClientSourceController extends BaseController<ClientSourceM
     }
     return ClientSourceController.instance;
   }
+    async fetchOne(params: Params, options?: ApiCallOptions) {
+      return await super.fetchOne(params, {
+        ...options,
+        useJson: true,
+        headers: {
+          'Accept-Language': (params as ShowClientSourceParams).allLocales ? '*' : 'en',
+        },
+      });
+    }
 }

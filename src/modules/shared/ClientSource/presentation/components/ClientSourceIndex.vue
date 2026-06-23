@@ -10,9 +10,9 @@ import DeleteClientSourceParams from '../../core/params/delete.client.source.par
 import ShowClientSourceParams from '../../core/params/show.client.source.params.ts';
 import EditIcon from '@/shared/icons/EditIcon.vue';
 import DeleteDialog from '@/base/Presentation/Dialogs/MainDialogs/DeleteDialog.vue';
-import ClientSourceForm from './ClientSourceForm.vue';
 import type ClientSourceModel from '../../core/models/client.source.model.ts';
 import IndexClientSourceParams from '../../core/params/index.client.source.params.ts';
+import ClientSourceAdd from './ClientSourceAdd.vue';
 
 // Controller instance
 const controller = ClientSourceController.getInstance();
@@ -92,13 +92,15 @@ const selectedClientSource = computed(() =>
 );
 
 const ShowClientSource = async (id: number) => {
-  await controller.fetchOne(new ShowClientSourceParams(id));
+  await controller.fetchOne(new ShowClientSourceParams(id,true));
   EditMode.value = true;
 };
-
+const formKey = ref(0);
 const onClientSourceSaved = async () => {
   EditMode.value = false;
   await fetchClientSource();
+   formKey.value++;
+  
 };
 </script>
 
@@ -124,7 +126,7 @@ const onClientSourceSaved = async () => {
         </button>
       </div>
     </div>
-    <ClientSourceForm :clientSource="selectedClientSource" @saved="onClientSourceSaved" />
+    <ClientSourceAdd :key="formKey" :clientSource="selectedClientSource" @saved="onClientSourceSaved" />
 
     <!-- ═══ Table ═══ -->
     <DataStatusBuilder :controller="state" :on-retry="async () => await fetchClientSource()">

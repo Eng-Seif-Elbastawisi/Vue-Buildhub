@@ -5,7 +5,7 @@ export default class ShowLocationParams implements Params {
   public location_id: number;
   public allLocales?: boolean;
 
-  public static readonly validation = new ClassValidation().setRules({
+  public static readonly validation = new ClassValidation().setRules({ 
     location_id: { required: true },
   });
 

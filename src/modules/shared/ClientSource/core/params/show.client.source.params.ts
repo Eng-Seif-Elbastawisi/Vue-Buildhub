@@ -6,18 +6,20 @@ import { ClassValidation } from '@/base/Presentation/Utils/classValidation';
  */
 export default class ShowClientSourceParams implements Params {
   public id: number;
+  public allLocales?: boolean;
 
   public static readonly validation = new ClassValidation().setRules({
-    id: { required: true, minLength: 1 },
+    // id: { required: true, minLength: 1 },
   });
 
-  constructor(id: number) {
+  constructor(id: number,allLocales?: boolean) {
     this.id = id;
+    this.allLocales = allLocales;
   }
 
   toMap(): { [p: string]: any } {
     const map: { [key: string]: any } = {
-      id: this.id,
+      client_source_id: this.id,
     };
 
     return map;

@@ -40,7 +40,7 @@
 
   const route = useRoute();
   onMounted(async () => {
-    await controller.fetchOne(new ShowMeasurementParams(Number(route.params.id)));
+    await controller.fetchOne(new ShowMeasurementParams(Number(route.params.id), true));
   });
 </script>
 

@@ -17,7 +17,7 @@ export default class DeleteMeasurementParams implements Params {
 
   toMap(): { [p: string]: any } {
     const map: { [key: string]: any } = {
-      id: this.id,
+      measurement_unit_id: this.id,
     };
 
     return map;

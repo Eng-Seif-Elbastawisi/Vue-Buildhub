@@ -20,7 +20,7 @@ export default class EditClientSourceParams implements Params {
 
   toMap(): { [p: string]: any } {
     return {
-      id: this.id,
+      client_source_id: this.id,
       translations: this.translations,
     };
   }

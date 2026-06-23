@@ -99,7 +99,6 @@
 
     EditMode.value = true;
   };
-
   const onStageSaved = async () => {
     EditMode.value = false;
     await fetchDepartments();
@@ -140,7 +139,7 @@
         </button>
       </div>
     </div>
-    <DepartmentAdd :department="selectedDepartment" @update-data="onStageSaved" />
+    <DepartmentAdd :department="selectedDepartment" @update-data="onStageSaved" @saved="onStageSaved" />
 
     <!-- ═══ Table ═══ -->
     <DataStatusBuilder :controller="state" :on-retry="async () => await fetchDepartments()">

@@ -42,15 +42,28 @@ export default class measurementModel {
    * @param json - Raw JSON data from API
    * @returns CountryModel instance
    */
+  static mapTranslations(translations: unknown, key: string = 'title'): Record<string, string> {
+    if (!Array.isArray(translations)) {
+      const value = translations as { title?: Record<string, string> } | undefined;
+      return value?.title ?? (translations as Record<string, string>) ?? {};
+    }
+
+    return translations.reduce<Record<string, string>>((result, translation) => {
+      const item = translation as Record<string, string>;
+      if (item.locale && item[key]) result[item.locale] = item[key];
+      return result;
+    }, {});
+  }
+
   static fromJson(json: any): measurementModel {
     if (!json) {
-      throw new Error('Cannot create CountryModel from null or undefined');
+      throw new Error('Cannot create measurementModel from null or undefined');
     }
 
     return new measurementModel({
       id: json.id,
       title: json.title,
-      translations: { title: json.translations?.title ?? { en: json.title ?? '' } },
+      translations: { title: measurementModel.mapTranslations(json.title) },
       e_c_subject_id: json.e_c_subject_id,
       branches: json.branches?.map((branch: any) => BranchesModel.fromJson(branch)) ?? [],
       EducationType: json.education_type,

@@ -20,7 +20,7 @@ export default class EditMeasurementParams implements Params {
 
   toMap(): { [p: string]: any } {
     return {
-      id: this.id,
+      measurement_unit_id: this.id,
       translations: this.translations,
     };
   }

@@ -20,7 +20,7 @@ export default class EditStageParams implements Params {
 
   toMap(): { [p: string]: any } {
     return {
-      id: this.id,
+      stage_id: this.id,
       translations: this.translations,
     };
   }

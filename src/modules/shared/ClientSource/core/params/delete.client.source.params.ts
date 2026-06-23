@@ -17,7 +17,7 @@ export default class DeleteClientSourceParams implements Params {
 
   toMap(): { [p: string]: any } {
     const map: { [key: string]: any } = {
-      id: this.id,
+      client_source_id: this.id,
     };
 
     return map;

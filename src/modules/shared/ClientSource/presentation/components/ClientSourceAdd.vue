@@ -35,8 +35,8 @@ const saveClientSource = async () => {
 
     const result =
       paramsToSave instanceof EditClientSourceParams
-        ? await controller.update(paramsToSave, undefined)
-        : await controller.create(paramsToSave, undefined);
+         ? await controller.update(paramsToSave, { useJson: true })
+    : await controller.create(paramsToSave, { useJson: true });
 
     if (result) {
       emit('saved');

@@ -36,7 +36,7 @@ const updateData = (updatedParams: EditClientSourceParams) => {
 
 const route = useRoute();
 onMounted(async () => {
-  await controller.fetchOne(new ShowClientSourceParams(Number(route.params.id)));
+  await controller.fetchOne(new ShowClientSourceParams(Number(route.params.id), true));
 });
 </script>
 

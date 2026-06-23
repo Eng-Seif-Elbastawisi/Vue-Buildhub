@@ -1,7 +1,10 @@
 import BaseController from '@/base/Presentation/Controller/baseController';
 import type { ControllerConfig } from '@/base/Presentation/Controller/baseController';
-import type measurementModel from '../../core/models/stage.model';
+import type measurementModel from '../../core/models/measurement.model';
 import MeasurementRepository from '../../data/repositories/measurement.repository';
+import type Params from '@/base/Core/Params/params';
+import type { ApiCallOptions } from '@/base/Data/ApiService/baseApiService';
+import type ShowMeasurementParams from '../../core/params/show.measurement.params';
 
 export default class MeasurementController extends BaseController<
   measurementModel,
@@ -35,4 +38,13 @@ export default class MeasurementController extends BaseController<
     }
     return MeasurementController.instance;
   }
+    async fetchOne(params: Params, options?: ApiCallOptions) {
+      return await super.fetchOne(params, {
+        ...options,
+        useJson: true,
+        headers: {
+          'Accept-Language': (params as ShowMeasurementParams).allLocales ? '*' : 'en',
+        },
+      });
+    }
 }

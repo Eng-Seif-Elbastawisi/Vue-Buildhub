@@ -1,9 +1,9 @@
 import BaseRepository, { type RepositoryConfig } from '@/base/Domain/Repositories/baseRepository';
-import type StageModel from '../../core/models/stage.model';
+import type StageModel from '../../core/models/measurement.model';
 import { EducationType } from '../../core/constants/educationtype.enum';
 import TitleInterface from '@/base/Data/Models/titleInterface';
 import MeasurementApiService from '../api/measurement.api-service';
-import measurementModel from '../../core/models/stage.model';
+import measurementModel from '../../core/models/measurement.model';
 
 /**
  * Country Repository for API data operations

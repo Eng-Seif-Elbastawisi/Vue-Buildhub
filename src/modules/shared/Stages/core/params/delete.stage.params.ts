@@ -17,7 +17,7 @@ export default class DeleteStageParams implements Params {
 
   toMap(): { [p: string]: any } {
     const map: { [key: string]: any } = {
-      id: this.id,
+      stage_id: this.id,
     };
 
     return map;

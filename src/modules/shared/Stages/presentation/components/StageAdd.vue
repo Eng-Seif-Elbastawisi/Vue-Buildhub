@@ -33,10 +33,10 @@
 
       const paramsToSave = params.value;
 
-      const result =
-        paramsToSave instanceof EditStageParams
-          ? await controller.update(paramsToSave, undefined)
-          : await controller.create(paramsToSave, undefined);
+     const result =
+  paramsToSave instanceof EditStageParams
+    ? await controller.update(paramsToSave, { useJson: true })
+    : await controller.create(paramsToSave, { useJson: true });
 
       if (result) {
         emit('saved');

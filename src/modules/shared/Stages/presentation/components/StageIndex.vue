@@ -92,7 +92,7 @@
   );
 
   const ShowStage = async (id: number) => {
-    await controller.fetchOne(new ShowStageParams(id));
+    await controller.fetchOne(new ShowStageParams({id, allLocales: true}));
     EditMode.value = true;
   };
 

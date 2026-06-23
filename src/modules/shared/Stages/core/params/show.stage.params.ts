@@ -1,26 +1,21 @@
 import type Params from '@/base/Core/Params/params';
 import { ClassValidation } from '@/base/Presentation/Utils/classValidation';
 
-/**
- * Parameters for showing a country
- */
 export default class ShowStageParams implements Params {
   public id: number;
+  public allLocales?: boolean;
 
   public static readonly validation = new ClassValidation().setRules({
-    id: { required: true, minLength: 1 },
+    id: { required: true },
   });
 
-  constructor(id: number) {
-    this.id = id;
+  constructor(data: { id: number; allLocales?: boolean }) {
+    this.id = data.id;
+    this.allLocales = data.allLocales;
   }
 
-  toMap(): { [p: string]: any } {
-    const map: { [key: string]: any } = {
-      id: this.id,
-    };
-
-    return map;
+  toMap(): { [p: string]: number } {
+    return { stage_id: this.id };
   }
 
   validate() {
