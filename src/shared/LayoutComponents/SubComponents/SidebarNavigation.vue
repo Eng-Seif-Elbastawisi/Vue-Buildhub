@@ -110,6 +110,12 @@
           name: 'Client Source',
           icon: EducationClassificationIcon,
         },
+        {
+          path: '/specialization',
+          name: 'Specialization',
+          icon: EducationClassificationIcon,
+          roles: ['organization'],
+        },
       ],
     },
     {
