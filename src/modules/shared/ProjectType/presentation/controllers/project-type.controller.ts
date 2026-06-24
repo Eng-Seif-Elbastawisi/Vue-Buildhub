@@ -11,14 +11,14 @@ import type ProjectTypeModel from '../../core/models/project-type.model';
 import type ProjectTypeShowModel from '../../core/models/project-type.show.model';
 import ProjectTypeRepository from '../../data/repositories/project-type.repository';
 import { useUserStore } from '@/stores/user';
-
+import type ShowProjectTypeParams from '../../core/params/show.project-type.params';
 
 export default class ProjectTypeController extends BaseController<
   ProjectTypeShowModel,
   ProjectTypeModel[]
 > {
   private static instance: ProjectTypeController;
-  
+
   private get userStore() {
     return useUserStore();
   }
@@ -50,7 +50,9 @@ export default class ProjectTypeController extends BaseController<
     const result = await super.create(params, { ...options, useJson: true });
     if (result instanceof DataSuccess) {
       // await router.push({ name: 'Projects' });
-      router.push(this.userStore.user?.type === 1 ? '/mainportal/projectType' : '/organization/projectType');
+      router.push(
+        this.userStore.user?.type === 1 ? '/mainportal/projectType' : '/organization/projectType',
+      );
 
       if (formKey) useFormsStore().clearFormData(formKey);
     }
@@ -61,7 +63,9 @@ export default class ProjectTypeController extends BaseController<
     const result = await super.update(params, { ...options, useJson: true });
     if (result instanceof DataSuccess) {
       // await router.push({ name: 'Projects' });
-            router.push(this.userStore.user?.type === 1 ? '/mainportal/projectType' : '/organization/projectType');
+      router.push(
+        this.userStore.user?.type === 1 ? '/mainportal/projectType' : '/organization/projectType',
+      );
 
       if (formKey) useFormsStore().clearFormData(formKey);
     }
@@ -73,5 +77,14 @@ export default class ProjectTypeController extends BaseController<
     options?: ApiCallOptions,
   ): Promise<DataState<ProjectTypeModel[]>> {
     return await super.fetchList(params, { ...options, useJson: true });
+  }
+  async fetchOne(params: Params, options?: ApiCallOptions) {
+    return await super.fetchOne(params, {
+      ...options,
+      useJson: true,
+      headers: {
+        'Accept-Language': (params as ShowProjectTypeParams).allLocales ? '*' : 'en',
+      },
+    });
   }
 }
