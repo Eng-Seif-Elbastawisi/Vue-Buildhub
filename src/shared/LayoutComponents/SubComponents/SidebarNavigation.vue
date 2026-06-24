@@ -133,8 +133,8 @@
           icon: ArticleIcon,
         },
         {
-          path: '/material',
-          name: 'Material',
+          path: '/supply',
+          name: 'Supply',
           icon: ArticleIcon,
         },
         {
@@ -158,6 +158,12 @@
           name: 'Employee',
           icon: ArticleIcon,
           roles: ['organization'],
+        },
+        {
+          path: '/material',
+          name: 'Material',
+          icon: ArticleIcon,
+          // roles: ['organization'],
         },
       ],
     },
