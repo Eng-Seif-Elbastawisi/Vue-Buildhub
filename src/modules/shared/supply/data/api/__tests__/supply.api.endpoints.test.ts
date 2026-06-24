@@ -13,9 +13,9 @@ describe('SupplyApiEndpoints', () => {
     userStore.user = { type: 1 } as any;
     const endpoints = new SupplyApiEndpoints();
 
-    expect(endpoints.index).toContain('mainportal/fetch_materials');
-    expect(endpoints.store).toContain('mainportal/store_material');
-    expect(endpoints.delete).toContain('mainportal/delete_material');
+    expect(endpoints.index).toContain('mainportal/fetch_supplies');
+    expect(endpoints.store).toContain('mainportal/store_supply');
+    expect(endpoints.delete).toContain('mainportal/delete_supply');
   });
 
   it('uses organization prefix for other users', () => {
@@ -23,8 +23,8 @@ describe('SupplyApiEndpoints', () => {
     userStore.user = { type: 2 } as any;
     const endpoints = new SupplyApiEndpoints();
 
-    expect(endpoints.index).toContain('organization/fetch_materials');
-    expect(endpoints.store).toContain('organization/store_material');
-    expect(endpoints.delete).toContain('organization/delete_material');
+    expect(endpoints.index).toContain('organization/fetch_supplies');
+    expect(endpoints.store).toContain('organization/store_supply');
+    expect(endpoints.delete).toContain('organization/delete_supply');
   });
 });

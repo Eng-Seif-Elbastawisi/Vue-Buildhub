@@ -30,7 +30,7 @@ describe('supply params', () => {
       translations,
     });
     expect(edit.toMap()).toEqual({
-      material_id: 3,
+      supply_id: 3,
       price: 150,
       brand_id: 7,
       measurement_unit_id: 2,
@@ -59,8 +59,8 @@ describe('supply params', () => {
   });
 
   it('maps and validates identifiers', () => {
-    expect(new ShowSupplyParams({ supply_id: 4 }).toMap()).toEqual({ material_id: 4 });
-    expect(new DeleteSupplyParams({ supply_id: 4 }).toMap()).toEqual({ material_id: 4 });
+    expect(new ShowSupplyParams({ supply_id: 4 }).toMap()).toEqual({ supply_id: 4 });
+    expect(new DeleteSupplyParams({ supply_id: 4 }).toMap()).toEqual({ supply_id: 4 });
     expect(new ShowSupplyParams({ supply_id: null as unknown as number }).validate().isValid).toBe(
       false,
     );

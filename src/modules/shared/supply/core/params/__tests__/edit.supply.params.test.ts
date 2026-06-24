@@ -12,7 +12,7 @@ describe('EditSupplyParams', () => {
       translations,
     });
     expect(params.toMap()).toEqual({
-      material_id: 9,
+      supply_id: 9,
       price: 20,
       brand_id: 4,
       measurement_unit_id: 3,
