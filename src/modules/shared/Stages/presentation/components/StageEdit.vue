@@ -5,6 +5,7 @@
   import type EditStageParams from '../../core/params/edit.stage.params';
   import StageForm from './StageForm.vue';
   import ShowStageParams from '../../core/params/show.stage.params';
+  import type AddStageParams from '../../core/params/add.stges.params.ts';
 
   // Controller instance
   const controller = StageController.getInstance();
@@ -29,14 +30,17 @@
     }
   };
 
-  const updateData = (updatedParams: EditStageParams) => {
-    params.value = updatedParams;
-    // saveEmail();
+  // const updateData = (updatedParams: EditStageParams) => {
+  //   params.value = updatedParams;
+  //   // saveEmail();
+  // };
+  const updateData = (updatedParams: AddStageParams | EditStageParams) => {
+    params.value = updatedParams as EditStageParams;
   };
 
   const route = useRoute();
   onMounted(async () => {
-    await controller.fetchOne(new ShowStageParams(Number(route.params.id)));
+    await controller.fetchOne(new ShowStageParams({ id: Number(route.params.id) }));
   });
 </script>
 
