@@ -1,4 +1,5 @@
 import type TitleInterface from '@/base/Data/Models/titleInterface';
+import OrganizationEmployeeModel from './employee.model';
 export default class OrganizationShowModel {
   public readonly id?: number;
   public readonly phone?: string;
@@ -8,6 +9,7 @@ export default class OrganizationShowModel {
   public readonly employee_password?: string;
   public readonly address?: string;
   public readonly name?: string;
+  public readonly default_employee: OrganizationEmployeeModel;
 
   constructor(data: {
     id?: number;
@@ -18,6 +20,7 @@ export default class OrganizationShowModel {
     employee_password?: string;
     address?: string;
     name?: string;
+    default_employee: OrganizationEmployeeModel;
   }) {
     this.id = data.id;
     this.phone = data.phone;
@@ -27,6 +30,7 @@ export default class OrganizationShowModel {
     this.employee_password = data.employee_password;
     this.address = data.address;
     this.name = data.name;
+    this.default_employee = data.default_employee;
     Object.freeze(this);
   }
 
@@ -53,6 +57,7 @@ export default class OrganizationShowModel {
       employee_phone: json.employee_phone,
       employee_password: json.employee_password,
       address: json.address,
+      default_employee: OrganizationEmployeeModel.fromJson(json.default_employee),
       name: json.name,
     });
   }
@@ -66,6 +71,7 @@ export default class OrganizationShowModel {
     employee_password: 'General Building Materials',
     address: 'General Building Materials',
     name: 'General Building Materials',
+    default_employee: OrganizationEmployeeModel.example,
   });
 
   static getLocalizedData<T extends Record<string, any>>(

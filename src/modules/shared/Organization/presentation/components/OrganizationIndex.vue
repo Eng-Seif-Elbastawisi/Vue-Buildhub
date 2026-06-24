@@ -21,9 +21,9 @@
   const headers: TableHeader[] = [
     { key: 'name', label: 'name', width: '20%', sortable: true },
     { key: 'address', label: 'address', width: '20%' },
-    { key: 'employee_name', label: 'employee_name', width: '20%' },
-    { key: 'employee_phone', label: 'employee_phone', width: '20%' },
-    { key: 'employee_email', label: 'employee_email', width: '20%' },
+    { key: 'default_employee_name', label: 'employee_name', width: '20%' },
+    { key: 'default_employee_phone', label: 'employee_phone', width: '20%' },
+    { key: 'default_employee_email', label: 'employee_email', width: '20%' },
   ];
 
   const perPage = ref(10);
@@ -118,7 +118,7 @@
       <div class="btns">
         <router-link
           class="btn btn-primary"
-          :to="user?.isMaster ? '/organization/add' : '/organization/organization/add'"
+          :to="user?.type === 1 ? '/mainportal/organization/add' : '/organization/organization/add'"
         >
           {{ $t('organization.add') }}
         </router-link>
@@ -185,13 +185,22 @@
             <template #cell-organization="{ item }">
               {{ item.name ?? 'N/A' }}
             </template>
+            <template #cell-default_employee_name="{ item }">
+              {{ item.default_employee.name ?? 'N/A' }}
+            </template>
+            <template #cell-default_employee_email="{ item }">
+              {{ item.default_employee.employee_email ?? 'N/A' }}
+            </template>
+            <template #cell-default_employee_phone="{ item }">
+              {{ item.default_employee.employee_phone ?? 'N/A' }}
+            </template>
             <template #actions="{ item }">
               <div class="row-actions">
                 <router-link
                   class="action-btn edit"
                   :to="
-                    user?.isMaster
-                      ? `/admin/organization/edit/${item.id}`
+                    user?.type === 1
+                      ? `/mainportal/organization/edit/${item.id}`
                       : `/organization/organization/edit/${item.id}`
                   "
                   title="Edit"

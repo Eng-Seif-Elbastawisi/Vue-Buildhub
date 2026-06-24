@@ -1,3 +1,5 @@
+import OrganizationEmployeeModel from './employee.model';
+
 export default class OrganizationModel {
   public readonly id?: number;
   public readonly employee_name: string;
@@ -6,6 +8,7 @@ export default class OrganizationModel {
   public readonly employee_password: string;
   public readonly address: string;
   public readonly name: string;
+  public readonly default_employee: OrganizationEmployeeModel;
 
   constructor(data: {
     id?: number;
@@ -15,6 +18,7 @@ export default class OrganizationModel {
     employee_password: string;
     address: string;
     name: string;
+    default_employee: OrganizationEmployeeModel;
   }) {
     this.id = data.id;
     this.employee_name = data.employee_name;
@@ -23,6 +27,7 @@ export default class OrganizationModel {
     this.employee_password = data.employee_password;
     this.address = data.address;
     this.name = data.name;
+    this.default_employee = data.default_employee;
 
     Object.freeze(this);
   }
@@ -40,6 +45,7 @@ export default class OrganizationModel {
       employee_password: json.employee_password,
       address: json.address,
       name: json.name,
+      default_employee: OrganizationEmployeeModel.fromJson(json.default_employee),
     });
   }
 
@@ -51,5 +57,6 @@ export default class OrganizationModel {
     employee_password: 'password',
     address: '123 Main St',
     name: 'John Doe',
+    default_employee: OrganizationEmployeeModel.example,
   });
 }
