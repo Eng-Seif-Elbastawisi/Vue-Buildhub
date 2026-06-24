@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
-import MeasurementModel from '../../../core/models/stage.model';
+import MeasurementModel from '../../../core/models/measurement.model';
 import AddMeasurementParams from '../../../core/params/add.measurement.params';
 import EditMeasurementParams from '../../../core/params/edit.measurement.params';
 import MeasurementForm from '../MeasurementForm.vue';

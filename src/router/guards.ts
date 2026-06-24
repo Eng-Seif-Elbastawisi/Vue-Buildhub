@@ -1,48 +1,55 @@
-import type { NavigationGuardNext, RouteLocationNormalized } from 'vue-router';
+import type { RouteLocationNormalized } from 'vue-router';
 import { useUserStore } from '@/stores/user';
 
 const ROLE_PATHS: Record<number, string> = {
   1: '/admin',
   2: '/organization',
-  3: '/supervision', // غيرها حسب اسم route بتاع النوع التالت
 };
 
-const PROTECTED_PREFIXES = ['/admin', '/organization', '/supervision'];
+const LOGIN_PATHS = ['/login-admin', '/login-organization'];
 
-export function authGuard(
-  to: RouteLocationNormalized,
-  _from: RouteLocationNormalized,
-  next: NavigationGuardNext,
-): void {
+const PROTECTED_PREFIXES = ['/admin', '/organization'];
+
+const DEFAULT_LOGIN_PATH = '/login-organization';
+
+const startsWithPath = (path: string, prefix: string) => {
+  return path === prefix || path.startsWith(`${prefix}/`);
+};
+
+const getLoginPathByTarget = (path: string) => {
+  if (startsWithPath(path, '/admin')) {
+    return '/login-admin';
+  }
+
+  return DEFAULT_LOGIN_PATH;
+};
+
+export function authGuard(to: RouteLocationNormalized) {
   const userStore = useUserStore();
 
   const userType = Number(userStore.user?.type);
-  const appPath = ROLE_PATHS[userType];
 
-  const isLoginPage = to.path === '/login';
-  const isProtectedPage = PROTECTED_PREFIXES.some((path) => to.path.startsWith(path));
+  const userAppPath = ROLE_PATHS[userType];
 
-  // مش عامل login أو type مش معروف
-  if (!appPath) {
-    if (isLoginPage) {
-      return next();
-    }
+  const isLoginPage = LOGIN_PATHS.includes(to.path);
+  const isProtectedPage = PROTECTED_PREFIXES.some((prefix) => startsWithPath(to.path, prefix));
 
-    return next({
-      path: '/login',
-      query: { redirect: to.fullPath },
-    });
+  // مش عامل login
+  if (!userAppPath) {
+    if (isLoginPage) return true;
+
+    return getLoginPathByTarget(to.path);
   }
 
-  // لو عامل login وفتح login رجعه للداشبورد بتاعه
+  // عامل login وبيحاول يدخل صفحة login
   if (isLoginPage) {
-    return next({ path: appPath });
+    return userAppPath;
   }
 
-  // لو داخل على protected route مش بتاع نوعه
-  if (isProtectedPage && !to.path.startsWith(appPath)) {
-    return next({ path: appPath });
+  // عامل login بس داخل path مش بتاع role بتاعه
+  if (isProtectedPage && !startsWithPath(to.path, userAppPath)) {
+    return userAppPath;
   }
 
-  return next();
+  return true;
 }

@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest';
-import { UnitTypeEnum } from '../../constant/unit.type.enum';
 import EditMaterialParams from '../edit.materials.params';
 
 describe('EditMaterialParams', () => {
@@ -9,14 +8,14 @@ describe('EditMaterialParams', () => {
       material_id: 9,
       price: 20,
       brandId: 4,
-      unit: UnitTypeEnum.box,
+      measurementId: 3,
       translations,
     });
     expect(params.toMap()).toEqual({
       material_id: 9,
       price: 20,
-      brandId: 4,
-      unit: UnitTypeEnum.box,
+      brand_id: 4,
+      measurement_unit_id: 3,
       translations,
     });
     expect(params.validate().isValid).toBe(true);

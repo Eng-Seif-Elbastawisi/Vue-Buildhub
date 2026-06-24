@@ -52,7 +52,7 @@ describe('SidebarNavigation.vue', () => {
 
     expect(wrapper.text()).toContain('Stages');
     expect(wrapper.text()).toContain('Departments');
-    expect(wrapper.text()).toContain('Terms');
+    expect(wrapper.text()).toContain('Client Source');
   });
 
   it('applies active class based on current route', () => {

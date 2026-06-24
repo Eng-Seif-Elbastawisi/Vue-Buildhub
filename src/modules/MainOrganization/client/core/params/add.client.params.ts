@@ -1,6 +1,6 @@
 import type Params from '@/base/Core/Params/params';
 import { ClassValidation } from '@/base/Presentation/Utils/classValidation';
-import { ClientTypeEnum } from '../constant/client.type.enum';
+import { type ClientTypeEnum } from '../constant/client.type.enum';
 
 export default class AddClientParams implements Params {
   public phone?: string;
@@ -18,7 +18,7 @@ export default class AddClientParams implements Params {
     phone?: string;
     name?: string;
     email?: string;
-    address?: string; 
+    address?: string;
     type?: ClientTypeEnum;
   }) {
     this.phone = data.phone;
