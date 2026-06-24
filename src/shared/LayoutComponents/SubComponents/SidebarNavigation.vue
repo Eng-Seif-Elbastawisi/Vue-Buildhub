@@ -119,6 +119,7 @@
           path: '/suppliers',
           name: 'Suppliers',
           icon: ArticleIcon,
+          roles: ['organization'],
         },
         {
           path: '/brand',
