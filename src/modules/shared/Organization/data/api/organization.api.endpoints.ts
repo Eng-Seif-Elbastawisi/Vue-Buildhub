@@ -4,7 +4,7 @@ import { useUserStore } from '@/stores/user';
 export class OrganizationEndpoints extends BaseEndpoints {
   // protected readonly prefix = 'dashboard/';
   protected get prefix(): string {
-    return useUserStore().user?.type === 1 ? 'organization/' : 'mainportal/';
+    return useUserStore().user?.type === 1 ? 'mainportal/' : 'organization/';
   }
 
   readonly index = this.url('fetch_organizations');
