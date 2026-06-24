@@ -1,4 +1,3 @@
-import type TitleInterface from '@/base/Data/Models/titleInterface';
 
 export default class SuppliersModel {
   public readonly id?: number;

@@ -8,7 +8,6 @@ import {
   DataFailed,
 } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
 import { useUserStore } from '@/stores/user';
-import router from '@/router';
 import { type ErrorModel } from '@/base/Core/NetworkStructure/Resources/errors/errorModel';
 
 /**

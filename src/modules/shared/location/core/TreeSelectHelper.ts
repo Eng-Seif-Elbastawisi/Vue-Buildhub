@@ -1,5 +1,5 @@
 import TitleInterface from '@/base/Data/Models/titleInterface';
-import type BranchesModel from '@/modules/Stages/core/models/branches.model';
+import type BranchesModel from '../../Stages/core/models/branches.model';
 
 function flattenBranchTree(
   nodes: BranchesModel[],

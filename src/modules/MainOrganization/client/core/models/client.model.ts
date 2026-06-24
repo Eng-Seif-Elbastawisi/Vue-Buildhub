@@ -44,6 +44,6 @@ export default class ClientModel {
     name: 'ali',
     email: 'email',
     address: 'address',
-    type: ClientTypeEnum.customer,
+    type: ClientTypeEnum.COMPANY,
   });
 }

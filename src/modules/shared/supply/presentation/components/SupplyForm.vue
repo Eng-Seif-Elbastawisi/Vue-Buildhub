@@ -27,7 +27,7 @@
   const brandController = BrandController.getInstance();
   const brandParams = new IndexBrandParams('', 1, 100, 0, undefined, 1);
   const measurementController = MeasurementController.getInstance();
-  const measurementParams = new IndexMeasurementParams('', 1, 100, 0, undefined, 1);
+  const measurementParams = new IndexMeasurementParams('', 1, 100, 0);
 
   const translations = ref<Record<string, string>>({});
   const price = ref<number>();
@@ -41,18 +41,44 @@
     }
   });
 
-  watch(
-    () => props.supply,
-    (supply) => {
-      if (!supply) return;
+  // watch(
+  //   () => props.supply,
+  //   (supply) => {
+  //     if (!supply) return;
 
-      translations.value = { ...supply.translations.title };
-      price.value = supply.price;
-      brand.value = supply.brandId;
-      measurement.value = supply.measurementId;
-    },
-    { immediate: true },
-  );
+  //     translations.value = { ...supply.translations.title };
+  //     price.value = supply.price;
+  //     brand.value = supply.brandId;
+  //     measurement.value = supply.measurementId;
+  //   },
+  //   { immediate: true },
+  // );
+  watch(
+  () => props.supply,
+  (supply) => {
+    if (!supply) return;
+
+    translations.value = { ...supply.translations.title };
+    price.value = supply.price;
+
+    brand.value =
+      supply.brandId?.id !== undefined && supply.brandId?.id !== null
+        ? {
+            id: supply.brandId.id,
+            title: supply.brandId.title ?? '',
+          }
+        : null;
+
+    measurement.value =
+      supply.measurementId?.id !== undefined && supply.measurementId?.id !== null
+        ? {
+            id: supply.measurementId.id,
+            title: supply.measurementId.title ?? '',
+          }
+        : null;
+  },
+  { immediate: true },
+);
 
   const updateData = () => {
     const translationParams = new TranslationParams({ title: translations.value });
