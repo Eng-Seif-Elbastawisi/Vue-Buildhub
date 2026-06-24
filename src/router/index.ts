@@ -9,14 +9,14 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/choose-country',
-      name: 'Choose Country',
-      component: () => import('@/views/auth/LoginCountry.vue'),
+      path: '/login-organization',
+      name: 'Login Organization',
+      component: () => import('@/views/MainOrganization/auth_organization/LoginOrganization.vue'),
     },
     {
-      path: '/login',
-      name: 'Login',
-      component: () => import('@/views/auth/LoginOrg.vue'),
+      path: '/login-admin',
+      name: 'Login Admin',
+      component: () => import('@/views/MainAdmin/auth_admin/LoginAdmin.vue'),
     },
     {
       path: '/not-found',

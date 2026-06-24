@@ -1,6 +1,3 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
-
 # Get the remote and URL from husky's push arguments
 remote="$1"
 url="$2"

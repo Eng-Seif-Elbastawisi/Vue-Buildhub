@@ -1,0 +1,158 @@
+@use '../../../../styles/mixins/grid' as *;
+@use '../../../../styles/mixins/flex' as *;
+@use '../../../../styles/variables' as *;
+
+.login {
+  width: 100%;
+  min-height: 100vh;
+  padding: 32px 20px;
+
+  @include flex(column, nowrap, center, center);
+
+  gap: 28px;
+
+  @media screen and (max-width: 600px) {
+    padding: 24px 16px;
+    gap: 20px;
+  }
+
+  /* ── Top Logo ─────────────────────────────────────────── */
+  .login-header {
+    @include flex(row, nowrap, center, center);
+
+    .logo-img {
+      height: 36px;
+      object-fit: contain;
+    }
+  }
+
+  /* ── Form Card ─────────────────────────────────────────── */
+  .login-form {
+    @include flex(column, nowrap, space-between, center);
+
+    position: relative;
+    width: 713px;
+    max-width: 100%;
+    padding: 80px;
+    background-color: var(--BgWhite);
+    border-radius: 20px;
+    box-shadow: var(--shadow-lg);
+    gap: 28px;
+    height: 557px;
+
+    @media screen and (max-width: 600px) {
+      width: 100%;
+      padding: 28px 20px 24px;
+    }
+
+    /* ── Language Switcher ─────────────────────────────────── */
+    .lang-switcher {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+    }
+
+    /* ── Title ─────────────────────────────────────────── */
+    .title {
+      @include flex(column, nowrap, center, center);
+
+      width: 100%;
+      gap: 8px;
+      text-align: center;
+      margin-top: 8px;
+
+      h2 {
+        color: $StandardBlack;
+        font-size: 40px;
+        font-weight: 700;
+        font-family: 'Bold';
+      }
+
+      p {
+        font-family: 'Medium';
+        color: $Gray-5;
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 1.5;
+        padding-top: 10px;
+      }
+    }
+
+    /* ── Inputs ─────────────────────────────────────────── */
+    .inputs {
+      @include flex(column, nowrap, flex-start, flex-start);
+
+      width: 100%;
+      gap: 18px;
+
+      .input-wrapper {
+        position: relative;
+        width: 100%;
+
+        @include flex(column, nowrap, flex-start, flex-start);
+
+        gap: 6px;
+        padding: 0 !important;
+
+        label {
+          font-family: 'Medium';
+          color: $StandardBlack;
+          font-size: 14px;
+          font-weight: 600;
+        }
+
+        input {
+          width: 100%;
+          padding: 0.75rem 3rem 0.75rem 1rem;
+          border: 1px solid var(--gray-200);
+          border-radius: 50px;
+          transition: var(--transition-fast);
+          color: var(--Black) !important;
+          background: $StandardWhite !important;
+          box-shadow: 0 0 0 1000px $StandardWhite inset !important;
+          -webkit-text-fill-color: $StandardBlack !important;
+          caret-color: $StandardBlack;
+
+          &:focus {
+            outline: none;
+            border-color: var(--PrimaryColor);
+            box-shadow: 0 0 0 3px var(--PrimaryColor-light);
+          }
+
+          &::placeholder {
+            font-family: 'Regular', sans-serif;
+            font-size: var(--md-size-base);
+            color: var(--gray-400);
+          }
+        }
+
+        .icon-eye {
+          position: absolute;
+          bottom: 0.75rem;
+          right: 1rem;
+          height: 20px;
+          width: 20px;
+          cursor: pointer;
+          color: var(--gray-400);
+          transition: var(--transition-fast);
+
+          &:hover {
+            color: var(--PrimaryColor);
+          }
+        }
+      }
+    }
+
+    button {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+}
+
+// input:-webkit-autofill,
+// input:-webkit-autofill:hover,
+// input:-webkit-autofill:focus {
+//   background-color: white !important;
+//   // transition: background-color 5000s ease-in-out 0s;
+// }

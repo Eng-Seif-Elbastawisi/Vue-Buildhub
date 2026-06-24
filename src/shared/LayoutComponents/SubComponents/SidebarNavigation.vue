@@ -1,255 +1,203 @@
 <script setup lang="ts">
+  import { computed, type Component } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
-  import { computed, ref, type Component } from 'vue';
+  import { storeToRefs } from 'pinia';
+
   import TechlabLogo from '@/assets/images/TechlabLogo.png';
+
   import EducationClassificationIcon from '@/shared/icons/SidebarIcons/EducationClassificationIcon.vue';
-  import { useUserStore } from '@/stores/user';
   import AuthArrowIcon from '@/shared/icons/SidebarIcons/AuthArrowIcon.vue';
   import IconLogout from '@/shared/icons/IconLogout.vue';
+  import ArticleIcon from '@/shared/icons/ArticleIcon.vue';
+
   import Accordion from 'primevue/accordion';
   import AccordionPanel from 'primevue/accordionpanel';
   import AccordionHeader from 'primevue/accordionheader';
   import AccordionContent from 'primevue/accordioncontent';
-  import ArticleIcon from '@/shared/icons/ArticleIcon.vue';
+
+  import { useUserStore } from '@/stores/user';
 
   const route = useRoute();
-  const emit = defineEmits(['clickItem']);
-  interface MenuItem {
-    link: string;
+  const router = useRouter();
+
+  const emit = defineEmits<{
+    (e: 'clickItem'): void;
+  }>();
+
+  const userStore = useUserStore();
+  const { user } = storeToRefs(userStore);
+
+  type UserRole = 'admin' | 'organization';
+
+  interface MenuItemConfig {
+    path: string;
     name: string;
     icon?: Component;
     badge?: string;
     hasArrow?: boolean;
+
+    /**
+     * لو roles مش موجودة، الصفحة هتظهر للأدمن والأورجانيزيشن.
+     * roles: ['admin'] معناها أدمن فقط.
+     * roles: ['organization'] معناها أورجانيزيشن فقط.
+     */
+    roles?: UserRole[];
   }
+
+  interface MenuSectionConfig {
+    group: string;
+    items: MenuItemConfig[];
+  }
+
+  interface MenuItem extends MenuItemConfig {
+    link: string;
+  }
+
   interface MenuSection {
     group: string;
     items: MenuItem[];
   }
-  const { user } = useUserStore();
-  const baseMenu: MenuSection[] = [
+
+  const currentRole = computed<UserRole>(() => {
+    return user.value?.isMaster || Number(user.value?.type) === 1 ? 'admin' : 'organization';
+  });
+
+  const appPrefix = computed(() => {
+    return currentRole.value === 'admin' ? '/admin' : '/organization';
+  });
+
+  const menuConfig: MenuSectionConfig[] = [
     {
       group: 'Overview',
       items: [
         {
-          link: user?.isMaster ? '/admin/stages' : '/organization/stages',
+          path: '/stages',
           name: 'Stages',
           icon: EducationClassificationIcon,
         },
         {
-          link: user?.isMaster ? '/admin/departments' : '/organization/departments',
+          path: '/departments',
           name: 'Departments',
           icon: EducationClassificationIcon,
         },
+
         {
-          link: user?.isMaster ? '/admin/terms' : '/organization/terms',
-          name: 'Terms',
-          icon: EducationClassificationIcon,
-        },
-        {
-          link: user?.isMaster ? '/admin/measurement' : '/organization/measurement',
+          path: '/measurement',
           name: 'Measurement',
           icon: EducationClassificationIcon,
         },
+
         {
-          link: user?.isMaster ? '/admin/organization' : '/organization/organization',
-          name: 'Organization',
+          path: '/item',
+          name: 'Items',
           icon: EducationClassificationIcon,
         },
         {
-          link: user?.isMaster ? '/admin/item' : '/organization/item',
-          name: 'item',
+          path: '/admin',
+          name: 'Admins',
           icon: EducationClassificationIcon,
+          roles: ['admin'],
         },
         {
-          link: user?.isMaster ? '/admin/admin' : '/organization/admin',
-          name: 'admin',
+          path: '/organization',
+          name: 'Organizations',
           icon: EducationClassificationIcon,
+          roles: ['organization'],
         },
+
         {
-          link: user?.isMaster ? '/admin/client-source' : '/organization/client-source',
+          path: '/client-source',
           name: 'Client Source',
           icon: EducationClassificationIcon,
         },
-
-        // {
-        //   link: '/employees',
-        //   name: 'Employees',
-        //   icon: Sidebaremploye,
-        // },
-        // {
-        //   link: '/documents',
-        //   name: 'Documents',
-        //   icon: DocumentIcon,
-        // },
-        // {
-        //   link: '/skills',
-        //   name: 'Skills',
-        //   icon: SettingIcon,
-        // },
-
-        // {
-        //   link: '/stages',
-        //   name: 'Stages',
-        //   icon: SettingIcon,
-        // },
-        // {
-        //   link: '/subjects',
-        //   name: 'Subjects',
-        //   icon: SettingIcon,
-        // },
-        // {
-        //   link: '/units',
-        //   name: 'Units',
-        //   icon: SettingIcon,
-        // },
       ],
     },
-    // {
-    //   group: 'location',
-    //   items: [
-    //     {
-    //       link: '/countries',
-    //       name: 'Countries',
-    //       icon: SettingIcon,
-    //     },
-    //   ],
-    // },
-    // {
-    //   group: 'Apps Kits',
-    //   items: [
-    //     {
-    //       link: '/questions',
-    //       name: 'Questions',
-    //       icon: Question,
-    //     },
-    //     {
-    //       link: '/articles',
-    //       name: 'Articles',
-    //       icon: ArticleIcon,
-    //     },
-    //   ],
-    // },
-    // {
-    //   group: 'statics',
-    //   items: [
-    //     {
-    //       link: '/about',
-    //       name: 'About',
-    //       icon: AboutIcon,
-    //     },
-    //     {
-    //       link: '/support',
-    //       name: 'Support',
-    //       icon: SupportIcon,
-    //     },
-    //     {
-    //       link: '/faqs',
-    //       name: 'Faqs',
-    //       icon: FaqsIcon,
-    //     },
-    //     {
-    //       link: '/privacy',
-    //       name: 'Privacy and policy',
-    //       icon: SidebarPrivecy,
-    //     },
-    //     {
-    //       link: '/terms-conditions',
-    //       name: 'terms & conditions',
-    //       icon: SidebarTerms,
-    //     },
-    //     {
-    //       link: '/deleted-accounts',
-    //       name: 'add logout reasons',
-    //       icon: SidebarTerms,
-    //     },
-    //   ],
-    // },
     {
       group: 'Suppliers',
       items: [
         {
-          link: user?.isMaster ? '/admin/suppliers' : '/organization/suppliers',
-          name: 'suppliers',
+          path: '/suppliers',
+          name: 'Suppliers',
           icon: ArticleIcon,
         },
         {
-          link: user?.isMaster ? '/admin/brand' : '/organization/brand',
-          name: 'brand',
+          path: '/brand',
+          name: 'Brand',
           icon: ArticleIcon,
         },
         {
-          link: user?.isMaster ? '/admin/material' : '/organization/material',
-          name: 'material',
+          path: '/material',
+          name: 'Material',
           icon: ArticleIcon,
         },
-
         {
-          link: user?.isMaster ? '/admin/projectType' : '/organization/projectType',
+          path: '/projectType',
           name: 'Project Types',
           icon: ArticleIcon,
         },
         {
-          link: user?.isMaster ? '/admin/client' : '/organization/client',
+          path: '/client',
           name: 'Clients',
           icon: ArticleIcon,
+          roles: ['organization'],
         },
         {
-          link: user?.isMaster ? '/admin/location' : '/organization/location',
-          name: 'location',
+          path: '/location',
+          name: 'Location',
           icon: ArticleIcon,
         },
         {
-          link: user?.isMaster ? '/admin/employee' : '/organization/employee',
-          name: 'employee',
+          path: '/employee',
+          name: 'Employee',
           icon: ArticleIcon,
+          roles: ['organization'],
         },
       ],
     },
   ];
 
-  const menu = computed<MenuSection[]>(() => baseMenu);
+  const menu = computed<MenuSection[]>(() => {
+    return menuConfig
+      .map((section) => {
+        const items = section.items
+          .filter((item) => {
+            if (!item.roles) return true;
 
-  [
-    {
-      group: 'Suppliers',
-      items: [
-        {
-          link: '/suppliers',
-          name: 'suppliers',
-          icon: ArticleIcon,
-        },
-        {
-          link: '/brand',
-          name: 'brand',
-          icon: ArticleIcon,
-        },
-      ],
-    },
-  ];
+            return item.roles.includes(currentRole.value);
+          })
+          .map((item) => ({
+            ...item,
+            link: `${appPrefix.value}${item.path}`,
+          }));
 
-  const userStore = useUserStore();
-  const router = useRouter();
+        return {
+          group: section.group,
+          items,
+        };
+      })
+      .filter((section) => section.items.length > 0);
+  });
+
+  const isActiveRoute = (link: string) => {
+    return route.path === link || route.path.startsWith(`${link}/`);
+  };
 
   const logout = () => {
+    const loginPath = currentRole.value === 'admin' ? '/login-admin' : '/login-organization';
+
     userStore.logout();
-    router.push({ name: 'Choose Country' });
-  };
 
-  const isDropMenuOpen = ref(false);
-
-  const toggleDropMenu = () => {
-    isDropMenuOpen.value = !isDropMenuOpen.value;
+    router.push(loginPath);
   };
 </script>
+
 <template>
   <aside class="sidebar">
     <div class="sidebar-wrapper">
       <div class="logo-container">
         <img class="logo" :src="TechlabLogo" alt="Techlab Logo" />
-        <!-- <h2 class="logo">Logo</h2> -->
       </div>
 
-      <!-- Menu -->
       <div class="menu">
         <div v-for="(group, gIndex) in menu" :key="gIndex" class="menu-group">
           <p v-if="group.group" class="group-title">
@@ -261,61 +209,58 @@
             :key="i"
             :to="item.link"
             class="menu-item"
-            :class="{ active: route.path === item.link }"
+            :class="{ active: isActiveRoute(item.link) }"
             @click="emit('clickItem')"
           >
-            <component :is="item.icon" class="icon" />
+            <component :is="item.icon" v-if="item.icon" class="icon" />
 
-            <span class="label">{{ item.name }}</span>
-
-            <span v-if="item?.badge" class="badge">
-              {{ item?.badge }}
+            <span class="label">
+              {{ item.name }}
             </span>
 
-            <span v-if="item?.hasArrow" class="arrow">›</span>
+            <span v-if="item.badge" class="badge">
+              {{ item.badge }}
+            </span>
+
+            <span v-if="item.hasArrow" class="arrow">›</span>
           </router-link>
         </div>
       </div>
 
-      <Accordion :value="0">
-        <template #collapseicon> </template>
-        <template #expandicon> </template>
+      <Accordion value="0">
+        <template #collapseicon></template>
+        <template #expandicon></template>
+
         <AccordionPanel value="0">
           <AccordionHeader>
-            <div class="auth-container" @click="toggleDropMenu">
+            <div class="auth-container">
               <div class="auth-data">
                 <img
-                  :src="user?.image || `https://cyber.comolho.com/static/img/avatar.png`"
-                  alt="image"
+                  :src="user?.image || 'https://cyber.comolho.com/static/img/avatar.png'"
+                  alt="User image"
                 />
+
                 <div class="user-data">
-                  <span class="name">{{ user?.name }}</span>
-                  <span class="status">Admin</span>
+                  <span class="name">
+                    {{ user?.name || 'User' }}
+                  </span>
+
+                  <span class="status">
+                    {{ currentRole === 'admin' ? 'Admin' : 'Organization' }}
+                  </span>
                 </div>
               </div>
-              <auth-arrow-icon />
+
+              <AuthArrowIcon />
             </div>
           </AccordionHeader>
+
           <AccordionContent>
             <div class="mega-body">
-              <button class="menu-item">
-                <icon-user-circle />
-                <span>{{ $t('my_profile') }}</span>
-                <icon-chevron-right class="arrow" />
-              </button>
-              <button class="menu-item">
-                <icon-settings />
-                <span>{{ $t('settings') }}</span>
-                <icon-chevron-right class="arrow" />
-              </button>
-              <button class="menu-item">
-                <icon-bell />
-                <span>{{ $t('notifications') }}</span>
-                <icon-chevron-right class="arrow" />
-              </button>
               <div class="divider"></div>
-              <button class="menu-item danger" @click="logout">
-                <icon-logout />
+
+              <button type="button" class="menu-item danger" @click="logout">
+                <IconLogout />
                 <span>{{ $t('logout') }}</span>
               </button>
             </div>
@@ -331,19 +276,37 @@
     padding: 0 !important;
     box-shadow: none !important;
     margin: 0 !important;
+    border: 0 !important;
+    background: transparent !important;
   }
 
   :deep(.p-accordionheader-link) {
     padding: 0 !important;
     box-shadow: none !important;
     margin: 0 !important;
+    border: 0 !important;
+    background: transparent !important;
   }
 
   :deep(.p-accordion) {
     margin-top: auto;
+    border: 0 !important;
+    background: transparent !important;
+  }
+
+  :deep(.p-accordionpanel) {
+    border: 0 !important;
+    background: transparent !important;
+  }
+
+  :deep(.p-accordioncontent) {
+    border: 0 !important;
+    background: transparent !important;
   }
 
   :deep(.p-accordioncontent-content) {
     padding: 0 !important;
+    border: 0 !important;
+    background: transparent !important;
   }
 </style>
