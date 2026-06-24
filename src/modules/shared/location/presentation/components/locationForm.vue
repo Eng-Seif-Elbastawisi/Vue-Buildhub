@@ -23,7 +23,7 @@ import TranslationParams from '@/base/Core/Params/translationParams';
   const formStore = useFormsStore();
   const locationOptions = Object.entries(LocationTypeEnum).map(([title, id]) => ({ id, title }));
 
-  const translations = ref<Record<string, string>>({});
+  const translations = ref<Record<string, string>>({}); 
   const code = ref<string | undefined>();
   const locationType = ref<TitleInterface<string | number> | null>(null);
 

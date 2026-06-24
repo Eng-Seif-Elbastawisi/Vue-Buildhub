@@ -15,7 +15,7 @@
   const materialId = Number(route.params.material_id);
 
   const updateData = (data: AddMaterialsParams) => {
-    params.value = new EditMaterialParams({ material_id: materialId, ...data.toMap() });
+    params.value = new EditMaterialParams({ material_id: materialId, brandId:data.brandId, measurementId:data.measurementId, price:data.price, translations:data.translations});
   };
 
   const saveMaterial = async () => {

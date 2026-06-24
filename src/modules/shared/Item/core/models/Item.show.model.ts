@@ -48,7 +48,7 @@ export default class ItemShowModel {
       measurement_unit_id: json.measurement_unit_id as number | undefined,
       price: json.price as number | undefined,
       notes: json.notes as string | undefined,
-      translations: { title: ItemModel.mapTranslations(json.translations) },
+      translations: { title: ItemModel.mapTranslations(json.title) },
     });
   }
 

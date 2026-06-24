@@ -45,8 +45,14 @@
   const price = ref<number>();
   const notes = ref<string>('');
 
-  const optionFromId = (id?: number | string) => (id ? { id, title: String(id) } : null);
-  const numericId = (value?: string | number) => (value == null ? undefined : Number(value));
+const optionFromId = (id?: number | string): TitleInterface<number> | null => {
+  return id !== undefined && id !== null
+    ? {
+        id: Number(id),
+        title: String(id),
+      }
+    : null;
+};  const numericId = (value?: string | number) => (value == null ? undefined : Number(value));
 
   onBeforeRouteLeave((to, from) => {
     const savedData = props.formKey ? formStore.getFormData(props.formKey) : null;
@@ -56,7 +62,7 @@
   });
 
   watch(
-    () => props.item,
+    () => props.item, 
     (item) => {
       if (!item) return;
       translations.value = { ...item.translations.title };

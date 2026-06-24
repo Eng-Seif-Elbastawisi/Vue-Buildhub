@@ -1,12 +1,10 @@
 <script setup lang="ts">
   import { computed, onMounted, ref } from 'vue';
-  import { useI18n } from 'vue-i18n';
   import { useRoute, useRouter } from 'vue-router';
   import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
   import AppTable, { type TableHeader } from '@/shared/HelpersComponents/AppTable.vue';
   import Pagination from '@/shared/HelpersComponents/Pagination.vue';
   import TableSkelaton from '@/shared/HelpersComponents/TableSkelaton.vue';
-  import { UnitTypeEnum } from '../../core/constant/unit.type.enum';
   import type MaterialsModel from '../../core/models/materials.model';
   import DeleteMaterialParams from '../../core/params/delete.materials.params';
   import IndexMaterialParams from '../../core/params/index.materials.params';
@@ -18,23 +16,23 @@
   const state = computed(() => controller.listState.value);
   const router = useRouter();
   const route = useRoute();
-  const { locale, t } = useI18n();
+  // const { locale, t } = useI18n();
   const perPage = ref(10);
   const word = ref('');
 
   const headers: TableHeader[] = [
-    { key: 'title', label: 'title', width: '35%', sortable: true },
-    { key: 'brandId', label: 'brand', width: '20%' },
-    { key: 'price', label: 'price', width: '20%' },
+    { key: 'title', label: 'title', width: '50%', sortable: true },
+    // { key: 'brandId', label: 'brand', width: '20%' },
+    { key: 'price', label: 'price', width: '50%' },
     // { key: 'unit', label: 'unit', width: '20%' },
   ];
 
-  const unitLabels = Object.fromEntries(
-    Object.entries(UnitTypeEnum).map(([name, id]) => [id, name]),
-  );
-  const titleFor = (item: MaterialsModel) =>
-    item.translations.title[locale.value] ?? item.translations.title.en ?? '-';
-  const unitFor = (item: MaterialsModel) => t(`material.units.${unitLabels[item.unit]}`);
+  // const unitLabels = Object.fromEntries(
+  //   Object.entries(UnitTypeEnum).map(([name, id]) => [id, name]),
+  // );
+  // const titleFor = (item: MaterialsModel) =>
+  //   item.translations.title[locale.value] ?? item.translations.title.en ?? '-';
+  // const unitFor = (item: MaterialsModel) => t(`material.units.${unitLabels[item.unit]}`);
 
   const fetchMaterials = async (page: number = 1, searchWord: string = '') => {
     await controller.fetchList(

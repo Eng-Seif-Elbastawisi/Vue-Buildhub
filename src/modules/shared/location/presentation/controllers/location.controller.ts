@@ -54,7 +54,7 @@ export default class LocationController extends BaseController<LocationShowModel
     const result = await super.create(params, { ...options, useJson: true });
 
     if (result instanceof DataSuccess) {
-      // router.push({ name: 'Location' });
+      // router.push({ name: 'Location' }); 
 
       router.push(this.userStore.user?.type === 1 ? '/mainportal/location' : '/organization/location');
 

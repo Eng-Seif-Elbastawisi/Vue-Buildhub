@@ -31,7 +31,7 @@ export default class LocationModel {
       return value?.title ?? (translations as Record<string, string>) ?? {};
     }
 
-    return translations.reduce<Record<string, string>>((result, translation) => {
+    return translations.reduce<Record<string, string>>((result, translation) => { 
       const item = translation as Record<string, string>;
       if (item.locale && item[key]) result[item.locale] = item[key];
       return result;

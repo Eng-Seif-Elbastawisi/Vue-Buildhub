@@ -43,7 +43,7 @@ export default class MaterialsModel {
 
     return new MaterialsModel({
       id: json.id as number | undefined,
-      translations: { title: MaterialsModel.mapTranslations(json.translations) },
+      translations: { title: MaterialsModel.mapTranslations(json.translations) }, 
       unit: json.unit as UnitTypeEnum,
       title: json.title as string,
       price: Number(json.price),

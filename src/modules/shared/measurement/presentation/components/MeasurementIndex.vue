@@ -129,7 +129,7 @@ const onMeasurementSaved = async () => {
         </button>
       </div>
     </div>
-    <MeasurementAdd :key="formKey" :stage="selectedMeasurement" @saved="onMeasurementSaved" />
+    <MeasurementAdd :key="formKey" :stage="selectedMeasurement" @saved="onMeasurementSaved" /> 
 
     <!-- ═══ Table ═══ -->
     <DataStatusBuilder :controller="state" :on-retry="async () => await fetchMeasurements()">

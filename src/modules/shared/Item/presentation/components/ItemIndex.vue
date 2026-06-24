@@ -22,7 +22,7 @@
   const word = ref('');
 
   const headers: TableHeader[] = [
-    { key: 'translations', label: 'title', width: '35%', sortable: true },
+    { key: 'title', label: 'title', width: '35%', sortable: true },
     { key: 'notes', label: 'notes', width: '30%' },
     { key: 'price', label: 'price', width: '30%' },
     // { key: 'type', label: 'type', width: '30%' },
@@ -96,7 +96,7 @@
           striped
         >
           <template #cell-translations="{ item }">{{ titleFor(item) }}</template>
-          <template #cell-type="{ item }">{{ typeFor(item) }}</template>
+          <!-- <template #cell-type="{ item }">{{ typeFor(item) }}</template> -->
           <template #actions="{ item }">
             <div class="row-actions">
               <router-link

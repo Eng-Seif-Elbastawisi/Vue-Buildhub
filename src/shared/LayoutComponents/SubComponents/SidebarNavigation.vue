@@ -40,11 +40,11 @@
           name: 'Departments',
           icon: EducationClassificationIcon,
         },
-        {
-          link: user?.isMaster ? '/admin/terms' : '/organization/terms',
-          name: 'Terms',
-          icon: EducationClassificationIcon,
-        },
+        // {
+        //   link: user?.isMaster ? '/admin/terms' : '/organization/terms',
+        //   name: 'Terms',
+        //   icon: EducationClassificationIcon,
+        // },
         {
           link: user?.isMaster ? '/admin/measurement' : '/organization/measurement',
           name: 'Measurement',

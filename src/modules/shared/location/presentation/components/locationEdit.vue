@@ -30,7 +30,7 @@
     try {
       await controller.update(params.value, undefined, formKey);
     } finally {
-      loading.value = false;
+      loading.value = false; 
     }
   };
 

@@ -2,14 +2,17 @@ import { BrandTypeEnum } from '../constant/Brand.type.enum';
 
 export default class SuppliersModel {
   public readonly id?: number;
+  public readonly title?: string;
   public readonly translations: { title: Record<string, string> };
   public readonly type: BrandTypeEnum;
   constructor(data: {
     id?: number;
+    title?: string;
     translations: { title: Record<string, string> };
     type: BrandTypeEnum;
   }) {
     this.id = data.id;
+    this.title = data.title;
     this.translations = data.translations;
     this.type = data.type;
     Object.freeze(this);
@@ -22,6 +25,7 @@ export default class SuppliersModel {
 
     return new SuppliersModel({
       id: json.id,
+      title: json.title,
       translations: {
         title: SuppliersModel.mapTranslations(json.translations, json.title),
       },

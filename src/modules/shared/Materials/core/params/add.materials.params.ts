@@ -1,6 +1,5 @@
 import type Params from '@/base/Core/Params/params';
 import { ClassValidation } from '@/base/Presentation/Utils/classValidation';
-import { type UnitTypeEnum } from '../constant/unit.type.enum';
 
 export default class AddMaterialsParams implements Params {
   public price?: number;

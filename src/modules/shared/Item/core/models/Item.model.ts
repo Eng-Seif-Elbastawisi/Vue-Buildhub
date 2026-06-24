@@ -5,6 +5,7 @@ import { ItemTypeEnum } from '../constant/item.type.enum copy';
 export default class ItemModel {
   public readonly id?: number;
   public readonly type: ItemTypeEnum;
+  public readonly title: string;
   public readonly status: ItemStatusEnum;
   public readonly stage_id: TitleInterface<number>;
   public readonly department_id: TitleInterface<number>;
@@ -17,6 +18,7 @@ export default class ItemModel {
     id?: number;
     translations: { title: Record<string, string> };
     type: ItemTypeEnum;
+    title: string;
     status: ItemStatusEnum;
     stage_id: TitleInterface<number>;
     department_id: TitleInterface<number>;
@@ -27,6 +29,7 @@ export default class ItemModel {
     this.id = data.id;
     this.translations = data.translations;
     this.type = data.type;
+    this.title = data.title;
     this.status = data.status;
     this.stage_id = data.stage_id;
     this.department_id = data.department_id;
@@ -57,6 +60,7 @@ export default class ItemModel {
       translations: { title: ItemModel.mapTranslations(json.translations) },
       type: json.type as ItemTypeEnum,
       status: json.status as ItemStatusEnum,
+      title: json.title as string,
       stage_id: new TitleInterface({
         id: json.stage_id as number,
         title: json.stage_id_title as string,
@@ -78,6 +82,7 @@ export default class ItemModel {
     id: 10,
     translations: { title: { ar: 'مادة', en: 'Material' } },
     type: ItemTypeEnum.MANUFACTURING,
+    title: 'Material',
     status: ItemStatusEnum.MAIN,
     stage_id: new TitleInterface({ id: 10, title: 'Stage 1' }),
     department_id: new TitleInterface({ id: 10, title: 'Department 1' }),

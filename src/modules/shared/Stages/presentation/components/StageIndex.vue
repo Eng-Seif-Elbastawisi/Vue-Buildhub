@@ -80,7 +80,7 @@
   const setSelectef = (items: StageModel[]) => {
     SelectedRow.value = items;
   };
-
+ 
   const deleteSelected = () => {
     SelectedRow.value.forEach((item) => {
       deleteCountry(item.id!);
@@ -95,9 +95,10 @@
     await controller.fetchOne(new ShowStageParams({id, allLocales: true}));
     EditMode.value = true;
   };
-
+  const formKey = ref(0);
   const onStageSaved = async () => {
     EditMode.value = false;
+    formKey.value++;
     await fetchStages();
   };
 </script>
@@ -136,7 +137,7 @@
         </button>
       </div>
     </div>
-    <StageAdd :stage="selectedStage" @saved="onStageSaved" />
+    <StageAdd :key="formKey" :stage="selectedStage" @saved="onStageSaved" />
 
     <!-- ═══ Table ═══ -->
     <DataStatusBuilder :controller="state" :on-retry="async () => await fetchStages()">

@@ -12,10 +12,14 @@ import type ItemShowModel from '../../core/models/Item.show.model';
 import type ItemModel from '../../core/models/Item.model';
 import type ShowItemParams from '../../core/params/show.Item.params';
 import ItemRepository from '../../data/repositories/Item.repository';
+import { useUserStore } from '@/stores/user';
 
 export default class ItemController extends BaseController<ItemShowModel, ItemModel[]> {
   private static instance: ItemController;
-
+  
+protected get userStore() {
+    return useUserStore();
+  }
   protected get repository() {
     return ItemRepository.getInstance();
   }
@@ -49,7 +53,8 @@ export default class ItemController extends BaseController<ItemShowModel, ItemMo
     const result = await super.create(params, { ...options, useJson: true });
 
     if (result instanceof DataSuccess) {
-      router.push({ name: 'Item' });
+      // router.push({ name: 'Item' });
+      router.push(this.userStore.user?.type === 1 ? '/mainportal/item' : '/organization/item');
       if (formKey) FormStore.clearFormData(formKey);
     }
 
@@ -62,7 +67,7 @@ export default class ItemController extends BaseController<ItemShowModel, ItemMo
     const result = await super.update(params, { ...options, useJson: true });
 
     if (result instanceof DataSuccess) {
-      router.push({ name: 'Item' });
+      router.push(this.userStore.user?.type === 1 ? '/mainportal/item' : '/organization/item');
       if (formKey) FormStore.clearFormData(formKey);
     }
 
