@@ -33,10 +33,10 @@
 
       const paramsToSave = params.value;
 
-     const result =
-  paramsToSave instanceof EditStageParams
-    ? await controller.update(paramsToSave, { useJson: true })
-    : await controller.create(paramsToSave, { useJson: true });
+      const result =
+        paramsToSave instanceof EditStageParams
+          ? await controller.update(paramsToSave, { useJson: true })
+          : await controller.create(paramsToSave, { useJson: true });
 
       if (result) {
         emit('saved');
@@ -59,11 +59,18 @@
       <StageForm :form-key="formKey" :stage="stage" :loading="loading" @update-data="updateData" />
 
       <div class="actions" :class="{ disabled: loading }">
-        <AppButton :title="$t('save')" size="sm" icon="right" type="submit" @click="saveStage">
+        <AppButton
+          class="btn-save"
+          :title="$t('save')"
+          size="sm"
+          icon="right"
+          type="submit"
+          @click="saveStage"
+        >
           {{ $t('save') }}
 
           <template #icon>
-            <IconAccept />
+            <IconAccept class="icon" />
           </template>
         </AppButton>
       </div>
@@ -77,6 +84,31 @@
 </template>
 
 <style scoped lang="scss">
+  .email-form-card {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 20px;
+
+    .actions {
+      padding: 0;
+
+      .btn-save {
+        border-radius: 20px;
+        border: 1px solid white;
+
+        &:hover {
+          border: 1px solid var(--PrimaryColor);
+
+          .icon {
+            stroke: var(--PrimaryColor);
+          }
+        }
+      }
+    }
+  }
+
   .email-crud-example {
     padding: 0;
     padding-block: 20px;
