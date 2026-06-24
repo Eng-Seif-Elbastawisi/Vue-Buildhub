@@ -14,7 +14,6 @@
 import { BaseEndpoints } from '@/base/Data/Endpoints/BaseEndpoints';
 import { useUserStore } from '@/stores/user';
 export class BrandApiEndpoints extends BaseEndpoints {
-  
   protected get prefix(): string {
     return useUserStore().user?.type === 1 ? 'mainportal/' : 'organization/';
   }
