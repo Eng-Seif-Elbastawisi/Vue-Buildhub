@@ -33,7 +33,7 @@ describe('StageModel', () => {
     expect(model).toMatchObject({
       id: 1,
       title: 'Preparatory',
-      translations: { title: { en: 'Preparatory', ar: 'Preparatory AR' } },
+      translations: { title: 'Preparatory' },
       e_c_subject_id: 3,
       EducationType: { id: EducationType.General, title: 'General' },
     });
@@ -46,9 +46,9 @@ describe('StageModel', () => {
     expect(
       StageModel.fromJson({ id: 1, title: 'Fallback', education_type: null }).translations,
     ).toEqual({
-      title: { en: 'Fallback' },
+      title: 'Fallback',
     });
-    expect(() => StageModel.fromJson(null)).toThrow('Cannot create CountryModel');
+    expect(() => StageModel.fromJson(null)).toThrow('Cannot create StageModel');
     expect(StageModel.example).toBeInstanceOf(StageModel);
   });
 });

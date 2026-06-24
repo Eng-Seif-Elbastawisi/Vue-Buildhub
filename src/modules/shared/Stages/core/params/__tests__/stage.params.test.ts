@@ -13,7 +13,7 @@ describe('stage params', () => {
     const edit = new EditStageParams({ id: 3, translations });
 
     expect(add.toMap()).toEqual({ translations, parent_id: 5 });
-    expect(edit.toMap()).toEqual({ id: 3, translations });
+    expect(edit.toMap()).toEqual({ stage_id: 3, translations });
     expect(add.validate().isValid).toBe(true);
     expect(edit.validate().isValid).toBe(true);
   });
@@ -30,8 +30,8 @@ describe('stage params', () => {
   });
 
   it('maps and validates identifiers', () => {
-    expect(new ShowStageParams(4).toMap()).toEqual({ id: 4 });
-    expect(new DeleteStageParams(4).toMap()).toEqual({ id: 4 });
-    expect(new ShowStageParams(null as unknown as number).validate().isValid).toBe(false);
+    expect(new ShowStageParams({ id: 4 }).toMap()).toEqual({ stage_id: 4 });
+    expect(new DeleteStageParams(4).toMap()).toEqual({ stage_id: 4 });
+    expect(new ShowStageParams({ id: null as unknown as number }).validate().isValid).toBe(false);
   });
 });
