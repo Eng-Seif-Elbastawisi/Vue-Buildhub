@@ -8,7 +8,7 @@
 .client-page {
   display: flex;
   flex-direction: column;
-  gap: 10px; 
+  gap: 10px;
   font-family: 'Medium';
 
   .search-field {
@@ -44,9 +44,25 @@
   }
 
   .client-header {
-    @include flex-row(nowrap, space-between, center);
+    @include flex-column(nowrap, space-between, start);
 
+    gap: $MdSize;
     width: 100%;
+    margin-bottom: $MdSize;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border-weak);
+    position: relative;
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      width: 80px;
+      height: 3px;
+      background: linear-gradient(90deg, var(--PrimaryColor), transparent);
+      border-radius: var(--radius-full);
+    }
 
     .btns {
       @include flex-row(nowrap, stretch, center);
