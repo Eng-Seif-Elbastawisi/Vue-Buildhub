@@ -3,7 +3,7 @@
   import { useRoute, useRouter } from 'vue-router';
   import { storeToRefs } from 'pinia';
 
-  import TechlabLogo from '@/assets/images/TechlabLogo.png';
+  import BuildHubLogo from '@/assets/images/BuildHubLogo.jpg';
 
   import EducationClassificationIcon from '@/shared/icons/SidebarIcons/EducationClassificationIcon.vue';
   import AuthArrowIcon from '@/shared/icons/SidebarIcons/AuthArrowIcon.vue';
@@ -154,6 +154,16 @@
           icon: ArticleIcon,
         },
         {
+          path: '/location-governorate',
+          name: 'Location Governorate',
+          icon: ArticleIcon,
+        },
+        {
+          path: '/location-city',
+          name: 'Location City',
+          icon: ArticleIcon,
+        },
+        {
           path: '/employee',
           name: 'Employee',
           icon: ArticleIcon,
@@ -208,7 +218,7 @@
   <aside class="sidebar">
     <div class="sidebar-wrapper">
       <div class="logo-container">
-        <img class="logo" :src="TechlabLogo" alt="Techlab Logo" />
+        <img class="logo" :src="BuildHubLogo" alt="BuildHub Logo" />
       </div>
 
       <div class="menu">
