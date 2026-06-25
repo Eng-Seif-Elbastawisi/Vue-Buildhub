@@ -42,6 +42,8 @@
         route.query.page ? Number(route.query.page) : page,
         perPage.value,
         1,
+        null,
+        LocationTypeEnum.COUNTRY,
       ),
     );
   };
@@ -161,8 +163,8 @@
         <div class="empty-state">
           <h3>{{ $t('location.empty_title') }}</h3>
           <p>{{ $t('location.empty_description') }}</p>
-          <router-link class="btn btn-primary" to="/location/add">{{
-            $t('location.add')
+          <router-link class="btn btn-primary" to="/location-governorate/add">{{
+            $t('location-governorate.add')
           }}</router-link>
         </div>
       </template>

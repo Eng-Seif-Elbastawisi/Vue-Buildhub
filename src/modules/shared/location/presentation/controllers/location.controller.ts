@@ -11,6 +11,8 @@ import { useFormsStore } from '@/stores/formsStore';
 import type LocationShowModel from '../../core/models/location.show.model';
 import type LocationModel from '../../core/models/location.model';
 import type ShowLocationParams from '../../core/params/show.location.params';
+import type AddLocationParams from '../../core/params/add.location.params';
+import { LocationTypeEnum } from '../../core/constant/location.type.enum';
 import LocationRepository from '../../data/repositories/location.repository';
 import { useUserStore } from '@/stores/user';
 
@@ -45,7 +47,22 @@ export default class LocationController extends BaseController<LocationShowModel
     if (!LocationController.instance) {
       LocationController.instance = new LocationController();
     }
+
     return LocationController.instance;
+  }
+
+  private getLocationRoute(type?: LocationTypeEnum): string {
+    const prefix = this.userStore.user?.type === 1 ? '/mainportal' : '/organization';
+
+    const routes: Record<LocationTypeEnum, string> = {
+      [LocationTypeEnum.COUNTRY]: `${prefix}/location`,
+      [LocationTypeEnum.GOVERNORATE]: `${prefix}/location-governorate`,
+      [LocationTypeEnum.CITY]: `${prefix}/location-city`,
+      [LocationTypeEnum.REGION]: `${prefix}/location-region`,
+      [LocationTypeEnum.PLACE]: `${prefix}/location-place`,
+    };
+
+    return routes[type ?? LocationTypeEnum.COUNTRY];
   }
 
   async create(params: Params, options?: ApiCallOptions, formKey?: string) {
@@ -54,9 +71,9 @@ export default class LocationController extends BaseController<LocationShowModel
     const result = await super.create(params, { ...options, useJson: true });
 
     if (result instanceof DataSuccess) {
-      // router.push({ name: 'Location' }); 
+      const locationParams = params as AddLocationParams;
 
-      router.push(this.userStore.user?.type === 1 ? '/mainportal/location' : '/organization/location');
+      router.push(this.getLocationRoute(locationParams.type));
 
       if (formKey) FormStore.clearFormData(formKey);
     }
@@ -70,8 +87,9 @@ export default class LocationController extends BaseController<LocationShowModel
     const result = await super.update(params, { ...options, useJson: true });
 
     if (result instanceof DataSuccess) {
-      // router.push({ name: 'Location' });
-      router.push(this.userStore.user?.type === 1 ? '/mainportal/location' : '/organization/location');
+      const locationParams = params as AddLocationParams;
+
+      router.push(this.getLocationRoute(locationParams.type));
 
       if (formKey) FormStore.clearFormData(formKey);
     }

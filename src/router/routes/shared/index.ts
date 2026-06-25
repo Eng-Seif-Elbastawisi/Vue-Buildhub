@@ -12,6 +12,8 @@ import { LocationRoutes } from './location';
 import { measurementRoutes } from './measurement';
 import { ClientSourceRoutes } from './clientsource';
 import { supplyRoutes } from './supply';
+import { LocationGovernorateRoutes } from './location_governorate';
+import { LocationCityRoutes } from './location_city';
 
 export const sharedRoutes: RouteRecordRaw[] = [
   ...organizationRoutes,
@@ -27,4 +29,6 @@ export const sharedRoutes: RouteRecordRaw[] = [
   ...LocationRoutes,
   ...measurementRoutes,
   ...ClientSourceRoutes,
+  ...LocationGovernorateRoutes,
+  ...LocationCityRoutes,
 ];

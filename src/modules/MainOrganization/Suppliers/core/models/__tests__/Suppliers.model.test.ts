@@ -5,7 +5,7 @@ describe('SuppliersModel', () => {
   it('maps supplier list JSON and freezes the instance', () => {
     const model = SuppliersModel.fromJson({
       id: 1,
-      Suppliers: 'Build Supply',
+      name: 'Build Supply',
       Specialization: 'Concrete',
       phone: '01000000000',
       materials: 'Cement',
@@ -13,7 +13,7 @@ describe('SuppliersModel', () => {
 
     expect(model).toMatchObject({
       id: 1,
-      Suppliers: 'Build Supply',
+      name: 'Build Supply',
       Specialization: 'Concrete',
       phone: '01000000000',
       materials: 'Cement',

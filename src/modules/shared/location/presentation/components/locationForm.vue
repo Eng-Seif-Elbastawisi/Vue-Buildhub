@@ -1,14 +1,11 @@
 <script setup lang="ts">
-  import { ref, watch } from 'vue';
+  import { ref } from 'vue';
   import { onBeforeRouteLeave } from 'vue-router';
-  import type TitleInterface from '@/base/Data/Models/titleInterface';
-  import UpdatedCustomInputSelect from '@/shared/FormInputs/UpdatedCustomInputSelect.vue';
   import MultiLangInput from '@/shared/MultiLangInput.vue';
   import { useFormsStore } from '@/stores/formsStore';
   import AddLocationParams from '../../core/params/add.location.params';
-  import { LocationTypeEnum } from '../../core/constant/location.type.enum';
   import type locationShowModel from '../../core/models/location.show.model';
-import TranslationParams from '@/base/Core/Params/translationParams';
+  import TranslationParams from '@/base/Core/Params/translationParams';
 
   const emit = defineEmits<{
     updateData: [params: AddLocationParams];
@@ -21,11 +18,8 @@ import TranslationParams from '@/base/Core/Params/translationParams';
   }>();
 
   const formStore = useFormsStore();
-  const locationOptions = Object.entries(LocationTypeEnum).map(([title, id]) => ({ id, title }));
 
-  const translations = ref<Record<string, string>>({}); 
-  const code = ref<string | undefined>();
-  const locationType = ref<TitleInterface<string | number> | null>(null);
+  const translations = ref<Record<string, string>>({});
 
   onBeforeRouteLeave((to, from) => {
     const savedData = props.formKey ? formStore.getFormData(props.formKey) : null;
@@ -34,29 +28,11 @@ import TranslationParams from '@/base/Core/Params/translationParams';
     }
   });
 
-  watch(
-    () => props.location,
-    (location) => {
-      if (!location) return;
-      translations.value = { ...location.translations.title };
-      code.value = location.code;
-      locationType.value = location.type
-        ? (locationOptions.find((option) => option.id === location.type) ?? null)
-        : null;
-      updateData();
-    },
-    { immediate: true },
-  );
-
   const updateData = () => {
     const translationParams = new TranslationParams({ title: translations.value });
     emit(
       'updateData',
       new AddLocationParams({
-        code: code.value,
-        type: locationType.value?.id as
-          | (typeof LocationTypeEnum)[keyof typeof LocationTypeEnum]
-          | undefined,
         translations: translationParams,
       }),
     );
@@ -98,18 +74,6 @@ import TranslationParams from '@/base/Core/Params/translationParams';
           />
         </div>
       </div> -->
-
-      <div class="field-group">
-        <UpdatedCustomInputSelect
-          id="location-type"
-          v-model="locationType"
-          :label="$t('location.type')"
-          :placeholder="$t('location.type_placeholder')"
-          :static-options="locationOptions"
-          required
-          @update:model-value="updateData"
-        />
-      </div>
     </div>
   </div>
 </template>

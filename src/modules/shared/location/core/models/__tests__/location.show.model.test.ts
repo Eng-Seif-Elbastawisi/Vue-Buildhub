@@ -7,16 +7,30 @@ describe('LocationShowModel', () => {
     expect(
       LocationShowModel.fromJson({
         id: 9,
-        parent_id: 2,
+        parent: {
+          id: 2,
+          type: LocationTypeEnum.COUNTRY,
+          title: [
+            { locale: 'en', title: 'Egypt' },
+            { locale: 'ar', title: 'مصر' },
+          ],
+        },
         code: 'S-01',
-        type: LocationTypeEnum.store,
-        translations: { title: { en: 'Store', ar: 'متجر' } },
+        type: LocationTypeEnum.CITY,
+        title: [
+          { locale: 'en', title: 'Store' },
+          { locale: 'ar', title: 'متجر' },
+        ],
       }),
     ).toMatchObject({
       id: 9,
-      parentId: 2,
+      parent: {
+        id: 2,
+        type: LocationTypeEnum.COUNTRY,
+        title: 'Egypt',
+      },
       code: 'S-01',
-      type: LocationTypeEnum.store,
+      type: LocationTypeEnum.CITY,
       translations: { title: { en: 'Store', ar: 'متجر' } },
     });
   });
