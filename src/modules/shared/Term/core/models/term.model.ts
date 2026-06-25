@@ -4,13 +4,13 @@ export default class TermModel {
   public readonly id?: number;
   public readonly title: string;
   public readonly translations: { title: Record<string, string> };
-  public readonly department: TitleInterface<number>;
+  public readonly department?: TitleInterface<number>;
 
   constructor(data: {
     id?: number;
     title?: string;
     translations?: { title: Record<string, string> };
-    department: TitleInterface<number>;
+    department?: TitleInterface<number>;
   }) {
     this.id = data.id;
     this.translations = data.translations ?? { title: { en: data.title ?? '' } };

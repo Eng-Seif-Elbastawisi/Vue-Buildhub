@@ -12,6 +12,8 @@
   import { useUserStore } from '@/stores/user';
   import ItemController from '../controllers/Item.controller';
   import IndexItemParams from '../../core/params/index.Item.params';
+  import { debounce } from '@/base/Presentation/Utils/debouced';
+  import IndexAddIcon from '@/shared/icons/IndexAddIcon.vue';
 
   const controller = ItemController.getInstance();
   const state = computed(() => controller.listState.value);
@@ -45,6 +47,17 @@
       ),
     );
   };
+  const Search = debounce(() => {
+    router.push({
+      query: {
+        ...route.query,
+        page: Number(route.query.page ?? 1),
+        word: word.value || undefined,
+      },
+    });
+
+    fetchItems(1, word.value);
+  });
 
   const onPageChange = (page: number) => {
     void fetchItems(page);
@@ -71,18 +84,45 @@
 </script>
 
 <template>
-  <div class="location-page">
-    <div class="location-header">
+  <div class="item-page">
+    <div class="item-header">
       <div>
         <h4>{{ $t('item.index.title') }}</h4>
         <p>{{ $t('item.index.description') }}</p>
       </div>
-      <router-link
-        class="btn btn-primary"
-        :to="user?.type === 1 ? '/mainportal/item/add' : '/organization/item/add'"
-      >
-        {{ $t('item.add') }}</router-link
-      >
+    </div>
+    <div class="toolbar">
+      <div class="search-field">
+        <span class="search-icon">
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+          >
+            <circle cx="11" cy="11" r="8" />
+            <path d="m21 21-4.35-4.35" />
+          </svg>
+        </span>
+        <input
+          v-model="word"
+          placeholder="Search by country name or code…"
+          class="search-input"
+          type="text"
+          @input="Search"
+        />
+      </div>
+      <div class="action-buttons">
+        <router-link
+          class="btn btn-primary"
+          :to="user?.type === 1 ? '/mainportal/item/add' : '/organization/item/add'"
+        >
+          <IndexAddIcon /> {{ $t('item.add') }}
+        </router-link>
+      </div>
     </div>
 
     <DataStatusBuilder :controller="state" :on-retry="async () => await fetchItems()">
@@ -102,7 +142,9 @@
               <router-link
                 class="action-btn edit"
                 :to="
-                  user?.isMaster ? `/item/edit/${item.id}` : `/organization/item/edit/${item.id}`
+                  user?.type === 1
+                    ? `/mainportal/item/edit/${item.id}`
+                    : `/organization/item/edit/${item.id}`
                 "
                 :title="$t('item.edit')"
               >

@@ -7,7 +7,6 @@
   import { debounce } from '@/base/Presentation/Utils/debouced';
   import EditIcon from '@/shared/icons/EditIcon.vue';
   import DeleteDialog from '@/base/Presentation/Dialogs/MainDialogs/DeleteDialog.vue';
-  import type DepartmentModel from '@/modules/shared/Department/core/models/department.model';
   import TermController from '../controllers/term.controller';
   import IndexTermParams from '../../core/params/index.term.params';
   import type TermModel from '../../core/models/term.model';
@@ -143,7 +142,7 @@
         <div class="table-frame">
           <AppTable
             :headers="headers"
-            :items="data as DepartmentModel[]"
+            :items="data as TermModel[]"
             selectable
             show-index
             hoverable

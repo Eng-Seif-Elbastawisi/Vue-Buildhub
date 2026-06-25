@@ -80,7 +80,7 @@
   const setSelectef = (items: StageModel[]) => {
     SelectedRow.value = items;
   };
- 
+
   const deleteSelected = () => {
     SelectedRow.value.forEach((item) => {
       deleteCountry(item.id!);
@@ -92,7 +92,7 @@
   );
 
   const ShowStage = async (id: number) => {
-    await controller.fetchOne(new ShowStageParams({id, allLocales: true}));
+    await controller.fetchOne(new ShowStageParams({ id, allLocales: true }));
     EditMode.value = true;
   };
   const formKey = ref(0);

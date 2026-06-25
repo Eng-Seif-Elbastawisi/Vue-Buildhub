@@ -47,7 +47,7 @@
       @update-data="(value) => (params = value as AddDepartmentParams)"
     />
     <div class="actions">
-      <AppButton :title="$t('save')" type="button" @click="saveDepartment">{{
+      <AppButton class="btn-save" :title="$t('save')" type="button" @click="saveDepartment">{{
         $t('save')
       }}</AppButton>
     </div>
@@ -59,5 +59,9 @@
 <style scoped>
   .actions {
     padding: 0 0 20px 20px;
+  }
+
+  .btn-save {
+    width: 100%;
   }
 </style>

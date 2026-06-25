@@ -12,6 +12,8 @@
   // import { EquipmentTypeEnum } from '../../core/constant/equipment.type.enum.ts';
   import { useUserStore } from '@/stores/user.ts';
   import DeleteDialog from '@/base/Presentation/Dialogs/MainDialogs/DeleteDialog.vue';
+  import { debounce } from '@/base/Presentation/Utils/debouced.ts';
+  import IndexAddIcon from '@/shared/icons/IndexAddIcon.vue';
 
   const controller = BrandController.getInstance();
   const state = computed(() => controller.listState.value);
@@ -38,16 +40,16 @@
     );
   };
 
-  // const Search = debounce(() => {
-  //   router.push({
-  //     query: {
-  //       ...route.query,
-  //       page: Number(route.query.page ?? 1),
-  //       word: word.value || undefined,
-  //     },
-  //   });
-  //   fetchSuppliers(1, word.value);
-  // });
+  const Search = debounce(() => {
+    router.push({
+      query: {
+        ...route.query,
+        page: Number(route.query.page ?? 1),
+        word: word.value || undefined,
+      },
+    });
+    fetchBrand(1, word.value);
+  });
 
   const onPageChange = (page: number) => {
     fetchBrand(page);
@@ -99,24 +101,36 @@
     <div class="badge">{{ $t('All Brands') }}</div>
     <div class="index-header">
       <div class="toolbar">
-        <!-- <div class="search-field">
+        <div class="search-field">
           <span class="search-icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-              stroke-linecap="round">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            >
               <circle cx="11" cy="11" r="8" />
               <path d="m21 21-4.35-4.35" />
             </svg>
           </span>
-          <input v-model="word" :placeholder="$t('search_suppliers')" class="search-input" type="text"
-            @input="Search" />
-        </div> -->
+          <input
+            v-model="word"
+            :placeholder="$t('search_suppliers')"
+            class="search-input"
+            type="text"
+            @input="Search"
+          />
+        </div>
       </div>
       <div class="btns">
         <router-link
           class="btn btn-primary"
           :to="user?.type === 1 ? '/mainportal/brand/add' : '/organization/brand/add'"
         >
-          {{ $t('brand.add') }}
+          <IndexAddIcon /> {{ $t('brand') }}
         </router-link>
         <!-- <button class="btn btn-secondary" @click="visible = true">{{ $t('add_Brand') }}</button> -->
         <!-- <Dialog
@@ -181,7 +195,11 @@
               <div class="row-actions">
                 <router-link
                   class="action-btn edit"
-                  :to="user?.type === 1 ? `/brand/edit/${item.id}` : `/organization/brand/edit/${item.id}`"
+                  :to="
+                    user?.type === 1
+                      ? `/brand/edit/${item.id}`
+                      : `/organization/brand/edit/${item.id}`
+                  "
                   title="Edit"
                 >
                   <svg
