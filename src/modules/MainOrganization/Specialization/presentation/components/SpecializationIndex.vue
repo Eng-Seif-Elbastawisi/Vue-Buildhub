@@ -225,14 +225,7 @@
   .toolbar {
     display: flex;
     justify-content: space-between;
-  }
-
-  .page-header,
-  .row-actions {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: 1rem;
+    width: 100%;
   }
 
   .empty-state {
@@ -240,6 +233,15 @@
     flex-direction: column;
     align-items: center;
     gap: 10px;
+  }
+
+  .page-header,
+  .row-actions {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: start;
+    gap: 1rem;
   }
 
   .page-header p,

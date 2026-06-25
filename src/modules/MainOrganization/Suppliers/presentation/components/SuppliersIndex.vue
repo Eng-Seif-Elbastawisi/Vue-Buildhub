@@ -11,6 +11,8 @@
   import type SuppliersModel from '../../core/models/Suppliers.model.ts';
   import { useUserStore } from '@/stores/user.ts';
   import DeleteDialog from '@/base/Presentation/Dialogs/MainDialogs/DeleteDialog.vue';
+  import { debounce } from '@/base/Presentation/Utils/debouced';
+  import IndexAddIcon from '@/shared/icons/IndexAddIcon.vue';
 
   const controller = SuppliersController.getInstance();
   const state = computed(() => controller.listState.value);
@@ -47,16 +49,16 @@
     );
   };
 
-  // const Search = debounce(() => {
-  //   router.push({
-  //     query: {
-  //       ...route.query,
-  //       page: Number(route.query.page ?? 1),
-  //       word: word.value || undefined,
-  //     },
-  //   });
-  //   fetchSuppliers(1, word.value);
-  // });
+  const Search = debounce(() => {
+    router.push({
+      query: {
+        ...route.query,
+        page: Number(route.query.page ?? 1),
+        word: word.value || undefined,
+      },
+    });
+    fetchSuppliers(1, word.value);
+  });
 
   const onPageChange = (page: number) => {
     fetchSuppliers(page);
@@ -99,27 +101,39 @@
     <p class="document-index-dexription">
       {{ $t('Manage and organize all uploaded documents in one place') }}
     </p>
-    <div class="badge">{{ $t('All Suppliers') }}</div>
+    <!-- <div class="badge">{{ $t('All Suppliers') }}</div> -->
     <div class="index-header">
       <div class="toolbar">
-        <!-- <div class="search-field">
+        <div class="search-field">
           <span class="search-icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-              stroke-linecap="round">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            >
               <circle cx="11" cy="11" r="8" />
               <path d="m21 21-4.35-4.35" />
             </svg>
           </span>
-          <input v-model="word" :placeholder="$t('search_suppliers')" class="search-input" type="text"
-            @input="Search" />
-        </div> -->
+          <input
+            v-model="word"
+            :placeholder="$t('search_suppliers')"
+            class="search-input"
+            type="text"
+            @input="Search"
+          />
+        </div>
       </div>
       <div class="btns">
         <router-link
           class="btn btn-primary"
           :to="user?.isMaster ? '/suppliers/add' : '/organization/suppliers/add'"
         >
-          {{ $t('suppliers.add') }}
+          <IndexAddIcon /> {{ $t('suppliers') }}
         </router-link>
         <!-- <button class="btn btn-secondary" @click="visible = true">{{ $t('add_Supplier') }}</button> -->
         <!-- <Dialog

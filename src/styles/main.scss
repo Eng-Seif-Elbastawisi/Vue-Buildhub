@@ -45,6 +45,7 @@
 
 /* ── Modules ───────────────────────────────────────────────────── */
 @use '../modules/MainOrganization/Suppliers/presentation/styles/supplier_imports';
+@use '../modules/shared/supply/presentation/styles/supply_imports';
 @use '../modules/MainOrganization/client/presentation/styles/client_imports';
 @use '../modules/shared/location/presentation/styles/location_imports';
 @use '../modules/shared/Item/presentation/styles/item_imports';
@@ -56,6 +57,7 @@
 @use '../modules/shared/ClientSource/presentation/styles/client_source_imports';
 @use '../modules/shared/Department/presentation/styles/department_imports';
 @use '../modules/MainOrganization/Specialization/presentation/styles/Specialization_imports';
+@use '../modules/MainOrganization/employee/presentation/styles/employee_imports';
 /* ── Pages ─────────────────────────────────────────────────────── */
 @use '../modules/auth/presentation/styles/login';
 @use 'error/error';

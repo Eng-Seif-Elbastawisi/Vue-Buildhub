@@ -84,8 +84,8 @@
 </script>
 
 <template>
-  <div class="location-page">
-    <div class="location-header">
+  <div class="item-page">
+    <div class="item-header">
       <div>
         <h4>{{ $t('item.index.title') }}</h4>
         <p>{{ $t('item.index.description') }}</p>
