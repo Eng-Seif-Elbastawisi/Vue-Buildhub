@@ -1,0 +1,10 @@
+export { default as SpecializationModel } from './core/models/project.model';
+export { default as SpecializationShowModel } from './core/models/project.show.model';
+export { default as AddSpecializationParams } from './core/params/add.project.params';
+export { default as EditSpecializationParams } from './core/params/edit.project.params';
+export { default as DeleteSpecializationParams } from './core/params/delete.project.params';
+export { default as ShowSpecializationParams } from './core/params/show.project.params';
+export { default as IndexSpecializationParams } from './core/params/index.project.params';
+export { default as SpecializationRepository } from './data/repositories/project.repository';
+export { default as SpecializationController } from './presentation/controllers/project.controller';
+export { default as SpecializationApiService } from './data/api/project.api-service';

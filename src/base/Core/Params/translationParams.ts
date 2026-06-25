@@ -1,7 +1,7 @@
-import type Params from "./params";
-import { ClassValidation } from "@/base/Presentation/Utils/classValidation";
+import type Params from './params';
+import { ClassValidation } from '@/base/Presentation/Utils/classValidation';
 
-export type SupportedLang = "en" | "ar" | "fr" | "es" | "zh";
+export type SupportedLang = 'en' | 'ar' | 'fr' | 'es' | 'zh';
 export type LocalizedText = Partial<Record<SupportedLang, string>>;
 
 export default class TranslationParams implements Params {
@@ -11,15 +11,13 @@ export default class TranslationParams implements Params {
     title: { required: true },
   });
 
-  constructor(data:{
-    title: LocalizedText
-  }) {
+  constructor(data: { title: LocalizedText }) {
     this.title = data.title;
   }
 
   toMap(): Record<string, LocalizedText> {
     const data: Record<string, LocalizedText> = {};
-    if (this.title) data["title"] = this.title;
+    if (this.title) data['title'] = this.title;
     return data;
   }
 

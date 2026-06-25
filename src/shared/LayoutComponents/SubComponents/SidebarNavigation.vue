@@ -175,6 +175,12 @@
           icon: ArticleIcon,
           // roles: ['organization'],
         },
+        {
+          path: '/project',
+          name: 'Project',
+          icon: ArticleIcon,
+          roles: ['organization'],
+        },
       ],
     },
   ];
