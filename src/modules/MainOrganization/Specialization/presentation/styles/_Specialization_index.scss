@@ -7,7 +7,7 @@
 
 .project-page {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 10px;
   font-family: 'Medium';
 
@@ -78,6 +78,7 @@
   }
 
   /* ── Page Header ───────────────────────────────────────────── */
+
   .page-header {
     display: flex;
     align-items: center;

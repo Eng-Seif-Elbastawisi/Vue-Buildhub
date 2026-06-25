@@ -108,7 +108,7 @@
 </script>
 
 <template>
-  <div class="measurement-page">
+  <div class="index-measurement-page">
     <div class="index-header">
       <div class="toolbar">
         <div class="search-field">
