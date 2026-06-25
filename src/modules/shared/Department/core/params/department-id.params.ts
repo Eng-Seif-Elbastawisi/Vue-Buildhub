@@ -13,7 +13,7 @@ export default class DepartmentIdParams implements Params {
   }
 
   toMap(): Record<string, number> {
-    return { id: this.id };
+    return { department_id: this.id };
   }
 
   validate() {

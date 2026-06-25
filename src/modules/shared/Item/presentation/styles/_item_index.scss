@@ -43,10 +43,16 @@
     }
   }
 
+  .toolbar {
+    display: flex;
+    justify-content: space-between;
+  }
+
   .location-header {
     @include flex-row(nowrap, space-between, center);
 
     width: 100%;
+    margin: $XsSize 0;
 
     .btns {
       @include flex-row(nowrap, stretch, center);

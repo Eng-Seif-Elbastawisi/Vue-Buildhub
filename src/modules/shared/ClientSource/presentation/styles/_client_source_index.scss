@@ -6,9 +6,22 @@
 
   gap: $XlSize2;
 
-  
   .email-crud-example {
     margin: 0;
+    width: 100%;
+  }
+
+  .email-form-card {
+    background: var(--bg-main);
+    border-radius: 24px;
+    padding: 16px;
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+    background-color: var(--color-light-gray);
+  }
+
+  .field-group {
     width: 100%;
   }
 
@@ -27,7 +40,7 @@
 
     .btns-container {
       @include flex-row(nowrap, flex-start, center);
- 
+
       gap: $XsSize4;
     }
   }

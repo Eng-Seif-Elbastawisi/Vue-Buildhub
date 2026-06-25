@@ -77,7 +77,7 @@
     await fetchDepartments();
   };
 
-  const formRoute = computed(() => '/stages/add');
+  // const formRoute = computed(() => '/stages/add');
 
   const SelectedRow = ref<DepartmentModel[]>([]);
   const setSelectef = (items: DepartmentModel[]) => {
@@ -99,14 +99,16 @@
 
     EditMode.value = true;
   };
-  const onStageSaved = async () => {
+  const formKey = ref(0);
+  const onDepartmentSaved = async () => {
     EditMode.value = false;
     await fetchDepartments();
+    formKey.value++;
   };
 </script>
 
 <template>
-  <div class="stage-page">
+  <div class="index-page-department">
     <div class="index-header">
       <div class="toolbar">
         <div class="search-field">
@@ -139,7 +141,12 @@
         </button>
       </div>
     </div>
-    <DepartmentAdd :department="selectedDepartment" @update-data="onStageSaved" @saved="onStageSaved" />
+    <DepartmentAdd
+      :key="formKey"
+      :department="selectedDepartment"
+      @update-data="onDepartmentSaved"
+      @saved="onDepartmentSaved"
+    />
 
     <!-- ═══ Table ═══ -->
     <DataStatusBuilder :controller="state" :on-retry="async () => await fetchDepartments()">
@@ -164,7 +171,7 @@
                   <EditIcon />
                 </button>
                 <DeleteDialog
-                  :title="$t('Are you sure you want to remove this stage?')"
+                  :title="$t('Are you sure you want to remove this department?')"
                   :message="$t('This action cannot be undone.')"
                   :hasbtn="true"
                   @delete="deleteCountry(item.id!)"
@@ -216,7 +223,7 @@
           </svg>
           <h3>No emails yet</h3>
           <p>Add the first employee email to get started</p>
-          <router-link :to="formRoute" class="btn-add empty-cta">
+          <!-- <router-link :to="formRoute" class="btn-add empty-cta">
             <svg
               width="18"
               height="18"
@@ -229,7 +236,7 @@
               <path d="M12 5v14M5 12h14" />
             </svg>
             <span>Add Email</span>
-          </router-link>
+          </router-link> -->
         </div>
       </template>
     </DataStatusBuilder>

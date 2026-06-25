@@ -21,7 +21,7 @@ export default class EditDepartmentParams implements Params {
 
   toMap(): { [p: string]: any } {
     return {
-      id: this.id,
+      department_id: this.id,
       translations: this.translations,
       stage_id: this.stageId,
     };
