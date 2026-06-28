@@ -116,7 +116,7 @@
         </div>
         <router-link
           class="btn btn-primary"
-          :to="user?.type === 1 ? '/mainportal/location/add' : '/organization/location/add'"
+          :to="user?.type === 1 ? '/admin/location/add' : '/organization/location/add'"
         >
           <IndexAddIcon /> {{ $t('location') }}</router-link
         >
@@ -141,7 +141,7 @@
                 class="action-btn edit"
                 :to="
                   user?.type === 1
-                    ? `/mainportal/location/edit/${item.id}`
+                    ? `/admin/location/edit/${item.id}`
                     : `/organization/location/edit/${item.id}`
                 "
                 :title="$t('location.edit')"
@@ -199,9 +199,11 @@
         <div class="empty-state">
           <h3>{{ $t('location.empty_title') }}</h3>
           <p>{{ $t('location.empty_description') }}</p>
-          <router-link class="btn btn-primary" to="/location-governorate/add">{{
-            $t('location-governorate.add')
-          }}</router-link>
+          <router-link
+            class="btn btn-primary"
+            :to="user?.type === 1 ? '/admin/location/add' : '/organization/location/add'"
+            >{{ $t('location.add') }}</router-link
+          >
         </div>
       </template>
 

@@ -4,7 +4,7 @@
 
 :root {
   /* ── Primary ───────────────────────────────────────────────── */
-  --PrimaryColor: #4faf7c;
+  --PrimaryColor: #c47a35;
   --PrimaryColor-hover: #24385c;
   --PrimaryColor-active: #4338ca;
   --PrimaryColor-light: #eef2ff;
@@ -40,7 +40,7 @@
   --btn-easy: rgba(255, 247, 230, 1);
 
   /* ── Secondary ─────────────────────────────────────────────── */
-  --SecondaryColor: #f8fafc;
+  --SecondaryColor: #102a43;
   --SecondaryColor-hover: #f1f5f9;
   --background-tree-subject: rgba(245, 245, 245, 1);
 
@@ -538,4 +538,3 @@ $BtnActionHover: var(--btn-action-hover);
 $ErrorBg: var(--error-bg);
 $ErrorText: var(--error-text);
 $ErrorBorder: var(--error-border);
- 

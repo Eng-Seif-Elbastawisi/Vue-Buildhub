@@ -20,7 +20,7 @@
     @click="selectCountry"
   >
     <div class="flag-container">
-      <img :src="country.flag" alt="flag" class="flag" />
+      <img :src="country.flag" :alt="$t('Flag')" class="flag" />
       <IconCheck v-if="country.id === selectedCountryId" class="flag-selected-icon" />
     </div>
     <span class="title">{{ country.title }}</span>

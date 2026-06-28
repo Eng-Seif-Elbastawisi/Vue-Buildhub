@@ -74,7 +74,10 @@
     await fetchStages();
   };
 
-  const formRoute = computed(() => '/stages/add');
+  const routePrefix = computed(() =>
+    route.path.startsWith('/admin') ? '/admin' : '/organization',
+  );
+  const formRoute = computed(() => `${routePrefix.value}/stages/add`);
 
   const SelectedRow = ref<StageModel[]>([]);
   const setSelectef = (items: StageModel[]) => {
@@ -124,7 +127,7 @@
           </span>
           <input
             v-model="word"
-            placeholder="Search by country name or code…"
+            :placeholder="$t('search_by_country_name_or_code')"
             class="search-input"
             type="text"
             @input="Search"
@@ -133,7 +136,7 @@
       </div>
       <div class="flex gap-10">
         <button v-if="SelectedRow.length > 0" class="btn-add" @click="deleteSelected">
-          <span>delete</span>
+          <span>{{ $t('delete') }}</span>
         </button>
       </div>
     </div>
@@ -158,7 +161,7 @@
 
             <template #actions="{ item }">
               <div class="row-actions">
-                <button class="action-btn edit" title="Edit" @click="ShowStage(item.id!)">
+                <button class="action-btn edit" :title="$t('Edit')" @click="ShowStage(item.id!)">
                   <EditIcon />
                 </button>
                 <DeleteDialog
@@ -168,7 +171,7 @@
                   @delete="deleteCountry(item.id!)"
                 >
                   <template #btn>
-                    <button class="action-btn delete" title="Delete">
+                    <button class="action-btn delete" :title="$t('Delete')">
                       <svg
                         width="15"
                         height="15"
@@ -212,8 +215,8 @@
             <rect x="2" y="4" width="20" height="16" rx="2" />
             <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
           </svg>
-          <h3>No emails yet</h3>
-          <p>Add the first employee email to get started</p>
+          <h3>{{ $t('no_emails_yet') }}</h3>
+          <p>{{ $t('add_first_employee_email') }}</p>
           <router-link :to="formRoute" class="btn-add empty-cta">
             <svg
               width="18"
@@ -226,7 +229,7 @@
             >
               <path d="M12 5v14M5 12h14" />
             </svg>
-            <span>Add Email</span>
+            <span>{{ $t('add_email') }}</span>
           </router-link>
         </div>
       </template>

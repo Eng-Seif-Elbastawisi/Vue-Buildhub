@@ -37,8 +37,8 @@
 <template>
   <div class="inputs-container">
     <div v-for="(_, i) in inputs" :key="i" class="input-wrapper">
-      <label for="">Title</label>
-      <input v-model="inputs[i]!.title" type="text" placeholder="Enter Title" />
+      <label for="">{{ $t('Title') }}</label>
+      <input v-model="inputs[i]!.title" type="text" :placeholder="$t('Enter Title')" />
     </div>
   </div>
 </template>

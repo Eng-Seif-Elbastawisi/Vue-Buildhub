@@ -190,9 +190,11 @@
         ><div class="empty-state">
           <h3>{{ $t('project.empty_title') }}</h3>
           <p>{{ $t('project.empty_description') }}</p>
-          <router-link class="btn btn-primary" to="/project/add">{{
-            $t('project.add')
-          }}</router-link>
+          <router-link
+            class="btn btn-primary"
+            :to="user?.isMaster ? '/admin/projectType/add' : '/organization/projectType/add'"
+            >{{ $t('project.add') }}</router-link
+          >
         </div></template
       >
       <template #loader

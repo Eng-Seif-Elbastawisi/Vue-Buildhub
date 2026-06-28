@@ -118,7 +118,7 @@
       <div class="btns">
         <router-link
           class="btn btn-primary"
-          :to="user?.type === 1 ? '/mainportal/organization/add' : '/organization/organization/add'"
+          :to="user?.type === 1 ? '/admin/organization/add' : '/organization/organization/add'"
         >
           {{ $t('organization.add') }}
         </router-link>
@@ -200,7 +200,7 @@
                   class="action-btn edit"
                   :to="
                     user?.type === 1
-                      ? `/mainportal/organization/edit/${item.id}`
+                      ? `/admin/organization/edit/${item.id}`
                       : `/organization/organization/edit/${item.id}`
                   "
                   title="Edit"
@@ -280,7 +280,7 @@
           <h3>{{ $t('no_Suppliers_yet') }}</h3>
           <p>{{ $t('add_first_Supplier') }}</p>
           <router-link
-            :to="user?.isMaster ? '/organization/add' : '/organization/organization/add'"
+            :to="user?.isMaster ? '/admin/organization/add' : '/organization/organization/add'"
             class="btn-add empty-cta"
           >
             <svg

@@ -90,7 +90,7 @@
           </span>
           <input
             v-model="word"
-            placeholder="Search by country name or code…"
+            :placeholder="$t('search_by_country_name_or_code')"
             class="search-input"
             type="text"
             @input="Search"
@@ -99,7 +99,9 @@
         <router-link
           class="btn btn-primary"
           :to="
-            user?.type === 1 ? '/mainportal/Specialization/add' : '/organization/Specialization/add'
+            user?.type === 1
+              ? '/organization/specialization/add'
+              : '/organization/specialization/add'
           "
           ><IndexAddIcon />{{ $t('Specialization') }}</router-link
         >
@@ -128,8 +130,8 @@
                 class="action-btn edit"
                 :to="
                   user?.type === 1
-                    ? `/mainportal/Specialization/edit/${item.id}`
-                    : `/organization/Specialization/edit/${item.id}`
+                    ? `/organization/specialization/edit/${item.id}`
+                    : `/organization/specialization/edit/${item.id}`
                 "
               >
                 <svg
@@ -153,7 +155,7 @@
                 @delete="deleteSpecialization(item.id!)"
               >
                 <template #btn>
-                  <button class="action-btn delete" title="Delete">
+                  <button class="action-btn delete" :title="$t('Delete')">
                     <svg
                       width="15"
                       height="15"
@@ -195,8 +197,8 @@
             class="btn btn-primary"
             :to="
               user?.type === 1
-                ? '/mainportal/Specialization/add'
-                : '/organization/Specialization/add'
+                ? '/organization/specialization/add'
+                : '/organization/specialization/add'
             "
             ><IndexAddIcon />{{ $t('Specialization.add') }}</router-link
           >

@@ -39,7 +39,7 @@
 <template>
   <div class="lang-input-wrapper">
     <!-- input -->
-    <input v-model="value" :type="type || 'text'" class="input" placeholder="Enter value" />
+    <input v-model="value" :type="type || 'text'" class="input" :placeholder="$t('enter_value')" />
 
     <!-- language selector inside input -->
     <select v-model="lang" class="lang-select">

@@ -218,13 +218,13 @@
   <aside class="sidebar">
     <div class="sidebar-wrapper">
       <div class="logo-container">
-        <img class="logo" :src="BuildHubLogo" alt="BuildHub Logo" />
+        <img class="logo" :src="BuildHubLogo" :alt="$t('buildhub_logo')" />
       </div>
 
       <div class="menu">
         <div v-for="(group, gIndex) in menu" :key="gIndex" class="menu-group">
           <p v-if="group.group" class="group-title">
-            {{ group.group }}
+            {{ $t(group.group) }}
           </p>
 
           <router-link
@@ -238,7 +238,7 @@
             <component :is="item.icon" v-if="item.icon" class="icon" />
 
             <span class="label">
-              {{ item.name }}
+              {{ $t(item.name) }}
             </span>
 
             <span v-if="item.badge" class="badge">
@@ -265,11 +265,11 @@
 
                 <div class="user-data">
                   <span class="name">
-                    {{ user?.name || 'User' }}
+                    {{ user?.name || $t('user') }}
                   </span>
 
                   <span class="status">
-                    {{ currentRole === 'admin' ? 'Admin' : 'Organization' }}
+                    {{ currentRole === 'admin' ? $t('Admin') : $t('Organization') }}
                   </span>
                 </div>
               </div>
