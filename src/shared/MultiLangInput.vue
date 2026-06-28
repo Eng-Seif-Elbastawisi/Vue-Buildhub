@@ -1,5 +1,6 @@
 <script setup lang="ts">
   import { ref, computed, watch } from 'vue';
+  import { useI18n } from 'vue-i18n';
 
   interface Props {
     fieldKey: string;
@@ -17,6 +18,8 @@
     placeholder: '',
     type: 'title',
   });
+
+  const { t } = useI18n();
 
   const emit = defineEmits<{
     (e: 'update:modelValue', value: Record<string, string>): void;
@@ -53,6 +56,15 @@
       });
     },
   });
+
+  const inputPlaceholder = computed(
+    () =>
+      props.placeholder ||
+      t('enter_label_in_language', {
+        label: props.label.toLowerCase(),
+        language: activeLang.value?.toUpperCase(),
+      }),
+  );
 
   const handleLangSwitch = (lang: string) => {
     activeLang.value = lang;

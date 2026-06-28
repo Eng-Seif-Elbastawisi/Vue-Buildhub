@@ -81,7 +81,7 @@
       </div>
       <router-link
         class="btn btn-primary"
-        :to="user?.type === 1 ? '/mainportal/location-city/add' : '/organization/location-city/add'"
+        :to="user?.type === 1 ? '/admin/location-city/add' : '/organization/location-city/add'"
       >
         {{ $t('location.add') }}</router-link
       >
@@ -105,7 +105,7 @@
                 class="action-btn edit"
                 :to="
                   user?.type === 1
-                    ? `/mainportal/location-city/edit/${item.id}`
+                    ? `/admin/location-city/edit/${item.id}`
                     : `/organization/location-city/edit/${item.id}`
                 "
                 :title="$t('location-city.edit')"
@@ -163,9 +163,11 @@
         <div class="empty-state">
           <h3>{{ $t('location.empty_title') }}</h3>
           <p>{{ $t('location.empty_description') }}</p>
-          <router-link class="btn btn-primary" to="/location-city/add">{{
-            $t('location-city.add')
-          }}</router-link>
+          <router-link
+            class="btn btn-primary"
+            :to="user?.type === 1 ? '/admin/location-city/add' : '/organization/location-city/add'"
+            >{{ $t('location-city.add') }}</router-link
+          >
         </div>
       </template>
 

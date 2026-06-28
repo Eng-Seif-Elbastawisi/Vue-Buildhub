@@ -49,7 +49,7 @@
 
       <div class="inputs">
         <div class="input-wrapper">
-          <label for="email">Email</label>
+          <label for="email">{{ $t('Email') }}</label>
           <input
             id="email"
             v-model="email"

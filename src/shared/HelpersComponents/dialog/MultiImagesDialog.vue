@@ -47,12 +47,12 @@
         <template #item="slotProps">
           <img
             :src="slotProps.item"
-            :alt="'image'"
+            :alt="$t('image')"
             style="width: 100%; height: 40rem; object-fit: contain"
           />
         </template>
         <template #thumbnail="slotProps">
-          <img :src="slotProps.item" :alt="'image'" style="display: block" />
+          <img :src="slotProps.item" :alt="$t('image')" style="display: block" />
         </template>
       </Galleria>
     </Dialog>

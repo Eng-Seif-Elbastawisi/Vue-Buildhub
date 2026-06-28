@@ -11,6 +11,12 @@ const organizationJson = {
   employee_password: 'secret',
   address: 'Cairo',
   name: 'Build Hub',
+  default_employee: {
+    id: 1,
+    name: 'Jane Admin',
+    email: 'jane@example.com',
+    phone: '01000000000',
+  },
 };
 
 describe('OrganizationRepository', () => {

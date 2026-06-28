@@ -54,7 +54,7 @@
       />
 
       <div class="actions" :class="{ disabled: loading }">
-        <button type="button" @click="saveEmail">Save stage</button>
+        <button type="button" @click="saveEmail">{{ $t('measurement.save') }}</button>
       </div>
 
       <!-- Error Display -->

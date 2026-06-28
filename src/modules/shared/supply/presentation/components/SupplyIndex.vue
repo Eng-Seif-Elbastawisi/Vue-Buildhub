@@ -11,6 +11,8 @@
   import SupplyController from '../controllers/supply.controller';
   import { useUserStore } from '@/stores/user';
   import DeleteDialog from '@/base/Presentation/Dialogs/MainDialogs/DeleteDialog.vue';
+  import { debounce } from '@/base/Presentation/Utils/debouced';
+  import IndexAddIcon from '@/shared/icons/IndexAddIcon.vue';
 
   const controller = SupplyController.getInstance();
   const state = computed(() => controller.listState.value);
@@ -45,6 +47,17 @@
     );
   };
 
+  const Search = debounce(() => {
+    router.push({
+      query: {
+        ...route.query,
+        page: Number(route.query.page ?? 1),
+        word: word.value || undefined,
+      },
+    });
+    fetchSupply(1, word.value);
+  });
+
   const onPageChange = (page: number) => {
     void fetchSupply(page);
     void router.push({
@@ -76,12 +89,37 @@
         <h4>{{ $t('supply.list_title') }}</h4>
         <p>{{ $t('supply.list_description') }}</p>
       </div>
-      <router-link
-        class="btn btn-primary"
-        :to="user?.isMaster ? '/supply/add' : '/organization/supply/add'"
-      >
-        {{ $t('supply.add') }}</router-link
-      >
+      <div class="toolbar">
+        <div class="search-field">
+          <span class="search-icon">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <path d="m21 21-4.35-4.35" />
+            </svg>
+          </span>
+          <input
+            v-model="word"
+            :placeholder="$t('search_suppliers')"
+            class="search-input"
+            type="text"
+            @input="Search"
+          />
+        </div>
+        <router-link
+          class="btn btn-primary"
+          :to="user?.isMaster ? '/admin/supply/add' : '/organization/supply/add'"
+        >
+          <IndexAddIcon />{{ $t('supply') }}</router-link
+        >
+      </div>
     </div>
 
     <DataStatusBuilder :controller="state" :on-retry="async () => await fetchSupply()">
@@ -103,7 +141,7 @@
                 class="action-btn edit"
                 :to="
                   user?.isMaster
-                    ? `/supply/edit/${item.id}`
+                    ? `/admin/supply/edit/${item.id}`
                     : `/organization/supply/edit/${item.id}`
                 "
                 :title="$t('supply.edit')"
@@ -170,7 +208,11 @@
         <div class="empty-state">
           <h3>{{ $t('supply.empty_title') }}</h3>
           <p>{{ $t('supply.empty_description') }}</p>
-          <router-link class="btn btn-primary" to="/supply/add">{{ $t('supply.add') }}</router-link>
+          <router-link
+            class="btn btn-primary"
+            :to="user?.isMaster ? '/admin/supply/add' : '/organization/supply/add'"
+            >{{ $t('supply.add') }}</router-link
+          >
         </div>
       </template>
 
@@ -188,6 +230,12 @@
 </template>
 
 <style scoped lang="scss">
+  .toolbar {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
+
   .supply-page,
   .supply-header,
   .row-actions {
@@ -200,7 +248,8 @@
   }
 
   .supply-header {
-    align-items: center;
+    align-items: start;
+    flex-direction: column;
     justify-content: space-between;
     gap: 1rem;
   }

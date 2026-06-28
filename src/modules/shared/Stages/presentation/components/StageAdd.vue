@@ -85,11 +85,33 @@
 
 <style scoped lang="scss">
   .email-form-card {
-    display: flex;
+    background: var(--bg-main);
+    border-radius: 24px;
+    padding: 16px;
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+    background-color: var(--color-light-gray);
+    // display: flex;
+    // align-items: end;
+    // justify-content: space-between;
+    // gap: 24px;
+
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    gap: 1rem;
     align-items: end;
-    justify-content: space-between;
-    gap: 10px;
-    padding: 20px;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.15), transparent);
+      pointer-events: none;
+    }
 
     .actions {
       padding: 0;
@@ -97,6 +119,12 @@
       .btn-save {
         border-radius: 20px;
         border: 1px solid white;
+        width: 100%;
+        padding: 11px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 600;
+        font-family: 'medium';
 
         &:hover {
           border: 1px solid var(--PrimaryColor);
@@ -111,7 +139,7 @@
 
   .email-crud-example {
     padding: 0;
-    padding-block: 20px;
+    // padding-block: 20px;
   }
 
   :deep(.input-file) {

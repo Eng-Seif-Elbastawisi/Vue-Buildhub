@@ -8,7 +8,10 @@
   }
 
   import { ref, computed } from 'vue';
+  import { useI18n } from 'vue-i18n';
   import { dialogManager } from '@/base/Presentation/Dialogs/dialog.manager';
+
+  const { t } = useI18n();
 
   const props = defineProps<{
     headers: TableHeader[];
@@ -94,7 +97,7 @@
     try {
       await navigator.clipboard.writeText(text);
 
-      dialogManager.toastSuccess('Copied to clipboard: ' + text, {
+      dialogManager.toastSuccess(t('copied_to_clipboard', { value: text }), {
         duration: 2000,
       });
     } catch (err) {
@@ -133,7 +136,7 @@
               @click="handleSort(header)"
             >
               <div class="th-content">
-                <span>{{ header.label }}</span>
+                <span>{{ $t(header.label) }}</span>
                 <span v-if="header.sortable" class="sort-icon">
                   <template v-if="sortKey === header.key">
                     {{ sortDirection === 'asc' ? '▲' : '▼' }}

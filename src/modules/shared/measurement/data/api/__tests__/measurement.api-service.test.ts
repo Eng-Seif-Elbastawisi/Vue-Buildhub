@@ -11,9 +11,9 @@ describe('MeasurementApiService', () => {
       endpoints: Record<string, string>;
     };
 
-    expect(service.endpoints.index).toContain('dashboard/index_measurements');
-    expect(service.endpoints.create).toContain('dashboard/store_measurement');
-    expect(service.endpoints.update).toContain('dashboard/update_measurement');
-    expect(service.endpoints.delete).toContain('dashboard/delete_measurement');
+    expect(service.endpoints.index).toContain('mainportal/fetch_measurement_units');
+    expect(service.endpoints.create).toContain('mainportal/store_measurement_unit');
+    expect(service.endpoints.update).toContain('mainportal/update_measurement_unit');
+    expect(service.endpoints.delete).toContain('mainportal/delete_measurement_unit');
   });
 });

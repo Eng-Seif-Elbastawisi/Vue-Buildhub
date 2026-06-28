@@ -12,6 +12,7 @@
   import AdminController from '../controllers/admin.controller';
   import { useUserStore } from '@/stores/user';
 
+  const { user } = useUserStore();
   const controller = AdminController.getInstance();
   const state = computed(() => controller.listState.value);
   const router = useRouter();
@@ -57,7 +58,6 @@
     word.value = route.query.word ? String(route.query.word) : '';
     await fetchAdmins(route.query.page ? Number(route.query.page) : 1, word.value);
   });
-  const { user } = useUserStore();
 </script>
 
 <template>
@@ -69,7 +69,7 @@
       </div>
       <router-link
         class="btn btn-primary"
-        :to="user?.isMaster ? '/admin/add' : '/organization/admin/add'"
+        :to="user?.isMaster ? '/admin/admin/add' : '/organization/admin/add'"
       >
         {{ $t('admin.add') }}
       </router-link>
@@ -79,7 +79,7 @@
       <template #success="{ data }">
         <AppTable
           :headers="headers"
-          :items="data as AdminModel[]" 
+          :items="data as AdminModel[]"
           selectable
           show-index
           hoverable
@@ -90,7 +90,9 @@
               <router-link
                 class="action-btn edit"
                 :to="
-                  user?.isMaster ? `/admin/edit/${item.id}` : `/organization/admin/edit/${item.id}`
+                  user?.isMaster
+                    ? `/admin/admin/edit/${item.id}`
+                    : `/organization/admin/edit/${item.id}`
                 "
                 :title="$t('admin.edit')"
               >
@@ -147,7 +149,11 @@
         <div class="empty-state">
           <h3>{{ $t('admin.empty_title') }}</h3>
           <p>{{ $t('admin.empty_description') }}</p>
-          <router-link class="btn btn-primary" to="/admin/add">{{ $t('admin.add') }}</router-link>
+          <router-link
+            class="btn btn-primary"
+            :to="user?.isMaster ? '/admin/admin/add' : '/organization/admin/add'"
+            >{{ $t('admin.add') }}</router-link
+          >
         </div>
       </template>
 

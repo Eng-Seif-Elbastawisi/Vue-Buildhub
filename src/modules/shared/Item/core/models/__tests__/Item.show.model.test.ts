@@ -5,7 +5,7 @@ import ItemShowModel from '../Item.show.model';
 
 const itemJson = {
   id: 7,
-  translations: [{ locale: 'en', title: 'Concrete' }],
+  title: [{ locale: 'en', title: 'Concrete' }],
   type: ItemTypeEnum.MATERIAL,
   status: ItemStatusEnum.OPTIONAL,
   stage_id: 2,

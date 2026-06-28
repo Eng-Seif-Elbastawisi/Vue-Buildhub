@@ -12,26 +12,39 @@
   import ProjectTypeController from '../controllers/project-type.controller';
   import { useUserStore } from '@/stores/user';
   import DeleteDialog from '@/base/Presentation/Dialogs/MainDialogs/DeleteDialog.vue';
+  import IndexAddIcon from '@/shared/icons/IndexAddIcon.vue';
+  import { debounce } from '@/base/Presentation/Utils/debouced';
 
   const controller = ProjectTypeController.getInstance();
   const state = computed(() => controller.listState.value);
   const route = useRoute();
   const router = useRouter();
   const perPage = ref(10);
+  const word = ref('');
   const typeNames = Object.fromEntries(Object.entries(ProjectType).map(([name, id]) => [id, name]));
   const headers: TableHeader[] = [
     { key: 'title', label: 'title', width: '90%', sortable: true },
     // { key: 'projectType', label: 'project.type', width: '35%' },
   ];
-  const fetchProjects = async (page: number = 1) =>
+  const fetchProjects = async (page: number = 1, searchWord: string = '') =>
     controller.fetchList(
       new IndexProjectTypeParams(
-        '',
+        searchWord,
         route.query.page ? Number(route.query.page) : page,
         perPage.value,
         1,
       ),
     );
+  const Search = debounce(() => {
+    router.push({
+      query: {
+        ...route.query,
+        page: Number(route.query.page ?? 1),
+        word: word.value || undefined,
+      },
+    });
+    fetchProjects(1, word.value);
+  });
   const onPageChange = (page: number) => {
     void fetchProjects(page);
     void router.push({ query: { ...route.query, page: String(page) } });
@@ -57,11 +70,36 @@
         <h4>{{ $t('project.list_title') }}</h4>
         <p>{{ $t('project.list_description') }}</p>
       </div>
-      <router-link
-        class="btn btn-primary"
-        :to="user?.isMaster ? '/admin/projectType/add' : '/organization/projectType/add'"
-        >{{ $t('project.add') }}</router-link
-      >
+      <div class="toolbar">
+        <div class="search-field">
+          <span class="search-icon">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <path d="m21 21-4.35-4.35" />
+            </svg>
+          </span>
+          <input
+            v-model="word"
+            :placeholder="$t('search_suppliers')"
+            class="search-input"
+            type="text"
+            @input="Search"
+          />
+        </div>
+        <router-link
+          class="btn btn-primary"
+          :to="user?.isMaster ? '/admin/projectType/add' : '/organization/projectType/add'"
+          ><IndexAddIcon />{{ $t('project') }}</router-link
+        >
+      </div>
     </header>
     <DataStatusBuilder
       :controller="state"
@@ -152,9 +190,11 @@
         ><div class="empty-state">
           <h3>{{ $t('project.empty_title') }}</h3>
           <p>{{ $t('project.empty_description') }}</p>
-          <router-link class="btn btn-primary" to="/project/add">{{
-            $t('project.add')
-          }}</router-link>
+          <router-link
+            class="btn btn-primary"
+            :to="user?.isMaster ? '/admin/projectType/add' : '/organization/projectType/add'"
+            >{{ $t('project.add') }}</router-link
+          >
         </div></template
       >
       <template #loader
@@ -176,10 +216,16 @@
     gap: 1.5rem;
   }
 
+  .toolbar {
+    width: 100%;
+    justify-content: space-between;
+  }
+
   .page-header,
   .row-actions {
     display: flex;
-    align-items: center;
+    align-items: start;
+    flex-direction: row;
     justify-content: space-between;
     gap: 1rem;
   }

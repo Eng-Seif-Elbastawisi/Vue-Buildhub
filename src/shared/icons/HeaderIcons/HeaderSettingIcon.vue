@@ -1,11 +1,5 @@
 <template>
-  <svg
-    width="42"
-    height="42"
-    viewBox="0 0 42 42"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width="42" height="42" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       d="M21 0.25C32.4599 0.25 41.75 9.54009 41.75 21C41.75 32.4599 32.4599 41.75 21 41.75C9.54009 41.75 0.25 32.4599 0.25 21C0.25 9.54009 9.54009 0.25 21 0.25Z"
       fill="url(#paint0_linear_825_9175)"
@@ -28,7 +22,7 @@
         y2="40"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#18A957" stop-opacity="0.14" />
+        <stop stop-color="#c47a35" stop-opacity="0.14" />
         <stop offset="0.5" stop-color="white" stop-opacity="0.35" />
       </linearGradient>
     </defs>

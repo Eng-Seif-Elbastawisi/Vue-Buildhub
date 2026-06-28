@@ -83,7 +83,7 @@
         class="btn btn-primary"
         :to="
           user?.type === 1
-            ? '/mainportal/location-governorate/add'
+            ? '/admin/location-governorate/add'
             : '/organization/location-governorate/add'
         "
       >
@@ -109,7 +109,7 @@
                 class="action-btn edit"
                 :to="
                   user?.type === 1
-                    ? `/mainportal/location-governorate/edit/${item.id}`
+                    ? `/admin/location-governorate/edit/${item.id}`
                     : `/organization/location-governorate/edit/${item.id}`
                 "
                 :title="$t('location-governorate.edit')"
@@ -167,9 +167,15 @@
         <div class="empty-state">
           <h3>{{ $t('location.empty_title') }}</h3>
           <p>{{ $t('location.empty_description') }}</p>
-          <router-link class="btn btn-primary" to="/location/add">{{
-            $t('location.add')
-          }}</router-link>
+          <router-link
+            class="btn btn-primary"
+            :to="
+              user?.type === 1
+                ? '/admin/location-governorate/add'
+                : '/organization/location-governorate/add'
+            "
+            >{{ $t('location.add') }}</router-link
+          >
         </div>
       </template>
 

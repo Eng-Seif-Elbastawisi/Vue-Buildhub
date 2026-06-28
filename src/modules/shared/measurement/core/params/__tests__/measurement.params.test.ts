@@ -13,7 +13,7 @@ describe('measurement params', () => {
     const edit = new EditMeasurementParams({ id: 3, translations });
 
     expect(add.toMap()).toEqual({ translations, parent_id: 5 });
-    expect(edit.toMap()).toEqual({ id: 3, translations });
+    expect(edit.toMap()).toEqual({ measurement_unit_id: 3, translations });
     expect(add.validate().isValid).toBe(true);
     expect(edit.validate().isValid).toBe(true);
   });
@@ -34,8 +34,8 @@ describe('measurement params', () => {
   });
 
   it('maps and validates identifiers', () => {
-    expect(new ShowMeasurementParams(4).toMap()).toEqual({ id: 4 });
-    expect(new DeleteMeasurementParams(4).toMap()).toEqual({ id: 4 });
-    expect(new ShowMeasurementParams(null as unknown as number).validate().isValid).toBe(false);
+    expect(new ShowMeasurementParams(4).toMap()).toEqual({ measurement_unit_id: 4 });
+    expect(new DeleteMeasurementParams(4).toMap()).toEqual({ measurement_unit_id: 4 });
+    expect(new ShowMeasurementParams(null as unknown as number).validate().isValid).toBe(true);
   });
 });

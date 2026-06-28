@@ -26,7 +26,7 @@
     },
     buttonText: {
       type: String,
-      default: 'Export Excel',
+      default: 'export_excel',
     },
     buttonClass: {
       type: String,
@@ -250,7 +250,7 @@
 
 <template>
   <button class="btn btn-secondary ms-2" type="button" @click="handleExport">
-    Export Excel <SaveIcon />
+    {{ $t(buttonText) }} <SaveIcon />
   </button>
 </template>
 

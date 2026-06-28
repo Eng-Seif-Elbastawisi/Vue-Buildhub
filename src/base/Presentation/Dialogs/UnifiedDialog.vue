@@ -218,7 +218,7 @@
               <button
                 v-if="showCloseButton"
                 class="dialog-close"
-                aria-label="Close dialog"
+                :aria-label="$t('close_dialog')"
                 @click="handleClose"
               >
                 ×
@@ -226,7 +226,7 @@
 
               <!-- Image -->
               <div v-if="dialogImage" class="dialog-image-container">
-                <img :src="dialogImage" alt="Dialog Image" class="dialog-image" />
+                <img :src="dialogImage" :alt="$t('dialog_image')" class="dialog-image" />
               </div>
 
               <!-- Icon -->
@@ -275,10 +275,10 @@
               <!-- Default Confirm Actions for confirm type -->
               <div v-else-if="currentDialog.type === 'confirm'" class="dialog-actions">
                 <button class="dialog-action dialog-action-secondary" @click="handleClose">
-                  Cancel
+                  {{ $t('cancel') }}
                 </button>
                 <button class="dialog-action dialog-action-primary" @click="handleConfirm">
-                  Confirm
+                  {{ $t('confirm') }}
                 </button>
               </div>
             </template>

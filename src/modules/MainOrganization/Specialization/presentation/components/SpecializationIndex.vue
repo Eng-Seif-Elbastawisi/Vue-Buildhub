@@ -11,20 +11,23 @@
   import SpecializationController from '../controllers/specialization.controller';
   import { useUserStore } from '@/stores/user';
   import DeleteDialog from '@/base/Presentation/Dialogs/MainDialogs/DeleteDialog.vue';
+  import { debounce } from '@/base/Presentation/Utils/debouced';
+  import IndexAddIcon from '@/shared/icons/IndexAddIcon.vue';
 
   const controller = SpecializationController.getInstance();
   const state = computed(() => controller.listState.value);
   const route = useRoute();
   const router = useRouter();
   const perPage = ref(10);
+  const word = ref('');
   const headers: TableHeader[] = [
     { key: 'title', label: 'title', width: '90%', sortable: true },
     // { key: 'Specialization', label: 'project.type', width: '35%' },
   ];
-  const fetchSpecializations = async (page: number = 1) =>
+  const fetchSpecializations = async (page: number = 1, searchWord: string = '') =>
     controller.fetchList(
       new IndexSpecializationParams(
-        '',
+        searchWord,
         route.query.page ? Number(route.query.page) : page,
         perPage.value,
         1,
@@ -32,8 +35,21 @@
     );
   const onPageChange = (page: number) => {
     void fetchSpecializations(page);
-    void router.push({ query: { ...route.query, page: String(page) } });
+    void router.push({
+      query: { ...route.query, page: String(page), word: word.value || undefined },
+    });
   };
+  const Search = debounce(() => {
+    router.push({
+      query: {
+        ...route.query,
+        page: Number(route.query.page ?? 1),
+        word: word.value || undefined,
+      },
+    });
+
+    fetchSpecializations(1, word.value);
+  });
   const onPerPageChange = (count: number) => {
     perPage.value = count;
     void fetchSpecializations(1);
@@ -43,6 +59,7 @@
     await fetchSpecializations();
   };
   onMounted(async () => {
+    word.value = route.query.word ? String(route.query.word) : '';
     await fetchSpecializations();
   });
   const { user } = useUserStore();
@@ -55,11 +72,40 @@
         <h4>{{ $t('Specialization.list_title') }}</h4>
         <p>{{ $t('Specialization.list_description') }}</p>
       </div>
-      <router-link
-        class="btn btn-primary"
-        :to="user?.isMaster ? '/admin/Specialization/add' : '/organization/Specialization/add'"
-        >{{ $t('Specialization.add') }}</router-link
-      >
+      <div class="toolbar">
+        <div class="search-field">
+          <span class="search-icon">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <path d="m21 21-4.35-4.35" />
+            </svg>
+          </span>
+          <input
+            v-model="word"
+            :placeholder="$t('search_by_country_name_or_code')"
+            class="search-input"
+            type="text"
+            @input="Search"
+          />
+        </div>
+        <router-link
+          class="btn btn-primary"
+          :to="
+            user?.type === 1
+              ? '/organization/specialization/add'
+              : '/organization/specialization/add'
+          "
+          ><IndexAddIcon />{{ $t('Specialization') }}</router-link
+        >
+      </div>
     </header>
     <DataStatusBuilder
       :controller="state"
@@ -78,14 +124,14 @@
           hoverable
           striped
         >
-          <template #actions="{ item }"
-            ><div class="row-actions">
+          <template #actions="{ item }">
+            <div class="row-actions">
               <router-link
                 class="action-btn edit"
                 :to="
-                  user?.isMaster
-                    ? `/admin/Specialization/edit/${item.id}`
-                    : `/organization/Specialization/edit/${item.id}`
+                  user?.type === 1
+                    ? `/organization/specialization/edit/${item.id}`
+                    : `/organization/specialization/edit/${item.id}`
                 "
               >
                 <svg
@@ -109,7 +155,7 @@
                 @delete="deleteSpecialization(item.id!)"
               >
                 <template #btn>
-                  <button class="action-btn delete" title="Delete">
+                  <button class="action-btn delete" :title="$t('Delete')">
                     <svg
                       width="15"
                       height="15"
@@ -134,8 +180,8 @@
                 @delete="deleteProject(item.id!)"
                 ><template #btn><IndexDelete /></template
               ></DeleteDialog> -->
-            </div></template
-          >
+            </div>
+          </template>
         </AppTable>
         <Pagination
           :pagination="controller.pagination.value"
@@ -143,23 +189,30 @@
           @count-per-page="onPerPageChange"
         />
       </template>
-      <template #empty
-        ><div class="empty-state">
+      <template #empty>
+        <div class="empty-state">
           <h3>{{ $t('Specialization.empty_title') }}</h3>
           <p>{{ $t('Specialization.empty_description') }}</p>
-          <router-link class="btn btn-primary" to="/Specialization/add">{{
-            $t('Specialization.add')
-          }}</router-link>
-        </div></template
-      >
-      <template #loader
-        ><TableSkelaton
+          <router-link
+            class="btn btn-primary"
+            :to="
+              user?.type === 1
+                ? '/organization/specialization/add'
+                : '/organization/specialization/add'
+            "
+            ><IndexAddIcon />{{ $t('Specialization.add') }}</router-link
+          >
+        </div>
+      </template>
+      <template #loader>
+        <TableSkelaton
           :rows="5"
           :columns="headers.length"
           :has-actions="true"
           :show-index="true"
           :selectable="true"
-      /></template>
+        />
+      </template>
     </DataStatusBuilder>
   </div>
 </template>
@@ -171,11 +224,25 @@
     gap: 1.5rem;
   }
 
+  .toolbar {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
   .page-header,
   .row-actions {
     display: flex;
-    align-items: center;
+    flex-direction: row;
     justify-content: space-between;
+    align-items: start;
     gap: 1rem;
   }
 

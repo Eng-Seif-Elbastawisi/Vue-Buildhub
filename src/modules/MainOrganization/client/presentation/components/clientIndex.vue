@@ -11,6 +11,8 @@
   import ClientController from '../controllers/client.controller';
   import { useUserStore } from '@/stores/user';
   import type ClientShowModel from '../../core/models/client.show.model';
+  import IndexAddIcon from '@/shared/icons/IndexAddIcon.vue';
+  import { debounce } from '@/base/Presentation/Utils/debouced';
 
   const controller = ClientController.getInstance();
   const state = computed(() => controller.listState.value);
@@ -41,7 +43,16 @@
       ),
     );
   };
-
+  const Search = debounce(() => {
+    router.push({
+      query: {
+        ...route.query,
+        page: Number(route.query.page ?? 1),
+        word: word.value || undefined,
+      },
+    });
+    fetchClient(1, word.value);
+  });
   const onPageChange = (page: number) => {
     void fetchClient(page);
     void router.push({
@@ -73,12 +84,37 @@
         <h4>{{ $t('client.list_title') }}</h4>
         <p>{{ $t('client.list_description') }}</p>
       </div>
-      <router-link
-        class="btn btn-primary"
-        :to="user?.isMaster ? '/client/add' : '/organization/client/add'"
-      >
-        {{ $t('client.add') }}</router-link
-      >
+      <div class="toolbar">
+        <div class="search-field">
+          <span class="search-icon">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <path d="m21 21-4.35-4.35" />
+            </svg>
+          </span>
+          <input
+            v-model="word"
+            :placeholder="$t('search_suppliers')"
+            class="search-input"
+            type="text"
+            @input="Search"
+          />
+        </div>
+        <router-link
+          class="btn btn-primary"
+          :to="user?.isMaster ? '/client/add' : '/organization/client/add'"
+        >
+          <IndexAddIcon /> {{ $t('client') }}</router-link
+        >
+      </div>
     </div>
 
     <DataStatusBuilder :controller="state" :on-retry="async () => await fetchClient()">
@@ -169,7 +205,9 @@
         <div class="empty-state">
           <h3>{{ $t('client.empty_title') }}</h3>
           <p>{{ $t('client.empty_description') }}</p>
-          <router-link class="btn btn-primary" to="/client/add">{{ $t('client.add') }}</router-link>
+          <router-link class="btn btn-primary" to="/organization/client/add">{{
+            $t('client.add')
+          }}</router-link>
         </div>
       </template>
 
@@ -187,6 +225,11 @@
 </template>
 
 <style scoped lang="scss">
+  .toolbar {
+    width: 100%;
+    justify-content: space-between;
+  }
+
   .material-page,
   .material-header,
   .row-actions {

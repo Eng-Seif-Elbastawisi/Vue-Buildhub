@@ -23,7 +23,8 @@
 <template>
   <div v-if="pagination?.last > 1" class="pagination-wrapper">
     <span class="show-results">
-      show {{ pagination?.current }} to {{ pagination?.next }} of
+      {{ $t('show') }} {{ pagination?.current }} {{ $t('to') }} {{ pagination?.next }}
+      {{ $t('of') }}
       {{ pagination?.total }}
     </span>
 
@@ -32,7 +33,7 @@
         class="pagination-btn"
         @click="emit('changePage', pagination?.current! > 1 ? pagination?.current! - 1 : 1)"
       >
-        Prev
+        {{ $t('prev') }}
       </button>
       <span
         v-for="item in numberOfPages.slice(
@@ -54,12 +55,12 @@
           )
         "
       >
-        Next
+        {{ $t('next') }}
       </button>
     </div>
 
     <div class="count-per-page">
-      <span> Show </span>
+      <span>{{ $t('show') }}</span>
       <button class="pagination-btn" @click="toggle">
         {{ pagination?.count }} <span><IconArrowDown /></span>
       </button>
@@ -70,7 +71,7 @@
           <span @click="emit('countPerPage', 30)">30</span>
         </div>
       </Popover>
-      <span> per page </span>
+      <span>{{ $t('per_page') }}</span>
     </div>
   </div>
 </template>

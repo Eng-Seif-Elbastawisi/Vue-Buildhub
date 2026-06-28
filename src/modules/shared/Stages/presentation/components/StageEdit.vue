@@ -50,7 +50,7 @@
       <StageForm :stage="controller.itemData.value!" :loading="loading" @update-data="updateData" />
 
       <div class="actions" :class="{ disabled: loading }">
-        <button type="button" @click="saveEmail">Save stage</button>
+        <button type="button" @click="saveEmail">{{ $t('stage.save') }}</button>
       </div>
 
       <!-- Error Display -->

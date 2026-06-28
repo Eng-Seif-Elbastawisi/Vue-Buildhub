@@ -7,7 +7,6 @@
   import { debounce } from '@/base/Presentation/Utils/debouced';
   import EditIcon from '@/shared/icons/EditIcon.vue';
   import DeleteDialog from '@/base/Presentation/Dialogs/MainDialogs/DeleteDialog.vue';
-  import type DepartmentModel from '@/modules/shared/Department/core/models/department.model';
   import TermController from '../controllers/term.controller';
   import IndexTermParams from '../../core/params/index.term.params';
   import type TermModel from '../../core/models/term.model';
@@ -122,7 +121,7 @@
           </span>
           <input
             v-model="word"
-            placeholder="Search by country name or code…"
+            :placeholder="$t('search_by_country_name_or_code')"
             class="search-input"
             type="text"
             @input="Search"
@@ -131,7 +130,7 @@
       </div>
       <div class="flex gap-10">
         <button v-if="SelectedRow.length > 0" class="btn-add" @click="deleteSelected">
-          <span>delete</span>
+          <span>{{ $t('delete') }}</span>
         </button>
       </div>
     </div>
@@ -143,7 +142,7 @@
         <div class="table-frame">
           <AppTable
             :headers="headers"
-            :items="data as DepartmentModel[]"
+            :items="data as TermModel[]"
             selectable
             show-index
             hoverable
@@ -156,7 +155,7 @@
 
             <template #actions="{ item }">
               <div class="row-actions">
-                <button class="action-btn edit" title="Edit" @click="ShowTerm(item.id!)">
+                <button class="action-btn edit" :title="$t('Edit')" @click="ShowTerm(item.id!)">
                   <EditIcon />
                 </button>
                 <DeleteDialog
@@ -166,7 +165,7 @@
                   @delete="deleteTerm(item.id!)"
                 >
                   <template #btn>
-                    <button class="action-btn delete" title="Delete">
+                    <button class="action-btn delete" :title="$t('Delete')">
                       <svg
                         width="15"
                         height="15"
@@ -210,8 +209,8 @@
             <rect x="2" y="4" width="20" height="16" rx="2" />
             <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
           </svg>
-          <h3>No terms yet</h3>
-          <p>Add the first term to get started</p>
+          <h3>{{ $t('term.empty_title') }}</h3>
+          <p>{{ $t('term.empty_description') }}</p>
           <!-- <router-link :to="formRoute" class="btn-add empty-cta">
             <svg
               width="18"
@@ -224,7 +223,7 @@
             >
               <path d="M12 5v14M5 12h14" />
             </svg>
-            <span>Add Email</span>
+            <span>{{ $t('term.add') }}</span>
           </router-link> -->
         </div>
       </template>

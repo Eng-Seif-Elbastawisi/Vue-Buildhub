@@ -53,7 +53,7 @@ describe('UserModel', () => {
         employee_id: 42,
         created_at: '2024-02-01',
         updated_at: '2024-07-01',
-        api_token: 'jwt-token',
+        token: 'jwt-token',
         refresh_token: 'ref-token',
       };
       const model = UserModel.fromJson(json);

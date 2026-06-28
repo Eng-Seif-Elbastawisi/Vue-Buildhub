@@ -25,7 +25,7 @@
   <div class="Specialization-crud-page">
     <SpecializationForm :loading="loading" @update-data="params = $event" />
     <button class="btn btn-primary" type="button" :disabled="loading" @click="saveSpecialization">
-      {{ $t('Specialization.save') }}
+      {{ $t('save') }}
     </button>
     <div v-if="controller.errorMessage.value" class="error">
       {{ controller.errorMessage.value }}

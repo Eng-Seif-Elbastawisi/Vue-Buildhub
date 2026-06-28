@@ -5,7 +5,7 @@
   background-color: white;
 }
 
-.location-page {
+.item-page {
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -43,10 +43,16 @@
     }
   }
 
-  .location-header {
+  .toolbar {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .item-header {
     @include flex-row(nowrap, space-between, center);
 
     width: 100%;
+    margin: $XsSize 0;
 
     .btns {
       @include flex-row(nowrap, stretch, center);

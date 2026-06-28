@@ -42,8 +42,8 @@
 </script>
 
 <template>
-  <div class="form-fields">
-    <!-- <div class="field-group" :class="{ disabled: loading }">
+  <!-- <div class="form-fields"> -->
+  <!-- <div class="field-group" :class="{ disabled: loading }">
       <label class="field-label" for="title"> {{ $t('stage_title') }} </label> 
       <div class="input-wrap">
         <input
@@ -56,22 +56,24 @@
         />
       </div>
     </div> -->
-    <div class="field-group" :class="{ disabled: loading }">
-      <MultiLangInput
-        v-model="translations"
-        field-key="title"
-        :label="$t('measurement_title')"
-        :languages="['en', 'ar']"
-        type="title"
-        @update:model-value="updateData"
-      />
-    </div>
+  <div class="field-group" :class="{ disabled: loading }">
+    <MultiLangInput
+      v-model="translations"
+      field-key="title"
+      :label="$t('measurement_title')"
+      :languages="['en', 'ar']"
+      type="title"
+      @update:model-value="updateData"
+    />
   </div>
+  <!-- </div> -->
 </template>
 
 <style scoped lang="scss">
   .form-fields {
-    padding: 20px;
+    padding: 0;
+    display: block;
+    width: 100%;
 
     .field-group {
       &.disabled {

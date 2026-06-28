@@ -45,8 +45,8 @@
 </script>
 
 <template>
-  <div class="form-fields">
-    <!-- <div class="field-group" :class="{ disabled: loading }">
+  <!-- <div class="form-fields"> -->
+  <!-- <div class="field-group" :class="{ disabled: loading }">
       <label class="field-label" for="title"> {{ $t('stage_title') }} </label> 
       <div class="input-wrap">
         <input
@@ -59,43 +59,21 @@
         />
       </div>
     </div> -->
-    <div class="field-group" :class="{ disabled: loading }">
-      <MultiLangInput
-        v-model="translations"
-        field-key="title"
-        :label="$t('client_source_title')"
-        :languages="['en', 'ar']"
-        type="title"
-        @update:model-value="updateData"
-      />
-    </div>
+  <div class="field-group" :class="{ disabled: loading }">
+    <MultiLangInput
+      v-model="translations"
+      field-key="title"
+      :label="$t('client_source_title')"
+      :languages="['en', 'ar']"
+      type="title"
+      @update:model-value="updateData"
+    />
   </div>
+  <!-- </div> -->
 </template>
 
 <style scoped lang="scss">
   .form-fields {
-    padding: 20px;
-    width: 100%;
-    background: var(--bg-main);
-    border-radius: var(--radius-xl);
-    border: 1px solid var(--border-strong);
-    box-shadow:
-      0 1px 3px rgba(0, 0, 0, 0.04),
-      0 8px 32px rgba(0, 0, 0, 0.04);
-    overflow: hidden;
-    position: relative;
-
-    &::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.15), transparent);
-      pointer-events: none;
-    }
-
     .field-group {
       width: 50%;
 
