@@ -13,4 +13,17 @@ describe('sidebarSections', () => {
     );
     expect(sidebarSections.flatMap((section) => section.items).length).toBeGreaterThan(0);
   });
+
+  it('includes the organization system identity page in config', () => {
+    const systemIdentityItem = sidebarSections
+      .flatMap((section) => section.items)
+      .find((item) => item.path === '/system-identity');
+
+    expect(systemIdentityItem).toEqual(
+      expect.objectContaining({
+        labelKey: 'system_identity.title',
+        roles: ['organization'],
+      }),
+    );
+  });
 });

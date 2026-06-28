@@ -4,9 +4,11 @@ import { SuppliersRoutes } from './Suppliers';
 import { ClientRoutes } from './client';
 import { EmployeeRoutes } from './employee';
 import { SpecializationRoutes } from './specialization';
+import { SystemIdentityRoutes } from './systemIdentity';
 
 export const dashboardRoutes: RouteRecordRaw[] = [
   // ...countryRoutes,
+  ...SystemIdentityRoutes,
   ...SuppliersRoutes,
   ...ClientRoutes,
   ...EmployeeRoutes,

@@ -18,11 +18,11 @@
   const { user } = useUserStore();
 
   const currentRole = computed(() => {
-    return user?.isMaster || Number(user?.type) === 1 ? 'admin' : 'organization';
+    return user?.type == 1 ? 'mainportal' : 'organization';
   });
 
   const logout = () => {
-    const loginPath = currentRole.value === 'admin' ? '/login-admin' : '/login-organization';
+    const loginPath = currentRole.value === 'mainportal' ? '/login-admin' : '/login-organization';
 
     userStore.logout();
     router.push(loginPath);
