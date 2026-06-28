@@ -76,6 +76,12 @@ export const sidebarSections: SidebarSectionConfig[] = [
         icon: EducationClassificationIcon,
         roles: ['organization'],
       },
+      {
+        path: '/system-identity',
+        labelKey: 'system_identity.title',
+        icon: EducationClassificationIcon,
+        roles: ['organization'],
+      },
     ],
   },
   {

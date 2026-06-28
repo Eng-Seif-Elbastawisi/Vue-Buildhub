@@ -21,9 +21,9 @@
   // const date = ref();
 
   const headers: TableHeader[] = [
-    { key: 'name', label: 'Name', width: '40%', sortable: true },
+    { key: 'name', label: 'Name', width: '50%', sortable: true },
     // { key: 'Specialization', label: 'Specialization', width: '30%' },
-    { key: 'phone', label: 'Phone', width: '40%' },
+    { key: 'phone', label: 'Phone', width: '50%' },
     // { key: 'materials', label: 'Materials', width: '20%' },
   ];
 
