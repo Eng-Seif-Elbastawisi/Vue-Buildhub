@@ -595,5 +595,13 @@
   "Material": "Material",
   "employee.add": "Add employee",
   "location-governorate.add": "Add governorate",
-  "location-city.add": "Add city"
+  "location-city.add": "Add city",
+  "main_sidebar": "Main sidebar",
+  "sidebar_groups": "Sidebar groups",
+  "main_navigation": "Main navigation",
+  "collapse_sidebar": "Collapse sidebar",
+  "expand_sidebar": "Expand sidebar",
+  "Employee": "Employee",
+  "open_sidebar": "Open sidebar",
+  "close_sidebar": "Close sidebar"
 }

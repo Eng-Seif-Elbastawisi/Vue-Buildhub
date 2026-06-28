@@ -595,5 +595,13 @@
   "Material": "المادة",
   "employee.add": "إضافة موظف",
   "location-governorate.add": "إضافة محافظة",
-  "location-city.add": "إضافة مدينة"
+  "location-city.add": "إضافة مدينة",
+  "main_sidebar": "الشريط الجانبي الرئيسي",
+  "sidebar_groups": "مجموعات الشريط الجانبي",
+  "main_navigation": "التنقل الرئيسي",
+  "collapse_sidebar": "طي الشريط الجانبي",
+  "expand_sidebar": "توسيع الشريط الجانبي",
+  "Employee": "الموظف",
+  "open_sidebar": "فتح الشريط الجانبي",
+  "close_sidebar": "إغلاق الشريط الجانبي"
 }

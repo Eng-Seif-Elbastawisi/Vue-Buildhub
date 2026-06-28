@@ -2951,8 +2951,9 @@ body::-webkit-scrollbar-thumb:hover {
   }
 }
 .content .content-wrapper {
-  width: 100%;
+  width: 95%;
   margin-inline: auto;
+  padding-left: 2rem;
   display: flex;
   flex-direction: column;
   flex-wrap: nowrap;
