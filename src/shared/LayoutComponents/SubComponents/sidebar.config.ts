@@ -70,6 +70,12 @@ export const sidebarSections: SidebarSectionConfig[] = [
         icon: EducationClassificationIcon,
         roles: ['organization'],
       },
+      {
+        path: '/project',
+        labelKey: 'Project',
+        icon: EducationClassificationIcon,
+        roles: ['organization'],
+      },
     ],
   },
   {
