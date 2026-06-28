@@ -22,7 +22,7 @@ describe('sidebarSections', () => {
     expect(systemIdentityItem).toEqual(
       expect.objectContaining({
         labelKey: 'system_identity.title',
-        roles: ['organization'],
+        roles: ['organization', 'admin'],
       }),
     );
   });

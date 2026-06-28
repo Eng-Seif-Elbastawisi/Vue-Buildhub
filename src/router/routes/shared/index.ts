@@ -14,6 +14,7 @@ import { ClientSourceRoutes } from './clientsource';
 import { supplyRoutes } from './supply';
 import { LocationGovernorateRoutes } from './location_governorate';
 import { LocationCityRoutes } from './location_city';
+import { SystemIdentityRoutes } from './systemIdentity';
 
 export const sharedRoutes: RouteRecordRaw[] = [
   ...organizationRoutes,
@@ -31,4 +32,5 @@ export const sharedRoutes: RouteRecordRaw[] = [
   ...ClientSourceRoutes,
   ...LocationGovernorateRoutes,
   ...LocationCityRoutes,
+  ...SystemIdentityRoutes,
 ];

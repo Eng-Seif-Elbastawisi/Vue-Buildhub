@@ -112,6 +112,10 @@
     color: var(--PrimaryColor);
     background: var(--BgWhite);
     cursor: pointer;
+
+    svg {
+      fill: var(--PrimaryColor);
+    }
   }
 
   @media (max-width: 1023px) {

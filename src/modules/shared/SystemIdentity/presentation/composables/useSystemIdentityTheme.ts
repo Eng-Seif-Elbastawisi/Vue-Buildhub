@@ -1,30 +1,36 @@
 import { computed, ref } from 'vue';
 
-export interface SystemPalette {
+export interface SystemIdentityPalette {
   name: string;
   primary: string;
   secondary: string;
   accent: string;
 }
 
+export interface SystemIdentitySetting {
+  name?: string | null;
+  primary_color?: string | null;
+  secondary_color?: string | null;
+  accent_color?: string | null;
+  third_color?: string | null;
+}
+
 interface ColorBucket {
   color: string;
   count: number;
-  luma: number;
-  saturation: number;
 }
 
 const STORAGE_KEY = 'systemIdentityPalette';
 const MAX_EXTRACTED_COLORS = 8;
 
-const defaultPalette: SystemPalette = {
+const defaultPalette: SystemIdentityPalette = {
   name: 'BuildHub Copper',
   primary: '#B87333',
   secondary: '#101418',
   accent: '#C47A35',
 };
 
-const suggestedPalettes: SystemPalette[] = [
+const suggestedPalettes: SystemIdentityPalette[] = [
   defaultPalette,
   {
     name: 'Executive Slate',
@@ -46,7 +52,7 @@ const suggestedPalettes: SystemPalette[] = [
   },
 ];
 
-const currentPalette = ref<SystemPalette>({ ...defaultPalette });
+const currentPalette = ref<SystemIdentityPalette>({ ...defaultPalette });
 const extractedColors = ref<string[]>([]);
 
 const isBrowser = () => typeof window !== 'undefined' && typeof document !== 'undefined';
@@ -68,8 +74,7 @@ const normalizeHex = (color: string) => {
 };
 
 const hexToRgb = (color: string) => {
-  const normalized = normalizeHex(color).replace('#', '');
-  const value = Number.parseInt(normalized, 16);
+  const value = Number.parseInt(normalizeHex(color).replace('#', ''), 16);
 
   return {
     red: (value >> 16) & 255,
@@ -92,9 +97,7 @@ const getSaturation = (red: number, green: number, blue: number) => {
   const max = Math.max(red, green, blue);
   const min = Math.min(red, green, blue);
 
-  if (max === 0) return 0;
-
-  return (max - min) / max;
+  return max === 0 ? 0 : (max - min) / max;
 };
 
 const getReadableTextColor = (background: string) => {
@@ -116,34 +119,32 @@ const getColorDistance = (first: string, second: string) => {
 
 const bucketColor = (red: number, green: number, blue: number) => {
   const bucketSize = 24;
-  const bucketedRed = Math.round(red / bucketSize) * bucketSize;
-  const bucketedGreen = Math.round(green / bucketSize) * bucketSize;
-  const bucketedBlue = Math.round(blue / bucketSize) * bucketSize;
   const toHex = (value: number) => Math.min(255, value).toString(16).padStart(2, '0');
 
-  return `#${toHex(bucketedRed)}${toHex(bucketedGreen)}${toHex(bucketedBlue)}`.toUpperCase();
+  return `#${toHex(Math.round(red / bucketSize) * bucketSize)}${toHex(
+    Math.round(green / bucketSize) * bucketSize,
+  )}${toHex(Math.round(blue / bucketSize) * bucketSize)}`.toUpperCase();
 };
 
-const sanitizePalette = (palette: SystemPalette): SystemPalette => ({
+const sanitizePalette = (palette: SystemIdentityPalette): SystemIdentityPalette => ({
   name: palette.name || defaultPalette.name,
   primary: normalizeHex(palette.primary),
   secondary: normalizeHex(palette.secondary),
   accent: normalizeHex(palette.accent),
 });
 
-const savePalette = (palette: SystemPalette) => {
+const savePalette = (palette: SystemIdentityPalette) => {
   if (!isBrowser()) return;
 
   window.localStorage.setItem(STORAGE_KEY, JSON.stringify(sanitizePalette(palette)));
 };
 
-const setCssVariables = (palette: SystemPalette) => {
+const setCssVariables = (palette: SystemIdentityPalette) => {
   if (!isBrowser()) return;
 
   const normalized = sanitizePalette(palette);
   const root = document.documentElement;
   const primaryText = getReadableTextColor(normalized.primary);
-
   const variables: Record<string, string> = {
     '--brand-primary': normalized.primary,
     '--brand-secondary': normalized.secondary,
@@ -183,7 +184,7 @@ const setCssVariables = (palette: SystemPalette) => {
   });
 };
 
-const applyPalette = (palette: SystemPalette) => {
+const applyPalette = (palette: SystemIdentityPalette) => {
   const normalized = sanitizePalette(palette);
 
   currentPalette.value = normalized;
@@ -193,6 +194,26 @@ const applyPalette = (palette: SystemPalette) => {
 
 const resetPalette = () => {
   applyPalette(defaultPalette);
+};
+
+const clearSavedPalette = () => {
+  currentPalette.value = { ...defaultPalette };
+  setCssVariables(defaultPalette);
+
+  if (!isBrowser()) return;
+
+  window.localStorage.removeItem(STORAGE_KEY);
+};
+
+const applySettingTheme = (setting?: SystemIdentitySetting | null) => {
+  if (!setting?.primary_color || !setting.secondary_color) return;
+
+  applyPalette({
+    name: setting.name ?? defaultPalette.name,
+    primary: setting.primary_color,
+    secondary: setting.secondary_color,
+    accent: setting.accent_color ?? setting.third_color ?? defaultPalette.accent,
+  });
 };
 
 const loadSavedPalette = () => {
@@ -209,7 +230,7 @@ const loadSavedPalette = () => {
   }
 
   try {
-    const parsedPalette = sanitizePalette(JSON.parse(savedPalette) as SystemPalette);
+    const parsedPalette = sanitizePalette(JSON.parse(savedPalette) as SystemIdentityPalette);
     currentPalette.value = parsedPalette;
     setCssVariables(parsedPalette);
     return parsedPalette;
@@ -219,8 +240,8 @@ const loadSavedPalette = () => {
   }
 };
 
-const pickPaletteFromExtractedColors = (colors: string[]): SystemPalette => {
-  const buckets = colors.map((color) => {
+const pickPaletteFromExtractedColors = (colors: string[]): SystemIdentityPalette => {
+  const rankedColors = colors.map((color) => {
     const { red, green, blue } = hexToRgb(color);
 
     return {
@@ -229,12 +250,11 @@ const pickPaletteFromExtractedColors = (colors: string[]): SystemPalette => {
       saturation: getSaturation(red, green, blue),
     };
   });
-  const sortedByStrength = [...buckets].sort((first, second) => {
-    return second.saturation + second.luma - (first.saturation + first.luma);
-  });
-  const primary = sortedByStrength.find((color) => color.luma > 0.22 && color.luma < 0.78)?.color;
-  const secondary = [...buckets].sort((first, second) => first.luma - second.luma)[0]?.color;
-  const accent = [...buckets].sort((first, second) => second.luma - first.luma)[0]?.color;
+  const primary = [...rankedColors]
+    .sort((first, second) => second.saturation + second.luma - (first.saturation + first.luma))
+    .find((color) => color.luma > 0.22 && color.luma < 0.78)?.color;
+  const secondary = [...rankedColors].sort((first, second) => first.luma - second.luma)[0]?.color;
+  const accent = [...rankedColors].sort((first, second) => second.luma - first.luma)[0]?.color;
 
   return sanitizePalette({
     name: 'Detected From Logo',
@@ -288,7 +308,7 @@ const extractColorsFromImage = async (file: File) => {
       if (bucket) {
         bucket.count += 1;
       } else {
-        buckets.set(color, { color, count: 1, luma, saturation });
+        buckets.set(color, { color, count: 1 });
       }
     }
 
@@ -313,7 +333,7 @@ const extractColorsFromImage = async (file: File) => {
   }
 };
 
-export const useSystemIdentity = () => {
+export const useSystemIdentityTheme = () => {
   const detectedPalette = computed(() => pickPaletteFromExtractedColors(extractedColors.value));
 
   return {
@@ -324,6 +344,8 @@ export const useSystemIdentity = () => {
     detectedPalette,
     applyPalette,
     resetPalette,
+    clearSavedPalette,
+    applySettingTheme,
     loadSavedPalette,
     savePalette,
     extractColorsFromImage,

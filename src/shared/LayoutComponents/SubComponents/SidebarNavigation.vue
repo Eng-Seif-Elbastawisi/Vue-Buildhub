@@ -236,7 +236,7 @@
 
 <style scoped lang="scss">
   .sidebar-shell {
-    --sidebar-shell-bg: var(--gray-950);
+    --sidebar-shell-bg: var(--SecondaryColor);
     --sidebar-pane-bg: var(--BgWhite);
     --sidebar-pane-border: var(--border-weak);
     --sidebar-text: var(--gray-700);
