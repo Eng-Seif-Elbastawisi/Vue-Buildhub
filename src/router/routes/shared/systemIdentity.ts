@@ -4,7 +4,7 @@ export const SystemIdentityRoutes: RouteRecordRaw[] = [
   {
     path: 'system-identity',
     name: 'System Identity',
-    component: () => import('@/views/MainOrganization/SystemIdentity/SystemIdentity.vue'),
+    component: () => import('@/views/shared/SystemIdentity/IndexSystemIdentity.vue'),
     meta: {
       breadcrumb: 'system_identity.title',
     },

@@ -10,7 +10,7 @@ import ar from './locales/ar.json';
 import en from './locales/en.json';
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate';
 import ToastService from 'primevue/toastservice';
-import { useSystemIdentity } from '@/composables/useSystemIdentity';
+import { useSystemIdentityTheme } from '@/modules/shared/SystemIdentity/presentation/composables/useSystemIdentityTheme';
 
 const i18n = createI18n({
   locale: 'en',
@@ -39,7 +39,7 @@ import { useUserStore } from '@/stores/user';
 const userStore = useUserStore();
 userStore.initFromPersist();
 
-const { loadSavedPalette } = useSystemIdentity();
+const { loadSavedPalette } = useSystemIdentityTheme();
 loadSavedPalette();
 
 app.mount('#app');
