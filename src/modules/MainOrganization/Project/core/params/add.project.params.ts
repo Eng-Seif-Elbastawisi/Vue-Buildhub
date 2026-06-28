@@ -1,7 +1,11 @@
 import type Params from '@/base/Core/Params/params';
 import { ClassValidation } from '@/base/Presentation/Utils/classValidation';
 import type TranslationParams from '@/base/Core/Params/translationParams';
-import { ServiceType } from '@/modules/MainOrganization/Project/core/constants/serviceType.enum';
+import { type ServiceType } from '@/modules/MainOrganization/Project/core/constants/serviceType.enum';
+
+export interface ProjectAttachmentParams {
+  file: string;
+}
 
 export default class AddProjectParams implements Params {
   public translations?: TranslationParams;
@@ -15,7 +19,7 @@ export default class AddProjectParams implements Params {
   public service_type?: ServiceType;
   public date?: string;
   public notes?: string;
-  public attachments?: string;
+  public attachments?: ProjectAttachmentParams[];
 
   public static readonly validation = new ClassValidation().setRules({});
 
@@ -31,7 +35,7 @@ export default class AddProjectParams implements Params {
     service_type?: ServiceType;
     date?: string;
     notes?: string;
-    attachments?: string;
+    attachments?: ProjectAttachmentParams[];
   }) {
     this.translations = data.translations;
     this.client_exist = data.client_exist;
@@ -67,6 +71,7 @@ export default class AddProjectParams implements Params {
   validate() {
     return AddProjectParams.validation.validate(this);
   }
+
   validateOrThrow() {
     return AddProjectParams.validation.validateOrThrow(this);
   }

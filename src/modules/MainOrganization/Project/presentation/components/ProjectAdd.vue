@@ -23,7 +23,7 @@
 
 <template>
   <div class="Project-crud-page">
-    <ProjectForm :loading="loading" @update-data="params = $event" />
+    <ProjectForm :loading="loading" :is-edit="false" @update-data="params = $event" />
     <button class="btn btn-primary" type="button" :disabled="loading" @click="saveProject">
       {{ $t('Project.save') }}
     </button>

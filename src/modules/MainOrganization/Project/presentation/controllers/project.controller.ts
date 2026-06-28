@@ -7,23 +7,20 @@ import BaseController, {
 } from '@/base/Presentation/Controller/baseController';
 import router from '@/router';
 import { useFormsStore } from '@/stores/formsStore';
-import type SpecializationModel from '../../core/models/project.model';
-import type SpecializationShowModel from '../../core/models/project.show.model';
-import SpecializationRepository from '../../data/repositories/project.repository';
+import type ProjectModel from '../../core/models/project.model';
+import type ProjectShowModel from '../../core/models/project.show.model';
+import ProjectRepository from '../../data/repositories/project.repository';
 import { useUserStore } from '@/stores/user';
-import type ShowSpecializationParams from '../../core/params/show.project.params';
+import type ShowProjectParams from '../../core/params/show.project.params';
 
-export default class SpecializationController extends BaseController<
-  SpecializationShowModel,
-  SpecializationModel[]
-> {
-  private static instance: SpecializationController;
+export default class ProjectController extends BaseController<ProjectShowModel, ProjectModel[]> {
+  private static instance: ProjectController;
 
   private get userStore() {
     return useUserStore();
   }
   protected get repository() {
-    return SpecializationRepository.getInstance();
+    return ProjectRepository.getInstance();
   }
   protected get config(): ControllerConfig {
     return {
@@ -40,10 +37,9 @@ export default class SpecializationController extends BaseController<
   private constructor() {
     super();
   }
-  static getInstance(): SpecializationController {
-    if (!SpecializationController.instance)
-      SpecializationController.instance = new SpecializationController();
-    return SpecializationController.instance;
+  static getInstance(): ProjectController {
+    if (!ProjectController.instance) ProjectController.instance = new ProjectController();
+    return ProjectController.instance;
   }
 
   async create(params: Params, options?: ApiCallOptions, formKey?: string) {
@@ -51,9 +47,7 @@ export default class SpecializationController extends BaseController<
     if (result instanceof DataSuccess) {
       // await router.push({ name: 'Projects' });
       router.push(
-        this.userStore.user?.type === 1
-          ? '/mainportal/specialization'
-          : '/organization/specialization',
+        this.userStore.user?.type === 1 ? '/mainportal/project' : '/organization/project',
       );
 
       if (formKey) useFormsStore().clearFormData(formKey);
@@ -66,9 +60,7 @@ export default class SpecializationController extends BaseController<
     if (result instanceof DataSuccess) {
       // await router.push({ name: 'Projects' });
       router.push(
-        this.userStore.user?.type === 1
-          ? '/mainportal/specialization'
-          : '/organization/specialization',
+        this.userStore.user?.type === 1 ? '/mainportal/project' : '/organization/project',
       );
 
       if (formKey) useFormsStore().clearFormData(formKey);
@@ -76,10 +68,7 @@ export default class SpecializationController extends BaseController<
     return result;
   }
 
-  async fetchList(
-    params: Params,
-    options?: ApiCallOptions,
-  ): Promise<DataState<SpecializationModel[]>> {
+  async fetchList(params: Params, options?: ApiCallOptions): Promise<DataState<ProjectModel[]>> {
     return await super.fetchList(params, { ...options, useJson: true });
   }
   async fetchOne(params: Params, options?: ApiCallOptions) {
@@ -87,7 +76,7 @@ export default class SpecializationController extends BaseController<
       ...options,
       useJson: true,
       headers: {
-        'Accept-Language': (params as ShowSpecializationParams).allLocales ? '*' : 'en',
+        'Accept-Language': (params as ShowProjectParams).allLocales ? '*' : 'en',
       },
     });
   }

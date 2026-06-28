@@ -13,7 +13,7 @@ export default class ShowProjectParams implements Params {
     this.allLocales = data.allLocales;
   }
   toMap(): Record<string, number> {
-    return { projectId: this.projectId };
+    return { project_id: this.projectId };
   }
   validate() {
     return ShowProjectParams.validation.validate(this);

@@ -16,6 +16,15 @@
     params.value = new EditProjectParams({
       projectId,
       translations: data.translations,
+      client_exist: data.client_exist,
+      client_id: data.client_id,
+      client_name: data.client_name,
+      client_phone: data.client_phone,
+      client_source: data.client_source,
+      project_type_id: data.project_type_id,
+      location_id: data.location_id,
+      service_type: data.service_type,
+      attachments: data.attachments,
     });
   };
   const saveProject = async () => {
@@ -37,6 +46,7 @@
     <ProjectForm
       :Project="controller.itemData.value!"
       :loading="loading"
+      :is-edit="true"
       @update-data="updateData"
     />
     <button class="btn btn-primary" type="button" :disabled="loading" @click="saveProject">

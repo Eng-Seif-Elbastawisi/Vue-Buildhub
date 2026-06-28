@@ -1,25 +1,33 @@
 <script setup lang="ts">
   import { computed, ref, watch } from 'vue';
+  import { useI18n } from 'vue-i18n';
 
   import TranslationParams from '@/base/Core/Params/translationParams';
+  import type TitleInterface from '@/base/Data/Models/titleInterface';
 
   import MultiLangInput from '@/shared/MultiLangInput.vue';
-  import { ServiceType } from '@/modules/MainOrganization/Project/core/constants/serviceType.enum';
   import UpdatedCustomInputSelect from '@/shared/FormInputs/UpdatedCustomInputSelect.vue';
+  import HandleFilesUpload, { type UploadedFile } from '@/shared/FormInputs/HandleFilesUpload.vue';
+
+  import { ServiceType } from '@/modules/MainOrganization/Project/core/constants/serviceType.enum';
 
   import type ProjectShowModel from '../../core/models/project.show.model';
-  import AddProjectParams from '../../core/params/add.project.params';
+  import AddProjectParams, {
+    type ProjectAttachmentParams,
+  } from '../../core/params/add.project.params';
+
   import IndexClientSourceParams from '@/modules/shared/ClientSource/core/params/index.client.source.params';
   import ClientSourceController from '@/modules/shared/ClientSource/presentation/controllers/client.source.controller';
+
   import LocationController from '@/modules/shared/location/presentation/controllers/location.controller';
   import IndexLocationParams from '@/modules/shared/location/core/params/index.location.params';
   import { LocationTypeEnum } from '@/modules/shared/location/core/constant/location.type.enum';
+
   import IndexClientParams from '@/modules/MainOrganization/client/core/params/index.client.params';
   import ClientController from '@/modules/MainOrganization/client/presentation/controllers/client.controller';
+
   import ProjectTypeController from '@/modules/shared/ProjectType/presentation/controllers/project-type.controller';
   import IndexProjectTypeParams from '@/modules/shared/ProjectType/core/params/index.project-type.params';
-  import { useI18n } from 'vue-i18n';
-  import type TitleInterface from '@/base/Data/Models/titleInterface';
 
   const emit = defineEmits<{
     updateData: [params: AddProjectParams];
@@ -28,7 +36,9 @@
   const props = defineProps<{
     Project?: ProjectShowModel;
     loading?: boolean;
+    isEdit?: boolean;
   }>();
+
   const { t } = useI18n();
 
   const clientSourceController = ClientSourceController.getInstance();
@@ -41,52 +51,202 @@
   const indexClientParams = new IndexClientParams('', 1, 100, 0);
 
   const locationController = LocationController.getInstance();
-  const indexLocationParams = new IndexLocationParams('', 1, 100, 0);
+
+  const countryParams = new IndexLocationParams('', 1, 100, 0, null, LocationTypeEnum.COUNTRY);
+
   const serviceTypeOptions = computed<TitleInterface<number>[]>(() => [
     { id: ServiceType.EXECUTIONONLY, title: t('Project.service_types.executionOnly') },
     { id: ServiceType.DESIGNONLY, title: t('Project.service_types.designOnly') },
     { id: ServiceType.BOTH, title: t('Project.service_types.both') },
   ]);
 
-  const translations = ref<Record<string, string>>({});
+  const titleTranslations = ref<Record<string, string>>({});
+  const descriptionTranslations = ref<Record<string, string>>({});
+
   const client_exist = ref<boolean>(false);
-  const client_id = ref<number>(0);
+
+  const selectedClient = ref<TitleInterface<number> | null>(null);
+  const selectedClientSource = ref<TitleInterface<number> | null>(null);
+  const selectedProjectType = ref<TitleInterface<number> | null>(null);
+  const selectedServiceType = ref<TitleInterface<number> | null>(null);
+
+  const selectedCountry = ref<TitleInterface<number> | null>(null);
+  const selectedGovernorate = ref<TitleInterface<number> | null>(null);
+  const selectedCity = ref<TitleInterface<number> | null>(null);
+
   const client_name = ref<string>('');
   const client_phone = ref<string>('');
-  const client_source = ref<number>(0);
-  const project_type_id = ref<number>(0);
-  const location_id = ref<number>(0);
-  const service_type = ref<ServiceType>(0);
   const date = ref<string>('');
   const notes = ref<string>('');
-  const attachments = ref<string>('');
-  const selectedServiceType = ref<TitleInterface<number> | null>(null);
+
+  // دي الملفات الجديدة فقط اللي هتتبعت للـ backend
+  const attachments = ref<ProjectAttachmentParams[]>([]);
+
+  // دي الملفات القديمة للـ preview فقط ومش هتتبعت في update
+  const existingAttachmentFiles = ref<string[]>([]);
+
+  const attachmentFiles = computed(() => existingAttachmentFiles.value);
+
+  const governorateParams = computed(() => {
+    return new IndexLocationParams(
+      '',
+      1,
+      100,
+      0,
+      null,
+      LocationTypeEnum.GOVERNORATE,
+      selectedCountry.value?.id ? Number(selectedCountry.value.id) : null,
+    );
+  });
+
+  const cityParams = computed(() => {
+    return new IndexLocationParams(
+      '',
+      1,
+      100,
+      0,
+      null,
+      LocationTypeEnum.CITY,
+      selectedGovernorate.value?.id ? Number(selectedGovernorate.value.id) : null,
+    );
+  });
+
+  const getTitle = (item: any): string => {
+    if (!item) return '';
+
+    if (item.name) {
+      return item.name;
+    }
+
+    if (!item.title) return '';
+
+    if (typeof item.title === 'string') {
+      return item.title;
+    }
+
+    if (Array.isArray(item.title)) {
+      return (
+        item.title.find((titleItem: any) => titleItem.locale === 'en')?.title ||
+        item.title[0]?.title ||
+        ''
+      );
+    }
+
+    return '';
+  };
 
   const updateData = () => {
     emit(
       'updateData',
       new AddProjectParams({
         translations: new TranslationParams({
-          title: translations.value,
-          description: translations.value,
-          notes: translations.value,
+          title: titleTranslations.value,
+          description: descriptionTranslations.value,
         }),
-        client_exist: client_exist.value,
-        client_id: client_id.value,
-        client_name: client_name.value,
-        client_phone: client_phone.value,
-        client_source: client_source.value,
-        project_type_id: project_type_id.value,
-        location_id: location_id.value,
-        service_type: service_type.value,
-        date: date.value,
-        attachments: attachments.value,
+
+        client_exist: props.isEdit ? undefined : client_exist.value,
+
+        client_id:
+          client_exist.value || props.isEdit
+            ? selectedClient.value?.id
+              ? Number(selectedClient.value.id)
+              : undefined
+            : undefined,
+
+        client_name: !props.isEdit && !client_exist.value ? client_name.value : undefined,
+
+        client_phone: !props.isEdit && !client_exist.value ? client_phone.value : undefined,
+
+        client_source:
+          !props.isEdit && !client_exist.value
+            ? selectedClientSource.value?.id
+              ? Number(selectedClientSource.value.id)
+              : undefined
+            : undefined,
+
+        project_type_id: selectedProjectType.value?.id
+          ? Number(selectedProjectType.value.id)
+          : undefined,
+
+        location_id: selectedCity.value?.id ? Number(selectedCity.value.id) : undefined,
+
+        service_type: selectedServiceType.value?.id as ServiceType | undefined,
+
+        // لو مفيش ملفات جديدة، مش هنبعت attachments
+        attachments: attachments.value.length ? attachments.value : undefined,
       }),
     );
   };
 
-  const updateTranslations = (value: Record<string, string>) => {
-    translations.value = value;
+  const updateTitleTranslations = (value: Record<string, string>) => {
+    titleTranslations.value = value;
+    updateData();
+  };
+
+  const updateDescriptionTranslations = (value: Record<string, string>) => {
+    descriptionTranslations.value = value;
+    updateData();
+  };
+
+  const updateClientExist = () => {
+    if (client_exist.value) {
+      client_name.value = '';
+      client_phone.value = '';
+      selectedClientSource.value = null;
+    } else {
+      selectedClient.value = null;
+    }
+
+    updateData();
+  };
+
+  const updateClient = (value: TitleInterface<number> | null) => {
+    selectedClient.value = value;
+    updateData();
+  };
+
+  const updateClientSource = (value: TitleInterface<number> | null) => {
+    selectedClientSource.value = value;
+    updateData();
+  };
+
+  const updateProjectType = (value: TitleInterface<number> | null) => {
+    selectedProjectType.value = value;
+    updateData();
+  };
+
+  const updateServiceType = (value: TitleInterface<number> | null) => {
+    selectedServiceType.value = value;
+    updateData();
+  };
+
+  const updateCountry = (value: TitleInterface<number> | null) => {
+    selectedCountry.value = value;
+    selectedGovernorate.value = null;
+    selectedCity.value = null;
+    updateData();
+  };
+
+  const updateGovernorate = (value: TitleInterface<number> | null) => {
+    selectedGovernorate.value = value;
+    selectedCity.value = null;
+    updateData();
+  };
+
+  const updateCity = (value: TitleInterface<number> | null) => {
+    selectedCity.value = value;
+    updateData();
+  };
+
+  const updateAttachments = (files: UploadedFile[]) => {
+    // هنا بناخد الملفات الجديدة فقط
+    // الملفات القديمة بتكون URL ومش base64، فمش هتتبعت
+    attachments.value = files
+      .filter((file) => file.base64 && file.base64.startsWith('data:'))
+      .map((file) => ({
+        file: file.base64,
+      }));
+
     updateData();
   };
 
@@ -95,18 +255,81 @@
     (Project) => {
       if (!Project) return;
 
-      translations.value = {
-        ...(Project.translations?.title ?? {}),
+      const projectData = Project as any;
+
+      titleTranslations.value = {
+        ...(projectData.translations?.title ?? {}),
       };
+
+      descriptionTranslations.value = {
+        ...(projectData.translations?.description ?? {}),
+      };
+
+      client_exist.value = projectData.client_exist ?? Boolean(projectData.client);
+
+      client_name.value = projectData.client_name ?? '';
+      client_phone.value = projectData.client_phone ?? '';
+      date.value = projectData.date ?? '';
+      notes.value = projectData.notes ?? '';
+
+      // القديم للعرض فقط
+      existingAttachmentFiles.value = Array.isArray(projectData.attachments)
+        ? projectData.attachments.map((attachment: any) => attachment.file).filter(Boolean)
+        : [];
+
+      // الجديد اللي هيتبعت يبدأ فاضي
+      attachments.value = [];
+
+      selectedClient.value = projectData.client
+        ? {
+            id: projectData.client.id,
+            title: getTitle(projectData.client),
+          }
+        : null;
+
+      selectedClientSource.value = projectData.client_source
+        ? {
+            id: projectData.client_source.id,
+            title: getTitle(projectData.client_source),
+          }
+        : null;
+
+      selectedProjectType.value = projectData.project_type
+        ? {
+            id: projectData.project_type.id,
+            title: getTitle(projectData.project_type),
+          }
+        : null;
+
+      selectedServiceType.value = projectData.service_type
+        ? (serviceTypeOptions.value.find((item) => item.id === projectData.service_type) ?? null)
+        : null;
+
+      selectedCity.value = projectData.location
+        ? {
+            id: projectData.location.id,
+            title: getTitle(projectData.location),
+          }
+        : null;
+
+      selectedGovernorate.value = projectData.location?.parent
+        ? {
+            id: projectData.location.parent.id,
+            title: getTitle(projectData.location.parent),
+          }
+        : null;
+
+      selectedCountry.value = projectData.location?.parent?.parent
+        ? {
+            id: projectData.location.parent.parent.id,
+            title: getTitle(projectData.location.parent.parent),
+          }
+        : null;
 
       updateData();
     },
     { immediate: true },
   );
-  const updateServiceType = (value: TitleInterface<number> | null) => {
-    service_type.value = value?.id as ServiceType;
-    updateData();
-  };
 </script>
 
 <template>
@@ -122,99 +345,171 @@
           field-key="title"
           :label="$t('title')"
           :languages="['ar', 'en']"
-          :model-value="translations"
+          :model-value="titleTranslations"
           type="title"
-          @update:model-value="updateTranslations"
+          @update:model-value="updateTitleTranslations"
         />
       </div>
-    </div>
-    <div class="field-group">
-      <UpdatedCustomInputSelect
-        id="service_type"
-        :model-value="selectedServiceType"
-        :label="$t('service_type')"
-        :placeholder="$t('service_type_placeholder')"
-        :static-options="serviceTypeOptions"
-        required
-        @update:model-value="updateServiceType"
-      />
-    </div>
-    <div class="field-group">
-      <UpdatedCustomInputSelect
-        id="service_type"
-        v-model="service_type"
-        :label="$t('service_type')"
-        :static-options="serviceTypeOptions"
-        :placeholder="$t('service_type_placeholder')"
-        @update:model-value="updateServiceType"
-      />
-    </div>
 
-    <div class="field-group">
-      <UpdatedCustomInputSelect
-        id="project_type_id"
-        v-model="project_type_id"
-        :label="$t('project_type_id')"
-        :controller="projectTypeController"
-        :placeholder="$t('project_type_id_placeholder')"
-        :params="indexProjectTypeParams"
-        @update:model-value="updateData"
-      />
-    </div>
+      <div class="field-group">
+        <UpdatedCustomInputSelect
+          id="project_type_id"
+          :model-value="selectedProjectType"
+          :label="$t('project_type_id')"
+          :controller="projectTypeController"
+          :placeholder="$t('project_type_id_placeholder')"
+          :params="indexProjectTypeParams"
+          @update:model-value="updateProjectType"
+        />
+      </div>
 
-    <div class="field-group">
-      <UpdatedCustomInputSelect
-        id="location_id"
-        v-model="location_id"
-        :label="$t('location_id')"
-        :controller="locationController"
-        :placeholder="$t('location_id_placeholder')"
-        :params="indexLocationParams"
-        @update:model-value="updateData"
-      />
-    </div>
+      <template v-if="!isEdit">
+        <div class="field-group col-span-2">
+          <label class="checkbox-field">
+            <input v-model="client_exist" type="checkbox" @change="updateClientExist" />
+            <span>{{ $t('Project.client_exist') }}</span>
+          </label>
+        </div>
 
-    <div class="field-group">
-      <UpdatedCustomInputSelect
-        id="client_id"
-        v-model="client_id"
-        :label="$t('client_id')"
-        :controller="clientController"
-        :placeholder="$t('client_id_placeholder')"
-        :params="indexClientParams"
-        @update:model-value="updateData"
-      />
-    </div>
+        <div v-if="client_exist" class="field-group">
+          <UpdatedCustomInputSelect
+            id="client_id"
+            :model-value="selectedClient"
+            :label="$t('client_id')"
+            :controller="clientController"
+            :placeholder="$t('client_id_placeholder')"
+            :params="indexClientParams"
+            @update:model-value="updateClient"
+          />
+        </div>
 
-    <div class="field-group">
-      <CustomDatePicker
-        id="date"
-        v-model="date"
-        :label="$t('date')"
-        :placeholder="$t('date_placeholder')"
-        @update:model-value="updateData"
-      />
-    </div>
+        <template v-else>
+          <div class="field-group">
+            <label class="field-label" for="client_name">{{ $t('client_name') }}</label>
+            <input
+              id="client_name"
+              v-model="client_name"
+              class="field-input"
+              :placeholder="$t('client_name_placeholder')"
+              @input="updateData"
+            />
+          </div>
 
-    <div class="field-group">
-      <MultiLangInput
-        field-key="notes"
-        :label="$t('notes')"
-        :languages="['ar', 'en']"
-        :model-value="translations"
-        type="notes"
-        @update:model-value="updateTranslations"
-      />
-    </div>
+          <div class="field-group">
+            <label class="field-label" for="client_phone">{{ $t('client_phone') }}</label>
+            <input
+              id="client_phone"
+              v-model="client_phone"
+              class="field-input"
+              :placeholder="$t('client_phone_placeholder')"
+              @input="updateData"
+            />
+          </div>
 
-    <div class="field-group">
-      <CustomFileInput
-        id="attachments"
-        v-model="attachments"
-        :label="$t('attachments')"
-        :placeholder="$t('attachments_placeholder')"
-        @update:model-value="updateData"
-      />
+          <div class="field-group">
+            <UpdatedCustomInputSelect
+              id="client_source"
+              :model-value="selectedClientSource"
+              :label="$t('client_source')"
+              :controller="clientSourceController"
+              :placeholder="$t('client_source_placeholder')"
+              :params="indexClientSourceParams"
+              @update:model-value="updateClientSource"
+            />
+          </div>
+        </template>
+      </template>
+
+      <div class="field-group">
+        <UpdatedCustomInputSelect
+          id="country_id"
+          :model-value="selectedCountry"
+          :label="$t('location.country')"
+          :controller="locationController"
+          :placeholder="$t('location.country_placeholder')"
+          :params="countryParams"
+          @update:model-value="updateCountry"
+        />
+      </div>
+
+      <div class="field-group">
+        <UpdatedCustomInputSelect
+          id="governorate_id"
+          :model-value="selectedGovernorate"
+          :label="$t('location.governorate')"
+          :controller="locationController"
+          :placeholder="$t('location.governorate_placeholder')"
+          :params="governorateParams"
+          @update:model-value="updateGovernorate"
+        />
+      </div>
+
+      <div class="field-group">
+        <UpdatedCustomInputSelect
+          id="city_id"
+          :model-value="selectedCity"
+          :label="$t('location.city')"
+          :controller="locationController"
+          :placeholder="$t('location.city_placeholder')"
+          :params="cityParams"
+          @update:model-value="updateCity"
+        />
+      </div>
+
+      <div class="field-group">
+        <UpdatedCustomInputSelect
+          id="service_type"
+          :model-value="selectedServiceType"
+          :label="$t('service_type')"
+          :static-options="serviceTypeOptions"
+          :placeholder="$t('service_type_placeholder')"
+          @update:model-value="updateServiceType"
+        />
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="date">{{ $t('date') }}</label>
+        <input
+          id="date"
+          v-model="date"
+          class="field-input"
+          type="date"
+          :placeholder="$t('date_placeholder')"
+          @input="updateData"
+        />
+      </div>
+
+      <div class="field-group col-span-2">
+        <MultiLangInput
+          field-key="description"
+          :label="$t('description')"
+          :languages="['ar', 'en']"
+          :model-value="descriptionTranslations"
+          type="description"
+          @update:model-value="updateDescriptionTranslations"
+        />
+      </div>
+
+      <div class="field-group col-span-2">
+        <label class="field-label" for="notes">{{ $t('notes') }}</label>
+        <textarea
+          id="notes"
+          v-model="notes"
+          class="field-input field-textarea"
+          :placeholder="$t('notes_placeholder')"
+          @input="updateData"
+        />
+      </div>
+
+      <div class="field-group col-span-2">
+        <HandleFilesUpload
+          id="attachments"
+          :label="$t('attachments')"
+          :file="attachmentFiles"
+          :multiple="true"
+          @change="updateAttachments"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -242,9 +537,66 @@
     }
   }
 
+  .field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .field-label {
+    font-family: 'Medium';
+    font-size: var(--sm-size);
+    color: var(--gray-6);
+  }
+
+  .field-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid var(--border-weak);
+    border-radius: 28px;
+    background: var(--white);
+    outline: none;
+    transition: all 0.25s ease;
+    font-family: 'Medium';
+    font-weight: 400;
+    font-size: var(--sm-size);
+    color: var(--bread-crumb-color-span);
+  }
+
+  .field-textarea {
+    min-height: 110px;
+    resize: vertical;
+    border-radius: 18px;
+  }
+
+  .checkbox-field {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: fit-content;
+    cursor: pointer;
+    font-family: 'Medium';
+    font-size: var(--sm-size);
+    color: var(--gray-6);
+  }
+
+  .checkbox-field input {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+  }
+
+  .col-span-2 {
+    grid-column: span 2;
+  }
+
   @media (max-width: 768px) {
     .form-fields {
       grid-template-columns: 1fr;
+    }
+
+    .col-span-2 {
+      grid-column: span 1;
     }
   }
 </style>
