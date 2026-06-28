@@ -4,6 +4,7 @@ import { SuppliersRoutes } from './Suppliers';
 import { ClientRoutes } from './client';
 import { EmployeeRoutes } from './employee';
 import { SpecializationRoutes } from './specialization';
+import { ProjectRoutes } from './project';
 
 export const dashboardRoutes: RouteRecordRaw[] = [
   // ...countryRoutes,
@@ -11,4 +12,5 @@ export const dashboardRoutes: RouteRecordRaw[] = [
   ...ClientRoutes,
   ...EmployeeRoutes,
   ...SpecializationRoutes,
+  ...ProjectRoutes,
 ];

@@ -93,22 +93,53 @@
 
     <div class="input-wrap">
       <textarea
-        v-if="type == 'description'"
+        v-if="type === 'description'"
         v-model="currentValue"
-        type="text"
-        :placeholder="inputPlaceholder"
-        class="field-input"
+        :placeholder="
+          placeholder || `Enter ${label.toLowerCase()} in ${activeLang?.toUpperCase()}...`
+        "
+        class="field-input field-input--textarea"
         :dir="activeLang === 'ar' ? 'rtl' : 'ltr'"
       ></textarea>
+
       <input
         v-else
         v-model="currentValue"
         type="text"
-        :placeholder="inputPlaceholder"
-        class="field-input"
+        :placeholder="
+          placeholder || `Enter ${label.toLowerCase()} in ${activeLang?.toUpperCase()}...`
+        "
+        class="field-input field-input--text"
         :dir="activeLang === 'ar' ? 'rtl' : 'ltr'"
       />
       <span class="active-indicator">{{ activeLang?.toUpperCase() }}</span>
     </div>
   </div>
 </template>
+
+<style scoped>
+  .field-input {
+    width: 100%;
+    border: 1px solid var(--border-weak);
+    border-radius: 28px;
+    background: var(--white);
+    outline: none;
+    transition: all 0.25s ease;
+    font-family: 'Medium';
+    font-weight: 400;
+    font-size: var(--sm-size);
+    color: var(--bread-crumb-color-span);
+  }
+
+  .field-input--text {
+    height: 48px;
+    padding: 0 16px;
+  }
+
+  .field-input--textarea {
+    height: 100px;
+    padding: 12px 16px;
+    resize: none;
+    border-radius: 28px;
+  }
+</style>

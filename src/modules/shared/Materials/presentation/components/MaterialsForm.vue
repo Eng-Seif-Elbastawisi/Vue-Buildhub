@@ -45,23 +45,12 @@
     () => props.material,
     (material) => {
       if (!material) return;
+      // console.log(material);
 
       translations.value = { ...material.translations.title };
       price.value = material.price;
-
-      brand.value = material.brandId
-        ? {
-            id: material.brandId.id!,
-            title: material.brandId.title ?? '',
-          }
-        : null;
-
-      measurement.value = material.measurementId
-        ? {
-            id: material.measurementId.id!,
-            title: material.measurementId.title ?? '',
-          }
-        : null;
+      brand.value = material.brandId;
+      measurement.value = material.measurementId;
     },
     { immediate: true },
   );

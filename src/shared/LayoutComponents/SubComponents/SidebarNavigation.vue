@@ -48,8 +48,127 @@
     return currentRole.value === 'admin' ? '/admin' : '/organization';
   });
 
-  const menu = computed<SidebarSection[]>(() => {
-    return sidebarSections
+  const menuConfig: MenuSectionConfig[] = [
+    {
+      group: 'Overview',
+      items: [
+        {
+          path: '/stages',
+          name: 'Stages',
+          icon: EducationClassificationIcon,
+        },
+        {
+          path: '/departments',
+          name: 'Departments',
+          icon: EducationClassificationIcon,
+        },
+
+        {
+          path: '/measurement',
+          name: 'Measurement',
+          icon: EducationClassificationIcon,
+        },
+
+        {
+          path: '/item',
+          name: 'Items',
+          icon: EducationClassificationIcon,
+        },
+        {
+          path: '/admin',
+          name: 'Admins',
+          icon: EducationClassificationIcon,
+          roles: ['admin'],
+        },
+        {
+          path: '/organization',
+          name: 'Organizations',
+          icon: EducationClassificationIcon,
+          roles: ['organization'],
+        },
+
+        {
+          path: '/client-source',
+          name: 'Client Source',
+          icon: EducationClassificationIcon,
+        },
+        {
+          path: '/specialization',
+          name: 'Specialization',
+          icon: EducationClassificationIcon,
+          roles: ['organization'],
+        },
+      ],
+    },
+    {
+      group: 'Suppliers',
+      items: [
+        {
+          path: '/suppliers',
+          name: 'Suppliers',
+          icon: ArticleIcon,
+          roles: ['organization'],
+        },
+        {
+          path: '/brand',
+          name: 'Brand',
+          icon: ArticleIcon,
+        },
+        {
+          path: '/supply',
+          name: 'Supply',
+          icon: ArticleIcon,
+        },
+        {
+          path: '/projectType',
+          name: 'Project Types',
+          icon: ArticleIcon,
+        },
+        {
+          path: '/client',
+          name: 'Clients',
+          icon: ArticleIcon,
+          roles: ['organization'],
+        },
+        {
+          path: '/location',
+          name: 'Location',
+          icon: ArticleIcon,
+        },
+        {
+          path: '/location-governorate',
+          name: 'Location Governorate',
+          icon: ArticleIcon,
+        },
+        {
+          path: '/location-city',
+          name: 'Location City',
+          icon: ArticleIcon,
+        },
+        {
+          path: '/employee',
+          name: 'Employee',
+          icon: ArticleIcon,
+          roles: ['organization'],
+        },
+        {
+          path: '/material',
+          name: 'Material',
+          icon: ArticleIcon,
+          // roles: ['organization'],
+        },
+        {
+          path: '/project',
+          name: 'Project',
+          icon: ArticleIcon,
+          roles: ['organization'],
+        },
+      ],
+    },
+  ];
+
+  const menu = computed<MenuSection[]>(() => {
+    return menuConfig
       .map((section) => {
         const items = section.items
           .filter((item) => {
