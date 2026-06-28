@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import ProjectController from '../../presentation/controllers/project.controller';
+import ProjectController from '../project.controller';
 
 vi.mock('@/stores/user', () => ({
   useUserStore: vi.fn(() => ({ user: { type: 1 } })),

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import ProjectShowModel from '../../core/models/project.show.model';
+import ProjectShowModel from '../project.show.model';
 
 describe('ProjectShowModel', () => {
   it('should instantiate correctly', () => {

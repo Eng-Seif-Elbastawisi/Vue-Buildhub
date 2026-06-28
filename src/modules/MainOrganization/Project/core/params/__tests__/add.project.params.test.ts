@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import AddProjectParams from '../../core/params/add.project.params';
+import AddProjectParams from '../add.project.params';
 import { ServiceType } from '@/modules/MainOrganization/Project/core/constants/serviceType.enum';
 
 describe('AddProjectParams', () => {

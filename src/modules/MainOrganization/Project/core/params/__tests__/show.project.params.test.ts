@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import ShowProjectParams from '../../core/params/show.project.params';
+import ShowProjectParams from '../show.project.params';
 
 describe('ShowProjectParams', () => {
   it('should instantiate correctly and convert to map', () => {
@@ -16,6 +16,11 @@ describe('ShowProjectParams', () => {
   });
 
   it('should have required validation rule', () => {
-    expect(ShowProjectParams.validation.rules.projectId).toEqual({ required: true });
+    const result = ShowProjectParams.validation.validate({ projectId: undefined });
+
+    expect(result).toEqual({
+      isValid: false,
+      errors: [{ field: 'projectId', message: 'projectId is required' }],
+    });
   });
 });
