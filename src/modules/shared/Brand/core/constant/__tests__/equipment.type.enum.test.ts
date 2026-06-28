@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { EquipmentTypeEnum } from '../equipment.type.enum';
+import { BrandTypeEnum } from '../Brand.type.enum';
 
-describe('EquipmentTypeEnum', () => {
-  it('exposes stable equipment type identifiers', () => {
-    expect(EquipmentTypeEnum).toEqual({ materials: 1, equipment: 2, services: 3 });
+describe('BrandTypeEnum', () => {
+  it('exposes stable brand type identifiers', () => {
+    expect(BrandTypeEnum).toEqual({ MATERIALS: 1, SUPPLIES: 2 });
   });
 });

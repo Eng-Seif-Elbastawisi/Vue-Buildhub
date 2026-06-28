@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { UnitTypeEnum } from '../unit.type.enum';
+import { ClientTypeEnum } from '../client.type.enum';
 
-describe('client UnitTypeEnum', () => {
-  it('exposes stable unit identifiers', () => {
-    expect(UnitTypeEnum).toEqual({ meter: 1, bag: 2, box: 3 });
+describe('ClientTypeEnum', () => {
+  it('exposes stable client type identifiers', () => {
+    expect(ClientTypeEnum).toEqual({ INDIVIDUAL: 1, COMPANY: 2, DEVELOPER: 3 });
   });
 });

@@ -13,22 +13,28 @@ describe('material params', () => {
     const add = new AddMaterialsParams({
       price: 125,
       brandId: 7,
-      unit: UnitTypeEnum.bag,
+      measurementId: UnitTypeEnum.bag,
       translations,
     });
     const edit = new EditMaterialParams({
       material_id: 3,
       price: 150,
       brandId: 7,
-      unit: UnitTypeEnum.bag,
+      measurementId: UnitTypeEnum.bag,
       translations,
     });
-    expect(add.toMap()).toEqual({ price: 125, brandId: 7, unit: UnitTypeEnum.bag, translations });
+
+    expect(add.toMap()).toEqual({
+      price: 125,
+      brand_id: 7,
+      measurement_unit_id: UnitTypeEnum.bag,
+      translations,
+    });
     expect(edit.toMap()).toEqual({
       material_id: 3,
       price: 150,
-      brandId: 7,
-      unit: UnitTypeEnum.bag,
+      brand_id: 7,
+      measurement_unit_id: UnitTypeEnum.bag,
       translations,
     });
     expect(add.validate().isValid).toBe(true);

@@ -12,6 +12,7 @@
   import AdminController from '../controllers/admin.controller';
   import { useUserStore } from '@/stores/user';
 
+  const { user } = useUserStore();
   const controller = AdminController.getInstance();
   const state = computed(() => controller.listState.value);
   const router = useRouter();
@@ -57,7 +58,6 @@
     word.value = route.query.word ? String(route.query.word) : '';
     await fetchAdmins(route.query.page ? Number(route.query.page) : 1, word.value);
   });
-  const { user } = useUserStore();
 </script>
 
 <template>

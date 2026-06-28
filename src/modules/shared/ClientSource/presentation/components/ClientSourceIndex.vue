@@ -79,7 +79,7 @@
   };
 
   const routePrefix = computed(() =>
-    route.path.startsWith('/admin') ? '/admin' : '/organization',
+    route.path?.startsWith('/admin') ? '/admin' : '/organization',
   );
   const formRoute = computed(() => `${routePrefix.value}/client-source/add`);
 

@@ -5,10 +5,10 @@ describe('MeasurementEndpoints', () => {
   it('uses dashboard measurement endpoints', () => {
     const endpoints = new MeasurementEndpoints();
 
-    expect(endpoints.index).toContain('dashboard/index_measurements');
-    expect(endpoints.show).toContain('dashboard/show_measurement');
-    expect(endpoints.store).toContain('dashboard/store_measurement');
-    expect(endpoints.update).toContain('dashboard/update_measurement');
-    expect(endpoints.delete).toContain('dashboard/delete_measurement');
+    expect(endpoints.index).toContain('mainportal/fetch_measurement_units');
+    expect(endpoints.show).toContain('mainportal/show_measurement_unit');
+    expect(endpoints.store).toContain('mainportal/store_measurement_unit');
+    expect(endpoints.update).toContain('mainportal/update_measurement_unit');
+    expect(endpoints.delete).toContain('mainportal/delete_measurement_unit');
   });
 });

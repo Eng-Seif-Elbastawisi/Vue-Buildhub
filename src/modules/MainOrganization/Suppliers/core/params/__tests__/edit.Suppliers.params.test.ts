@@ -7,16 +7,12 @@ describe('EditSuppliersParams', () => {
       new EditSuppliersParams({
         suppliers_id: 4,
         name: 'Build',
-        Specialization: 'Concrete',
         phone: '010',
-        materials: 'Cement',
       }).toMap(),
     ).toEqual({
-      suppliers_id: 4,
+      supplier_id: 4,
       name: 'Build',
-      Specialization: 'Concrete',
       phone: '010',
-      materials: 'Cement',
     });
   });
 });

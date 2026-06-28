@@ -49,7 +49,7 @@ describe('ExportPdf', () => {
 
   it('displays export text', () => {
     const wrapper = createWrapper();
-    expect(wrapper.text()).toContain('Export PDF');
+    expect(wrapper.text()).toContain('export');
   });
 
   it('renders the export icon', () => {

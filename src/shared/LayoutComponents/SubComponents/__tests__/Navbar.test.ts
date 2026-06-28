@@ -6,7 +6,7 @@ import Navbar from '../Navbar.vue';
 vi.mock('@/stores/user', () => ({
   useUserStore: () => ({
     logout: vi.fn(),
-    user: { name: 'Test User' },
+    user: { name: 'Test User', isMaster: true, type: 1 },
   }),
 }));
 
@@ -80,7 +80,7 @@ describe('Navbar.vue', () => {
     expect(wrapper.find('.mega-menu').exists()).toBe(false);
   });
 
-  it('calls logout and navigates to /login on logout click', async () => {
+  it('calls logout and navigates to the admin login on logout click', async () => {
     const wrapper = mount(Navbar, mountOptions);
 
     // Open dropdown first
@@ -89,6 +89,6 @@ describe('Navbar.vue', () => {
     const logoutBtn = wrapper.find('.logout-btn');
     await logoutBtn.trigger('click');
 
-    expect(mockPush).toHaveBeenCalledWith('/login');
+    expect(mockPush).toHaveBeenCalledWith('/login-admin');
   });
 });

@@ -119,7 +119,17 @@ const createWrapper = (props = {}) =>
   mount(DataStatusBuilder, {
     props,
     global: {
-      mocks: { $t: (key: string) => key },
+      mocks: {
+        $t: (key: string) =>
+          ({
+            no_data: 'No data available',
+            request_was_cancelled: 'Request was cancelled',
+            too_many_requests: 'Too Many Requests',
+            please_wait_before_trying_again: 'Please wait before trying again.',
+            try_again: 'Try Again',
+            loading: 'Loading...',
+          })[key] ?? key,
+      },
     },
   });
 

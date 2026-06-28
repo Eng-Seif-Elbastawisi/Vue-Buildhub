@@ -30,7 +30,7 @@ const createWrapper = (props = {}) =>
       default: '<p class="demo-content">Demo slot content</p>',
     },
     global: {
-      mocks: { $t: (key: string) => key },
+      mocks: { $t: (key: string) => ({ demo: 'Demo', code: 'Code' })[key] ?? key },
     },
   });
 
