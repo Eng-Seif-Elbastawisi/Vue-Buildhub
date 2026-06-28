@@ -128,7 +128,7 @@
       <div class="btns">
         <router-link
           class="btn btn-primary"
-          :to="user?.type === 1 ? '/mainportal/brand/add' : '/organization/brand/add'"
+          :to="user?.type === 1 ? '/admin/brand/add' : '/organization/brand/add'"
         >
           <IndexAddIcon /> {{ $t('brand') }}
         </router-link>
@@ -277,7 +277,7 @@
           <h3>{{ $t('no_Suppliers_yet') }}</h3>
           <p>{{ $t('add_first_Supplier') }}</p>
           <router-link
-            :to="user?.isMaster ? '/brand/add' : '/organization/brand/add'"
+            :to="user?.isMaster ? '/admin/brand/add' : '/organization/brand/add'"
             class="btn-add empty-cta"
           >
             <svg

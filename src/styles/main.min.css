@@ -1,5 +1,5 @@
 :root {
-  --PrimaryColor: #4faf7c;
+  --PrimaryColor: #c47a35;
   --PrimaryColor-hover: #24385c;
   --PrimaryColor-active: #4338ca;
   --PrimaryColor-light: #eef2ff;
@@ -33,7 +33,7 @@
   --color-gray-soft-1: rgba(48, 48, 48, 1);
   --btn-gold: rgba(217, 145, 0, 1);
   --btn-easy: rgba(255, 247, 230, 1);
-  --SecondaryColor: #f8fafc;
+  --SecondaryColor: #102a43;
   --SecondaryColor-hover: #f1f5f9;
   --background-tree-subject: rgba(245, 245, 245, 1);
   --success: #16a34a;
@@ -3401,7 +3401,7 @@ body::-webkit-scrollbar-thumb:hover {
   height: 15px;
 }
 :root {
-  --PrimaryColor: #4faf7c;
+  --PrimaryColor: #c47a35;
   --PrimaryColor-hover: #24385c;
   --PrimaryColor-active: #4338ca;
   --PrimaryColor-light: #eef2ff;
@@ -3435,7 +3435,7 @@ body::-webkit-scrollbar-thumb:hover {
   --color-gray-soft-1: rgba(48, 48, 48, 1);
   --btn-gold: rgba(217, 145, 0, 1);
   --btn-easy: rgba(255, 247, 230, 1);
-  --SecondaryColor: #f8fafc;
+  --SecondaryColor: #102a43;
   --SecondaryColor-hover: #f1f5f9;
   --background-tree-subject: rgba(245, 245, 245, 1);
   --success: #16a34a;
@@ -3830,7 +3830,7 @@ html.dark {
   .p-breadcrumb-item:first-child
   span {
   font-size: 12px;
-  color: var(--breadcrumb-first-text, var(--green)) !important;
+  color: var(--PrimaryColor) !important;
 }
 .feature-header-container
   .content

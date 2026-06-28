@@ -63,7 +63,7 @@ describe('DepartmentForm', () => {
     const events = wrapper.emitted('updateData') ?? [];
     const params = events.at(-1)?.[0] as EditDepartmentParams;
     expect(params.toMap()).toEqual({
-      id: 5,
+      department_id: 5,
       translations: expect.objectContaining({ title: { en: 'Existing', ar: 'القائم' } }),
       stage_id: 3,
     });

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-  import { ref, watch } from 'vue';
+  import { computed, ref, watch } from 'vue';
   import IconLogout from '@/shared/icons/IconLogout.vue';
   import { useUserStore } from '@/stores/user';
   import SearchIcon from '@/shared/icons/SearchIcon.vue';
@@ -15,10 +15,17 @@
 
   const userStore = useUserStore();
   const router = useRouter();
+  const { user } = useUserStore();
+
+  const currentRole = computed(() => {
+    return user?.isMaster || Number(user?.type) === 1 ? 'admin' : 'organization';
+  });
 
   const logout = () => {
+    const loginPath = currentRole.value === 'admin' ? '/login-admin' : '/login-organization';
+
     userStore.logout();
-    router.push('/login');
+    router.push(loginPath);
   };
 
   const isDropMenuOpen = ref(false);
@@ -27,8 +34,6 @@
   };
 
   const DrawerVisible = ref(false);
-  const { user } = useUserStore();
-
   const { query, results, isOpen, activeIndex, navigate, onKeydown } = useRouteSearch();
 
   watch(results, (val) => {
@@ -45,7 +50,7 @@
         <input
           v-model="query"
           type="search"
-          placeholder="Search What You Want"
+          :placeholder="$t('search_what_you_want')"
           autocomplete="off"
         />
 
@@ -70,18 +75,18 @@
         <HeaderSettingIcon class="cursor-pointer" />
 
         <div class="user cursor-pointer dropdown-trigger">
-          <img alt="user" :src="EmployeeImage" @click="toggleDropMenu" />
+          <img :alt="$t('user')" :src="EmployeeImage" @click="toggleDropMenu" />
 
           <transition name="mega-menu">
             <div v-if="isDropMenuOpen" class="mega-menu">
               <div class="mega-header">
                 <img
                   :src="EmployeeImage || `https://cyber.comolho.com/static/img/avatar.png`"
-                  alt="image"
+                  :alt="$t('image')"
                 />
                 <div>
                   <p class="name">{{ user?.name }}</p>
-                  <span class="role">Admin</span>
+                  <span class="role">{{ $t('Admin') }}</span>
                 </div>
               </div>
 

@@ -174,7 +174,7 @@
       <slot name="empty" :state="currentState">
         <div class="empty-default">
           <div class="empty-icon">📭</div>
-          <p class="empty-message">No data available</p>
+          <p class="empty-message">{{ $t('no_data') }}</p>
         </div>
       </slot>
     </div>
@@ -227,9 +227,9 @@
       >
         <div class="rate-limited-default">
           <div class="rate-limited-icon">⏱️</div>
-          <h3>Too Many Requests</h3>
-          <p>Please wait before trying again.</p>
-          <button class="retry-btn" @click="handleRetry">Try Again</button>
+          <h3>{{ $t('too_many_requests') }}</h3>
+          <p>{{ $t('please_wait_before_trying_again') }}</p>
+          <button class="retry-btn" @click="handleRetry">{{ $t('try_again') }}</button>
         </div>
       </slot>
     </div>
@@ -239,7 +239,7 @@
       <slot name="cancelled" :state="currentState">
         <div class="cancelled-default">
           <div class="cancelled-icon">🚫</div>
-          <p>Request was cancelled</p>
+          <p>{{ $t('request_was_cancelled') }}</p>
         </div>
       </slot>
     </div>
@@ -268,7 +268,7 @@
         </div>
         <div v-else class="spinner-loader">
           <div class="spinner"></div>
-          <span class="loading-text">Loading...</span>
+          <span class="loading-text">{{ $t('loading') }}</span>
         </div>
       </slot>
     </div>

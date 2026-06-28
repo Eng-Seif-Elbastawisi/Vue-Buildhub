@@ -31,8 +31,8 @@
       }"
     >
       <TabList>
-        <Tab value="0">Demo</Tab>
-        <Tab value="1">Code</Tab>
+        <Tab value="0">{{ $t('demo') }}</Tab>
+        <Tab value="1">{{ $t('code') }}</Tab>
       </TabList>
 
       <TabPanels>

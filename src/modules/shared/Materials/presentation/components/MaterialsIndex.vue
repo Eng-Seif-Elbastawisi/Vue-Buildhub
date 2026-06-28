@@ -113,7 +113,7 @@
         </div>
         <router-link
           class="btn btn-primary"
-          :to="user?.isMaster ? '/material/add' : '/organization/material/add'"
+          :to="user?.isMaster ? '/admin/material/add' : '/organization/material/add'"
         >
           <IndexAddIcon /> {{ $t('material') }}</router-link
         >
@@ -139,7 +139,7 @@
                 class="action-btn edit"
                 :to="
                   user?.isMaster
-                    ? `/material/edit/${item.id}`
+                    ? `/admin/material/edit/${item.id}`
                     : `/organization/material/edit/${item.id}`
                 "
                 :title="$t('material.edit')"
@@ -206,9 +206,11 @@
         <div class="empty-state">
           <h3>{{ $t('material.empty_title') }}</h3>
           <p>{{ $t('material.empty_description') }}</p>
-          <router-link class="btn btn-primary" to="/material/add">{{
-            $t('material.add')
-          }}</router-link>
+          <router-link
+            class="btn btn-primary"
+            :to="user?.isMaster ? '/admin/material/add' : '/organization/material/add'"
+            >{{ $t('material.add') }}</router-link
+          >
         </div>
       </template>
 

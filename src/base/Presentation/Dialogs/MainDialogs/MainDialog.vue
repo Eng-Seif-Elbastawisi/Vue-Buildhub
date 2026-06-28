@@ -26,7 +26,7 @@
       <img alt="" class="dialog-icon" src="" />
       <h4 class="dialog-title"></h4>
       <p class="dialog-message"></p>
-      <!--      <button class="dialog-close-btn">Ok</button>-->
+      <!--      <button class="dialog-close-btn">{{$t('ok')}}</button>-->
     </div>
   </dialog>
 </template>

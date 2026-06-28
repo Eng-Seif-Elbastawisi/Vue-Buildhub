@@ -205,7 +205,9 @@
         <div class="empty-state">
           <h3>{{ $t('client.empty_title') }}</h3>
           <p>{{ $t('client.empty_description') }}</p>
-          <router-link class="btn btn-primary" to="/client/add">{{ $t('client.add') }}</router-link>
+          <router-link class="btn btn-primary" to="/organization/client/add">{{
+            $t('client.add')
+          }}</router-link>
         </div>
       </template>
 

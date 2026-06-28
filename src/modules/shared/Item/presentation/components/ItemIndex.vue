@@ -109,7 +109,7 @@
         </span>
         <input
           v-model="word"
-          placeholder="Search by country name or code…"
+          :placeholder="$t('search_by_country_name_or_code')"
           class="search-input"
           type="text"
           @input="Search"
@@ -118,7 +118,7 @@
       <div class="action-buttons">
         <router-link
           class="btn btn-primary"
-          :to="user?.type === 1 ? '/mainportal/item/add' : '/organization/item/add'"
+          :to="user?.type === 1 ? '/admin/item/add' : '/organization/item/add'"
         >
           <IndexAddIcon /> {{ $t('item.add') }}
         </router-link>
@@ -143,7 +143,7 @@
                 class="action-btn edit"
                 :to="
                   user?.type === 1
-                    ? `/mainportal/item/edit/${item.id}`
+                    ? `/admin/item/edit/${item.id}`
                     : `/organization/item/edit/${item.id}`
                 "
                 :title="$t('item.edit')"
@@ -169,7 +169,7 @@
                 @delete="deleteItem(item.id!)"
               >
                 <template #btn>
-                  <button class="action-btn delete" title="Delete">
+                  <button class="action-btn delete" :title="$t('Delete')">
                     <svg
                       width="15"
                       height="15"
@@ -201,7 +201,11 @@
         <div class="empty-state">
           <h3>{{ $t('item.empty_title') }}</h3>
           <p>{{ $t('item.empty_description') }}</p>
-          <router-link class="btn btn-primary" to="/item/add">{{ $t('item.add') }}</router-link>
+          <router-link
+            class="btn btn-primary"
+            :to="user?.type === 1 ? '/admin/item/add' : '/organization/item/add'"
+            >{{ $t('item.add') }}</router-link
+          >
         </div>
       </template>
 

@@ -7,7 +7,7 @@ describe('EditDepartmentParams', () => {
     const translations = new TranslationParams({ title: { en: 'Science', ar: 'العلوم' } });
 
     expect(new EditDepartmentParams({ id: 5, translations, stageId: 2 }).toMap()).toEqual({
-      id: 5,
+      department_id: 5,
       translations,
       stage_id: 2,
     });

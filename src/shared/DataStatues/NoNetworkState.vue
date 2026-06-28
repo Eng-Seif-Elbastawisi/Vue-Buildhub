@@ -96,21 +96,21 @@
       </svg>
     </div>
 
-    <h3 class="no-network-title">No Internet Connection</h3>
+    <h3 class="no-network-title">{{ $t('no_internet_connection') }}</h3>
 
     <p class="no-network-message">
-      {{ message || 'Please check your internet connection and try again.' }}
+      {{ message || $t('check_internet_connection') }}
     </p>
 
     <div class="connection-status" :class="{ 'is-online': isOnline }">
       <span class="status-dot"></span>
-      {{ isOnline ? 'You are back online' : 'Currently offline' }}
+      {{ isOnline ? $t('you_are_back_online') : $t('currently_offline') }}
     </div>
 
     <button class="no-network-retry-btn" :disabled="isRetrying || !isOnline" @click="handleRetry">
       <span v-if="isRetrying" class="retry-spinner"></span>
       <span v-else>↻</span>
-      {{ isRetrying ? 'Retrying...' : 'Try Again' }}
+      {{ isRetrying ? $t('retrying') : $t('try_again') }}
     </button>
   </div>
 </template>

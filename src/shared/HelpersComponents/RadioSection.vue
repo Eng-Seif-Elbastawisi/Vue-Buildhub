@@ -45,7 +45,7 @@
           class="checkbox-label"
           :for="title.split(' ').join('-')"
           @click="customize = !customize"
-          >customize</label
+          >{{ $t('customize') }}</label
         >
       </div>
     </div>

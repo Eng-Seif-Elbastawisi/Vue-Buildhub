@@ -14,7 +14,7 @@
       <Skeleton height="3rem" width="100%"></Skeleton>
     </div>
     <div class="col-span-3 button-wrapper">
-      <button class="btn btn-primary" type="submit">Submit</button>
+      <button class="btn btn-primary" type="submit">{{ $t('submit') }}</button>
       <!--      <PrimaryButton :title="'Add'" :type="'submit'" />-->
     </div>
   </form>

@@ -39,7 +39,7 @@ describe('Pagination', () => {
 
   it('displays results info', () => {
     const wrapper = createWrapper();
-    expect(wrapper.text()).toContain('show 2 to 3 of');
+    expect(wrapper.text()).toContain('Show 2 to 3 of');
     expect(wrapper.text()).toContain('50');
   });
 

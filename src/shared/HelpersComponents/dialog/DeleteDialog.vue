@@ -19,11 +19,11 @@
   <div @click="visible = true">
     <slot name="Dialog" />
   </div>
-  <Dialog v-model:visible="visible" modal header="DeleteDialog" :style="{ width: '25rem' }">
-    <h1>Are you sure you want to delete this item?</h1>
+  <Dialog v-model:visible="visible" modal :header="$t('delete_dialog')" :style="{ width: '25rem' }">
+    <h1>{{ $t('delete_item_confirmation') }}</h1>
     <div class="dialogs-btn-container">
-      <button @click="Cancel">Cancel</button>
-      <button @click="Delete">Delete</button>
+      <button @click="Cancel">{{ $t('cancel') }}</button>
+      <button @click="Delete">{{ $t('Delete') }}</button>
     </div>
   </Dialog>
 </template>

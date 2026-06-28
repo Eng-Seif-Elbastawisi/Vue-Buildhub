@@ -15,7 +15,7 @@ describe('buildBreadcrumb', () => {
     const route = makeRoute({ country_code: 'eg' }, []);
     const router = makeRouter([]);
     const crumbs = buildBreadcrumb(route, router);
-    expect(crumbs[0]).toEqual({ label: 'Home', url: '/eg/' });
+    expect(crumbs[0]).toEqual({ label: 'Home', url: '/' });
   });
 
   it('should use "/" as the Home url when no country_code param exists', () => {

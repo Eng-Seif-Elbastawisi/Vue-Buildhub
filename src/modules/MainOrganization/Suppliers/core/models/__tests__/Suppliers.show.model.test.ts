@@ -7,7 +7,7 @@ describe('SuppliersShowModel', () => {
       id: 2,
       phone: '01111111111',
       materials: 'Steel',
-      Supplier: 'Acme',
+      name: 'Acme',
       spacification: 'Metal',
     });
 
@@ -15,7 +15,7 @@ describe('SuppliersShowModel', () => {
       id: 2,
       phone: '01111111111',
       materials: 'Steel',
-      Supplier: 'Acme',
+      name: 'Acme',
       spacification: 'Metal',
     });
     expect(Object.isFrozen(model)).toBe(true);

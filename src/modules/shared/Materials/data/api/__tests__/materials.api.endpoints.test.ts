@@ -2,10 +2,10 @@ import { describe, expect, it } from 'vitest';
 import { MaterialApiEndpoints } from '../materials.api.endpoints';
 
 describe('MaterialApiEndpoints', () => {
-  it('uses dashboard endpoints', () => {
+  it('uses main portal material endpoints for admin users', () => {
     const endpoints = new MaterialApiEndpoints();
-    expect(endpoints.index).toContain('dashboard/fetch_material');
-    expect(endpoints.store).toContain('dashboard/add_material');
-    expect(endpoints.delete).toContain('dashboard/delete_material');
+    expect(endpoints.index).toContain('mainportal/fetch_materials');
+    expect(endpoints.store).toContain('mainportal/store_material');
+    expect(endpoints.delete).toContain('mainportal/delete_material');
   });
 });

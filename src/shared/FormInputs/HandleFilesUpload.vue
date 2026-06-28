@@ -275,7 +275,7 @@
         v-for="fileItem in files"
         :key="fileItem.id"
         class="preview-item"
-        title="Click to download"
+        :title="$t('click_to_download')"
         @click="downloadFile(fileItem)"
       >
         <template v-if="isImage(fileItem)">
