@@ -19,9 +19,11 @@ export default class ProjectController extends BaseController<ProjectShowModel, 
   private get userStore() {
     return useUserStore();
   }
+
   protected get repository() {
     return ProjectRepository.getInstance();
   }
+
   protected get config(): ControllerConfig {
     return {
       showLoadingDialog: false,
@@ -37,40 +39,70 @@ export default class ProjectController extends BaseController<ProjectShowModel, 
   private constructor() {
     super();
   }
+
   static getInstance(): ProjectController {
-    if (!ProjectController.instance) ProjectController.instance = new ProjectController();
+    if (!ProjectController.instance) {
+      ProjectController.instance = new ProjectController();
+    }
+
     return ProjectController.instance;
+  }
+
+  private getPrefix(): string {
+    return this.userStore.user?.type === 1 ? '/mainportal' : '/organization';
+  }
+
+  private getProjectIdFromResult(result: DataSuccess<ProjectShowModel>): number | undefined {
+    const data = result.data as ProjectShowModel | undefined;
+
+    return data?.id;
   }
 
   async create(params: Params, options?: ApiCallOptions, formKey?: string) {
     const result = await super.create(params, { ...options, useJson: true });
-    if (result instanceof DataSuccess) {
-      // await router.push({ name: 'Projects' });
-      router.push(
-        this.userStore.user?.type === 1 ? '/mainportal/project' : '/organization/project',
-      );
 
-      if (formKey) useFormsStore().clearFormData(formKey);
+    if (result instanceof DataSuccess) {
+      const projectId = this.getProjectIdFromResult(result as DataSuccess<ProjectShowModel>);
+
+      if (formKey) {
+        useFormsStore().clearFormData(formKey);
+      }
+
+      if (projectId) {
+        router.push({
+          name: 'add-project_preview',
+          query: {
+            project_id: projectId,
+          },
+        });
+
+        return result;
+      }
+
+      router.push(`${this.getPrefix()}/project`);
     }
+
     return result;
   }
 
   async update(params: Params, options?: ApiCallOptions, formKey?: string) {
     const result = await super.update(params, { ...options, useJson: true });
-    if (result instanceof DataSuccess) {
-      // await router.push({ name: 'Projects' });
-      router.push(
-        this.userStore.user?.type === 1 ? '/mainportal/project' : '/organization/project',
-      );
 
-      if (formKey) useFormsStore().clearFormData(formKey);
+    if (result instanceof DataSuccess) {
+      router.push(`${this.getPrefix()}/project`);
+
+      if (formKey) {
+        useFormsStore().clearFormData(formKey);
+      }
     }
+
     return result;
   }
 
   async fetchList(params: Params, options?: ApiCallOptions): Promise<DataState<ProjectModel[]>> {
     return await super.fetchList(params, { ...options, useJson: true });
   }
+
   async fetchOne(params: Params, options?: ApiCallOptions) {
     return await super.fetchOne(params, {
       ...options,

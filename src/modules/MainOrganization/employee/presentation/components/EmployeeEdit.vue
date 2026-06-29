@@ -21,6 +21,7 @@ const updateData = (data: AddEmployeeParams) => {
     email: data.email,
     phone: data.phone,
     password: data.password || undefined,
+    type: data.type,
   });
 };
 

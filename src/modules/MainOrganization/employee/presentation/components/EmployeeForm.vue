@@ -1,14 +1,19 @@
 <script setup lang="ts">
-  import { ref, watch } from 'vue';
+  import { computed, ref, watch } from 'vue';
   import { onBeforeRouteLeave, useRoute } from 'vue-router';
   import { useFormsStore } from '@/stores/formsStore';
   import DocumentIcon from '@/shared/icons/DocaumentType/DocumentIcon.vue';
   import type EmployeeModel from '../../core/models/employee.model';
   import AddEmployeeParams from '../../core/params/add.employee.params';
+  import { EmployeeType } from '../../core/constants/type.enum';
+  import type TitleInterface from '@/base/Data/Models/titleInterface';
+  import { useI18n } from 'vue-i18n';
+  import UpdatedCustomInputSelect from '@/shared/FormInputs/UpdatedCustomInputSelect.vue';
 
   const emit = defineEmits<{
     updateData: [params: AddEmployeeParams];
   }>();
+  const { t } = useI18n();
 
   const props = defineProps<{
     admin?: EmployeeModel;
@@ -22,7 +27,14 @@
   const email = ref('');
   const phone = ref('');
   const password = ref('');
-
+  const type = ref<EmployeeType>(EmployeeType.EMPLOYEE);
+  const employeeTypeOptions = computed<TitleInterface<EmployeeType>[]>(() => [
+    { id: EmployeeType.EMPLOYEE, title: t('employee.employee') },
+    { id: EmployeeType.ENGINEER, title: t(' employee.engineer') },
+    { id: EmployeeType.SELLER, title: t(' employee.seller') },
+    { id: EmployeeType.PRICING_RESPONSIBLE, title: t('employee.pricing_responsible') },
+  ]);
+  const selectedEmployeeType = ref<TitleInterface<EmployeeType> | null>(null);
   const updateData = () => {
     emit(
       'updateData',
@@ -31,6 +43,7 @@
         email: email.value,
         phone: phone.value,
         password: password.value,
+        type: type.value,
       }),
     );
   };
@@ -43,19 +56,31 @@
     }
   });
 
-  watch(
-    () => props.admin,
-    (admin) => {
-      if (!admin) return;
+watch(
+  () => props.admin,
+  (admin) => {
+    if (!admin) return;
 
-      name.value = admin.name ?? '';
-      email.value = admin.email ?? '';
-      phone.value = admin.phone ?? '';
-      password.value = '';
-      updateData();
-    },
-    { immediate: true },
-  );
+    name.value = admin.name ?? '';
+    email.value = admin.email ?? '';
+    phone.value = admin.phone ?? '';
+    password.value = '';
+
+    type.value = admin.employee_type ?? EmployeeType.EMPLOYEE;
+
+    selectedEmployeeType.value =
+      employeeTypeOptions.value.find((option) => option.id === type.value) ?? null;
+
+    updateData();
+  },
+  { immediate: true },
+);
+
+  const updateEmployeeType = (value: TitleInterface<EmployeeType> | null) => {
+    selectedEmployeeType.value = value;
+    type.value = value?.id ?? EmployeeType.EMPLOYEE;
+    updateData();
+  };
 </script>
 
 <template>
@@ -123,6 +148,17 @@
             @input="updateData"
           />
         </div>
+      </div>
+
+      <div class="field-group">
+        <UpdatedCustomInputSelect
+          id="employee_type"
+          :model-value="selectedEmployeeType"
+          :label="$t('employee_type')"
+          :static-options="employeeTypeOptions"
+          :placeholder="$t('employee_type_placeholder')"
+          @update:model-value="updateEmployeeType"
+        />
       </div>
     </div>
   </div>

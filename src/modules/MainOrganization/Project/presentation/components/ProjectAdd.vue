@@ -4,6 +4,7 @@
   import type AddProjectParams from '../../core/params/add.project.params.ts';
   import ProjectController from '../controllers/project.controller.ts';
   import ProjectForm from './ProjectForm.vue';
+  import ProjectSteps from './ProjectSteps.vue';
 
   const controller = ProjectController.getInstance();
   const route = useRoute();
@@ -23,6 +24,7 @@
 
 <template>
   <div class="Project-crud-page">
+    <ProjectSteps :current-step="1" />
     <ProjectForm :loading="loading" :is-edit="false" @update-data="params = $event" />
     <button class="btn btn-primary" type="button" :disabled="loading" @click="saveProject">
       {{ $t('Project.save') }}

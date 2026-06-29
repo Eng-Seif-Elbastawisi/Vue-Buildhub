@@ -25,6 +25,11 @@
       location_id: data.location_id,
       service_type: data.service_type,
       attachments: data.attachments,
+      engineer_id: data.engineer_id,
+      preview_date: data.preview_date,
+      preview_time: data.preview_time,
+      site_link: data.site_link,
+      address: data.address,
     });
   };
   const saveProject = async () => {

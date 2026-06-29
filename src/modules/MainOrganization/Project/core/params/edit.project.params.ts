@@ -21,6 +21,11 @@ export default class EditProjectParams implements Params {
   public date?: string;
   public notes?: string;
   public attachments?: ProjectAttachmentParams[];
+  public engineer_id?: number;
+  public preview_date?: string;
+  public preview_time?: string;
+  public site_link?: string;
+  public address?: string;
 
   public static readonly validation = new ClassValidation().setRules({});
 
@@ -38,6 +43,11 @@ export default class EditProjectParams implements Params {
     date?: string;
     notes?: string;
     attachments?: ProjectAttachmentParams[];
+    engineer_id?: number;
+    preview_date?: string;
+    preview_time?: string;
+    site_link?: string;
+    address?: string;
   }) {
     this.projectId = data.projectId;
     this.translations = data.translations;
@@ -52,6 +62,11 @@ export default class EditProjectParams implements Params {
     this.date = data.date;
     this.notes = data.notes;
     this.attachments = data.attachments;
+    this.engineer_id = data.engineer_id;
+    this.preview_date = data.preview_date;
+    this.preview_time = data.preview_time;
+    this.site_link = data.site_link;
+    this.address = data.address;
   }
 
   toMap(): Record<string, unknown> {
@@ -69,6 +84,11 @@ export default class EditProjectParams implements Params {
       date: this.date,
       notes: this.notes,
       attachments: this.attachments,
+      engineer_id: this.engineer_id,
+      preview_date: this.preview_date,
+      preview_time: this.preview_time,
+      site_link: this.site_link,
+      address: this.address,
     };
   }
 
