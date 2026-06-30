@@ -142,6 +142,11 @@ export const sidebarSections: SidebarSectionConfig[] = [
         labelKey: 'Material',
         icon: ArticleIcon,
       },
+      {
+        path: '/space',
+        labelKey: 'Space',
+        icon: ArticleIcon,
+      },
     ],
   },
 ];
