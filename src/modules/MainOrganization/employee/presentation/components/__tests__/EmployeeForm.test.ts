@@ -81,7 +81,9 @@ describe('EmployeeForm', () => {
     await wrapper.find<HTMLInputElement>('#admin-phone').setValue('01000000000');
     await wrapper.find<HTMLInputElement>('#admin-password').setValue('secret123');
 
-    await wrapper.find('[data-testid="employee-type-select"]').setValue(String(EmployeeType.ENGINEER));
+    await wrapper
+      .find('[data-testid="employee-type-select"]')
+      .setValue(String(EmployeeType.ENGINEER));
 
     const params = wrapper.emitted('updateData')?.at(-1)?.[0] as AddEmployeeParams;
 
