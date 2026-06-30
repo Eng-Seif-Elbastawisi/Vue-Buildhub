@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils';
 import { describe, expect, it, vi } from 'vitest';
-import ProjectPreviewForm from '../ProjectPreviewForm.vue';
+import ProjectPreviewForm from '../project_preview/ProjectPreviewForm.vue';
 import type AddProjectPreviewParams from '../../../core/params/add.project.preview.params';
 import ProjectShowModel from '../../../core/models/project.show.model';
 
