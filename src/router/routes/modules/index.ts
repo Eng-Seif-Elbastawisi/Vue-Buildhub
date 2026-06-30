@@ -6,6 +6,7 @@ import { EmployeeRoutes } from './employee';
 import { SpecializationRoutes } from './specialization';
 import { ProjectRoutes } from './project';
 import { SystemIdentityRoutes } from '../shared/systemIdentity';
+import { ProjectPreviewRoutes } from './project_preview';
 
 export const dashboardRoutes: RouteRecordRaw[] = [
   // ...countryRoutes,
@@ -15,4 +16,5 @@ export const dashboardRoutes: RouteRecordRaw[] = [
   ...EmployeeRoutes,
   ...SpecializationRoutes,
   ...ProjectRoutes,
+  ...ProjectPreviewRoutes,
 ];

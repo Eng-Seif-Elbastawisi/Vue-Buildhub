@@ -54,6 +54,11 @@
 
   const countryParams = new IndexLocationParams('', 1, 100, 0, null, LocationTypeEnum.COUNTRY);
 
+  const clientExistOptions = computed<TitleInterface<number>[]>(() => [
+    { id: 0, title: t('Project.client_new') },
+    { id: 1, title: t('Project.client_existing') },
+  ]);
+
   const serviceTypeOptions = computed<TitleInterface<number>[]>(() => [
     { id: ServiceType.EXECUTIONONLY, title: t('Project.service_types.executionOnly') },
     { id: ServiceType.DESIGNONLY, title: t('Project.service_types.designOnly') },
@@ -63,8 +68,9 @@
   const titleTranslations = ref<Record<string, string>>({});
   const descriptionTranslations = ref<Record<string, string>>({});
 
-  const client_exist = ref<boolean>(false);
+  const client_exist = ref<boolean | null>(null);
 
+  const selectedClientExist = ref<TitleInterface<number> | null>(null);
   const selectedClient = ref<TitleInterface<number> | null>(null);
   const selectedClientSource = ref<TitleInterface<number> | null>(null);
   const selectedProjectType = ref<TitleInterface<number> | null>(null);
@@ -79,10 +85,8 @@
   const date = ref<string>('');
   const notes = ref<string>('');
 
-  // دي الملفات الجديدة فقط اللي هتتبعت للـ backend
   const attachments = ref<ProjectAttachmentParams[]>([]);
 
-  // دي الملفات القديمة للـ preview فقط ومش هتتبعت في update
   const existingAttachmentFiles = ref<string[]>([]);
 
   const attachmentFiles = computed(() => existingAttachmentFiles.value);
@@ -110,6 +114,10 @@
       selectedGovernorate.value?.id ? Number(selectedGovernorate.value.id) : null,
     );
   });
+
+  const getClientExistOption = (value: boolean) => {
+    return clientExistOptions.value.find((option) => option.id === (value ? 1 : 0)) ?? null;
+  };
 
   const getTitle = (item: any): string => {
     if (!item) return '';
@@ -144,21 +152,30 @@
           description: descriptionTranslations.value,
         }),
 
-        client_exist: props.isEdit ? undefined : client_exist.value,
+        client_exist:
+          props.isEdit || selectedClientExist.value === null
+            ? undefined
+            : Boolean(client_exist.value),
 
         client_id:
-          client_exist.value || props.isEdit
+          !props.isEdit && selectedClientExist.value && client_exist.value
             ? selectedClient.value?.id
               ? Number(selectedClient.value.id)
               : undefined
             : undefined,
 
-        client_name: !props.isEdit && !client_exist.value ? client_name.value : undefined,
+        client_name:
+          !props.isEdit && selectedClientExist.value && client_exist.value === false
+            ? client_name.value
+            : undefined,
 
-        client_phone: !props.isEdit && !client_exist.value ? client_phone.value : undefined,
+        client_phone:
+          !props.isEdit && selectedClientExist.value && client_exist.value === false
+            ? client_phone.value
+            : undefined,
 
         client_source:
-          !props.isEdit && !client_exist.value
+          !props.isEdit && selectedClientExist.value && client_exist.value === false
             ? selectedClientSource.value?.id
               ? Number(selectedClientSource.value.id)
               : undefined
@@ -172,8 +189,10 @@
 
         service_type: selectedServiceType.value?.id as ServiceType | undefined,
 
-        // لو مفيش ملفات جديدة، مش هنبعت attachments
         attachments: attachments.value.length ? attachments.value : undefined,
+
+        notes: notes.value,
+        date: date.value,
       }),
     );
   };
@@ -188,7 +207,21 @@
     updateData();
   };
 
-  const updateClientExist = () => {
+  const updateClientExist = (value: TitleInterface<number> | null) => {
+    selectedClientExist.value = value;
+
+    if (!value) {
+      client_exist.value = null;
+      selectedClient.value = null;
+      selectedClientSource.value = null;
+      client_name.value = '';
+      client_phone.value = '';
+      updateData();
+      return;
+    }
+
+    client_exist.value = value.id === 1;
+
     if (client_exist.value) {
       client_name.value = '';
       client_phone.value = '';
@@ -239,8 +272,6 @@
   };
 
   const updateAttachments = (files: UploadedFile[]) => {
-    // هنا بناخد الملفات الجديدة فقط
-    // الملفات القديمة بتكون URL ومش base64، فمش هتتبعت
     attachments.value = files
       .filter((file) => file.base64 && file.base64.startsWith('data:'))
       .map((file) => ({
@@ -253,7 +284,16 @@
   watch(
     () => props.Project,
     (Project) => {
-      if (!Project) return;
+      if (!Project) {
+        selectedClientExist.value = null;
+        client_exist.value = null;
+        selectedClient.value = null;
+        selectedClientSource.value = null;
+        client_name.value = '';
+        client_phone.value = '';
+        updateData();
+        return;
+      }
 
       const projectData = Project as any;
 
@@ -266,18 +306,17 @@
       };
 
       client_exist.value = projectData.client_exist ?? Boolean(projectData.client);
+      selectedClientExist.value = getClientExistOption(Boolean(client_exist.value));
 
       client_name.value = projectData.client_name ?? '';
       client_phone.value = projectData.client_phone ?? '';
       date.value = projectData.date ?? '';
       notes.value = projectData.notes ?? '';
 
-      // القديم للعرض فقط
       existingAttachmentFiles.value = Array.isArray(projectData.attachments)
         ? projectData.attachments.map((attachment: any) => attachment.file).filter(Boolean)
         : [];
 
-      // الجديد اللي هيتبعت يبدأ فاضي
       attachments.value = [];
 
       selectedClient.value = projectData.client
@@ -362,16 +401,30 @@
           @update:model-value="updateProjectType"
         />
       </div>
-
+      <div class="field-group">
+        <label class="field-label" for="date">{{ $t('date') }}</label>
+        <input
+          id="date"
+          v-model="date"
+          class="field-input"
+          type="date"
+          :placeholder="$t('date_placeholder')"
+          @input="updateData"
+        />
+      </div>
       <template v-if="!isEdit">
-        <div class="field-group col-span-2">
-          <label class="checkbox-field">
-            <input v-model="client_exist" type="checkbox" @change="updateClientExist" />
-            <span>{{ $t('Project.client_exist') }}</span>
-          </label>
+        <div class="field-group">
+          <UpdatedCustomInputSelect
+            id="client_exist"
+            :model-value="selectedClientExist"
+            :label="$t('Project.client_exist')"
+            :static-options="clientExistOptions"
+            :placeholder="$t('Project.client_exist_placeholder')"
+            @update:model-value="updateClientExist"
+          />
         </div>
 
-        <div v-if="client_exist" class="field-group">
+        <div v-if="selectedClientExist && client_exist" class="field-group">
           <UpdatedCustomInputSelect
             id="client_id"
             :model-value="selectedClient"
@@ -383,7 +436,7 @@
           />
         </div>
 
-        <template v-else>
+        <template v-if="selectedClientExist && client_exist === false">
           <div class="field-group">
             <label class="field-label" for="client_name">{{ $t('client_name') }}</label>
             <input
@@ -456,27 +509,32 @@
         />
       </div>
 
-      <div class="field-group">
-        <UpdatedCustomInputSelect
-          id="service_type"
-          :model-value="selectedServiceType"
-          :label="$t('service_type')"
-          :static-options="serviceTypeOptions"
-          :placeholder="$t('service_type_placeholder')"
-          @update:model-value="updateServiceType"
-        />
-      </div>
+      <div class="field-group col-span-2">
+        <label class="field-label">{{ $t('service_type') }}</label>
 
-      <div class="field-group">
-        <label class="field-label" for="date">{{ $t('date') }}</label>
-        <input
-          id="date"
-          v-model="date"
-          class="field-input"
-          type="date"
-          :placeholder="$t('date_placeholder')"
-          @input="updateData"
-        />
+        <div class="service-tabs">
+          <button
+            v-for="option in serviceTypeOptions"
+            :key="option.id"
+            type="button"
+            class="service-tab"
+            :class="{ active: selectedServiceType?.id === option.id }"
+            @click="updateServiceType(option)"
+          >
+            <span class="service-tab__icon">
+              {{
+                option.id === ServiceType.EXECUTIONONLY
+                  ? '🛠'
+                  : option.id === ServiceType.DESIGNONLY
+                    ? '✏️'
+                    : '🏗'
+              }}
+            </span>
+            <span class="service-tab__title">
+              {{ option.title }}
+            </span>
+          </button>
+        </div>
       </div>
 
       <div class="field-group col-span-2">
@@ -563,27 +621,57 @@
     color: var(--bread-crumb-color-span);
   }
 
+  .field-input:focus {
+    border-color: var(--PrimaryColor);
+  }
+
   .field-textarea {
     min-height: 110px;
     resize: vertical;
     border-radius: 18px;
   }
 
-  .checkbox-field {
-    display: inline-flex;
+  .service-tabs {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+
+  .service-tab {
+    display: flex;
     align-items: center;
+    justify-content: center;
     gap: 0.5rem;
-    width: fit-content;
+    min-height: 48px;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border-weak);
+    border-radius: 28px;
+    background: var(--white);
     cursor: pointer;
     font-family: 'Medium';
     font-size: var(--sm-size);
-    color: var(--gray-6);
+    color: var(--bread-crumb-color-span);
+    transition: all 0.25s ease;
+
+    &:hover {
+      border-color: var(--PrimaryColor);
+      background: var(--PrimaryColor-light);
+    }
+
+    &.active {
+      border-color: var(--PrimaryColor);
+      background: var(--PrimaryColor-light);
+      color: var(--PrimaryColor);
+      box-shadow: 0 0 0 1px var(--PrimaryColor);
+    }
   }
 
-  .checkbox-field input {
-    width: 18px;
-    height: 18px;
-    cursor: pointer;
+  .service-tab__icon {
+    line-height: 1;
+  }
+
+  .service-tab__title {
+    white-space: nowrap;
   }
 
   .col-span-2 {
@@ -592,6 +680,10 @@
 
   @media (max-width: 768px) {
     .form-fields {
+      grid-template-columns: 1fr;
+    }
+
+    .service-tabs {
       grid-template-columns: 1fr;
     }
 

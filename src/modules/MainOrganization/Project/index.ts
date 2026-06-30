@@ -8,3 +8,8 @@ export { default as IndexSpecializationParams } from './core/params/index.projec
 export { default as SpecializationRepository } from './data/repositories/project.repository';
 export { default as SpecializationController } from './presentation/controllers/project.controller';
 export { default as SpecializationApiService } from './data/api/project.api-service';
+export { default as ProjectShowPreviewModel } from './core/models/project.preview.show.model';
+export { default as ProjectPreviewAddParams } from './core/params/add.project.preview.params';
+export { default as ProjectPreviewEditParams } from './core/params/edit.project.preview.params';
+export { default as ProjectPreviewShowParams } from './core/params/show.project.preview.params';
+export { default as ProjectPreviewController } from './presentation/controllers/project.preview.controller';

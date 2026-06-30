@@ -18,6 +18,8 @@ export default class ProjectApiService extends BaseApiService {
       create: this.projectEndpoints.store,
       update: this.projectEndpoints.update,
       delete: this.projectEndpoints.delete,
+      
+
     };
   }
 }

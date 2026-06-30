@@ -11,3 +11,4 @@ export class ProjectApiEndpoints extends BaseEndpoints {
   readonly update = this.url('update_project');
   readonly delete = this.url('delete_project');
 }
+
