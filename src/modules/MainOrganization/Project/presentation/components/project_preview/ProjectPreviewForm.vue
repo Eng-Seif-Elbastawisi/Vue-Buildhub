@@ -11,9 +11,11 @@
   import { NotificationType } from '@/modules/MainOrganization/Project/core/constants/notificationType.enum';
   import { Status } from '@/modules/MainOrganization/Project/core/constants/status.enum';
   import { useI18n } from 'vue-i18n';
+
   const emit = defineEmits<{
     updateData: [params: AddProjectPreviewParams];
   }>();
+
   const { t } = useI18n();
 
   const props = defineProps<{
@@ -24,31 +26,36 @@
   }>();
 
   const selectedEngineer = ref<TitleInterface<number> | null>(null);
+  const selectedPricingResponsible = ref<TitleInterface<number> | null>(null);
+  const selectedNotificationType = ref<TitleInterface<NotificationType> | null>(null);
+  const status = ref<TitleInterface<Status> | null>(null);
+
   const previewDate = ref<string>('');
   const previewTime = ref<string>('');
   const siteLink = ref<string>('');
   const address = ref<string>('');
   const notification_message = ref<string>('');
+
   const employeeController = EmployeeController.getInstance();
-  const selectedNotificationType = ref<TitleInterface<NotificationType> | null>(null);
+
   const notificationTypeOptions = computed<TitleInterface<NotificationType>[]>(() => [
     { id: NotificationType.LOW, title: t('project.notification_low') },
     { id: NotificationType.NORMAL, title: t('project.notification_normal') },
     { id: NotificationType.URGENT, title: t('project.notification_urgent') },
   ]);
 
-  const status = ref<TitleInterface<Status> | null>(null);
   const statusOptions = computed<TitleInterface<Status>[]>(() => [
     { id: Status.NEED_ADDITIONAL_VISIT, title: t('project.status_need_additional_visit') },
     { id: Status.NOT_READY_FOR_COMPLETION, title: t('project.status_not_ready_for_completion') },
     { id: Status.READY_FOR_PRICING, title: t('project.status_ready_for_pricing') },
   ]);
+
   // employee type = 2
   const engineerParams = new IndexEmployeeParams('', 1, 100, 0, 2);
+
   // employee type = 4
   const pricingResponsibleParams = new IndexEmployeeParams('', 1, 100, 0, 4);
 
-  const selectedPricingResponsible = ref<TitleInterface<number> | null>(null);
   const updateData = () => {
     emit(
       'updateData',
@@ -61,7 +68,9 @@
         address: address.value,
         notification_type: selectedNotificationType.value?.id ?? NotificationType.LOW,
         status: status.value?.id ?? Status.NEED_ADDITIONAL_VISIT,
-        pricing_responsible_id: selectedPricingResponsible.value?.id ?? undefined,
+        pricing_responsible_id: selectedPricingResponsible.value?.id
+          ? Number(selectedPricingResponsible.value.id)
+          : undefined,
         notification_message: notification_message.value,
       }),
     );
@@ -92,17 +101,37 @@
     (projectPreview) => {
       if (!projectPreview) return;
 
-      selectedEngineer.value = projectPreview.engineer
+      const projectData = projectPreview as any;
+
+      selectedEngineer.value = projectData.engineer
         ? {
-            id: projectPreview.engineer.id,
-            title: projectPreview.engineer.title,
+            id: projectData.engineer.id,
+            title: projectData.engineer.title,
           }
         : null;
 
-      previewDate.value = projectPreview.preview_date ?? '';
-      previewTime.value = projectPreview.preview_time ?? '';
-      siteLink.value = projectPreview.site_link ?? '';
-      address.value = projectPreview.address ?? '';
+      selectedPricingResponsible.value = projectData.pricing_responsible
+        ? {
+            id: projectData.pricing_responsible.id,
+            title: projectData.pricing_responsible.title || projectData.pricing_responsible.name,
+          }
+        : null;
+
+      selectedNotificationType.value =
+        notificationTypeOptions.value.find((item) => item.id === projectData.notification_type) ??
+        notificationTypeOptions.value.find((item) => item.id === NotificationType.LOW) ??
+        null;
+
+      status.value =
+        statusOptions.value.find((item) => item.id === projectData.status) ??
+        statusOptions.value.find((item) => item.id === Status.NEED_ADDITIONAL_VISIT) ??
+        null;
+
+      previewDate.value = projectData.preview_date ?? '';
+      previewTime.value = projectData.preview_time ?? '';
+      siteLink.value = projectData.site_link ?? '';
+      address.value = projectData.address ?? '';
+      notification_message.value = projectData.notification_message ?? '';
 
       updateData();
     },
@@ -127,8 +156,10 @@
     <div class="form-grid form-grid--three">
       <div class="field-block">
         <div class="field-label-row">
-          <span class="label-icon"></span>
-          <label class="field-label" for="engineer_id">{{ $t('project.preview_engineer') }}</label>
+          <span class="label-icon">👷</span>
+          <label class="field-label" for="engineer_id">
+            {{ $t('project.preview_engineer') }}
+          </label>
         </div>
 
         <UpdatedCustomInputSelect
@@ -144,7 +175,9 @@
       <div class="field-block">
         <div class="field-label-row">
           <span class="label-icon">📅</span>
-          <label class="field-label" for="preview_date">{{ $t('project.preview_date') }}</label>
+          <label class="field-label" for="preview_date">
+            {{ $t('project.preview_date') }}
+          </label>
         </div>
 
         <input
@@ -159,7 +192,9 @@
       <div class="field-block">
         <div class="field-label-row">
           <span class="label-icon">⏰</span>
-          <label class="field-label" for="preview_time">{{ $t('project.preview_time') }}</label>
+          <label class="field-label" for="preview_time">
+            {{ $t('project.preview_time') }}
+          </label>
         </div>
 
         <input
@@ -174,7 +209,9 @@
       <div class="field-block">
         <div class="field-label-row">
           <span class="label-icon">🔗</span>
-          <label class="field-label" for="site_link">{{ $t('project.site_link') }}</label>
+          <label class="field-label" for="site_link">
+            {{ $t('project.site_link') }}
+          </label>
         </div>
 
         <input
@@ -189,8 +226,10 @@
 
       <div class="field-block">
         <div class="field-label-row">
-          <span class="label-icon">👷</span>
-          <label class="field-label">{{ $t('project.preview_engineer') }}</label>
+          <span class="label-icon">💰</span>
+          <label class="field-label" for="pricing_responsible_id">
+            {{ $t('project.pricing_responsible') }}
+          </label>
         </div>
 
         <UpdatedCustomInputSelect
@@ -198,16 +237,22 @@
           :model-value="selectedPricingResponsible"
           :controller="employeeController"
           :params="pricingResponsibleParams"
-          :placeholder="$t('project.preview_engineer_placeholder')"
+          :placeholder="$t('project.pricing_responsible_placeholder')"
           @update:model-value="updatePricingResponsible"
         />
       </div>
 
-      <div class="field-group">
+      <div class="field-block">
+        <div class="field-label-row">
+          <span class="label-icon">🔔</span>
+          <label class="field-label" for="notification_type">
+            {{ $t('project.notification_type') }}
+          </label>
+        </div>
+
         <UpdatedCustomInputSelect
           id="notification_type"
           :model-value="selectedNotificationType"
-          :label="$t('project.notification_type')"
           :static-options="notificationTypeOptions"
           :placeholder="$t('project.notification_type_placeholder')"
           @update:model-value="updateNotificationType"
@@ -216,15 +261,17 @@
 
       <div class="field-block">
         <div class="field-label-row">
-          <span class="label-icon">👷</span>
-          <label class="field-label">{{ $t('status') }}</label>
+          <span class="label-icon">📌</span>
+          <label class="field-label" for="status">
+            {{ $t('status') }}
+          </label>
         </div>
 
         <UpdatedCustomInputSelect
           id="status"
           :model-value="status"
           :static-options="statusOptions"
-          :placeholder="$t('project.preview_engineer_placeholder')"
+          :placeholder="$t('status_placeholder')"
           @update:model-value="updateStatus"
         />
       </div>
@@ -232,7 +279,9 @@
       <div class="field-block col-span-3">
         <div class="field-label-row">
           <span class="label-icon">📍</span>
-          <label class="field-label" for="address">{{ $t('address') }}</label>
+          <label class="field-label" for="address">
+            {{ $t('address') }}
+          </label>
         </div>
 
         <textarea
@@ -246,10 +295,10 @@
 
       <div class="field-block col-span-3">
         <div class="field-label-row">
-          <span class="label-icon">📍</span>
-          <label class="field-label" for="notification_message">{{
-            $t('notification_message')
-          }}</label>
+          <span class="label-icon">✉️</span>
+          <label class="field-label" for="notification_message">
+            {{ $t('notification_message') }}
+          </label>
         </div>
 
         <textarea
@@ -300,10 +349,21 @@
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
+    min-height: 24px;
   }
 
   .label-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    min-width: 22px;
+    height: 22px;
     line-height: 1;
+    border-radius: 50%;
+    background: var(--PrimaryColor-light);
+    color: var(--PrimaryColor);
+    font-size: 0.78rem;
   }
 
   .field-label {
@@ -314,6 +374,7 @@
 
   .field-input {
     width: 100%;
+    min-height: 46px;
     padding: 12px 16px;
     border: 1px solid var(--border-weak);
     border-radius: 28px;
@@ -358,5 +419,9 @@
     .col-span-3 {
       grid-column: span 1;
     }
+  }
+
+  .form-section :deep(.input-label) {
+    display: none;
   }
 </style>
