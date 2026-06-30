@@ -51,6 +51,7 @@ export const sidebarSections: SidebarSectionConfig[] = [
         path: '/project-item',
         labelKey: 'Project Item',
         icon: EducationClassificationIcon,
+        roles: ['organization'],
       },
       {
         path: '/admin',
