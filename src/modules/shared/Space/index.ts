@@ -1,0 +1,10 @@
+export { default as SpaceModel } from './core/models/space.model';
+export { default as SpaceShowModel } from './core/models/space.show.model';
+export { default as AddSpaceParams } from './core/params/add.space.params';
+export { default as EditSpaceParams } from './core/params/edit.space.params';
+export { default as DeleteSpaceParams } from './core/params/delete.space.params';
+export { default as ShowSpaceParams } from './core/params/show.space.params';
+export { default as IndexSpaceParams } from './core/params/index.space.params';
+export { default as SpaceRepository } from './data/repositories/space.repository';
+export { default as SpaceController } from './presentation/controllers/space.controller';
+export { default as SpaceApiService } from './data/api/space.api-service';
