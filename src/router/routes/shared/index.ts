@@ -16,6 +16,7 @@ import { LocationGovernorateRoutes } from './location_governorate';
 import { LocationCityRoutes } from './location_city';
 import { SystemIdentityRoutes } from './systemIdentity';
 import { SpaceRoutes } from './space';
+import { projectItemRoutes } from './projectItem';
 
 export const sharedRoutes: RouteRecordRaw[] = [
   ...organizationRoutes,
@@ -35,4 +36,5 @@ export const sharedRoutes: RouteRecordRaw[] = [
   ...LocationCityRoutes,
   ...SystemIdentityRoutes,
   ...SpaceRoutes,
+  ...projectItemRoutes,
 ];

@@ -48,6 +48,11 @@ export const sidebarSections: SidebarSectionConfig[] = [
         icon: EducationClassificationIcon,
       },
       {
+        path: '/project-item',
+        labelKey: 'Project Item',
+        icon: EducationClassificationIcon,
+      },
+      {
         path: '/admin',
         labelKey: 'Admins',
         icon: EducationClassificationIcon,
