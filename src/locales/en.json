@@ -704,5 +704,8 @@
   "expand_sidebar": "Expand sidebar",
   "Employee": "Employee",
   "open_sidebar": "Open sidebar",
-  "close_sidebar": "Close sidebar"
+  "close_sidebar": "Close sidebar",
+  "ProjectPreview.list_title": "List of project previews",
+  "ProjectPreview.list_description": "Here you can see all the project previews in the system",
+  "ProjectPreview.visit_title": "Visit {number}"
 }

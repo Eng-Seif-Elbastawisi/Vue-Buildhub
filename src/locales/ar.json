@@ -704,5 +704,8 @@
   "expand_sidebar": "توسيع الشريط الجانبي",
   "Employee": "الموظف",
   "open_sidebar": "فتح الشريط الجانبي",
-  "close_sidebar": "إغلاق الشريط الجانبي"
+  "close_sidebar": "إغلاق الشريط الجانبي",
+  "ProjectPreview.list_title": "قائمة معاينات المشاريع",
+  "ProjectPreview.list_description": "هنا يمكنك رؤية جميع معاينات المشاريع في النظام",
+  "ProjectPreview.visit_title": "الزيارة {رقم}"
 }

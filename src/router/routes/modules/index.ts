@@ -8,6 +8,7 @@ import { ProjectRoutes } from './project';
 import { SystemIdentityRoutes } from '../shared/systemIdentity';
 import { ProjectPreviewRoutes } from './project_preview';
 import { ProjectPricingRoutes } from './project_pricing';
+import { ProjectFloorRoutes } from './project_floor';
 
 export const dashboardRoutes: RouteRecordRaw[] = [
   // ...countryRoutes,
@@ -19,4 +20,5 @@ export const dashboardRoutes: RouteRecordRaw[] = [
   ...ProjectRoutes,
   ...ProjectPreviewRoutes,
   ...ProjectPricingRoutes,
+  ...ProjectFloorRoutes,
 ];
