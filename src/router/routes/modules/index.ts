@@ -7,6 +7,7 @@ import { SpecializationRoutes } from './specialization';
 import { ProjectRoutes } from './project';
 import { SystemIdentityRoutes } from '../shared/systemIdentity';
 import { ProjectPreviewRoutes } from './project_preview';
+import { ProjectPricingRoutes } from './project_pricing';
 
 export const dashboardRoutes: RouteRecordRaw[] = [
   // ...countryRoutes,
@@ -17,4 +18,5 @@ export const dashboardRoutes: RouteRecordRaw[] = [
   ...SpecializationRoutes,
   ...ProjectRoutes,
   ...ProjectPreviewRoutes,
+  ...ProjectPricingRoutes,
 ];

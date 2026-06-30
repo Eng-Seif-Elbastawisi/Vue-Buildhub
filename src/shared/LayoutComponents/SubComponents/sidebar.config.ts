@@ -83,6 +83,12 @@ export const sidebarSections: SidebarSectionConfig[] = [
         roles: ['organization'],
       },
       {
+        path: '/project-pricing',
+        labelKey: 'Project Pricing',
+        icon: EducationClassificationIcon,
+        roles: ['organization'],
+      },
+      {
         path: '/system-identity',
         labelKey: 'system_identity.title',
         icon: EducationClassificationIcon,

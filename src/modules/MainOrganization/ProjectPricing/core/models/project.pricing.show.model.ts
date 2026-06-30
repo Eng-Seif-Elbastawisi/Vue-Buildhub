@@ -1,0 +1,39 @@
+import { ProjectPricingDiscountEnum } from '../constant/project.pricing.discount.enum';
+
+export default class ProjectPricingShowModel {
+  public readonly id?: number;
+  public readonly total_tax?: number;
+  public readonly discount_type?: ProjectPricingDiscountEnum;
+  public readonly discount_value?: number;
+
+  constructor(data: {
+    id?: number;
+    total_tax?: number;
+    discount_type?: ProjectPricingDiscountEnum;
+    discount_value?: number;
+  }) {
+    this.id = data.id;
+    this.total_tax = data.total_tax;
+    this.discount_type = data.discount_type;
+    this.discount_value = data.discount_value;
+    Object.freeze(this);
+  }
+
+  static fromJson(json: Record<string, unknown>): ProjectPricingShowModel {
+    if (!json) throw new Error('Invalid ProjectPricingShowModel data');
+
+    return new ProjectPricingShowModel({
+      id: json.id as number | undefined,
+      total_tax: json.total_tax as number | undefined,
+      discount_type: json.discount_type as ProjectPricingDiscountEnum | undefined,
+      discount_value: json.discount_value as number | undefined,
+    });
+  }
+
+  static example: ProjectPricingShowModel = new ProjectPricingShowModel({
+    id: 1,
+    total_tax: 14,
+    discount_type: ProjectPricingDiscountEnum.FIXED,
+    discount_value: 250,
+  });
+}
