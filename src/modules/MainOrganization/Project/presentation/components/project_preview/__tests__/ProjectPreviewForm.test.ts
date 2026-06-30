@@ -1,8 +1,10 @@
 import { mount } from '@vue/test-utils';
 import { describe, expect, it, vi } from 'vitest';
-import ProjectPreviewForm from '../project_preview/ProjectPreviewForm.vue';
-import type AddProjectPreviewParams from '../../../core/params/add.project.preview.params';
-import ProjectShowModel from '../../../core/models/project.show.model';
+import ProjectPreviewForm from '../ProjectPreviewForm.vue';
+import type AddProjectPreviewParams from '../../../../core/params/add.project.preview.params';
+import ProjectPreviewShowModel from '../../../../core/models/project.preview.show.model';
+import { NotificationType } from '../../../../core/constants/notificationType.enum';
+import { Status } from '../../../../core/constants/status.enum';
 
 vi.mock('@/modules/MainOrganization/employee/presentation/controllers/employee.controller', () => ({
   default: {
@@ -12,7 +14,7 @@ vi.mock('@/modules/MainOrganization/employee/presentation/controllers/employee.c
 
 describe('ProjectPreviewForm.vue', () => {
   it('hydrates edit values and emits preview params', () => {
-    const project = new ProjectShowModel({
+    const projectPreview = new ProjectPreviewShowModel({
       engineer: { id: 15, title: 'Site Engineer' },
       preview_date: '2026-06-25',
       preview_time: '10:30:00',
@@ -22,7 +24,7 @@ describe('ProjectPreviewForm.vue', () => {
 
     const wrapper = mount(ProjectPreviewForm, {
       props: {
-        Project: project,
+        projectPreview,
         isEdit: true,
       },
       global: {
@@ -34,7 +36,8 @@ describe('ProjectPreviewForm.vue', () => {
             name: 'UpdatedCustomInputSelect',
             props: ['modelValue', 'params'],
             emits: ['update:modelValue'],
-            template: '<button class="engineer-select" @click="$emit(\'update:modelValue\', { id: 16, title: \'New Engineer\' })">{{ modelValue?.title }}</button>',
+            template:
+              '<button class="engineer-select" @click="$emit(\'update:modelValue\', { id: 16, title: \'New Engineer\' })">{{ modelValue?.title }}</button>',
           },
         },
       },
@@ -56,6 +59,11 @@ describe('ProjectPreviewForm.vue', () => {
       preview_time: '10:30:00',
       site_link: 'https://maps.google.com/?q=30.0444,31.2357',
       address: 'Nasr City, Cairo, Egypt',
+      project_id: undefined,
+      notification_type: NotificationType.LOW,
+      status: Status.NEED_ADDITIONAL_VISIT,
+      pricing_responsible_id: undefined,
+      notification_message: '',
     });
   });
 

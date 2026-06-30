@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  const props = defineProps<{
+  defineProps<{
     currentStep: 1 | 2 | 3;
   }>();
 

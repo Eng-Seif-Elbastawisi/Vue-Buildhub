@@ -63,7 +63,6 @@
         status: status.value?.id ?? Status.NEED_ADDITIONAL_VISIT,
         pricing_responsible_id: selectedPricingResponsible.value?.id ?? undefined,
         notification_message: notification_message.value,
-        
       }),
     );
   };
@@ -80,13 +79,11 @@
 
   const updateNotificationType = (value: TitleInterface<NotificationType> | null) => {
     selectedNotificationType.value = value;
-    notificationType.value = value?.id ?? NotificationType.LOW;
     updateData();
   };
 
   const updateStatus = (value: TitleInterface<Status> | null) => {
     status.value = value;
-    status.value = value?.id ?? Status.NEED_ADDITIONAL_VISIT;
     updateData();
   };
 
@@ -129,7 +126,7 @@
 
     <div class="form-grid form-grid--three">
       <div class="field-block">
-    <div class="field-label-row">
+        <div class="field-label-row">
           <span class="label-icon"></span>
           <label class="field-label" for="engineer_id">{{ $t('project.preview_engineer') }}</label>
         </div>
@@ -228,7 +225,7 @@
           :model-value="status"
           :static-options="statusOptions"
           :placeholder="$t('project.preview_engineer_placeholder')"
-          @update:model-value="updatePricingResponsible"
+          @update:model-value="updateStatus"
         />
       </div>
 

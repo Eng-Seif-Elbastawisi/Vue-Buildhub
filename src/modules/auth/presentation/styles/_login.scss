@@ -88,6 +88,7 @@
       .input-wrapper {
         position: relative;
         width: 100%;
+
         @include flex(column, nowrap, flex-start, flex-start);
 
         gap: 6px;
@@ -110,7 +111,7 @@
           background: $StandardWhite !important;
           box-shadow: 0 0 0 1000px $StandardWhite inset !important;
           -webkit-text-fill-color: $StandardBlack !important;
-  caret-color: #000;
+          caret-color: #000;
 
           &:focus {
             outline: none;

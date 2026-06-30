@@ -95,9 +95,7 @@
       <textarea
         v-if="type === 'description'"
         v-model="currentValue"
-        :placeholder="
-          placeholder || `Enter ${label.toLowerCase()} in ${activeLang?.toUpperCase()}...`
-        "
+        :placeholder="inputPlaceholder"
         class="field-input field-input--textarea"
         :dir="activeLang === 'ar' ? 'rtl' : 'ltr'"
       ></textarea>
@@ -106,9 +104,7 @@
         v-else
         v-model="currentValue"
         type="text"
-        :placeholder="
-          placeholder || `Enter ${label.toLowerCase()} in ${activeLang?.toUpperCase()}...`
-        "
+        :placeholder="inputPlaceholder"
         class="field-input field-input--text"
         :dir="activeLang === 'ar' ? 'rtl' : 'ltr'"
       />

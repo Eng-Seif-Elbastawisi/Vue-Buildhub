@@ -15,7 +15,6 @@
   import AddProjectParams, {
     type ProjectAttachmentParams,
   } from '../../core/params/add.project.params';
-  import type AddProjectPreviewParams from '../../core/params/add.project.preview.params';
 
   import IndexClientSourceParams from '@/modules/shared/ClientSource/core/params/index.client.source.params';
   import ClientSourceController from '@/modules/shared/ClientSource/presentation/controllers/client.source.controller';
@@ -87,7 +86,6 @@
   const notes = ref<string>('');
 
   const attachments = ref<ProjectAttachmentParams[]>([]);
-  const previewParams = ref<AddProjectPreviewParams | null>(null);
 
   const existingAttachmentFiles = ref<string[]>([]);
 
@@ -280,11 +278,6 @@
         file: file.base64,
       }));
 
-    updateData();
-  };
-
-  const updatePreviewData = (params: AddProjectPreviewParams) => {
-    previewParams.value = params;
     updateData();
   };
 
