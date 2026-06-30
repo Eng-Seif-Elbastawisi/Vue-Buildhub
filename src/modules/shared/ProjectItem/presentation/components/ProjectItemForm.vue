@@ -161,9 +161,10 @@
           @update:model-value="updateData"
         />
       </div>
-      <!-- 
-     <div class="field-group col-span-2">
-        <label class="field-label" for="project-item-floor">{{ $t('project_item.project_floor') }}</label>
+      <div class="field-group col-span-2">
+        <label class="field-label" for="project-item-floor">{{
+          $t('project_item.project_floor')
+        }}</label>
         <div class="input-wrap">
           <input
             id="project-item-floor"
@@ -176,8 +177,7 @@
             @input="updateData"
           />
         </div>
-      </div> 
-       -->
+      </div>
     </div>
   </div>
 </template>
