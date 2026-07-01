@@ -8,7 +8,7 @@
   import StageController from '@/modules/shared/Stages/presentation/controllers/stage.controller';
   import AddDepartmentParams from '../../core/params/add.department.params';
   import EditDepartmentParams from '../../core/params/edit.department.params';
-  import type DepartmentModel from '../../core/models/department.model';
+  import DepartmentModel from '../../core/models/department.model';
 
   const emit = defineEmits<{
     updateData: [params: AddDepartmentParams | EditDepartmentParams];
@@ -64,10 +64,13 @@
     (department) => {
       if (!department) return;
 
-      title.value = { ...department.translations.title };
+      title.value = { ...DepartmentModel.mapTranslations(department.translations.title) };
       selectedStage.value = new TitleInterface({
         id: Number(department.stage.id),
-        title: department.stage.title,
+        title: DepartmentModel.toBilingualLabel(
+          DepartmentModel.mapTranslations(department.stage.title),
+          department.stage.title,
+        ),
       });
       updateData();
     },
