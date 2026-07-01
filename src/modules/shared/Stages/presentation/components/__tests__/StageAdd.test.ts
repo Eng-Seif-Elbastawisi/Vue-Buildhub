@@ -119,4 +119,16 @@ describe('StageAdd', () => {
     expect(mockController.update.mock.calls[0]?.[0].id).toBe(StageModel.example.id);
     expect(mockController.create).not.toHaveBeenCalled();
   });
+
+  it('emits cancel when editing and the cancel button is clicked', async () => {
+    const wrapper = mount(StageAdd, {
+      global: globalConfig,
+      props: { stage: StageModel.example },
+    });
+
+    const buttons = wrapper.findAll('app-button-stub');
+    await buttons.at(1)?.trigger('click');
+
+    expect(wrapper.emitted('cancel')).toBeTruthy();
+  });
 });

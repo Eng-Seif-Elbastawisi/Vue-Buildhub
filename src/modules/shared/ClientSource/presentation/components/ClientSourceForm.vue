@@ -9,17 +9,18 @@
     updateData: [params: AddClientSourceParams | EditClientSourceParams];
   }>();
 
-  const { clientSource, loading } = defineProps<{
+  const props = defineProps<{
     clientSource?: ClientSourceModel;
     loading?: boolean;
+    resetKey?: number;
   }>();
   const translations = ref<{ [key: string]: string }>({});
   const updateData = () => {
-    if (clientSource?.id) {
+    if (props.clientSource?.id) {
       emit(
         'updateData',
         new EditClientSourceParams({
-          id: clientSource?.id,
+          id: props.clientSource.id,
           translations: { title: translations.value },
         }),
       );
@@ -35,12 +36,19 @@
   };
 
   watch(
-    () => clientSource,
+    () => props.clientSource,
     (newClientSource) => {
       translations.value = newClientSource?.translations?.title ?? {};
       updateData();
     },
     { immediate: true },
+  );
+
+  watch(
+    () => props.resetKey,
+    () => {
+      translations.value = {};
+    },
   );
 </script>
 
@@ -59,7 +67,7 @@
         />
       </div>
     </div> -->
-  <div class="field-group" :class="{ disabled: loading }">
+  <div class="field-group" :class="{ disabled: props.loading }">
     <MultiLangInput
       v-model="translations"
       field-key="title"

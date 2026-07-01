@@ -11,6 +11,7 @@
   const route = useRoute();
   const params = ref<EditDepartmentParams | null>(null);
   const loading = ref(false);
+  const resetKey = ref(0);
 
   const save = async () => {
     if (!params.value) return;
@@ -22,6 +23,11 @@
     }
   };
 
+  const clearInputs = () => {
+    params.value = null;
+    resetKey.value += 1;
+  };
+
   onMounted(() => controller.fetchOne(new DepartmentIdParams(Number(route.params.id))));
 </script>
 
@@ -31,11 +37,30 @@
     <DepartmentForm
       :department="controller.itemData.value ?? undefined"
       :loading="loading"
+      :reset-key="resetKey"
       @update-data="(value) => (params = value as EditDepartmentParams)"
     />
-    <AppButton :title="$t('save')" type="button" @click="save">{{ $t('save') }}</AppButton>
+    <div class="actions" :class="{ disabled: loading }">
+      <AppButton :title="$t('save')" type="button" @click="save">{{ $t('save') }}</AppButton>
+      <AppButton theme="secondary" :title="$t('cancel')" type="button" @click="clearInputs">
+        {{ $t('cancel') }}
+      </AppButton>
+    </div>
     <div v-if="controller.errorMessage.value" class="error">
       {{ controller.errorMessage.value }}
     </div>
   </section>
 </template>
+
+<style scoped lang="scss">
+  .actions {
+    display: flex;
+    gap: 0.75rem;
+
+    &.disabled {
+      cursor: not-allowed;
+      pointer-events: none;
+      opacity: 0.7;
+    }
+  }
+</style>

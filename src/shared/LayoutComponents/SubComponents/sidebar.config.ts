@@ -47,12 +47,12 @@ export const sidebarSections: SidebarSectionConfig[] = [
         labelKey: 'Items',
         icon: EducationClassificationIcon,
       },
-      {
-        path: '/project-item',
-        labelKey: 'Project Item',
-        icon: EducationClassificationIcon,
-        roles: ['organization'],
-      },
+      // {
+      //   path: '/project-item',
+      //   labelKey: 'Project Item',
+      //   icon: EducationClassificationIcon,
+      //   roles: ['organization'],
+      // },
       {
         path: '/admin',
         labelKey: 'Admins',
@@ -88,12 +88,12 @@ export const sidebarSections: SidebarSectionConfig[] = [
         icon: EducationClassificationIcon,
         roles: ['organization'],
       },
-      {
-        path: '/project-pricing',
-        labelKey: 'Project Pricing',
-        icon: EducationClassificationIcon,
-        roles: ['organization'],
-      },
+      // {
+      //   path: '/project-pricing',
+      //   labelKey: 'Project Pricing',
+      //   icon: EducationClassificationIcon,
+      //   roles: ['organization'],
+      // },
       {
         path: '/system-identity',
         labelKey: 'system_identity.title',

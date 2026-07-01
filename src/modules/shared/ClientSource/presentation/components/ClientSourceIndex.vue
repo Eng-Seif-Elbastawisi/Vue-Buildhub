@@ -90,7 +90,9 @@
 
   const deleteSelected = () => {
     SelectedRow.value.forEach((item) => {
-      deleteClientSource(item.id!);
+      if (item.id !== undefined) {
+        deleteClientSource(item.id);
+      }
     });
   };
   const EditMode = ref(false);
@@ -106,6 +108,12 @@
   const onClientSourceSaved = async () => {
     EditMode.value = false;
     await fetchClientSource();
+    formKey.value++;
+  };
+
+  const onClientSourceCancelled = () => {
+    EditMode.value = false;
+    controller.resetItem();
     formKey.value++;
   };
 </script>
@@ -147,6 +155,7 @@
     <ClientSourceAdd
       :key="formKey"
       :client-source="selectedClientSource"
+      @cancel="onClientSourceCancelled"
       @saved="onClientSourceSaved"
     />
 

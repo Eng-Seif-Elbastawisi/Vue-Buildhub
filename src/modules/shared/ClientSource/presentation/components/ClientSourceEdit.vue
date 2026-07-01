@@ -12,6 +12,7 @@
   // Form state
   const params = ref<EditClientSourceParams | null>(null);
   const loading = ref(false);
+  const resetKey = ref(0);
   /**
    * Save (create or update) email
    */
@@ -34,6 +35,11 @@
     // saveEmail();
   };
 
+  const clearInputs = () => {
+    params.value = null;
+    resetKey.value += 1;
+  };
+
   const route = useRoute();
   onMounted(async () => {
     await controller.fetchOne(new ShowClientSourceParams(Number(route.params.id), true));
@@ -46,11 +52,13 @@
       <ClientSourceForm
         :client-source="controller.itemData.value!"
         :loading="loading"
-        @update-client-source="updateData"
+        :reset-key="resetKey"
+        @update-data="updateData"
       />
 
       <div class="actions" :class="{ disabled: loading }">
         <button type="button" @click="saveClientSource">{{ $t('client_source.save') }}</button>
+        <button type="button" @click="clearInputs">{{ $t('cancel') }}</button>
       </div>
 
       <!-- Error Display -->
@@ -69,6 +77,8 @@
 
   .actions {
     padding: 0 0 10px 20px;
+    display: flex;
+    gap: 0.75rem;
   }
 
   .actions {

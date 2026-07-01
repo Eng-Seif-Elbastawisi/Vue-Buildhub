@@ -86,7 +86,9 @@
 
   const deleteSelected = () => {
     SelectedRow.value.forEach((item) => {
-      deleteCountry(item.id!);
+      if (item.id !== undefined) {
+        deleteCountry(item.id);
+      }
     });
   };
   const EditMode = ref(false);
@@ -103,6 +105,12 @@
     EditMode.value = false;
     formKey.value++;
     await fetchStages();
+  };
+
+  const onStageCancelled = () => {
+    EditMode.value = false;
+    controller.resetItem();
+    formKey.value++;
   };
 </script>
 
@@ -140,7 +148,12 @@
         </button>
       </div>
     </div>
-    <StageAdd :key="formKey" :stage="selectedStage" @saved="onStageSaved" />
+    <StageAdd
+      :key="formKey"
+      :stage="selectedStage"
+      @cancel="onStageCancelled"
+      @saved="onStageSaved"
+    />
 
     <!-- ═══ Table ═══ -->
     <DataStatusBuilder :controller="state" :on-retry="async () => await fetchStages()">

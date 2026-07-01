@@ -15,6 +15,7 @@
 
   const emit = defineEmits<{
     saved: [];
+    cancel: [];
   }>();
 
   const controller = StageController.getInstance();
@@ -22,6 +23,7 @@
   const formKey = route.fullPath;
   const params = ref<AddStageParams | EditStageParams | null>(null);
   const loading = ref(false);
+  const resetKey = ref(0);
 
   const saveStage = async () => {
     loading.value = true;
@@ -41,6 +43,7 @@
       if (result) {
         emit('saved');
       }
+
     } catch (error) {
       console.error('Error saving email:', error);
     } finally {
@@ -51,12 +54,24 @@
   const updateData = (updatedParams: AddStageParams | EditStageParams) => {
     params.value = updatedParams;
   };
+
+  const cancelStage = () => {
+    params.value = null;
+    resetKey.value += 1;
+    emit('cancel');
+  };
 </script>
 
 <template>
   <div class="email-crud-example">
     <div class="email-form-card">
-      <StageForm :form-key="formKey" :stage="stage" :loading="loading" @update-data="updateData" />
+      <StageForm
+        :form-key="formKey"
+        :stage="stage"
+        :loading="loading"
+        :reset-key="resetKey"
+        @update-data="updateData"
+      />
 
       <div class="actions" :class="{ disabled: loading }">
         <AppButton
@@ -73,6 +88,13 @@
             <IconAccept class="icon" />
           </template>
         </AppButton>
+        <button
+         v-if="stage?.id"
+          class="btn-cancel"
+          :title="$t('cancel')"
+          type="button"
+          @click="cancelStage"
+        >     {{ $t('cancel') }}</button>
       </div>
 
       <!-- Error Display -->
@@ -115,11 +137,13 @@
 
     .actions {
       padding: 0;
+      display: flex;
+      gap: 0.75rem;
 
       .btn-save {
+        flex: 1;
         border-radius: 20px;
         border: 1px solid white;
-        width: 100%;
         padding: 11px;
         cursor: pointer;
         transition: all 0.3s ease;
@@ -133,6 +157,10 @@
             stroke: var(--PrimaryColor);
           }
         }
+      }
+
+      .btn-cancel {
+        flex: 0 0 auto;
       }
     }
   }

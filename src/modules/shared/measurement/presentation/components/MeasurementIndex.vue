@@ -90,7 +90,9 @@
 
   const deleteSelected = () => {
     SelectedRow.value.forEach((item) => {
-      deleteMeasurement(item.id!);
+      if (item.id !== undefined) {
+        deleteMeasurement(item.id);
+      }
     });
   };
   const EditMode = ref(false);
@@ -106,6 +108,12 @@
   const onMeasurementSaved = async () => {
     EditMode.value = false;
     await fetchMeasurements();
+    formKey.value++;
+  };
+
+  const onMeasurementCancelled = () => {
+    EditMode.value = false;
+    controller.resetItem();
     formKey.value++;
   };
 </script>
@@ -144,7 +152,12 @@
         </button>
       </div>
     </div>
-    <MeasurementAdd :key="formKey" :stage="selectedMeasurement" @saved="onMeasurementSaved" />
+    <MeasurementAdd
+      :key="formKey"
+      :stage="selectedMeasurement"
+      @cancel="onMeasurementCancelled"
+      @saved="onMeasurementSaved"
+    />
 
     <!-- ═══ Table ═══ -->
     <DataStatusBuilder :controller="state" :on-retry="async () => await fetchMeasurements()">

@@ -11,7 +11,7 @@ const global = {
       props: ['modelValue'],
       emits: ['update:modelValue'],
       template:
-        "<input class=\"multi-lang-input\" @input=\"$emit('update:modelValue', { en: 'Updated', ar: 'Updated AR' })\" />",
+        "<input class=\"multi-lang-input\" :value=\"modelValue.en ?? ''\" @input=\"$emit('update:modelValue', { en: 'Updated', ar: 'Updated AR' })\" />",
     },
   },
   mocks: {
@@ -41,5 +41,18 @@ describe('MeasurementForm', () => {
   it('disables the field group while loading', () => {
     const wrapper = mount(MeasurementForm, { global, props: { loading: true } });
     expect(wrapper.find('.field-group.disabled').exists()).toBe(true);
+  });
+
+  it('clears multilingual values when resetKey changes', async () => {
+    const wrapper = mount(MeasurementForm, {
+      global,
+      props: { stage: MeasurementModel.example, resetKey: 0 },
+    });
+
+    expect(wrapper.find<HTMLInputElement>('.multi-lang-input').element.value).toBe('title');
+
+    await wrapper.setProps({ resetKey: 1 });
+
+    expect(wrapper.find<HTMLInputElement>('.multi-lang-input').element.value).toBe('');
   });
 });

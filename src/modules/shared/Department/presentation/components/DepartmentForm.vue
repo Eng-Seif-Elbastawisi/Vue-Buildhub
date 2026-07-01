@@ -17,6 +17,7 @@
   const props = defineProps<{
     department?: DepartmentModel;
     loading?: boolean;
+    resetKey?: number;
   }>();
 
   const title = ref<Record<string, string>>({});
@@ -75,6 +76,14 @@
       updateData();
     },
     { immediate: true },
+  );
+
+  watch(
+    () => props.resetKey,
+    () => {
+      title.value = {};
+      selectedStage.value = undefined;
+    },
   );
 </script>
 

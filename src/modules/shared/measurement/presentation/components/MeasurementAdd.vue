@@ -15,6 +15,7 @@
 
   const emit = defineEmits<{
     saved: [];
+    cancel: [];
   }>();
 
   const controller = MeasurementController.getInstance();
@@ -22,6 +23,7 @@
   const formKey = route.fullPath;
   const params = ref<AddMeasurementParams | EditMeasurementParams | null>(null);
   const loading = ref(false);
+  const resetKey = ref(0);
 
   const saveStage = async () => {
     loading.value = true;
@@ -51,6 +53,12 @@
   const updateData = (updatedParams: AddMeasurementParams | EditMeasurementParams) => {
     params.value = updatedParams;
   };
+
+  const cancelMeasurement = () => {
+    params.value = null;
+    resetKey.value += 1;
+    emit('cancel');
+  };
 </script>
 
 <template>
@@ -60,6 +68,7 @@
         :form-key="formKey"
         :stage="stage"
         :loading="loading"
+        :reset-key="resetKey"
         @update-data="updateData"
       />
 
@@ -77,6 +86,16 @@
           <template #icon>
             <IconAccept />
           </template>
+        </AppButton>
+        <AppButton
+          v-if="stage?.id"
+          class="btn-cancel"
+          theme="secondary"
+          :title="$t('cancel')"
+          type="button"
+          @click="cancelMeasurement"
+        >
+          {{ $t('cancel') }}
         </AppButton>
       </div>
 
@@ -103,11 +122,13 @@
 
   .actions {
     padding: 0 0 10px 20px;
+    display: flex;
+    gap: 0.75rem;
 
     .btn-save {
+      flex: 1;
       border-radius: 20px;
       border: 1px solid white;
-      width: 100%;
       padding: 11px;
       cursor: pointer;
       transition: all 0.3s ease;
@@ -121,6 +142,10 @@
           stroke: var(--PrimaryColor);
         }
       }
+    }
+
+    .btn-cancel {
+      flex: 0 0 auto;
     }
   }
 

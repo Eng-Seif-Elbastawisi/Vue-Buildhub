@@ -34,6 +34,7 @@ describe('ClientSourceEdit', () => {
     });
 
     expect(wrapper.text()).toContain('client_source.save');
+    expect(wrapper.text()).toContain('cancel');
   });
 
   it('loads the client source from the route id', () => {
