@@ -12,6 +12,7 @@
   import DepartmentIdParams from '@/modules/shared/Department/core/params/department-id.params';
   import type DepartmentModel from '@/modules/shared/Department/core/models/department.model';
   import DepartmentAdd from './DepartmentAdd.vue';
+  import ShowDepartmentParams from '../../core/params/show.department.params';
 
   // Controller instance
   const controller = DepartmentController.getInstance();
@@ -95,7 +96,7 @@
   );
 
   const ShowDepartment = async (id: number) => {
-    await controller.fetchOne(new DepartmentIdParams(id));
+    await controller.fetchOne(new ShowDepartmentParams({ id, allLocales: true }));
 
     EditMode.value = true;
   };

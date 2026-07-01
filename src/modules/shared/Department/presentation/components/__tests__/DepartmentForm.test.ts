@@ -14,13 +14,14 @@ const MultiLangInputStub = {
   props: ['modelValue'],
   emits: ['update:modelValue'],
   template:
-    "<button class=\"multi-lang-input\" @click=\"$emit('update:modelValue', { en: 'Science', ar: 'العلوم' })\">title</button>",
+    '<button class="multi-lang-input" @click="$emit(\'update:modelValue\', { en: \'Science\', ar: \'العلوم\' })"><span class="title-en">{{ modelValue.en }}</span><span class="title-ar">{{ modelValue.ar }}</span></button>',
 };
 
 const SelectStub = {
+  props: ['modelValue'],
   emits: ['update:modelValue'],
   template:
-    '<button class="stage-select" @click="$emit(\'update:modelValue\', newStage)">stage</button>',
+    '<button class="stage-select" @click="$emit(\'update:modelValue\', newStage)">{{ modelValue?.title ?? "stage" }}</button>',
   data: () => ({ newStage: new TitleInterface({ id: 7, title: 'Secondary' }) }),
 };
 
@@ -67,5 +68,31 @@ describe('DepartmentForm', () => {
       translations: expect.objectContaining({ title: { en: 'Existing', ar: 'القائم' } }),
       stage_id: 3,
     });
+  });
+
+  it('hydrates edit translation objects as English and Arabic values', () => {
+    const department = new DepartmentModel({
+      id: 8,
+      translations: {
+        title: [
+          { locale: 'en', title: 'Operations' },
+          { locale: 'ar', title: 'العمليات' },
+        ] as unknown as Record<string, string>,
+      },
+      stage: new TitleInterface({
+        id: 4,
+        title: [
+          { locale: 'en', title: 'Finishing' },
+          { locale: 'ar', title: 'التشطيبات' },
+        ] as unknown as string,
+      }),
+    });
+
+    const wrapper = mountForm({ department });
+
+    expect(wrapper.find('.title-en').text()).toBe('Operations');
+    expect(wrapper.find('.title-ar').text()).toBe('العمليات');
+    expect(wrapper.find('.stage-select').text()).toBe('Finishing / التشطيبات');
+    expect(wrapper.find('.stage-select').text()).not.toContain('[object Object]');
   });
 });
