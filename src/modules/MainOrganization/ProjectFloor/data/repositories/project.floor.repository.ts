@@ -33,4 +33,8 @@ export default class ProjectFloorRepository extends BaseRepository<
   protected parseList(data: unknown): ProjectFloorModel[] {
     return Array.isArray(data) ? data.map((item) => ProjectFloorModel.fromJson(item)) : [];
   }
+
+  async getProject(params?: Record<string, unknown>) {
+    return await this.apiService.getProject(params as any);
+  }
 }

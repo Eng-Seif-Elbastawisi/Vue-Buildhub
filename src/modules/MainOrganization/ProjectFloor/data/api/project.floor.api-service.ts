@@ -20,4 +20,8 @@ export default class ProjectFloorApiService extends BaseApiService {
       delete: this.projectFloorEndpoints.delete,
     };
   }
+
+  async getProject(params?: Record<string, unknown>) {
+    return await this.customPost(this.projectFloorEndpoints.getProject, params as any);
+  }
 }
