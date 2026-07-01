@@ -28,4 +28,12 @@ export const organizationRoutes: RouteRecordRaw[] = [
       parent: 'Organization',
     },
   },
+  {
+    path: 'organization-toggle',
+    name: 'Organization Toggle',
+    component: () => import('@/views/MainOrganization/Organization/OrganizationToggle.vue'),
+    meta: {
+      breadcrumb: 'organization_toggle.title',
+    },
+  },
 ];

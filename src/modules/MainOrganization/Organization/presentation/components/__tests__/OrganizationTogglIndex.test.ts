@@ -1,0 +1,127 @@
+import { flushPromises, mount } from '@vue/test-utils';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
+import OrganizationToggledModel from '../../../core/models/organization.toggle.model';
+import ToggleOrganizationParams from '../../../core/params/toggle.organization.params';
+import OrganizationTogglIndex from '../OrganizationTogglIndex.vue';
+
+const mockController = vi.hoisted(() => ({
+  showSetting: vi.fn(),
+  toggleSetting: vi.fn(),
+  itemData: { value: null as OrganizationToggledModel | null },
+  errorMessage: { value: null as string | null },
+}));
+
+vi.mock('../../controllers/organization.toggl.controller', () => ({
+  default: { getInstance: () => mockController },
+}));
+
+const global = {
+  stubs: {
+    ToggleSwitch: {
+      props: ['modelValue', 'disabled'],
+      emits: ['update:modelValue'],
+      template:
+        '<button class="toggle-switch-stub" :disabled="disabled" @click="$emit(\'update:modelValue\', !modelValue)">{{ modelValue }}</button>',
+    },
+  },
+  mocks: {
+    $t: (key: string) => key,
+  },
+};
+
+describe('OrganizationTogglIndex', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    window.localStorage.clear();
+    mockController.itemData.value = OrganizationToggledModel.example;
+    mockController.errorMessage.value = null;
+    mockController.showSetting.mockResolvedValue(
+      new DataSuccess({ data: OrganizationToggledModel.example }),
+    );
+    mockController.toggleSetting.mockResolvedValue(
+      new DataSuccess({
+        data: new OrganizationToggledModel({ id: 10, toggle_status: 2 }),
+      }),
+    );
+  });
+
+  it('loads and renders the organization fetch toggle page', async () => {
+    const wrapper = mount(OrganizationTogglIndex, { global });
+    await flushPromises();
+
+    expect(mockController.showSetting).toHaveBeenCalledTimes(1);
+    expect(wrapper.text()).toContain('organization_toggle.title');
+    expect(wrapper.text()).toContain('organization_toggle.active');
+  });
+
+  it('sends numeric toggle params when the switch changes', async () => {
+    const wrapper = mount(OrganizationTogglIndex, { global });
+    await flushPromises();
+
+    await wrapper.find('.toggle-switch-stub').trigger('click');
+    await flushPromises();
+
+    expect(mockController.toggleSetting).toHaveBeenCalledWith(expect.any(ToggleOrganizationParams));
+    expect(mockController.toggleSetting.mock.calls[0]?.[0].toggle_status).toBe(2);
+    expect(window.localStorage.getItem('organizationFetchToggleStatus')).toBe('2');
+    expect(wrapper.text()).toContain('organization_toggle.inactive');
+  });
+
+  it('keeps the selected inactive label even when toggle response returns stale active data', async () => {
+    mockController.toggleSetting.mockResolvedValue(
+      new DataSuccess({
+        data: new OrganizationToggledModel({ id: 10, toggle_status: 1 }),
+      }),
+    );
+    const wrapper = mount(OrganizationTogglIndex, { global });
+    await flushPromises();
+
+    await wrapper.find('.toggle-switch-stub').trigger('click');
+    await flushPromises();
+
+    expect(mockController.toggleSetting.mock.calls[0]?.[0].toggle_status).toBe(2);
+    expect(wrapper.text()).toContain('organization_toggle.inactive');
+    expect(wrapper.text()).toContain('organization_toggle.off_label');
+  });
+
+  it('loads the numeric value from the show endpoint when no local selection exists', async () => {
+    mockController.showSetting.mockResolvedValue(
+      new DataSuccess({
+        data: new OrganizationToggledModel({ id: 10, toggle_status: 2 }),
+      }),
+    );
+
+    const wrapper = mount(OrganizationTogglIndex, { global });
+    await flushPromises();
+
+    expect(wrapper.text()).toContain('organization_toggle.inactive');
+    expect(window.localStorage.getItem('organizationFetchToggleStatus')).toBe('2');
+  });
+
+  it('prefers the locally selected status on refresh while the show endpoint syncs', async () => {
+    window.localStorage.setItem('organizationFetchToggleStatus', '2');
+    mockController.showSetting.mockResolvedValue(
+      new DataSuccess({
+        data: new OrganizationToggledModel({ id: 10, toggle_status: 1 }),
+      }),
+    );
+
+    const wrapper = mount(OrganizationTogglIndex, { global });
+    await flushPromises();
+
+    expect(wrapper.text()).toContain('organization_toggle.inactive');
+    expect(window.localStorage.getItem('organizationFetchToggleStatus')).toBe('2');
+  });
+
+  it('renders controller errors with retry action', async () => {
+    mockController.errorMessage.value = 'Unable to load setting';
+    const wrapper = mount(OrganizationTogglIndex, { global });
+    await flushPromises();
+
+    expect(wrapper.find('.toggle-error').text()).toContain('Unable to load setting');
+    await wrapper.find('.retry-button').trigger('click');
+
+    expect(mockController.showSetting).toHaveBeenCalledTimes(2);
+  });
+});

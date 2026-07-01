@@ -58,6 +58,7 @@
 @use '../modules/shared/Department/presentation/styles/department_imports';
 @use '../modules/MainOrganization/Specialization/presentation/styles/Specialization_imports';
 @use '../modules/MainOrganization/employee/presentation/styles/employee_imports';
+@use '../modules/MainOrganization/Organization/presentation/styles/organization_toggle_imports';
 /* ── Pages ─────────────────────────────────────────────────────── */
 @use '../modules/auth/presentation/styles/login';
 @use 'error/error';

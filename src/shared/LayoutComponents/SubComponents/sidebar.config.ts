@@ -63,6 +63,12 @@ export const sidebarSections: SidebarSectionConfig[] = [
         path: '/organization',
         labelKey: 'Organizations',
         icon: EducationClassificationIcon,
+        roles: ['admin'],
+      },
+      {
+        path: '/organization-toggle',
+        labelKey: 'Organization',
+        icon: EducationClassificationIcon,
         roles: ['organization'],
       },
       {

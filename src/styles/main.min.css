@@ -242,35 +242,6 @@
   --badge-bg: #4faf7c0f;
   --sidebar-auth-bg: #24385c;
   --caution-bg: #fff7e6;
-  --buildhub-dark: #101418;
-  --buildhub-darker: #07090c;
-  --buildhub-copper: #b87333;
-  --buildhub-copper-accent: #c47a35;
-  --buildhub-soft-copper: #fff7ef;
-  --buildhub-page-bg: #f6f7f8;
-  --buildhub-muted-text: #68707c;
-  --buildhub-border: #e6e1dc;
-  --buildhub-copper-alpha-8: rgba(184, 115, 51, 0.08);
-  --buildhub-copper-alpha-12: rgba(184, 115, 51, 0.12);
-  --buildhub-copper-alpha-18: rgba(184, 115, 51, 0.18);
-  --buildhub-copper-alpha-24: rgba(184, 115, 51, 0.24);
-  --buildhub-copper-alpha-35: rgba(184, 115, 51, 0.35);
-  --buildhub-copper-alpha-60: rgba(184, 115, 51, 0.6);
-  --buildhub-white-alpha-6: rgba(255, 255, 255, 0.06);
-  --buildhub-white-alpha-8: rgba(255, 255, 255, 0.08);
-  --buildhub-white-alpha-10: rgba(255, 255, 255, 0.1);
-  --buildhub-white-alpha-12: rgba(255, 255, 255, 0.12);
-  --buildhub-white-alpha-16: rgba(255, 255, 255, 0.16);
-  --buildhub-white-alpha-18: rgba(255, 255, 255, 0.18);
-  --buildhub-white-alpha-70: rgba(255, 255, 255, 0.7);
-  --buildhub-white-alpha-78: rgba(255, 255, 255, 0.78);
-  --buildhub-black-alpha-6: rgba(7, 9, 12, 0.06);
-  --buildhub-black-alpha-8: rgba(7, 9, 12, 0.08);
-  --buildhub-black-alpha-12: rgba(7, 9, 12, 0.12);
-  --buildhub-black-alpha-14: rgba(7, 9, 12, 0.14);
-  --buildhub-black-alpha-18: rgba(7, 9, 12, 0.18);
-  --buildhub-black-alpha-22: rgba(7, 9, 12, 0.22);
-  --buildhub-shadow: 0 24px 70px rgba(7, 9, 12, 0.16);
 }
 html.dark {
   --bg-body: #0d1117;
@@ -3674,35 +3645,6 @@ body::-webkit-scrollbar-thumb:hover {
   --badge-bg: #4faf7c0f;
   --sidebar-auth-bg: #24385c;
   --caution-bg: #fff7e6;
-  --buildhub-dark: #101418;
-  --buildhub-darker: #07090c;
-  --buildhub-copper: #b87333;
-  --buildhub-copper-accent: #c47a35;
-  --buildhub-soft-copper: #fff7ef;
-  --buildhub-page-bg: #f6f7f8;
-  --buildhub-muted-text: #68707c;
-  --buildhub-border: #e6e1dc;
-  --buildhub-copper-alpha-8: rgba(184, 115, 51, 0.08);
-  --buildhub-copper-alpha-12: rgba(184, 115, 51, 0.12);
-  --buildhub-copper-alpha-18: rgba(184, 115, 51, 0.18);
-  --buildhub-copper-alpha-24: rgba(184, 115, 51, 0.24);
-  --buildhub-copper-alpha-35: rgba(184, 115, 51, 0.35);
-  --buildhub-copper-alpha-60: rgba(184, 115, 51, 0.6);
-  --buildhub-white-alpha-6: rgba(255, 255, 255, 0.06);
-  --buildhub-white-alpha-8: rgba(255, 255, 255, 0.08);
-  --buildhub-white-alpha-10: rgba(255, 255, 255, 0.1);
-  --buildhub-white-alpha-12: rgba(255, 255, 255, 0.12);
-  --buildhub-white-alpha-16: rgba(255, 255, 255, 0.16);
-  --buildhub-white-alpha-18: rgba(255, 255, 255, 0.18);
-  --buildhub-white-alpha-70: rgba(255, 255, 255, 0.7);
-  --buildhub-white-alpha-78: rgba(255, 255, 255, 0.78);
-  --buildhub-black-alpha-6: rgba(7, 9, 12, 0.06);
-  --buildhub-black-alpha-8: rgba(7, 9, 12, 0.08);
-  --buildhub-black-alpha-12: rgba(7, 9, 12, 0.12);
-  --buildhub-black-alpha-14: rgba(7, 9, 12, 0.14);
-  --buildhub-black-alpha-18: rgba(7, 9, 12, 0.18);
-  --buildhub-black-alpha-22: rgba(7, 9, 12, 0.22);
-  --buildhub-shadow: 0 24px 70px rgba(7, 9, 12, 0.16);
 }
 html.dark {
   --bg-body: #0d1117;
@@ -8312,6 +8254,162 @@ html.dark {
 .employee-page .fade-enter-from,
 .employee-page .fade-leave-to {
   opacity: 0;
+}
+.document-crud-example .loader {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  border: 8px solid;
+  border-color: #000 rgba(0, 0, 0, 0);
+  animation: l1 1s infinite;
+}
+@keyframes l1 {
+  to {
+    transform: rotate(0.5turn);
+  }
+}
+@keyframes l7 {
+  to {
+    transform: rotate(0.5turn);
+  }
+}
+.organization-toggle-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 1.5rem;
+}
+.toggle-hero,
+.toggle-card,
+.toggle-details,
+.toggle-error,
+.toggle-status {
+  border: 1px solid var(--border-weak);
+  border-radius: var(--radius-sm);
+  background: var(--BgWhite);
+  box-shadow: var(--shadow-sm);
+}
+.toggle-hero {
+  padding: 1.25rem;
+}
+.toggle-hero h1 {
+  margin: 0.25rem 0;
+  color: var(--Black);
+  font-size: 1.75rem;
+  line-height: 1.2;
+}
+.toggle-hero p:last-child {
+  max-width: 46rem;
+  margin: 0;
+  color: var(--GrayText);
+  line-height: 1.7;
+}
+.eyebrow {
+  margin: 0;
+  color: var(--PrimaryColor);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+.toggle-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.5rem;
+}
+.toggle-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.toggle-copy h2 {
+  margin: 0;
+  color: var(--Black);
+  font-size: 1.2rem;
+}
+.toggle-copy p {
+  max-width: 42rem;
+  margin: 0;
+  color: var(--GrayText);
+  line-height: 1.7;
+}
+.toggle-chip {
+  width: fit-content;
+  border: 1px solid var(--border-weak);
+  border-radius: var(--radius-xs);
+  padding: 0.35rem 0.65rem;
+  color: var(--PrimaryColor);
+  background: var(--PrimaryColor-light);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+.toggle-control {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--Black);
+  font-weight: 700;
+  white-space: nowrap;
+}
+.toggle -status {
+  padding: 0.85rem 1rem;
+  color: var(--success-dark);
+  font-weight: 700;
+}
+.toggle-error {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem 1rem;
+  color: var(--danger-dark);
+}
+.retry-button {
+  border: 1px solid var(--border-weak);
+  border-radius: var(--radius-xs);
+  padding: 0.55rem 0.85rem;
+  color: var(--Black);
+  background: var(--BgWhite);
+  font-weight: 700;
+  cursor: pointer;
+}
+.toggle-details {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  padding: 1rem;
+}
+.toggle-details div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 0;
+}
+.toggle-details span {
+  color: var(--GrayText);
+  font-size: 0.84rem;
+}
+.toggle-details strong {
+  overflow: hidden;
+  color: var(--Black);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+@media (max-width: 760px) {
+  .organization-toggle-page {
+    padding: 1rem;
+  }
+  .toggle-card,
+  .toggle-details {
+    grid-template-columns: 1fr;
+  }
+  .toggle-control,
+  .toggle-error {
+    align-items: flex-start;
+    flex-direction: column;
+  }
 }
 .document-crud-example .loader {
   width: 35px;

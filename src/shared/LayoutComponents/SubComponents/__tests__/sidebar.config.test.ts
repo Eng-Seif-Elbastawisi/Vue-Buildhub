@@ -26,4 +26,17 @@ describe('sidebarSections', () => {
       }),
     );
   });
+
+  it('includes the organization fetch toggle page in config', () => {
+    const organizationToggleItem = sidebarSections
+      .flatMap((section) => section.items)
+      .find((item) => item.path === '/organization-toggle');
+
+    expect(organizationToggleItem).toEqual(
+      expect.objectContaining({
+        labelKey: 'Organization',
+        roles: ['organization'],
+      }),
+    );
+  });
 });
