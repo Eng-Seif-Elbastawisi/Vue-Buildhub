@@ -5,12 +5,10 @@ import type { ApiCallOptions } from '@/base/Data/ApiService/baseApiService';
 import BaseController, {
   type ControllerConfig,
 } from '@/base/Presentation/Controller/baseController';
-import router from '@/router';
 import { useFormsStore } from '@/stores/formsStore';
 import type ProjectFloorModel from '../../core/models/project.floor.model';
 import type ProjectFloorShowModel from '../../core/models/project.floor.show.model';
 import ProjectFloorRepository from '../../data/repositories/project.floor.repository';
-import { useUserStore } from '@/stores/user';
 import type ShowProjectFloorParams from '../../core/params/show.project.floor.params';
 
 export default class ProjectFloorController extends BaseController<
@@ -19,9 +17,6 @@ export default class ProjectFloorController extends BaseController<
 > {
   private static instance: ProjectFloorController;
 
-  private get userStore() {
-    return useUserStore();
-  }
   protected get repository() {
     return ProjectFloorRepository.getInstance();
   }
@@ -50,11 +45,11 @@ export default class ProjectFloorController extends BaseController<
     const result = await super.create(params, { ...options, useJson: true });
     if (result instanceof DataSuccess) {
       // await router.push({ name: 'Projects' });
-      router.push(
-        this.userStore.user?.type === 1
-          ? '/mainportal/project-floor'
-          : '/organization/project-floor',
-      );
+      // router.push(
+      //   this.userStore.user?.type === 1
+      //     ? '/mainportal/project-floor'
+      //     : '/organization/project-floor',
+      // );
 
       if (formKey) useFormsStore().clearFormData(formKey);
     }
@@ -64,12 +59,11 @@ export default class ProjectFloorController extends BaseController<
   async update(params: Params, options?: ApiCallOptions, formKey?: string) {
     const result = await super.update(params, { ...options, useJson: true });
     if (result instanceof DataSuccess) {
-      // await router.push({ name: 'Projects' });
-      router.push(
-        this.userStore.user?.type === 1
-          ? '/mainportal/project-preview'
-          : '/organization/project-preview',
-      );
+      // router.push(
+      //   this.userStore.user?.type === 1
+      //     ? '/mainportal/project-preview'
+      //     : '/organization/project-preview',
+      // );
 
       if (formKey) useFormsStore().clearFormData(formKey);
     }
@@ -90,5 +84,8 @@ export default class ProjectFloorController extends BaseController<
         'Accept-Language': (params as ShowProjectFloorParams).allLocales ? '*' : 'en',
       },
     });
+  }
+  async getProject(params?: Record<string, unknown>) {
+    return await this.repository.getProject(params);
   }
 }

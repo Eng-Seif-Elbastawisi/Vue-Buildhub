@@ -10,4 +10,6 @@ export class ProjectFloorApiEndpoints extends BaseEndpoints {
   readonly store = this.url('store_project_floor');
   readonly update = this.url('update_project_floor');
   readonly delete = this.url('delete_project_floor');
+
+  readonly getProject = this.url('update_project_preview_status');
 }
