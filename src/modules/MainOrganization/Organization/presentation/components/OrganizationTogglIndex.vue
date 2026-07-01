@@ -18,8 +18,8 @@
 
   const isBrowser = () => typeof window !== 'undefined';
   const normalizeStatus = (status: unknown) => {
-    if (status === true) return INACTIVE_STATUS;
-    if (status === false) return ACTIVE_STATUS;
+    if (status === true) return ACTIVE_STATUS;
+    if (status === false) return INACTIVE_STATUS;
 
     return Number(status) === INACTIVE_STATUS ? INACTIVE_STATUS : ACTIVE_STATUS;
   };

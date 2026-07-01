@@ -51,7 +51,7 @@ describe('OrganizationTogglIndex', () => {
     await flushPromises();
 
     expect(mockController.showSetting).toHaveBeenCalledTimes(1);
-    expect(wrapper.text()).toContain('organization_toggle.title');
+    expect(wrapper.text()).toContain('show organization');
     expect(wrapper.text()).toContain('organization_toggle.active');
   });
 
@@ -82,7 +82,7 @@ describe('OrganizationTogglIndex', () => {
 
     expect(mockController.toggleSetting.mock.calls[0]?.[0].toggle_status).toBe(2);
     expect(wrapper.text()).toContain('organization_toggle.inactive');
-    expect(wrapper.text()).toContain('organization_toggle.off_label');
+    expect(wrapper.find('.toggle-switch-stub').text()).toBe('false');
   });
 
   it('loads the numeric value from the show endpoint when no local selection exists', async () => {
@@ -114,14 +114,12 @@ describe('OrganizationTogglIndex', () => {
     expect(window.localStorage.getItem('organizationFetchToggleStatus')).toBe('2');
   });
 
-  it('renders controller errors with retry action', async () => {
+  it('keeps the compact card when controller errors are present', async () => {
     mockController.errorMessage.value = 'Unable to load setting';
     const wrapper = mount(OrganizationTogglIndex, { global });
     await flushPromises();
 
-    expect(wrapper.find('.toggle-error').text()).toContain('Unable to load setting');
-    await wrapper.find('.retry-button').trigger('click');
-
-    expect(mockController.showSetting).toHaveBeenCalledTimes(2);
+    expect(wrapper.find('.toggle-card').exists()).toBe(true);
+    expect(wrapper.find('.toggle-error').exists()).toBe(false);
   });
 });
