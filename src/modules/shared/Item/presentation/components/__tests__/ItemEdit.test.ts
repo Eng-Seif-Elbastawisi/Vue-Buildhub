@@ -8,6 +8,7 @@ import EditItemParams from '../../../core/params/edit.Item.params';
 import ShowItemParams from '../../../core/params/show.Item.params';
 import ItemEdit from '../ItemEdit.vue';
 
+const push = vi.hoisted(() => vi.fn());
 const mockController = vi.hoisted(() => ({
   fetchOne: vi.fn(),
   update: vi.fn(),
@@ -21,6 +22,7 @@ vi.mock('../../controllers/Item.controller', () => ({
 
 vi.mock('vue-router', () => ({
   useRoute: () => ({ fullPath: '/item/edit/12', params: { id: '12' } }),
+  useRouter: () => ({ push }),
 }));
 
 const addParams = new AddItemParams({
