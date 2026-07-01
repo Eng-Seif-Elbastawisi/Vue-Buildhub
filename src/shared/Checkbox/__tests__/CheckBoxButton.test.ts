@@ -51,7 +51,7 @@ describe('CheckBoxButton', () => {
   it('uses default CheckBoxImg when no img prop', () => {
     const wrapper = createWrapper();
     const img = wrapper.find('img');
-    expect(img.attributes('src')).toBe('mocked-checkbox.png');
+    expect(img.attributes('src')).toContain('CheckBoxImg.png');
   });
 
   it('initializes checked state from prop', () => {

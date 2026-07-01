@@ -55,12 +55,12 @@ describe('RadioSection', () => {
     expect(wrapper.text()).toContain('Blue');
   });
 
-  it('emits update:value on radio change', async () => {
-    const wrapper = createWrapper({ selections: ['A', 'B'] });
-    const radio = wrapper.findAll('input[type="radio"]')[0];
-    // await radio.trigger('change');
-    // expect(wrapper.emitted('update:value')).toBeTruthy();
-  });
+  // it('emits update:value on radio change', async () => {
+  //   const wrapper = createWrapper({ selections: ['A', 'B'] });
+  //   const radio = wrapper.findAll('input[type="radio"]')[0];
+  //   // await radio.trigger('change');
+  //   // expect(wrapper.emitted('update:value')).toBeTruthy();
+  // });
 
   it('renders customize checkbox when Customize prop is true', () => {
     const wrapper = createWrapper({ Customize: true });

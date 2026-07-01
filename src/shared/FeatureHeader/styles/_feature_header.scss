@@ -105,7 +105,8 @@
             &:first-child {
               span {
                 font-size: 12px;
-                color: var(--breadcrumb-first-text, var(--green)) !important;
+                // color: var(--breadcrumb-first-text, var(--green)) !important;
+                color: var(--PrimaryColor) !important;
               }
             }
 

@@ -2,29 +2,17 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import LoginController from '../login.controller';
 
 // ── Hoisted mocks (must be declared before vi.mock factories run) ─────────────
-const { mockPush, mockLogin } = vi.hoisted(() => ({
-  mockPush: vi.fn(),
+const { mockLogin, mockSetUser } = vi.hoisted(() => ({
   mockLogin: vi.fn(),
+  mockSetUser: vi.fn(),
 }));
 
 // ── Pinia ────────────────────────────────────────────────────────────────────
 vi.mock('@/stores/user', () => ({
   useUserStore: () => ({
-    setUser: vi.fn(),
+    setUser: mockSetUser,
     isAuth: false,
   }),
-}));
-
-// ── Router ───────────────────────────────────────────────────────────────────
-vi.mock('@/router', () => ({
-  default: {
-    push: mockPush,
-    currentRoute: {
-      value: {
-        params: { country_code: 'eg' },
-      },
-    },
-  },
 }));
 
 // ── Repository ───────────────────────────────────────────────────────────────
@@ -86,14 +74,14 @@ describe('LoginController', () => {
       expect(mockLogin).toHaveBeenCalledWith(mockParams);
     });
 
-    it('should navigate to the country route after successful login', async () => {
+    it('should store the user after successful login', async () => {
       const mockParams = { toMap: () => ({}) } as any;
       const successResponse = { data: { id: 1 }, isSuccess: true };
       mockLogin.mockResolvedValue(successResponse);
 
       await LoginController.getInstance().login(mockParams);
 
-      expect(mockPush).toHaveBeenCalledWith('/eg/');
+      expect(mockSetUser).toHaveBeenCalledWith(successResponse.data);
     });
 
     it('should return a DataFailed response when repository throws', async () => {
@@ -103,7 +91,7 @@ describe('LoginController', () => {
       const result = await LoginController.getInstance().login(mockParams);
 
       expect(result).toBeDefined();
-      expect(mockPush).not.toHaveBeenCalled();
+      expect(mockSetUser).not.toHaveBeenCalled();
     });
   });
 });

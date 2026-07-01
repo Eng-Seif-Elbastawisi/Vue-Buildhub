@@ -30,7 +30,7 @@
   <div v-if="isOpen" class="dialog-overlay" @click.self="closeDialog">
     <div class="dialog-content">
       <p class="dialog-message">{{ message }}</p>
-      <button class="dialog-close-btn" @click="closeDialog">Close</button>
+      <button class="dialog-close-btn" @click="closeDialog">{{ $t('close') }}</button>
     </div>
   </div>
 </template>

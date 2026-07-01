@@ -53,8 +53,13 @@ describe('UserModel', () => {
         employee_id: 42,
         created_at: '2024-02-01',
         updated_at: '2024-07-01',
-        api_token: 'jwt-token',
+        token: 'jwt-token',
         refresh_token: 'ref-token',
+        setting: {
+          primary_color: '#1a5fb4',
+          secondary_color: '#613583',
+          accent_color: '#a51d2d',
+        },
       };
       const model = UserModel.fromJson(json);
       expect(model.id).toBe(5);
@@ -64,6 +69,7 @@ describe('UserModel', () => {
       expect(model.employeeId).toBe(42);
       expect(model.apiToken).toBe('jwt-token');
       expect(model.refreshToken).toBe('ref-token');
+      expect(model.setting?.primary_color).toBe('#1a5fb4');
     });
 
     it('should throw when json is null', () => {
@@ -89,6 +95,7 @@ describe('UserModel', () => {
       expect(json.updated_at).toBe('2024-06-01');
       expect(json.api_token).toBe('token-abc');
       expect(json.refresh_token).toBe('refresh-xyz');
+      expect(json.setting).toBeUndefined();
     });
   });
 

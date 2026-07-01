@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import type UserModel from '@/modules/auth/core/models/user.model';
+import { useSystemIdentityTheme } from '@/modules/shared/SystemIdentity/presentation/composables/useSystemIdentityTheme';
 
 let autoLogoutTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -15,6 +16,7 @@ export const useUserStore = defineStore(
       user.value = data;
       isAuth.value = true;
       expiresAt.value = Date.now() + 24 * 60 * 60 * 1000;
+      useSystemIdentityTheme().applySettingTheme(data.setting);
       setAutoLogout();
     };
 
@@ -27,6 +29,7 @@ export const useUserStore = defineStore(
       user.value = null;
       isAuth.value = false;
       expiresAt.value = null;
+      useSystemIdentityTheme().clearSavedPalette();
       localStorage.clear();
     };
 
@@ -49,6 +52,9 @@ export const useUserStore = defineStore(
       if (expiresAt.value && Date.now() > expiresAt.value) {
         logout();
       } else {
+        if (user.value?.setting) {
+          useSystemIdentityTheme().applySettingTheme(user.value.setting);
+        }
         setAutoLogout();
       }
     };

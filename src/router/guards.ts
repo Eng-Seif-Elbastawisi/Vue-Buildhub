@@ -1,26 +1,55 @@
-import type { NavigationGuardNext, RouteLocationNormalized } from 'vue-router';
+import type { RouteLocationNormalized } from 'vue-router';
 import { useUserStore } from '@/stores/user';
 
-export function authGuard(
-  to: RouteLocationNormalized,
-  _from: RouteLocationNormalized,
-  next: NavigationGuardNext,
-): void {
-  const userData = useUserStore();
+const ROLE_PATHS: Record<number, string> = {
+  1: '/admin',
+  2: '/organization',
+};
 
-  if (to.path === '/choose-country' || to.path === '/not-found') {
-    return next();
+const LOGIN_PATHS = ['/login-admin', '/login-organization'];
+
+const PROTECTED_PREFIXES = ['/admin', '/organization'];
+
+const DEFAULT_LOGIN_PATH = '/login-organization';
+
+const startsWithPath = (path: string, prefix: string) => {
+  return path === prefix || path.startsWith(`${prefix}/`);
+};
+
+const getLoginPathByTarget = (path: string) => {
+  if (startsWithPath(path, '/admin')) {
+    return '/login-admin';
   }
 
-  const isLoginPage = to.path === '/login';
+  return DEFAULT_LOGIN_PATH;
+};
 
-  if (!userData.isAuth && !isLoginPage) {
-    return next({ name: 'Choose Country' });
+export function authGuard(to: RouteLocationNormalized) {
+  const userStore = useUserStore();
+
+  const userType = Number(userStore.user?.type);
+
+  const userAppPath = ROLE_PATHS[userType];
+
+  const isLoginPage = LOGIN_PATHS.includes(to.path);
+  const isProtectedPage = PROTECTED_PREFIXES.some((prefix) => startsWithPath(to.path, prefix));
+
+  // مش عامل login
+  if (!userAppPath) {
+    if (isLoginPage) return true;
+
+    return getLoginPathByTarget(to.path);
   }
 
-  if (isLoginPage && userData.isAuth) {
-    return next({ name: 'About' });
+  // عامل login وبيحاول يدخل صفحة login
+  if (isLoginPage) {
+    return userAppPath;
   }
 
-  next();
+  // عامل login بس داخل path مش بتاع role بتاعه
+  if (isProtectedPage && !startsWithPath(to.path, userAppPath)) {
+    return userAppPath;
+  }
+
+  return true;
 }

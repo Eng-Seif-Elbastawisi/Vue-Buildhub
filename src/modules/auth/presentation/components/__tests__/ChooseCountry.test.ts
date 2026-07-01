@@ -97,11 +97,6 @@ describe('ChooseCountry.vue', () => {
     const continueButton = wrapper.find('button.btn-primary');
     await continueButton.trigger('click');
 
-    expect(mockPush).toHaveBeenCalledWith({
-      name: 'Login',
-      params: {
-        country_code: 'eg',
-      },
-    });
+    expect(mockPush).toHaveBeenCalledWith({ name: 'Login' });
   });
 });

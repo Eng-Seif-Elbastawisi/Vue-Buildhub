@@ -49,19 +49,16 @@
       </svg>
     </div>
 
-    <h3 class="timeout-title">Request Timed Out</h3>
+    <h3 class="timeout-title">{{ $t('request_timed_out') }}</h3>
 
     <p class="timeout-message">
-      {{
-        message ||
-        'The server took too long to respond. Please check your connection and try again.'
-      }}
+      {{ message || $t('server_took_too_long') }}
     </p>
 
     <button class="timeout-retry-btn" :disabled="isRetrying" @click="handleRetry">
       <span v-if="isRetrying" class="retry-spinner"></span>
       <span v-else>↻</span>
-      {{ isRetrying ? 'Retrying...' : 'Try Again' }}
+      {{ isRetrying ? $t('retrying') : $t('try_again') }}
     </button>
   </div>
 </template>

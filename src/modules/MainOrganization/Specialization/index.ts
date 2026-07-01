@@ -1,0 +1,10 @@
+export { default as SpecializationModel } from './core/models/specialization.model';
+export { default as SpecializationShowModel } from './core/models/specialization.show.model';
+export { default as AddSpecializationParams } from './core/params/add.specialization.params';
+export { default as EditSpecializationParams } from './core/params/edit.specialization.params';
+export { default as DeleteSpecializationParams } from './core/params/delete.specialization.params';
+export { default as ShowSpecializationParams } from './core/params/show.specialization.params';
+export { default as IndexSpecializationParams } from './core/params/index.specialization.params';
+export { default as SpecializationRepository } from './data/repositories/specialization.repository';
+export { default as SpecializationController } from './presentation/controllers/specialization.controller';
+export { default as SpecializationApiService } from './data/api/specialization.api-service';

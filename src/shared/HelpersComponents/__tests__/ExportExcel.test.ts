@@ -38,7 +38,7 @@ const createWrapper = (props = {}) =>
       ...props,
     },
     global: {
-      mocks: { $t: (key: string) => key },
+      mocks: { $t: (key: string) => ({ export_excel: 'Export Excel' })[key] ?? key },
     },
   });
 

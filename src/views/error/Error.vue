@@ -5,9 +5,9 @@
   <div class="error-container">
     <h2 class="error-404">404</h2>
     <ErrorIcon404 class="error-icon" />
-    <h3 class="error-text">Opp! Page Not Found</h3>
+    <h3 class="error-text">{{ $t('page_not_found_title') }}</h3>
     <p class="error-description">
-      We couldn’t find the page you were looking for. It might have been moved or deleted.
+      {{ $t('page_not_found_message') }}
     </p>
   </div>
 </template>

@@ -33,7 +33,7 @@
 
 /* ── Layout ────────────────────────────────────────────────────── */
 @use '../shared/LayoutComponents/styles/layout_imports';
-
+@use '../shared//FeatureHeader/styles/feature_header';
 /* ── Components ────────────────────────────────────────────────── */
 @use 'tables/main_table';
 @use 'Pagination/pagination';
@@ -44,19 +44,21 @@
 @use 'HomeBreadCrump/fast_routes';
 
 /* ── Modules ───────────────────────────────────────────────────── */
-@use '../modules/country/presentation/styles/country_imports';
-@use '../modules/employee/presentation/styles/employee_imports';
-@use '../modules/EducationClassification/presentation/styles/education_classification_imports';
-@use '../shared/FeatureHeader/styles/_feature_header';
-@use '../modules/document/presentation/styles/document_imports';
-@use '../modules/about/presentation/styles/about_imports';
-@use '../modules/SupportContacts/presentation/styles/support_imports';
-@use '../modules/DeleteReasons/presentation/styles/deleted_accounts_imports';
-@use '../modules/faqs/presentation/styles/faqs_imports';
-@use '../modules/privacy/presentation/styles/privacy_imports';
-@use '../modules/terms-conditions/presentation/styles/terms_imports';
-@use '../modules/Questions/presentation/styles/questions_imports';
-@use '../modules/Articles/presentation/styles/artical_imports';
+@use '../modules/MainOrganization/Suppliers/presentation/styles/supplier_imports';
+@use '../modules/shared/supply/presentation/styles/supply_imports';
+@use '../modules/MainOrganization/client/presentation/styles/client_imports';
+@use '../modules/shared/location/presentation/styles/location_imports';
+@use '../modules/shared/Item/presentation/styles/item_imports';
+@use '../modules/shared/Brand/presentation/styles/brand_imports';
+@use '../modules/shared/ProjectType/presentation/styles/project_type_imports';
+@use '../modules/shared/Materials/presentation/styles/material_imports';
+@use '../modules/shared/measurement/presentation/styles/measurement_imports';
+@use '../modules/shared/Organization/presentation/styles/organization_imports';
+@use '../modules/shared/ClientSource/presentation/styles/client_source_imports';
+@use '../modules/shared/Department/presentation/styles/department_imports';
+@use '../modules/MainOrganization/Specialization/presentation/styles/Specialization_imports';
+@use '../modules/MainOrganization/employee/presentation/styles/employee_imports';
+@use '../modules/MainOrganization/Organization/presentation/styles/organization_toggle_imports';
 /* ── Pages ─────────────────────────────────────────────────────── */
 @use '../modules/auth/presentation/styles/login';
 @use 'error/error';
@@ -69,6 +71,8 @@
 @use 'GlobalStyles/import';
 // helpers components styles
 @use '../shared/HelpersComponents/FilterDialog/styles/filter_dialog';
+@use '../modules/shared/Stages/presentation/styles/stages_imports';
+@use '../modules/shared/Term/presentation/styles/term_imports';
 /* =============================================================================
    GLOBAL OVERRIDES & BASE STYLES
    ============================================================================= */
@@ -232,6 +236,7 @@ body {
   .p-accordioncontent-content {
     padding: 0 !important;
   }
+
   .p-accordionpanel {
     border: none !important;
   }

@@ -4,6 +4,7 @@
   import Select from 'primevue/select';
 
   import { computed, ref, watch, toRefs } from 'vue';
+  import { useI18n } from 'vue-i18n';
 
   import type Params from '@/base/Core/Params/params';
 
@@ -59,6 +60,8 @@
 
   const emit = defineEmits(['update:modelValue', 'update:slot']);
 
+  const { t } = useI18n();
+
   const props = withDefaults(defineProps<Props>(), {
     type: 1,
 
@@ -99,7 +102,7 @@
 
   const loading = ref(false);
 
-  const message = ref('No Data Found');
+  const message = ref(t('no_data_found'));
 
   const localValue = ref(props.modelValue);
 
@@ -215,7 +218,7 @@
     try {
       loading.value = true;
 
-      message.value = 'Loading Data';
+      message.value = t('loading_data');
 
       // Before: const response = await controller.value.fetch(params.value);
 
@@ -237,9 +240,9 @@
     if (!controller?.value) return;
 
     if (controller.value.isListFailed()) {
-      message.value = 'An Error Occurred';
+      message.value = t('an_error_occurred');
     } else if (controller.value.isListSuccess()) {
-      message.value = 'No Data Found';
+      message.value = t('no_data_found');
     }
   }
 
@@ -252,7 +255,7 @@
   function handleFetchError(error: unknown): void {
     console.error('Fetch error:', error);
 
-    message.value = 'Failed to load data';
+    message.value = t('failed_to_load_data');
 
     dynamicOptions.value = [];
   }
@@ -322,10 +325,15 @@
 </template>
 
 <style scoped lang="scss">
+  .required span {
+    color: red;
+  }
+
   .reload-icon {
     z-index: 9999;
     cursor: pointer;
   }
+
   .add-dialog {
     width: 20px;
     height: 20px;

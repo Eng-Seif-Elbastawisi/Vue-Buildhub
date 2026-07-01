@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import WelcomeItem from './WelcomeItem.vue'
-import DocumentationIcon from './icons/IconDocumentation.vue'
-import ToolingIcon from './icons/IconTooling.vue'
-import EcosystemIcon from './icons/IconEcosystem.vue'
-import CommunityIcon from './icons/IconCommunity.vue'
-import SupportIcon from './icons/IconSupport.vue'
+  import WelcomeItem from './WelcomeItem.vue';
+  import DocumentationIcon from './icons/IconDocumentation.vue';
+  import ToolingIcon from './icons/IconTooling.vue';
+  import EcosystemIcon from './icons/IconEcosystem.vue';
+  import CommunityIcon from './icons/IconCommunity.vue';
+  import SupportIcon from './icons/IconSupport.vue';
 
-const openReadmeInEditor = () => fetch('/__open-in-editor?file=README.md')
+  const openReadmeInEditor = () => fetch('/__open-in-editor?file=README.md');
 </script>
 
 <template>
@@ -14,27 +14,29 @@ const openReadmeInEditor = () => fetch('/__open-in-editor?file=README.md')
     <template #icon>
       <DocumentationIcon />
     </template>
-    <template #heading>Documentation</template>
+    <template #heading>{{ $t('vue_starter.documentation') }}</template>
 
-    Vue’s
-    <a href="https://vuejs.org/" target="_blank" rel="noopener">official documentation</a>
-    provides you with all information you need to get started.
+    {{ $t('vue_starter.vue_docs_prefix') }}
+    <a href="https://vuejs.org/" target="_blank" rel="noopener">{{
+      $t('vue_starter.official_documentation')
+    }}</a>
+    {{ $t('vue_starter.vue_docs_suffix') }}
   </WelcomeItem>
 
   <WelcomeItem>
     <template #icon>
       <ToolingIcon />
     </template>
-    <template #heading>Tooling</template>
+    <template #heading>{{ $t('vue_starter.tooling') }}</template>
 
-    This project is served and bundled with
-    <a href="https://vite.dev/guide/features.html" target="_blank" rel="noopener">Vite</a>. The
-    recommended IDE setup is
+    {{ $t('vue_starter.tooling_prefix') }}
+    <a href="https://vite.dev/guide/features.html" target="_blank" rel="noopener">Vite</a>.
+    {{ $t('vue_starter.recommended_ide') }}
     <a href="https://code.visualstudio.com/" target="_blank" rel="noopener">VSCode</a>
     +
     <a href="https://github.com/vuejs/language-tools" target="_blank" rel="noopener"
       >Vue - Official</a
-    >. If you need to test your components and web pages, check out
+    >. {{ $t('vue_starter.testing_prefix') }}
     <a href="https://vitest.dev/" target="_blank" rel="noopener">Vitest</a>
     and
     <a href="https://www.cypress.io/" target="_blank" rel="noopener">Cypress</a>
@@ -43,7 +45,7 @@ const openReadmeInEditor = () => fetch('/__open-in-editor?file=README.md')
 
     <br />
 
-    More instructions are available in
+    {{ $t('vue_starter.more_instructions') }}
     <a href="javascript:void(0)" @click="openReadmeInEditor"><code>README.md</code></a
     >.
   </WelcomeItem>
@@ -52,44 +54,46 @@ const openReadmeInEditor = () => fetch('/__open-in-editor?file=README.md')
     <template #icon>
       <EcosystemIcon />
     </template>
-    <template #heading>Ecosystem</template>
+    <template #heading>{{ $t('vue_starter.ecosystem') }}</template>
 
-    Get official tools and libraries for your project:
+    {{ $t('vue_starter.ecosystem_prefix') }}
     <a href="https://pinia.vuejs.org/" target="_blank" rel="noopener">Pinia</a>,
     <a href="https://router.vuejs.org/" target="_blank" rel="noopener">Vue Router</a>,
     <a href="https://test-utils.vuejs.org/" target="_blank" rel="noopener">Vue Test Utils</a>, and
-    <a href="https://github.com/vuejs/devtools" target="_blank" rel="noopener">Vue Dev Tools</a>. If
-    you need more resources, we suggest paying
+    <a href="https://github.com/vuejs/devtools" target="_blank" rel="noopener">Vue Dev Tools</a>.
+    {{ $t('vue_starter.more_resources_prefix') }}
     <a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">Awesome Vue</a>
-    a visit.
+    {{ $t('vue_starter.visit_suffix') }}
   </WelcomeItem>
 
   <WelcomeItem>
     <template #icon>
       <CommunityIcon />
     </template>
-    <template #heading>Community</template>
+    <template #heading>{{ $t('vue_starter.community') }}</template>
 
-    Got stuck? Ask your question on
+    {{ $t('vue_starter.community_prefix') }}
     <a href="https://chat.vuejs.org" target="_blank" rel="noopener">Vue Land</a>
-    (our official Discord server), or
+    {{ $t('vue_starter.discord_suffix') }}
     <a href="https://stackoverflow.com/questions/tagged/vue.js" target="_blank" rel="noopener"
       >StackOverflow</a
-    >. You should also follow the official
+    >. {{ $t('vue_starter.follow_prefix') }}
     <a href="https://bsky.app/profile/vuejs.org" target="_blank" rel="noopener">@vuejs.org</a>
-    Bluesky account or the
+    {{ $t('vue_starter.bluesky_suffix') }}
     <a href="https://x.com/vuejs" target="_blank" rel="noopener">@vuejs</a>
-    X account for latest news in the Vue world.
+    {{ $t('vue_starter.x_suffix') }}
   </WelcomeItem>
 
   <WelcomeItem>
     <template #icon>
       <SupportIcon />
     </template>
-    <template #heading>Support Vue</template>
+    <template #heading>{{ $t('vue_starter.support_vue') }}</template>
 
-    As an independent project, Vue relies on community backing for its sustainability. You can help
-    us by
-    <a href="https://vuejs.org/sponsor/" target="_blank" rel="noopener">becoming a sponsor</a>.
+    {{ $t('vue_starter.support_prefix') }}
+    <a href="https://vuejs.org/sponsor/" target="_blank" rel="noopener">{{
+      $t('vue_starter.becoming_sponsor')
+    }}</a
+    >.
   </WelcomeItem>
 </template>

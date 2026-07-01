@@ -109,7 +109,7 @@
           <button
             v-if="toast.showClose !== false"
             class="toast-close"
-            aria-label="Dismiss toast"
+            :aria-label="$t('dismiss_toast')"
             @click.stop="dismissToast(toast.id)"
           >
             ×

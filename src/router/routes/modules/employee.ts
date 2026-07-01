@@ -1,35 +1,31 @@
 import type { RouteRecordRaw } from '@/router/types';
-import EmployeeIcon from '@/shared/icons/BreadcrumbIcons/EmployeeIcon.vue';
 
-export const employeeRoutes: RouteRecordRaw[] = [
+export const EmployeeRoutes: RouteRecordRaw[] = [
   {
-    path: 'employees',
-    name: 'Employees',
-    component: () => import('@/views/Employee/IndexEmployee.vue'),
+    path: 'employee',
+    name: 'Employee',
+    component: () => import('@/views/MainOrganization/employee/IndexEmployee.vue'),
     meta: {
-      breadcrumb: 'Employees',
-      icon: EmployeeIcon,
+      breadcrumb: 'Employee',
     },
   },
   {
-    path: 'employees/add',
+    path: 'employee/add',
     name: 'Add Employee',
-    component: () => import('@/views/Employee/AddEmployee.vue'),
+    component: () => import('@/views/MainOrganization/employee/AddEmployee.vue'),
     meta: {
       breadcrumb: 'Add Employee',
-      icon: EmployeeIcon,
-      parent: 'Employees',
+      parent: 'Employee',
     },
   },
   {
-    path: 'employees/edit/:id',
+    path: 'employee/edit/:employee_id',
     name: 'Edit Employee',
-    component: () => import('@/views/Employee/EditEmployee.vue'),
+    component: () => import('@/views/MainOrganization/employee/EditEmployee.vue'),
     props: true,
     meta: {
       breadcrumb: 'Edit Employee',
-      icon: EmployeeIcon,
-      parent: 'Employees',
+      parent: 'Employee',
     },
   },
 ];

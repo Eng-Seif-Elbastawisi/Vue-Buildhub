@@ -1,5 +1,6 @@
 import { EmailType } from '../constants/emailType.enum';
 import { isValidEmail } from '../utils/email.validation';
+import type { SystemIdentitySetting } from '@/modules/shared/SystemIdentity/presentation/composables/useSystemIdentityTheme';
 
 /**
  * Email model representing employee email data
@@ -20,6 +21,7 @@ export default class UserModel {
   public readonly image?: string;
   public readonly languages?: any[];
   public readonly isMaster?: boolean;
+  public readonly setting?: SystemIdentitySetting | null;
 
   constructor(data: {
     id?: number;
@@ -34,6 +36,7 @@ export default class UserModel {
     image?: string;
     languages?: any[];
     isMaster?: boolean;
+    setting?: SystemIdentitySetting | null;
   }) {
     this.id = data.id;
     this.email = data.email;
@@ -47,6 +50,7 @@ export default class UserModel {
     this.image = data.image;
     this.languages = data.languages;
     this.isMaster = data.isMaster;
+    this.setting = data.setting;
   }
 
   /**
@@ -73,6 +77,7 @@ export default class UserModel {
       image: json.image,
       languages: json.languages,
       isMaster: json.is_master,
+      setting: json.setting,
     });
   }
 
@@ -92,6 +97,7 @@ export default class UserModel {
       api_token: this.apiToken,
       refresh_token: this.refreshToken,
       image: this.image,
+      setting: this.setting,
     };
   }
 
