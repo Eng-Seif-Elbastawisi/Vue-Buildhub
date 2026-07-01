@@ -13,6 +13,7 @@
   // Form state
   const params = ref<EditStageParams | null>(null);
   const loading = ref(false);
+  const resetKey = ref(0);
   /**
    * Save (create or update) email
    */
@@ -38,6 +39,11 @@
     params.value = updatedParams as EditStageParams;
   };
 
+  const clearInputs = () => {
+    params.value = null;
+    resetKey.value += 1;
+  };
+
   const route = useRoute();
   onMounted(async () => {
     await controller.fetchOne(new ShowStageParams({ id: Number(route.params.id) }));
@@ -47,10 +53,16 @@
 <template>
   <div class="email-crud-example">
     <div class="email-form-card">
-      <StageForm :stage="controller.itemData.value!" :loading="loading" @update-data="updateData" />
+      <StageForm
+        :stage="controller.itemData.value!"
+        :loading="loading"
+        :reset-key="resetKey"
+        @update-data="updateData"
+      />
 
       <div class="actions" :class="{ disabled: loading }">
         <button type="button" @click="saveEmail">{{ $t('stage.save') }}</button>
+        <button type="button" @click="clearInputs">{{ $t('cancel') }}</button>
       </div>
 
       <!-- Error Display -->
@@ -69,6 +81,8 @@
 
   .actions {
     padding: 0 0 10px 20px;
+    display: flex;
+    gap: 0.75rem;
   }
 
   .actions {

@@ -80,6 +80,7 @@ describe('StageEdit', () => {
   it('contains the save button', () => {
     const wrapper = mount(StageEdit, { global: globalConfig });
     expect(wrapper.find('button').exists()).toBe(true);
+    expect(wrapper.text()).toContain('cancel');
   });
 
   it('does not show error section when there is no error', () => {

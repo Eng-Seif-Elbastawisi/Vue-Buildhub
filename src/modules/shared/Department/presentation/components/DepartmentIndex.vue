@@ -87,7 +87,9 @@
 
   const deleteSelected = () => {
     SelectedRow.value.forEach((item) => {
-      deleteCountry(item.id!);
+      if (item.id !== undefined) {
+        deleteCountry(item.id);
+      }
     });
   };
   const EditMode = ref(false);
@@ -104,6 +106,12 @@
   const onDepartmentSaved = async () => {
     EditMode.value = false;
     await fetchDepartments();
+    formKey.value++;
+  };
+
+  const onDepartmentCancelled = () => {
+    EditMode.value = false;
+    controller.resetItem();
     formKey.value++;
   };
 </script>
@@ -145,6 +153,7 @@
     <DepartmentAdd
       :key="formKey"
       :department="selectedDepartment"
+      @cancel="onDepartmentCancelled"
       @update-data="onDepartmentSaved"
       @saved="onDepartmentSaved"
     />

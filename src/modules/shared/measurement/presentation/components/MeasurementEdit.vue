@@ -13,6 +13,7 @@
   // Form state
   const params = ref<EditMeasurementParams | null>(null);
   const loading = ref(false);
+  const resetKey = ref(0);
   /**
    * Save (create or update) email
    */
@@ -38,6 +39,11 @@
     params.value = updatedParams as EditMeasurementParams;
   };
 
+  const clearInputs = () => {
+    params.value = null;
+    resetKey.value += 1;
+  };
+
   const route = useRoute();
   onMounted(async () => {
     await controller.fetchOne(new ShowMeasurementParams(Number(route.params.id), true));
@@ -50,11 +56,13 @@
       <MeasurementForm
         :stage="controller.itemData.value!"
         :loading="loading"
+        :reset-key="resetKey"
         @update-data="updateData"
       />
 
       <div class="actions" :class="{ disabled: loading }">
         <button type="button" @click="saveEmail">{{ $t('measurement.save') }}</button>
+        <button type="button" @click="clearInputs">{{ $t('cancel') }}</button>
       </div>
 
       <!-- Error Display -->
@@ -73,6 +81,8 @@
 
   .actions {
     padding: 0 0 10px 20px;
+    display: flex;
+    gap: 0.75rem;
   }
 
   .actions {

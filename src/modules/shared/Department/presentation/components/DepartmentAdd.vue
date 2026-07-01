@@ -8,10 +8,14 @@
   import EditDepartmentParams from '../../core/params/edit.department.params.ts';
 
   const controller = DepartmentController.getInstance();
-  const params = ref<AddDepartmentParams | null>(null);
+  const params = ref<AddDepartmentParams | EditDepartmentParams | null>(null);
   const loading = ref(false);
-  const { department } = defineProps<{ department?: DepartmentModel }>();
-  const emit = defineEmits(['saved']);
+  const props = defineProps<{ department?: DepartmentModel }>();
+  const emit = defineEmits<{
+    saved: [];
+    cancel: [];
+  }>();
+  const resetKey = ref(0);
 
   const saveDepartment = async () => {
     loading.value = true;
@@ -37,19 +41,40 @@
       loading.value = false;
     }
   };
+
+  const updateData = (value: AddDepartmentParams | EditDepartmentParams) => {
+    params.value = value;
+  };
+
+  const cancelDepartment = () => {
+    params.value = null;
+    resetKey.value += 1;
+    emit('cancel');
+  };
 </script>
 
 <template>
   <section class="department-page">
     <DepartmentForm
       :loading="loading"
-      :department="department"
-      @update-data="(value) => (params = value as AddDepartmentParams)"
+      :department="props.department"
+      :reset-key="resetKey"
+      @update-data="updateData"
     />
     <div class="actions">
       <AppButton class="btn-save" :title="$t('save')" type="button" @click="saveDepartment">{{
         $t('save')
       }}</AppButton>
+      <AppButton
+        v-if="props.department?.id"
+        class="btn-cancel"
+        theme="secondary"
+        :title="$t('cancel')"
+        type="button"
+        @click="cancelDepartment"
+      >
+        {{ $t('cancel') }}
+      </AppButton>
     </div>
     <div v-if="controller.errorMessage.value" class="error">
       {{ controller.errorMessage.value }}
@@ -59,9 +84,15 @@
 <style scoped>
   .actions {
     padding: 0 0 20px 20px;
+    display: flex;
+    gap: 0.75rem;
   }
 
   .btn-save {
-    width: 100%;
+    flex: 1;
+  }
+
+  .btn-cancel {
+    flex: 0 0 auto;
   }
 </style>

@@ -9,16 +9,20 @@
     updateData: [params: AddMeasurementParams | EditMeasurementParams];
   }>();
 
-  const { stage, loading } = defineProps<{
+  const props = defineProps<{
     stage?: measurementModel;
     loading?: boolean;
+    resetKey?: number;
   }>();
   const translations = ref<{ [key: string]: string }>({});
   const updateData = () => {
-    if (stage?.id) {
+    if (props.stage?.id) {
       emit(
         'updateData',
-        new EditMeasurementParams({ id: stage?.id, translations: { title: translations.value } }),
+        new EditMeasurementParams({
+          id: props.stage.id,
+          translations: { title: translations.value },
+        }),
       );
       return;
     }
@@ -32,12 +36,19 @@
   };
 
   watch(
-    () => stage,
+    () => props.stage,
     (newStage) => {
       translations.value = newStage?.translations?.title ?? {};
       updateData();
     },
     { immediate: true },
+  );
+
+  watch(
+    () => props.resetKey,
+    () => {
+      translations.value = {};
+    },
   );
 </script>
 
@@ -56,7 +67,7 @@
         />
       </div>
     </div> -->
-  <div class="field-group" :class="{ disabled: loading }">
+  <div class="field-group" :class="{ disabled: props.loading }">
     <MultiLangInput
       v-model="translations"
       field-key="title"

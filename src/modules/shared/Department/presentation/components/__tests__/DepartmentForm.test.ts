@@ -95,4 +95,16 @@ describe('DepartmentForm', () => {
     expect(wrapper.find('.stage-select').text()).toBe('Finishing / التشطيبات');
     expect(wrapper.find('.stage-select').text()).not.toContain('[object Object]');
   });
+
+  it('clears title and selected stage when resetKey changes', async () => {
+    const wrapper = mountForm({ department: DepartmentModel.example(), resetKey: 0 });
+
+    expect(wrapper.find('.title-en').text()).toBe('Smart Learning Platform');
+    expect(wrapper.find('.stage-select').text()).toBe('Engineering');
+
+    await wrapper.setProps({ resetKey: 1 });
+
+    expect(wrapper.find('.title-en').text()).toBe('');
+    expect(wrapper.find('.stage-select').text()).toBe('stage');
+  });
 });

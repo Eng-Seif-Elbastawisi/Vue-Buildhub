@@ -15,6 +15,7 @@
 
   const emit = defineEmits<{
     saved: [];
+    cancel: [];
   }>();
 
   const controller = ClientSourceController.getInstance();
@@ -22,6 +23,7 @@
   const formKey = route.fullPath;
   const params = ref<AddClientSourceParams | EditClientSourceParams | null>(null);
   const loading = ref(false);
+  const resetKey = ref(0);
 
   const saveClientSource = async () => {
     loading.value = true;
@@ -51,6 +53,12 @@
   const updateData = (updatedParams: AddClientSourceParams | EditClientSourceParams) => {
     params.value = updatedParams;
   };
+
+  const cancelClientSource = () => {
+    params.value = null;
+    resetKey.value += 1;
+    emit('cancel');
+  };
 </script>
 
 <template>
@@ -60,6 +68,7 @@
         :form-key="formKey"
         :client-source="clientSource"
         :loading="loading"
+        :reset-key="resetKey"
         @update-data="updateData"
       />
 
@@ -77,6 +86,16 @@
           <template #icon>
             <IconAccept class="icon" />
           </template>
+        </AppButton>
+        <AppButton
+          v-if="clientSource?.id"
+          class="btn-cancel"
+          theme="secondary"
+          :title="$t('cancel')"
+          type="button"
+          @click="cancelClientSource"
+        >
+          {{ $t('cancel') }}
         </AppButton>
       </div>
 
@@ -113,10 +132,13 @@
 
   .actions {
     // padding: 0 0 10px 20px;
+    display: flex;
+    gap: 0.75rem;
+
     .btn-save {
+      flex: 1;
       border-radius: 20px;
       border: 1px solid white;
-      width: 100%;
       padding: 11px;
       cursor: pointer;
       transition: all 0.3s ease;
@@ -130,6 +152,10 @@
           stroke: var(--PrimaryColor);
         }
       }
+    }
+
+    .btn-cancel {
+      flex: 0 0 auto;
     }
   }
 
