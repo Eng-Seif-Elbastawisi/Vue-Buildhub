@@ -61,6 +61,7 @@
 @use '../modules/MainOrganization/Organization/presentation/styles/organization_toggle_imports';
 /* ── Pages ─────────────────────────────────────────────────────── */
 @use '../modules/auth/presentation/styles/login';
+@use '../modules/auth/presentation/styles/auth_shell';
 @use 'error/error';
 @use 'toast/tosat';
 
