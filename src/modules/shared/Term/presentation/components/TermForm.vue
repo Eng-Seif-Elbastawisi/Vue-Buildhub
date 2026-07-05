@@ -65,10 +65,10 @@
       if (!term) return;
 
       title.value = { ...term.translations.title };
-      selectedDepartment.value = new TitleInterface({
-        id: Number(term.department.id),
-        title: term.department.title,
-      });
+      selectedDepartment.value = {
+        id: Number(term?.department?.id ?? undefined) as number,
+        title: term?.department?.title,
+      };
       updateData();
     },
     { immediate: true },
