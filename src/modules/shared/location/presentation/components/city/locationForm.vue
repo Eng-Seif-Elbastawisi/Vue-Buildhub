@@ -11,6 +11,7 @@
   import TranslationParams from '@/base/Core/Params/translationParams';
   import LocationController from '../../controllers/location.controller';
   import IndexLocationParams from '../../../core/params/index.location.params';
+  import DocumentIcon from '@/shared/icons/DocaumentType/DocumentIcon.vue';
 
   const emit = defineEmits<{
     updateData: [params: AddLocationParams];
@@ -109,10 +110,13 @@
 
 <template>
   <div class="material-form-card">
-    <header class="form-header">
-      <h3>{{ $t('location.form_title') }}</h3>
-      <p>{{ $t('location.form_description') }}</p>
-    </header>
+    <div class="document-form-header">
+      <DocumentIcon />
+      <header class="form-header">
+        <h3>{{ $t('location.form_title') }}</h3>
+        <p>{{ $t('location.form_description') }}</p>
+      </header>
+    </div>
 
     <div class="form-fields" :class="{ disabled: loading }">
       <div class="field-group">
@@ -155,6 +159,13 @@
   </div>
 </template>
 <style scoped lang="scss">
+  .document-form-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+
   .field-input {
     width: 100%;
     padding: 12px 16px;

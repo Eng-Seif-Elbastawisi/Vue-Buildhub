@@ -137,12 +137,12 @@
     <div class="field-group col-span-2">
       <label class="field-label" for="name">{{ $t(`question title`) }}</label>
       <div class="input-wrap">
-        <input id="title" v-model="title" type="text" placeholder="Enter question title" class="field-input"
+        <input id="title" v-model="title" type="text" :placeholder="$t('question_title_placeholder')" class="field-input"
           @input="updateData" />
       </div>
     </div>
     <div class="field-group">
-      <UpdatedCustomInputSelect id="doc-branch" v-model="Specialization" :label="`Specialization`"
+      <UpdatedCustomInputSelect id="doc-branch" v-model="Specialization" :label="$t('specialization')"
         :static-options="branchOptions" :placeholder="$t('Enter subject name')" :reload="true"
         @update:model-value="handleBranchChange($event)" />
     </div>
@@ -158,7 +158,7 @@
     <div class="field-group col-span-2">
       <label class="field-label" for="name">{{ $t(`question title`) }}</label>
       <div class="input-wrap">
-        <input id="title" v-model="title" type="text" placeholder="Enter question title" class="field-input"
+        <input id="title" v-model="title" type="text" :placeholder="$t('question_title_placeholder')" class="field-input"
           @input="updateData" />
       </div>
     </div>
@@ -203,7 +203,7 @@
                       ? `/admin/organization/edit/${item.id}`
                       : `/organization/organization/edit/${item.id}`
                   "
-                  title="Edit"
+                  :title="$t('Edit')"
                 >
                   <svg
                     width="15"
@@ -227,7 +227,7 @@
                   @delete="deleteOrganization(item.id!)"
                 >
                   <template #btn>
-                    <button class="action-btn delete" title="Delete">
+                    <button class="action-btn delete" :title="$t('Delete')">
                       <svg
                         width="15"
                         height="15"
@@ -308,7 +308,7 @@
         >
         </TableSkelaton>
       </template>
-      <template #failed> ing </template>
+      <template #failed>{{ $t('failed_state_text') }}</template>
     </DataStatusBuilder>
   </div>
 </template>

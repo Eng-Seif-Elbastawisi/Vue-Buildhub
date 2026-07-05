@@ -40,7 +40,7 @@
 </template>
 
 <style scoped lang="scss">
-  .material-crud-page {
+  .location-crud-page {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;

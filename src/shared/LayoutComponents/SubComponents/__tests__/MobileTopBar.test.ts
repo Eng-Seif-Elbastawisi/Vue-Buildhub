@@ -9,13 +9,7 @@ describe('MobileTopBar', () => {
   });
 
   it('renders the brand and emits openSidebar from menu button', async () => {
-    const wrapper = mount(MobileTopBar, {
-      global: {
-        mocks: {
-          $t: (key: string) => key,
-        },
-      },
-    });
+    const wrapper = mount(MobileTopBar);
 
     expect(wrapper.text()).toContain('BuildHub');
 

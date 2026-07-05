@@ -8,9 +8,6 @@ const createWrapper = (props = {}) =>
       label: 'Upload Files',
       ...props,
     },
-    global: {
-      mocks: { $t: (key: string) => key },
-    },
   });
 
 describe('HandleFilesUpload', () => {
@@ -57,9 +54,6 @@ describe('HandleFilesUpload', () => {
       props: {
         file: 'http://example.com/test.jpg',
       },
-      global: {
-        mocks: { $t: (key: string) => key },
-      },
     });
 
     // The component uses onMounted to process preloaded files
@@ -75,9 +69,6 @@ describe('HandleFilesUpload', () => {
         file: ['img1.jpg', 'img2.jpg'],
         multiple: true,
       },
-      global: {
-        mocks: { $t: (key: string) => key },
-      },
     });
 
     await wrapper.vm.$nextTick();
@@ -89,9 +80,6 @@ describe('HandleFilesUpload', () => {
     const wrapper = mount(HandleFilesUpload, {
       props: {
         file: 'test.jpg',
-      },
-      global: {
-        mocks: { $t: (key: string) => key },
       },
     });
 
@@ -108,9 +96,6 @@ describe('HandleFilesUpload', () => {
     const wrapper = mount(HandleFilesUpload, {
       props: {
         file: '',
-      },
-      global: {
-        mocks: { $t: (key: string) => key },
       },
     });
 

@@ -109,7 +109,7 @@
                 @delete="deleteProject(item.id!)"
               >
                 <template #btn>
-                  <button class="action-btn delete" title="Delete">
+                  <button class="action-btn delete" :title="$t('Delete')">
                     <svg
                       width="15"
                       height="15"

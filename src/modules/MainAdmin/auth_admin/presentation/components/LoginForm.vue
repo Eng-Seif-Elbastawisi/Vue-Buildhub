@@ -111,7 +111,7 @@
         v-if="loading"
         :src="LoadingIcon"
         class="loader-skills"
-        alt="loading"
+        :alt="$t('loading_image_alt')"
         width="30"
         height="30"
       />

@@ -19,7 +19,7 @@
     <div class="mobile-brand">
       <img class="mobile-logo" :src="BuildHubLogo" :alt="$t('buildhub_logo')" />
       <div class="mobile-copy">
-        <strong>BuildHub</strong>
+        <strong>{{ $t('buildhub') }}</strong>
         <span>{{ $t('main_navigation') }}</span>
       </div>
     </div>

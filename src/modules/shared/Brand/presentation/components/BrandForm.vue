@@ -107,6 +107,13 @@
 </template>
 
 <style scoped>
+  .document-form-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+
   .form-fields {
     .all_inputs {
       display: grid;

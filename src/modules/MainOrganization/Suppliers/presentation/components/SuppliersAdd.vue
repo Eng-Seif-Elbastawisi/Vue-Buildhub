@@ -55,6 +55,9 @@
 <style scoped lang="scss">
   .document-crud-example {
     margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
   }
 
   .actions {

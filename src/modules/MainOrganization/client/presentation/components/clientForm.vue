@@ -5,9 +5,10 @@
   import type ClientShowModel from '../../core/models/client.show.model';
   import AddClientParams from '../../core/params/add.client.params';
   import { ClientTypeEnum } from '../../core/constant/client.type.enum';
-import UpdatedCustomInputSelect from '@/shared/FormInputs/UpdatedCustomInputSelect.vue';
-import TitleInterface from '@/base/Data/Models/titleInterface';
-import { useI18n } from 'vue-i18n';
+  import UpdatedCustomInputSelect from '@/shared/FormInputs/UpdatedCustomInputSelect.vue';
+  import TitleInterface from '@/base/Data/Models/titleInterface';
+  import { useI18n } from 'vue-i18n';
+  import DocumentIcon from '@/shared/icons/DocaumentType/DocumentIcon.vue';
 
   const emit = defineEmits<{
     updateData: [params: AddClientParams];
@@ -32,19 +33,19 @@ import { useI18n } from 'vue-i18n';
   // const typeOptions = Object.entries(ClientTypeEnum).map(([title, id]) => ({ id: Number(id), title }));
   const { t } = useI18n();
   const typeOptions = computed<TitleInterface<number>[]>(() => [
-  new TitleInterface({
-    id: ClientTypeEnum.INDIVIDUAL,
-    title: t('INDIVIDUAL'),
-  }),
-  new TitleInterface({
-    id: ClientTypeEnum.COMPANY,
-    title: t('COMPANY'),
-  }),
-  new TitleInterface({
-    id: ClientTypeEnum.DEVELOPER,
-    title: t('DEVELOPER'),
-  }),
-]);
+    new TitleInterface({
+      id: ClientTypeEnum.INDIVIDUAL,
+      title: t('INDIVIDUAL'),
+    }),
+    new TitleInterface({
+      id: ClientTypeEnum.COMPANY,
+      title: t('COMPANY'),
+    }),
+    new TitleInterface({
+      id: ClientTypeEnum.DEVELOPER,
+      title: t('DEVELOPER'),
+    }),
+  ]);
 
   onBeforeRouteLeave((to, from) => {
     const savedData = props.formKey ? formStore.getFormData(props.formKey) : null;
@@ -53,42 +54,44 @@ import { useI18n } from 'vue-i18n';
     }
   });
 
-watch(
-  () => props.client,
-  (client) => {
-    if (!client) return;
+  watch(
+    () => props.client,
+    (client) => {
+      if (!client) return;
 
-    name.value = client.name;
-    phone.value = String(client.phone ?? '');
-    email.value = client.email;
-    address.value = client.address;
+      name.value = client.name;
+      phone.value = String(client.phone ?? '');
+      email.value = client.email;
+      address.value = client.address;
 
-    selectedType.value =
-      typeOptions.value.find((item) => item.id === client.type) ?? null;
-  },
-  { immediate: true },
-);
+      selectedType.value = typeOptions.value.find((item) => item.id === client.type) ?? null;
+    },
+    { immediate: true },
+  );
 
   const updateData = () => {
-  emit(
-    'updateData',
-    new AddClientParams({
-      phone: String(phone.value ?? ''),
-      name: name.value,
-      email: email.value,
-      address: address.value,
-      type: selectedType.value?.id as ClientTypeEnum,
-    }),
-  );
-};
+    emit(
+      'updateData',
+      new AddClientParams({
+        phone: String(phone.value ?? ''),
+        name: name.value,
+        email: email.value,
+        address: address.value,
+        type: selectedType.value?.id as ClientTypeEnum,
+      }),
+    );
+  };
 </script>
 
 <template>
   <div class="material-form-card">
-    <header class="form-header">
-      <h3>{{ $t('client.form_title') }}</h3>
-      <p>{{ $t('client.form_description') }}</p>
-    </header>
+    <div class="document-form-header">
+      <DocumentIcon />
+      <header class="form-header">
+        <h3>{{ $t('client.form_title') }}</h3>
+        <p>{{ $t('client.form_description') }}</p>
+      </header>
+    </div>
 
     <div class="form-fields" :class="{ disabled: loading }">
       <!-- <div class="field-group col-span-2">
@@ -152,7 +155,7 @@ watch(
           />
         </div>
       </div>
-       <div class="field-group">
+      <div class="field-group">
         <UpdatedCustomInputSelect
           id="type"
           v-model="selectedType"
@@ -168,6 +171,13 @@ watch(
 </template>
 
 <style scoped lang="scss">
+  .document-form-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+
   .field-input {
     width: 100%;
     padding: 12px 16px;

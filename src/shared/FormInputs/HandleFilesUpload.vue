@@ -236,7 +236,7 @@
 
 <template>
   <div class="file-upload-wrapper">
-    <label class="upload-label">{{ label }}</label>
+    <label class="upload-label">{{ $t(label) }}</label>
 
     <label
       v-if="!haveContent"
@@ -245,7 +245,7 @@
     >
       <span class="upload-icon">↑</span>
       <span class="upload-text">
-        {{ isMaxReached ? `Max ${maxFiles} files reached` : 'Click to upload' }}
+        {{ isMaxReached ? $t('max_files_reached', { max: maxFiles }) : $t('click_to_upload') }}
       </span>
       <input
         :id="inputId"
@@ -298,7 +298,7 @@
         <button
           type="button"
           class="remove-btn"
-          title="Remove"
+          :title="$t('remove_file')"
           @click.stop="removeFile(fileItem.id)"
         >
           ✕

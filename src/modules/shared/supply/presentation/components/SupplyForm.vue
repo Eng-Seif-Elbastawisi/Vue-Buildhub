@@ -12,6 +12,7 @@
   import MeasurementController from '@/modules/shared/measurement/presentation/controllers/measurement.controller';
   import IndexMeasurementParams from '@/modules/shared/measurement/core/params/index.measurement.params';
   import TranslationParams from '@/base/Core/Params/translationParams';
+  import DocumentIcon from '@/shared/icons/DocaumentType/DocumentIcon.vue';
 
   const emit = defineEmits<{
     updateData: [params: AddSupplyParams];
@@ -54,31 +55,31 @@
   //   { immediate: true },
   // );
   watch(
-  () => props.supply,
-  (supply) => {
-    if (!supply) return;
+    () => props.supply,
+    (supply) => {
+      if (!supply) return;
 
-    translations.value = { ...supply.translations.title };
-    price.value = supply.price;
+      translations.value = { ...supply.translations.title };
+      price.value = supply.price;
 
-    brand.value =
-      supply.brandId?.id !== undefined && supply.brandId?.id !== null
-        ? {
-            id: supply.brandId.id,
-            title: supply.brandId.title ?? '',
-          }
-        : null;
+      brand.value =
+        supply.brandId?.id !== undefined && supply.brandId?.id !== null
+          ? {
+              id: supply.brandId.id,
+              title: supply.brandId.title ?? '',
+            }
+          : null;
 
-    measurement.value =
-      supply.measurementId?.id !== undefined && supply.measurementId?.id !== null
-        ? {
-            id: supply.measurementId.id,
-            title: supply.measurementId.title ?? '',
-          }
-        : null;
-  },
-  { immediate: true },
-);
+      measurement.value =
+        supply.measurementId?.id !== undefined && supply.measurementId?.id !== null
+          ? {
+              id: supply.measurementId.id,
+              title: supply.measurementId.title ?? '',
+            }
+          : null;
+    },
+    { immediate: true },
+  );
 
   const updateData = () => {
     const translationParams = new TranslationParams({ title: translations.value });
@@ -101,10 +102,13 @@
 
 <template>
   <div class="supply-form-card">
-    <header class="form-header">
-      <h3>{{ $t('supply.form_title') }}</h3>
-      <p>{{ $t('supply.form_description') }}</p>
-    </header>
+    <div class="document-form-header">
+      <DocumentIcon />
+      <header class="form-header">
+        <h3>{{ $t('supply.form_title') }}</h3>
+        <p>{{ $t('supply.form_description') }}</p>
+      </header>
+    </div>
 
     <div class="form-fields" :class="{ disabled: loading }">
       <div class="field-group col-span-2">
@@ -166,6 +170,13 @@
 </template>
 
 <style scoped lang="scss">
+  .document-form-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+
   .input-wrap {
     input {
       width: 100%;

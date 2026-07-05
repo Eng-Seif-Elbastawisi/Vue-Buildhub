@@ -34,7 +34,7 @@ describe('LocationForm', () => {
     expect(params.toMap()).toEqual({
       parent_id: undefined,
       code: undefined,
-      type: undefined,
+      type: 1,
       translations: { title: { en: 'Building', ar: 'مبنى' } },
     });
   });

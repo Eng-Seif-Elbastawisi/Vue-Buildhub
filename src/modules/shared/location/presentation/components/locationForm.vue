@@ -1,11 +1,13 @@
 <script setup lang="ts">
-  import { ref } from 'vue';
+  import { ref, watch } from 'vue';
   import { onBeforeRouteLeave } from 'vue-router';
   import MultiLangInput from '@/shared/MultiLangInput.vue';
   import { useFormsStore } from '@/stores/formsStore';
   import AddLocationParams from '../../core/params/add.location.params';
   import type locationShowModel from '../../core/models/location.show.model';
   import TranslationParams from '@/base/Core/Params/translationParams';
+  import type { LocationTypeEnum } from '../../core/constant/location.type.enum';
+  import DocumentIcon from '@/shared/icons/DocaumentType/DocumentIcon.vue';
 
   const emit = defineEmits<{
     updateData: [params: AddLocationParams];
@@ -19,7 +21,8 @@
 
   const formStore = useFormsStore();
 
-  const translations = ref<Record<string, string>>({});
+  const translations = ref<{ [key: string]: string }>({});
+  const type = ref<LocationTypeEnum>(props.location?.type ?? 1);
 
   onBeforeRouteLeave((to, from) => {
     const savedData = props.formKey ? formStore.getFormData(props.formKey) : null;
@@ -34,9 +37,18 @@
       'updateData',
       new AddLocationParams({
         translations: translationParams,
+        type: type.value,
       }),
     );
   };
+  watch(
+    () => props.location,
+    (newLocation) => {
+      translations.value = newLocation?.translations?.title ?? {};
+      type.value = newLocation?.type ?? 1;
+    },
+    { immediate: true },
+  );
 
   const updateTranslations = (value: Record<string, string>) => {
     translations.value = value;
@@ -46,10 +58,13 @@
 
 <template>
   <div class="material-form-card">
-    <header class="form-header">
-      <h3>{{ $t('location.form_title') }}</h3>
-      <p>{{ $t('location.form_description') }}</p>
-    </header>
+    <div class="document-form-header">
+      <DocumentIcon />
+      <header class="form-header">
+        <h3>{{ $t('location.form_title') }}</h3>
+        <p>{{ $t('location.form_description') }}</p>
+      </header>
+    </div>
     <div class="form-fields" :class="{ disabled: loading }">
       <div class="field-group">
         <MultiLangInput
@@ -79,6 +94,13 @@
 </template>
 
 <style scoped lang="scss">
+  .document-form-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+
   .field-input {
     width: 100%;
     padding: 12px 16px;

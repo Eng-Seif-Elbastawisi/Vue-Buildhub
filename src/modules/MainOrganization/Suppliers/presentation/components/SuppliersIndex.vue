@@ -164,7 +164,7 @@
                 <UpdatedCustomInputSelect
                   id="doc-branch"
                   v-model="Specialization"
-                  :label="`Specialization`"
+                  :label="$t('specialization')"
                   :static-options="branchOptions"
                   :placeholder="$t('Enter subject name')"
                   :reload="true"
@@ -231,7 +231,7 @@
                       ? `/suppliers/edit/${item.id}`
                       : `/organization/suppliers/edit/${item.id}`
                   "
-                  title="Edit"
+                  :title="$t('Edit')"
                 >
                   <svg
                     width="15"
@@ -255,7 +255,7 @@
                   @delete="deleteSupplier(item.id!)"
                 >
                   <template #btn>
-                    <button class="action-btn delete" title="Delete">
+                    <button class="action-btn delete" :title="$t('Delete')">
                       <svg
                         width="15"
                         height="15"
@@ -336,7 +336,7 @@
         >
         </TableSkelaton>
       </template>
-      <template #failed> ing </template>
+      <template #failed>{{ $t('failed_state_text') }}</template>
     </DataStatusBuilder>
   </div>
 </template>

@@ -52,7 +52,7 @@ describe('DataEmpty', () => {
     const wrapper = createWrapper();
     const img = wrapper.find('img');
     expect(img.exists()).toBe(true);
-    expect(img.attributes('alt')).toBe('data empty');
+    expect(img.attributes('alt')).toBe('Empty data image');
   });
 
   it('has the data-empty root class', () => {

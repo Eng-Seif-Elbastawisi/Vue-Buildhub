@@ -36,7 +36,6 @@
         name: name.value,
 
         phone: phone.value,
-
       }),
     );
   };
@@ -79,7 +78,7 @@
           />
         </div>
       </div>
-<!-- 
+      <!-- 
       <div class="field-group">
         <label class="field-label" for="supplier-specialization">
           {{ $t('supplier.specialization') }}
@@ -128,6 +127,13 @@
 </template>
 
 <style scoped lang="scss">
+  .document-form-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+
   .form-fields {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
