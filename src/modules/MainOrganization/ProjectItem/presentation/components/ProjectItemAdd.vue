@@ -1,19 +1,37 @@
 <script setup lang="ts">
-  import { ref } from 'vue';
+  import { computed, ref } from 'vue';
   import { useRoute } from 'vue-router';
-  import ProjectItemController from '../controllers/project.Item.controller.ts';
-  import type AddProjectItemParams from '../../core/params/add.project.Item.params.ts';
+
+  import ProjectItemController from '../controllers/project.Item.controller';
+  import type AddProjectItemParams from '../../core/params/add.project.Item.params';
   import ProjectItemForm from './ProjectItemForm.vue';
+  import ProjectFloorShow from '../../../ProjectFloor/presentation/components/ProjectFloorShow.vue';
 
   const controller = ProjectItemController.getInstance();
+
   const route = useRoute();
   const formKey = route.fullPath;
+
   const params = ref<AddProjectItemParams | null>(null);
   const loading = ref(false);
 
+  const projectId = computed(() => {
+    const value = Number(route.query.project_id);
+
+    return Number.isNaN(value) ? 0 : value;
+  });
+
+  const projectItem = computed(() => {
+    const value = Number(route.query.project_item);
+
+    return Number.isNaN(value) ? 0 : value;
+  });
+
   const saveItem = async () => {
     if (!params.value) return;
+
     loading.value = true;
+
     try {
       await controller.create(params.value, undefined, formKey);
     } finally {
@@ -23,8 +41,16 @@
 </script>
 
 <template>
+  <ProjectFloorShow />
   <div class="item-crud-page">
-    <ProjectItemForm :form-key="formKey" :loading="loading" @update-data="params = $event" />
+    <ProjectItemForm
+      :form-key="formKey"
+      :loading="loading"
+      :project="projectId"
+      :project-item="projectItem"
+      :spaces="projectFloor?.spaces ?? []"
+      @update-data="params = $event"
+    />
 
     <div class="actions" :class="{ disabled: loading }">
       <button class="btn btn-primary w-full" type="button" @click="saveItem">
