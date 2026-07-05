@@ -1,7 +1,11 @@
 <script setup lang="ts">
-  import { computed, onBeforeUnmount, watch } from 'vue';
+  import { computed, onBeforeUnmount, ref, watch } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import { storeToRefs } from 'pinia';
+  import Accordion from 'primevue/accordion';
+  import AccordionContent from 'primevue/accordioncontent';
+  import AccordionHeader from 'primevue/accordionheader';
+  import AccordionPanel from 'primevue/accordionpanel';
 
   import BuildHubLogo from '@/assets/images/BuildHubLogo.jpg';
   import AuthArrowIcon from '@/shared/icons/SidebarIcons/AuthArrowIcon.vue';
@@ -21,6 +25,7 @@
   const router = useRouter();
   const userStore = useUserStore();
   const { user } = storeToRefs(userStore);
+  const expandedSections = ref<string[]>([]);
 
   const currentRole = computed<SidebarRole>(() => {
     return user.value?.isMaster || Number(user.value?.type) === 1 ? 'admin' : 'organization';
@@ -52,6 +57,18 @@
     return route.path === link || route.path.startsWith(`${link}/`);
   };
 
+  const getDefaultExpandedSections = () => {
+    const activeSections = menu.value
+      .filter((section) => section.items.some((item) => isActiveRoute(item.link)))
+      .map((section) => section.key);
+
+    if (activeSections.length > 0) return activeSections;
+
+    const firstSectionKey = menu.value[0]?.key;
+
+    return firstSectionKey ? [firstSectionKey] : [];
+  };
+
   const close = () => {
     emit('update:open', false);
   };
@@ -74,6 +91,7 @@
       document.body.classList.toggle('mobile-sidebar-open', isOpen);
 
       if (isOpen) {
+        expandedSections.value = getDefaultExpandedSections();
         window.addEventListener('keydown', onKeydown);
       } else {
         window.removeEventListener('keydown', onKeydown);
@@ -111,29 +129,39 @@
               <AuthArrowIcon />
             </button>
           </header>
-
-          <div class="drawer-menu">
-            <section v-for="section in menu" :key="section.key" class="drawer-section">
-              <p class="section-title">
-                {{ $t(section.labelKey) }}
-              </p>
-
-              <router-link
-                v-for="item in section.items"
-                :key="item.link"
-                :to="item.link"
-                class="drawer-item"
-                :class="{ active: isActiveRoute(item.link) }"
-                @click="close"
-              >
-                <span class="item-icon">
-                  <component :is="item.icon" v-if="item.icon" class="icon" />
+          <Accordion v-model:value="expandedSections" multiple class="drawer-accordion">
+            <AccordionPanel
+              v-for="section in menu"
+              :key="section.key"
+              :value="section.key"
+              class="drawer-section"
+            >
+              <AccordionHeader class="drawer-section-header">
+                <span class="section-title">
+                  {{ $t(section.labelKey) }}
                 </span>
-                <span class="item-label">{{ $t(item.labelKey) }}</span>
-                <span v-if="item.badge" class="badge">{{ item.badge }}</span>
-              </router-link>
-            </section>
-          </div>
+              </AccordionHeader>
+
+              <AccordionContent class="drawer-section-content">
+                <div class="drawer-section-links">
+                  <router-link
+                    v-for="item in section.items"
+                    :key="item.link"
+                    :to="item.link"
+                    class="drawer-item"
+                    :class="{ active: isActiveRoute(item.link) }"
+                    @click="close"
+                  >
+                    <span class="item-icon">
+                      <component :is="item.icon" v-if="item.icon" class="icon" />
+                    </span>
+                    <span class="item-label">{{ $t(item.labelKey) }}</span>
+                    <span v-if="item.badge" class="badge">{{ item.badge }}</span>
+                  </router-link>
+                </div>
+              </AccordionContent>
+            </AccordionPanel>
+          </Accordion>
 
           <footer class="drawer-footer">
             <div class="user-card">
@@ -264,19 +292,51 @@
     transform: rotate(0deg);
   }
 
-  .drawer-menu {
+  .drawer-accordion {
     flex: 1;
     min-height: 0;
     padding: 14px;
     overflow-y: auto;
   }
 
-  .drawer-section + .drawer-section {
-    margin-top: 18px;
+  .drawer-accordion :deep(.p-accordionpanel) {
+    border: 0;
+    background: transparent;
+  }
+
+  .drawer-accordion :deep(.p-accordionpanel + .p-accordionpanel) {
+    margin-top: 12px;
+  }
+
+  .drawer-accordion :deep(.p-accordionheader) {
+    padding: 0;
+    border: 0;
+    color: inherit;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .drawer-accordion :deep(.p-accordionheader-toggle-icon) {
+    color: var(--gray-500);
+  }
+
+  .drawer-accordion :deep(.p-accordioncontent-content) {
+    padding: 0;
+    border: 0;
+    background: transparent;
+  }
+
+  .drawer-section-links {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding-block-start: 8px;
   }
 
   .section-title {
-    margin: 0 0 8px;
+    display: block;
+    flex: 1;
+    margin: 0;
     padding-inline: 8px;
     color: var(--gray-500);
     font-size: 11px;
