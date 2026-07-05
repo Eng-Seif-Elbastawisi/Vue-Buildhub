@@ -4,11 +4,11 @@ import ShowProjectFloorParams from '../show.project.floor.params';
 describe('ShowProjectFloorParams', () => {
   it('should instantiate correctly and convert to map', () => {
     const params = new ShowProjectFloorParams({
-      projectFloorId: 456,
+      project_floor_id: 456,
       allLocales: true,
     });
 
-    expect(params.projectFloorId).toBe(456);
+    expect(params.project_floor_id).toBe(456);
     expect(params.allLocales).toBe(true);
 
     expect(params.toMap()).toEqual({
@@ -18,11 +18,11 @@ describe('ShowProjectFloorParams', () => {
   });
 
   it('should have required validation rule', () => {
-    const result = ShowProjectFloorParams.validation.validate({ projectFloorId: undefined });
+    const result = ShowProjectFloorParams.validation.validate({ project_floor_id: undefined });
 
     expect(result).toEqual({
       isValid: false,
-      errors: [{ field: 'projectFloorId', message: 'projectFloorId is required' }],
+      errors: [{ field: 'project_floor_id', message: 'project_floor_id is required' }],
     });
   });
 });

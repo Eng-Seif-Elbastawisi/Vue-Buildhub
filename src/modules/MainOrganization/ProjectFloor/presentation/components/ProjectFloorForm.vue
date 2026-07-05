@@ -16,11 +16,9 @@
   import IndexSpaceParams from '@/modules/shared/Space/core/params/index.space.params';
   import SpaceController from '@/modules/shared/Space/presentation/controllers/space.controller';
   import type ProjectFloorModel from '../../core/models/project.floor.model.ts';
-  import FinalResults from './FinalResults.vue';
-  import type AddFinalProjectFloorResultParams from '../../core/params/final.result.project.floor.params.ts';
+
   const emit = defineEmits<{
     updateData: [params: AddProjectFloorParams];
-    submitFinalResult: [params: AddFinalProjectFloorResultParams];
   }>();
   const props = defineProps<{
     projectFloor?: ProjectFloorModel;
@@ -542,11 +540,6 @@
       </section>
     </div>
   </div>
-
-  <FinalResults
-    :project-preview-id="getProjectPreviewId()"
-    @submit-final-result="emit('submitFinalResult', $event)"
-  />
 </template>
 
 <style scoped lang="scss">

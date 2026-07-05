@@ -6,7 +6,23 @@ import ProjectItemShowModel from '../../../core/models/project.Item.show.model';
 import AddProjectItemParams from '../../../core/params/add.project.Item.params';
 import ProjectItemForm from '../ProjectItemForm.vue';
 
-vi.mock('vue-router', () => ({ onBeforeRouteLeave: vi.fn() }));
+vi.mock('vue-router', () => ({
+  onBeforeRouteLeave: vi.fn(),
+  useRoute: () => ({ fullPath: '/item/add', params: {}, query: {} }),
+  useRouter: () => ({
+    push: vi.fn(),
+    replace: vi.fn(),
+    resolve: vi.fn(),
+  }),
+  createRouter: vi.fn(() => ({
+    install: vi.fn(),
+    push: vi.fn(),
+    resolve: vi.fn(),
+    afterEach: vi.fn(),
+    beforeEach: vi.fn(),
+  })),
+  createWebHistory: vi.fn(),
+}));
 
 vi.mock('@/modules/shared/Item/presentation/controllers/Item.controller', () => ({
   default: { getInstance: () => ({}) },
@@ -38,6 +54,7 @@ describe('ProjectItemForm', () => {
 
   it('emits complete item params from form inputs', async () => {
     const wrapper = mount(ProjectItemForm, {
+      props: { project: 4 },
       global: {
         mocks: { $t: (key: string) => key },
         stubs: { UpdatedCustomInputSelect: SelectStub },
@@ -45,20 +62,19 @@ describe('ProjectItemForm', () => {
     });
 
     await wrapper.find('.project-item-item').trigger('click');
+    await wrapper.find('.project-item-pricing-method').trigger('click');
     await wrapper.find<HTMLInputElement>('#project-item-price').setValue('250');
     await wrapper.find<HTMLInputElement>('#project-item-quantity').setValue('3');
-    await wrapper.find('.project-item-pricing-method').trigger('click');
-    await wrapper.find<HTMLInputElement>('#project-item-floor').setValue('2');
 
     const emissions = wrapper.emitted('updateData') as unknown[][];
     const params = emissions.at(-1)?.[0] as AddProjectItemParams;
 
     expect(params.toMap()).toEqual({
+      project_id: 4,
       price: 250,
       quantity: 3,
       item_id: 9,
       pricing_method: ProjectItemPriceEnum.GENERAL_ITEM,
-      project_floor_id: 2,
     });
   });
 

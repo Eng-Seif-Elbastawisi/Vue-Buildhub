@@ -20,4 +20,14 @@ export const ProjectFloorRoutes: RouteRecordRaw[] = [
       parent: 'project-floor',
     },
   },
+  {
+    path: 'project_floor/show/:project_floor_id',
+    name: 'show-project_floor',
+    component: () => import('@/views/MainOrganization/ProjectFloor/ShowProjectFloor.vue'),
+    props: true,
+    meta: {
+      breadcrumb: 'Show project_floor',
+      parent: 'project-floor',
+    },
+  },
 ];

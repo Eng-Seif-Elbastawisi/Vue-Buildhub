@@ -10,7 +10,9 @@
   import ProjectSteps from '../../../Project/presentation/components/ProjectSteps.vue';
   import type ProjectFloorModel from '../../core/models/project.floor.model';
   import type AddFinalProjectFloorResultParams from '../../core/params/final.result.project.floor.params';
-  import router from '@/router/index.ts';
+  import FinalResults from './FinalResults.vue';
+
+  import router from '@/router/index';
   import { useUserStore } from '@/stores/user';
 
   const controller = ProjectFloorController.getInstance();
@@ -18,11 +20,14 @@
   const route = useRoute();
   const userStore = useUserStore();
 
+  const params = ref<AddProjectFloorParams | null>(null);
+  const loading = ref(false);
+  const projectItem = computed(() => {
+    return projectFloor.value?.id ?? 0;
+  });
   const getPrefix = () => {
     return userStore.user?.type === 1 ? '/mainportal' : '/organization';
   };
-  const params = ref<AddProjectFloorParams | null>(null);
-  const loading = ref(false);
 
   const projectId = computed(() => {
     const value = Number(route.query.project_id);
@@ -76,20 +81,26 @@
     }
   };
 
-  onMounted(async () => {
-    await fetchProjectFloors();
-  });
   const submitFinalResult = async (finalParams: AddFinalProjectFloorResultParams) => {
     loading.value = true;
 
     try {
       await controller.getProject(finalParams);
 
-      await router.push(`${getPrefix()}/project`);
+      await router.push({
+        path: `${getPrefix()}/project-item/add`,
+        query: {
+          project_id: projectId.value,
+          project_item: projectItem.value,
+        },
+      });
     } finally {
       loading.value = false;
     }
   };
+  onMounted(async () => {
+    await fetchProjectFloors();
+  });
 </script>
 
 <template>
@@ -102,12 +113,18 @@
       :project-id="projectId"
       :project-preview-id="projectPreviewId"
       @update-data="params = $event"
-      @submit-final-result="submitFinalResult"
     />
 
     <button class="btn btn-primary" type="button" :disabled="loading" @click="saveProjectFloor">
       {{ $t('Project.save') }}
     </button>
+
+    <FinalResults
+      :project-id="projectId"
+      :project-preview-id="projectPreviewId"
+      :loading="loading"
+      @submit-final-result="submitFinalResult"
+    />
 
     <div v-if="controller.errorMessage.value" class="error">
       {{ controller.errorMessage.value }}
