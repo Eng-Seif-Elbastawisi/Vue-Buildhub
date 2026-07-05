@@ -23,7 +23,7 @@
 
 <template>
   <div class="feature-header-container">
-    <img class="header-img" :src="FeatureHeader" alt="header" />
+    <img class="header-img" :src="FeatureHeader" :alt="$t('feature_header_image_alt')" />
     <div class="content">
       <p class="title">
         {{ items[items.length - 1]?.label }}

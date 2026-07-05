@@ -1,25 +1,25 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { useRoute } from 'vue-router';
-import type AddEmployeeParams from '../../core/params/add.employee.params.ts';
-import EmployeeController from '../controllers/employee.controller.ts';
-import EmployeeForm from './EmployeeForm.vue';
+  import { ref } from 'vue';
+  import { useRoute } from 'vue-router';
+  import type AddEmployeeParams from '../../core/params/add.employee.params.ts';
+  import EmployeeController from '../controllers/employee.controller.ts';
+  import EmployeeForm from './EmployeeForm.vue';
 
-const controller = EmployeeController.getInstance();
-const route = useRoute();
-const formKey = route.fullPath;
-const params = ref<AddEmployeeParams | null>(null);
-const loading = ref(false);
+  const controller = EmployeeController.getInstance();
+  const route = useRoute();
+  const formKey = route.fullPath;
+  const params = ref<AddEmployeeParams | null>(null);
+  const loading = ref(false);
 
-const saveEmployee = async () => {
-  if (!params.value) return;
-  loading.value = true;
-  try {
-    await controller.create(params.value, undefined, formKey);
-  } finally {
-    loading.value = false;
-  }
-};
+  const saveEmployee = async () => {
+    if (!params.value) return;
+    loading.value = true;
+    try {
+      await controller.create(params.value, undefined, formKey);
+    } finally {
+      loading.value = false;
+    }
+  };
 </script>
 
 <template>
@@ -40,18 +40,18 @@ const saveEmployee = async () => {
 </template>
 
 <style scoped lang="scss">
-.admin-crud-page {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
+  .employee-crud-page {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
 
-.actions.disabled {
-  pointer-events: none;
-  opacity: 0.7;
-}
+  .actions.disabled {
+    pointer-events: none;
+    opacity: 0.7;
+  }
 
-.error {
-  color: var(--danger-dark);
-}
+  .error {
+    color: var(--danger-dark);
+  }
 </style>

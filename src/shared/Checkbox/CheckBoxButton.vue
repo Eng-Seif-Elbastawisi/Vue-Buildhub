@@ -11,16 +11,16 @@
   }>();
   const ButtonValue = ref(props.checked);
 
-  const UpdateData = (data: any) => {
-    // console.log(data.target.checked);
-    emit('update:checked', data.target.checked);
+  const UpdateData = (event: Event) => {
+    const target = event.target as HTMLInputElement;
+    emit('update:checked', target.checked);
   };
 </script>
 
 <template>
   <div class="checkbox-button">
     <label for="checkbox" class="checkbox-data">
-      <img :src="img || CheckBoxImg" alt="checkbox-icon" />
+      <img :src="img || CheckBoxImg" :alt="$t('checkbox_icon_alt')" />
       <p class="title">{{ title }}</p>
     </label>
     <Checkbox id="checkbox" v-model="ButtonValue" binary class="checkbox" @change="UpdateData" />

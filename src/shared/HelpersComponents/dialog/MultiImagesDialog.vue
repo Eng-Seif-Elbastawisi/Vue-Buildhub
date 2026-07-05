@@ -29,7 +29,7 @@
       <template #header>
         <!-- <HeaderSection
           :img="''"
-          :title="'All photos (10)'"
+          :title="$t('all_photos_count', { count: 10 })"
           :subtitle="'you can add more or delete photo'"
         /> -->
       </template>

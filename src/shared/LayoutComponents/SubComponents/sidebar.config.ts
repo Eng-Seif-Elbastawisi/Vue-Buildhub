@@ -136,17 +136,17 @@ export const sidebarSections: SidebarSectionConfig[] = [
       },
       {
         path: '/location',
-        labelKey: 'Location',
+        labelKey: 'country',
         icon: ArticleIcon,
       },
       {
         path: '/location-governorate',
-        labelKey: 'Location Governorate',
+        labelKey: 'Governorate',
         icon: ArticleIcon,
       },
       {
         path: '/location-city',
-        labelKey: 'Location City',
+        labelKey: 'city',
         icon: ArticleIcon,
       },
       {

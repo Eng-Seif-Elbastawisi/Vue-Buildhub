@@ -77,5 +77,5 @@
   </div>
 </template> -->
 <template>
-  <div>timeline</div>
+  <div>{{ $t('timeline') }}</div>
 </template>

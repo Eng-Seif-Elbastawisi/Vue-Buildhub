@@ -79,6 +79,13 @@
 </template>
 
 <style scoped lang="scss">
+  .document-crud-example {
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
   .loader {
     width: 35px;
     height: 35px;

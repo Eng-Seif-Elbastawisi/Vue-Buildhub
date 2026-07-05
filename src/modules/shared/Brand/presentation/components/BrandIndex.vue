@@ -151,7 +151,7 @@
                     id="title"
                     v-model="title"
                     type="text"
-                    placeholder="Enter brand title"
+                    :placeholder="$t('brand_title_placeholder')"
                     class="field-input"
                     @input="updateData"
                   />
@@ -161,7 +161,7 @@
                 <UpdatedCustomInputSelect
                   id="doc-branch"
                   v-model="equipment"
-                  :label="`Equipment type`"
+                  :label="$t('equipment_type')"
                   :static-options="equipmentOptions"
                   :placeholder="$t('Enter equipment type')"
                   :reload="true"
@@ -200,7 +200,7 @@
                       ? `/brand/edit/${item.id}`
                       : `/organization/brand/edit/${item.id}`
                   "
-                  title="Edit"
+                  :title="$t('Edit')"
                 >
                   <svg
                     width="15"
@@ -224,7 +224,7 @@
                   @delete="deleteBrand(item.id!)"
                 >
                   <template #btn>
-                    <button class="action-btn delete" title="Delete">
+                    <button class="action-btn delete" :title="$t('Delete')">
                       <svg
                         width="15"
                         height="15"
@@ -305,7 +305,7 @@
         >
         </TableSkelaton>
       </template>
-      <template #failed> ing </template>
+      <template #failed>{{ $t('failed_state_text') }}</template>
     </DataStatusBuilder>
   </div>
 </template>

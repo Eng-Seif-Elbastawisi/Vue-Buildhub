@@ -115,7 +115,7 @@
             <div class="drawer-brand">
               <img class="drawer-logo" :src="BuildHubLogo" :alt="$t('buildhub_logo')" />
               <div class="drawer-copy">
-                <strong>BuildHub</strong>
+                <strong>{{ $t('buildhub') }}</strong>
                 <span>{{ currentRole === 'admin' ? $t('Admin') : $t('Organization') }}</span>
               </div>
             </div>

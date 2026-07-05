@@ -19,9 +19,6 @@ const createWrapper = (props = {}) =>
       title: 'Test Checkbox',
       ...props,
     },
-    global: {
-      mocks: { $t: (key: string) => key },
-    },
   });
 
 describe('CheckBoxButton', () => {
@@ -39,7 +36,7 @@ describe('CheckBoxButton', () => {
     const wrapper = createWrapper();
     const img = wrapper.find('img');
     expect(img.exists()).toBe(true);
-    expect(img.attributes('alt')).toBe('checkbox-icon');
+    expect(img.attributes('alt')).toBe('Checkbox icon');
   });
 
   it('uses custom image when img prop is provided', () => {

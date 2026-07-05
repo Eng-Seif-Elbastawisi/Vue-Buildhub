@@ -38,7 +38,7 @@
       >Vue - Official</a
     >. {{ $t('vue_starter.testing_prefix') }}
     <a href="https://vitest.dev/" target="_blank" rel="noopener">Vitest</a>
-    and
+    {{ $t('and') }}
     <a href="https://www.cypress.io/" target="_blank" rel="noopener">Cypress</a>
     /
     <a href="https://playwright.dev/" target="_blank" rel="noopener">Playwright</a>.
@@ -59,7 +59,8 @@
     {{ $t('vue_starter.ecosystem_prefix') }}
     <a href="https://pinia.vuejs.org/" target="_blank" rel="noopener">Pinia</a>,
     <a href="https://router.vuejs.org/" target="_blank" rel="noopener">Vue Router</a>,
-    <a href="https://test-utils.vuejs.org/" target="_blank" rel="noopener">Vue Test Utils</a>, and
+    <a href="https://test-utils.vuejs.org/" target="_blank" rel="noopener">Vue Test Utils</a
+    >{{ $t('comma_and') }}
     <a href="https://github.com/vuejs/devtools" target="_blank" rel="noopener">Vue Dev Tools</a>.
     {{ $t('vue_starter.more_resources_prefix') }}
     <a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">Awesome Vue</a>

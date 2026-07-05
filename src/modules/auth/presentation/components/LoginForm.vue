@@ -34,7 +34,7 @@
 <template>
   <section class="login">
     <div class="login-header">
-      <img :src="logo" alt="TechLab" class="logo-img" />
+      <img :src="logo" :alt="$t('techlab_logo')" class="logo-img" />
     </div>
 
     <form class="login-form" @submit.prevent="login">
@@ -81,7 +81,7 @@
           v-if="loading"
           :src="LoadingIcon"
           class="loader-skills"
-          alt="loading"
+          :alt="$t('loading_image_alt')"
           width="30"
           height="30"
         />

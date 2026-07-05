@@ -153,7 +153,7 @@
           </div>
 
           <div class="brand-copy">
-            <span class="brand-name">BuildHub</span>
+            <span class="brand-name">{{ $t('buildhub') }}</span>
             <span class="brand-meta">{{
               currentRole === 'admin' ? $t('Admin') : $t('Organization')
             }}</span>

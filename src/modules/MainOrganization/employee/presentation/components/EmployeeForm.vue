@@ -56,25 +56,25 @@
     }
   });
 
-watch(
-  () => props.admin,
-  (admin) => {
-    if (!admin) return;
+  watch(
+    () => props.admin,
+    (admin) => {
+      if (!admin) return;
 
-    name.value = admin.name ?? '';
-    email.value = admin.email ?? '';
-    phone.value = admin.phone ?? '';
-    password.value = '';
+      name.value = admin.name ?? '';
+      email.value = admin.email ?? '';
+      phone.value = admin.phone ?? '';
+      password.value = '';
 
-    type.value = admin.employee_type ?? EmployeeType.EMPLOYEE;
+      type.value = admin.employee_type ?? EmployeeType.EMPLOYEE;
 
-    selectedEmployeeType.value =
-      employeeTypeOptions.value.find((option) => option.id === type.value) ?? null;
+      selectedEmployeeType.value =
+        employeeTypeOptions.value.find((option) => option.id === type.value) ?? null;
 
-    updateData();
-  },
-  { immediate: true },
-);
+      updateData();
+    },
+    { immediate: true },
+  );
 
   const updateEmployeeType = (value: TitleInterface<EmployeeType> | null) => {
     selectedEmployeeType.value = value;
@@ -165,6 +165,13 @@ watch(
 </template>
 
 <style scoped lang="scss">
+  .document-form-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+
   .form-fields {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));

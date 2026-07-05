@@ -176,6 +176,13 @@
 </template>
 
 <style scoped lang="scss">
+  .document-form-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+
   .hidden {
     display: none;
   }

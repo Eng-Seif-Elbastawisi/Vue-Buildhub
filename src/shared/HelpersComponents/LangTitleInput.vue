@@ -1,6 +1,9 @@
 <script setup lang="ts">
   import { computed, ref, watch } from 'vue';
   import Editor from 'primevue/editor';
+  import { useI18n } from 'vue-i18n';
+
+  const { t } = useI18n();
 
   const props = withDefaults(
     defineProps<{
@@ -214,7 +217,9 @@
   // Validate and emit validation status
   const validateTitles = () => {
     if (props.required && !hasAtLeastOneValue.value) {
-      validationError.value = `At least one language ${props.fieldType} is required`;
+      validationError.value = t('language_field_required', {
+        field: t(`field_${props.fieldType}`),
+      });
       emit('validate', false);
       return false;
     }
@@ -254,7 +259,13 @@
   });
 
   const placeholderText = computed(() => {
-    return props.placeholder || props.label || `Enter ${props.fieldType}...`;
+    return (
+      props.placeholder ||
+      props.label ||
+      t('enter_field_placeholder', {
+        field: t(`field_${props.fieldType}`),
+      })
+    );
   });
 
   const inputAttrs = computed(() => ({
@@ -321,7 +332,7 @@
             <span
               v-if="getFieldValue(titles.find((t) => t.locale === l.locale))"
               class="lang-indicator"
-              :title="`${l.locale.toUpperCase()} has content`"
+              :title="$t('content_available', { locale: l.locale.toUpperCase() })"
             >
               ✓
             </span>
@@ -351,7 +362,7 @@
 
     <!-- Selected Language Info -->
     <span class="select-lang">
-      {{ lang ? lang.toUpperCase() : 'select language from the top' }}
+      {{ lang ? lang.toUpperCase() : $t('select_language_from_top') }}
     </span>
 
     <!-- Validation Error -->

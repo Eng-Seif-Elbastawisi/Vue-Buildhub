@@ -106,7 +106,7 @@
               <span></span>
             </div>
             <div>
-              <strong>BuildHub OS</strong>
+              <strong>{{ $t('buildhub_os') }}</strong>
               <p>{{ $t(content.brandSubtitle) }}</p>
             </div>
           </header>
