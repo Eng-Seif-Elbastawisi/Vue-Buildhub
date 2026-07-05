@@ -3130,7 +3130,7 @@ body::-webkit-scrollbar-thumb:hover {
   flex-wrap: nowrap;
   justify-content: space-between;
   align-items: center;
-  background-color: var(--sidebar-auth-bg);
+  background-color: var(--PrimaryColor);
   padding: var(--xs-size-2) var(--xs-size);
   border-radius: 0 0 var(--xs-size-3) var(--xs-size-3);
 }

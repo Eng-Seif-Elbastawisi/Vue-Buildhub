@@ -393,7 +393,7 @@
 
   .brand-meta,
   .status {
-    color: var(--sidebar-muted);
+    color: black;
     font-size: 11px;
     font-weight: 600;
   }
