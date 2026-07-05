@@ -210,7 +210,10 @@
       })),
     );
 
-    spaces.value[index].attachments = attachments;
+    // spaces.value[index].attachments = attachments;
+    if (spaces.value[index]) {
+      spaces.value[index].attachments = attachments;
+    }
     updateData();
   };
 
