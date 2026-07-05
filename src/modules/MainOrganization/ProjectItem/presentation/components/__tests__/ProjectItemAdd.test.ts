@@ -18,10 +18,25 @@ vi.mock('@/modules/shared/Item/presentation/controllers/Item.controller', () => 
 }));
 
 vi.mock('vue-router', () => ({
-  useRoute: () => ({ fullPath: '/item/add' }),
+  onBeforeRouteLeave: vi.fn(),
+  useRoute: () => ({ fullPath: '/item/add', params: {}, query: { project_id: '4' } }),
+  useRouter: () => ({
+    push: vi.fn(),
+    replace: vi.fn(),
+    resolve: vi.fn(),
+  }),
+  createRouter: vi.fn(() => ({
+    install: vi.fn(),
+    push: vi.fn(),
+    resolve: vi.fn(),
+    afterEach: vi.fn(),
+    beforeEach: vi.fn(),
+  })),
+  createWebHistory: vi.fn(),
 }));
 
 const params = new AddProjectItemParams({
+  project_id: 4,
   price: 150,
   quantity: 3,
   item_id: 9,

@@ -126,8 +126,7 @@ describe('StageAdd', () => {
       props: { stage: StageModel.example },
     });
 
-    const buttons = wrapper.findAll('app-button-stub');
-    await buttons.at(1)?.trigger('click');
+    await wrapper.find('.btn-cancel').trigger('click');
 
     expect(wrapper.emitted('cancel')).toBeTruthy();
   });
