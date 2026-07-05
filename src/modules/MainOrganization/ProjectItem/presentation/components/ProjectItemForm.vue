@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { computed, ref, watch } from 'vue';
+  import { computed, onMounted, ref, watch } from 'vue';
   import { onBeforeRouteLeave } from 'vue-router';
   import { useI18n } from 'vue-i18n';
 
@@ -10,15 +10,17 @@
   import IndexItemParams from '@/modules/shared/Item/core/params/index.Item.params';
   import GeneralItemController from '@/modules/shared/Item/presentation/controllers/Item.controller';
 
-  import { IndexSpaceParams, SpaceController } from '@/modules/shared/Space';
-
   import AddProjectItemParams from '../../core/params/add.project.Item.params';
   import { ProjectItemPriceEnum } from '../../core/constant/project.item.Price.enum';
   import type ProjectItemShowModel from '../../core/models/project.Item.show.model';
+
   import { FloorNumber } from '@/modules/MainOrganization/ProjectFloor/core/constants/floor.number.enum';
+  import IndexProjectFloorParams from '@/modules/MainOrganization/ProjectFloor/core/params/index.project.floor.params';
+  import ProjectFloorController from '@/modules/MainOrganization/ProjectFloor/presentation/controllers/project.floor.controller';
 
   const emit = defineEmits<{
     updateData: [params: AddProjectItemParams];
+    addItem: [];
   }>();
 
   const props = defineProps<{
@@ -35,8 +37,17 @@
   const generalItemController = GeneralItemController.getInstance();
   const generalItemParams = new IndexItemParams('', 1, 100, 0);
 
-  const spaceController = SpaceController.getInstance();
-  const spaceParams = new IndexSpaceParams('', 1, 100, 0);
+  const projectFloorController = ProjectFloorController.getInstance();
+  const projectFloorParams = new IndexProjectFloorParams('', 1, 100, 0);
+
+  const selectedItem = ref<TitleInterface<string | number> | null>(null);
+  const pricingMethod = ref<TitleInterface<string | number> | null>(null);
+  const selectedFloorNumber = ref<TitleInterface<FloorNumber> | null>(null);
+  const selectedSpace = ref<TitleInterface<number> | null>(null);
+
+  const price = ref<number>();
+  const quantity = ref<number>(1);
+  const pricingByPreviewItems = ref(true);
 
   const pricingMethodOptions = Object.entries(ProjectItemPriceEnum).map(([key, id]) => ({
     id,
@@ -44,63 +55,41 @@
   }));
 
   const floorNumberOptions = computed<TitleInterface<FloorNumber>[]>(() => [
-    {
-      id: FloorNumber.BASEMENT,
-      title: t('project.BASEMENT'),
-    },
-    {
-      id: FloorNumber.GROUND_FLOOR,
-      title: t('project.GROUND_FLOOR'),
-    },
-    {
-      id: FloorNumber.FIRST_FLOOR,
-      title: t('project.FIRST_FLOOR'),
-    },
-    {
-      id: FloorNumber.SECOND_FLOOR,
-      title: t('project.SECOND_FLOOR'),
-    },
-    {
-      id: FloorNumber.THIRD_FLOOR,
-      title: t('project.THIRD_FLOOR'),
-    },
-    {
-      id: FloorNumber.FOURTH_FLOOR,
-      title: t('project.FOURTH_FLOOR'),
-    },
-    {
-      id: FloorNumber.FIFTH_FLOOR,
-      title: t('project.FIFTH_FLOOR'),
-    },
-    {
-      id: FloorNumber.SIXTH_FLOOR,
-      title: t('project.SIXTH_FLOOR'),
-    },
-    {
-      id: FloorNumber.SEVENTH_FLOOR,
-      title: t('project.SEVENTH_FLOOR'),
-    },
-    {
-      id: FloorNumber.EIGHTH_FLOOR,
-      title: t('project.EIGHTH_FLOOR'),
-    },
-    {
-      id: FloorNumber.NINTH_FLOOR,
-      title: t('project.NINTH_FLOOR'),
-    },
-    {
-      id: FloorNumber.TENTH_FLOOR,
-      title: t('project.TENTH_FLOOR'),
-    },
+    { id: FloorNumber.BASEMENT, title: t('project.BASEMENT') },
+    { id: FloorNumber.GROUND_FLOOR, title: t('project.GROUND_FLOOR') },
+    { id: FloorNumber.FIRST_FLOOR, title: t('project.FIRST_FLOOR') },
+    { id: FloorNumber.SECOND_FLOOR, title: t('project.SECOND_FLOOR') },
+    { id: FloorNumber.THIRD_FLOOR, title: t('project.THIRD_FLOOR') },
+    { id: FloorNumber.FOURTH_FLOOR, title: t('project.FOURTH_FLOOR') },
+    { id: FloorNumber.FIFTH_FLOOR, title: t('project.FIFTH_FLOOR') },
+    { id: FloorNumber.SIXTH_FLOOR, title: t('project.SIXTH_FLOOR') },
+    { id: FloorNumber.SEVENTH_FLOOR, title: t('project.SEVENTH_FLOOR') },
+    { id: FloorNumber.EIGHTH_FLOOR, title: t('project.EIGHTH_FLOOR') },
+    { id: FloorNumber.NINTH_FLOOR, title: t('project.NINTH_FLOOR') },
+    { id: FloorNumber.TENTH_FLOOR, title: t('project.TENTH_FLOOR') },
   ]);
 
-  const selectedItem = ref<TitleInterface<string | number> | null>(null);
-  const pricingMethod = ref<TitleInterface<string | number> | null>(null);
-  const selectedFloorNumber = ref<TitleInterface<FloorNumber> | null>(null);
-  const selectedSpace = ref<TitleInterface<number>[]>([]);
+  const projectFloorSpaceOptions = computed<TitleInterface<number>[]>(() => {
+    const state = projectFloorController.listState.value as any;
 
-  const price = ref<number>();
-  const quantity = ref<number>();
+    const data =
+      state?.data?.data ??
+      state?.data ??
+      state?.response?.data?.data ??
+      state?.response?.data ??
+      [];
+
+    const floors = Array.isArray(data) ? data : Array.isArray(data?.data) ? data.data : [];
+
+    return floors.flatMap((floor: any) => {
+      if (!Array.isArray(floor.spaces)) return [];
+
+      return floor.spaces.map((spaceItem: any) => ({
+        id: Number(spaceItem.id),
+        title: spaceItem.space?.title ?? `#${spaceItem.id}`,
+      }));
+    });
+  });
 
   const numericId = (value?: string | number) => {
     return value == null ? undefined : Number(value);
@@ -123,6 +112,19 @@
     return (
       option ?? {
         id: Number(id) as FloorNumber,
+        title: String(id),
+      }
+    );
+  };
+
+  const spaceOptionFromId = (id?: number | string): TitleInterface<number> | null => {
+    if (id === undefined || id === null) return null;
+
+    const option = projectFloorSpaceOptions.value.find((space) => Number(space.id) === Number(id));
+
+    return (
+      option ?? {
+        id: Number(id),
         title: String(id),
       }
     );
@@ -154,13 +156,17 @@
   });
 
   const selectedProjectFloorSpaceId = computed(() => {
-    return selectedSpace.value[0]?.id ? Number(selectedSpace.value[0].id) : undefined;
+    return selectedSpace.value?.id ? Number(selectedSpace.value.id) : undefined;
   });
 
   const selectedProjectFloorId = computed(() => {
     return selectedFloorNumber.value?.id !== undefined && selectedFloorNumber.value?.id !== null
       ? Number(selectedFloorNumber.value.id)
       : undefined;
+  });
+
+  const total = computed(() => {
+    return Number(price.value ?? 0) * Number(quantity.value ?? 0);
   });
 
   const resetFieldsByPricingMethod = () => {
@@ -171,11 +177,11 @@
     }
 
     if (isFullFloorRelated.value) {
-      selectedSpace.value = [];
+      selectedSpace.value = null;
       return;
     }
 
-    selectedSpace.value = [];
+    selectedSpace.value = null;
     selectedFloorNumber.value = null;
   };
 
@@ -187,12 +193,12 @@
 
   function updateSelectedSpace(value: TitleInterface<number>[] | TitleInterface<number> | null) {
     if (!value) {
-      selectedSpace.value = [];
+      selectedSpace.value = null;
       updateData();
       return;
     }
 
-    selectedSpace.value = Array.isArray(value) ? value.slice(0, 1) : [value];
+    selectedSpace.value = Array.isArray(value) ? (value[0] ?? null) : value;
 
     updateData();
   }
@@ -222,6 +228,30 @@
     );
   }
 
+  function addItem() {
+    updateData();
+
+    if (!selectedItem.value) return;
+    if (!pricingMethod.value) return;
+    if (!quantity.value) return;
+
+    if ((isGeneralItem.value || isFullFloorRelated.value) && !price.value) return;
+    if (isSpaceRelated.value && !selectedSpace.value) return;
+    if (isFullFloorRelated.value && !selectedFloorNumber.value) return;
+
+    emit('addItem');
+  }
+
+  function resetForm() {
+    selectedItem.value = null;
+    pricingMethod.value = null;
+    selectedFloorNumber.value = null;
+    selectedSpace.value = null;
+    price.value = undefined;
+    quantity.value = 1;
+    updateData();
+  }
+
   onBeforeRouteLeave((to, from) => {
     const savedData = props.formKey ? formStore.getFormData(props.formKey) : null;
 
@@ -229,6 +259,15 @@
       formStore.showReturnWarning(props.formKey);
     }
   });
+
+  watch(
+    () => props.loading,
+    (isLoading, wasLoading) => {
+      if (wasLoading === true && isLoading === false) {
+        resetForm();
+      }
+    },
+  );
 
   watch(
     () => props.item,
@@ -243,152 +282,184 @@
         : null;
 
       price.value = item.price;
-      quantity.value = item.quantity;
+      quantity.value = item.quantity ?? 1;
 
       const projectFloorSpaceId = (item as any).project_floor_space_id;
       const projectFloorId = (item as any).project_floor_id;
 
-      selectedSpace.value = projectFloorSpaceId
-        ? [
-            {
-              id: Number(projectFloorSpaceId),
-              title: String(projectFloorSpaceId),
-            },
-          ]
-        : [];
-
+      selectedSpace.value = projectFloorSpaceId ? spaceOptionFromId(projectFloorSpaceId) : null;
       selectedFloorNumber.value = floorOptionFromId(projectFloorId);
 
       updateData();
     },
     { immediate: true },
   );
+
+  watch(
+    projectFloorSpaceOptions,
+    () => {
+      if (!selectedSpace.value) return;
+
+      selectedSpace.value = spaceOptionFromId(selectedSpace.value.id);
+      updateData();
+    },
+    { deep: true },
+  );
+
+  onMounted(async () => {
+    await projectFloorController.fetchList(projectFloorParams);
+  });
 </script>
 
 <template>
-  <div class="material-form-card">
-    <header class="form-header">
-      <h3>{{ $t('project_item.form_title') }}</h3>
-      <p>{{ $t('project_item.form_description') }}</p>
+  <section class="pricing-card" dir="rtl">
+    <header class="pricing-header">
+      <div>
+        <h3>{{ $t('project_item.title') }}</h3>
+      </div>
     </header>
 
-    <div class="form-fields" :class="{ disabled: loading }">
-      <div class="field-group">
-        <UpdatedCustomInputSelect
-          id="project-item-item"
-          v-model="selectedItem"
-          :controller="generalItemController"
-          :label="$t('project_item.item')"
-          :params="generalItemParams"
-          :placeholder="$t('project_item.item_placeholder')"
-          :reload="true"
-          required
-          @update:model-value="updateData"
-        />
-      </div>
+    <div class="add-panel" :class="{ disabled: loading }">
+      <div class="form-row">
+        <div class="field-box field-box--method">
+          <label class="mini-label">{{ $t('project_item.pricing_method_label') }}</label>
 
-      <div class="field-group">
-        <UpdatedCustomInputSelect
-          id="project-item-pricing-method"
-          :model-value="pricingMethod"
-          :label="$t('project_item.pricing_method')"
-          :placeholder="$t('project_item.pricing_method_placeholder')"
-          :static-options="pricingMethodOptions"
-          required
-          @update:model-value="updatePricingMethod"
-        />
-      </div>
-
-      <div v-if="isGeneralItem || isFullFloorRelated" class="field-group">
-        <label class="field-label" for="project-item-price">
-          {{ $t('project_item.price') }}
-        </label>
-
-        <div class="input-wrap">
-          <input
-            id="project-item-price"
-            v-model.number="price"
-            class="field-input"
-            min="0"
-            step="0.01"
-            type="number"
-            :placeholder="$t('project_item.price_placeholder')"
-            @input="updateData"
+          <UpdatedCustomInputSelect
+            id="project-item-pricing-method"
+            :model-value="pricingMethod"
+            :placeholder="$t('project_item.pricing_method_placeholder')"
+            :static-options="pricingMethodOptions"
+            required
+            @update:model-value="updatePricingMethod"
           />
         </div>
-      </div>
 
-      <div class="field-group">
-        <label class="field-label" for="project-item-quantity">
-          {{ $t('project_item.quantity') }}
-        </label>
+        <div v-if="isFullFloorRelated" class="field-box field-box--floor">
+          <label class="mini-label">{{ $t('ProjectFloor.floor_number_label') }}</label>
 
-        <div class="input-wrap">
+          <UpdatedCustomInputSelect
+            id="floor_number"
+            :model-value="selectedFloorNumber"
+            :static-options="floorNumberOptions"
+            :placeholder="$t('ProjectFloor.floor_number_placeholder')"
+            required
+            @update:model-value="updateFloorNumber"
+          />
+        </div>
+
+        <div v-if="isSpaceRelated" class="field-box field-box--floor">
+          <label class="mini-label">{{ $t('ProjectFloor.space_label') }}</label>
+
+          <UpdatedCustomInputSelect
+            id="space_id"
+            :model-value="selectedSpace"
+            :static-options="projectFloorSpaceOptions"
+            :placeholder="$t('ProjectFloor.space_placeholder')"
+            @update:model-value="updateSelectedSpace"
+          />
+        </div>
+
+        <div class="field-box field-box--item">
+          <label class="mini-label">{{ $t('project_item.item_label') }}</label>
+
+          <UpdatedCustomInputSelect
+            id="project-item-item"
+            v-model="selectedItem"
+            :controller="generalItemController"
+            :params="generalItemParams"
+            :placeholder="$t('project_item.item_placeholder')"
+            :reload="true"
+            required
+            @update:model-value="updateData"
+          />
+        </div>
+
+        <div class="field-box field-box--qty">
+          <label class="mini-label">{{ $t('project_item.quantity_label') }}</label>
+
           <input
-            id="project-item-quantity"
             v-model.number="quantity"
             class="field-input"
             min="0"
             step="1"
             type="number"
-            :placeholder="$t('project_item.quantity_placeholder')"
             @input="updateData"
           />
         </div>
-      </div>
 
-      <div v-if="isSpaceRelated" class="field-group col-span-2">
-        <UpdatedCustomInputSelect
-          id="space_id"
-          :model-value="selectedSpace"
-          :controller="spaceController"
-          :params="spaceParams"
-          :placeholder="$t('ProjectFloor.space_placeholder')"
-          @update:model-value="updateSelectedSpace"
-        />
-      </div>
+        <div v-if="isGeneralItem || isFullFloorRelated" class="field-box field-box--price">
+          <label class="mini-label">{{ $t('project_item.price_label') }} </label>
 
-      <div v-if="isFullFloorRelated" class="field-group col-span-2">
-        <UpdatedCustomInputSelect
-          id="floor_number"
-          :model-value="selectedFloorNumber"
-          :static-options="floorNumberOptions"
-          :label="$t('project_item.project_floor')"
-          :placeholder="$t('ProjectFloor.floor_number_placeholder')"
-          required
-          @update:model-value="updateFloorNumber"
-        />
+          <input
+            v-model.number="price"
+            class="field-input"
+            min="0"
+            step="0.01"
+            type="number"
+            @input="updateData"
+          />
+        </div>
+
+        <div v-if="isGeneralItem || isFullFloorRelated" class="field-box field-box--total">
+          <label class="mini-label">{{ $t('project_item.total_label') }}</label>
+
+          <input class="field-input readonly-input" :value="total" readonly />
+        </div>
+
+        <button type="button" class="add-btn" :disabled="loading" @click="addItem">
+          <span v-if="loading" class="loader"></span>
+          <span v-else>{{ $t('general.add') }}</span>
+        </button>
       </div>
     </div>
-  </div>
+  </section>
 </template>
 
 <style scoped lang="scss">
-  .material-form-card {
+  .pricing-card {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 0.85rem;
+    padding: 1rem;
+    border: 1px solid rgba(214, 207, 198, 0.9);
+    border-radius: 18px;
+    background: #fff;
   }
 
-  .form-header {
+  .pricing-header {
+    display: flex;
+    justify-content: flex-start;
+    text-align: right;
+
     h3 {
       margin: 0;
       color: #111827;
       font-family: 'Bold';
-    }
-
-    p {
-      margin: 0.35rem 0 0;
-      color: var(--gray-5);
-      line-height: 1.7;
+      font-size: 1rem;
     }
   }
 
-  .form-fields {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1rem;
-    align-items: end;
+  .preview-check {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin-top: 0.45rem;
+    color: #111827;
+    font-family: 'Medium';
+    font-size: var(--sm-size);
+
+    input {
+      width: 16px;
+      height: 16px;
+      accent-color: #2563eb;
+    }
+  }
+
+  .add-panel {
+    padding: 0.75rem;
+    border: 1px solid rgba(214, 207, 198, 0.85);
+    border-radius: 14px;
+    background: #fafbfc;
 
     &.disabled {
       pointer-events: none;
@@ -396,53 +467,86 @@
     }
   }
 
-  .field-group {
+  .form-row {
+    display: grid;
+    grid-template-columns:
+      minmax(150px, 1fr)
+      minmax(150px, 1fr)
+      minmax(150px, 1fr)
+      minmax(170px, 1.1fr)
+      minmax(110px, 0.7fr)
+      minmax(150px, 0.8fr)
+      minmax(150px, 0.8fr)
+      minmax(140px, 0.7fr);
+    gap: 0.55rem;
+    align-items: end;
+  }
+
+  .field-box {
+    min-width: 0;
+  }
+
+  .mini-label {
     display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .field-label {
+    justify-content: center;
+    margin-bottom: 0.3rem;
     color: #334155;
-    font-family: 'Medium';
-    font-size: var(--sm-size);
-  }
-
-  .input-wrap {
-    width: 100%;
+    font-family: 'Bold';
+    font-size: 0.75rem;
   }
 
   .field-input {
     width: 100%;
-    max-width: 100%;
-    padding: 12px 16px;
-    border: 1px solid var(--border-weak);
-    border-radius: 28px;
-    background: var(--white);
+    min-height: 42px;
+    padding: 0.55rem 0.75rem;
+    border: 1px solid rgba(210, 199, 187, 0.95);
+    border-radius: 9px;
+    background: #fff;
+    color: #111827;
     outline: none;
-    transition: all 0.25s ease;
+    text-align: center;
     font-family: 'Medium';
-    font-weight: 400;
     font-size: var(--sm-size);
-    color: var(--bread-crumb-color-span);
+  }
 
-    &:focus {
-      border-color: var(--PrimaryColor);
-      box-shadow: 0 0 0 3px var(--PrimaryColor-light);
+  .readonly-input {
+    background: #fff;
+    color: #111827;
+  }
+
+  .add-btn {
+    min-height: 42px;
+    border: 0;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #b77733, #050505);
+    color: #fff;
+    cursor: pointer;
+    font-family: 'Bold';
+    transition: all 0.25s ease;
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.65;
+    }
+
+    &:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 24px rgba(117, 70, 28, 0.18);
     }
   }
 
-  .col-span-2 {
-    grid-column: span 2;
+  @media (max-width: 1200px) {
+    .form-row {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
   }
 
   @media (max-width: 768px) {
-    .form-fields {
+    .form-row {
       grid-template-columns: 1fr;
     }
-
-    .col-span-2 {
-      grid-column: span 1;
-    }
+  }
+  .add-panel :deep(.input-label) {
+    display: none;
   }
 </style>

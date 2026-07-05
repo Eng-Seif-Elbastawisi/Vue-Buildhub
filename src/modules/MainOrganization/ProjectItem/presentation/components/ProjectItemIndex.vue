@@ -1,263 +1,276 @@
 <script setup lang="ts">
-  import { computed, onMounted, ref } from 'vue';
+  import { computed } from 'vue';
   import { useI18n } from 'vue-i18n';
-  import { useRoute, useRouter } from 'vue-router';
-  import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
-  import AppTable, { type TableHeader } from '@/shared/HelpersComponents/AppTable.vue';
-  import Pagination from '@/shared/HelpersComponents/Pagination.vue';
-  import TableSkelaton from '@/shared/HelpersComponents/TableSkelaton.vue';
-  import DeleteDialog from '@/base/Presentation/Dialogs/MainDialogs/DeleteDialog.vue';
-  import type ProjectItemModel from '../../core/models/project.Item.model';
-  import DeleteProjectItemParams from '../../core/params/delete.project.Item.params';
-  import { useUserStore } from '@/stores/user';
-  import ProjectItemController from '../controllers/project.Item.controller';
-  import IndexProjectItemParams from '../../core/params/index.project.Item.params';
-  import { debounce } from '@/base/Presentation/Utils/debouced';
-  import IndexAddIcon from '@/shared/icons/IndexAddIcon.vue';
+
+  import ProjectItemModel from '../../core/models/project.Item.model';
   import { ProjectItemPriceEnum } from '../../core/constant/project.item.Price.enum';
+  import { FloorNumber } from '@/modules/MainOrganization/ProjectFloor/core/constants/floor.number.enum';
+  import type TitleInterface from '@/base/Data/Models/titleInterface';
 
-  const controller = ProjectItemController.getInstance();
-  const state = computed(() => controller.listState.value);
-  const router = useRouter();
-  const route = useRoute();
   const { t } = useI18n();
-  const perPage = ref(10);
-  const word = ref('');
 
-  const pricingMethodKeys = Object.fromEntries(
-    Object.entries(ProjectItemPriceEnum).map(([key, id]) => [id, key]),
-  ) as Record<ProjectItemPriceEnum, string>;
+  const props = defineProps<{
+    items: ProjectItemModel[];
+    loading?: boolean;
+  }>();
 
-  const headers: TableHeader[] = [
-    { key: 'item_id', label: 'project_item.item', width: '35%', sortable: true },
-    { key: 'quantity', label: 'project_item.quantity', width: '15%' },
-    { key: 'price', label: 'project_item.price', width: '15%' },
-    { key: 'pricing_method', label: 'project_item.pricing_method', width: '25%' },
-    { key: 'project_floor_id', label: 'project_item.project_floor', width: '10%' },
-  ];
-
-  const itemTitleFor = (item: ProjectItemModel) => item.item_id?.title ?? '-';
-  const pricingMethodFor = (item: ProjectItemModel) => {
-    const key = pricingMethodKeys[item.pricing_method];
-
-    return key ? t(`project_item.pricing_methods.${key}`) : '-';
-  };
-
-  const fetchItems = async (page: number = 1, searchWord: string = '') => {
-    await controller.fetchList(
-      new IndexProjectItemParams(
-        searchWord,
-        route.query.page ? Number(route.query.page) : page,
-        perPage.value,
-        1,
-      ),
+  const pricingMethodTitle = (method: ProjectItemPriceEnum) => {
+    const option = Object.entries(ProjectItemPriceEnum).find(
+      ([, value]) => Number(value) === Number(method),
     );
-  };
-  const Search = debounce(() => {
-    router.push({
-      query: {
-        ...route.query,
-        page: Number(route.query.page ?? 1),
-        word: word.value || undefined,
-      },
-    });
 
-    fetchItems(1, word.value);
+    if (!option) return '-';
+
+    const [key] = option;
+
+    return t(`project_item.pricing_methods.${key}`);
+  };
+
+  const floorNumberOptions = computed<TitleInterface<FloorNumber>[]>(() => {
+    return Object.entries(FloorNumber).map(([key, value]) => ({
+      id: value as FloorNumber,
+      title: t(`${key}`),
+    }));
   });
 
-  const onPageChange = (page: number) => {
-    void fetchItems(page);
-    void router.push({
-      query: { ...route.query, page: String(page), word: word.value || undefined },
-    });
+  const relatedTitle = (item: ProjectItemModel) => {
+    if (item.pricing_method === ProjectItemPriceEnum.SPACE_RELATED) {
+      return item.project_floor_space_title ?? '-';
+    }
+
+    if (item.pricing_method === ProjectItemPriceEnum.FULL_FLOOR_RELATED) {
+      const floor = floorNumberOptions.value.find(
+        (floor) => Number(floor.id) === Number(item.project_floor_number),
+      );
+
+      return floor?.title ?? '-';
+    }
+
+    return '-';
   };
 
-  const onPerPageChange = (count: number) => {
-    perPage.value = count;
-    void fetchItems(1);
-  };
-
-  const deleteItem = async (id: number) => {
-    await controller.delete(new DeleteProjectItemParams({ project_item_id: id }));
-    await fetchItems();
-  };
-
-  onMounted(async () => {
-    word.value = route.query.word ? String(route.query.word) : '';
-    await fetchItems(route.query.page ? Number(route.query.page) : 1, word.value);
+  const totalPrice = computed(() => {
+    return props.items.reduce((total, item) => total + Number(item.final_price ?? 0), 0);
   });
-  const { user } = useUserStore();
 </script>
 
 <template>
-  <div class="item-page">
-    <div class="item-header">
+  <section class="items-table-card" dir="rtl">
+    <div class="table-summary">
       <div>
-        <h4>{{ $t('project_item.index.title') }}</h4>
-        <p>{{ $t('project_item.index.description') }}</p>
+        <h3>{{ $t('Selection Criteria Items') }}</h3>
+        <p>
+          {{
+            $t('The data displayed here comes from an index fetch performed after the addition.')
+          }}
+        </p>
       </div>
-    </div>
-    <div class="toolbar">
-      <div class="search-field">
-        <span class="search-icon">
-          <svg
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-          >
-            <circle cx="11" cy="11" r="8" />
-            <path d="m21 21-4.35-4.35" />
-          </svg>
-        </span>
-        <input
-          v-model="word"
-          :placeholder="$t('project_item.search_placeholder')"
-          class="search-input"
-          type="text"
-          @input="Search"
-        />
-      </div>
-      <div class="action-buttons">
-        <router-link
-          class="btn btn-primary"
-          :to="user?.type === 1 ? '/admin/project-item/add' : '/organization/project-item/add'"
-        >
-          <IndexAddIcon /> {{ $t('project_item.add') }}
-        </router-link>
+
+      <div class="summary-total">
+        <span>{{ $t('project_item.total_price_label') }}</span>
+        <strong>{{ totalPrice.toLocaleString() }}</strong>
       </div>
     </div>
 
-    <DataStatusBuilder :controller="state" :on-retry="async () => await fetchItems()">
-      <template #success="{ data }">
-        <AppTable
-          :headers="headers"
-          :items="data as ProjectItemModel[]"
-          selectable
-          show-index
-          hoverable
-          striped
-        >
-          <template #cell-item_id="{ item }">{{ itemTitleFor(item) }}</template>
-          <template #cell-pricing_method="{ item }">{{ pricingMethodFor(item) }}</template>
-          <template #actions="{ item }">
-            <div class="row-actions">
-              <router-link
-                class="action-btn edit"
-                :to="
-                  user?.type === 1
-                    ? `/admin/project-item/edit/${item.id}`
-                    : `/organization/project-item/edit/${item.id}`
-                "
-                :title="$t('project_item.edit')"
-              >
-                <svg
-                  width="15"
-                  height="15"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                </svg>
-              </router-link>
-              <DeleteDialog
-                :title="$t('project_item.delete_title')"
-                :message="$t('project_item.delete_message')"
-                :hasbtn="true"
-                @delete="deleteItem(item.id!)"
-              >
-                <template #btn>
-                  <button class="action-btn delete" :title="$t('Delete')">
-                    <svg
-                      width="15"
-                      height="15"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    >
-                      <path d="M3 6h18" />
-                      <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
-                      <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
-                    </svg>
-                  </button>
-                </template>
-              </DeleteDialog>
-            </div>
-          </template>
-        </AppTable>
-        <Pagination
-          :pagination="controller.pagination.value"
-          @change-page="onPageChange"
-          @count-per-page="onPerPageChange"
-        />
-      </template>
+    <div class="items-table" :class="{ disabled: loading }">
+      <div class="table-head">
+        <span>{{ $t('project_item.item_label') }}</span>
+        <span>{{ $t('project_item.related_label') }}</span>
+        <span>{{ $t('project_item.pricing_method_label') }}</span>
+        <span>{{ $t('project_item.quantity_label') }}</span>
+        <span>{{ $t('project_item.price_label') }}</span>
+        <span>{{ $t('project_item.total_price_label') }}</span>
+        <span>{{ $t('general.created_at') }}</span>
+      </div>
 
-      <template #empty>
-        <div class="empty-state">
-          <h3>{{ $t('project_item.empty_title') }}</h3>
-          <p>{{ $t('project_item.empty_description') }}</p>
-          <router-link
-            class="btn btn-primary"
-            :to="user?.type === 1 ? '/admin/project-item/add' : '/organization/project-item/add'"
-            >{{ $t('project_item.add') }}</router-link
-          >
+      <div v-if="!items.length" class="empty-row">{{ $t('project_item.no_items') }}</div>
+
+      <div v-for="item in items" :key="item.id" class="table-row">
+        <div class="table-cell">
+          <input class="table-input" :value="item.item.title" readonly />
         </div>
-      </template>
 
-      <template #loader>
-        <TableSkelaton
-          :rows="5"
-          :columns="headers.length"
-          :has-actions="true"
-          :show-index="true"
-          :selectable="true"
-        />
-      </template>
-    </DataStatusBuilder>
-  </div>
+        <div class="table-cell">
+          {{ relatedTitle(item) }}
+        </div>
+
+        <div class="table-cell">
+          {{ pricingMethodTitle(item.pricing_method) }}
+        </div>
+
+        <div class="table-cell">
+          <input class="table-input table-input--center" :value="item.quantity" readonly />
+        </div>
+
+        <div class="table-cell">
+          <input class="table-input table-input--center" :value="item.price" readonly />
+        </div>
+
+        <div class="table-cell total-cell">
+          {{ item.final_price.toLocaleString() }}
+        </div>
+
+        <div class="table-cell muted-cell">
+          {{ item.created_at ?? '-' }}
+        </div>
+      </div>
+    </div>
+  </section>
 </template>
 
 <style scoped lang="scss">
-  .material-page,
-  .material-header,
-  .row-actions {
+  .items-table-card {
     display: flex;
-  }
-
-  .material-page {
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 0.85rem;
+    padding: 1rem;
+    border: 1px solid rgba(214, 207, 198, 0.9);
+    border-radius: 18px;
+    background: #fff;
   }
 
-  .material-header {
-    align-items: center;
+  .table-summary {
+    display: flex;
+    align-items: flex-start;
     justify-content: space-between;
     gap: 1rem;
+
+    h3 {
+      margin: 0;
+      color: #111827;
+      font-family: 'Bold';
+      font-size: 1rem;
+    }
+
+    p {
+      margin: 0.35rem 0 0;
+      color: #64748b;
+      font-size: var(--sm-size);
+    }
   }
 
-  .material-header p,
-  .empty-state p {
-    color: var(--gray-5);
-  }
-
-  .row-actions {
-    align-items: center;
-    gap: 0.75rem;
-  }
-
-  .empty-state {
-    padding: 3rem 1rem;
+  .summary-total {
+    display: flex;
+    min-width: 140px;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 0.75rem 1rem;
+    border-radius: 14px;
+    background: #f8fafc;
     text-align: center;
+
+    span {
+      color: #64748b;
+      font-family: 'Medium';
+      font-size: var(--xs-size);
+    }
+
+    strong {
+      color: var(--PrimaryColor);
+      font-family: 'Bold';
+      font-size: 1rem;
+    }
+  }
+
+  .items-table {
+    overflow: hidden;
+    border-radius: 15px;
+    background: #fff;
+
+    &.disabled {
+      pointer-events: none;
+      opacity: 0.7;
+    }
+  }
+
+  .table-head,
+  .table-row {
+    display: grid;
+    grid-template-columns:
+      minmax(180px, 1.5fr)
+      minmax(140px, 1fr)
+      minmax(150px, 1fr)
+      minmax(100px, 0.7fr)
+      minmax(120px, 0.8fr)
+      minmax(120px, 0.8fr)
+      minmax(160px, 1fr);
+    gap: 0.75rem;
+    align-items: center;
+  }
+
+  .table-head {
+    padding: 0.85rem 1rem;
+    background: #f8fafc;
+    color: #1e293b;
+    font-family: 'Bold';
+    font-size: 0.75rem;
+  }
+
+  .table-row {
+    padding: 0.7rem 1rem;
+    border-top: 1px solid rgba(214, 207, 198, 0.75);
+    color: #111827;
+    font-family: 'Medium';
+    font-size: var(--sm-size);
+  }
+
+  .table-input {
+    width: 100%;
+    min-height: 36px;
+    padding: 0.45rem 0.7rem;
+    border: 1px solid rgba(210, 199, 187, 0.9);
+    border-radius: 9px;
+    background: #fff;
+    color: #111827;
+    text-align: right;
+    font-family: 'Medium';
+  }
+
+  .table-input--center {
+    text-align: center;
+  }
+
+  .total-cell {
+    color: var(--PrimaryColor);
+    font-family: 'Bold';
+  }
+
+  .muted-cell {
+    color: #64748b;
+    font-size: var(--xs-size);
+  }
+
+  .empty-row {
+    padding: 1rem;
+    border-top: 1px solid rgba(214, 207, 198, 0.75);
+    color: #64748b;
+    text-align: center;
+    font-family: 'Medium';
+  }
+
+  @media (max-width: 1200px) {
+    .table-head,
+    .table-row {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 768px) {
+    .table-summary {
+      flex-direction: column;
+    }
+
+    .summary-total {
+      width: 100%;
+    }
+
+    .table-head {
+      display: none;
+    }
+
+    .table-row {
+      grid-template-columns: 1fr;
+      gap: 0.45rem;
+    }
   }
 </style>
