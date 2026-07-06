@@ -1,6 +1,6 @@
 <script setup lang="ts">
   defineProps<{
-    currentStep: 1 | 2 | 3;
+    currentStep: 1 | 2 | 3 | 4;
   }>();
 
   const steps = [
@@ -16,8 +16,13 @@
     },
     {
       id: 3,
-      title: 'Project Attachments',
-      description: 'Project files and documents',
+      title: 'Project Floors',
+      description: 'Project floors',
+    },
+    {
+      id: 4,
+      title: 'Project Items',
+      description: 'Project items',
     },
   ];
 </script>
