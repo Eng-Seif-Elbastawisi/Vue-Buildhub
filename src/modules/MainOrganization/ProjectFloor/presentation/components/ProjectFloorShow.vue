@@ -428,11 +428,11 @@
 
   .attachment-card {
     display: inline-flex;
-    max-width: 240px;
+    max-width: 200px;
     min-height: 52px;
     align-items: center;
     gap: 0.65rem;
-    padding: 0.55rem 0.7rem;
+    // padding: 0.55rem 0.7rem;
     border: 1px solid rgba(148, 163, 184, 0.22);
     border-radius: 16px;
     background: linear-gradient(135deg, #ffffff, #f8fafc);
@@ -515,7 +515,7 @@
     }
 
     .space-row {
-      grid-template-columns: 42px repeat(2, minmax(0, 1fr));
+      grid-template-columns: repeat(2, 1fr);
     }
   }
 
