@@ -63,9 +63,7 @@
   });
 
   const fetchProjectFloors = async () => {
-    await controller.fetchList(
-      new IndexProjectFloorParams('', 1, 20, 1, null, projectId.value, projectPreviewId.value),
-    );
+    await controller.fetchList(new IndexProjectFloorParams('', 1, 20, 1, null, projectId.value));
   };
 
   const saveProjectFloor = async () => {

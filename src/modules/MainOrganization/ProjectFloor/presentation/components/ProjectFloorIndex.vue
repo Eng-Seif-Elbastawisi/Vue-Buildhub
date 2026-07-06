@@ -28,6 +28,8 @@
         route.query.page ? Number(route.query.page) : page,
         perPage.value,
         1,
+        null,
+        route.params.projectId ? Number(route.params.projectId) : null,
       ),
     );
   const onPageChange = (page: number) => {

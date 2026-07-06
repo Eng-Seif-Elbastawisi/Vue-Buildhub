@@ -26,7 +26,7 @@
 
   const formStore = useFormsStore();
   const brandController = BrandController.getInstance();
-  const brandParams = new IndexBrandParams('', 1, 100, 0, undefined, 1);
+  const brandParams = new IndexBrandParams('', 1, 100, 0, undefined, 2);
   const measurementController = MeasurementController.getInstance();
   const measurementParams = new IndexMeasurementParams('', 1, 100, 0);
 

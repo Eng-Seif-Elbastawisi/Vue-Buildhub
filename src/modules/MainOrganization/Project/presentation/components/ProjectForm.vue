@@ -1,6 +1,7 @@
 <script setup lang="ts">
   import { computed, ref, watch } from 'vue';
   import { useI18n } from 'vue-i18n';
+  import DatePicker from 'primevue/datepicker';
 
   import TranslationParams from '@/base/Core/Params/translationParams';
   import type TitleInterface from '@/base/Data/Models/titleInterface';
@@ -82,7 +83,13 @@
 
   const client_name = ref<string>('');
   const client_phone = ref<string>('');
+
+  // date اللي هيتبعت للـ API
   const date = ref<string>('');
+
+  // date الخاص بـ PrimeVue DatePicker
+  const selectedDate = ref<Date | null>(null);
+
   const notes = ref<string>('');
 
   const attachments = ref<ProjectAttachmentParams[]>([]);
@@ -114,6 +121,32 @@
       selectedGovernorate.value?.id ? Number(selectedGovernorate.value.id) : null,
     );
   });
+
+  const formatDateForApi = (value: Date | null): string => {
+    if (!value) return '';
+
+    const year = value.getFullYear();
+    const month = String(value.getMonth() + 1).padStart(2, '0');
+    const day = String(value.getDate()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
+  };
+
+  const parseApiDate = (value?: string | null): Date | null => {
+    if (!value) return null;
+
+    const [year, month, day] = value.split('-').map(Number);
+
+    if (!year || !month || !day) return null;
+
+    return new Date(year, month - 1, day);
+  };
+
+  const updateDate = (value: Date | null) => {
+    selectedDate.value = value;
+    date.value = formatDateForApi(value);
+    updateData();
+  };
 
   const getClientExistOption = (value: boolean) => {
     return clientExistOptions.value.find((option) => option.id === (value ? 1 : 0)) ?? null;
@@ -291,6 +324,8 @@
         selectedClientSource.value = null;
         client_name.value = '';
         client_phone.value = '';
+        date.value = '';
+        selectedDate.value = null;
         updateData();
         return;
       }
@@ -310,7 +345,10 @@
 
       client_name.value = projectData.client_name ?? '';
       client_phone.value = projectData.client_phone ?? '';
+
       date.value = projectData.date ?? '';
+      selectedDate.value = parseApiDate(projectData.date);
+
       notes.value = projectData.notes ?? '';
 
       existingAttachmentFiles.value = Array.isArray(projectData.attachments)
@@ -401,17 +439,24 @@
           @update:model-value="updateProjectType"
         />
       </div>
+
       <div class="field-group">
         <label class="field-label" for="date">{{ $t('date') }}</label>
-        <input
-          id="date"
-          v-model="date"
-          class="field-input"
-          type="date"
+
+        <DatePicker
+          input-id="date"
+          :model-value="selectedDate"
+          date-format="yy-mm-dd"
+          show-icon
+          icon-display="input"
+          :manual-input="false"
           :placeholder="$t('date_placeholder')"
-          @input="updateData"
+          input-class="field-input"
+          class="date-picker"
+          @update:model-value="updateDate"
         />
       </div>
+
       <template v-if="!isEdit">
         <div class="field-group">
           <UpdatedCustomInputSelect
@@ -629,6 +674,28 @@
     min-height: 110px;
     resize: vertical;
     border-radius: 18px;
+  }
+
+  .date-picker {
+    width: 100%;
+  }
+
+  :deep(.p-datepicker-input) {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid var(--border-weak);
+    border-radius: 28px;
+    background: var(--white);
+    outline: none;
+    transition: all 0.25s ease;
+    font-family: 'Medium';
+    font-weight: 400;
+    font-size: var(--sm-size);
+    color: var(--bread-crumb-color-span);
+  }
+
+  :deep(.p-datepicker-input:focus) {
+    border-color: var(--PrimaryColor);
   }
 
   .service-tabs {

@@ -1,5 +1,6 @@
 <script setup lang="ts">
   import { computed, ref, watch } from 'vue';
+  import DatePicker from 'primevue/datepicker';
 
   import type TitleInterface from '@/base/Data/Models/titleInterface';
   import UpdatedCustomInputSelect from '@/shared/FormInputs/UpdatedCustomInputSelect.vue';
@@ -30,8 +31,14 @@
   const selectedNotificationType = ref<TitleInterface<NotificationType> | null>(null);
   const status = ref<TitleInterface<Status> | null>(null);
 
+  // Values sent to API
   const previewDate = ref<string>('');
   const previewTime = ref<string>('');
+
+  // Values used by PrimeVue DatePicker
+  const selectedPreviewDate = ref<Date | null>(null);
+  const selectedPreviewTime = ref<Date | null>(null);
+
   const siteLink = ref<string>('');
   const address = ref<string>('');
   const notification_message = ref<string>('');
@@ -53,8 +60,80 @@
   // employee type = 2
   const engineerParams = new IndexEmployeeParams('', 1, 100, 0, 2);
 
-  // employee type = 4
-  const pricingResponsibleParams = new IndexEmployeeParams('', 1, 100, 0, 4);
+  type PrimeDateValue = Date | Date[] | null | undefined;
+
+  const normalizeDateValue = (value: PrimeDateValue): Date | null => {
+    if (!value) return null;
+
+    if (Array.isArray(value)) {
+      return value[0] ?? null;
+    }
+
+    return value;
+  };
+
+  const formatDateForApi = (value: Date | null): string => {
+    if (!value) return '';
+
+    const year = value.getFullYear();
+    const month = String(value.getMonth() + 1).padStart(2, '0');
+    const day = String(value.getDate()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
+  };
+
+  const parseApiDate = (value?: string | null): Date | null => {
+    if (!value) return null;
+
+    const [year, month, day] = value.split('-').map(Number);
+
+    if (!year || !month || !day) return null;
+
+    return new Date(year, month - 1, day);
+  };
+
+  const formatTimeForApi = (value: Date | null): string => {
+    if (!value) return '';
+
+    const hours = String(value.getHours()).padStart(2, '0');
+    const minutes = String(value.getMinutes()).padStart(2, '0');
+
+    return `${hours}:${minutes}`;
+  };
+
+  const parseApiTime = (value?: string | null): Date | null => {
+    if (!value) return null;
+
+    const [hours, minutes] = value.split(':').map(Number);
+
+    if (Number.isNaN(hours) || Number.isNaN(minutes)) return null;
+
+    const date = new Date();
+    date.setHours(hours);
+    date.setMinutes(minutes);
+    date.setSeconds(0);
+    date.setMilliseconds(0);
+
+    return date;
+  };
+
+  const updatePreviewDate = (value: PrimeDateValue) => {
+    const dateValue = normalizeDateValue(value);
+
+    selectedPreviewDate.value = dateValue;
+    previewDate.value = formatDateForApi(dateValue);
+
+    updateData();
+  };
+
+  const updatePreviewTime = (value: PrimeDateValue) => {
+    const timeValue = normalizeDateValue(value);
+
+    selectedPreviewTime.value = timeValue;
+    previewTime.value = formatTimeForApi(timeValue);
+
+    updateData();
+  };
 
   const updateData = () => {
     emit(
@@ -78,21 +157,6 @@
 
   const updateEngineer = (value: TitleInterface<number> | null) => {
     selectedEngineer.value = value;
-    updateData();
-  };
-
-  const updatePricingResponsible = (value: TitleInterface<number> | null) => {
-    selectedPricingResponsible.value = value;
-    updateData();
-  };
-
-  const updateNotificationType = (value: TitleInterface<NotificationType> | null) => {
-    selectedNotificationType.value = value;
-    updateData();
-  };
-
-  const updateStatus = (value: TitleInterface<Status> | null) => {
-    status.value = value;
     updateData();
   };
 
@@ -129,6 +193,10 @@
 
       previewDate.value = projectData.preview_date ?? '';
       previewTime.value = projectData.preview_time ?? '';
+
+      selectedPreviewDate.value = parseApiDate(projectData.preview_date);
+      selectedPreviewTime.value = parseApiTime(projectData.preview_time);
+
       siteLink.value = projectData.site_link ?? '';
       address.value = projectData.address ?? '';
       notification_message.value = projectData.notification_message ?? '';
@@ -180,12 +248,16 @@
           </label>
         </div>
 
-        <input
-          id="preview_date"
-          v-model="previewDate"
-          class="field-input"
-          type="date"
-          @input="updateData"
+        <DatePicker
+          input-id="preview_date"
+          :model-value="selectedPreviewDate"
+          date-format="yy-mm-dd"
+          show-icon
+          icon-display="input"
+          :manual-input="false"
+          class="prime-date-picker"
+          input-class="field-input"
+          @update:model-value="updatePreviewDate"
         />
       </div>
 
@@ -197,12 +269,17 @@
           </label>
         </div>
 
-        <input
-          id="preview_time"
-          v-model="previewTime"
-          class="field-input"
-          type="time"
-          @input="updateData"
+        <DatePicker
+          input-id="preview_time"
+          :model-value="selectedPreviewTime"
+          time-only
+          hour-format="24"
+          show-icon
+          icon-display="input"
+          :manual-input="false"
+          class="prime-date-picker"
+          input-class="field-input"
+          @update:model-value="updatePreviewTime"
         />
       </div>
 
@@ -224,58 +301,6 @@
         />
       </div>
 
-      <div class="field-block">
-        <div class="field-label-row">
-          <span class="label-icon">💰</span>
-          <label class="field-label" for="pricing_responsible_id">
-            {{ $t('project.pricing_responsible') }}
-          </label>
-        </div>
-
-        <UpdatedCustomInputSelect
-          id="pricing_responsible_id"
-          :model-value="selectedPricingResponsible"
-          :controller="employeeController"
-          :params="pricingResponsibleParams"
-          :placeholder="$t('project.pricing_responsible_placeholder')"
-          @update:model-value="updatePricingResponsible"
-        />
-      </div>
-
-      <div class="field-block">
-        <div class="field-label-row">
-          <span class="label-icon">🔔</span>
-          <label class="field-label" for="notification_type">
-            {{ $t('project.notification_type') }}
-          </label>
-        </div>
-
-        <UpdatedCustomInputSelect
-          id="notification_type"
-          :model-value="selectedNotificationType"
-          :static-options="notificationTypeOptions"
-          :placeholder="$t('project.notification_type_placeholder')"
-          @update:model-value="updateNotificationType"
-        />
-      </div>
-
-      <div class="field-block">
-        <div class="field-label-row">
-          <span class="label-icon">📌</span>
-          <label class="field-label" for="status">
-            {{ $t('status') }}
-          </label>
-        </div>
-
-        <UpdatedCustomInputSelect
-          id="status"
-          :model-value="status"
-          :static-options="statusOptions"
-          :placeholder="$t('status_placeholder')"
-          @update:model-value="updateStatus"
-        />
-      </div>
-
       <div class="field-block col-span-3">
         <div class="field-label-row">
           <span class="label-icon">📍</span>
@@ -289,23 +314,6 @@
           v-model="address"
           class="field-input field-textarea"
           :placeholder="$t('project.preview_address_placeholder')"
-          @input="updateData"
-        />
-      </div>
-
-      <div class="field-block col-span-3">
-        <div class="field-label-row">
-          <span class="label-icon">✉️</span>
-          <label class="field-label" for="notification_message">
-            {{ $t('notification_message') }}
-          </label>
-        </div>
-
-        <textarea
-          id="notification_message"
-          v-model="notification_message"
-          class="field-input field-textarea"
-          :placeholder="$t('project.preview_notification_message_placeholder')"
           @input="updateData"
         />
       </div>
@@ -389,6 +397,34 @@
 
   .field-input:focus {
     border-color: var(--PrimaryColor);
+  }
+
+  .prime-date-picker {
+    width: 100%;
+  }
+
+  :deep(.p-datepicker-input) {
+    width: 100%;
+    min-height: 46px;
+    padding: 12px 16px;
+    border: 1px solid var(--border-weak);
+    border-radius: 28px;
+    background: var(--white);
+    outline: none;
+    transition: all 0.25s ease;
+    font-family: 'Medium';
+    font-weight: 400;
+    font-size: var(--sm-size);
+    color: var(--bread-crumb-color-span);
+  }
+
+  :deep(.p-datepicker-input:focus) {
+    border-color: var(--PrimaryColor);
+  }
+
+  :deep(.p-datepicker-dropdown) {
+    border-start-end-radius: 28px;
+    border-end-end-radius: 28px;
   }
 
   .field-textarea {

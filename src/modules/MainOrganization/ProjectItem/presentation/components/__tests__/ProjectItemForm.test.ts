@@ -28,6 +28,18 @@ vi.mock('@/modules/shared/Item/presentation/controllers/Item.controller', () => 
   default: { getInstance: () => ({}) },
 }));
 
+vi.mock(
+  '@/modules/MainOrganization/ProjectFloor/presentation/controllers/project.floor.controller',
+  () => ({
+    default: {
+      getInstance: () => ({
+        fetchList: vi.fn(),
+        listState: { value: { data: [] } },
+      }),
+    },
+  }),
+);
+
 const SelectStub = {
   props: ['id'],
   emits: ['update:modelValue'],
@@ -63,8 +75,8 @@ describe('ProjectItemForm', () => {
 
     await wrapper.find('.project-item-item').trigger('click');
     await wrapper.find('.project-item-pricing-method').trigger('click');
-    await wrapper.find<HTMLInputElement>('#project-item-price').setValue('250');
-    await wrapper.find<HTMLInputElement>('#project-item-quantity').setValue('3');
+    await wrapper.find<HTMLInputElement>('.field-box--price input').setValue('250');
+    await wrapper.find<HTMLInputElement>('.field-box--qty input').setValue('3');
 
     const emissions = wrapper.emitted('updateData') as unknown[][];
     const params = emissions.at(-1)?.[0] as AddProjectItemParams;
@@ -87,10 +99,10 @@ describe('ProjectItemForm', () => {
       },
     });
 
-    expect(wrapper.find<HTMLInputElement>('#project-item-price').element.value).toBe(
+    expect(wrapper.find<HTMLInputElement>('.field-box--price input').element.value).toBe(
       String(ProjectItemShowModel.example.price),
     );
-    expect(wrapper.find('.form-fields.disabled').exists()).toBe(true);
+    expect(wrapper.find('.add-panel.disabled').exists()).toBe(true);
     expect(wrapper.emitted('updateData')?.[0]?.[0]).toBeInstanceOf(AddProjectItemParams);
   });
 });

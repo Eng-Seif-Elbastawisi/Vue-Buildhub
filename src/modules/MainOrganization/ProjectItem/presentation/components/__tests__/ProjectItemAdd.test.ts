@@ -6,6 +6,8 @@ import ProjectItemAdd from '../ProjectItemAdd.vue';
 
 const mockController = vi.hoisted(() => ({
   create: vi.fn(),
+  fetchList: vi.fn(),
+  listState: { value: { data: [] } },
   errorMessage: { value: null as string | null },
 }));
 
@@ -47,10 +49,15 @@ const params = new AddProjectItemParams({
 const global = {
   stubs: {
     ProjectItemForm: {
-      emits: ['updateData'],
-      template: '<div class="item-form-stub" @click="$emit(\'updateData\', params)"></div>',
+      emits: ['updateData', 'addItem'],
+      template:
+        '<div class="item-form-stub" @click="$emit(\'updateData\', params); $emit(\'addItem\')"></div>',
       setup: () => ({ params }),
     },
+    ProjectItemTable: true,
+    ProjectFloorShow: true,
+    ProjectPricingAdd: true,
+    ProjectSteps: true,
   },
   mocks: {
     $t: (key: string) => key,
@@ -61,17 +68,19 @@ describe('ProjectItemAdd', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockController.create.mockResolvedValue({});
+    mockController.fetchList.mockResolvedValue({});
     mockController.errorMessage.value = null;
   });
 
   it('creates an item with emitted form params', async () => {
     const wrapper = mount(ProjectItemAdd, { global });
+    await flushPromises();
 
     await wrapper.find('.item-form-stub').trigger('click');
-    await wrapper.find('button').trigger('click');
     await flushPromises();
 
     expect(mockController.create).toHaveBeenCalledWith(params, undefined, '/item/add');
+    expect(mockController.fetchList).toHaveBeenCalledTimes(2);
   });
 
   it('renders controller errors', () => {

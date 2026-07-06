@@ -67,10 +67,7 @@
         <h4>{{ $t('admin.index.title') }}</h4>
         <p>{{ $t('admin.index.description') }}</p>
       </div>
-      <router-link
-        class="btn btn-primary"
-        :to="user?.isMaster ? '/admin/admin/add' : '/organization/admin/add'"
-      >
+      <router-link class="btn btn-primary" :to="{ name: 'Add Admin' }">
         {{ $t('admin.add') }}
       </router-link>
     </div>
@@ -89,11 +86,7 @@
             <div class="row-actions">
               <router-link
                 class="action-btn edit"
-                :to="
-                  user?.isMaster
-                    ? `/admin/admin/edit/${item.id}`
-                    : `/organization/admin/edit/${item.id}`
-                "
+                :to="{ name: 'Edit Admin', params: { id: item.id } }"
                 :title="$t('admin.edit')"
               >
                 <svg
