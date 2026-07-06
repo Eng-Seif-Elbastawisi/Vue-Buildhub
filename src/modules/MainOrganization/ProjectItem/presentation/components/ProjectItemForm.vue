@@ -38,38 +38,42 @@
   const generalItemParams = new IndexItemParams('', 1, 100, 0);
 
   const projectFloorController = ProjectFloorController.getInstance();
-  const projectFloorParams = new IndexProjectFloorParams('', 1, 100, 0);
+  const projectFloorParams = new IndexProjectFloorParams('', 1, 100, 0, null, props.project);
 
   const selectedItem = ref<TitleInterface<string | number> | null>(null);
   const pricingMethod = ref<TitleInterface<string | number> | null>(null);
-  const selectedFloorNumber = ref<TitleInterface<FloorNumber> | null>(null);
+
+  // هنا id هيكون project_floor_id الحقيقي، والـ title هيكون floor_number مترجم
+  const selectedFloorNumber = ref<TitleInterface<number> | null>(null);
   const selectedSpace = ref<TitleInterface<number> | null>(null);
 
   const price = ref<number>();
   const quantity = ref<number>(1);
-  const pricingByPreviewItems = ref(true);
+
+  // بنستخدمه عشان لو floor_number راجع 0 يظهر عادي بعد ما floors تتحمل
+  const pendingFloorNumber = ref<number | string | null>(null);
 
   const pricingMethodOptions = Object.entries(ProjectItemPriceEnum).map(([key, id]) => ({
     id,
     title: t(`project_item.pricing_methods.${key}`),
   }));
 
-  const floorNumberOptions = computed<TitleInterface<FloorNumber>[]>(() => [
-    { id: FloorNumber.BASEMENT, title: t('project.BASEMENT') },
-    { id: FloorNumber.GROUND_FLOOR, title: t('project.GROUND_FLOOR') },
-    { id: FloorNumber.FIRST_FLOOR, title: t('project.FIRST_FLOOR') },
-    { id: FloorNumber.SECOND_FLOOR, title: t('project.SECOND_FLOOR') },
-    { id: FloorNumber.THIRD_FLOOR, title: t('project.THIRD_FLOOR') },
-    { id: FloorNumber.FOURTH_FLOOR, title: t('project.FOURTH_FLOOR') },
-    { id: FloorNumber.FIFTH_FLOOR, title: t('project.FIFTH_FLOOR') },
-    { id: FloorNumber.SIXTH_FLOOR, title: t('project.SIXTH_FLOOR') },
-    { id: FloorNumber.SEVENTH_FLOOR, title: t('project.SEVENTH_FLOOR') },
-    { id: FloorNumber.EIGHTH_FLOOR, title: t('project.EIGHTH_FLOOR') },
-    { id: FloorNumber.NINTH_FLOOR, title: t('project.NINTH_FLOOR') },
-    { id: FloorNumber.TENTH_FLOOR, title: t('project.TENTH_FLOOR') },
+  const floorNumberTitleOptions = computed<TitleInterface<number>[]>(() => [
+    { id: Number(FloorNumber.BASEMENT), title: t('project.BASEMENT') },
+    { id: Number(FloorNumber.GROUND_FLOOR), title: t('project.GROUND_FLOOR') },
+    { id: Number(FloorNumber.FIRST_FLOOR), title: t('project.FIRST_FLOOR') },
+    { id: Number(FloorNumber.SECOND_FLOOR), title: t('project.SECOND_FLOOR') },
+    { id: Number(FloorNumber.THIRD_FLOOR), title: t('project.THIRD_FLOOR') },
+    { id: Number(FloorNumber.FOURTH_FLOOR), title: t('project.FOURTH_FLOOR') },
+    { id: Number(FloorNumber.FIFTH_FLOOR), title: t('project.FIFTH_FLOOR') },
+    { id: Number(FloorNumber.SIXTH_FLOOR), title: t('project.SIXTH_FLOOR') },
+    { id: Number(FloorNumber.SEVENTH_FLOOR), title: t('project.SEVENTH_FLOOR') },
+    { id: Number(FloorNumber.EIGHTH_FLOOR), title: t('project.EIGHTH_FLOOR') },
+    { id: Number(FloorNumber.NINTH_FLOOR), title: t('project.NINTH_FLOOR') },
+    { id: Number(FloorNumber.TENTH_FLOOR), title: t('project.TENTH_FLOOR') },
   ]);
 
-  const projectFloorSpaceOptions = computed<TitleInterface<number>[]>(() => {
+  const getProjectFloors = () => {
     const state = projectFloorController.listState.value as any;
 
     const data =
@@ -79,9 +83,31 @@
       state?.response?.data ??
       [];
 
-    const floors = Array.isArray(data) ? data : Array.isArray(data?.data) ? data.data : [];
+    return Array.isArray(data) ? data : Array.isArray(data?.data) ? data.data : [];
+  };
 
-    return floors.flatMap((floor: any) => {
+  const getFloorTitle = (floorNumber?: number | string | null) => {
+    if (floorNumber === undefined || floorNumber === null) return '';
+
+    const option = floorNumberTitleOptions.value.find(
+      (floor) => Number(floor.id) === Number(floorNumber),
+    );
+
+    return option?.title ?? String(floorNumber);
+  };
+
+  // ده هيعرض الأدوار الراجعة من الـ API بس
+  const projectFloorOptions = computed<TitleInterface<number>[]>(() => {
+    return getProjectFloors()
+      .filter((floor: any) => floor?.id !== undefined && floor?.id !== null)
+      .map((floor: any) => ({
+        id: Number(floor.id),
+        title: getFloorTitle(floor.floor_number),
+      }));
+  });
+
+  const projectFloorSpaceOptions = computed<TitleInterface<number>[]>(() => {
+    return getProjectFloors().flatMap((floor: any) => {
       if (!Array.isArray(floor.spaces)) return [];
 
       return floor.spaces.map((spaceItem: any) => ({
@@ -104,17 +130,41 @@
       : null;
   };
 
-  const floorOptionFromId = (id?: number | string): TitleInterface<FloorNumber> | null => {
+  const projectFloorOptionFromProjectFloorId = (
+    id?: number | string | null,
+  ): TitleInterface<number> | null => {
     if (id === undefined || id === null) return null;
 
-    const option = floorNumberOptions.value.find((floor) => Number(floor.id) === Number(id));
+    const option = projectFloorOptions.value.find((floor) => Number(floor.id) === Number(id));
 
     return (
       option ?? {
-        id: Number(id) as FloorNumber,
+        id: Number(id),
         title: String(id),
       }
     );
+  };
+
+  const projectFloorOptionFromFloorNumber = (
+    floorNumber?: number | string | null,
+  ): TitleInterface<number> | null => {
+    if (floorNumber === undefined || floorNumber === null) return null;
+
+    const floor = getProjectFloors().find(
+      (projectFloor: any) => Number(projectFloor.floor_number) === Number(floorNumber),
+    );
+
+    if (floor?.id !== undefined && floor?.id !== null) {
+      return {
+        id: Number(floor.id),
+        title: getFloorTitle(floor.floor_number),
+      };
+    }
+
+    return {
+      id: Number(floorNumber),
+      title: getFloorTitle(floorNumber),
+    };
   };
 
   const spaceOptionFromId = (id?: number | string): TitleInterface<number> | null => {
@@ -173,6 +223,7 @@
     if (isSpaceRelated.value) {
       price.value = undefined;
       selectedFloorNumber.value = null;
+      pendingFloorNumber.value = null;
       return;
     }
 
@@ -183,6 +234,7 @@
 
     selectedSpace.value = null;
     selectedFloorNumber.value = null;
+    pendingFloorNumber.value = null;
   };
 
   function updatePricingMethod(value: TitleInterface<string | number> | null) {
@@ -203,7 +255,8 @@
     updateData();
   }
 
-  const updateFloorNumber = (value: TitleInterface<FloorNumber> | null) => {
+  const updateFloorNumber = (value: TitleInterface<number> | null) => {
+    pendingFloorNumber.value = null;
     selectedFloorNumber.value = value;
     updateData();
   };
@@ -247,6 +300,7 @@
     pricingMethod.value = null;
     selectedFloorNumber.value = null;
     selectedSpace.value = null;
+    pendingFloorNumber.value = null;
     price.value = undefined;
     quantity.value = 1;
     updateData();
@@ -284,15 +338,47 @@
       price.value = item.price;
       quantity.value = item.quantity ?? 1;
 
+      const projectFloor = (item as any).project_floor ?? (item as any).projectFloor;
       const projectFloorSpaceId = (item as any).project_floor_space_id;
-      const projectFloorId = (item as any).project_floor_id;
+      const projectFloorId = (item as any).project_floor_id ?? projectFloor?.id;
 
-      selectedSpace.value = projectFloorSpaceId ? spaceOptionFromId(projectFloorSpaceId) : null;
-      selectedFloorNumber.value = floorOptionFromId(projectFloorId);
+      // مهم: هنا بنقرأ floor_number حتى لو قيمته 0
+      const floorNumber = (item as any).floor_number ?? projectFloor?.floor_number;
+
+      pendingFloorNumber.value = floorNumber ?? null;
+
+      selectedSpace.value =
+        projectFloorSpaceId !== undefined && projectFloorSpaceId !== null
+          ? spaceOptionFromId(projectFloorSpaceId)
+          : null;
+
+      selectedFloorNumber.value =
+        projectFloorId !== undefined && projectFloorId !== null
+          ? projectFloorOptionFromProjectFloorId(projectFloorId)
+          : projectFloorOptionFromFloorNumber(floorNumber);
 
       updateData();
     },
     { immediate: true },
+  );
+
+  watch(
+    projectFloorOptions,
+    () => {
+      if (pendingFloorNumber.value !== null) {
+        selectedFloorNumber.value = projectFloorOptionFromFloorNumber(pendingFloorNumber.value);
+        updateData();
+        return;
+      }
+
+      if (!selectedFloorNumber.value) return;
+
+      selectedFloorNumber.value = projectFloorOptionFromProjectFloorId(
+        selectedFloorNumber.value.id,
+      );
+      updateData();
+    },
+    { deep: true },
   );
 
   watch(
@@ -340,7 +426,7 @@
           <UpdatedCustomInputSelect
             id="floor_number"
             :model-value="selectedFloorNumber"
-            :static-options="floorNumberOptions"
+            :static-options="projectFloorOptions"
             :placeholder="$t('ProjectFloor.floor_number_placeholder')"
             required
             @update:model-value="updateFloorNumber"
@@ -546,6 +632,7 @@
       grid-template-columns: 1fr;
     }
   }
+
   .add-panel :deep(.input-label) {
     display: none;
   }

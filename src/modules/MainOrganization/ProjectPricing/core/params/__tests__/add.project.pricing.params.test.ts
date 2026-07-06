@@ -3,6 +3,7 @@ import { ProjectPricingDiscountEnum } from '../../constant/project.pricing.disco
 import AddProjectPricingParams from '../add.project.pricing.params';
 
 const payload = {
+  project_id: 4,
   total_tax: 14,
   discount_type: ProjectPricingDiscountEnum.FIXED,
   discount_value: 250,

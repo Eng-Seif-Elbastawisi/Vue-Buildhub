@@ -9,15 +9,42 @@ const mockController = vi.hoisted(() => ({
   errorMessage: { value: null as string | null },
 }));
 
+const mockProjectItemController = vi.hoisted(() => ({
+  fetchList: vi.fn(),
+  listState: { value: { data: [] } },
+}));
+
 vi.mock('../../controllers/project.pricing.controller', () => ({
   default: { getInstance: () => mockController },
 }));
 
+vi.mock(
+  '@/modules/MainOrganization/ProjectItem/presentation/controllers/project.Item.controller',
+  () => ({
+    default: { getInstance: () => mockProjectItemController },
+  }),
+);
+
 vi.mock('vue-router', () => ({
-  useRoute: () => ({ fullPath: '/project-pricing/add' }),
+  onBeforeRouteLeave: vi.fn(),
+  useRoute: () => ({ fullPath: '/project-pricing/add', query: { project_id: '4' } }),
+  useRouter: () => ({
+    push: vi.fn(),
+    replace: vi.fn(),
+    resolve: vi.fn(),
+  }),
+  createRouter: vi.fn(() => ({
+    install: vi.fn(),
+    push: vi.fn(),
+    resolve: vi.fn(),
+    afterEach: vi.fn(),
+    beforeEach: vi.fn(),
+  })),
+  createWebHistory: vi.fn(),
 }));
 
 const params = new AddProjectPricingParams({
+  project_id: 4,
   total_tax: 14,
   discount_type: ProjectPricingDiscountEnum.FIXED,
   discount_value: 250,
@@ -40,11 +67,13 @@ describe('ProjectPricingAdd', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockController.create.mockResolvedValue({});
+    mockProjectItemController.fetchList.mockResolvedValue({});
     mockController.errorMessage.value = null;
   });
 
   it('creates project pricing with emitted form params', async () => {
     const wrapper = mount(ProjectPricingAdd, { global });
+    await flushPromises();
 
     await wrapper.find('.pricing-form-stub').trigger('click');
     await wrapper.find('button').trigger('click');
