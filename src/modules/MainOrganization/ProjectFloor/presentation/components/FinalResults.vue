@@ -503,6 +503,7 @@
     cursor: pointer;
     font-family: 'Medium';
     transition: all 0.25s ease;
+    font-size: var(--md-size);
 
     &:hover,
     &.active {

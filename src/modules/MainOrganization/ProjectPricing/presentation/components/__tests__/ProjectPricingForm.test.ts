@@ -8,24 +8,6 @@ import ProjectPricingForm from '../ProjectPricingForm.vue';
 
 vi.mock('vue-router', () => ({ onBeforeRouteLeave: vi.fn() }));
 
-const SelectStub = {
-  props: ['id'],
-  emits: ['update:modelValue'],
-  template:
-    '<button :class="id" @click="$emit(\'update:modelValue\', optionFor(id))">select</button>',
-  methods: {
-    optionFor(id: string) {
-      const options: Record<string, { id: number; title: string }> = {
-        'project-pricing-discount-type': {
-          id: ProjectPricingDiscountEnum.FIXED,
-          title: 'Fixed',
-        },
-      };
-      return options[id];
-    },
-  },
-};
-
 describe('ProjectPricingForm', () => {
   beforeEach(() => {
     setActivePinia(createPinia());
@@ -33,20 +15,21 @@ describe('ProjectPricingForm', () => {
 
   it('emits complete pricing params from form inputs', async () => {
     const wrapper = mount(ProjectPricingForm, {
+      props: { projectId: 4 },
       global: {
         mocks: { $t: (key: string) => key },
-        stubs: { UpdatedCustomInputSelect: SelectStub },
       },
     });
 
     await wrapper.find<HTMLInputElement>('#project-pricing-total-tax').setValue('14');
-    await wrapper.find('.project-pricing-discount-type').trigger('click');
+    await wrapper.findAll('.discount-toggle button')[0].trigger('click');
     await wrapper.find<HTMLInputElement>('#project-pricing-discount-value').setValue('250');
 
     const emissions = wrapper.emitted('updateData') as unknown[][];
     const params = emissions.at(-1)?.[0] as AddProjectPricingParams;
 
     expect(params.toMap()).toEqual({
+      project_id: 4,
       total_tax: 14,
       discount_type: ProjectPricingDiscountEnum.FIXED,
       discount_value: 250,
@@ -58,14 +41,13 @@ describe('ProjectPricingForm', () => {
       props: { item: ProjectPricingShowModel.example, loading: true },
       global: {
         mocks: { $t: (key: string) => key },
-        stubs: { UpdatedCustomInputSelect: SelectStub },
       },
     });
 
     expect(wrapper.find<HTMLInputElement>('#project-pricing-total-tax').element.value).toBe(
       String(ProjectPricingShowModel.example.total_tax),
     );
-    expect(wrapper.find('.form-fields.disabled').exists()).toBe(true);
+    expect(wrapper.find('.pricing-summary-card.disabled').exists()).toBe(true);
     expect(wrapper.emitted('updateData')?.[0]?.[0]).toBeInstanceOf(AddProjectPricingParams);
   });
 });

@@ -8,9 +8,10 @@
 
   import ProjectItemForm from './ProjectItemForm.vue';
   import ProjectItemTable from './ProjectItemIndex.vue';
-  import ProjectItemModel from '../../core/models/project.Item.model';
+  import type ProjectItemModel from '../../core/models/project.Item.model';
   import ProjectFloorShow from '../../../ProjectFloor/presentation/components/ProjectFloorShow.vue';
-import ProjectSteps from '@/modules/MainOrganization/Project/presentation/components/ProjectSteps.vue';
+  import ProjectSteps from '@/modules/MainOrganization/Project/presentation/components/ProjectSteps.vue';
+  import ProjectPricingAdd from '@/modules/MainOrganization/ProjectPricing/presentation/components/ProjectPricingAdd.vue';
 
   const controller = ProjectItemController.getInstance();
   const route = useRoute();
@@ -40,18 +41,14 @@ import ProjectSteps from '@/modules/MainOrganization/Project/presentation/compon
       state?.response?.data ??
       [];
 
-    const items = Array.isArray(data)
-      ? data
-      : Array.isArray(data?.data)
-        ? data.data
-        : [];
+    const items = Array.isArray(data) ? data : Array.isArray(data?.data) ? data.data : [];
 
     return items as ProjectItemModel[];
   });
 
   const fetchProjectItems = async () => {
     await controller.fetchList(
-      new IndexProjectItemParams('', 1, 100, 0, projectId.value),
+      new IndexProjectItemParams('', 1, 100, 0, undefined, projectId.value),
     );
   };
 
@@ -93,6 +90,7 @@ import ProjectSteps from '@/modules/MainOrganization/Project/presentation/compon
     <div v-if="controller.errorMessage.value" class="error">
       {{ controller.errorMessage.value }}
     </div>
+    <ProjectPricingAdd :project-id="projectId" :form-key="formKey" :loading="loading" />
   </div>
 </template>
 

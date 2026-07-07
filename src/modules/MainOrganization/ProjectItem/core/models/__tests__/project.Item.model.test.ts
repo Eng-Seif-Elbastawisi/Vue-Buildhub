@@ -9,7 +9,10 @@ const itemJson = {
   item_id: 9,
   item_id_title: 'Concrete',
   pricing_method: ProjectItemPriceEnum.GENERAL_ITEM,
-  project_floor_id: 2,
+  final_price: 450,
+  project: { id: 4, title: 'Office Tower' },
+  project_floor: { id: 2, floor_number: 1 },
+  project_floor_space: { id: 6, space: { title: 'Lobby' } },
 };
 
 describe('ProjectItemModel', () => {
@@ -20,10 +23,14 @@ describe('ProjectItemModel', () => {
       id: 7,
       price: 150,
       quantity: 3,
+      final_price: 450,
       pricing_method: ProjectItemPriceEnum.GENERAL_ITEM,
       project_floor_id: 2,
+      project_floor_number: 1,
+      project_floor_space_id: 6,
+      project_floor_space_title: 'Lobby',
     });
-    expect(model.item_id).toMatchObject({ id: 9, title: 'Concrete' });
+    expect(model.item).toMatchObject({ id: 9, title: 'Concrete' });
     expect(Object.isFrozen(model)).toBe(true);
   });
 
