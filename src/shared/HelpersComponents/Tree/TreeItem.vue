@@ -2,6 +2,7 @@
   import AddBranch from '@/shared/icons/AddBranch.vue';
   import FolderIcon from '@/shared/icons/FolderIcon.vue';
   import { ref } from 'vue';
+  import { useI18n } from 'vue-i18n';
   export interface TreeNode {
     id: number | string;
     label: string;
@@ -11,8 +12,12 @@
     node: TreeNode;
   }>();
   const emit = defineEmits(['handleItemClick']);
+  const { t, te } = useI18n();
 
   const isOpen = ref(false);
+  const translateIfExists = (value: string) => {
+    return te(value) ? t(value) : value;
+  };
 
   const hasChildren = props.node.children && props.node.children.length > 0;
 
@@ -32,12 +37,12 @@
         <AddBranch />
         <FolderIcon />
         <span>
-          {{ node.label }}
+          {{ translateIfExists(node.label) }}
         </span>
       </span>
       <span v-else @click="$emit('handleItemClick', node)"
         >📄
-        {{ node.label }}
+        {{ translateIfExists(node.label) }}
       </span>
     </div>
 

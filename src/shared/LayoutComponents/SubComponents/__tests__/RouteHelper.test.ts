@@ -15,14 +15,14 @@ describe('buildBreadcrumb', () => {
     const route = makeRoute({ country_code: 'eg' }, []);
     const router = makeRouter([]);
     const crumbs = buildBreadcrumb(route, router);
-    expect(crumbs[0]).toEqual({ label: 'Home', url: '/' });
+    expect(crumbs[0]).toEqual({ label: 'home', url: '/' });
   });
 
   it('should use "/" as the Home url when no country_code param exists', () => {
     const route = makeRoute({}, []);
     const router = makeRouter([]);
     const crumbs = buildBreadcrumb(route, router);
-    expect(crumbs[0]).toEqual({ label: 'Home', url: '/' });
+    expect(crumbs[0]).toEqual({ label: 'home', url: '/' });
   });
 
   it('should add breadcrumb entries for matched routes that have meta.breadcrumb', () => {

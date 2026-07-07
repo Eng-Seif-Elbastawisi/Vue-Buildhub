@@ -26,7 +26,7 @@
     <div class="breadcrump">
       <Breadcrumb :model="items">
         <template #item="{ item }">
-          <span @click="$router.push(item.url!)">{{ item.label }}</span>
+          <span @click="$router.push(item.url!)">{{ $t(item.label) }}</span>
         </template>
       </Breadcrumb>
     </div>

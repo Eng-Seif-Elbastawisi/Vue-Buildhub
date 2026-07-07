@@ -21,9 +21,9 @@
   // const date = ref();
 
   const headers: TableHeader[] = [
-    { key: 'name', label: 'Name', width: '50%', sortable: true },
+    { key: 'name', label: 'name', width: '50%', sortable: true },
     // { key: 'Specialization', label: 'Specialization', width: '30%' },
-    { key: 'phone', label: 'Phone', width: '50%' },
+    { key: 'phone', label: 'phone', width: '50%' },
     // { key: 'materials', label: 'Materials', width: '20%' },
   ];
 
@@ -220,7 +220,7 @@
             striped
           >
             <template #cell-name="{ item }">
-              {{ item.name ?? 'N/A' }}
+              {{ item.name ?? $t('not_available') }}
             </template>
             <template #actions="{ item }">
               <div class="row-actions">

@@ -224,7 +224,7 @@
     <div class="form-grid form-grid--three">
       <div class="field-block">
         <div class="field-label-row">
-          <span class="label-icon">👷</span>
+          <!-- <span class="label-icon">👷</span> -->
           <label class="field-label" for="engineer_id">
             {{ $t('project.preview_engineer') }}
           </label>
@@ -242,7 +242,7 @@
 
       <div class="field-block">
         <div class="field-label-row">
-          <span class="label-icon">📅</span>
+          <!-- <span class="label-icon">📅</span> -->
           <label class="field-label" for="preview_date">
             {{ $t('project.preview_date') }}
           </label>
@@ -263,7 +263,7 @@
 
       <div class="field-block">
         <div class="field-label-row">
-          <span class="label-icon">⏰</span>
+          <!-- <span class="label-icon">⏰</span> -->
           <label class="field-label" for="preview_time">
             {{ $t('project.preview_time') }}
           </label>
@@ -285,7 +285,7 @@
 
       <div class="field-block">
         <div class="field-label-row">
-          <span class="label-icon">🔗</span>
+          <!-- <span class="label-icon">🔗</span> -->
           <label class="field-label" for="site_link">
             {{ $t('project.site_link') }}
           </label>
@@ -303,7 +303,7 @@
 
       <div class="field-block col-span-3">
         <div class="field-label-row">
-          <span class="label-icon">📍</span>
+          <!-- <span class="label-icon">📍</span> -->
           <label class="field-label" for="address">
             {{ $t('address') }}
           </label>

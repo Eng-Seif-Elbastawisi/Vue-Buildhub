@@ -6,23 +6,23 @@
   const steps = [
     {
       id: 1,
-      title: 'Project Data',
-      description: 'Basic project information',
+      titleKey: 'Project.steps.project_data',
+      descriptionKey: 'Project.steps.project_data_description',
     },
     {
       id: 2,
-      title: 'Project Preview',
-      description: 'Engineer and site visit details',
+      titleKey: 'Project.steps.project_preview',
+      descriptionKey: 'Project.steps.project_preview_description',
     },
     {
       id: 3,
-      title: 'Project Floors',
-      description: 'Project floors',
+      titleKey: 'Project.steps.project_floors',
+      descriptionKey: 'Project.steps.project_floors_description',
     },
     {
       id: 4,
-      title: 'Project Items',
-      description: 'Project items',
+      titleKey: 'Project.steps.project_items',
+      descriptionKey: 'Project.steps.project_items_description',
     },
   ];
 </script>
@@ -44,8 +44,8 @@
       </div>
 
       <div class="project-steps__content">
-        <h4>{{ step.title }}</h4>
-        <p>{{ step.description }}</p>
+        <h4>{{ $t(step.titleKey) }}</h4>
+        <p>{{ $t(step.descriptionKey) }}</p>
       </div>
 
       <div

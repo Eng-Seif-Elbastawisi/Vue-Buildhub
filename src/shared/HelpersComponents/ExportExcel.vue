@@ -1,10 +1,13 @@
 <!-- ExportExcel.vue -->
 <script lang="ts" setup>
   import { ref, computed, watch, nextTick } from 'vue';
+  import { useI18n } from 'vue-i18n';
   import * as XLSX from 'xlsx';
   import { saveAs } from 'file-saver';
   // import ExportIcon from '@/shared/icons/ExportIcon.vue';
   import SaveIcon from '@/shared/icons/SaveIcon.vue';
+
+  const { t } = useI18n();
 
   const props = defineProps({
     data: {
@@ -156,7 +159,7 @@
       emit('export-start');
 
       if (!hasData.value) {
-        throw new Error('No data available to export');
+        throw new Error(t('export.no_data'));
       }
 
       const columnsToExport = props.showAdvanced
@@ -164,7 +167,7 @@
         : availableColumns.value;
 
       if (columnsToExport.length === 0) {
-        throw new Error('Please select at least one column to export');
+        throw new Error(t('export.select_column'));
       }
 
       // Prepare data for export
@@ -223,7 +226,7 @@
       }
 
       // Show success message
-      const message = `Successfully exported ${props.data.length} records to ${filename}`;
+      const message = t('export.success', { count: props.data.length, filename });
       showToast(message, 'success');
 
       emit('export-success', {
@@ -233,7 +236,7 @@
       });
     } catch (error: any) {
       console.error('Export failed:', error);
-      showToast(error.message || 'Failed to export data', 'error');
+      showToast(error.message || t('export.failed'), 'error');
       emit('export-error', error);
     } finally {
       loading.value = false;

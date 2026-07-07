@@ -56,22 +56,22 @@ export const ErrorType = {
 /**
  * Map ErrorType to user-friendly messages
  */
-export const ERROR_TYPE_MESSAGES: Record<typeof ErrorType[keyof typeof ErrorType], string> = {
-  [ErrorType.serviceSide]: 'Server error occurred',
-  [ErrorType.networkConnection]: 'No internet connection',
-  [ErrorType.dataEmpty]: 'No data available',
-  [ErrorType.dataDirty]: 'Data could not be processed',
-  [ErrorType.unknown]: 'An unexpected error occurred',
-  [ErrorType.badRequest]: 'Invalid request',
-  [ErrorType.unAuthorized]: 'Please log in again',
-  [ErrorType.methodNotAllowed]: 'Operation not allowed',
-  [ErrorType.timeout]: 'Request timed out',
-  [ErrorType.cancelled]: 'Request was cancelled',
-  [ErrorType.rateLimit]: 'Too many requests',
-  [ErrorType.validation]: 'Please check your input',
-  [ErrorType.forbidden]: 'Access denied',
-  [ErrorType.notFound]: 'Not found',
-  [ErrorType.conflict]: 'A conflict occurred',
+export const ERROR_TYPE_MESSAGES: Record<(typeof ErrorType)[keyof typeof ErrorType], string> = {
+  [ErrorType.serviceSide]: 'error.server',
+  [ErrorType.networkConnection]: 'error.no_internet',
+  [ErrorType.dataEmpty]: 'no_data',
+  [ErrorType.dataDirty]: 'error.data_dirty',
+  [ErrorType.unknown]: 'error.unexpected',
+  [ErrorType.badRequest]: 'error.invalid_request',
+  [ErrorType.unAuthorized]: 'error.login_again',
+  [ErrorType.methodNotAllowed]: 'error.operation_not_allowed',
+  [ErrorType.timeout]: 'request_timed_out',
+  [ErrorType.cancelled]: 'request_was_cancelled',
+  [ErrorType.rateLimit]: 'too_many_requests',
+  [ErrorType.validation]: 'error.check_input',
+  [ErrorType.forbidden]: 'error.access_denied',
+  [ErrorType.notFound]: 'error.not_found',
+  [ErrorType.conflict]: 'error.conflict',
 };
 
 /**
@@ -115,7 +115,7 @@ export class ErrorModel {
       code?: string;
       validationErrors?: Record<string, string[]>;
       retryFn?: () => Promise<void>;
-    }
+    },
   ) {
     this.title = title;
     this.type = type;
@@ -142,7 +142,10 @@ export class ErrorModel {
   /**
    * Create error model from exception
    */
-  static fromException(error: Error, type: (typeof ErrorType)[keyof typeof ErrorType] = ErrorType.unknown): ErrorModel {
+  static fromException(
+    error: Error,
+    type: (typeof ErrorType)[keyof typeof ErrorType] = ErrorType.unknown,
+  ): ErrorModel {
     return new ErrorModel(error.message, type);
   }
 
@@ -150,46 +153,30 @@ export class ErrorModel {
    * Create a network connection error
    */
   static networkError(retryFn?: () => Promise<void>): ErrorModel {
-    return new ErrorModel(
-      'No internet connection',
-      ErrorType.networkConnection,
-      { retryFn }
-    );
+    return new ErrorModel('error.no_internet', ErrorType.networkConnection, { retryFn });
   }
 
   /**
    * Create a timeout error
    */
   static timeoutError(retryFn?: () => Promise<void>): ErrorModel {
-    return new ErrorModel(
-      'Request timed out',
-      ErrorType.timeout,
-      { retryFn }
-    );
+    return new ErrorModel('request_timed_out', ErrorType.timeout, { retryFn });
   }
 
   /**
    * Create an empty data error
    */
   static emptyError(message?: string): ErrorModel {
-    return new ErrorModel(
-      message || 'No data available',
-      ErrorType.dataEmpty
-    );
+    return new ErrorModel(message || 'no_data', ErrorType.dataEmpty);
   }
 
   /**
    * Create a validation error
    */
-  static validationError(
-    errors: Record<string, string[]>,
-    message?: string
-  ): ErrorModel {
-    return new ErrorModel(
-      message || 'Please check your input',
-      ErrorType.validation,
-      { validationErrors: errors }
-    );
+  static validationError(errors: Record<string, string[]>, message?: string): ErrorModel {
+    return new ErrorModel(message || 'error.check_input', ErrorType.validation, {
+      validationErrors: errors,
+    });
   }
 
   /**
@@ -199,7 +186,9 @@ export class ErrorModel {
     return {
       title: this.title,
       type: this.type,
-      typeName: Object.keys(ErrorType).find(key => ErrorType[key as keyof typeof ErrorType] === this.type),
+      typeName: Object.keys(ErrorType).find(
+        (key) => ErrorType[key as keyof typeof ErrorType] === this.type,
+      ),
       details: this.details,
       code: this.code,
       validationErrors: this.validationErrors,

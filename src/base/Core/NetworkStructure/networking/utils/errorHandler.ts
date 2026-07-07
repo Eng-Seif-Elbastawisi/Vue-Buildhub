@@ -1,8 +1,5 @@
-import { DataFailed } from "@/base/Core/NetworkStructure/Resources/dataState/dataState";
-import {
-  ErrorModel,
-  ErrorType,
-} from "@/base/Core/NetworkStructure/Resources/errors/errorModel";
+import { DataFailed } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
+import { ErrorModel, ErrorType } from '@/base/Core/NetworkStructure/Resources/errors/errorModel';
 
 class ErrorHandler {
   static handleError<T>(e: any) {
@@ -13,53 +10,32 @@ class ErrorHandler {
       }
       if (e.response.status == 400) {
         return new DataFailed<T>({
-          error: new ErrorModel(
-            errorMessage ?? "تاكد من البيانات المدخلة",
-            ErrorType.dataDirty,
-          ),
+          error: new ErrorModel(errorMessage ?? 'error.check_input', ErrorType.dataDirty),
         });
       } else if (e.response.status == 401) {
         return new DataFailed<T>({
-          error: new ErrorModel(
-            errorMessage ?? "يجب عليكم تسجيل الدخول",
-            ErrorType.unknown,
-          ),
+          error: new ErrorModel(errorMessage ?? 'error.login_again', ErrorType.unknown),
         });
       } else if (e.response.status == 302) {
         return new DataFailed<T>({
-          error: new ErrorModel(
-            errorMessage ?? "يجب عليكم تسجيل الدخول",
-            ErrorType.unknown,
-          ),
+          error: new ErrorModel(errorMessage ?? 'error.login_again', ErrorType.unknown),
         });
       } else if (e.response.status == 500) {
         return new DataFailed<T>({
-          error: new ErrorModel(
-            errorMessage ?? "حدث خطأ ما حاول مره اخري",
-            ErrorType.serviceSide,
-          ),
+          error: new ErrorModel(errorMessage ?? 'error.retry_later', ErrorType.serviceSide),
         });
       } else if (e.response.status == 404) {
         return new DataFailed<T>({
-          error: new ErrorModel(
-            errorMessage ?? "حدث خطأ تاكد من المسار",
-            ErrorType.unknown,
-          ),
+          error: new ErrorModel(errorMessage ?? 'error.route_not_found', ErrorType.unknown),
         });
       } else {
         return new DataFailed<T>({
-          error: new ErrorModel(
-            errorMessage ?? "حدث خطأ ما حاول مره اخري",
-            ErrorType.unknown,
-          ),
+          error: new ErrorModel(errorMessage ?? 'error.retry_later', ErrorType.unknown),
         });
       }
     }
     return new DataFailed<T>({
-      error: new ErrorModel(
-        errorMessage ?? "حدث خطأ ما حاول مره اخري",
-        ErrorType.serviceSide,
-      ),
+      error: new ErrorModel(errorMessage ?? 'error.retry_later', ErrorType.serviceSide),
     });
   }
 }
