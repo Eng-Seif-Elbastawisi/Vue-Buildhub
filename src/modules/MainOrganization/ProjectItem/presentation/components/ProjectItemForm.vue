@@ -10,7 +10,13 @@
   import IndexItemParams from '@/modules/shared/Item/core/params/index.Item.params';
   import GeneralItemController from '@/modules/shared/Item/presentation/controllers/Item.controller';
 
-  import AddProjectItemParams from '../../core/params/add.project.Item.params';
+  import IndexDepartmentParams from '@/modules/shared/Department/core/params/index.department.params';
+  import DepartmentController from '@/modules/shared/Department/presentation/controllers/department.controller';
+
+  import AddProjectItemParams, {
+    type ProjectItemPayload,
+  } from '../../core/params/add.project.Item.params';
+
   import { ProjectItemPriceEnum } from '../../core/constant/project.item.Price.enum';
   import type ProjectItemShowModel from '../../core/models/project.Item.show.model';
 
@@ -20,7 +26,6 @@
 
   const emit = defineEmits<{
     updateData: [params: AddProjectItemParams];
-    addItem: [];
   }>();
 
   const props = defineProps<{
@@ -31,26 +36,36 @@
     projectItem?: number;
   }>();
 
+  type LocalProjectItemRow = ProjectItemPayload & {
+    local_id: number;
+    item_title: string;
+    pricing_method_title: string;
+    related_title: string;
+    total?: number;
+  };
+
   const formStore = useFormsStore();
   const { t } = useI18n();
 
   const generalItemController = GeneralItemController.getInstance();
   const generalItemParams = new IndexItemParams('', 1, 100, 0);
 
+  const departmentController = DepartmentController.getInstance();
+  const departmentParams = new IndexDepartmentParams('', 1, 100, 0);
+
   const projectFloorController = ProjectFloorController.getInstance();
   const projectFloorParams = new IndexProjectFloorParams('', 1, 100, 0, null, props.project);
 
+  const selectedDepartment = ref<TitleInterface<string | number> | null>(null);
   const selectedItem = ref<TitleInterface<string | number> | null>(null);
   const pricingMethod = ref<TitleInterface<string | number> | null>(null);
-
-  // هنا id هيكون project_floor_id الحقيقي، والـ title هيكون floor_number مترجم
   const selectedFloorNumber = ref<TitleInterface<number> | null>(null);
   const selectedSpace = ref<TitleInterface<number> | null>(null);
 
   const price = ref<number>();
   const quantity = ref<number>(1);
+  const localItems = ref<LocalProjectItemRow[]>([]);
 
-  // بنستخدمه عشان لو floor_number راجع 0 يظهر عادي بعد ما floors تتحمل
   const pendingFloorNumber = ref<number | string | null>(null);
 
   const pricingMethodOptions = Object.entries(ProjectItemPriceEnum).map(([key, id]) => ({
@@ -96,7 +111,6 @@
     return option?.title ?? String(floorNumber);
   };
 
-  // ده هيعرض الأدوار الراجعة من الـ API بس
   const projectFloorOptions = computed<TitleInterface<number>[]>(() => {
     return getProjectFloors()
       .filter((floor: any) => floor?.id !== undefined && floor?.id !== null)
@@ -181,11 +195,26 @@
   };
 
   const itemOptionFromModel = (item?: ProjectItemShowModel): TitleInterface<number> | null => {
-    if (!item?.item_id) return null;
+    const apiItem = (item as any)?.item_id ?? (item as any)?.item;
+
+    if (!apiItem) return null;
 
     return {
-      id: Number(item.item_id.id),
-      title: item.item_id.title,
+      id: Number(apiItem.id),
+      title: apiItem.title,
+    };
+  };
+
+  const departmentOptionFromModel = (
+    item?: ProjectItemShowModel,
+  ): TitleInterface<number> | null => {
+    const department = (item as any)?.department ?? (item as any)?.item?.department;
+
+    if (!department) return null;
+
+    return {
+      id: Number(department.id),
+      title: department.title ?? department.name ?? `#${department.id}`,
     };
   };
 
@@ -217,6 +246,10 @@
 
   const total = computed(() => {
     return Number(price.value ?? 0) * Number(quantity.value ?? 0);
+  });
+
+  const localItemsTotal = computed(() => {
+    return localItems.value.reduce((sum, item) => sum + Number(item.total ?? 0), 0);
   });
 
   const resetFieldsByPricingMethod = () => {
@@ -261,41 +294,65 @@
     updateData();
   };
 
+  function buildCurrentItem(): LocalProjectItemRow | null {
+    if (!selectedItem.value) return null;
+    if (!pricingMethod.value) return null;
+    if (!quantity.value) return null;
+
+    if ((isGeneralItem.value || isFullFloorRelated.value) && !price.value) return null;
+    if (isSpaceRelated.value && !selectedSpace.value) return null;
+    if (isFullFloorRelated.value && !selectedFloorNumber.value) return null;
+
+    return {
+      local_id: Date.now(),
+      item_id: numericId(selectedItem.value.id),
+      item_title: selectedItem.value.title,
+      pricing_method: selectedPricingMethodId.value,
+      pricing_method_title: pricingMethod.value.title,
+      quantity: quantity.value,
+
+      price: isSpaceRelated.value ? undefined : price.value,
+
+      project_floor_space_id: isSpaceRelated.value ? selectedProjectFloorSpaceId.value : undefined,
+
+      project_floor_id: isFullFloorRelated.value ? selectedProjectFloorId.value : undefined,
+
+      related_title: isSpaceRelated.value
+        ? (selectedSpace.value?.title ?? '-')
+        : isFullFloorRelated.value
+          ? (selectedFloorNumber.value?.title ?? '-')
+          : '-',
+
+      total: isSpaceRelated.value ? undefined : total.value,
+    };
+  }
+
   function updateData() {
     emit(
       'updateData',
       new AddProjectItemParams({
         project_id: props.project,
-        item_id: numericId(selectedItem.value?.id),
-        pricing_method: selectedPricingMethodId.value,
-        quantity: quantity.value,
-
-        price: isSpaceRelated.value ? undefined : price.value,
-
-        project_floor_space_id: isSpaceRelated.value
-          ? selectedProjectFloorSpaceId.value
-          : undefined,
-
-        project_floor_id: isFullFloorRelated.value ? selectedProjectFloorId.value : undefined,
+        department_id: numericId(selectedDepartment.value?.id),
+        items: localItems.value.map((item) => ({
+          item_id: item.item_id,
+          price: item.price,
+          quantity: item.quantity,
+          pricing_method: item.pricing_method,
+          project_floor_id: item.project_floor_id,
+          project_floor_space_id: item.project_floor_space_id,
+        })),
       }),
     );
   }
 
-  function addItem() {
-    updateData();
+  function addItemToList() {
+    const item = buildCurrentItem();
 
-    if (!selectedItem.value) return;
-    if (!pricingMethod.value) return;
-    if (!quantity.value) return;
+    if (!selectedDepartment.value) return;
+    if (!item) return;
 
-    if ((isGeneralItem.value || isFullFloorRelated.value) && !price.value) return;
-    if (isSpaceRelated.value && !selectedSpace.value) return;
-    if (isFullFloorRelated.value && !selectedFloorNumber.value) return;
+    localItems.value.push(item);
 
-    emit('addItem');
-  }
-
-  function resetForm() {
     selectedItem.value = null;
     pricingMethod.value = null;
     selectedFloorNumber.value = null;
@@ -303,6 +360,25 @@
     pendingFloorNumber.value = null;
     price.value = undefined;
     quantity.value = 1;
+
+    updateData();
+  }
+
+  function removeItem(localId: number) {
+    localItems.value = localItems.value.filter((item) => item.local_id !== localId);
+    updateData();
+  }
+
+  function resetForm() {
+    selectedDepartment.value = null;
+    selectedItem.value = null;
+    pricingMethod.value = null;
+    selectedFloorNumber.value = null;
+    selectedSpace.value = null;
+    pendingFloorNumber.value = null;
+    price.value = undefined;
+    quantity.value = 1;
+    localItems.value = [];
     updateData();
   }
 
@@ -328,6 +404,7 @@
     (item) => {
       if (!item) return;
 
+      selectedDepartment.value = departmentOptionFromModel(item);
       selectedItem.value = itemOptionFromModel(item);
 
       pricingMethod.value = item.pricing_method
@@ -341,8 +418,6 @@
       const projectFloor = (item as any).project_floor ?? (item as any).projectFloor;
       const projectFloorSpaceId = (item as any).project_floor_space_id;
       const projectFloorId = (item as any).project_floor_id ?? projectFloor?.id;
-
-      // مهم: هنا بنقرأ floor_number حتى لو قيمته 0
       const floorNumber = (item as any).floor_number ?? projectFloor?.floor_number;
 
       pendingFloorNumber.value = floorNumber ?? null;
@@ -376,6 +451,7 @@
       selectedFloorNumber.value = projectFloorOptionFromProjectFloorId(
         selectedFloorNumber.value.id,
       );
+
       updateData();
     },
     { deep: true },
@@ -407,6 +483,21 @@
 
     <div class="add-panel" :class="{ disabled: loading }">
       <div class="form-row">
+        <div class="field-box field-box--department">
+          <label class="mini-label">{{ $t('department.title') }}</label>
+
+          <UpdatedCustomInputSelect
+            id="department_id"
+            v-model="selectedDepartment"
+            :controller="departmentController"
+            :params="departmentParams"
+            :placeholder="$t('department.placeholder')"
+            :reload="true"
+            required
+            @update:model-value="updateData"
+          />
+        </div>
+
         <div class="field-box field-box--method">
           <label class="mini-label">{{ $t('project_item.pricing_method_label') }}</label>
 
@@ -474,7 +565,7 @@
         </div>
 
         <div v-if="isGeneralItem || isFullFloorRelated" class="field-box field-box--price">
-          <label class="mini-label">{{ $t('project_item.price_label') }} </label>
+          <label class="mini-label">{{ $t('project_item.price_label') }}</label>
 
           <input
             v-model.number="price"
@@ -492,10 +583,50 @@
           <input class="field-input readonly-input" :value="total" readonly />
         </div>
 
-        <button type="button" class="add-btn" :disabled="loading" @click="addItem">
-          <span v-if="loading" class="loader"></span>
-          <span v-else>{{ $t('general.add') }}</span>
+        <button type="button" class="add-btn" :disabled="loading" @click="addItemToList">
+          {{ $t('general.add') }}
         </button>
+      </div>
+
+      <div class="local-items-table">
+        <div class="local-table-summary">
+          <strong>{{ $t('project_item.selected_items') || 'Selected Items' }}</strong>
+          <span>{{ localItems.length }}</span>
+        </div>
+
+        <div v-if="!localItems.length" class="empty-local-row">
+          {{ $t('project_item.no_items') }}
+        </div>
+
+        <div v-else class="local-table">
+          <div class="local-table-head">
+            <span>{{ $t('project_item.item_label') }}</span>
+            <span>{{ $t('project_item.related_label') }}</span>
+            <span>{{ $t('project_item.pricing_method_label') }}</span>
+            <span>{{ $t('project_item.quantity_label') }}</span>
+            <span>{{ $t('project_item.price_label') }}</span>
+            <span>{{ $t('project_item.total_label') }}</span>
+            <span>{{ $t('general.actions') }}</span>
+          </div>
+
+          <div v-for="item in localItems" :key="item.local_id" class="local-table-row">
+            <span>{{ item.item_title }}</span>
+            <span>{{ item.related_title }}</span>
+            <span>{{ item.pricing_method_title }}</span>
+            <span>{{ item.quantity }}</span>
+            <span>{{ item.price ?? '-' }}</span>
+            <span>{{ item.total ?? '-' }}</span>
+
+            <button type="button" class="remove-btn" @click="removeItem(item.local_id)">
+              {{ $t('Delete') }}
+            </button>
+          </div>
+        </div>
+
+        <div class="local-total">
+          <span>{{ $t('project_item.total_label') }}</span>
+          <strong>{{ localItemsTotal.toLocaleString() }}</strong>
+        </div>
       </div>
     </div>
   </section>
@@ -522,22 +653,6 @@
       color: #111827;
       font-family: 'Bold';
       font-size: 1rem;
-    }
-  }
-
-  .preview-check {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.45rem;
-    margin-top: 0.45rem;
-    color: #111827;
-    font-family: 'Medium';
-    font-size: var(--sm-size);
-
-    input {
-      width: 16px;
-      height: 16px;
-      accent-color: #2563eb;
     }
   }
 
@@ -621,14 +736,109 @@
     }
   }
 
+  .local-items-table {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1rem;
+  }
+
+  .local-table-summary,
+  .local-total {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    border-radius: 14px;
+    background: #fff;
+    color: #111827;
+    font-family: 'Bold';
+
+    span {
+      color: #64748b;
+    }
+
+    strong {
+      color: var(--PrimaryColor);
+    }
+  }
+
+  .empty-local-row {
+    padding: 1rem;
+    border: 1px dashed rgba(148, 163, 184, 0.45);
+    border-radius: 14px;
+    background: #fff;
+    color: #64748b;
+    text-align: center;
+    font-family: 'Medium';
+  }
+
+  .local-table {
+    overflow: hidden;
+    border: 1px solid rgba(214, 207, 198, 0.75);
+    border-radius: 14px;
+    background: #fff;
+  }
+
+  .local-table-head,
+  .local-table-row {
+    display: grid;
+    grid-template-columns:
+      minmax(160px, 1.2fr)
+      minmax(130px, 1fr)
+      minmax(130px, 1fr)
+      minmax(90px, 0.6fr)
+      minmax(100px, 0.7fr)
+      minmax(100px, 0.7fr)
+      minmax(90px, 0.6fr);
+    gap: 0.65rem;
+    align-items: center;
+  }
+
+  .local-table-head {
+    padding: 0.75rem 1rem;
+    background: #f8fafc;
+    color: #1e293b;
+    font-family: 'Bold';
+    font-size: 0.75rem;
+  }
+
+  .local-table-row {
+    padding: 0.75rem 1rem;
+    border-top: 1px solid rgba(214, 207, 198, 0.75);
+    color: #334155;
+    font-family: 'Medium';
+    font-size: var(--sm-size);
+  }
+
+  .remove-btn {
+    min-height: 34px;
+    border: 1px solid rgba(239, 68, 68, 0.35);
+    border-radius: 9px;
+    background: #fff;
+    color: #ef4444;
+    cursor: pointer;
+    font-family: 'Bold';
+  }
+
   @media (max-width: 1200px) {
-    .form-row {
+    .form-row,
+    .local-table-head,
+    .local-table-row {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
 
   @media (max-width: 768px) {
     .form-row {
+      grid-template-columns: 1fr;
+    }
+
+    .local-table-head {
+      display: none;
+    }
+
+    .local-table-row {
       grid-template-columns: 1fr;
     }
   }

@@ -76,6 +76,17 @@
     return total < 0 ? 0 : total;
   });
 
+  const displayedFinalTotal = computed(() => {
+    if (
+      props.item?.price_after_discount !== undefined &&
+      props.item?.price_after_discount !== null
+    ) {
+      return Number(props.item.price_after_discount);
+    }
+
+    return finalTotal.value;
+  });
+
   const optionFromId = (id?: number | string): TitleInterface<string | number> | null => {
     if (id === undefined || id === null) return null;
 
@@ -121,11 +132,13 @@
       if (!item) {
         discountMode.value = 'value';
         discountType.value = valueDiscountOption.value;
+        totalTax.value = 0;
+        discountValue.value = 0;
         updateData();
         return;
       }
 
-      totalTax.value = item.total_tax ?? 0;
+      totalTax.value = Number(item.total_tax ?? 0);
 
       discountType.value = item.discount_type
         ? optionFromId(item.discount_type)
@@ -135,7 +148,7 @@
         discountMode.value = 'value';
       }
 
-      discountValue.value = item.discount_value ?? 0;
+      discountValue.value = Number(item.discount_value ?? 0);
 
       updateData();
     },
@@ -229,7 +242,7 @@
         </span>
 
         <strong class="summary-value">
-          {{ formatMoney(finalTotal) }}
+          {{ formatMoney(displayedFinalTotal) }}
         </strong>
       </article>
     </div>
