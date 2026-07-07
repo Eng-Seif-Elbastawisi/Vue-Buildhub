@@ -6,7 +6,7 @@ export default class IndexEmployeeParams extends IndexParams {
     pageNumber: number = 1,
     perPage: number = 10,
     withPage: number = 1,
-    public type?: number,
+    // public type?: number,
   ) {
     super(word, pageNumber, perPage, withPage);
   }
@@ -14,7 +14,7 @@ export default class IndexEmployeeParams extends IndexParams {
   toMap(): Record<string, string | number | number[] | null> {
     return {
       ...super.toMap(),
-      ...(this.type !== undefined ? { type: this.type } : {}),
+      // ...(this.type ? { type: this.type } : {}),
     };
   }
 }

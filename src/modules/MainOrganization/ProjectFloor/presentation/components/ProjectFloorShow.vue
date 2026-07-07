@@ -1,7 +1,6 @@
 <script setup lang="ts">
   import { computed, onMounted, ref } from 'vue';
   import { useRoute } from 'vue-router';
-  import { useI18n } from 'vue-i18n';
   import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
 
   import ShowProjectFloorParams from '../../core/params/show.project.floor.params';
@@ -10,7 +9,6 @@
 
   const controller = ProjectFloorController.getInstance();
   const route = useRoute();
-  const { t } = useI18n();
 
   const loading = ref(false);
   const projectFloor = ref<ProjectFloorShowModel | null>(null);
@@ -27,25 +25,23 @@
     const floorNumber = projectFloor.value?.floor_number;
 
     const floors: Record<number, string> = {
-      [-1]: 'project_floor.basement',
-      [0]: 'project_floor.ground_floor',
-      [1]: 'project_floor.first_floor',
-      [2]: 'project_floor.second_floor',
-      [3]: 'project_floor.third_floor',
-      [4]: 'project_floor.fourth_floor',
-      [5]: 'project_floor.fifth_floor',
-      [6]: 'project_floor.sixth_floor',
-      [7]: 'project_floor.seventh_floor',
-      [8]: 'project_floor.eighth_floor',
-      [9]: 'project_floor.ninth_floor',
-      [10]: 'project_floor.tenth_floor',
+      [-1]: 'Basement',
+      [0]: 'Ground Floor',
+      [1]: 'First Floor',
+      [2]: 'Second Floor',
+      [3]: 'Third Floor',
+      [4]: 'Fourth Floor',
+      [5]: 'Fifth Floor',
+      [6]: 'Sixth Floor',
+      [7]: 'Seventh Floor',
+      [8]: 'Eighth Floor',
+      [9]: 'Ninth Floor',
+      [10]: 'Tenth Floor',
     };
 
     if (floorNumber === undefined || floorNumber === null) return '-';
 
-    const floorKey = floors[Number(floorNumber)];
-
-    return floorKey ? t(floorKey) : String(floorNumber);
+    return floors[Number(floorNumber)] ?? String(floorNumber);
   });
 
   const fetchProjectFloor = async () => {
@@ -73,12 +69,12 @@
 
 <template>
   <div class="ProjectFloor-crud-page">
-    <section v-if="loading" class="show-card">{{ $t('loading') }}</section>
+    <section v-if="loading" class="show-card">Loading...</section>
 
     <section v-else-if="projectFloor" class="show-card">
       <header class="show-header">
         <div>
-          <span class="eyebrow">{{ $t('floor_reference') }}</span>
+          <span class="eyebrow">Floor Reference</span>
           <h3>{{ floorTitle }}</h3>
           <p>{{ projectFloor.project?.title }}</p>
         </div>
