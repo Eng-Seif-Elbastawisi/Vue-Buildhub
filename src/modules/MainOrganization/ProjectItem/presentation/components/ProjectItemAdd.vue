@@ -9,6 +9,7 @@
   import ProjectItemForm from './ProjectItemForm.vue';
   import ProjectItemTable from './ProjectItemIndex.vue';
   import type ProjectItemModel from '../../core/models/project.Item.model';
+
   import ProjectFloorShow from '../../../ProjectFloor/presentation/components/ProjectFloorShow.vue';
   import ProjectSteps from '@/modules/MainOrganization/Project/presentation/components/ProjectSteps.vue';
   import ProjectPricingAdd from '@/modules/MainOrganization/ProjectPricing/presentation/components/ProjectPricingAdd.vue';
@@ -52,14 +53,16 @@
     );
   };
 
-  const saveItem = async () => {
+  const saveItems = async () => {
     if (!params.value) return;
+    if (!params.value.items.length) return;
 
     loading.value = true;
 
     try {
       await controller.create(params.value, undefined, formKey);
       await fetchProjectItems();
+      params.value = null;
     } finally {
       loading.value = false;
     }
@@ -82,8 +85,19 @@
       :project="projectId"
       :project-item="projectItem"
       @update-data="params = $event"
-      @add-item="saveItem"
     />
+
+    <div class="actions" :class="{ disabled: loading }">
+      <button
+        class="btn btn-primary w-full"
+        type="button"
+        :disabled="loading || !params?.items?.length"
+        @click="saveItems"
+      >
+        <span v-if="loading" class="loader"></span>
+        <span v-else>{{ $t('project_item.save') }}</span>
+      </button>
+    </div>
 
     <ProjectItemTable :items="projectItems" :loading="loading" />
 
@@ -99,6 +113,11 @@
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
+  }
+
+  .actions.disabled {
+    pointer-events: none;
+    opacity: 0.7;
   }
 
   .error {

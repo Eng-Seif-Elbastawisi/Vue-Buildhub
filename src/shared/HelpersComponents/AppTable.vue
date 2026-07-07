@@ -11,7 +11,7 @@
   import { useI18n } from 'vue-i18n';
   import { dialogManager } from '@/base/Presentation/Dialogs/dialog.manager';
 
-  const { t } = useI18n();
+  const { t, te } = useI18n();
 
   const props = defineProps<{
     headers: TableHeader[];
@@ -52,6 +52,14 @@
 
   const allSelected = computed(() => {
     return props.items.length > 0 && selectedRows.value.size === props.items.length;
+  });
+
+  const translateIfExists = (value: string) => {
+    return te(value) ? t(value) : value;
+  };
+
+  const emptyDisplayMessage = computed(() => {
+    return props.emptyMessage ? translateIfExists(props.emptyMessage) : t('no_data');
   });
 
   function toggleAll() {
@@ -165,9 +173,9 @@
                 ($slots.actions ? 1 : 0)
               "
               class="empty-row"
-              @dblclick="copyToClipboard(emptyMessage || 'No data available')"
+              @dblclick="copyToClipboard(emptyDisplayMessage)"
             >
-              {{ emptyMessage || 'No data available' }}
+              {{ emptyDisplayMessage }}
             </td>
           </tr>
 

@@ -1,29 +1,29 @@
-import type Params from "@/base/Core/Params/params";
-import axios from "axios";
-import type { AxiosResponse } from "axios";
+import type Params from '@/base/Core/Params/params';
+import axios from 'axios';
+import type { AxiosResponse } from 'axios';
 import NetworkService, {
   type NetworkRequestConfig,
-} from "@/base/Core/NetworkStructure/networking/networkService";
-import type ServiceCallParams from "@/base/Core/Params/callParamsInterface";
-import { dialogManager } from "@/base/Presentation/Dialogs/dialog.manager";
-import { env } from "@/base/Core/Config";
-import ErrorHandler from "@/base/Core/NetworkStructure/errors/errorHandler";
+} from '@/base/Core/NetworkStructure/networking/networkService';
+import type ServiceCallParams from '@/base/Core/Params/callParamsInterface';
+import { dialogManager } from '@/base/Presentation/Dialogs/dialog.manager';
+import { env } from '@/base/Core/Config';
+import ErrorHandler from '@/base/Core/NetworkStructure/errors/errorHandler';
 import {
   CancelledRequestException,
   NetworkDisconnectException,
   RequestTimeoutException,
-} from "@/base/Core/Constants/exceptionConstants";
+} from '@/base/Core/Constants/exceptionConstants';
 
 /**
  * HTTP method types for API calls
  */
 export const CrudType = {
-  FormData: "formData",
-  POST: "post",
-  GET: "get",
-  DELETE: "delete",
-  PUT: "put",
-  PATCH: "patch",
+  FormData: 'formData',
+  POST: 'post',
+  GET: 'get',
+  DELETE: 'delete',
+  PUT: 'put',
+  PATCH: 'patch',
 } as const;
 
 export type CrudType = (typeof CrudType)[keyof typeof CrudType];
@@ -40,10 +40,7 @@ export type ProgressCallback = (progress: {
 /**
  * Extended call options
  */
-export interface ExtendedCallOptions extends Omit<
-  ServiceCallParams,
-  "url" | "type"
-> {
+export interface ExtendedCallOptions extends Omit<ServiceCallParams, 'url' | 'type'> {
   /** Request timeout override */
   timeout?: number;
 
@@ -101,7 +98,7 @@ export default abstract class ServicesInterface {
 
     // Show loading dialog if requested
     if (showLoadingDialog) {
-      dialogManager.loading("Processing...");
+      dialogManager.loading('processing');
     }
 
     // Build network config
@@ -224,15 +221,15 @@ export default abstract class ServicesInterface {
 
       // Handle special cases
       if (axios.isCancel(error)) {
-        throw new CancelledRequestException("Request was cancelled");
+        throw new CancelledRequestException('request_was_cancelled');
       }
 
       if (ErrorHandler.isNetworkError(error)) {
-        throw new NetworkDisconnectException("Network connection failed");
+        throw new NetworkDisconnectException('Network connection failed');
       }
 
       if (ErrorHandler.isTimeout(error)) {
-        throw new RequestTimeoutException("Request timed out");
+        throw new RequestTimeoutException('Request timed out');
       }
 
       throw apiError;
@@ -251,7 +248,7 @@ export default abstract class ServicesInterface {
       };
     }
 
-    throw new Error("No response received");
+    throw new Error('error.no_response_received');
   }
 
   /**

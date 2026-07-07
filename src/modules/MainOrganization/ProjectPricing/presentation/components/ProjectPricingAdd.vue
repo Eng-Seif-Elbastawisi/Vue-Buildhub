@@ -4,6 +4,8 @@
 
   import ProjectPricingController from '../controllers/project.pricing.controller';
   import type AddProjectPricingParams from '../../core/params/add.project.pricing.params';
+  import IndexProjectPricingParams from '../../core/params/index.project.pricing.params';
+  import type ProjectPricingShowModel from '../../core/models/project.pricing.show.model';
   import ProjectPricingForm from './ProjectPricingForm.vue';
 
   import ProjectItemController from '@/modules/MainOrganization/ProjectItem/presentation/controllers/project.Item.controller';
@@ -19,6 +21,7 @@
   const params = ref<AddProjectPricingParams | null>(null);
   const loading = ref(false);
   const itemsLoading = ref(false);
+  const pricingLoading = ref(false);
 
   const projectId = computed(() => {
     const value = Number(route.query.project_id);
@@ -42,9 +45,24 @@
   });
 
   const totalItemsPrice = computed(() => {
-    return projectItems.value.reduce((total, item) => {
-      return total + Number(item.final_price ?? 0);
+    return projectItems.value.reduce((total, item: any) => {
+      return total + Number(item.final_price ?? item.finalPrice ?? 0);
     }, 0);
+  });
+
+  const projectPricing = computed<ProjectPricingShowModel | undefined>(() => {
+    const state = controller.listState.value as any;
+
+    const data =
+      state?.data?.data ??
+      state?.data ??
+      state?.response?.data?.data ??
+      state?.response?.data ??
+      [];
+
+    const pricingData = Array.isArray(data) ? data : Array.isArray(data?.data) ? data.data : [];
+
+    return pricingData[0] as ProjectPricingShowModel | undefined;
   });
 
   const fetchProjectItems = async () => {
@@ -61,6 +79,20 @@
     }
   };
 
+  const fetchProjectPricing = async () => {
+    if (!projectId.value) return;
+
+    pricingLoading.value = true;
+
+    try {
+      await controller.fetchList(
+        new IndexProjectPricingParams('', 1, 100, 0, undefined, projectId.value),
+      );
+    } finally {
+      pricingLoading.value = false;
+    }
+  };
+
   const saveItem = async () => {
     if (!params.value) return;
 
@@ -68,31 +100,33 @@
 
     try {
       await controller.create(params.value, undefined, formKey);
+      await fetchProjectPricing();
     } finally {
       loading.value = false;
     }
   };
 
   onMounted(async () => {
-    await fetchProjectItems();
+    await Promise.all([fetchProjectItems(), fetchProjectPricing()]);
   });
 </script>
 
 <template>
   <div class="item-crud-page">
     <ProjectPricingForm
+      :item="projectPricing"
       :form-key="formKey"
-      :loading="loading || itemsLoading"
+      :loading="loading || itemsLoading || pricingLoading"
       :project-id="projectId"
       :total-items-price="totalItemsPrice"
       @update-data="params = $event"
     />
 
-    <div class="actions" :class="{ disabled: loading || itemsLoading }">
+    <div class="actions" :class="{ disabled: loading || itemsLoading || pricingLoading }">
       <button
         class="btn btn-primary w-full"
         type="button"
-        :disabled="loading || itemsLoading"
+        :disabled="loading || itemsLoading || pricingLoading"
         @click="saveItem"
       >
         <span v-if="loading" class="loader"></span>

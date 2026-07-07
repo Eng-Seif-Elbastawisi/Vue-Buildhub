@@ -40,12 +40,12 @@
 
   const valueDiscountOption = computed<TitleInterface<string | number>>(() => ({
     id: VALUE_DISCOUNT_ID,
-    title: t('project_pricing.discount_types.VALUE') || 'value',
+    title: t('project_pricing.discount_types.FIXED'),
   }));
 
   const percentDiscountOption = computed<TitleInterface<string | number>>(() => ({
     id: PERCENTAGE_DISCOUNT_ID,
-    title: t('project_pricing.discount_types.PERCENTAGE') || '%',
+    title: t('project_pricing.discount_types.PERCENTAGE'),
   }));
 
   const isValueDiscount = computed(() => {
@@ -74,6 +74,17 @@
     const total = totalDesignItems.value + taxAmount.value - discountAmount.value;
 
     return total < 0 ? 0 : total;
+  });
+
+  const displayedFinalTotal = computed(() => {
+    if (
+      props.item?.price_after_discount !== undefined &&
+      props.item?.price_after_discount !== null
+    ) {
+      return Number(props.item.price_after_discount);
+    }
+
+    return finalTotal.value;
   });
 
   const optionFromId = (id?: number | string): TitleInterface<string | number> | null => {
@@ -121,11 +132,13 @@
       if (!item) {
         discountMode.value = 'value';
         discountType.value = valueDiscountOption.value;
+        totalTax.value = 0;
+        discountValue.value = 0;
         updateData();
         return;
       }
 
-      totalTax.value = item.total_tax ?? 0;
+      totalTax.value = Number(item.total_tax ?? 0);
 
       discountType.value = item.discount_type
         ? optionFromId(item.discount_type)
@@ -135,7 +148,7 @@
         discountMode.value = 'value';
       }
 
-      discountValue.value = item.discount_value ?? 0;
+      discountValue.value = Number(item.discount_value ?? 0);
 
       updateData();
     },
@@ -160,7 +173,7 @@
     <div class="summary-grid">
       <article class="summary-box">
         <span class="summary-label">
-          {{ $t('project_pricing.design_items_total') || 'إجمالي بنود التصميم' }}
+          {{ $t('project_pricing.design_items_total') }}
         </span>
 
         <strong class="summary-value">
@@ -171,7 +184,7 @@
       <article class="summary-box discount-box">
         <div class="discount-head">
           <span class="summary-label">
-            {{ $t('project_pricing.discount') || 'خصم' }}
+            {{ $t('project_pricing.discount') }}
           </span>
 
           <div class="discount-toggle">
@@ -180,7 +193,7 @@
               :class="{ active: isValueDiscount }"
               @click="setDiscountType('value')"
             >
-              {{ $t('project_pricing.value') || 'value' }}
+              {{ $t('project_pricing.value') }}
             </button>
 
             <button
@@ -207,7 +220,7 @@
 
       <article class="summary-box">
         <label class="summary-label" for="project-pricing-total-tax">
-          {{ $t('project_pricing.tax_percentage') || 'ضريبة %' }}
+          {{ $t('project_pricing.tax_percentage') }}
         </label>
 
         <input
@@ -225,11 +238,11 @@
 
       <article class="summary-box">
         <span class="summary-label">
-          {{ $t('project_pricing.final_total') || 'الإجمالي النهائي' }}
+          {{ $t('project_pricing.final_total') }}
         </span>
 
         <strong class="summary-value">
-          {{ formatMoney(finalTotal) }}
+          {{ formatMoney(displayedFinalTotal) }}
         </strong>
       </article>
     </div>

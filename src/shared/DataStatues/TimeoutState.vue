@@ -5,6 +5,7 @@
    */
 
   import { ref } from 'vue';
+  import { useI18n } from 'vue-i18n';
 
   const props = defineProps<{
     message?: string;
@@ -16,6 +17,13 @@
   }>();
 
   const isRetrying = ref(false);
+  const { t, te } = useI18n();
+
+  const translateIfExists = (value?: string) => {
+    if (!value) return '';
+
+    return te(value) ? t(value) : value;
+  };
 
   async function handleRetry() {
     if (isRetrying.value) return;
@@ -52,7 +60,7 @@
     <h3 class="timeout-title">{{ $t('request_timed_out') }}</h3>
 
     <p class="timeout-message">
-      {{ message || $t('server_took_too_long') }}
+      {{ message ? translateIfExists(message) : $t('server_took_too_long') }}
     </p>
 
     <button class="timeout-retry-btn" :disabled="isRetrying" @click="handleRetry">

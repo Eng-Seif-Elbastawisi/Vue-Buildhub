@@ -1,7 +1,16 @@
 <script lang="ts" setup>
   import { computed, ref, watch, onMounted, onUnmounted } from 'vue';
+  import { useI18n } from 'vue-i18n';
   import { dialogManager } from './dialog.manager';
   import { DialogType, DIALOG_ICONS, DIALOG_COLORS } from './dialog.types';
+
+  const { t, te } = useI18n();
+
+  const translateIfExists = (value?: string) => {
+    if (!value) return '';
+
+    return te(value) ? t(value) : value;
+  };
 
   // Reactive state from dialog manager
   const currentDialog = computed(() => dialogManager.currentDialog.value);
@@ -202,7 +211,7 @@
             <div v-if="isLoading && !currentDialog" class="dialog-loading">
               <div class="loading-spinner"></div>
               <p v-if="loadingMessage" class="loading-message">
-                {{ loadingMessage }}
+                {{ translateIfExists(loadingMessage) }}
               </p>
               <div v-if="showProgress" class="loading-progress">
                 <div class="progress-bar">
@@ -236,12 +245,12 @@
 
               <!-- Title -->
               <h3 v-if="dialogTitle" class="dialog-title">
-                {{ dialogTitle }}
+                {{ translateIfExists(dialogTitle) }}
               </h3>
 
               <!-- Message -->
               <p class="dialog-message">
-                {{ dialogMessage }}
+                {{ translateIfExists(dialogMessage) }}
               </p>
 
               <!-- Progress Bar -->
@@ -268,7 +277,7 @@
                   @click="handleAction(action)"
                 >
                   <span v-if="action.loading" class="action-spinner"></span>
-                  {{ action.label }}
+                  {{ translateIfExists(action.label) }}
                 </button>
               </div>
 

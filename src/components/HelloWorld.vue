@@ -9,8 +9,9 @@
     <h1 class="green">{{ msg }}</h1>
     <h3>
       {{ $t('vue_starter.created_with') }}
-      <a href="https://vite.dev/" target="_blank" rel="noopener">Vite</a> +
-      <a href="https://vuejs.org/" target="_blank" rel="noopener">Vue 3</a>.
+      <a href="https://vite.dev/" target="_blank" rel="noopener">{{ $t('vue_starter.vite') }}</a> +
+      <a href="https://vuejs.org/" target="_blank" rel="noopener">{{ $t('vue_starter.vue_3') }}</a
+      >.
       {{ $t('vue_starter.whats_next') }}
     </h3>
   </div>

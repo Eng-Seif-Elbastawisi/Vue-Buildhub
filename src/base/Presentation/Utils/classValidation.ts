@@ -1,4 +1,5 @@
 import { dialogManager } from '@/base/Presentation/Dialogs/dialog.manager';
+import { translate } from '@/locales/i18n';
 
 // class_validation.ts
 export interface ValidationRule {
@@ -50,7 +51,7 @@ export class ClassValidation {
       const value = obj[field];
 
       if (rule.required && this.isEmpty(value)) {
-        errors.push({ field, message: `${field} is required` });
+        errors.push({ field, message: translate('validation.required', { field }) });
         return;
       }
 
@@ -65,7 +66,7 @@ export class ClassValidation {
       ) {
         errors.push({
           field,
-          message: `${field} must be at least ${rule.minLength} characters`,
+          message: translate('validation.min_length', { field, min: rule.minLength }),
         });
       }
 
@@ -76,23 +77,23 @@ export class ClassValidation {
       ) {
         errors.push({
           field,
-          message: `${field} must be at most ${rule.maxLength} characters`,
+          message: translate('validation.max_length', { field, max: rule.maxLength }),
         });
       }
 
       if (rule.min !== undefined && typeof value === 'number' && value < rule.min) {
         errors.push({
           field,
-          message: `${field} must be at least ${rule.min}`,
+          message: translate('validation.min', { field, min: rule.min }),
         });
       }
 
       if (rule.max !== undefined && typeof value === 'number' && value > rule.max) {
-        errors.push({ field, message: `${field} must be at most ${rule.max}` });
+        errors.push({ field, message: translate('validation.max', { field, max: rule.max }) });
       }
 
       if (rule.pattern && typeof value === 'string' && !rule.pattern.test(value)) {
-        errors.push({ field, message: `${field} format is invalid` });
+        errors.push({ field, message: translate('validation.invalid_format', { field }) });
       }
 
       if (rule.custom) {
@@ -100,7 +101,8 @@ export class ClassValidation {
         if (result !== true) {
           errors.push({
             field,
-            message: typeof result === 'string' ? result : `${field} is invalid`,
+            message:
+              typeof result === 'string' ? result : translate('validation.invalid', { field }),
           });
         }
       }

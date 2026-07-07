@@ -233,7 +233,7 @@ export default abstract class BaseController<T, TList = T[]> {
     this.setListLoading();
 
     if (this.config.showLoadingDialog) {
-      this.showLoadingDialog('Loading...');
+      this.showLoadingDialog('loading');
     }
 
     try {
@@ -315,7 +315,7 @@ export default abstract class BaseController<T, TList = T[]> {
     this.setItemLoading();
 
     if (this.config.showLoadingDialog) {
-      this.showLoadingDialog('Loading...');
+      this.showLoadingDialog('loading');
     }
 
     try {
@@ -438,7 +438,7 @@ export default abstract class BaseController<T, TList = T[]> {
       if (result instanceof DataSuccess) {
         this.setItemState(new DataInitial<T>());
         if (this.config.showSuccessDialog) {
-          this.showSuccessDialog('Deleted successfully');
+          this.showSuccessDialog('delete_success');
           this.setItemState(result);
         }
       }
@@ -590,7 +590,7 @@ export default abstract class BaseController<T, TList = T[]> {
   // DIALOG INTEGRATION
   // =========================================================================
 
-  protected showLoadingDialog(message: string = 'Loading...'): void {
+  protected showLoadingDialog(message: string = 'loading'): void {
     dialogManager.loading(message);
   }
 

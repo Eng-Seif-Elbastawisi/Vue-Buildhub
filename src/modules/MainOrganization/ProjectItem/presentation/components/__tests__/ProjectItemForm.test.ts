@@ -48,6 +48,7 @@ const SelectStub = {
   methods: {
     optionFor(id: string) {
       const options: Record<string, { id: number; title: string }> = {
+        department_id: { id: 7, title: 'Finishing' },
         'project-item-item': { id: 9, title: 'Concrete' },
         'project-item-pricing-method': {
           id: ProjectItemPriceEnum.GENERAL_ITEM,
@@ -73,20 +74,27 @@ describe('ProjectItemForm', () => {
       },
     });
 
+    await wrapper.find('.department_id').trigger('click');
     await wrapper.find('.project-item-item').trigger('click');
     await wrapper.find('.project-item-pricing-method').trigger('click');
     await wrapper.find<HTMLInputElement>('.field-box--price input').setValue('250');
     await wrapper.find<HTMLInputElement>('.field-box--qty input').setValue('3');
+    await wrapper.find('.add-btn').trigger('click');
 
     const emissions = wrapper.emitted('updateData') as unknown[][];
     const params = emissions.at(-1)?.[0] as AddProjectItemParams;
 
     expect(params.toMap()).toEqual({
       project_id: 4,
-      price: 250,
-      quantity: 3,
-      item_id: 9,
-      pricing_method: ProjectItemPriceEnum.GENERAL_ITEM,
+      department_id: 7,
+      items: [
+        {
+          item_id: 9,
+          price: 250,
+          quantity: 3,
+          pricing_method: ProjectItemPriceEnum.GENERAL_ITEM,
+        },
+      ],
     });
   });
 

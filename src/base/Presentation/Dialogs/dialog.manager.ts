@@ -128,7 +128,7 @@ class DialogManager {
   success(message: string, options?: Partial<DialogOptions>): string {
     return this.show({
       type: DialogType.SUCCESS,
-      title: 'Success',
+      title: 'dialog.success_title',
       image: ImgDialog.success,
       message,
       duration: 3000,
@@ -142,7 +142,7 @@ class DialogManager {
   error(message: string, options?: Partial<DialogOptions>): string {
     return this.show({
       type: DialogType.ERROR,
-      title: 'Error',
+      title: 'dialog.error_title',
       image: ImgDialog.error,
       message,
       duration: 5000,
@@ -156,7 +156,7 @@ class DialogManager {
   warning(message: string, options?: Partial<DialogOptions>): string {
     return this.show({
       type: DialogType.WARNING,
-      title: 'Warning',
+      title: 'dialog.warning_title',
       image: ImgDialog.warning,
       message,
       duration: 4000,
@@ -170,7 +170,7 @@ class DialogManager {
   info(message: string, options?: Partial<DialogOptions>): string {
     return this.show({
       type: DialogType.INFO,
-      title: 'Information',
+      title: 'dialog.info_title',
       image: ImgDialog.info,
       message,
       duration: 3000,
@@ -188,7 +188,7 @@ class DialogManager {
   ): string {
     return this.show({
       type: DialogType.CONFIRM,
-      title: 'Confirm',
+      title: 'confirm',
       image: ImgDialog.warning,
       message,
       duration: 0, // Don't auto-dismiss
@@ -196,13 +196,13 @@ class DialogManager {
       onConfirm,
       actions: [
         {
-          label: 'Cancel',
+          label: 'cancel',
           type: 'secondary',
           onClick: () => this.closeDialog(),
           closeOnClick: true,
         },
         {
-          label: 'Confirm',
+          label: 'confirm',
           type: 'primary',
           onClick: async () => {
             await onConfirm();
@@ -253,7 +253,7 @@ class DialogManager {
   /**
    * Show loading dialog
    */
-  loading(message: string = 'Loading...'): void {
+  loading(message: string = 'loading'): void {
     this.isLoading.value = true;
     this.loadingMessage.value = message;
     this.loadingProgress.value = 0;
