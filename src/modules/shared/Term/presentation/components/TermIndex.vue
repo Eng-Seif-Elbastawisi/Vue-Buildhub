@@ -20,7 +20,7 @@
   const route = useRoute();
 
   // Table headers
-  const headers: TableHeader[] = [{ key: 'title', label: 'Title', width: '95%', sortable: true }];
+  const headers: TableHeader[] = [{ key: 'title', label: 'title', width: '95%', sortable: true }];
 
   // Pagination state
   const perPage = ref(10);

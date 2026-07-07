@@ -25,7 +25,7 @@
   }
 
   const props = withDefaults(defineProps<Props>(), {
-    label: 'Upload Files',
+    label: 'upload_files',
     accept: [
       // Images
       'image/*',

@@ -5,8 +5,17 @@
    */
 
   import { computed } from 'vue';
+  import { useI18n } from 'vue-i18n';
   import { dialogManager } from './dialog.manager';
   import { DIALOG_ICONS, DIALOG_COLORS, type Toast } from './dialog.types';
+
+  const { t, te } = useI18n();
+
+  const translateIfExists = (value?: string) => {
+    if (!value) return '';
+
+    return te(value) ? t(value) : value;
+  };
 
   // Props
   const props = withDefaults(
@@ -101,8 +110,8 @@
 
           <!-- Content -->
           <div class="toast-content">
-            <h4 v-if="toast.title" class="toast-title">{{ toast.title }}</h4>
-            <p class="toast-message">{{ toast.message }}</p>
+            <h4 v-if="toast.title" class="toast-title">{{ translateIfExists(toast.title) }}</h4>
+            <p class="toast-message">{{ translateIfExists(toast.message) }}</p>
           </div>
 
           <!-- Close Button -->

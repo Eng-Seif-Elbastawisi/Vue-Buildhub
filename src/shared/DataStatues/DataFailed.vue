@@ -17,8 +17,13 @@
     },
   );
 
-  const { t } = useI18n();
+  const { t, te } = useI18n();
   const addTextValue = computed(() => props.addText ?? t('home'));
+  const translateIfExists = (value?: string) => {
+    if (!value) return '';
+
+    return te(value) ? t(value) : value;
+  };
 </script>
 
 <template>
@@ -28,8 +33,8 @@
       class="data-empty-image"
       src="@/assets/images/app/system-failed.png"
     />
-    <h2>{{ props.title }}</h2>
-    <p>{{ props.description }}</p>
+    <h2>{{ translateIfExists(props.title) }}</h2>
+    <p>{{ translateIfExists(props.description) }}</p>
     <router-link :to="props.link" class="btn btn-primary">
       {{ addTextValue }}
     </router-link>

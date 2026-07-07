@@ -14,7 +14,7 @@ export const buildBreadcrumb = (route: any, router: any): BreadCrumbItem[] => {
   };
 
   result.push({
-    label: 'Home',
+    label: 'home',
     url: '/',
   });
 

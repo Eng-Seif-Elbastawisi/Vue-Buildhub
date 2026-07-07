@@ -5,6 +5,7 @@
    */
 
   import { ref, onMounted, onUnmounted } from 'vue';
+  import { useI18n } from 'vue-i18n';
 
   const props = defineProps<{
     message?: string;
@@ -17,6 +18,13 @@
 
   const isRetrying = ref(false);
   const isOnline = ref(navigator.onLine);
+  const { t, te } = useI18n();
+
+  const translateIfExists = (value?: string) => {
+    if (!value) return '';
+
+    return te(value) ? t(value) : value;
+  };
 
   // Listen for online/offline events
   function handleOnline() {
@@ -99,7 +107,7 @@
     <h3 class="no-network-title">{{ $t('no_internet_connection') }}</h3>
 
     <p class="no-network-message">
-      {{ message || $t('check_internet_connection') }}
+      {{ message ? translateIfExists(message) : $t('check_internet_connection') }}
     </p>
 
     <div class="connection-status" :class="{ 'is-online': isOnline }">

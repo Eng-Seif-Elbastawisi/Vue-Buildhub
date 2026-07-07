@@ -163,10 +163,6 @@
     if (!selectedSpace.value.length) return;
 
     selectedSpace.value.forEach((space) => {
-      const alreadyExists = spaces.value.some((item) => Number(item.space.id) === Number(space.id));
-
-      if (alreadyExists) return;
-
       spaces.value.push({
         space,
         length: '',
@@ -180,7 +176,6 @@
     selectedSpace.value = [];
     updateData();
   };
-
   const removeSpace = (index: number) => {
     spaces.value.splice(index, 1);
     updateData();
@@ -388,7 +383,11 @@
             <span></span>
           </div>
 
-          <article v-for="(item, index) in spaces" :key="item.space.id" class="space-row">
+          <article
+            v-for="(item, index) in spaces"
+            :key="`${item.space.id}-${index}`"
+            class="space-row"
+          >
             <div class="space-row__index">
               {{ index + 1 }}
             </div>

@@ -40,12 +40,12 @@
 
   const valueDiscountOption = computed<TitleInterface<string | number>>(() => ({
     id: VALUE_DISCOUNT_ID,
-    title: t('project_pricing.discount_types.VALUE') || 'value',
+    title: t('project_pricing.discount_types.FIXED'),
   }));
 
   const percentDiscountOption = computed<TitleInterface<string | number>>(() => ({
     id: PERCENTAGE_DISCOUNT_ID,
-    title: t('project_pricing.discount_types.PERCENTAGE') || '%',
+    title: t('project_pricing.discount_types.PERCENTAGE'),
   }));
 
   const isValueDiscount = computed(() => {
@@ -173,7 +173,7 @@
     <div class="summary-grid">
       <article class="summary-box">
         <span class="summary-label">
-          {{ $t('project_pricing.design_items_total') || 'إجمالي بنود التصميم' }}
+          {{ $t('project_pricing.design_items_total') }}
         </span>
 
         <strong class="summary-value">
@@ -184,7 +184,7 @@
       <article class="summary-box discount-box">
         <div class="discount-head">
           <span class="summary-label">
-            {{ $t('project_pricing.discount') || 'خصم' }}
+            {{ $t('project_pricing.discount') }}
           </span>
 
           <div class="discount-toggle">
@@ -193,7 +193,7 @@
               :class="{ active: isValueDiscount }"
               @click="setDiscountType('value')"
             >
-              {{ $t('project_pricing.value') || 'value' }}
+              {{ $t('project_pricing.value') }}
             </button>
 
             <button
@@ -220,7 +220,7 @@
 
       <article class="summary-box">
         <label class="summary-label" for="project-pricing-total-tax">
-          {{ $t('project_pricing.tax_percentage') || 'ضريبة %' }}
+          {{ $t('project_pricing.tax_percentage') }}
         </label>
 
         <input
@@ -238,7 +238,7 @@
 
       <article class="summary-box">
         <span class="summary-label">
-          {{ $t('project_pricing.final_total') || 'الإجمالي النهائي' }}
+          {{ $t('project_pricing.final_total') }}
         </span>
 
         <strong class="summary-value">

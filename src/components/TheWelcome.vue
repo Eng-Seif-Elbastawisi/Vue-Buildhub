@@ -30,18 +30,29 @@
     <template #heading>{{ $t('vue_starter.tooling') }}</template>
 
     {{ $t('vue_starter.tooling_prefix') }}
-    <a href="https://vite.dev/guide/features.html" target="_blank" rel="noopener">Vite</a>.
+    <a href="https://vite.dev/guide/features.html" target="_blank" rel="noopener">{{
+      $t('vue_starter.vite')
+    }}</a
+    >.
     {{ $t('vue_starter.recommended_ide') }}
-    <a href="https://code.visualstudio.com/" target="_blank" rel="noopener">VSCode</a>
+    <a href="https://code.visualstudio.com/" target="_blank" rel="noopener">{{
+      $t('vue_starter.vscode')
+    }}</a>
     +
-    <a href="https://github.com/vuejs/language-tools" target="_blank" rel="noopener"
-      >Vue - Official</a
+    <a href="https://github.com/vuejs/language-tools" target="_blank" rel="noopener">{{
+      $t('vue_starter.vue_official')
+    }}</a
     >. {{ $t('vue_starter.testing_prefix') }}
-    <a href="https://vitest.dev/" target="_blank" rel="noopener">Vitest</a>
+    <a href="https://vitest.dev/" target="_blank" rel="noopener">{{ $t('vue_starter.vitest') }}</a>
     {{ $t('and') }}
-    <a href="https://www.cypress.io/" target="_blank" rel="noopener">Cypress</a>
+    <a href="https://www.cypress.io/" target="_blank" rel="noopener">{{
+      $t('vue_starter.cypress')
+    }}</a>
     /
-    <a href="https://playwright.dev/" target="_blank" rel="noopener">Playwright</a>.
+    <a href="https://playwright.dev/" target="_blank" rel="noopener">{{
+      $t('vue_starter.playwright')
+    }}</a
+    >.
 
     <br />
 
@@ -57,13 +68,26 @@
     <template #heading>{{ $t('vue_starter.ecosystem') }}</template>
 
     {{ $t('vue_starter.ecosystem_prefix') }}
-    <a href="https://pinia.vuejs.org/" target="_blank" rel="noopener">Pinia</a>,
-    <a href="https://router.vuejs.org/" target="_blank" rel="noopener">Vue Router</a>,
-    <a href="https://test-utils.vuejs.org/" target="_blank" rel="noopener">Vue Test Utils</a
+    <a href="https://pinia.vuejs.org/" target="_blank" rel="noopener">{{
+      $t('vue_starter.pinia')
+    }}</a
+    >,
+    <a href="https://router.vuejs.org/" target="_blank" rel="noopener">{{
+      $t('vue_starter.vue_router')
+    }}</a
+    >,
+    <a href="https://test-utils.vuejs.org/" target="_blank" rel="noopener">{{
+      $t('vue_starter.vue_test_utils')
+    }}</a
     >{{ $t('comma_and') }}
-    <a href="https://github.com/vuejs/devtools" target="_blank" rel="noopener">Vue Dev Tools</a>.
+    <a href="https://github.com/vuejs/devtools" target="_blank" rel="noopener">{{
+      $t('vue_starter.vue_dev_tools')
+    }}</a
+    >.
     {{ $t('vue_starter.more_resources_prefix') }}
-    <a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">Awesome Vue</a>
+    <a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">{{
+      $t('vue_starter.awesome_vue')
+    }}</a>
     {{ $t('vue_starter.visit_suffix') }}
   </WelcomeItem>
 
@@ -74,10 +98,13 @@
     <template #heading>{{ $t('vue_starter.community') }}</template>
 
     {{ $t('vue_starter.community_prefix') }}
-    <a href="https://chat.vuejs.org" target="_blank" rel="noopener">Vue Land</a>
+    <a href="https://chat.vuejs.org" target="_blank" rel="noopener">{{
+      $t('vue_starter.vue_land')
+    }}</a>
     {{ $t('vue_starter.discord_suffix') }}
-    <a href="https://stackoverflow.com/questions/tagged/vue.js" target="_blank" rel="noopener"
-      >StackOverflow</a
+    <a href="https://stackoverflow.com/questions/tagged/vue.js" target="_blank" rel="noopener">{{
+      $t('vue_starter.stackoverflow')
+    }}</a
     >. {{ $t('vue_starter.follow_prefix') }}
     <a href="https://bsky.app/profile/vuejs.org" target="_blank" rel="noopener">@vuejs.org</a>
     {{ $t('vue_starter.bluesky_suffix') }}

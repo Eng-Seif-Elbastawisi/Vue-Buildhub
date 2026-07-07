@@ -2,7 +2,7 @@
   import { computed } from 'vue';
   import { useI18n } from 'vue-i18n';
 
-  import ProjectItemModel from '../../core/models/project.Item.model';
+  import type ProjectItemModel from '../../core/models/project.Item.model';
   import { ProjectItemPriceEnum } from '../../core/constant/project.item.Price.enum';
   import { FloorNumber } from '@/modules/MainOrganization/ProjectFloor/core/constants/floor.number.enum';
   import type TitleInterface from '@/base/Data/Models/titleInterface';
@@ -29,7 +29,7 @@
   const floorNumberOptions = computed<TitleInterface<FloorNumber>[]>(() => {
     return Object.entries(FloorNumber).map(([key, value]) => ({
       id: value as FloorNumber,
-      title: t(`${key}`),
+      title: t(`ProjectFloor.floor_numbers.${key}`),
     }));
   });
 
@@ -58,11 +58,9 @@
   <section class="items-table-card" dir="rtl">
     <div class="table-summary">
       <div>
-        <h3>{{ $t('Selection Criteria Items') }}</h3>
+        <h3>{{ $t('project_item.selection_criteria_items') }}</h3>
         <p>
-          {{
-            $t('The data displayed here comes from an index fetch performed after the addition.')
-          }}
+          {{ $t('project_item.index_fetch_description') }}
         </p>
       </div>
 
@@ -74,11 +72,11 @@
 
     <div class="items-table" :class="{ disabled: loading }">
       <div class="table-head">
-        <span>{{ $t('project_item.item_label') }}</span>
+        <span>{{ $t('project_item.item') }}</span>
         <span>{{ $t('project_item.related_label') }}</span>
-        <span>{{ $t('project_item.pricing_method_label') }}</span>
-        <span>{{ $t('project_item.quantity_label') }}</span>
-        <span>{{ $t('project_item.price_label') }}</span>
+        <span>{{ $t('project_item.pricing_method') }}</span>
+        <span>{{ $t('project_item.quantity') }}</span>
+        <span>{{ $t('project_item.price') }}</span>
         <span>{{ $t('project_item.total_price_label') }}</span>
         <span>{{ $t('general.created_at') }}</span>
       </div>

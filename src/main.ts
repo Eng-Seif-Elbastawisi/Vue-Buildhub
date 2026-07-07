@@ -5,21 +5,11 @@ import { createPinia } from 'pinia';
 import router from './router';
 import App from './App.vue';
 import Aura from '@primeuix/themes/aura';
-import { createI18n } from 'vue-i18n';
-import ar from './locales/ar.json';
-import en from './locales/en.json';
+import i18n from './locales/i18n';
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate';
 import ToastService from 'primevue/toastservice';
 import { useSystemIdentityTheme } from '@/modules/shared/SystemIdentity/presentation/composables/useSystemIdentityTheme';
 
-const i18n = createI18n({
-  locale: 'en',
-  fallbackLocale: 'en',
-  messages: {
-    en,
-    ar,
-  },
-});
 const pinia = createPinia();
 
 const app = createApp(App)

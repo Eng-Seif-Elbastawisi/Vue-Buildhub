@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import { useRouter } from 'vue-router';
+import { translate } from '@/locales/i18n';
 export const useFormsStore = defineStore(
   'forms',
   () => {
@@ -36,8 +37,8 @@ export const useFormsStore = defineStore(
 
       toast.add({
         severity: 'info',
-        summary: 'Unsaved Changes',
-        detail: 'Click here to return to the form',
+        summary: translate('unsaved_changes'),
+        detail: translate('return_to_form'),
       });
 
       const observer = new MutationObserver(() => {
@@ -52,8 +53,8 @@ export const useFormsStore = defineStore(
           BtnsContainer.style.gap = '10px';
           BtnsContainer.style.justifyContent = 'space-between';
 
-          SaveDatabutton.innerText = 'Return to Form';
-          ClearDatabutton.innerText = 'Clear Data';
+          SaveDatabutton.innerText = translate('return_to_form_button');
+          ClearDatabutton.innerText = translate('clear_data');
 
           SaveDatabutton.className = 'return-btn';
           ClearDatabutton.className = 'return-btn';

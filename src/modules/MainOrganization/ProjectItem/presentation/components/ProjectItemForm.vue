@@ -74,18 +74,18 @@
   }));
 
   const floorNumberTitleOptions = computed<TitleInterface<number>[]>(() => [
-    { id: Number(FloorNumber.BASEMENT), title: t('project.BASEMENT') },
-    { id: Number(FloorNumber.GROUND_FLOOR), title: t('project.GROUND_FLOOR') },
-    { id: Number(FloorNumber.FIRST_FLOOR), title: t('project.FIRST_FLOOR') },
-    { id: Number(FloorNumber.SECOND_FLOOR), title: t('project.SECOND_FLOOR') },
-    { id: Number(FloorNumber.THIRD_FLOOR), title: t('project.THIRD_FLOOR') },
-    { id: Number(FloorNumber.FOURTH_FLOOR), title: t('project.FOURTH_FLOOR') },
-    { id: Number(FloorNumber.FIFTH_FLOOR), title: t('project.FIFTH_FLOOR') },
-    { id: Number(FloorNumber.SIXTH_FLOOR), title: t('project.SIXTH_FLOOR') },
-    { id: Number(FloorNumber.SEVENTH_FLOOR), title: t('project.SEVENTH_FLOOR') },
-    { id: Number(FloorNumber.EIGHTH_FLOOR), title: t('project.EIGHTH_FLOOR') },
-    { id: Number(FloorNumber.NINTH_FLOOR), title: t('project.NINTH_FLOOR') },
-    { id: Number(FloorNumber.TENTH_FLOOR), title: t('project.TENTH_FLOOR') },
+    { id: Number(FloorNumber.BASEMENT), title: t('ProjectFloor.floor_numbers.BASEMENT') },
+    { id: Number(FloorNumber.GROUND_FLOOR), title: t('ProjectFloor.floor_numbers.GROUND_FLOOR') },
+    { id: Number(FloorNumber.FIRST_FLOOR), title: t('ProjectFloor.floor_numbers.FIRST_FLOOR') },
+    { id: Number(FloorNumber.SECOND_FLOOR), title: t('ProjectFloor.floor_numbers.SECOND_FLOOR') },
+    { id: Number(FloorNumber.THIRD_FLOOR), title: t('ProjectFloor.floor_numbers.THIRD_FLOOR') },
+    { id: Number(FloorNumber.FOURTH_FLOOR), title: t('ProjectFloor.floor_numbers.FOURTH_FLOOR') },
+    { id: Number(FloorNumber.FIFTH_FLOOR), title: t('ProjectFloor.floor_numbers.FIFTH_FLOOR') },
+    { id: Number(FloorNumber.SIXTH_FLOOR), title: t('ProjectFloor.floor_numbers.SIXTH_FLOOR') },
+    { id: Number(FloorNumber.SEVENTH_FLOOR), title: t('ProjectFloor.floor_numbers.SEVENTH_FLOOR') },
+    { id: Number(FloorNumber.EIGHTH_FLOOR), title: t('ProjectFloor.floor_numbers.EIGHTH_FLOOR') },
+    { id: Number(FloorNumber.NINTH_FLOOR), title: t('ProjectFloor.floor_numbers.NINTH_FLOOR') },
+    { id: Number(FloorNumber.TENTH_FLOOR), title: t('ProjectFloor.floor_numbers.TENTH_FLOOR') },
   ]);
 
   const getProjectFloors = () => {
@@ -477,7 +477,7 @@
   <section class="pricing-card" dir="rtl">
     <header class="pricing-header">
       <div>
-        <h3>{{ $t('project_item.title') }}</h3>
+        <h3>{{ $t('project_item.form_title') }}</h3>
       </div>
     </header>
 
@@ -499,7 +499,7 @@
         </div>
 
         <div class="field-box field-box--method">
-          <label class="mini-label">{{ $t('project_item.pricing_method_label') }}</label>
+          <label class="mini-label">{{ $t('project_item.pricing_method') }}</label>
 
           <UpdatedCustomInputSelect
             id="project-item-pricing-method"
@@ -512,7 +512,7 @@
         </div>
 
         <div v-if="isFullFloorRelated" class="field-box field-box--floor">
-          <label class="mini-label">{{ $t('ProjectFloor.floor_number_label') }}</label>
+          <label class="mini-label">{{ $t('ProjectFloor.floor_number') }}</label>
 
           <UpdatedCustomInputSelect
             id="floor_number"
@@ -525,7 +525,7 @@
         </div>
 
         <div v-if="isSpaceRelated" class="field-box field-box--floor">
-          <label class="mini-label">{{ $t('ProjectFloor.space_label') }}</label>
+          <label class="mini-label">{{ $t('ProjectFloor.space') }}</label>
 
           <UpdatedCustomInputSelect
             id="space_id"
@@ -537,7 +537,7 @@
         </div>
 
         <div class="field-box field-box--item">
-          <label class="mini-label">{{ $t('project_item.item_label') }}</label>
+          <label class="mini-label">{{ $t('project_item.item') }}</label>
 
           <UpdatedCustomInputSelect
             id="project-item-item"
@@ -552,7 +552,7 @@
         </div>
 
         <div class="field-box field-box--qty">
-          <label class="mini-label">{{ $t('project_item.quantity_label') }}</label>
+          <label class="mini-label">{{ $t('project_item.quantity') }}</label>
 
           <input
             v-model.number="quantity"
@@ -565,7 +565,7 @@
         </div>
 
         <div v-if="isGeneralItem || isFullFloorRelated" class="field-box field-box--price">
-          <label class="mini-label">{{ $t('project_item.price_label') }}</label>
+          <label class="mini-label">{{ $t('project_item.price') }}</label>
 
           <input
             v-model.number="price"
@@ -590,7 +590,7 @@
 
       <div class="local-items-table">
         <div class="local-table-summary">
-          <strong>{{ $t('project_item.selected_items') || 'Selected Items' }}</strong>
+          <strong>{{ $t('project_item.selected_items') }}</strong>
           <span>{{ localItems.length }}</span>
         </div>
 
@@ -600,11 +600,11 @@
 
         <div v-else class="local-table">
           <div class="local-table-head">
-            <span>{{ $t('project_item.item_label') }}</span>
+            <span>{{ $t('project_item.item') }}</span>
             <span>{{ $t('project_item.related_label') }}</span>
-            <span>{{ $t('project_item.pricing_method_label') }}</span>
-            <span>{{ $t('project_item.quantity_label') }}</span>
-            <span>{{ $t('project_item.price_label') }}</span>
+            <span>{{ $t('project_item.pricing_method') }}</span>
+            <span>{{ $t('project_item.quantity') }}</span>
+            <span>{{ $t('project_item.price') }}</span>
             <span>{{ $t('project_item.total_label') }}</span>
             <span>{{ $t('general.actions') }}</span>
           </div>
@@ -618,7 +618,7 @@
             <span>{{ item.total ?? '-' }}</span>
 
             <button type="button" class="remove-btn" @click="removeItem(item.local_id)">
-              {{ $t('Delete') }}
+              {{ $t('general.delete') }}
             </button>
           </div>
         </div>
