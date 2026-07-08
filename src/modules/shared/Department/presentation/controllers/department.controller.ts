@@ -21,9 +21,15 @@ export default class DepartmentController extends BaseController<
         showLoadingDialog: false,
         showSuccessDialog: false,
         showErrorDialog: false,
+<<<<<<< HEAD
         showErrorTosat: true, 
         showSuccessTosat: true,
         autoRetry: false, 
+=======
+        showErrorTosat: true,
+        showSuccessTosat: true,
+        autoRetry: false,
+>>>>>>> 391b375 ( add search in sidebar and icon delet)
         maxAutoRetries: 1,
       };
     }
