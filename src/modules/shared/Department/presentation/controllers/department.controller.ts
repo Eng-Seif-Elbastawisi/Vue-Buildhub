@@ -21,9 +21,9 @@ export default class DepartmentController extends BaseController<
         showLoadingDialog: false,
         showSuccessDialog: false,
         showErrorDialog: false,
-        showErrorTosat: true,
+        showErrorTosat: true, 
         showSuccessTosat: true,
-        autoRetry: false,
+        autoRetry: false, 
         maxAutoRetries: 1,
       };
     }
