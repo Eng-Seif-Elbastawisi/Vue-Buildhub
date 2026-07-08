@@ -284,7 +284,7 @@
 </script>
 
 <template>
-  <div class="input-label flex justify-between w-full">
+  <!-- <div class="input-label flex justify-between w-full">
     <slot v-if="!hasHeader">
       <div class="flex items-center">
         <slot name="reloadHeader"></slot>
@@ -328,7 +328,7 @@
     </slot>
 
     <slot v-else name="Header"></slot>
-  </div>
+  </div> -->
 
   <slot v-if="!hascontent">
     <component

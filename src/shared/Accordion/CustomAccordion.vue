@@ -62,6 +62,11 @@
 </template>
 
 <style scoped>
+  .p-accordioncontent-content,
+  .p-accordioncontent {
+    background-color: transparent !important;
+  }
+
   .custom-accordion {
     width: 100%;
   }

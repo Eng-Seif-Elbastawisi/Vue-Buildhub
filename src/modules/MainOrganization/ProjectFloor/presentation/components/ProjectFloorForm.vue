@@ -1043,12 +1043,12 @@
 
     span {
       display: inline-flex;
-      width: 34px;
+      // width: 34px;
       height: 34px;
       align-items: center;
       justify-content: center;
       border-radius: 13px;
-      background: var(--PrimaryColor-light);
+      // background: var(--PrimaryColor-light);
       color: var(--PrimaryColor);
       font-family: 'Bold';
       font-size: var(--xs-size);

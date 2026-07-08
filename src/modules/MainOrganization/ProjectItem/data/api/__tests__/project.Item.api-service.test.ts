@@ -11,9 +11,9 @@ describe('ProjectItemApiService', () => {
       endpoints: Record<string, string>;
     };
 
-    expect(service.endpoints.index).toContain('mainportal/fetch_project_items');
-    expect(service.endpoints.create).toContain('mainportal/store_new_project_item');
+    expect(service.endpoints.index).toContain('mainportal/fetch_project_department_items');
+    expect(service.endpoints.create).toContain('mainportal/store_project_department_item');
     expect(service.endpoints.update).toContain('mainportal/update_project_item');
-    expect(service.endpoints.delete).toContain('mainportal/delete_project_item');
+    expect(service.endpoints.delete).toContain('mainportal/delete_project_department_item');
   });
 });

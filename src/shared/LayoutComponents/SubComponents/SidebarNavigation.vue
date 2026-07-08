@@ -9,7 +9,14 @@
   import IconLogout from '@/shared/icons/IconLogout.vue';
 
   import { useUserStore } from '@/stores/user';
-  import { sidebarSections, type SidebarRole, type SidebarSectionConfig } from './sidebar.config';
+  import SidebarCountsApiService from './sidebar.counts.api-service';
+  import {
+    getSidebarSections,
+    getSidebarSectionsWithCounts,
+    type SidebarRole,
+    type SidebarCountsPayload,
+    type SidebarSectionConfig,
+  } from './sidebar.config';
 
   const route = useRoute();
   const router = useRouter();
@@ -23,6 +30,7 @@
 
   const isPanelOpen = ref(false);
   const selectedSectionKey = ref<string | null>(null);
+  const sidebarSectionsState = ref(getSidebarSections());
 
   interface SidebarItem {
     path: string;
@@ -49,7 +57,7 @@
   });
 
   const menu = computed<SidebarSection[]>(() => {
-    return sidebarSections
+    return sidebarSectionsState.value
       .map((section) => {
         const items = section.items
           .filter((item) => {
@@ -72,6 +80,22 @@
       .filter((section) => section.items.length > 0);
   });
 
+  const loadSidebarCounts = async () => {
+    if (!user.value?.id) {
+      sidebarSectionsState.value = getSidebarSections();
+      return;
+    }
+
+    try {
+      const response = await SidebarCountsApiService.getInstance().fetchSidebarCounts();
+      const responseData: SidebarCountsPayload | undefined = response?.data?.data;
+
+      sidebarSectionsState.value = getSidebarSectionsWithCounts(responseData ?? {});
+    } catch {
+      sidebarSectionsState.value = getSidebarSections();
+    }
+  };
+
   const isActiveRoute = (link: string) => {
     return route.path === link || route.path.startsWith(`${link}/`);
   };
@@ -92,6 +116,14 @@
     activeSection,
     (section) => {
       if (section) selectedSectionKey.value = section.key;
+    },
+    { immediate: true },
+  );
+
+  watch(
+    [currentRole, () => user.value?.id],
+    () => {
+      void loadSidebarCounts();
     },
     { immediate: true },
   );
