@@ -12,6 +12,41 @@ vi.mock('@/modules/MainOrganization/employee/presentation/controllers/employee.c
   },
 }));
 
+const DatePickerStub = {
+  name: 'DatePicker',
+  props: {
+    modelValue: {
+      type: [Date, String],
+      default: null,
+    },
+    inputId: {
+      type: String,
+      required: true,
+    },
+    timeOnly: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  emits: ['update:modelValue'],
+  methods: {
+    formatValue(value?: Date | string | null): string {
+      if (!value) return '';
+      if (typeof value === 'string') return value;
+
+      const pad = (part: number) => String(part).padStart(2, '0');
+
+      if (this.timeOnly) {
+        return `${pad(value.getHours())}:${pad(value.getMinutes())}:${pad(value.getSeconds())}`;
+      }
+
+      return `${value.getFullYear()}-${pad(value.getMonth() + 1)}-${pad(value.getDate())}`;
+    },
+  },
+  template:
+    '<input :id="inputId" :value="formatValue(modelValue)" @input="$emit(\'update:modelValue\', $event.target.value)" />',
+};
+
 describe('ProjectPreviewForm.vue', () => {
   it('hydrates edit values and emits preview params', () => {
     const projectPreview = new ProjectPreviewShowModel({
@@ -32,6 +67,7 @@ describe('ProjectPreviewForm.vue', () => {
           $t: (key: string) => key,
         },
         stubs: {
+          DatePicker: DatePickerStub,
           UpdatedCustomInputSelect: {
             name: 'UpdatedCustomInputSelect',
             props: ['modelValue', 'params'],
@@ -74,6 +110,7 @@ describe('ProjectPreviewForm.vue', () => {
           $t: (key: string) => key,
         },
         stubs: {
+          DatePicker: DatePickerStub,
           UpdatedCustomInputSelect: {
             name: 'UpdatedCustomInputSelect',
             props: ['params'],

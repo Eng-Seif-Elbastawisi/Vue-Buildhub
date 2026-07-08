@@ -15,6 +15,7 @@
   import { ItemTypeEnum } from '../../core/constant/item.type.enum copy';
   import { ItemStatusEnum } from '../../core/constant/item.status.enum';
   import type ItemShowModel from '../../core/models/Item.show.model';
+  import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
 
   const emit = defineEmits<{
     updateData: [params: AddItemParams];
@@ -45,14 +46,15 @@
   const price = ref<number>();
   const notes = ref<string>('');
 
-const optionFromId = (id?: number | string): TitleInterface<number> | null => {
-  return id !== undefined && id !== null
-    ? {
-        id: Number(id),
-        title: String(id),
-      }
-    : null;
-};  const numericId = (value?: string | number) => (value == null ? undefined : Number(value));
+  const optionFromId = (id?: number | string): TitleInterface<number> | null => {
+    return id !== undefined && id !== null
+      ? {
+          id: Number(id),
+          title: String(id),
+        }
+      : null;
+  };
+  const numericId = (value?: string | number) => (value == null ? undefined : Number(value));
 
   onBeforeRouteLeave((to, from) => {
     const savedData = props.formKey ? formStore.getFormData(props.formKey) : null;
@@ -62,7 +64,7 @@ const optionFromId = (id?: number | string): TitleInterface<number> | null => {
   });
 
   watch(
-    () => props.item, 
+    () => props.item,
     (item) => {
       if (!item) return;
       translations.value = { ...item.translations.title };
@@ -124,7 +126,10 @@ const optionFromId = (id?: number | string): TitleInterface<number> | null => {
       </div>
 
       <div class="field-group">
-        <label class="field-label" for="item-price">{{ $t('item.price') }}</label>
+        <span class="field-help-label-row field-help-label-row--block">
+          <label class="field-label" for="item-price">{{ $t('item.price') }}</label>
+          <FieldHelpIcon :label="$t('item.price')" field-name="price" field-id="item-price" />
+        </span>
         <div class="input-wrap">
           <input
             id="item-price"
@@ -206,7 +211,10 @@ const optionFromId = (id?: number | string): TitleInterface<number> | null => {
       </div>
 
       <div class="field-group col-span-2">
-        <label class="field-label" for="item-notes">{{ $t('item.notes') }}</label>
+        <span class="field-help-label-row field-help-label-row--block">
+          <label class="field-label" for="item-notes">{{ $t('item.notes') }}</label>
+          <FieldHelpIcon :label="$t('item.notes')" field-name="notes" field-id="item-notes" />
+        </span>
         <div class="input-wrap">
           <textarea
             id="item-notes"

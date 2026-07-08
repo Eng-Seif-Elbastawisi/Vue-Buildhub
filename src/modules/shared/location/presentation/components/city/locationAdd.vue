@@ -27,7 +27,13 @@
     <LocationForm :form-key="formKey" :loading="loading" @update-data="params = $event" />
 
     <div class="actions" :class="{ disabled: loading }">
-      <button class="btn btn-primary w-full" type="button" @click="saveLocation">
+      <button
+        :disabled="loading"
+        :class="{ 'btn--loading': loading }"
+        class="btn btn-primary w-full"
+        type="button"
+        @click="saveLocation"
+      >
         <span v-if="loading" class="loader"></span>
         <span v-else>{{ $t('location.save') }}</span>
       </button>

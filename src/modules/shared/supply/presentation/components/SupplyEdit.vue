@@ -49,7 +49,13 @@
     />
 
     <div class="actions" :class="{ disabled: loading }">
-      <button class="btn btn-primary w-full" type="button" @click="saveSupply">
+      <button
+        :disabled="loading"
+        :class="{ 'btn--loading': loading }"
+        class="btn btn-primary w-full"
+        type="button"
+        @click="saveSupply"
+      >
         <span v-if="loading" class="loader"></span>
         <span v-else>{{ $t('supply.update') }}</span>
       </button>

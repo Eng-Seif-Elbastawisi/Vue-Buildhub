@@ -2,19 +2,39 @@
   import { watch } from 'vue';
   import ToggleSwitch from 'primevue/toggleswitch';
 
+  import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
+
   const emit = defineEmits(['update:value']);
 
-  const props = defineProps<{
-    fields: {
-      key: string;
-      label: string;
-      placeholder: string;
-      value: string;
-      enabled: boolean;
-    }[];
-    switch_title?: string;
-    switch_reverse?: boolean;
-  }>();
+  interface SwitchField {
+    key: string;
+    label: string;
+    placeholder: string;
+    value: string;
+    enabled: boolean;
+    helpTitle?: string;
+    helpText?: string;
+    helpExamples?: string[];
+    showHelp?: boolean;
+  }
+
+  const props = withDefaults(
+    defineProps<{
+      fields: SwitchField[];
+      switch_title?: string;
+      switch_reverse?: boolean;
+      helpTitle?: string;
+      helpText?: string;
+      helpExamples?: string[];
+      showHelp?: boolean;
+    }>(),
+    {
+      helpTitle: '',
+      helpText: '',
+      helpExamples: () => [],
+      showHelp: true,
+    },
+  );
 
   watch(
     () => props.fields,
@@ -40,7 +60,19 @@
   <div class="zone-data-container">
     <div v-for="field in fields" :key="field.key" class="input-wrapper">
       <div class="input-title">
-        <label class="title" :for="field.key">{{ $t(field.label) }}</label>
+        <span class="field-help-label-row">
+          <label class="title" :for="field.key">{{ $t(field.label) }}</label>
+
+          <FieldHelpIcon
+            :label="$t(field.label)"
+            :field-name="field.key"
+            :field-id="field.key"
+            :help-title="field.helpTitle ?? helpTitle"
+            :help-text="field.helpText ?? helpText"
+            :help-examples="field.helpExamples ?? helpExamples"
+            :show-help="field.showHelp ?? showHelp"
+          />
+        </span>
         <div class="switch-btn">
           <p class="title">{{ switch_title }}</p>
           <ToggleSwitch v-model="field.enabled" />

@@ -3,6 +3,8 @@
   import RadioButton from 'primevue/radiobutton';
   import Checkbox from 'primevue/checkbox';
 
+  import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
+
   const SelectedOption = ref();
   const customize = ref();
   const emit = defineEmits(['update:value', 'update:Customize']);
@@ -12,6 +14,10 @@
     selections?: string[];
     images_selections?: string[];
     Customize?: boolean;
+    helpTitle?: string;
+    helpText?: string;
+    helpExamples?: string[];
+    showHelp?: boolean;
   }>();
 
   const UpdateSelect = (data: Event) => {
@@ -31,7 +37,17 @@
 <template>
   <div class="radio-selection-containre">
     <div class="radio-selection-header">
-      <p class="title">{{ title }}</p>
+      <span class="field-help-label-row">
+        <p class="title">{{ title }}</p>
+        <FieldHelpIcon
+          :label="title"
+          :field-name="title"
+          :help-title="helpTitle"
+          :help-text="helpText"
+          :help-examples="helpExamples"
+          :show-help="showHelp"
+        />
+      </span>
       <div v-if="Customize" class="checkbox-header">
         <!-- <input type="checkbox" v-model="customize" :id="title.split(' ').join('-')"
           :name="title.split(' ').join('-')" /> -->

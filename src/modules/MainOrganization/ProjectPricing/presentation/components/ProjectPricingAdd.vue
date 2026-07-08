@@ -124,6 +124,7 @@
 
     <div class="actions" :class="{ disabled: loading || itemsLoading || pricingLoading }">
       <button
+        :class="{ 'btn--loading': loading }"
         class="btn btn-primary w-full"
         type="button"
         :disabled="loading || itemsLoading || pricingLoading"

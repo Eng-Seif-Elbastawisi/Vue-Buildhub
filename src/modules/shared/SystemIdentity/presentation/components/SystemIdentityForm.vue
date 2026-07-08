@@ -9,6 +9,7 @@
     useSystemIdentityTheme,
     type SystemIdentityPalette,
   } from '../composables/useSystemIdentityTheme';
+  import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
 
   const emit = defineEmits<{ updateData: [params: StoreSystemIdentityParams] }>();
   const props = defineProps<{
@@ -158,13 +159,29 @@
 
     <div class="form-grid">
       <section class="form-card">
-        <label class="field-group">
-          <span>{{ $t('system_identity.name') }}</span>
-          <input v-model="name" type="text" class="field-input" @input="buildParams" />
-        </label>
+        <div class="field-group">
+          <span class="field-help-label-row">
+            <label for="system-identity-name">{{ $t('system_identity.name') }}</label>
+            <FieldHelpIcon
+              :label="$t('system_identity.name')"
+              field-name="name"
+              field-id="system-identity-name"
+            />
+          </span>
+          <input
+            id="system-identity-name"
+            v-model="name"
+            type="text"
+            class="field-input"
+            @input="buildParams"
+          />
+        </div>
 
         <div class="logo-upload">
-          <span>{{ $t('system_identity.logo') }}</span>
+          <span class="field-help-label-row">
+            <span>{{ $t('system_identity.logo') }}</span>
+            <FieldHelpIcon :label="$t('system_identity.logo')" field-name="image" />
+          </span>
           <div class="logo-preview">
             <img v-if="logoPreview" :src="logoPreview" :alt="$t('system_identity.logo')" />
             <span v-else>{{ $t('system_identity.logo_preview') }}</span>
@@ -181,30 +198,84 @@
           </button>
         </div>
 
-        <label class="toggle-row">
-          <input v-model="isActive" type="checkbox" @change="buildParams" />
-          <span>{{ $t('system_identity.active') }}</span>
-        </label>
+        <div class="toggle-row">
+          <input
+            id="system-identity-active"
+            v-model="isActive"
+            type="checkbox"
+            @change="buildParams"
+          />
+          <span class="field-help-label-row">
+            <label for="system-identity-active">{{ $t('system_identity.active') }}</label>
+            <FieldHelpIcon
+              :label="$t('system_identity.active')"
+              field-name="status"
+              field-id="system-identity-active"
+            />
+          </span>
+        </div>
       </section>
 
       <section class="form-card">
-        <label class="color-row">
-          <span>{{ $t('system_identity.primary_color') }}</span>
-          <input v-model="primaryColor" type="color" @input="buildParams" />
+        <div class="color-row">
+          <span class="field-help-label-row">
+            <label for="system-identity-primary-color">{{
+              $t('system_identity.primary_color')
+            }}</label>
+            <FieldHelpIcon
+              :label="$t('system_identity.primary_color')"
+              field-name="color"
+              field-id="system-identity-primary-color"
+            />
+          </span>
+          <input
+            id="system-identity-primary-color"
+            v-model="primaryColor"
+            type="color"
+            @input="buildParams"
+          />
           <strong>{{ primaryColor }}</strong>
-        </label>
+        </div>
 
-        <label class="color-row">
-          <span>{{ $t('system_identity.secondary_color') }}</span>
-          <input v-model="secondaryColor" type="color" @input="buildParams" />
+        <div class="color-row">
+          <span class="field-help-label-row">
+            <label for="system-identity-secondary-color">{{
+              $t('system_identity.secondary_color')
+            }}</label>
+            <FieldHelpIcon
+              :label="$t('system_identity.secondary_color')"
+              field-name="color"
+              field-id="system-identity-secondary-color"
+            />
+          </span>
+          <input
+            id="system-identity-secondary-color"
+            v-model="secondaryColor"
+            type="color"
+            @input="buildParams"
+          />
           <strong>{{ secondaryColor }}</strong>
-        </label>
+        </div>
 
-        <label class="color-row">
-          <span>{{ $t('system_identity.accent_color') }}</span>
-          <input v-model="accentColor" type="color" @input="buildParams" />
+        <div class="color-row">
+          <span class="field-help-label-row">
+            <label for="system-identity-accent-color">{{
+              $t('system_identity.accent_color')
+            }}</label>
+            <FieldHelpIcon
+              :label="$t('system_identity.accent_color')"
+              field-name="color"
+              field-id="system-identity-accent-color"
+            />
+          </span>
+          <input
+            id="system-identity-accent-color"
+            v-model="accentColor"
+            type="color"
+            @input="buildParams"
+          />
           <strong>{{ accentColor }}</strong>
-        </label>
+        </div>
 
         <div class="extracted-colors">
           <span>{{ $t('system_identity.extracted_colors') }}</span>

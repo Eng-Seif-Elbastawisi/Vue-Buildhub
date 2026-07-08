@@ -8,6 +8,7 @@
   import AddProjectPricingParams from '../../core/params/add.project.pricing.params';
   import { ProjectPricingDiscountEnum } from '../../core/constant/project.pricing.discount.enum';
   import type ProjectPricingShowModel from '../../core/models/project.pricing.show.model';
+  import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
 
   const emit = defineEmits<{
     updateData: [params: AddProjectPricingParams];
@@ -183,8 +184,11 @@
 
       <article class="summary-box discount-box">
         <div class="discount-head">
-          <span class="summary-label">
-            {{ $t('project_pricing.discount') }}
+          <span class="field-help-label-row">
+            <span class="summary-label">
+              {{ $t('project_pricing.discount') }}
+            </span>
+            <FieldHelpIcon :label="$t('project_pricing.discount')" field-name="discount" />
           </span>
 
           <div class="discount-toggle">
@@ -219,9 +223,16 @@
       </article>
 
       <article class="summary-box">
-        <label class="summary-label" for="project-pricing-total-tax">
-          {{ $t('project_pricing.tax_percentage') }}
-        </label>
+        <span class="field-help-label-row">
+          <label class="summary-label" for="project-pricing-total-tax">
+            {{ $t('project_pricing.tax_percentage') }}
+          </label>
+          <FieldHelpIcon
+            :label="$t('project_pricing.tax_percentage')"
+            field-name="tax"
+            field-id="project-pricing-total-tax"
+          />
+        </span>
 
         <input
           id="project-pricing-total-tax"

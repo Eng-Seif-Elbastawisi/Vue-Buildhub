@@ -2,6 +2,8 @@
   import { ref, computed, watch } from 'vue';
   import { useI18n } from 'vue-i18n';
 
+  import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
+
   interface Props {
     fieldKey: string;
     modelValue?: Record<string, string>;
@@ -9,6 +11,10 @@
     label?: string;
     placeholder?: string;
     type?: 'title' | 'description';
+    helpTitle?: string;
+    helpText?: string;
+    helpExamples?: string[];
+    showHelp?: boolean;
   }
 
   const props = withDefaults(defineProps<Props>(), {
@@ -17,6 +23,10 @@
     label: '',
     placeholder: '',
     type: 'title',
+    helpTitle: '',
+    helpText: '',
+    helpExamples: () => [],
+    showHelp: true,
   });
 
   const { t } = useI18n();
@@ -74,7 +84,18 @@
 <template>
   <div class="multi-lang-input">
     <div class="header-input">
-      <label v-if="label" class="field-label">{{ label }}</label>
+      <span v-if="label" class="field-help-label-row">
+        <label class="field-label">{{ label }}</label>
+
+        <FieldHelpIcon
+          :label="label"
+          :field-name="fieldKey"
+          :help-title="helpTitle"
+          :help-text="helpText"
+          :help-examples="helpExamples"
+          :show-help="showHelp"
+        />
+      </span>
 
       <div class="lang-switcher">
         <button

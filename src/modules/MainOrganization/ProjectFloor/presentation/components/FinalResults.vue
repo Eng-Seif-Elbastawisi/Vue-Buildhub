@@ -6,6 +6,7 @@
 
   import type TitleInterface from '@/base/Data/Models/titleInterface';
   import UpdatedCustomInputSelect from '@/shared/FormInputs/UpdatedCustomInputSelect.vue';
+  import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
 
   import IndexEmployeeParams from '@/modules/MainOrganization/employee/core/params/index.employee.params';
   import EmployeeController from '@/modules/MainOrganization/employee/presentation/controllers/employee.controller';
@@ -221,9 +222,16 @@
       <div class="dialog-body">
         <div class="dialog-grid">
           <div class="dialog-field">
-            <label class="field-label">
-              {{ $t('ProjectFloor.pricing_responsible') }}
-            </label>
+            <span class="field-help-label-row field-help-label-row--block">
+              <label class="field-label">
+                {{ $t('ProjectFloor.pricing_responsible') }}
+              </label>
+              <FieldHelpIcon
+                :label="$t('ProjectFloor.pricing_responsible')"
+                field-name="engineer"
+                field-id="pricing_responsible_id"
+              />
+            </span>
 
             <UpdatedCustomInputSelect
               id="pricing_responsible_id"
@@ -235,9 +243,12 @@
           </div>
 
           <div class="dialog-field">
-            <label class="field-label">
-              {{ $t('ProjectFloor.notification_type') }}
-            </label>
+            <span class="field-help-label-row field-help-label-row--block">
+              <label class="field-label">
+                {{ $t('ProjectFloor.notification_type') }}
+              </label>
+              <FieldHelpIcon :label="$t('ProjectFloor.notification_type')" field-name="type" />
+            </span>
 
             <div class="notification-tabs">
               <button
@@ -263,9 +274,16 @@
         </div>
 
         <div class="dialog-field">
-          <label class="field-label" for="notification_message">
-            {{ $t('ProjectFloor.notification_message') }}
-          </label>
+          <span class="field-help-label-row field-help-label-row--block">
+            <label class="field-label" for="notification_message">
+              {{ $t('ProjectFloor.notification_message') }}
+            </label>
+            <FieldHelpIcon
+              :label="$t('ProjectFloor.notification_message')"
+              field-name="notes"
+              field-id="notification_message"
+            />
+          </span>
 
           <textarea
             id="notification_message"

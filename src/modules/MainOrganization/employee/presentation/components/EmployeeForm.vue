@@ -9,6 +9,7 @@
   import type TitleInterface from '@/base/Data/Models/titleInterface';
   import { useI18n } from 'vue-i18n';
   import UpdatedCustomInputSelect from '@/shared/FormInputs/UpdatedCustomInputSelect.vue';
+  import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
 
   const emit = defineEmits<{
     updateData: [params: AddEmployeeParams];
@@ -95,7 +96,10 @@
 
     <div class="form-fields" :class="{ disabled: loading }">
       <div class="field-group">
-        <label class="field-label" for="admin-name">{{ $t('name') }}</label>
+        <span class="field-help-label-row field-help-label-row--block">
+          <label class="field-label" for="admin-name">{{ $t('name') }}</label>
+          <FieldHelpIcon :label="$t('name')" field-name="name" field-id="admin-name" />
+        </span>
         <div class="input-wrap">
           <input
             id="admin-name"
@@ -109,7 +113,10 @@
       </div>
 
       <div class="field-group">
-        <label class="field-label" for="admin-email">{{ $t('email') }}</label>
+        <span class="field-help-label-row field-help-label-row--block">
+          <label class="field-label" for="admin-email">{{ $t('email') }}</label>
+          <FieldHelpIcon :label="$t('email')" field-name="email" field-id="admin-email" />
+        </span>
         <div class="input-wrap">
           <input
             id="admin-email"
@@ -123,7 +130,10 @@
       </div>
 
       <div class="field-group">
-        <label class="field-label" for="admin-phone">{{ $t('phone') }}</label>
+        <span class="field-help-label-row field-help-label-row--block">
+          <label class="field-label" for="admin-phone">{{ $t('phone') }}</label>
+          <FieldHelpIcon :label="$t('phone')" field-name="phone" field-id="admin-phone" />
+        </span>
         <div class="input-wrap">
           <input
             id="admin-phone"
@@ -137,7 +147,10 @@
       </div>
 
       <div v-if="!route.params.employee_id" class="field-group">
-        <label class="field-label" for="admin-password">{{ $t('password') }}</label>
+        <span class="field-help-label-row field-help-label-row--block">
+          <label class="field-label" for="admin-password">{{ $t('password') }}</label>
+          <FieldHelpIcon :label="$t('password')" field-name="password" field-id="admin-password" />
+        </span>
         <div class="input-wrap">
           <input
             id="admin-password"

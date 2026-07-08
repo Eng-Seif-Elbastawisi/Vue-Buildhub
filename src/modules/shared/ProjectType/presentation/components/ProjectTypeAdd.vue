@@ -24,7 +24,13 @@
 <template>
   <div class="project-crud-page">
     <ProjectTypeForm :loading="loading" @update-data="params = $event" />
-    <button class="btn btn-primary" type="button" :disabled="loading" @click="saveProject">
+    <button
+      :class="{ 'btn--loading': loading }"
+      class="btn btn-primary"
+      type="button"
+      :disabled="loading"
+      @click="saveProject"
+    >
       {{ $t('project.save') }}
     </button>
     <div v-if="controller.errorMessage.value" class="error">

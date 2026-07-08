@@ -5,6 +5,7 @@
   import DocumentIcon from '@/shared/icons/DocaumentType/DocumentIcon.vue';
   import type SuppliersShowModel from '../../core/models/Suppliers.show.model';
   import AddSuppliersParams from '../../core/params/add.Suppliers.params';
+  import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
 
   const emit = defineEmits<{
     updateData: [params: AddSuppliersParams];
@@ -66,7 +67,10 @@
 
     <div class="form-fields" :class="{ disabled: loading }">
       <div class="field-group">
-        <label class="field-label" for="supplier-name">{{ $t('supplier.name') }}</label>
+        <span class="field-help-label-row field-help-label-row--block">
+          <label class="field-label" for="supplier-name">{{ $t('supplier.name') }}</label>
+          <FieldHelpIcon :label="$t('supplier.name')" field-name="name" field-id="supplier-name" />
+        </span>
         <div class="input-wrap">
           <input
             id="supplier-name"
@@ -96,7 +100,14 @@
       </div> -->
 
       <div class="field-group">
-        <label class="field-label" for="supplier-phone">{{ $t('supplier.phone') }}</label>
+        <span class="field-help-label-row field-help-label-row--block">
+          <label class="field-label" for="supplier-phone">{{ $t('supplier.phone') }}</label>
+          <FieldHelpIcon
+            :label="$t('supplier.phone')"
+            field-name="phone"
+            field-id="supplier-phone"
+          />
+        </span>
         <div class="input-wrap">
           <input
             id="supplier-phone"

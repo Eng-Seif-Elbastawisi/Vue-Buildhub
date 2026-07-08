@@ -32,7 +32,9 @@
       :loading="loading"
       @update-data="(value) => (params = value as EditTermParams)"
     />
-    <AppButton :title="$t('save')" type="button" @click="save">{{ $t('save') }}</AppButton>
+    <AppButton :loading="loading" :title="$t('save')" type="button" @click="save">{{
+      $t('save')
+    }}</AppButton>
     <div v-if="controller.errorMessage.value" class="error">
       {{ controller.errorMessage.value }}
     </div>

@@ -27,7 +27,13 @@
     <EmployeeForm :form-key="formKey" :loading="loading" @update-data="params = $event" />
 
     <div class="actions" :class="{ disabled: loading }">
-      <button class="btn btn-primary w-full" type="button" @click="saveEmployee">
+      <button
+        :disabled="loading"
+        :class="{ 'btn--loading': loading }"
+        class="btn btn-primary w-full"
+        type="button"
+        @click="saveEmployee"
+      >
         <span v-if="loading" class="loader"></span>
         <span v-else>{{ $t('employee.save') }}</span>
       </button>

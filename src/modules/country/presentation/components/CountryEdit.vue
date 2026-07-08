@@ -42,10 +42,20 @@
 
 <template>
   <div class="email-crud-example">
-    <CountryForm :country="controller.itemData.value!" :loading="loading" @update-data="updateData" />
+    <CountryForm
+      :country="controller.itemData.value!"
+      :loading="loading"
+      @update-data="updateData"
+    />
 
     <div class="actions" :class="{ disabled: loading }">
-      <button type="button" class="btn btn-primary" @click="saveEmail">
+      <button
+        :disabled="loading"
+        :class="{ 'btn--loading': loading }"
+        type="button"
+        class="btn btn-primary"
+        @click="saveEmail"
+      >
         <span v-if="loading" class="loader"></span>
         <span v-else>{{ $t('Save') }}</span>
       </button>
