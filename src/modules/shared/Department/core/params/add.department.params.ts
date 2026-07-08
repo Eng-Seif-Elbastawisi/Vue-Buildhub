@@ -8,7 +8,7 @@ export default class AddDepartmentParams implements Params {
 
   public static readonly validation = new ClassValidation().setRules({
     translations: { required: true },
-    stageId: { required: true },
+    // stageId: { required: true },
   });
 
   constructor(data: { translations: TranslationParams; stageId: number }) {
