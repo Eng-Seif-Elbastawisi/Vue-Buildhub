@@ -120,6 +120,18 @@ describe('FieldHelpIcon', () => {
     expect(popover.text()).toContain('Tip: Use a value everyone can recognize.');
   });
 
+  it('renders the popover pointer as an image asset', async () => {
+    const wrapper = createWrapper({ fieldName: 'title', label: 'Title' });
+
+    await wrapper.find('button').trigger('click');
+
+    const pointer = wrapper.find('img.field-help-popover-pointer');
+
+    expect(pointer.exists()).toBe(true);
+    expect(pointer.attributes('alt')).toBe('');
+    expect(pointer.attributes('aria-hidden')).toBe('true');
+  });
+
   it('renders registry importance and tip content', async () => {
     const wrapper = createWrapper({ fieldName: 'name', label: 'Name' });
 

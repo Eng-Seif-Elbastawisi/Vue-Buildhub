@@ -53,9 +53,6 @@
   const popover = ref<FieldHelpPopoverRef | null>(null);
   const triggerButton = ref<HTMLButtonElement | null>(null);
   const connectorStyle = ref<Record<string, string>>({});
-  const popoverAssetStyle = computed<Record<string, string>>(() => ({
-    '--field-help-pointer-image': `url(${popoverPointerImage})`,
-  }));
   const popoverId = `field-help-${Math.random().toString(36).slice(2, 10)}`;
   let connectorFrame = 0;
   let resizeObserver: ResizeObserver | null = null;
@@ -165,8 +162,7 @@
       return;
     }
 
-    const pointerElement =
-      popoverElement.querySelector<HTMLElement>('.field-help-popover-pointer');
+    const pointerElement = popoverElement.querySelector<HTMLElement>('.field-help-popover-pointer');
     const pointerRect = pointerElement?.getBoundingClientRect();
     const triggerCenterX = triggerRect.left + triggerRect.width / 2;
     const triggerCenterY = triggerRect.top + triggerRect.height / 2;
@@ -271,7 +267,6 @@
     <Popover
       ref="popover"
       class="field-help-popover"
-      :style="popoverAssetStyle"
       @show="handlePopoverShow"
       @hide="handlePopoverHide"
     >
@@ -320,9 +315,12 @@
         </p>
       </div>
 
-      <span
+      <img
         class="field-help-popover-pointer"
+        :src="popoverPointerImage"
+        alt=""
         aria-hidden="true"
+        draggable="false"
       />
     </Popover>
 
@@ -537,23 +535,22 @@
   }
 
   :global(.field-help-popover .field-help-popover-pointer) {
+    display: block;
     position: absolute;
-    top: -0.75rem;
+    top: -0.8125rem;
     left: 50%;
     z-index: 3;
-    width: 1.75rem;
-    height: 0.875rem;
-    background: var(--field-help-popover-bg);
-    filter: drop-shadow(0 -1px 0 var(--field-help-popover-border));
-    mask: var(--field-help-pointer-image) 50% 50% / 100% 100% no-repeat;
+    width: 2rem;
+    height: 1rem;
+    object-fit: contain;
     pointer-events: none;
     transform: translateX(-50%);
-    -webkit-mask: var(--field-help-pointer-image) 50% 50% / 100% 100% no-repeat;
+    user-select: none;
   }
 
   :global(.field-help-popover.p-popover-flipped .field-help-popover-pointer) {
     top: auto;
-    bottom: -0.75rem;
+    bottom: -0.8125rem;
     transform: translateX(-50%) rotate(180deg);
   }
 
