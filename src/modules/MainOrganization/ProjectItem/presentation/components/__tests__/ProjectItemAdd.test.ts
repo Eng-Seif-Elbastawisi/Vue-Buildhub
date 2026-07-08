@@ -39,19 +39,22 @@ vi.mock('vue-router', () => ({
 
 const params = new AddProjectItemParams({
   project_id: 4,
-  price: 150,
-  quantity: 3,
-  item_id: 9,
-  pricing_method: ProjectItemPriceEnum.GENERAL_ITEM,
-  project_floor_id: 2,
+  department_id: 7,
+  items: [
+    {
+      price: 150,
+      quantity: 3,
+      item_id: 9,
+      pricing_method: ProjectItemPriceEnum.GENERAL_ITEM,
+    },
+  ],
 });
 
 const global = {
   stubs: {
     ProjectItemForm: {
-      emits: ['updateData', 'addItem'],
-      template:
-        '<div class="item-form-stub" @click="$emit(\'updateData\', params); $emit(\'addItem\')"></div>',
+      emits: ['updateData'],
+      template: '<div class="item-form-stub" @click="$emit(\'updateData\', params)"></div>',
       setup: () => ({ params }),
     },
     ProjectItemTable: true,
@@ -77,6 +80,7 @@ describe('ProjectItemAdd', () => {
     await flushPromises();
 
     await wrapper.find('.item-form-stub').trigger('click');
+    await wrapper.find('button').trigger('click');
     await flushPromises();
 
     expect(mockController.create).toHaveBeenCalledWith(params, undefined, '/item/add');
