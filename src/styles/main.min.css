@@ -801,9 +801,27 @@ ul {
   pointer-events: none;
 }
 .btn--loading {
+  position: relative;
+  min-height: 2.75rem;
   opacity: 0.7;
   cursor: wait;
   pointer-events: none;
+}
+.btn--loading > * {
+  visibility: hidden;
+}
+.btn--loading::after {
+  content: "";
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  width: 1.875rem;
+  height: 1.875rem;
+  background-image: url("../assets/images/loading.webp");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  transform: translate(-50%, -50%);
 }
 .btn__spinner {
   display: inline-block;

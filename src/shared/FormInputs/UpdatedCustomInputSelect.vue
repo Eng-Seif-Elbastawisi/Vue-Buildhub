@@ -14,6 +14,8 @@
 
   import PlusIcon from '@/shared/icons/PlusIcon.vue';
 
+  import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
+
   import type TitleInterface from '@/base/Data/Models/titleInterface';
 
   import type BaseController from '@/base/Presentation/Controller/baseController';
@@ -45,6 +47,8 @@
 
     id?: string;
 
+    name?: string;
+
     autoFill?: boolean;
 
     reload?: boolean;
@@ -56,6 +60,14 @@
     hasHeader?: boolean;
 
     onclick?: () => void;
+
+    helpTitle?: string;
+
+    helpText?: string;
+
+    helpExamples?: string[];
+
+    showHelp?: boolean;
   }
 
   const emit = defineEmits(['update:modelValue', 'update:slot']);
@@ -76,6 +88,8 @@
     staticOptions: null,
 
     optional: false,
+
+    showHelp: true,
   });
 
   const {
@@ -291,11 +305,23 @@
           <PlusIcon />
         </div>
 
-        <label :class="{ required: required }" class="input-label">
-          <span v-if="required" class="text-red-500">*</span>
+        <span class="field-help-label-row">
+          <label :class="{ required: required }" class="input-label">
+            <span v-if="required" class="text-red-500">*</span>
 
-          {{ $t(label ?? '') }}
-        </label>
+            {{ $t(label ?? '') }}
+          </label>
+
+          <FieldHelpIcon
+            :label="$t(label ?? '')"
+            :field-name="name ?? id"
+            :field-id="id"
+            :help-title="helpTitle"
+            :help-text="helpText"
+            :help-examples="helpExamples"
+            :show-help="showHelp"
+          />
+        </span>
 
         <slot name="LabelHeader"></slot>
       </div>

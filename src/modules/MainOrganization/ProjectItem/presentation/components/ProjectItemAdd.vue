@@ -89,6 +89,7 @@
 
     <div class="actions" :class="{ disabled: loading }">
       <button
+        :class="{ 'btn--loading': loading }"
         class="btn btn-primary w-full"
         type="button"
         :disabled="loading || !params?.items?.length"

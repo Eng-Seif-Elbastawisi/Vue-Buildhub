@@ -50,7 +50,13 @@
     />
 
     <div class="actions" :class="{ disabled: loading }">
-      <button class="btn btn-primary w-full" type="button" @click="saveAdmin">
+      <button
+        :disabled="loading"
+        :class="{ 'btn--loading': loading }"
+        class="btn btn-primary w-full"
+        type="button"
+        @click="saveAdmin"
+      >
         <span v-if="loading" class="loader"></span>
         <span v-else>{{ $t('employee.update') }}</span>
       </button>

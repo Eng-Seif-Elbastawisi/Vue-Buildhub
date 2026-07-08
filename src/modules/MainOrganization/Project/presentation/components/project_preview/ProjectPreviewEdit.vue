@@ -5,7 +5,7 @@
   import EditProjectPreviewParams from '../../../core/params/edit.project.preview.params.ts';
   import ProjectPreviewController from '../../controllers/project.preview.controller.ts';
   import ProjectPreviewForm from '../project_preview/ProjectPreviewForm.vue';
-import ShowProjectPreviewParams from '../../../core/params/show.project.preview.params.ts';
+  import ShowProjectPreviewParams from '../../../core/params/show.project.preview.params.ts';
 
   const controller = ProjectPreviewController.getInstance();
   const route = useRoute();
@@ -44,7 +44,13 @@ import ShowProjectPreviewParams from '../../../core/params/show.project.preview.
       :is-edit="true"
       @update-data="updateData"
     />
-    <button class="btn btn-primary" type="button" :disabled="loading" @click="saveProject">
+    <button
+      :class="{ 'btn--loading': loading }"
+      class="btn btn-primary"
+      type="button"
+      :disabled="loading"
+      @click="saveProject"
+    >
       {{ $t('Project.update') }}
     </button>
     <div v-if="controller.errorMessage.value" class="error">

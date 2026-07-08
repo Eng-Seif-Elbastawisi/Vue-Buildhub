@@ -1,6 +1,8 @@
 <script setup lang="ts">
   import { ref, onMounted, computed, watch } from 'vue';
 
+  import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
+
   export interface UploadedFile {
     id: string;
     name: string;
@@ -22,6 +24,10 @@
     file?: string | string[];
     base64File?: string | string[];
     hidepreview?: boolean;
+    helpTitle?: string;
+    helpText?: string;
+    helpExamples?: string[];
+    showHelp?: boolean;
   }
 
   const props = withDefaults(defineProps<Props>(), {
@@ -54,6 +60,10 @@
     ].join(','),
     maxFiles: Infinity,
     multiple: false,
+    helpTitle: '',
+    helpText: '',
+    helpExamples: () => [],
+    showHelp: true,
   });
 
   const emit = defineEmits<{
@@ -236,7 +246,19 @@
 
 <template>
   <div class="file-upload-wrapper">
-    <label class="upload-label">{{ $t(label) }}</label>
+    <span class="field-help-label-row">
+      <label class="upload-label">{{ $t(label) }}</label>
+
+      <FieldHelpIcon
+        :label="$t(label)"
+        :field-name="label"
+        :field-id="inputId"
+        :help-title="helpTitle"
+        :help-text="helpText"
+        :help-examples="helpExamples"
+        :show-help="showHelp"
+      />
+    </span>
 
     <label
       v-if="!haveContent"

@@ -5,6 +5,7 @@
 
   import type TitleInterface from '@/base/Data/Models/titleInterface';
   import UpdatedCustomInputSelect from '@/shared/FormInputs/UpdatedCustomInputSelect.vue';
+  import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
   import { useFormsStore } from '@/stores/formsStore';
 
   import IndexItemParams from '@/modules/shared/Item/core/params/index.Item.params';
@@ -484,7 +485,14 @@
     <div class="add-panel" :class="{ disabled: loading }">
       <div class="form-row">
         <div class="field-box field-box--department">
-          <label class="mini-label">{{ $t('department.title') }}</label>
+          <span class="field-help-label-row">
+            <label class="mini-label">{{ $t('department.title') }}</label>
+            <FieldHelpIcon
+              :label="$t('department.title')"
+              field-name="department_id"
+              field-id="department_id"
+            />
+          </span>
 
           <UpdatedCustomInputSelect
             id="department_id"
@@ -499,7 +507,14 @@
         </div>
 
         <div class="field-box field-box--method">
-          <label class="mini-label">{{ $t('project_item.pricing_method') }}</label>
+          <span class="field-help-label-row">
+            <label class="mini-label">{{ $t('project_item.pricing_method') }}</label>
+            <FieldHelpIcon
+              :label="$t('project_item.pricing_method')"
+              field-name="type"
+              field-id="project-item-pricing-method"
+            />
+          </span>
 
           <UpdatedCustomInputSelect
             id="project-item-pricing-method"
@@ -512,7 +527,14 @@
         </div>
 
         <div v-if="isFullFloorRelated" class="field-box field-box--floor">
-          <label class="mini-label">{{ $t('ProjectFloor.floor_number') }}</label>
+          <span class="field-help-label-row">
+            <label class="mini-label">{{ $t('ProjectFloor.floor_number') }}</label>
+            <FieldHelpIcon
+              :label="$t('ProjectFloor.floor_number')"
+              field-name="floor_number"
+              field-id="floor_number"
+            />
+          </span>
 
           <UpdatedCustomInputSelect
             id="floor_number"
@@ -525,7 +547,14 @@
         </div>
 
         <div v-if="isSpaceRelated" class="field-box field-box--floor">
-          <label class="mini-label">{{ $t('ProjectFloor.space') }}</label>
+          <span class="field-help-label-row">
+            <label class="mini-label">{{ $t('ProjectFloor.space') }}</label>
+            <FieldHelpIcon
+              :label="$t('ProjectFloor.space')"
+              field-name="space"
+              field-id="space_id"
+            />
+          </span>
 
           <UpdatedCustomInputSelect
             id="space_id"
@@ -537,7 +566,14 @@
         </div>
 
         <div class="field-box field-box--item">
-          <label class="mini-label">{{ $t('project_item.item') }}</label>
+          <span class="field-help-label-row">
+            <label class="mini-label">{{ $t('project_item.item') }}</label>
+            <FieldHelpIcon
+              :label="$t('project_item.item')"
+              field-name="material"
+              field-id="project-item-item"
+            />
+          </span>
 
           <UpdatedCustomInputSelect
             id="project-item-item"
@@ -552,7 +588,10 @@
         </div>
 
         <div class="field-box field-box--qty">
-          <label class="mini-label">{{ $t('project_item.quantity') }}</label>
+          <span class="field-help-label-row">
+            <label class="mini-label">{{ $t('project_item.quantity') }}</label>
+            <FieldHelpIcon :label="$t('project_item.quantity')" field-name="quantity" />
+          </span>
 
           <input
             v-model.number="quantity"
@@ -565,7 +604,10 @@
         </div>
 
         <div v-if="isGeneralItem || isFullFloorRelated" class="field-box field-box--price">
-          <label class="mini-label">{{ $t('project_item.price') }}</label>
+          <span class="field-help-label-row">
+            <label class="mini-label">{{ $t('project_item.price') }}</label>
+            <FieldHelpIcon :label="$t('project_item.price')" field-name="price" />
+          </span>
 
           <input
             v-model.number="price"
@@ -578,7 +620,10 @@
         </div>
 
         <div v-if="isGeneralItem || isFullFloorRelated" class="field-box field-box--total">
-          <label class="mini-label">{{ $t('project_item.total_label') }}</label>
+          <span class="field-help-label-row">
+            <label class="mini-label">{{ $t('project_item.total_label') }}</label>
+            <FieldHelpIcon :label="$t('project_item.total_label')" field-name="total" />
+          </span>
 
           <input class="field-input readonly-input" :value="total" readonly />
         </div>

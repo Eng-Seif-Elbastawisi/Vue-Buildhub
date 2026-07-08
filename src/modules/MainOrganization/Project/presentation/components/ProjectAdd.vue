@@ -26,7 +26,13 @@
   <div class="Project-crud-page">
     <ProjectSteps :current-step="1" />
     <ProjectForm :loading="loading" :is-edit="false" @update-data="params = $event" />
-    <button class="btn btn-primary" type="button" :disabled="loading" @click="saveProject">
+    <button
+      :class="{ 'btn--loading': loading }"
+      class="btn btn-primary"
+      type="button"
+      :disabled="loading"
+      @click="saveProject"
+    >
       {{ $t('Project.save') }}
     </button>
     <div v-if="controller.errorMessage.value" class="error">

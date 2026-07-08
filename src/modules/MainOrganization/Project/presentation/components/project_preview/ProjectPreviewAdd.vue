@@ -46,13 +46,10 @@
 <template>
   <div class="ProjectPreviewAdd-crud-page">
     <ProjectSteps :current-step="2" />
-    <ProjectPreviewForm
-      :loading="loading"
-      :project-id="projectId"
-      @update-data="updateData"
-    />
+    <ProjectPreviewForm :loading="loading" :project-id="projectId" @update-data="updateData" />
 
     <button
+      :class="{ 'btn--loading': loading }"
       class="btn btn-primary"
       type="button"
       :disabled="loading || !projectId"

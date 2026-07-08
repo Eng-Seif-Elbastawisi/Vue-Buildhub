@@ -12,6 +12,7 @@
   import MeasurementController from '@/modules/shared/measurement/presentation/controllers/measurement.controller';
   import IndexMeasurementParams from '@/modules/shared/measurement/core/params/index.measurement.params';
   import TranslationParams from '@/base/Core/Params/translationParams';
+  import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
 
   const emit = defineEmits<{
     updateData: [params: AddMaterialsParams];
@@ -95,7 +96,14 @@
       </div>
 
       <div class="field-group">
-        <label class="field-label" for="material-price">{{ $t('material.price') }}</label>
+        <span class="field-help-label-row field-help-label-row--block">
+          <label class="field-label" for="material-price">{{ $t('material.price') }}</label>
+          <FieldHelpIcon
+            :label="$t('material.price')"
+            field-name="price"
+            field-id="material-price"
+          />
+        </span>
         <div class="input-wrap">
           <input
             id="material-price"

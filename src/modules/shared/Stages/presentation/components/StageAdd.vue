@@ -43,7 +43,6 @@
       if (result) {
         emit('saved');
       }
-
     } catch (error) {
       console.error('Error saving email:', error);
     } finally {
@@ -75,6 +74,7 @@
 
       <div class="actions" :class="{ disabled: loading }">
         <AppButton
+          :loading="loading"
           class="btn-save"
           :title="$t('save')"
           size="sm"
@@ -89,12 +89,14 @@
           </template>
         </AppButton>
         <button
-         v-if="stage?.id"
+          v-if="stage?.id"
           class="btn-cancel"
           :title="$t('cancel')"
           type="button"
           @click="cancelStage"
-        >     {{ $t('cancel') }}</button>
+        >
+          {{ $t('cancel') }}
+        </button>
       </div>
 
       <!-- Error Display -->

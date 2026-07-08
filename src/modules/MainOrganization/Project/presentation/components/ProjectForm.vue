@@ -9,6 +9,7 @@
   import MultiLangInput from '@/shared/MultiLangInput.vue';
   import UpdatedCustomInputSelect from '@/shared/FormInputs/UpdatedCustomInputSelect.vue';
   import HandleFilesUpload, { type UploadedFile } from '@/shared/FormInputs/HandleFilesUpload.vue';
+  import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
 
   import { ServiceType } from '@/modules/MainOrganization/Project/core/constants/serviceType.enum';
 
@@ -441,7 +442,10 @@
       </div>
 
       <div class="field-group">
-        <label class="field-label" for="date">{{ $t('date') }}</label>
+        <span class="field-help-label-row field-help-label-row--block">
+          <label class="field-label" for="date">{{ $t('date') }}</label>
+          <FieldHelpIcon :label="$t('date')" field-name="date" field-id="date" />
+        </span>
 
         <DatePicker
           input-id="date"
@@ -483,7 +487,10 @@
 
         <template v-if="selectedClientExist && client_exist === false">
           <div class="field-group">
-            <label class="field-label" for="client_name">{{ $t('client_name') }}</label>
+            <span class="field-help-label-row field-help-label-row--block">
+              <label class="field-label" for="client_name">{{ $t('client_name') }}</label>
+              <FieldHelpIcon :label="$t('client_name')" field-name="name" field-id="client_name" />
+            </span>
             <input
               id="client_name"
               v-model="client_name"
@@ -494,7 +501,14 @@
           </div>
 
           <div class="field-group">
-            <label class="field-label" for="client_phone">{{ $t('client_phone') }}</label>
+            <span class="field-help-label-row field-help-label-row--block">
+              <label class="field-label" for="client_phone">{{ $t('client_phone') }}</label>
+              <FieldHelpIcon
+                :label="$t('client_phone')"
+                field-name="phone"
+                field-id="client_phone"
+              />
+            </span>
             <input
               id="client_phone"
               v-model="client_phone"
@@ -555,7 +569,10 @@
       </div>
 
       <div class="field-group col-span-2">
-        <label class="field-label">{{ $t('service_type') }}</label>
+        <span class="field-help-label-row field-help-label-row--block">
+          <label class="field-label">{{ $t('service_type') }}</label>
+          <FieldHelpIcon :label="$t('service_type')" field-name="type" field-id="service_type" />
+        </span>
 
         <div class="service-tabs">
           <button
@@ -594,7 +611,10 @@
       </div>
 
       <div class="field-group col-span-2">
-        <label class="field-label" for="notes">{{ $t('notes') }}</label>
+        <span class="field-help-label-row field-help-label-row--block">
+          <label class="field-label" for="notes">{{ $t('notes') }}</label>
+          <FieldHelpIcon :label="$t('notes')" field-name="notes" field-id="notes" />
+        </span>
         <textarea
           id="notes"
           v-model="notes"

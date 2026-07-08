@@ -5,6 +5,7 @@
   import DocumentIcon from '@/shared/icons/DocaumentType/DocumentIcon.vue';
   import type AdminModel from '../../core/models/admin.model';
   import AddAdminParams from '../../core/params/add.admin.params';
+  import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
 
   const emit = defineEmits<{
     updateData: [params: AddAdminParams];
@@ -70,7 +71,10 @@
 
     <div class="form-fields" :class="{ disabled: loading }">
       <div class="field-group">
-        <label class="field-label" for="admin-name">{{ $t('admin.name') }}</label>
+        <span class="field-help-label-row field-help-label-row--block">
+          <label class="field-label" for="admin-name">{{ $t('admin.name') }}</label>
+          <FieldHelpIcon :label="$t('admin.name')" field-name="name" field-id="admin-name" />
+        </span>
         <div class="input-wrap">
           <input
             id="admin-name"
@@ -84,7 +88,10 @@
       </div>
 
       <div class="field-group">
-        <label class="field-label" for="admin-email">{{ $t('admin.email') }}</label>
+        <span class="field-help-label-row field-help-label-row--block">
+          <label class="field-label" for="admin-email">{{ $t('admin.email') }}</label>
+          <FieldHelpIcon :label="$t('admin.email')" field-name="email" field-id="admin-email" />
+        </span>
         <div class="input-wrap">
           <input
             id="admin-email"
@@ -98,7 +105,10 @@
       </div>
 
       <div class="field-group">
-        <label class="field-label" for="admin-phone">{{ $t('admin.phone') }}</label>
+        <span class="field-help-label-row field-help-label-row--block">
+          <label class="field-label" for="admin-phone">{{ $t('admin.phone') }}</label>
+          <FieldHelpIcon :label="$t('admin.phone')" field-name="phone" field-id="admin-phone" />
+        </span>
         <div class="input-wrap">
           <input
             id="admin-phone"
@@ -112,7 +122,14 @@
       </div>
 
       <div v-if="!route.params.id" class="field-group">
-        <label class="field-label" for="admin-password">{{ $t('admin.password') }}</label>
+        <span class="field-help-label-row field-help-label-row--block">
+          <label class="field-label" for="admin-password">{{ $t('admin.password') }}</label>
+          <FieldHelpIcon
+            :label="$t('admin.password')"
+            field-name="password"
+            field-id="admin-password"
+          />
+        </span>
         <div class="input-wrap">
           <input
             id="admin-password"

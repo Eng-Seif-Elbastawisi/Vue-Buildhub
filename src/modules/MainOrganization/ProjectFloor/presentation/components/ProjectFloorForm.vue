@@ -4,6 +4,7 @@
 
   import type TitleInterface from '@/base/Data/Models/titleInterface';
   import UpdatedCustomInputSelect from '@/shared/FormInputs/UpdatedCustomInputSelect.vue';
+  import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
 
   import AddProjectFloorParams, {
     type ProjectFloorSpaceParams,
@@ -302,9 +303,16 @@
 
         <div class="picker-panel">
           <div class="picker-field picker-field--floor">
-            <label class="field-label" for="floor_number">
-              {{ $t('ProjectFloor.floor_number') }}
-            </label>
+            <span class="field-help-label-row field-help-label-row--block">
+              <label class="field-label" for="floor_number">
+                {{ $t('ProjectFloor.floor_number') }}
+              </label>
+              <FieldHelpIcon
+                :label="$t('ProjectFloor.floor_number')"
+                field-name="floor_number"
+                field-id="floor_number"
+              />
+            </span>
 
             <UpdatedCustomInputSelect
               id="floor_number"
@@ -316,9 +324,16 @@
           </div>
 
           <div class="picker-field picker-field--space">
-            <label class="field-label" for="space_id">
-              {{ $t('ProjectFloor.space') }}
-            </label>
+            <span class="field-help-label-row field-help-label-row--block">
+              <label class="field-label" for="space_id">
+                {{ $t('ProjectFloor.space') }}
+              </label>
+              <FieldHelpIcon
+                :label="$t('ProjectFloor.space')"
+                field-name="space"
+                field-id="space_id"
+              />
+            </span>
 
             <UpdatedCustomInputSelect
               id="space_id"
@@ -491,9 +506,16 @@
           <div class="note-field">
             <div class="note-field__label">
               <span>01</span>
-              <label for="site_description">
-                {{ $t('ProjectFloor.site_description') }}
-              </label>
+              <span class="field-help-label-row">
+                <label for="site_description">
+                  {{ $t('ProjectFloor.site_description') }}
+                </label>
+                <FieldHelpIcon
+                  :label="$t('ProjectFloor.site_description')"
+                  field-name="description"
+                  field-id="site_description"
+                />
+              </span>
             </div>
 
             <textarea
@@ -508,9 +530,16 @@
           <div class="note-field">
             <div class="note-field__label">
               <span>02</span>
-              <label for="technical_general_notes">
-                {{ $t('ProjectFloor.technical_general_notes') }}
-              </label>
+              <span class="field-help-label-row">
+                <label for="technical_general_notes">
+                  {{ $t('ProjectFloor.technical_general_notes') }}
+                </label>
+                <FieldHelpIcon
+                  :label="$t('ProjectFloor.technical_general_notes')"
+                  field-name="notes"
+                  field-id="technical_general_notes"
+                />
+              </span>
             </div>
 
             <textarea
@@ -525,9 +554,16 @@
           <div class="note-field">
             <div class="note-field__label">
               <span>03</span>
-              <label for="inspection_recommendations">
-                {{ $t('ProjectFloor.inspection_recommendations') }}
-              </label>
+              <span class="field-help-label-row">
+                <label for="inspection_recommendations">
+                  {{ $t('ProjectFloor.inspection_recommendations') }}
+                </label>
+                <FieldHelpIcon
+                  :label="$t('ProjectFloor.inspection_recommendations')"
+                  field-name="notes"
+                  field-id="inspection_recommendations"
+                />
+              </span>
             </div>
 
             <textarea
