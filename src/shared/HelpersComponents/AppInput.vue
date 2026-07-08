@@ -1,6 +1,8 @@
 <script setup lang="ts">
   import { ref, watch } from 'vue';
 
+  import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
+
   // Props
   const props = defineProps<{
     modelValue: { title: string; img?: string }[];
@@ -37,7 +39,10 @@
 <template>
   <div class="inputs-container">
     <div v-for="(_, i) in inputs" :key="i" class="input-wrapper">
-      <label for="">{{ $t('Title') }}</label>
+      <span class="field-help-label-row field-help-label-row--block">
+        <label for="">{{ $t('Title') }}</label>
+        <FieldHelpIcon :label="$t('Title')" field-name="title" />
+      </span>
       <input v-model="inputs[i]!.title" type="text" :placeholder="$t('Enter Title')" />
     </div>
   </div>

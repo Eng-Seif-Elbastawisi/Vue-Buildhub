@@ -6,6 +6,7 @@
   import UpdatedCustomInputSelect from '@/shared/FormInputs/UpdatedCustomInputSelect.vue';
   import IndexEmployeeParams from '@/modules/MainOrganization/employee/core/params/index.employee.params';
   import EmployeeController from '@/modules/MainOrganization/employee/presentation/controllers/employee.controller';
+  import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
 
   import type ProjectPreviewShowModel from '../../../core/models/project.preview.show.model';
   import AddProjectPreviewParams from '../../../core/params/add.project.preview.params';
@@ -228,6 +229,11 @@
           <label class="field-label" for="engineer_id">
             {{ $t('project.preview_engineer') }}
           </label>
+          <FieldHelpIcon
+            :label="$t('project.preview_engineer')"
+            field-name="engineer"
+            field-id="engineer_id"
+          />
         </div>
 
         <UpdatedCustomInputSelect
@@ -246,6 +252,11 @@
           <label class="field-label" for="preview_date">
             {{ $t('project.preview_date') }}
           </label>
+          <FieldHelpIcon
+            :label="$t('project.preview_date')"
+            field-name="date"
+            field-id="preview_date"
+          />
         </div>
 
         <DatePicker
@@ -267,6 +278,11 @@
           <label class="field-label" for="preview_time">
             {{ $t('project.preview_time') }}
           </label>
+          <FieldHelpIcon
+            :label="$t('project.preview_time')"
+            field-name="time"
+            field-id="preview_time"
+          />
         </div>
 
         <DatePicker
@@ -289,6 +305,11 @@
           <label class="field-label" for="site_link">
             {{ $t('project.site_link') }}
           </label>
+          <FieldHelpIcon
+            :label="$t('project.site_link')"
+            field-name="site_link"
+            field-id="site_link"
+          />
         </div>
 
         <input
@@ -307,6 +328,7 @@
           <label class="field-label" for="address">
             {{ $t('address') }}
           </label>
+          <FieldHelpIcon :label="$t('address')" field-name="address" field-id="address" />
         </div>
 
         <textarea

@@ -5,6 +5,7 @@
   import DocumentIcon from '@/shared/icons/DocaumentType/DocumentIcon.vue';
   import type OrganizationShowModel from '../../core/models/organization.show.model';
   import AddOrganizationParams from '../../core/params/add.organization.params';
+  import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
 
   const emit = defineEmits<{
     updateData: [params: AddOrganizationParams];
@@ -79,7 +80,10 @@
 
     <div class="form-fields" :class="{ disabled: loading }">
       <div class="field-group">
-        <label class="field-label" for="organization-name">{{ $t('Name') }}</label>
+        <span class="field-help-label-row field-help-label-row--block">
+          <label class="field-label" for="organization-name">{{ $t('Name') }}</label>
+          <FieldHelpIcon :label="$t('Name')" field-name="name" field-id="organization-name" />
+        </span>
         <div class="input-wrap">
           <input
             id="organization-name"
@@ -93,9 +97,16 @@
       </div>
 
       <div class="field-group">
-        <label class="field-label" for="organization-address">
-          {{ $t('address') }}
-        </label>
+        <span class="field-help-label-row field-help-label-row--block">
+          <label class="field-label" for="organization-address">
+            {{ $t('address') }}
+          </label>
+          <FieldHelpIcon
+            :label="$t('address')"
+            field-name="address"
+            field-id="organization-address"
+          />
+        </span>
         <div class="input-wrap">
           <input
             id="organization-address"
@@ -109,9 +120,16 @@
       </div>
 
       <div class="field-group" :class="{ hidden: route.params.id }">
-        <label class="field-label" for="organization-employee_name">{{
-          $t('employee_name')
-        }}</label>
+        <span class="field-help-label-row field-help-label-row--block">
+          <label class="field-label" for="organization-employee_name">{{
+            $t('employee_name')
+          }}</label>
+          <FieldHelpIcon
+            :label="$t('employee_name')"
+            field-name="name"
+            field-id="organization-employee_name"
+          />
+        </span>
         <div class="input-wrap">
           <input
             id="organization-employee_name"
@@ -125,9 +143,16 @@
       </div>
 
       <div class="field-group" :class="{ hidden: route.params.id }">
-        <label class="field-label" for="organization-employee_email">{{
-          $t('employee_email')
-        }}</label>
+        <span class="field-help-label-row field-help-label-row--block">
+          <label class="field-label" for="organization-employee_email">{{
+            $t('employee_email')
+          }}</label>
+          <FieldHelpIcon
+            :label="$t('employee_email')"
+            field-name="email"
+            field-id="organization-employee_email"
+          />
+        </span>
         <div class="input-wrap">
           <input
             id="organization-employee_email"
@@ -141,9 +166,16 @@
       </div>
 
       <div class="field-group" :class="{ hidden: route.params.id }">
-        <label class="field-label" for="organization-employee_phone">{{
-          $t('employee_phone')
-        }}</label>
+        <span class="field-help-label-row field-help-label-row--block">
+          <label class="field-label" for="organization-employee_phone">{{
+            $t('employee_phone')
+          }}</label>
+          <FieldHelpIcon
+            :label="$t('employee_phone')"
+            field-name="phone"
+            field-id="organization-employee_phone"
+          />
+        </span>
         <div class="input-wrap">
           <input
             id="organization-employee_phone"
@@ -157,9 +189,16 @@
       </div>
 
       <div class="field-group" :class="{ hidden: route.params.id }">
-        <label class="field-label" for="organization-employee_password">{{
-          $t('employee_password')
-        }}</label>
+        <span class="field-help-label-row field-help-label-row--block">
+          <label class="field-label" for="organization-employee_password">{{
+            $t('employee_password')
+          }}</label>
+          <FieldHelpIcon
+            :label="$t('employee_password')"
+            field-name="password"
+            field-id="organization-employee_password"
+          />
+        </span>
         <div class="input-wrap">
           <input
             id="organization-employee_password"

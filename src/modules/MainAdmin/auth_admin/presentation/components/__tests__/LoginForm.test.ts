@@ -26,9 +26,18 @@ vi.mock('@/stores/user', () => ({
   }),
 }));
 
-vi.mock('vue-i18n', () => ({
-  useI18n: () => ({ locale: { value: 'en' } }),
-}));
+vi.mock('vue-i18n', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('vue-i18n')>();
+
+  return {
+    ...actual,
+    useI18n: () => ({
+      locale: { value: 'en' },
+      t: (key: string, params?: Record<string, string>) =>
+        key === 'field_help.show_for' ? `Show help for ${params?.field}` : key,
+    }),
+  };
+});
 
 describe('LoginForm.vue', () => {
   let mockLogin: any;

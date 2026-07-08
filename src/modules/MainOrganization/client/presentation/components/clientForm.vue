@@ -9,6 +9,7 @@
   import TitleInterface from '@/base/Data/Models/titleInterface';
   import { useI18n } from 'vue-i18n';
   import DocumentIcon from '@/shared/icons/DocaumentType/DocumentIcon.vue';
+  import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
 
   const emit = defineEmits<{
     updateData: [params: AddClientParams];
@@ -99,7 +100,10 @@
           :model-value="name" type="title" @update:model-value="updateData" />
       </div> -->
       <div class="field-group">
-        <label class="field-label" for="name">{{ $t(`client.name`) }}</label>
+        <span class="field-help-label-row field-help-label-row--block">
+          <label class="field-label" for="name">{{ $t(`client.name`) }}</label>
+          <FieldHelpIcon :label="$t('client.name')" field-name="name" field-id="name" />
+        </span>
         <div class="input-wrap">
           <input
             id="name"
@@ -113,7 +117,10 @@
       </div>
 
       <div class="field-group">
-        <label class="field-label" for="material-price">{{ $t('client.phone') }}</label>
+        <span class="field-help-label-row field-help-label-row--block">
+          <label class="field-label" for="material-price">{{ $t('client.phone') }}</label>
+          <FieldHelpIcon :label="$t('client.phone')" field-name="phone" field-id="material-price" />
+        </span>
         <div class="input-wrap">
           <input
             id="material-price"
@@ -129,7 +136,10 @@
       </div>
 
       <div class="field-group">
-        <label class="field-label" for="email">{{ $t('client.email') }}</label>
+        <span class="field-help-label-row field-help-label-row--block">
+          <label class="field-label" for="email">{{ $t('client.email') }}</label>
+          <FieldHelpIcon :label="$t('client.email')" field-name="email" field-id="email" />
+        </span>
         <div class="input-wrap">
           <input
             id="email"
@@ -143,7 +153,10 @@
       </div>
 
       <div class="field-group">
-        <label class="field-label" for="address">{{ $t('client.address') }}</label>
+        <span class="field-help-label-row field-help-label-row--block">
+          <label class="field-label" for="address">{{ $t('client.address') }}</label>
+          <FieldHelpIcon :label="$t('client.address')" field-name="address" field-id="address" />
+        </span>
         <div class="input-wrap">
           <input
             id="address"

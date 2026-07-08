@@ -13,6 +13,7 @@
   import IndexMeasurementParams from '@/modules/shared/measurement/core/params/index.measurement.params';
   import TranslationParams from '@/base/Core/Params/translationParams';
   import DocumentIcon from '@/shared/icons/DocaumentType/DocumentIcon.vue';
+  import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
 
   const emit = defineEmits<{
     updateData: [params: AddSupplyParams];
@@ -124,7 +125,10 @@
       </div>
 
       <div class="field-group">
-        <label class="field-label" for="supply-price">{{ $t('supply.price') }}</label>
+        <span class="field-help-label-row field-help-label-row--block">
+          <label class="field-label" for="supply-price">{{ $t('supply.price') }}</label>
+          <FieldHelpIcon :label="$t('supply.price')" field-name="price" field-id="supply-price" />
+        </span>
         <div class="input-wrap">
           <input
             id="supply-price"

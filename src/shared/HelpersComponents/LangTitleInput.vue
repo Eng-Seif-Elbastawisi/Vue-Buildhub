@@ -3,6 +3,8 @@
   import Editor from 'primevue/editor';
   import { useI18n } from 'vue-i18n';
 
+  import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
+
   const { t } = useI18n();
 
   const props = withDefaults(
@@ -39,6 +41,10 @@
       maxlength?: number;
       required?: boolean;
       disabled?: boolean;
+      helpTitle?: string;
+      helpText?: string;
+      helpExamples?: string[];
+      showHelp?: boolean;
       fieldType?:
         | 'title'
         | 'subtitle'
@@ -61,6 +67,10 @@
       maxlength: undefined,
       required: true,
       disabled: false,
+      helpTitle: '',
+      helpText: '',
+      helpExamples: () => [],
+      showHelp: true,
       fieldType: 'title',
     },
   );
@@ -310,10 +320,21 @@
 <template>
   <div class="input-wrapper">
     <div class="label-wrapper">
-      <label>
-        {{ $t(label) }}
-        <span v-if="required" class="text-red-500">*</span>
-      </label>
+      <span class="field-help-label-row">
+        <label>
+          {{ $t(label) }}
+          <span v-if="required" class="text-red-500">*</span>
+        </label>
+
+        <FieldHelpIcon
+          :label="$t(label)"
+          :field-name="fieldType"
+          :help-title="helpTitle"
+          :help-text="helpText"
+          :help-examples="helpExamples"
+          :show-help="showHelp"
+        />
+      </span>
 
       <!-- Dynamic Languages -->
       <div class="languages">

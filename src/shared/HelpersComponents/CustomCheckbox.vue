@@ -1,9 +1,15 @@
 <script setup lang="ts">
   import { ref, watch } from 'vue';
 
+  import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
+
   const props = defineProps<{
     title: string;
     checked?: boolean;
+    helpTitle?: string;
+    helpText?: string;
+    helpExamples?: string[];
+    showHelp?: boolean;
   }>();
   const emit = defineEmits(['update:checked']);
   const CheckboxValue = ref(props.checked);
@@ -57,5 +63,13 @@
         <span class="label-text">{{ $t(title) }}</span>
       </div>
     </label>
+    <FieldHelpIcon
+      :label="$t(title)"
+      :field-name="title"
+      :help-title="helpTitle"
+      :help-text="helpText"
+      :help-examples="helpExamples"
+      :show-help="showHelp"
+    />
   </div>
 </template>

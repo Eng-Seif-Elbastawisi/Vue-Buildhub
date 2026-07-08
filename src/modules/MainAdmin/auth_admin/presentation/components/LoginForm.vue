@@ -8,6 +8,7 @@
   import LoadingIcon from '@/assets/images/loading.webp';
   import { useUserStore } from '@/stores/user';
   import { useRouter } from 'vue-router';
+  import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
 
   withDefaults(
     defineProps<{
@@ -64,7 +65,10 @@
 
     <div class="inputs">
       <div class="input-wrapper">
-        <label for="email">{{ $t('Email') }}</label>
+        <span class="field-help-label-row field-help-label-row--block">
+          <label for="email">{{ $t('Email') }}</label>
+          <FieldHelpIcon :label="$t('Email')" field-name="email" field-id="email" />
+        </span>
         <div class="auth-input-wrap">
           <input
             id="email"
@@ -76,7 +80,10 @@
         </div>
       </div>
       <div class="input-wrapper input-wrapper--password">
-        <label for="password">{{ $t('Password') }}</label>
+        <span class="field-help-label-row field-help-label-row--block">
+          <label for="password">{{ $t('Password') }}</label>
+          <FieldHelpIcon :label="$t('Password')" field-name="password" field-id="password" />
+        </span>
         <div class="auth-input-wrap auth-input-wrap--password">
           <input
             id="password"

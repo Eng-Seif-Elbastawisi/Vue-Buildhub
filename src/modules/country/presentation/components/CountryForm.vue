@@ -4,6 +4,7 @@
   import { useFormsStore } from '@/stores/formsStore';
   import type CountryModel from '../../core/models/country.model';
   import AddCountryParams from '../../core/params/add.country.params';
+  import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
 
   const emit = defineEmits(['updateData']);
 
@@ -98,7 +99,10 @@
     <div class="form-fields">
       <!-- Email Field -->
       <div class="field-group" :class="{ disabled: loading }">
-        <label class="field-label" for="title"> {{ $t('Country Title') }} </label>
+        <span class="field-help-label-row field-help-label-row--block">
+          <label class="field-label" for="title"> {{ $t('Country Title') }} </label>
+          <FieldHelpIcon :label="$t('Country Title')" field-name="title" field-id="title" />
+        </span>
         <div class="input-wrap">
           <input
             id="title"
@@ -112,7 +116,10 @@
       </div>
 
       <div class="field-group" :class="{ disabled: loading }">
-        <label class="field-label" for="code"> {{ $t('Country Code') }} </label>
+        <span class="field-help-label-row field-help-label-row--block">
+          <label class="field-label" for="code"> {{ $t('Country Code') }} </label>
+          <FieldHelpIcon :label="$t('Country Code')" field-name="code" field-id="code" />
+        </span>
         <div class="input-wrap">
           <input
             id="code"
@@ -126,7 +133,10 @@
       </div>
 
       <div class="field-group" :class="{ disabled: loading }">
-        <label class="field-label" for="flag"> {{ $t('Country Flag') }} </label>
+        <span class="field-help-label-row field-help-label-row--block">
+          <label class="field-label" for="flag"> {{ $t('Country Flag') }} </label>
+          <FieldHelpIcon :label="$t('Country Flag')" field-name="image" field-id="flag" />
+        </span>
         <div class="input-wrap">
           <input
             id="flag"
