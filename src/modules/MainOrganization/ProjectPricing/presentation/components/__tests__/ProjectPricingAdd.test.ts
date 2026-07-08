@@ -6,6 +6,8 @@ import ProjectPricingAdd from '../ProjectPricingAdd.vue';
 
 const mockController = vi.hoisted(() => ({
   create: vi.fn(),
+  fetchList: vi.fn(),
+  listState: { value: { data: [] } },
   errorMessage: { value: null as string | null },
 }));
 
@@ -67,7 +69,10 @@ describe('ProjectPricingAdd', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockController.create.mockResolvedValue({});
+    mockController.fetchList.mockResolvedValue({});
     mockProjectItemController.fetchList.mockResolvedValue({});
+    mockController.listState.value = { data: [] };
+    mockProjectItemController.listState.value = { data: [] };
     mockController.errorMessage.value = null;
   });
 
