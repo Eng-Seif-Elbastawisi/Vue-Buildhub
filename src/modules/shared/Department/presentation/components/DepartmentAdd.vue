@@ -62,9 +62,14 @@
       @update-data="updateData"
     />
     <div class="actions">
-      <AppButton class="btn-save" :title="$t('save')" type="button" @click="saveDepartment">{{
-        $t('save')
-      }}</AppButton>
+      <AppButton
+        :loading="loading"
+        class="btn-save"
+        :title="$t('save')"
+        type="button"
+        @click="saveDepartment"
+        >{{ $t('save') }}</AppButton
+      >
       <AppButton
         v-if="props.department?.id"
         class="btn-cancel"

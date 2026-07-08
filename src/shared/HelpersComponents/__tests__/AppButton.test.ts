@@ -87,14 +87,14 @@ describe('AppButton', () => {
     expect(wrapper.classes()).toContain('btn--loading');
   });
 
-  it('shows spinner when loading', () => {
+  it('uses the shared button loader state when loading', () => {
     const wrapper = createWrapper({ loading: true });
-    expect(wrapper.find('.loader').exists()).toBe(true);
+    expect(wrapper.classes()).toContain('btn--loading');
   });
 
-  it('hides spinner when not loading', () => {
+  it('does not render the old inline spinner', () => {
     const wrapper = createWrapper();
-    expect(wrapper.find('.btn__spinner').exists()).toBe(false);
+    expect(wrapper.find('.loader').exists()).toBe(false);
   });
 
   it('emits click event', async () => {

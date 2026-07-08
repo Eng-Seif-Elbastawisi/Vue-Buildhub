@@ -35,7 +35,13 @@
 <template>
   <div class="Space-crud-page">
     <SpaceForm :Space="controller.itemData.value!" :loading="loading" @update-data="updateData" />
-    <button class="btn btn-primary" type="button" :disabled="loading" @click="saveSpace">
+    <button
+      :class="{ 'btn--loading': loading }"
+      class="btn btn-primary"
+      type="button"
+      :disabled="loading"
+      @click="saveSpace"
+    >
       {{ $t('Space.update') }}
     </button>
     <div v-if="controller.errorMessage.value" class="error">

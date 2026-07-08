@@ -57,7 +57,15 @@
       />
 
       <div class="actions" :class="{ disabled: loading }">
-        <button type="button" @click="saveClientSource">{{ $t('client_source.save') }}</button>
+        <button
+          class="btn btn-primary"
+          :class="{ 'btn--loading': loading }"
+          type="button"
+          :disabled="loading"
+          @click="saveClientSource"
+        >
+          {{ $t('client_source.save') }}
+        </button>
         <button type="button" @click="clearInputs">{{ $t('cancel') }}</button>
       </div>
 

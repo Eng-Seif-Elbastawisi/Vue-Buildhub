@@ -74,6 +74,7 @@
 
       <div class="actions" :class="{ disabled: loading }">
         <AppButton
+          :loading="loading"
           class="btn-save"
           :title="$t('save')"
           size="sm"

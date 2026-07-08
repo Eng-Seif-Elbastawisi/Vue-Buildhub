@@ -47,7 +47,7 @@
       @update-data="(value) => (params = value as AddTermParams)"
     />
     <div class="actions">
-      <AppButton :title="$t('save')" type="button" @click="saveDepartment">{{
+      <AppButton :loading="loading" :title="$t('save')" type="button" @click="saveDepartment">{{
         $t('save')
       }}</AppButton>
     </div>

@@ -15,7 +15,13 @@
   const materialId = Number(route.params.material_id);
 
   const updateData = (data: AddMaterialsParams) => {
-    params.value = new EditMaterialParams({ material_id: materialId, brandId:data.brandId, measurementId:data.measurementId, price:data.price, translations:data.translations});
+    params.value = new EditMaterialParams({
+      material_id: materialId,
+      brandId: data.brandId,
+      measurementId: data.measurementId,
+      price: data.price,
+      translations: data.translations,
+    });
   };
 
   const saveMaterial = async () => {
@@ -45,7 +51,13 @@
     />
 
     <div class="actions" :class="{ disabled: loading }">
-      <button class="btn btn-primary w-full" type="button" @click="saveMaterial">
+      <button
+        :disabled="loading"
+        :class="{ 'btn--loading': loading }"
+        class="btn btn-primary w-full"
+        type="button"
+        @click="saveMaterial"
+      >
         <span v-if="loading" class="loader"></span>
         <span v-else>{{ $t('material.update') }}</span>
       </button>

@@ -61,7 +61,15 @@
       />
 
       <div class="actions" :class="{ disabled: loading }">
-        <button type="button" @click="saveEmail">{{ $t('stage.save') }}</button>
+        <button
+          class="btn btn-primary"
+          :class="{ 'btn--loading': loading }"
+          type="button"
+          :disabled="loading"
+          @click="saveEmail"
+        >
+          {{ $t('stage.save') }}
+        </button>
         <button type="button" @click="clearInputs">{{ $t('cancel') }}</button>
       </div>
 

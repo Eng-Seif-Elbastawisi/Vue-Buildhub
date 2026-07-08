@@ -50,6 +50,7 @@
 
     <!-- <div class="actions" :class="{ disabled: loading }">
       <AppButton
+        :loading="loading"
         :title="$t('save_document')"
         size="sm"
         icon="right"
@@ -63,7 +64,13 @@
 </AppButton>
 </div> -->
     <div class="actions" :class="{ disabled: loading }">
-      <button class="btn btn-primary w-full" type="button" @click="saveBrand">
+      <button
+        :disabled="loading"
+        :class="{ 'btn--loading': loading }"
+        class="btn btn-primary w-full"
+        type="button"
+        @click="saveBrand"
+      >
         <span v-if="loading" class="loader"></span>
         <span v-else>
           {{ $t('save_document') }}

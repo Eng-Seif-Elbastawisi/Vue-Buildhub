@@ -54,7 +54,13 @@
       :is-edit="true"
       @update-data="updateData"
     />
-    <button class="btn btn-primary" type="button" :disabled="loading" @click="saveProjectFloor">
+    <button
+      :class="{ 'btn--loading': loading }"
+      class="btn btn-primary"
+      type="button"
+      :disabled="loading"
+      @click="saveProjectFloor"
+    >
       {{ $t('ProjectFloor.update') }}
     </button>
     <div v-if="controller.errorMessage.value" class="error">

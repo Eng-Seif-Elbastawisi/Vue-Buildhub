@@ -113,7 +113,13 @@
       @update-data="params = $event"
     />
 
-    <button class="btn btn-primary" type="button" :disabled="loading" @click="saveProjectFloor">
+    <button
+      :class="{ 'btn--loading': loading }"
+      class="btn btn-primary"
+      type="button"
+      :disabled="loading"
+      @click="saveProjectFloor"
+    >
       {{ $t('Project.save') }}
     </button>
 

@@ -72,7 +72,13 @@
     />
 
     <div class="settings-actions" :class="{ disabled: loading }">
-      <button class="identity-save-button" type="button" @click="saveSetting">
+      <button
+        class="identity-save-button"
+        :class="{ 'btn--loading': loading }"
+        type="button"
+        :disabled="loading"
+        @click="saveSetting"
+      >
         {{ $t('system_identity.save') }}
       </button>
     </div>

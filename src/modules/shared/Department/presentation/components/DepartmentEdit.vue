@@ -41,7 +41,9 @@
       @update-data="(value) => (params = value as EditDepartmentParams)"
     />
     <div class="actions" :class="{ disabled: loading }">
-      <AppButton :title="$t('save')" type="button" @click="save">{{ $t('save') }}</AppButton>
+      <AppButton :loading="loading" :title="$t('save')" type="button" @click="save">{{
+        $t('save')
+      }}</AppButton>
       <AppButton theme="secondary" :title="$t('cancel')" type="button" @click="clearInputs">
         {{ $t('cancel') }}
       </AppButton>
