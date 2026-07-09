@@ -100,4 +100,13 @@
   .btn-cancel {
     flex: 0 0 auto;
   }
+
+  .error {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: var(--danger-light);
+    color: var(--danger-dark);
+    border: 1px solid #f5c6cb;
+    border-radius: 4px;
+  }
 </style>

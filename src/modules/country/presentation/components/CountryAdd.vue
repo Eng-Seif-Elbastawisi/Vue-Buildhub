@@ -50,7 +50,14 @@
     />
 
     <div class="actions" :class="{ disabled: loading }">
-      <AppButton :title="$t('Save')" :loading="loading" size="sm" icon="right" type="submit" @click="saveEmail">
+      <AppButton
+        :title="$t('Save')"
+        :loading="loading"
+        size="sm"
+        icon="right"
+        type="submit"
+        @click="saveEmail"
+      >
         {{ $t('Save') }}
 
         <template #icon>
@@ -80,5 +87,14 @@
       pointer-events: none;
       opacity: 0.7;
     }
+  }
+
+  .error {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: var(--danger-light);
+    color: var(--danger-dark);
+    border: 1px solid #f5c6cb;
+    border-radius: 4px;
   }
 </style>

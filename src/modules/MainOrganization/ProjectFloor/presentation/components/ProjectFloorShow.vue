@@ -6,12 +6,13 @@
   import ShowProjectFloorParams from '../../core/params/show.project.floor.params';
   import ProjectFloorController from '../controllers/project.floor.controller';
   import type ProjectFloorShowModel from '../../core/models/project.floor.show.model';
+  import CustomAccordion from '@/shared/Accordion/CustomAccordion.vue';
 
   const controller = ProjectFloorController.getInstance();
   const route = useRoute();
 
   const loading = ref(false);
-  const projectFloor = ref<ProjectFloorShowModel | null>(null);
+  const projectFloorList = ref<ProjectFloorShowModel[]>([]);
 
   const projectFloorId = computed(() => {
     const value = Number(
@@ -21,9 +22,8 @@
     return Number.isNaN(value) ? 0 : value;
   });
 
-  const floorTitle = computed(() => {
-    const floorNumber = projectFloor.value?.floor_number;
-
+  const getFloorTitle = (item?: ProjectFloorShowModel | null) => {
+    const floorNumber = item?.floor_number;
     const floors: Record<number, string> = {
       [-1]: 'Basement',
       [0]: 'Ground Floor',
@@ -42,7 +42,7 @@
     if (floorNumber === undefined || floorNumber === null) return '-';
 
     return floors[Number(floorNumber)] ?? String(floorNumber);
-  });
+  };
 
   const fetchProjectFloor = async () => {
     if (!projectFloorId.value) return;
@@ -50,12 +50,15 @@
     loading.value = true;
 
     try {
-      const result = await controller.fetchOne(
+      const result = await controller.fetchList(
         new ShowProjectFloorParams({ project_floor_id: projectFloorId.value }),
       );
 
       if (result instanceof DataSuccess) {
-        projectFloor.value = result.data as ProjectFloorShowModel;
+        const floor = result.data as ProjectFloorShowModel | ProjectFloorShowModel[] | null;
+
+        console.log(floor);
+        projectFloorList.value = Array.isArray(floor) ? floor : floor ? [floor] : [];
       }
     } finally {
       loading.value = false;
@@ -71,146 +74,159 @@
   <div class="ProjectFloor-crud-page">
     <section v-if="loading" class="show-card">Loading...</section>
 
-    <section v-else-if="projectFloor" class="show-card">
-      <header class="show-header">
-        <div>
-          <span class="eyebrow">Floor Reference</span>
-          <h3>{{ floorTitle }}</h3>
-          <p>{{ projectFloor.project?.title }}</p>
-        </div>
+    <section v-else-if="projectFloorList.length" class="show-card">
+      <CustomAccordion
+        :items="projectFloorList"
+        :default-value="['0']"
+        :multiple="true"
+        accordion-content-class="show-accordion-content"
+      >
+        <template #header="{ item: floor }">
+          <div class="show-header">
+            <div>
+              <span class="eyebrow">Floor Reference</span>
+              <h3>{{ getFloorTitle(floor) }}</h3>
+              <p>{{ floor.project?.title }}</p>
+            </div>
 
-        <div class="show-id">#{{ projectFloor.id }}</div>
-      </header>
-
-      <div class="info-grid">
-        <div class="info-item">
-          <span>{{ $t('Project.project') }}</span>
-          <strong>{{ projectFloor.project?.title ?? '-' }}</strong>
-        </div>
-
-        <div class="info-item">
-          <span>{{ $t('Project.floor') }}</span>
-          <strong>{{ floorTitle }}</strong>
-        </div>
-
-        <div class="info-item">
-          <span>{{ $t('Project.engineer') }}</span>
-          <strong>{{ projectFloor.project_preview?.engineer?.title ?? '-' }}</strong>
-        </div>
-
-        <div class="info-item">
-          <span>{{ $t('Project.preview_date') }}</span>
-          <strong>{{ projectFloor.project_preview?.preview_date ?? '-' }}</strong>
-        </div>
-
-        <div class="info-item">
-          <span>{{ $t('Project.preview_time') }}</span>
-          <strong>{{ projectFloor.project_preview?.preview_time ?? '-' }}</strong>
-        </div>
-
-        <div class="info-item">
-          <span>{{ $t('Project.created_at') }}</span>
-          <strong>{{ projectFloor.created_at ?? '-' }}</strong>
-        </div>
-      </div>
-
-      <div class="notes-grid">
-        <div class="note-card">
-          <span>{{ $t('Project.site_description') }}</span>
-          <p>{{ projectFloor.site_description || '-' }}</p>
-        </div>
-
-        <div class="note-card">
-          <span>{{ $t('Project.technical_general_notes') }}</span>
-          <p>{{ projectFloor.technical_general_notes || '-' }}</p>
-        </div>
-
-        <div class="note-card">
-          <span>{{ $t('Project.inspection_recommendations') }}</span>
-          <p>{{ projectFloor.inspection_recommendations || '-' }}</p>
-        </div>
-      </div>
-
-      <section class="spaces-section">
-        <div class="spaces-header">
-          <div>
-            <h4>{{ $t('Project.spaces') }}</h4>
-            <p>{{ $t('Project.spaces_description') }}</p>
+            <div class="show-id">#{{ floor.id }}</div>
           </div>
+        </template>
 
-          <span>{{ projectFloor.spaces.length }}</span>
-        </div>
+        <template #content="{ item: floor }">
+          <div class="show-card-content">
+            <div class="info-grid">
+              <div class="info-item">
+                <span>{{ $t('Project.project') }}</span>
+                <strong>{{ floor.project?.title ?? '-' }}</strong>
+              </div>
 
-        <div v-if="!projectFloor.spaces.length" class="empty-state">
-          {{ $t('Project.no_spaces_registered') }}
-        </div>
+              <div class="info-item">
+                <span>{{ $t('Project.floor') }}</span>
+                <strong>{{ getFloorTitle(floor) }}</strong>
+              </div>
 
-        <div v-else class="spaces-list">
-          <article
-            v-for="(spaceItem, index) in projectFloor.spaces"
-            :key="spaceItem.id ?? index"
-            class="space-row"
-          >
-            <div class="space-index">
-              {{ index + 1 }}
-            </div>
+              <div class="info-item">
+                <span>{{ $t('Project.engineer') }}</span>
+                <strong>{{ floor.project_preview?.engineer?.title ?? '-' }}</strong>
+              </div>
 
-            <div class="space-name">
-              <strong>{{ spaceItem.space?.title ?? '-' }}</strong>
-            </div>
+              <div class="info-item">
+                <span>{{ $t('Project.preview_date') }}</span>
+                <strong>{{ floor.project_preview?.preview_date ?? '-' }}</strong>
+              </div>
 
-            <div class="metric">
-              <span>{{ $t('Project.length') }}</span>
-              <strong>{{ spaceItem.length || '0' }}</strong>
-            </div>
+              <div class="info-item">
+                <span>{{ $t('Project.preview_time') }}</span>
+                <strong>{{ floor.project_preview?.preview_time ?? '-' }}</strong>
+              </div>
 
-            <div class="metric">
-              <span>{{ $t('Project.width') }}</span>
-              <strong>{{ spaceItem.width || '0' }}</strong>
-            </div>
-
-            <div class="metric">
-              <span>{{ $t('Project.height') }}</span>
-              <strong>{{ spaceItem.height || '0' }}</strong>
-            </div>
-
-            <div class="space-notes">
-              <span>{{ $t('Project.notes') }}</span>
-              <strong>{{ spaceItem.notes || '-' }}</strong>
-            </div>
-
-            <div class="attachments">
-              <span>{{ $t('Project.attachments') }}</span>
-
-              <div v-if="!spaceItem.attachments.length" class="empty-attachment">-</div>
-
-              <div v-else class="attachment-list">
-                <a
-                  v-for="attachment in spaceItem.attachments"
-                  :key="attachment.id ?? attachment.file"
-                  :href="attachment.file"
-                  target="_blank"
-                  class="attachment-card"
-                >
-                  <span class="attachment-card__icon"> 📎 </span>
-
-                  <span class="attachment-card__content">
-                    <strong>
-                      {{ attachment.alt || $t('Project.view_file') }}
-                    </strong>
-
-                    <small v-if="attachment.file_size">
-                      {{ attachment.file_size }}
-                    </small>
-                  </span>
-
-                  <span class="attachment-card__action"> ↗ </span>
-                </a>
+              <div class="info-item">
+                <span>{{ $t('Project.created_at') }}</span>
+                <strong>{{ floor.created_at ?? '-' }}</strong>
               </div>
             </div>
-          </article>
-        </div>
-      </section>
+
+            <div class="notes-grid">
+              <div class="note-card">
+                <span>{{ $t('Project.site_description') }}</span>
+                <p>{{ floor.site_description || '-' }}</p>
+              </div>
+
+              <div class="note-card">
+                <span>{{ $t('Project.technical_general_notes') }}</span>
+                <p>{{ floor.technical_general_notes || '-' }}</p>
+              </div>
+
+              <div class="note-card">
+                <span>{{ $t('Project.inspection_recommendations') }}</span>
+                <p>{{ floor.inspection_recommendations || '-' }}</p>
+              </div>
+            </div>
+
+            <section class="spaces-section">
+              <div class="spaces-header">
+                <div>
+                  <h4>{{ $t('Project.spaces') }}</h4>
+                  <p>{{ $t('Project.spaces_description') }}</p>
+                </div>
+
+                <span>{{ floor.spaces.length }}</span>
+              </div>
+
+              <div v-if="!floor.spaces.length" class="empty-state">
+                {{ $t('Project.no_spaces_registered') }}
+              </div>
+
+              <div v-else class="spaces-list">
+                <article
+                  v-for="(spaceItem, index) in floor.spaces"
+                  :key="spaceItem.id ?? index"
+                  class="space-row"
+                >
+                  <div class="space-index">
+                    {{ index + 1 }}
+                  </div>
+
+                  <div class="space-name">
+                    <strong>{{ spaceItem.space?.title ?? '-' }}</strong>
+                  </div>
+
+                  <div class="metric">
+                    <span>{{ $t('Project.length') }}</span>
+                    <strong>{{ spaceItem.length || '0' }}</strong>
+                  </div>
+
+                  <div class="metric">
+                    <span>{{ $t('Project.width') }}</span>
+                    <strong>{{ spaceItem.width || '0' }}</strong>
+                  </div>
+
+                  <div class="metric">
+                    <span>{{ $t('Project.height') }}</span>
+                    <strong>{{ spaceItem.height || '0' }}</strong>
+                  </div>
+
+                  <div class="space-notes">
+                    <span>{{ $t('Project.notes') }}</span>
+                    <strong>{{ spaceItem.notes || '-' }}</strong>
+                  </div>
+
+                  <div class="attachments">
+                    <span>{{ $t('Project.attachments') }}</span>
+
+                    <div v-if="!spaceItem.attachments.length" class="empty-attachment">-</div>
+
+                    <div v-else class="attachment-list">
+                      <a
+                        v-for="attachment in spaceItem.attachments"
+                        :key="attachment.id ?? attachment.file"
+                        :href="attachment.file"
+                        target="_blank"
+                        class="attachment-card"
+                      >
+                        <span class="attachment-card__icon"> 📎 </span>
+
+                        <span class="attachment-card__content">
+                          <strong>
+                            {{ attachment.alt || $t('Project.view_file') }}
+                          </strong>
+
+                          <small v-if="attachment.file_size">
+                            {{ attachment.file_size }}
+                          </small>
+                        </span>
+
+                        <span class="attachment-card__action"> ↗ </span>
+                      </a>
+                    </div>
+                  </div>
+                </article>
+              </div>
+            </section>
+          </div>
+        </template>
+      </CustomAccordion>
     </section>
 
     <section v-else class="show-card empty-state">
@@ -240,6 +256,18 @@
     background:
       radial-gradient(circle at top right, rgba(160, 98, 39, 0.08), transparent 32%), #fff;
     box-shadow: 0 14px 35px rgba(15, 23, 42, 0.045);
+  }
+
+  .show-card-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .show-accordion-content {
+    background: transparent !important;
+    color: inherit;
+    padding: 1.25rem;
   }
 
   .show-header {
@@ -505,7 +533,12 @@
   }
 
   .error {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: var(--danger-light);
     color: var(--danger-dark);
+    border: 1px solid #f5c6cb;
+    border-radius: 4px;
   }
 
   @media (max-width: 1200px) {

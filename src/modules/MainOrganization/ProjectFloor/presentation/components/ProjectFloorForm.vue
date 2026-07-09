@@ -21,6 +21,7 @@
   const emit = defineEmits<{
     updateData: [params: AddProjectFloorParams];
   }>();
+
   const props = defineProps<{
     projectFloor?: ProjectFloorModel;
     projectId?: number;
@@ -120,6 +121,10 @@
     return props.projectFloor?.project_preview_id ?? props.projectPreviewId ?? 0;
   };
 
+  const getDefaultFloorNumber = () => {
+    return floorNumberOptions.value.find((item) => item.id === FloorNumber.GROUND_FLOOR) ?? null;
+  };
+
   const mapSpacesToParams = (): ProjectFloorSpaceParams[] => {
     return spaces.value.map((item) => ({
       space_id: Number(item.space.id),
@@ -161,11 +166,18 @@
   };
 
   const addSpace = () => {
+    if (!selectedFloorNumber.value) return;
     if (!selectedSpace.value.length) return;
 
     selectedSpace.value.forEach((space) => {
+      const alreadyExists = spaces.value.some((item) => {
+        return Number(item.space.id) === Number(space.id);
+      });
+
+      if (alreadyExists) return;
+
       spaces.value.push({
-        space,
+        space: { ...space },
         length: '',
         width: '',
         height: '',
@@ -177,6 +189,7 @@
     selectedSpace.value = [];
     updateData();
   };
+
   const removeSpace = (index: number) => {
     spaces.value.splice(index, 1);
     updateData();
@@ -204,16 +217,24 @@
       })),
     );
 
-    // spaces.value[index].attachments = attachments;
     if (spaces.value[index]) {
       spaces.value[index].attachments = attachments;
     }
+
     updateData();
   };
 
-  const getDefaultFloorNumber = () => {
-    return floorNumberOptions.value.find((item) => item.id === FloorNumber.GROUND_FLOOR) ?? null;
+  const resetForm = () => {
+    selectedFloorNumber.value = getDefaultFloorNumber();
+    selectedSpace.value = [];
+    spaces.value = [];
+
+    updateData();
   };
+
+  defineExpose({
+    resetForm,
+  });
 
   watch(
     () => props.projectFloor,
@@ -256,7 +277,6 @@
     },
     { immediate: true },
   );
-
   watch(
     () => [props.projectId, props.projectPreviewId],
     () => {
@@ -353,7 +373,7 @@
             <button
               type="button"
               class="add-space-btn"
-              :disabled="!selectedSpace.length"
+              :disabled="!selectedFloorNumber || !selectedSpace.length"
               @click="addSpace"
             >
               <span>+</span>
@@ -579,7 +599,6 @@
     </div>
   </div>
 </template>
-
 <style scoped lang="scss">
   .project-floor-form-card {
     display: flex;
@@ -1043,12 +1062,12 @@
 
     span {
       display: inline-flex;
-      width: 34px;
+      // width: 34px;
       height: 34px;
       align-items: center;
       justify-content: center;
       border-radius: 13px;
-      background: var(--PrimaryColor-light);
+      // background: var(--PrimaryColor-light);
       color: var(--PrimaryColor);
       font-family: 'Bold';
       font-size: var(--xs-size);

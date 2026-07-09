@@ -1,18 +1,26 @@
 <script setup lang="ts">
   import { computed, ref, watch } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
+  import { useI18n } from 'vue-i18n';
   import { storeToRefs } from 'pinia';
 
   import BuildHubLogo from '@/assets/images/BuildHubLogo.jpg';
 
-  import AuthArrowIcon from '@/shared/icons/SidebarIcons/AuthArrowIcon.vue';
   import IconLogout from '@/shared/icons/IconLogout.vue';
 
   import { useUserStore } from '@/stores/user';
-  import { sidebarSections, type SidebarRole, type SidebarSectionConfig } from './sidebar.config';
+  import SidebarCountsApiService from './sidebar.counts.api-service';
+  import {
+    getSidebarSections,
+    getSidebarSectionsWithCounts,
+    type SidebarRole,
+    type SidebarCountsPayload,
+    type SidebarSectionConfig,
+  } from './sidebar.config';
 
   const route = useRoute();
   const router = useRouter();
+  const { t } = useI18n();
 
   const emit = defineEmits<{
     (e: 'clickItem'): void;
@@ -23,6 +31,9 @@
 
   const isPanelOpen = ref(false);
   const selectedSectionKey = ref<string | null>(null);
+  const sidebarSectionsState = ref(getSidebarSections());
+  const sidebarCounts = ref<SidebarCountsPayload | null>(null);
+  const searchQuery = ref('');
 
   interface SidebarItem {
     path: string;
@@ -44,12 +55,16 @@
     return user.value?.isMaster || Number(user.value?.type) === 1 ? 'admin' : 'organization';
   });
 
+  const organizationName = computed(() => {
+    return sidebarCounts.value?.organization?.name || t('Organization');
+  });
+
   const appPrefix = computed(() => {
     return currentRole.value === 'admin' ? '/admin' : '/organization';
   });
 
   const menu = computed<SidebarSection[]>(() => {
-    return sidebarSections
+    return sidebarSectionsState.value
       .map((section) => {
         const items = section.items
           .filter((item) => {
@@ -72,6 +87,25 @@
       .filter((section) => section.items.length > 0);
   });
 
+  const loadSidebarCounts = async () => {
+    if (!user.value?.id) {
+      sidebarCounts.value = null;
+      sidebarSectionsState.value = getSidebarSections();
+      return;
+    }
+
+    try {
+      const response = await SidebarCountsApiService.getInstance().fetchSidebarCounts();
+      const responseData: SidebarCountsPayload | undefined = response?.data?.data;
+
+      sidebarCounts.value = responseData ?? null;
+      sidebarSectionsState.value = getSidebarSectionsWithCounts(responseData ?? {});
+    } catch {
+      sidebarCounts.value = null;
+      sidebarSectionsState.value = getSidebarSections();
+    }
+  };
+
   const isActiveRoute = (link: string) => {
     return route.path === link || route.path.startsWith(`${link}/`);
   };
@@ -80,18 +114,52 @@
     return menu.value.find((section) => section.items.some((item) => isActiveRoute(item.link)));
   });
 
+  const searchableMenu = computed<SidebarSection[]>(() => {
+    const query = searchQuery.value.trim().toLowerCase();
+
+    if (!query) {
+      return menu.value;
+    }
+
+    return menu.value
+      .map((section) => {
+        const sectionLabel = t(section.labelKey).toLowerCase();
+        const filteredItems = section.items.filter((item) => {
+          const label = t(item.labelKey).toLowerCase();
+          const searchText = `${label} ${sectionLabel} ${item.path}`.toLowerCase();
+
+          return searchText.includes(query);
+        });
+
+        return {
+          ...section,
+          items: filteredItems,
+        };
+      })
+      .filter((section) => section.items.length > 0);
+  });
+
   const selectedSection = computed(() => {
-    return (
-      menu.value.find((section) => section.key === selectedSectionKey.value) ??
-      activeSection.value ??
-      menu.value[0]
+    const bySelection = searchableMenu.value.find(
+      (section) => section.key === selectedSectionKey.value,
     );
+    const fallbackSection = activeSection.value ?? searchableMenu.value[0];
+
+    return bySelection ?? fallbackSection ?? null;
   });
 
   watch(
     activeSection,
     (section) => {
       if (section) selectedSectionKey.value = section.key;
+    },
+    { immediate: true },
+  );
+
+  watch(
+    [currentRole, () => user.value?.id],
+    () => {
+      void loadSidebarCounts();
     },
     { immediate: true },
   );
@@ -111,6 +179,7 @@
   };
 
   const handleItemClick = () => {
+    searchQuery.value = '';
     emit('clickItem');
     isPanelOpen.value = false;
   };
@@ -153,10 +222,11 @@
           </div>
 
           <div class="brand-copy">
-            <span class="brand-name">{{ $t('buildhub') }}</span>
-            <span class="brand-meta">{{
-              currentRole === 'admin' ? $t('Admin') : $t('Organization')
-            }}</span>
+            <span class="brand-name">{{ organizationName }}</span>
+
+            <span class="brand-meta">
+              {{ currentRole === 'admin' ? $t('Admin') : $t('Organization') }}
+            </span>
           </div>
 
           <button
@@ -166,12 +236,54 @@
             :title="$t('collapse_sidebar')"
             @click="closePanel"
           >
-            <AuthArrowIcon />
+            <span class="collapse-toggle__icon" aria-hidden="true">×</span>
           </button>
         </header>
 
         <div class="menu-scroll">
-          <section v-if="selectedSection" class="menu-group">
+          <div class="sidebar-search">
+            <input
+              v-model="searchQuery"
+              class="sidebar-search__input"
+              type="search"
+              :placeholder="$t('search_what_you_want')"
+              :aria-label="$t('search_what_you_want')"
+            />
+          </div>
+
+          <template v-if="searchQuery">
+            <section v-for="section in searchableMenu" :key="section.key" class="menu-group">
+              <p class="group-title">
+                {{ $t(section.labelKey) }}
+              </p>
+
+              <router-link
+                v-for="item in section.items"
+                :key="item.link"
+                :to="item.link"
+                class="menu-item"
+                :class="{ active: isActiveRoute(item.link) }"
+                :title="$t(item.labelKey)"
+                @click="handleItemClick"
+              >
+                <span class="item-icon">
+                  <component :is="item.icon" v-if="item.icon" class="icon" />
+                </span>
+
+                <span class="label">
+                  {{ $t(item.labelKey) }}
+                </span>
+
+                <span v-if="item.badge" class="badge">
+                  {{ item.badge }}
+                </span>
+
+                <span v-if="item.hasArrow" class="arrow">›</span>
+              </router-link>
+            </section>
+          </template>
+
+          <section v-else-if="selectedSection" class="menu-group">
             <p class="group-title">
               {{ $t(selectedSection.labelKey) }}
             </p>
@@ -216,7 +328,7 @@
                 </span>
 
                 <span class="status">
-                  {{ currentRole === 'admin' ? $t('Admin') : $t('Organization') }}
+                  {{ currentRole === 'admin' ? $t('Admin') : organizationName }}
                 </span>
               </div>
             </div>
@@ -426,13 +538,15 @@
       color var(--transition-fast);
   }
 
-  [dir='rtl'] .collapse-toggle {
-    transform: rotate(0deg);
-  }
-
   .collapse-toggle:hover {
     color: var(--PrimaryColor);
     border-color: var(--PrimaryColor);
+  }
+
+  .collapse-toggle__icon {
+    line-height: 1;
+    font-size: 1.25rem;
+    font-weight: 700;
   }
 
   .menu-scroll {
@@ -443,6 +557,61 @@
     overflow-y: auto;
     scrollbar-width: thin;
     scrollbar-color: var(--gray-300) transparent;
+  }
+
+  .sidebar-search {
+    padding: 0 4px 12px;
+    position: relative;
+    margin-block-end: 0.25rem;
+  }
+
+  .sidebar-search__input {
+    width: 100%;
+    min-height: 36px;
+    padding: 0.35rem 0.75rem;
+    border: 1px solid var(--sidebar-pane-border);
+    border-radius: 12px;
+    color: var(--sidebar-menu-text);
+    background: var(--BgWhite);
+    font-family: inherit;
+    font-size: 12px;
+    outline: none;
+    transition:
+      border-color var(--transition-fast),
+      box-shadow var(--transition-fast);
+  }
+
+  .sidebar-search__input:focus {
+    border-color: var(--PrimaryColor);
+    box-shadow: 0 0 0 2px color-mix(in sRGB, var(--PrimaryColor) 18%, transparent);
+  }
+
+  .sidebar-search::after {
+    content: '';
+    position: absolute;
+    inset-inline-start: 4px;
+    right: 4px;
+    bottom: 0;
+    height: 1px;
+    background-image: repeating-linear-gradient(
+      90deg,
+      var(--PrimaryColor) 0 5px,
+      transparent 5px 8px
+    );
+    background-size: 8px 1px;
+    background-position: 0 0;
+    pointer-events: none;
+    animation: sidebar-search-dash 1s linear infinite;
+  }
+
+  @keyframes sidebar-search-dash {
+    from {
+      background-position: 0 0;
+    }
+
+    to {
+      background-position: 8px 0;
+    }
   }
 
   .menu-scroll::-webkit-scrollbar {
@@ -457,7 +626,8 @@
   .menu-group {
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 4px;
+    margin: 1rem 0;
   }
 
   .group-title {
@@ -558,7 +728,6 @@
     font-size: 12px;
     font-weight: 700;
     text-overflow: ellipsis;
-    // white-space: nowrap;
   }
 
   .badge {

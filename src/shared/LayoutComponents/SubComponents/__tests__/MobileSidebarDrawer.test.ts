@@ -36,7 +36,7 @@ describe('MobileSidebarDrawer', () => {
       },
     });
 
-    expect(wrapper.text()).toContain('Overview');
+    expect(wrapper.text()).toContain('CRM');
     expect(wrapper.text()).toContain('Stages');
     expect(wrapper.findAll('.drawer-section').length).toBeGreaterThan(1);
     expect(wrapper.find('.drawer-section-header').exists()).toBe(true);

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { ref, watch } from 'vue';
+  import { onMounted, ref, watch } from 'vue';
   import TitleInterface from '@/base/Data/Models/titleInterface';
   import TranslationParams from '@/base/Core/Params/translationParams';
   import MultiLangInput from '@/shared/MultiLangInput.vue';
@@ -59,6 +59,8 @@
     selectedStage.value = data;
     updateData();
   };
+
+  onMounted(updateData);
 
   watch(
     () => props.department,

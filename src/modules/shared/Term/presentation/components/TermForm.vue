@@ -1,6 +1,6 @@
 <script setup lang="ts">
-  import { ref, watch } from 'vue';
-  import TitleInterface from '@/base/Data/Models/titleInterface';
+  import { onMounted, ref, watch } from 'vue';
+  import type TitleInterface from '@/base/Data/Models/titleInterface';
   import TranslationParams from '@/base/Core/Params/translationParams';
   import MultiLangInput from '@/shared/MultiLangInput.vue';
   import UpdatedCustomInputSelect from '@/shared/FormInputs/UpdatedCustomInputSelect.vue';
@@ -58,6 +58,8 @@
     selectedDepartment.value = data;
     updateData();
   };
+
+  onMounted(updateData);
 
   watch(
     () => props.term,

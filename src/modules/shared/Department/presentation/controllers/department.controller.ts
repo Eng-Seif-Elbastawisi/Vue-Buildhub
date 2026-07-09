@@ -1,4 +1,4 @@
-import BaseController from '@/base/Presentation/Controller/baseController';
+import BaseController, { type ControllerConfig } from '@/base/Presentation/Controller/baseController';
 
 import type DepartmentModel from '../../core/models/department.model';
 import DepartmentRepository from '../../data/repositories/department.repository';
@@ -16,9 +16,17 @@ export default class DepartmentController extends BaseController<
     return DepartmentRepository.getInstance();
   }
 
-  private constructor() {
-    super();
-  }
+  protected get config(): ControllerConfig {
+      return {
+        showLoadingDialog: false,
+        showSuccessDialog: false,
+        showErrorDialog: false,
+        showErrorTosat: true, 
+        showSuccessTosat: true,
+        autoRetry: false, 
+        maxAutoRetries: 1,
+      };
+    }
 
   static getInstance(): DepartmentController {
     if (!DepartmentController.instance) DepartmentController.instance = new DepartmentController();

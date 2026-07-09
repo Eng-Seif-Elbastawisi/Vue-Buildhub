@@ -4,8 +4,8 @@ import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/da
 import ProjectFloorShowModel from '../../../core/models/project.floor.show.model';
 import ProjectFloorShow from '../ProjectFloorShow.vue';
 
-const { fetchOneMock, routeMock } = vi.hoisted(() => ({
-  fetchOneMock: vi.fn(),
+const { fetchListMock, routeMock } = vi.hoisted(() => ({
+  fetchListMock: vi.fn(),
   routeMock: {
     params: { project_floor_id: '9' },
     query: {},
@@ -20,14 +20,14 @@ vi.mock('../../controllers/project.floor.controller', () => ({
   default: {
     getInstance: () => ({
       errorMessage: { value: '' },
-      fetchOne: fetchOneMock,
+      fetchList: fetchListMock,
     }),
   },
 }));
 
 describe('ProjectFloorShow', () => {
   beforeEach(() => {
-    fetchOneMock.mockReset();
+    fetchListMock.mockReset();
     routeMock.params = { project_floor_id: '9' };
     routeMock.query = {};
   });
@@ -68,7 +68,7 @@ describe('ProjectFloorShow', () => {
       created_at: '2026-07-05',
     });
 
-    fetchOneMock.mockResolvedValue(new DataSuccess({ data: floor }));
+    fetchListMock.mockResolvedValue(new DataSuccess({ data: floor }));
 
     const wrapper = mount(ProjectFloorShow, {
       global: {
@@ -78,8 +78,8 @@ describe('ProjectFloorShow', () => {
 
     await flushPromises();
 
-    expect(fetchOneMock).toHaveBeenCalledTimes(1);
-    expect(fetchOneMock.mock.calls[0][0].toMap()).toEqual({ project_floor_id: 9 });
+    expect(fetchListMock).toHaveBeenCalledTimes(1);
+    expect(fetchListMock.mock.calls[0][0].toMap()).toEqual({ project_floor_id: 9 });
     expect(wrapper.text()).toContain('First Floor');
     expect(wrapper.text()).toContain('Tower Renovation');
     expect(wrapper.text()).toContain('Site Engineer');
@@ -100,7 +100,7 @@ describe('ProjectFloorShow', () => {
 
     await flushPromises();
 
-    expect(fetchOneMock).not.toHaveBeenCalled();
+    expect(fetchListMock).not.toHaveBeenCalled();
     expect(wrapper.text()).toContain('Project.no_data_for_this_floor');
   });
 });
