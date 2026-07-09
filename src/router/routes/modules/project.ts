@@ -28,4 +28,14 @@ export const ProjectRoutes: RouteRecordRaw[] = [
       parent: 'project',
     },
   },
+  {
+    path: 'project/show/:project_id',
+    name: 'show-project',
+    component: () => import('@/views/MainOrganization/Project/ShowProject.vue'),
+    props: true,
+    meta: {
+      breadcrumb: 'Show project',
+      parent: 'project',
+    },
+  },
 ];

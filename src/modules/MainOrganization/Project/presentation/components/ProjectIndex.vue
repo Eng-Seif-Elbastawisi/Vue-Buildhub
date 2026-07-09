@@ -84,6 +84,17 @@
                 class="action-btn edit"
                 :to="
                   user?.isMaster
+                    ? `/admin/Project/show/${item.id}`
+                    : `/organization/Project/show/${item.id}`
+                "
+                :title="$t('show')"
+              >
+                <i class="pi pi-eye"></i>
+              </router-link>
+              <router-link
+                class="action-btn edit"
+                :to="
+                  user?.isMaster
                     ? `/admin/Project/edit/${item.id}`
                     : `/organization/Project/edit/${item.id}`
                 "
@@ -169,6 +180,39 @@
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
+  }
+
+  .action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border: 1px solid var(--border-weak);
+    border-radius: var(--radius-sm);
+    background: var(--bg-main);
+    color: var(--gray-400);
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+
+    &:hover {
+      transform: translateY(-2px);
+    }
+
+    &.edit:hover {
+      border-color: var(--PrimaryColor);
+      color: var(--PrimaryColor);
+      background: var(--PrimaryColor-light);
+      box-shadow: 0 3px 10px rgba(99, 102, 241, 0.2);
+    }
+
+    &.delete:hover {
+      border-color: var(--Red);
+      color: var(--Red);
+      background: var(--danger-light);
+      box-shadow: 0 3px 10px rgba(220, 38, 38, 0.15);
+    }
   }
 
   .page-header,

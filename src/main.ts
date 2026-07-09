@@ -1,3 +1,4 @@
+import 'primeicons/primeicons.css';
 import './styles/main.min.css';
 import { createApp } from 'vue';
 import PrimeVue from 'primevue/config';
