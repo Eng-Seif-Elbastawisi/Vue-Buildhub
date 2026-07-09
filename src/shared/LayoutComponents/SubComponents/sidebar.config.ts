@@ -32,6 +32,10 @@ export interface SidebarCountsPayload {
   suppliers_count?: number | string;
   invoices_count?: number | string;
   invoice_payments_count?: number | string;
+  organization?: {
+    id: number;
+    name: string;
+  };
 }
 
 export interface SidebarCountsApiResponse {
