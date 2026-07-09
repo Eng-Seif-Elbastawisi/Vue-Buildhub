@@ -1,11 +1,11 @@
 <script setup lang="ts">
   import { computed, ref, watch } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
+  import { useI18n } from 'vue-i18n';
   import { storeToRefs } from 'pinia';
 
   import BuildHubLogo from '@/assets/images/BuildHubLogo.jpg';
 
-  import AuthArrowIcon from '@/shared/icons/SidebarIcons/AuthArrowIcon.vue';
   import IconLogout from '@/shared/icons/IconLogout.vue';
 
   import { useUserStore } from '@/stores/user';
@@ -20,6 +20,7 @@
 
   const route = useRoute();
   const router = useRouter();
+  const { t } = useI18n();
 
   const emit = defineEmits<{
     (e: 'clickItem'): void;
@@ -31,6 +32,7 @@
   const isPanelOpen = ref(false);
   const selectedSectionKey = ref<string | null>(null);
   const sidebarSectionsState = ref(getSidebarSections());
+  const searchQuery = ref('');
 
   interface SidebarItem {
     path: string;
@@ -104,12 +106,36 @@
     return menu.value.find((section) => section.items.some((item) => isActiveRoute(item.link)));
   });
 
+  const searchableMenu = computed<SidebarSection[]>(() => {
+    const query = searchQuery.value.trim().toLowerCase();
+
+    if (!query) {
+      return menu.value;
+    }
+
+    return menu.value
+      .map((section) => {
+        const sectionLabel = t(section.labelKey).toLowerCase();
+        const filteredItems = section.items.filter((item) => {
+          const label = t(item.labelKey).toLowerCase();
+          const searchText = `${label} ${sectionLabel} ${item.path}`.toLowerCase();
+
+          return searchText.includes(query);
+        });
+
+        return {
+          ...section,
+          items: filteredItems,
+        };
+      })
+      .filter((section) => section.items.length > 0);
+  });
+
   const selectedSection = computed(() => {
-    return (
-      menu.value.find((section) => section.key === selectedSectionKey.value) ??
-      activeSection.value ??
-      menu.value[0]
-    );
+    const bySelection = searchableMenu.value.find((section) => section.key === selectedSectionKey.value);
+    const fallbackSection = activeSection.value ?? searchableMenu.value[0];
+
+    return bySelection ?? fallbackSection ?? null;
   });
 
   watch(
@@ -143,6 +169,7 @@
   };
 
   const handleItemClick = () => {
+    searchQuery.value = '';
     emit('clickItem');
     isPanelOpen.value = false;
   };
@@ -198,12 +225,54 @@
             :title="$t('collapse_sidebar')"
             @click="closePanel"
           >
-            <AuthArrowIcon />
+            <span class="collapse-toggle__icon" aria-hidden="true">×</span>
           </button>
         </header>
 
         <div class="menu-scroll">
-          <section v-if="selectedSection" class="menu-group">
+          <div class="sidebar-search">
+            <input
+              v-model="searchQuery"
+              class="sidebar-search__input"
+              type="search"
+              :placeholder="$t('search_what_you_want')"
+              :aria-label="$t('search_what_you_want')"
+            />
+          </div>
+
+          <template v-if="searchQuery">
+            <section v-for="section in searchableMenu" :key="section.key" class="menu-group">
+              <p class="group-title">
+                {{ $t(section.labelKey) }}
+              </p>
+
+              <router-link
+                v-for="item in section.items"
+                :key="item.link"
+                :to="item.link"
+                class="menu-item"
+                :class="{ active: isActiveRoute(item.link) }"
+                :title="$t(item.labelKey)"
+                @click="handleItemClick"
+              >
+                <span class="item-icon">
+                  <component :is="item.icon" v-if="item.icon" class="icon" />
+                </span>
+
+                <span class="label">
+                  {{ $t(item.labelKey) }}
+                </span>
+
+                <span v-if="item.badge" class="badge">
+                  {{ item.badge }}
+                </span>
+
+                <span v-if="item.hasArrow" class="arrow">›</span>
+              </router-link>
+            </section>
+          </template>
+
+          <section v-else-if="selectedSection" class="menu-group">
             <p class="group-title">
               {{ $t(selectedSection.labelKey) }}
             </p>
@@ -458,13 +527,15 @@
       color var(--transition-fast);
   }
 
-  [dir='rtl'] .collapse-toggle {
-    transform: rotate(0deg);
-  }
-
   .collapse-toggle:hover {
     color: var(--PrimaryColor);
     border-color: var(--PrimaryColor);
+  }
+
+  .collapse-toggle__icon {
+    line-height: 1;
+    font-size: 1.25rem;
+    font-weight: 700;
   }
 
   .menu-scroll {
@@ -475,6 +546,61 @@
     overflow-y: auto;
     scrollbar-width: thin;
     scrollbar-color: var(--gray-300) transparent;
+  }
+
+  .sidebar-search {
+    padding: 0 4px 12px;
+    position: relative;
+    margin-block-end: 0.25rem;
+  }
+
+  .sidebar-search__input {
+    width: 100%;
+    min-height: 36px;
+    padding: 0.35rem 0.75rem;
+    border: 1px solid var(--sidebar-pane-border);
+    border-radius: 12px;
+    color: var(--sidebar-menu-text);
+    background: var(--BgWhite);
+    font-family: inherit;
+    font-size: 12px;
+    outline: none;
+    transition:
+      border-color var(--transition-fast),
+      box-shadow var(--transition-fast);
+  }
+
+  .sidebar-search__input:focus {
+    border-color: var(--PrimaryColor);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--PrimaryColor) 18%, transparent);
+  }
+
+  .sidebar-search::after {
+    content: '';
+    position: absolute;
+    inset-inline-start: 4px;
+    right: 4px;
+    bottom: 0;
+    height: 1px;
+    background-image: repeating-linear-gradient(
+      90deg,
+      var(--PrimaryColor) 0 5px,
+      transparent 5px 8px
+    );
+    background-size: 8px 1px;
+    background-position: 0 0;
+    pointer-events: none;
+    animation: sidebar-search-dash 1s linear infinite;
+  }
+
+  @keyframes sidebar-search-dash {
+    from {
+      background-position: 0 0;
+    }
+
+    to {
+      background-position: 8px 0;
+    }
   }
 
   .menu-scroll::-webkit-scrollbar {
@@ -489,9 +615,9 @@
   .menu-group {
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 4px;
+    margin: 1rem 0;
   }
-
   .group-title {
     margin: 0 0 18px;
     padding: 0 8px;
