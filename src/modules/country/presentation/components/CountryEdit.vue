@@ -143,7 +143,6 @@
   button:hover {
     background-color: var(--PrimaryColor-dark);
   }
-
   .error {
     margin-top: 20px;
     padding: 10px;
