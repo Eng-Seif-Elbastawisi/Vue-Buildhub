@@ -11,7 +11,13 @@
   import AuthArrowIcon from '@/shared/icons/SidebarIcons/AuthArrowIcon.vue';
   import IconLogout from '@/shared/icons/IconLogout.vue';
   import { useUserStore } from '@/stores/user';
-  import { sidebarSections, type SidebarRole } from './sidebar.config';
+  import SidebarCountsApiService from './sidebar.counts.api-service';
+  import {
+    getSidebarSections,
+    getSidebarSectionsWithCounts,
+    type SidebarCountsPayload,
+    type SidebarRole,
+  } from './sidebar.config';
 
   const props = defineProps<{
     open: boolean;
@@ -26,6 +32,7 @@
   const userStore = useUserStore();
   const { user } = storeToRefs(userStore);
   const expandedSections = ref<string[]>([]);
+  const sidebarSectionsState = ref(getSidebarSections());
 
   const currentRole = computed<SidebarRole>(() => {
     return user.value?.isMaster || Number(user.value?.type) === 1 ? 'admin' : 'organization';
@@ -36,7 +43,7 @@
   });
 
   const menu = computed(() => {
-    return sidebarSections
+    return sidebarSectionsState.value
       .map((section) => ({
         ...section,
         items: section.items
@@ -52,6 +59,22 @@
       }))
       .filter((section) => section.items.length > 0);
   });
+
+  const loadSidebarCounts = async () => {
+    if (!user.value?.id) {
+      sidebarSectionsState.value = getSidebarSections();
+      return;
+    }
+
+    try {
+      const response = await SidebarCountsApiService.getInstance().fetchSidebarCounts();
+      const responseData: SidebarCountsPayload | undefined = response?.data?.data;
+
+      sidebarSectionsState.value = getSidebarSectionsWithCounts(responseData ?? {});
+    } catch {
+      sidebarSectionsState.value = getSidebarSections();
+    }
+  };
 
   const isActiveRoute = (link: string) => {
     return route.path === link || route.path.startsWith(`${link}/`);
@@ -96,6 +119,14 @@
       } else {
         window.removeEventListener('keydown', onKeydown);
       }
+    },
+    { immediate: true },
+  );
+
+  watch(
+    [currentRole, () => user.value?.id],
+    () => {
+      void loadSidebarCounts();
     },
     { immediate: true },
   );
