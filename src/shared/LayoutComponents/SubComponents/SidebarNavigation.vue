@@ -347,35 +347,36 @@
 </template>
 
 <style scoped lang="scss">
-    .sidebar-shell {
-      --sidebar-shell-bg: var(--SecondaryColor);
-      --sidebar-pane-bg: var(--BgWhite);
-      --sidebar-pane-border: var(--border-weak);
-      --sidebar-text: var(--gray-700);
-      --sidebar-muted: var(--gray-500);
-      --sidebar-hover: var(--gray-100);
-      --sidebar-active-bg: var(--PrimaryColor);
-      --sidebar-active-text: var(--BgWhite);
-      --sidebar-copper-soft: var(--warning-light);
-      --sidebar-group-title: var(--gray-400);
-      --sidebar-menu-text: var(--gray-800);
-      --sidebar-menu-hover-text: var(--gray-900);
-      --sidebar-menu-hover-bg: var(--gray-50);
-      --sidebar-icon-text: var(--gray-500);
-      --sidebar-icon-bg: var(--gray-100);
-      --sidebar-icon-active-bg: var(--PrimaryColor-light);
-      --sidebar-badge-border: var(--warning);
-      --sidebar-badge-text: var(--warning-dark);
-      --sidebar-badge-bg: var(--warning-light);
+      .sidebar-shell {
+        --sidebar-shell-bg: var(--SecondaryColor);
+        --sidebar-pane-bg: var(--BgWhite);
+        --sidebar-pane-border: var(--border-weak);
+        --sidebar-text: var(--gray-700);
+        --sidebar-muted: var(--gray-500);
+        --sidebar-hover: var(--gray-100);
+        --sidebar-active-bg: var(--PrimaryColor);
+        --sidebar-active-text: var(--BgWhite);
+        --sidebar-copper-soft: var(--warning-light);
+        --sidebar-group-title: var(--gray-400);
+        --sidebar-menu-text: var(--gray-800);
+        --sidebar-menu-hover-text: var(--gray-900);
+        --sidebar-menu-hover-bg: var(--gray-50);
+        --sidebar-icon-text: var(--gray-500);
+        --sidebar-icon-bg: var(--gray-100);
+        --sidebar-icon-active-bg: var(--PrimaryColor-light);
+        --sidebar-badge-border: var(--warning);
+        --sidebar-badge-text: var(--warning-dark);
+        --sidebar-badge-bg: var(--warning-light);
 
-      position: fixed;
-      inset-block: 0;
-      inset-inline-start: 0;
-      z-index: 1200;
-      width: 66px;
-      height: 100vh;
-      pointer-events: none;
-    }
+        position: fixed;
+        inset-block: 0;
+        inset-inline-start: 0;
+        z-index: 1200;
+        width: 66px;
+        height: 100vh;
+        pointer-events: none;
+      }
+
 
     .sidebar-rail {
       position: relative;
@@ -583,11 +584,7 @@
 
     .sidebar-search__input:focus {
       border-color: var(--PrimaryColor);
-  <<<<<<< HEAD
       box-shadow: 0 0 0 2px color-mix(in sRGB, var(--PrimaryColor) 18%, transparent);
-  =======
-      box-shadow: 0 0 0 2px color-mix(in srgb, var(--PrimaryColor) 18%, transparent);
-  >>>>>>> 391b375 ( add search in sidebar and icon delet)
     }
 
     .sidebar-search::after {
@@ -633,6 +630,7 @@
       gap: 4px;
       margin: 1rem 0;
     }
+
     .group-title {
       margin: 0 0 18px;
       padding: 0 8px;
@@ -793,18 +791,435 @@
 
     @media (max-width: 768px) {
       .sidebar-shell,
+  >>>>>>> 13ac62d (fix: project)
       .sidebar-rail {
-        width: 58px;
+        position: relative;
+        z-index: 2;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+        width: 66px;
+        height: 100%;
+        padding: 14px 8px;
+        background: var(--sidebar-shell-bg);
+        pointer-events: auto;
+      }
+
+      .rail-brand {
+        display: grid;
+        place-items: center;
+        width: 42px;
+        height: 42px;
+        margin-bottom: 10px;
+        border-radius: var(--radius-sm);
+        background: var(--white-alpha-15);
+      }
+
+      .rail-logo {
+        width: 30px;
+        height: 30px;
+        object-fit: contain;
+        border-radius: var(--radius-xs);
+      }
+
+      .rail-action {
+        display: grid;
+        place-items: center;
+        width: 44px;
+        height: 44px;
+        border: 0;
+        border-radius: var(--radius-sm);
+        color: var(--gray-400);
+        background: transparent;
+        cursor: pointer;
+        transition:
+          background var(--transition-fast),
+          color var(--transition-fast),
+          transform var(--transition-fast);
+      }
+
+      .rail-action:hover,
+      .rail-action.active {
+        color: var(--sidebar-active-text);
+        background: var(--PrimaryColor);
+      }
+
+      .rail-action:hover {
+        transform: translateY(-1px);
       }
 
       .sidebar {
-        width: min(256px, calc(100vw - 58px));
+        position: absolute;
+        inset-block: 0;
+        inset-inline-start: calc(100% + 0px);
+        width: 256px;
+        overflow: hidden;
+        color: var(--sidebar-text);
+        background: var(--sidebar-pane-bg);
+        border-inline-end: 1px solid var(--sidebar-pane-border);
+        box-shadow: var(--shadow-lg);
+        opacity: 0;
+        pointer-events: none;
+        transform: translateX(-10px);
+        transition:
+          opacity var(--transition),
+          transform var(--transition);
       }
 
-      .rail-action,
-      .rail-brand {
-        width: 40px;
-        height: 40px;
+      [dir='rtl'] .sidebar {
+        transform: translateX(10px);
       }
-    }
+
+      .sidebar-shell.is-open .sidebar {
+        opacity: 1;
+        pointer-events: auto;
+        transform: translateX(0);
+      }
+
+      .sidebar-wrapper {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        min-height: 0;
+        padding: 0.7rem 0.2rem;
+      }
+
+      .brand-panel {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-height: 56px;
+        padding: 0 0.4rem 14px;
+        border-bottom: 1px solid var(--sidebar-pane-border);
+      }
+
+      .brand-mark {
+        display: grid;
+        place-items: center;
+        flex: 0 0 36px;
+        width: 36px;
+        height: 36px;
+        border-radius: var(--radius-sm);
+        background: var(--sidebar-copper-soft);
+      }
+
+      .logo {
+        width: 26px;
+        height: 26px;
+        object-fit: contain;
+        border-radius: var(--radius-xs);
+      }
+
+      .brand-copy,
+      .user-data {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+      }
+
+      .brand-name,
+      .name {
+        overflow: hidden;
+        color: var(--gray-900);
+        font-size: 14px;
+        font-weight: 800;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .brand-meta,
+      .status {
+        color: black;
+        font-size: 11px;
+        font-weight: 600;
+      }
+
+      .collapse-toggle {
+        display: grid;
+        place-items: center;
+        flex: 0 0 30px;
+        width: 30px;
+        height: 30px;
+        margin-inline-start: auto;
+        border: 1px solid var(--sidebar-pane-border);
+        border-radius: var(--radius-sm);
+        color: var(--sidebar-muted);
+        background: var(--BgWhite);
+        cursor: pointer;
+        transform: rotate(180deg);
+        transition:
+          border-color var(--transition-fast),
+          color var(--transition-fast);
+      }
+
+      .collapse-toggle:hover {
+        color: var(--PrimaryColor);
+        border-color: var(--PrimaryColor);
+      }
+
+      .collapse-toggle__icon {
+        line-height: 1;
+        font-size: 1.25rem;
+        font-weight: 700;
+      }
+
+      .menu-scroll {
+        flex: 1;
+        min-height: 0;
+        margin: 16px -4px;
+        padding: 0 4px;
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: var(--gray-300) transparent;
+      }
+
+      .sidebar-search {
+        padding: 0 4px 12px;
+        position: relative;
+        margin-block-end: 0.25rem;
+      }
+
+      .sidebar-search__input {
+        width: 100%;
+        min-height: 36px;
+        padding: 0.35rem 0.75rem;
+        border: 1px solid var(--sidebar-pane-border);
+        border-radius: 12px;
+        color: var(--sidebar-menu-text);
+        background: var(--BgWhite);
+        font-family: inherit;
+        font-size: 12px;
+        outline: none;
+        transition:
+          border-color var(--transition-fast),
+          box-shadow var(--transition-fast);
+      }
+
+      .sidebar-search__input:focus {
+        border-color: var(--PrimaryColor);
+    <<<<<<< HEAD
+        box-shadow: 0 0 0 2px color-mix(in sRGB, var(--PrimaryColor) 18%, transparent);
+    =======
+        box-shadow: 0 0 0 2px color-mix(in srgb, var(--PrimaryColor) 18%, transparent);
+    >>>>>>> 391b375 ( add search in sidebar and icon delet)
+      }
+
+      .sidebar-search::after {
+        content: '';
+        position: absolute;
+        inset-inline-start: 4px;
+        right: 4px;
+        bottom: 0;
+        height: 1px;
+        background-image: repeating-linear-gradient(
+          90deg,
+          var(--PrimaryColor) 0 5px,
+          transparent 5px 8px
+        );
+        background-size: 8px 1px;
+        background-position: 0 0;
+        pointer-events: none;
+        animation: sidebar-search-dash 1s linear infinite;
+      }
+
+      @keyframes sidebar-search-dash {
+        from {
+          background-position: 0 0;
+        }
+
+        to {
+          background-position: 8px 0;
+        }
+      }
+
+      .menu-scroll::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      .menu-scroll::-webkit-scrollbar-thumb {
+        border-radius: var(--radius-full);
+        background: var(--gray-300);
+      }
+
+      .menu-group {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        margin: 1rem 0;
+      }
+      .group-title {
+        margin: 0 0 18px;
+        padding: 0 8px;
+        color: var(--sidebar-group-title);
+        font-size: 11px;
+        font-weight: 900;
+        letter-spacing: 0;
+        text-transform: uppercase;
+      }
+
+      .menu-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-height: 42px;
+        padding: 7px 10px;
+        border: 0;
+        border-radius: 14px;
+        color: var(--sidebar-menu-text);
+        background: transparent;
+        font-size: 14px;
+        font-weight: 900;
+        text-align: start;
+        text-decoration: none;
+        cursor: pointer;
+        transition:
+          background var(--transition-fast),
+          color var(--transition-fast),
+          transform var(--transition-fast);
+      }
+
+      .menu-item:hover {
+        color: var(--sidebar-menu-hover-text);
+        background: var(--sidebar-menu-hover-bg);
+        transform: translateX(2px);
+      }
+
+      [dir='rtl'] .menu-item:hover {
+        transform: translateX(-2px);
+      }
+
+      .menu-item.active {
+        color: var(--sidebar-menu-text);
+        background: transparent;
+      }
+
+      .rail-icon,
+      .icon {
+        width: 20px;
+        height: 20px;
+      }
+
+      .rail-icon svg,
+      .icon svg {
+        width: 20px;
+        height: 20px;
+      }
+
+      .rail-action {
+        color: var(--gray-300);
+      }
+
+      .rail-action:hover,
+      .rail-action.active {
+        color: var(--sidebar-active-text);
+        background: var(--sidebar-active-bg);
+      }
+
+      .rail-icon :deep(svg),
+      .icon :deep(svg),
+      .item-icon :deep(svg) {
+        width: 18px;
+        height: 18px;
+      }
+
+      .item-icon {
+        display: grid;
+        place-items: center;
+        flex: 0 0 30px;
+        width: 30px;
+        height: 30px;
+        border-radius: 11px;
+        color: var(--sidebar-icon-text);
+        background: var(--sidebar-icon-bg);
+      }
+
+      .menu-item.active .item-icon {
+        color: var(--PrimaryColor-hover);
+        background: var(--sidebar-icon-active-bg);
+      }
+
+      .label {
+        flex: 1;
+        overflow: hidden;
+        color: var(--sidebar-menu-text);
+        font-size: 12px;
+        font-weight: 700;
+        text-overflow: ellipsis;
+      }
+
+      .badge {
+        display: grid;
+        place-items: center;
+        min-width: 92px;
+        height: 22px;
+        padding: 0 14px;
+        border: 1px solid var(--sidebar-badge-border);
+        border-radius: 999px;
+        color: var(--sidebar-badge-text);
+        background: var(--sidebar-badge-bg);
+        font-size: 12px;
+        font-weight: 900;
+        line-height: 1;
+      }
+
+      .arrow {
+        opacity: 0.6;
+      }
+
+      .sidebar-footer {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding-top: 12px;
+        border-top: 1px solid var(--sidebar-pane-border);
+      }
+
+      .auth-container {
+        width: 100%;
+        padding: 8px;
+        border-radius: var(--radius-sm);
+        background: var(--gray-50);
+      }
+
+      .auth-data {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 0;
+      }
+
+      .auth-data img {
+        width: 36px;
+        height: 36px;
+        border-radius: var(--radius-full);
+        object-fit: cover;
+      }
+
+      .menu-item.danger {
+        width: 100%;
+        color: var(--danger);
+      }
+
+      .menu-item.danger:hover {
+        color: var(--danger-dark);
+        background: var(--danger-light);
+      }
+
+      @media (max-width: 768px) {
+        .sidebar-shell,
+        .sidebar-rail {
+          width: 58px;
+        }
+
+        .sidebar {
+          width: min(256px, calc(100vw - 58px));
+        }
+
+        .rail-action,
+        .rail-brand {
+          width: 40px;
+          height: 40px;
+        }
+      }
 </style>
