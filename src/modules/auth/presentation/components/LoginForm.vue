@@ -9,7 +9,7 @@
   import LoadingIcon from '@/assets/images/loading.webp';
   import { useUserStore } from '@/stores/user';
   import { useRouter } from 'vue-router';
-  import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
+  // import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
 
   const email = ref('');
   const password = ref('');
@@ -52,7 +52,7 @@
         <div class="input-wrapper">
           <span class="field-help-label-row field-help-label-row--block">
             <label for="email">{{ $t('Email') }}</label>
-            <FieldHelpIcon :label="$t('Email')" field-name="email" field-id="email" />
+            <!-- <FieldHelpIcon :label="$t('Email')" field-name="email" field-id="email" /> -->
           </span>
           <input
             id="email"
@@ -65,7 +65,7 @@
         <div class="input-wrapper">
           <span class="field-help-label-row field-help-label-row--block">
             <label for="password">{{ $t('Password') }}</label>
-            <FieldHelpIcon :label="$t('Password')" field-name="password" field-id="password" />
+            <!-- <FieldHelpIcon :label="$t('Password')" field-name="password" field-id="password" /> -->
           </span>
           <input
             id="password"

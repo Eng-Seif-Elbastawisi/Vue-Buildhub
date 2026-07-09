@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { ref, watch } from 'vue';
+  import { onMounted, ref, watch } from 'vue';
   import TranslationParams from '@/base/Core/Params/translationParams';
   import type TitleInterface from '@/base/Data/Models/titleInterface';
   import MultiLangInput from '@/shared/MultiLangInput.vue';
@@ -43,6 +43,8 @@
     translations.value = value;
     updateData();
   };
+
+  onMounted(updateData);
 
   watch(
     () => props.project,

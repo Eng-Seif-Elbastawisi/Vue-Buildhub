@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { ref, watch } from 'vue';
+  import { onMounted, ref, watch } from 'vue';
   import { onBeforeRouteLeave } from 'vue-router';
   import type TitleInterface from '@/base/Data/Models/titleInterface';
   import IndexBrandParams from '@/modules/shared/Brand/core/params/index.brand.params';
@@ -99,6 +99,8 @@
     translations.value = value;
     updateData();
   };
+
+  onMounted(updateData);
 </script>
 
 <template>

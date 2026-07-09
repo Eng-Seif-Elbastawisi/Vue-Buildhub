@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { ref, watch } from 'vue';
+  import { onMounted, ref, watch } from 'vue';
   import { onBeforeRouteLeave } from 'vue-router';
   import type TitleInterface from '@/base/Data/Models/titleInterface';
   import UpdatedCustomInputSelect from '@/shared/FormInputs/UpdatedCustomInputSelect.vue';
@@ -99,6 +99,8 @@
       }),
     );
   }
+
+  onMounted(updateData);
 
   const updateTranslations = (value: Record<string, string>) => {
     translations.value = value;

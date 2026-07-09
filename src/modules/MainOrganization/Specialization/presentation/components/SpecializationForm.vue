@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { ref, watch } from 'vue';
+  import { onMounted, ref, watch } from 'vue';
 
   import TranslationParams from '@/base/Core/Params/translationParams';
 
@@ -34,6 +34,8 @@
     translations.value = value;
     updateData();
   };
+
+  onMounted(updateData);
 
   watch(
     () => props.Specialization,

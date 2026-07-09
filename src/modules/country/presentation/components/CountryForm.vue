@@ -75,6 +75,7 @@
       updateData();
     } else {
       resetForm();
+      updateData();
     }
   });
 </script>

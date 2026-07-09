@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { computed, ref, watch } from 'vue';
+  import { computed, onMounted, ref, watch } from 'vue';
   import { onBeforeRouteLeave, useRoute } from 'vue-router';
   import { useFormsStore } from '@/stores/formsStore';
   import DocumentIcon from '@/shared/icons/DocaumentType/DocumentIcon.vue';
@@ -48,6 +48,8 @@
       }),
     );
   };
+
+  onMounted(updateData);
 
   onBeforeRouteLeave((to, from) => {
     const savedData = props.formKey ? formStore.getFormData(props.formKey) : null;

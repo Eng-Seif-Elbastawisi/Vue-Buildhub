@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { computed, ref, watch } from 'vue';
+  import { computed, onMounted, ref, watch } from 'vue';
   import { onBeforeRouteLeave } from 'vue-router';
   import { useI18n } from 'vue-i18n';
   import TranslationParams from '@/base/Core/Params/translationParams';
@@ -48,6 +48,8 @@
     selectedType.value = value;
     updateData();
   };
+
+  onMounted(updateData);
 
   onBeforeRouteLeave((to, from) => {
     const savedData = props.formKey ? formStore.getFormData(props.formKey) : null;

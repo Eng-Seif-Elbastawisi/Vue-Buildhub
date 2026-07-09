@@ -471,6 +471,7 @@
 
   onMounted(async () => {
     await projectFloorController.fetchList(projectFloorParams);
+    updateData();
   });
 </script>
 
