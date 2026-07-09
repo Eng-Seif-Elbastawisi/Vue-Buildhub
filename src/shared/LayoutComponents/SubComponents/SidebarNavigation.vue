@@ -32,6 +32,7 @@
   const isPanelOpen = ref(false);
   const selectedSectionKey = ref<string | null>(null);
   const sidebarSectionsState = ref(getSidebarSections());
+  const sidebarCounts = ref<SidebarCountsPayload | null>(null);
   const searchQuery = ref('');
 
   interface SidebarItem {
@@ -52,6 +53,10 @@
 
   const currentRole = computed<SidebarRole>(() => {
     return user.value?.isMaster || Number(user.value?.type) === 1 ? 'admin' : 'organization';
+  });
+
+  const organizationName = computed(() => {
+    return sidebarCounts.value?.organization?.name || t('Organization');
   });
 
   const appPrefix = computed(() => {
@@ -84,6 +89,7 @@
 
   const loadSidebarCounts = async () => {
     if (!user.value?.id) {
+      sidebarCounts.value = null;
       sidebarSectionsState.value = getSidebarSections();
       return;
     }
@@ -92,8 +98,10 @@
       const response = await SidebarCountsApiService.getInstance().fetchSidebarCounts();
       const responseData: SidebarCountsPayload | undefined = response?.data?.data;
 
+      sidebarCounts.value = responseData ?? null;
       sidebarSectionsState.value = getSidebarSectionsWithCounts(responseData ?? {});
     } catch {
+      sidebarCounts.value = null;
       sidebarSectionsState.value = getSidebarSections();
     }
   };
@@ -132,7 +140,9 @@
   });
 
   const selectedSection = computed(() => {
-    const bySelection = searchableMenu.value.find((section) => section.key === selectedSectionKey.value);
+    const bySelection = searchableMenu.value.find(
+      (section) => section.key === selectedSectionKey.value,
+    );
     const fallbackSection = activeSection.value ?? searchableMenu.value[0];
 
     return bySelection ?? fallbackSection ?? null;
@@ -212,10 +222,11 @@
           </div>
 
           <div class="brand-copy">
-            <span class="brand-name">{{ $t('buildhub') }}</span>
-            <span class="brand-meta">{{
-              currentRole === 'admin' ? $t('Admin') : $t('Organization')
-            }}</span>
+            <span class="brand-name">{{ organizationName }}</span>
+
+            <span class="brand-meta">
+              {{ currentRole === 'admin' ? $t('Admin') : $t('Organization') }}
+            </span>
           </div>
 
           <button
@@ -317,7 +328,7 @@
                 </span>
 
                 <span class="status">
-                  {{ currentRole === 'admin' ? $t('Admin') : $t('Organization') }}
+                  {{ currentRole === 'admin' ? $t('Admin') : organizationName }}
                 </span>
               </div>
             </div>
@@ -572,7 +583,7 @@
 
   .sidebar-search__input:focus {
     border-color: var(--PrimaryColor);
-    box-shadow: 0 0 0 2px color-mix(in srgb, var(--PrimaryColor) 18%, transparent);
+    box-shadow: 0 0 0 2px color-mix(in sRGB, var(--PrimaryColor) 18%, transparent);
   }
 
   .sidebar-search::after {
@@ -618,6 +629,7 @@
     gap: 4px;
     margin: 1rem 0;
   }
+
   .group-title {
     margin: 0 0 18px;
     padding: 0 8px;
@@ -716,7 +728,6 @@
     font-size: 12px;
     font-weight: 700;
     text-overflow: ellipsis;
-    // white-space: nowrap;
   }
 
   .badge {
