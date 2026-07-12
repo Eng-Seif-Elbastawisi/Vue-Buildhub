@@ -7,6 +7,8 @@
     emptyLabel: string;
     idLabel: string;
     titleLabel: string;
+    addItem: string;
+    addItemTo: { path: string; query: Record<string, unknown> };
     valueOrEmpty: (value?: string | number | null) => string;
   }>();
 
@@ -22,9 +24,9 @@
       <h2>{{ title }}</h2>
     </div>
 
-    <div v-if="!items.length" class="empty-panel">
-      {{ emptyLabel }}
-    </div>
+    <RouterLink v-if="!items.length" class="empty-panel empty-panel--link" :to="addItemTo">
+      <i class="pi pi-plus-circle"></i> {{ emptyLabel }}
+    </RouterLink>
 
     <div v-else class="table-wrap">
       <table class="project-table">
