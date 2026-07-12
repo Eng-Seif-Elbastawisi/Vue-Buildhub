@@ -266,6 +266,20 @@ export const sidebarSections: SidebarSectionConfig[] = [
         badge: '1',
         countKey: 'spaces_count',
       },
+      {
+        path: '/invoice',
+        labelKey: 'Invoice',
+        icon: ArticleIcon,
+        badge: '1',
+        countKey: 'invoices_count',
+      },
+      {
+        path: '/invoice-payment',
+        labelKey: 'Invoice Payment',
+        icon: ArticleIcon,
+        badge: '1',
+        countKey: 'invoice_payments_count',
+      },
     ],
   },
   {
