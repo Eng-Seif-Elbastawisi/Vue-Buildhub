@@ -1,3 +1,5 @@
+import type { ConvertStatus } from '../../../core/constants/convert.status.enum';
+
 export type LocaleEntry = {
   locale?: string;
   title?: string | null;
@@ -56,13 +58,14 @@ export type ProjectFloor = {
 
 export type ProjectShowRaw = {
   id?: number;
+  convert_status?: ConvertStatus | number | null;
   organization?: NamedEntity | null;
   employee?: NamedEntity | null;
   client?: NamedEntity | null;
   project_type?: NamedEntity | null;
   location?: NamedEntity | null;
   service_type?: number | null;
-  status?: number | null;
+  status?: ConvertStatus | number | null;
   title?: string | LocaleEntry[] | null;
   description?: LocaleEntry[] | null;
   date?: string | null;

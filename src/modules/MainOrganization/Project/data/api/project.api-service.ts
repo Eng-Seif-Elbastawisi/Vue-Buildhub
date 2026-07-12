@@ -6,8 +6,7 @@ export default class ProjectApiService extends BaseApiService {
   private readonly projectEndpoints = new ProjectApiEndpoints();
 
   static getInstance(): ProjectApiService {
-    if (!ProjectApiService.instance)
-      ProjectApiService.instance = new ProjectApiService();
+    if (!ProjectApiService.instance) ProjectApiService.instance = new ProjectApiService();
     return ProjectApiService.instance;
   }
 
@@ -18,8 +17,16 @@ export default class ProjectApiService extends BaseApiService {
       create: this.projectEndpoints.store,
       update: this.projectEndpoints.update,
       delete: this.projectEndpoints.delete,
-      
-
     };
+  }
+
+  async convertMeasurementToProject(params: any) {
+    return await this.customPost(this.projectEndpoints.convertMeasurementToProject, params);
+  }
+  async storeVersion(params: any) {
+    return await this.customPost(this.projectEndpoints.storeVersion, params);
+  }
+  async reviseVersion(params: any) {
+    return await this.customPost(this.projectEndpoints.reviseVersion, params);
   }
 }

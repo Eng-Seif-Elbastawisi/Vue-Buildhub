@@ -10,5 +10,8 @@ export class ProjectApiEndpoints extends BaseEndpoints {
   readonly store = this.url('store_project');
   readonly update = this.url('update_project');
   readonly delete = this.url('delete_project');
-}
 
+  readonly convertMeasurementToProject = this.url('convert_measurement_to_project');
+  readonly storeVersion = this.url('store_version');
+  readonly reviseVersion = this.url('revise_version');
+}

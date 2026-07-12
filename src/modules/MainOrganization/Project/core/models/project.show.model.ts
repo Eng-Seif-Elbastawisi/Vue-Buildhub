@@ -1,5 +1,6 @@
 import TranslationParams from '@/base/Core/Params/translationParams';
 import { ServiceType } from '@/modules/MainOrganization/Project/core/constants/serviceType.enum';
+import { ConvertStatus } from '../constants/convert.status.enum';
 
 export type ProjectSelectItem = {
   id: number;
@@ -42,10 +43,12 @@ export default class ProjectShowModel {
   public readonly attachments?: ProjectAttachmentModel[];
   public readonly engineer?: ProjectSelectItem | null;
   public readonly engineer_id?: number;
+  public readonly convert_status?: ConvertStatus;
   public readonly preview_date?: string;
   public readonly preview_time?: string;
   public readonly site_link?: string;
   public readonly address?: string;
+  public status?: ConvertStatus;
 
   constructor(data: {
     raw?: Record<string, unknown>;
@@ -72,10 +75,12 @@ export default class ProjectShowModel {
     attachments?: ProjectAttachmentModel[];
     engineer?: ProjectSelectItem | null;
     engineer_id?: number;
+    convert_status?: ConvertStatus;
     preview_date?: string;
     preview_time?: string;
     site_link?: string;
     address?: string;
+    status?: ConvertStatus;
   }) {
     this.raw = data.raw;
     this.id = data.id;
@@ -101,10 +106,12 @@ export default class ProjectShowModel {
     this.attachments = data.attachments;
     this.engineer = data.engineer;
     this.engineer_id = data.engineer_id;
+    this.convert_status = data.convert_status;
     this.preview_date = data.preview_date;
     this.preview_time = data.preview_time;
     this.site_link = data.site_link;
     this.address = data.address;
+    this.status = data.status;
 
     Object.freeze(this);
   }
@@ -167,19 +174,19 @@ export default class ProjectShowModel {
     }
 
     const client = ProjectShowModel.mapSelectItem(json.client);
+
     const clientData =
       json.client && typeof json.client === 'object'
         ? (json.client as Record<string, unknown>)
         : null;
+
     const projectType = ProjectShowModel.mapSelectItem(json.project_type);
     const engineer = ProjectShowModel.mapSelectItem(json.engineer);
 
-    /**
-     * مهم:
-     * الـ API الحالي بيرجع location_id فقط.
-     * لو backend رجّع location object، الكود ده هيقرأه.
-     * لو مرجعوش، selected city هتظهر كـ #13 فقط.
-     */
+    const convertStatus = Number(
+      json.convert_status ?? json.status ?? ConvertStatus.PENDING,
+    ) as ConvertStatus;
+
     const location =
       json.location && typeof json.location === 'object'
         ? ProjectShowModel.mapSelectItem(json.location)
@@ -226,10 +233,15 @@ export default class ProjectShowModel {
 
       engineer,
       engineer_id: engineer?.id ?? (json.engineer_id as number | undefined),
+
+      convert_status: convertStatus,
+
       preview_date: json.preview_date as string | undefined,
       preview_time: json.preview_time as string | undefined,
       site_link: json.site_link as string | undefined,
       address: json.address as string | undefined,
+
+      status: convertStatus,
     });
   }
 
@@ -267,7 +279,9 @@ export default class ProjectShowModel {
     },
     preview_date: '2026-06-25',
     preview_time: '10:30:00',
+    convert_status: ConvertStatus.PENDING,
     site_link: 'https://maps.google.com/?q=30.0444,31.2357',
     address: 'Nasr City, Cairo, Egypt',
+    status: ConvertStatus.PENDING,
   });
 }

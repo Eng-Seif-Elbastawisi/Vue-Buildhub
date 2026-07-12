@@ -4,12 +4,14 @@
   import autoTable, { type RowInput } from 'jspdf-autotable';
   import { useRoute } from 'vue-router';
   import { useI18n } from 'vue-i18n';
+  import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
   import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
   import fallbackProjectImage from '@/assets/images/ChatGPT Image Jul 1, 2026, 11_19_16 AM.png';
   import ShowProjectParams from '../../core/params/show.project.params';
   import type ProjectShowModel from '../../core/models/project.show.model';
   import ProjectController from '../controllers/project.controller';
   import { ServiceType } from '../../core/constants/serviceType.enum';
+  import { ConvertStatus } from '../../core/constants/convert.status.enum';
   import { FloorNumber } from '@/modules/MainOrganization/ProjectFloor/core/constants/floor.number.enum';
   import ProjectFloorsSection from './project_show/ProjectFloorsSection.vue';
   import ProjectInfoSection from './project_show/ProjectInfoSection.vue';
@@ -33,6 +35,7 @@
   const projectController = ProjectController.getInstance();
   const activeTab = ref('project-data');
   const exportingPdf = ref(false);
+  const loading = ref(false);
 
   const projectId = computed(() => {
     const value = Number(route.params.project_id);
@@ -43,6 +46,42 @@
   const projectModel = computed(() => projectController.itemData.value as ProjectShowModel | null);
   const project = computed<ProjectShowRaw>(() => {
     return (projectModel.value?.raw ?? projectModel.value ?? {}) as ProjectShowRaw;
+  });
+  const localConvertStatus = ref<ConvertStatus | null>(null);
+  const currentConvertStatus = computed<ConvertStatus>(() => {
+    if (localConvertStatus.value !== null) {
+      return localConvertStatus.value;
+    }
+
+    const value =
+      projectModel.value?.convert_status ??
+      project.value.convert_status ??
+      project.value.status ??
+      ConvertStatus.PENDING;
+
+    return Number(value) as ConvertStatus;
+  });
+  const convertActionLabel = computed(() => {
+    switch (currentConvertStatus.value) {
+      case ConvertStatus.PENDING:
+        return 'project.convertActions.convertMeasurementToProject';
+
+      case ConvertStatus.CONVERT_TO_PROJECT:
+        return 'project.convertActions.sendToClient';
+
+      case ConvertStatus.SEND_TO_CLIENT:
+        return 'project.convertActions.reviseVersion';
+
+      case ConvertStatus.REVISE_VERSION:
+        return 'project.convertActions.completed';
+
+      default:
+        return 'project.convertActions.convertMeasurementToProject';
+    }
+  });
+
+  const isConvertActionDisabled = computed(() => {
+    return loading.value || currentConvertStatus.value === ConvertStatus.REVISE_VERSION;
   });
 
   const tabs = computed<TabItem[]>(() => [
@@ -88,6 +127,40 @@
       label: active ? t('ProjectShow.active') : t('ProjectShow.inactive'),
       className: active ? 'is-active' : 'is-muted',
     };
+  };
+
+  const getConvertStatusMeta = (status: ConvertStatus) => {
+    switch (status) {
+      case ConvertStatus.PENDING:
+        return {
+          label: t('project.convertStatus.pending'),
+          className: 'is-pending',
+        };
+
+      case ConvertStatus.CONVERT_TO_PROJECT:
+        return {
+          label: t('project.convertStatus.convertToProject'),
+          className: 'is-converted',
+        };
+
+      case ConvertStatus.SEND_TO_CLIENT:
+        return {
+          label: t('project.convertStatus.sendToClient'),
+          className: 'is-send-client',
+        };
+
+      case ConvertStatus.REVISE_VERSION:
+        return {
+          label: t('project.convertStatus.reviseVersion'),
+          className: 'is-revised',
+        };
+
+      default:
+        return {
+          label: t('project.convertStatus.pending'),
+          className: 'is-pending',
+        };
+    }
   };
 
   const getServiceTypeLabel = (type?: number | null) => {
@@ -712,6 +785,72 @@
     );
   };
 
+  const handleConvertStatusAction = async () => {
+    if (!projectId.value || loading.value) return;
+
+    loading.value = true;
+
+    const oldStatus = currentConvertStatus.value;
+
+    try {
+      const payload = {
+        toMap: () => ({
+          project_id: projectId.value,
+        }),
+      };
+
+      let result;
+
+      switch (oldStatus) {
+        case ConvertStatus.PENDING:
+          result = await projectController.convertMeasurementToProject(payload);
+          break;
+
+        case ConvertStatus.CONVERT_TO_PROJECT:
+          result = await projectController.storeVersion(payload);
+          break;
+
+        case ConvertStatus.SEND_TO_CLIENT:
+          result = await projectController.reviseVersion(payload);
+          break;
+
+        case ConvertStatus.REVISE_VERSION:
+          return;
+
+        default:
+          return;
+      }
+
+      if (!(result instanceof DataSuccess)) return;
+
+      switch (oldStatus) {
+        case ConvertStatus.PENDING:
+          localConvertStatus.value = ConvertStatus.CONVERT_TO_PROJECT;
+          break;
+
+        case ConvertStatus.CONVERT_TO_PROJECT:
+          localConvertStatus.value = ConvertStatus.SEND_TO_CLIENT;
+          break;
+
+        case ConvertStatus.SEND_TO_CLIENT:
+          localConvertStatus.value = ConvertStatus.REVISE_VERSION;
+          break;
+      }
+
+      await fetchProject();
+
+      const refreshedStatus = Number(
+        projectController.itemData.value?.convert_status ?? projectController.itemData.value?.status,
+      );
+
+      if (Number.isFinite(refreshedStatus)) {
+        localConvertStatus.value = refreshedStatus as ConvertStatus;
+      }
+    } finally {
+      loading.value = false;
+    }
+  };
+
   onMounted(() => {
     void fetchProject();
   });
@@ -755,16 +894,19 @@
           <ProjectShowHeader
             :project="project"
             :project-title="projectTitle"
-            :status-meta="getStatusMeta(project.status)"
+            :status-meta="getConvertStatusMeta(currentConvertStatus)"
             :project-code-label="t('ProjectShow.project_code')"
             :created-at-label="t('ProjectShow.created_at')"
             :download-pdf-label="t('ProjectShow.download_pdf')"
             :generating-pdf-label="t('ProjectShow.generating_pdf')"
             :edit-project-label="t('ProjectShow.edit_project')"
             :exporting-pdf="exportingPdf"
+            :convert-action-label="t(convertActionLabel)"
+            :convert-action-disabled="isConvertActionDisabled"
             :format-date="formatDate"
             :format-time="formatTime"
             @download-pdf="downloadProjectPdf"
+            @convert-status-action="handleConvertStatusAction"
           />
 
           <ProjectShowTabs
@@ -788,6 +930,14 @@
                 :total-area="totalArea"
                 :average-height="averageHeight"
                 :empty-label="t('ProjectShow.no_floors')"
+                :add-floor-label="t('ProjectShow.add_floor')"
+                :add-floor-to="{
+                  path: '/project_floor/add',
+                  query: {
+                    project_id: project.id,
+                    project_preview_id: preview?.id,
+                  },
+                }"
                 :floor-label="t('ProjectShow.floor')"
                 :type-label="t('ProjectShow.type')"
                 :spaces-label="t('Project.spaces')"

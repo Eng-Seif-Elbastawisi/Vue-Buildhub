@@ -79,7 +79,10 @@ describe('ProjectFloorShow', () => {
     await flushPromises();
 
     expect(fetchListMock).toHaveBeenCalledTimes(1);
-    expect(fetchListMock.mock.calls[0][0].toMap()).toEqual({ project_floor_id: 9 });
+    expect(fetchListMock.mock.calls[0][0].toMap()).toMatchObject({
+      project_floor_id: 9,
+      allLocales: true,
+    });
     expect(wrapper.text()).toContain('First Floor');
     expect(wrapper.text()).toContain('Tower Renovation');
     expect(wrapper.text()).toContain('Site Engineer');

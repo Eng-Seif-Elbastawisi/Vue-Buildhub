@@ -8,6 +8,8 @@
     totalArea: number;
     averageHeight: number;
     emptyLabel: string;
+    addFloorLabel?: string;
+    addFloorTo?: Record<string, unknown>;
     floorLabel: string;
     typeLabel: string;
     spacesLabel: string;
@@ -37,7 +39,19 @@
       <h2>{{ title }}</h2>
     </div>
 
-    <div v-if="!floors.length" class="empty-panel">
+    <RouterLink v-if="!floors.length && addFloorTo" class="empty-panel empty-panel--link" :to="addFloorTo">
+      <i class="pi pi-plus-circle"></i>
+
+      <span>
+        {{ emptyLabel }}
+      </span>
+
+      <small v-if="addFloorLabel">
+        {{ addFloorLabel }}
+      </small>
+    </RouterLink>
+
+    <div v-else-if="!floors.length" class="empty-panel">
       {{ emptyLabel }}
     </div>
 
