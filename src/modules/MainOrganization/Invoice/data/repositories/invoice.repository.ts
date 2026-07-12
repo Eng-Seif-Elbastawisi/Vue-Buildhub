@@ -1,8 +1,9 @@
 import BaseRepository, { type RepositoryConfig } from '@/base/Domain/Repositories/baseRepository';
 import InvoiceModel from '../../core/models/invoice.model';
+import InvoiceShowModel from '../../core/models/invoice.show.model';
 import InvoiceApiService from '../api/invoice.api-service';
 
-export default class InvoiceRepository extends BaseRepository<InvoiceModel, InvoiceModel[]> {
+export default class InvoiceRepository extends BaseRepository<InvoiceShowModel, InvoiceModel[]> {
   private static instance: InvoiceRepository;
 
   protected get apiService() {
@@ -17,8 +18,8 @@ export default class InvoiceRepository extends BaseRepository<InvoiceModel, Invo
     };
   }
 
-  protected get mockItem(): InvoiceModel {
-    return InvoiceModel.example;
+  protected get mockItem(): InvoiceShowModel {
+    return InvoiceShowModel.example;
   }
 
   protected get mockList(): InvoiceModel[] {
@@ -33,8 +34,8 @@ export default class InvoiceRepository extends BaseRepository<InvoiceModel, Invo
     return InvoiceRepository.instance;
   }
 
-  protected parseItem(data: Record<string, unknown>): InvoiceModel {
-    return InvoiceModel.fromJson(data);
+  protected parseItem(data: Record<string, unknown>): InvoiceShowModel {
+    return InvoiceShowModel.fromJson(data);
   }
 
   protected parseList(data: unknown): InvoiceModel[] {

@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
+import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
 import InvoiceModel from '../../../core/models/invoice.model';
 
 vi.mock('@/stores/formsStore', () => ({
@@ -42,7 +43,11 @@ describe('InvoiceController', () => {
 
   it('maps invoices to select options using invoice number', () => {
     const controller = InvoiceController.getInstance() as unknown as {
-      toTitleInterface(invoice: InvoiceModel): { id: string | number; title: string; subtitle: string };
+      toTitleInterface(invoice: InvoiceModel): {
+        id: string | number;
+        title: string;
+        subtitle: string;
+      };
     };
 
     const option = controller.toTitleInterface(InvoiceModel.example);
@@ -50,5 +55,14 @@ describe('InvoiceController', () => {
     expect(option.id).toBe(1);
     expect(option.title).toBe('INV-2026-0001');
     expect(option.subtitle).toBe('2026-07-05');
+  });
+
+  it('fetches invoice details by invoice id', async () => {
+    const result = await InvoiceController.getInstance().fetchInvoiceById(1, {
+      useStaticData: true,
+    });
+
+    expect(result).toBeInstanceOf(DataSuccess);
+    expect(result.data?.invoice_number).toBe('INV-2026-0001');
   });
 });

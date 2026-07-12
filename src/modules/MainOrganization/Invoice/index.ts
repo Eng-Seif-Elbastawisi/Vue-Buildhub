@@ -1,5 +1,6 @@
 // Models
 export { default as InvoiceModel } from './core/models/invoice.model';
+export { default as InvoiceShowModel } from './core/models/invoice.show.model';
 
 // Params
 export { default as AddInvoiceParams } from './core/params/add.invoice.params';

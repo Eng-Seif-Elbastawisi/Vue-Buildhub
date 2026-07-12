@@ -9,9 +9,11 @@ import router from '@/router';
 import { useFormsStore } from '@/stores/formsStore';
 import { useUserStore } from '@/stores/user';
 import type InvoiceModel from '../../core/models/invoice.model';
+import type InvoiceShowModel from '../../core/models/invoice.show.model';
+import ShowInvoiceParams from '../../core/params/show.invoice.params';
 import InvoiceRepository from '../../data/repositories/invoice.repository';
 
-export default class InvoiceController extends BaseController<InvoiceModel, InvoiceModel[]> {
+export default class InvoiceController extends BaseController<InvoiceShowModel, InvoiceModel[]> {
   private static instance: InvoiceController;
 
   protected get userStore() {
@@ -80,7 +82,13 @@ export default class InvoiceController extends BaseController<InvoiceModel, Invo
     return await super.fetchOne(params, { ...options, useJson: true });
   }
 
-  protected toTitleInterface(invoice: InvoiceModel): TitleInterface<string | number> {
+  async fetchInvoiceById(invoiceId: number, options?: ApiCallOptions) {
+    return await this.fetchOne(new ShowInvoiceParams({ invoice_id: invoiceId }), options);
+  }
+
+  protected toTitleInterface(
+    invoice: InvoiceModel | InvoiceShowModel,
+  ): TitleInterface<string | number> {
     return new TitleInterface({
       id: invoice.id ?? '',
       title: invoice.invoice_number ?? String(invoice.id ?? ''),

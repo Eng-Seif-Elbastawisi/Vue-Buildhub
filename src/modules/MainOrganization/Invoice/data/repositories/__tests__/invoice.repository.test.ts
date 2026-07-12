@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import InvoiceModel from '../../../core/models/invoice.model';
+import InvoiceShowModel from '../../../core/models/invoice.show.model';
 import InvoiceRepository from '../invoice.repository';
 
 const invoiceJson = {
@@ -18,7 +19,7 @@ describe('InvoiceRepository', () => {
 
   it('parses invoice and list responses', () => {
     const repository = InvoiceRepository.getInstance() as unknown as {
-      parseItem(data: Record<string, unknown>): InvoiceModel;
+      parseItem(data: Record<string, unknown>): InvoiceShowModel;
       parseList(data: unknown): InvoiceModel[];
       config: { hasPagination: boolean; dataKey: string; paginationKey: string };
     };
@@ -28,7 +29,7 @@ describe('InvoiceRepository', () => {
       dataKey: 'data',
       paginationKey: 'meta',
     });
-    expect(repository.parseItem(invoiceJson)).toBeInstanceOf(InvoiceModel);
+    expect(repository.parseItem(invoiceJson)).toBeInstanceOf(InvoiceShowModel);
     expect(repository.parseList([invoiceJson])).toEqual([expect.any(InvoiceModel)]);
     expect(repository.parseList({})).toEqual([]);
   });

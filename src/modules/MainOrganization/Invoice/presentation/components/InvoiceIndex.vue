@@ -33,6 +33,9 @@
   ];
 
   const basePath = computed(() => (user?.type === 1 ? '/admin/invoice' : '/organization/invoice'));
+  const showBasePath = computed(() =>
+    user?.type === 1 ? '/admin/invoices' : '/organization/invoices',
+  );
 
   const projectTitleFor = (invoice: InvoiceModel) => {
     return invoice.project?.title || invoice.project?.name || invoice.project_id || '-';
@@ -138,6 +141,14 @@
 
           <template #actions="{ item }">
             <div class="row-actions">
+              <router-link
+                class="action-btn show"
+                :to="`${showBasePath}/${item.id}`"
+                :title="t('invoice_show.details')"
+              >
+                <i class="pi pi-eye"></i>
+              </router-link>
+
               <router-link
                 class="action-btn edit"
                 :to="`${basePath}/edit/${item.id}`"

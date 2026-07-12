@@ -30,6 +30,11 @@ const translate = (key: string, params?: Record<string, string>) => {
 };
 
 vi.mock('vue-i18n', () => ({
+  createI18n: () => ({
+    global: {
+      t: translate,
+    },
+  }),
   useI18n: () => ({
     t: translate,
   }),

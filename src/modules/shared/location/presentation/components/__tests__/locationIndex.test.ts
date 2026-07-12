@@ -9,7 +9,10 @@ vi.mock('vue-router', () => ({
   useRoute: () => ({ query: {} }),
   useRouter: () => ({ push: vi.fn() }),
 }));
-vi.mock('vue-i18n', () => ({ useI18n: () => ({ locale: ref('en'), t: (key: string) => key }) }));
+vi.mock('vue-i18n', () => ({
+  createI18n: () => ({ global: { t: (key: string) => key } }),
+  useI18n: () => ({ locale: ref('en'), t: (key: string) => key }),
+}));
 vi.mock('@/stores/user', () => ({ useUserStore: () => ({ user: { isMaster: true } }) }));
 vi.mock('../../controllers/location.controller', () => ({
   default: {

@@ -1,11 +1,14 @@
 import type Params from '@/base/Core/Params/params';
 import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
 import type { ApiCallOptions } from '@/base/Data/ApiService/baseApiService';
-import BaseController, { type ControllerConfig } from '@/base/Presentation/Controller/baseController';
+import BaseController, {
+  type ControllerConfig,
+} from '@/base/Presentation/Controller/baseController';
 import router from '@/router';
 import { useFormsStore } from '@/stores/formsStore';
 import { useUserStore } from '@/stores/user';
 import type InvoicePaymentModel from '../../core/models/invoice.payment.model';
+import AddInvoicePaymentParams from '../../core/params/add.invoice.payment.params';
 import InvoicePaymentRepository from '../../data/repositories/invoice.payment.repository';
 
 export default class InvoicePaymentController extends BaseController<
@@ -52,7 +55,9 @@ export default class InvoicePaymentController extends BaseController<
     if (result instanceof DataSuccess) {
       if (formKey) useFormsStore().clearFormData(formKey);
       await router.push(
-        this.userStore.user?.type === 1 ? '/admin/invoice-payment' : '/organization/invoice-payment',
+        this.userStore.user?.type === 1
+          ? '/admin/invoice-payment'
+          : '/organization/invoice-payment',
       );
     }
 
@@ -65,7 +70,9 @@ export default class InvoicePaymentController extends BaseController<
     if (result instanceof DataSuccess) {
       if (formKey) useFormsStore().clearFormData(formKey);
       await router.push(
-        this.userStore.user?.type === 1 ? '/admin/invoice-payment' : '/organization/invoice-payment',
+        this.userStore.user?.type === 1
+          ? '/admin/invoice-payment'
+          : '/organization/invoice-payment',
       );
     }
 
@@ -78,5 +85,22 @@ export default class InvoicePaymentController extends BaseController<
 
   async fetchOne(params: Params, options?: ApiCallOptions) {
     return await super.fetchOne(params, { ...options, useJson: true });
+  }
+
+  async createInvoicePayment(
+    invoiceId: number,
+    params: AddInvoicePaymentParams,
+    options?: ApiCallOptions,
+  ) {
+    const data = params.toMap();
+    const payload = new AddInvoicePaymentParams({
+      invoice_id: invoiceId,
+      payment_amount: data.payment_amount as number | undefined,
+      payment_date: data.payment_date as string | undefined,
+      payment_method: data.payment_method as number | undefined,
+      notes: data.notes as string | null | undefined,
+    });
+
+    return await super.create(payload, { ...options, useJson: true });
   }
 }

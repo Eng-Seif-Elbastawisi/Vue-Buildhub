@@ -10,6 +10,16 @@ export const InvoiceRoutes: RouteRecordRaw[] = [
     },
   },
   {
+    path: 'invoices/:id',
+    name: 'Show Invoice',
+    component: () => import('@/views/MainOrganization/Invoice/ShowInvoice.vue'),
+    props: true,
+    meta: {
+      breadcrumb: 'Invoice Details',
+      parent: 'Invoice',
+    },
+  },
+  {
     path: 'invoice/add',
     name: 'Add Invoice',
     component: () => import('@/views/MainOrganization/Invoice/AddInvoice.vue'),

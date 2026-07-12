@@ -52,9 +52,9 @@ export default class InvoicePaymentModel {
         (json.invoice_id as number | undefined) ??
         ((json.invoice as Record<string, unknown> | undefined)?.id as number | undefined),
       invoice: InvoicePaymentModel.mapInvoice(json.invoice),
-      payment_amount: Number(json.payment_amount ?? 0),
-      payment_date: json.payment_date as string | undefined,
-      payment_method: Number(json.payment_method ?? 0),
+      payment_amount: Number(json.payment_amount ?? json.amount ?? 0),
+      payment_date: (json.payment_date ?? json.date ?? json.created_at) as string | undefined,
+      payment_method: Number(json.payment_method ?? json.method ?? 0),
       notes: json.notes as string | null | undefined,
     });
   }

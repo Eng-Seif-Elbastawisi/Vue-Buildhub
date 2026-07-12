@@ -22,6 +22,22 @@ describe('InvoicePaymentModel', () => {
   });
 
   it('throws for invalid json', () => {
-    expect(() => InvoicePaymentModel.fromJson(null as unknown as Record<string, unknown>)).toThrow();
+    expect(() =>
+      InvoicePaymentModel.fromJson(null as unknown as Record<string, unknown>),
+    ).toThrow();
+  });
+
+  it('maps common payment aliases from show responses', () => {
+    const model = InvoicePaymentModel.fromJson({
+      id: 3,
+      invoice_id: 4,
+      amount: 2500,
+      date: '2026-07-06',
+      method: 2,
+    });
+
+    expect(model.payment_amount).toBe(2500);
+    expect(model.payment_date).toBe('2026-07-06');
+    expect(model.payment_method).toBe(2);
   });
 });

@@ -1,5 +1,6 @@
 @use '../../../../../styles/variables' as *;
 @use '../../../../../styles/mixins/flex' as *;
+
 .row-actions {
   @include flex-row(nowrap, center, center);
 
@@ -36,6 +37,7 @@
     color: var(--Red);
   }
 }
+
 .invoice-page {
   .toolbar {
     @include flex(row, wrap, space-between, center);
