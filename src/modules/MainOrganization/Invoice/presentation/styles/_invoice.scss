@@ -1,6 +1,41 @@
 @use '../../../../../styles/variables' as *;
 @use '../../../../../styles/mixins/flex' as *;
+.row-actions {
+  @include flex-row(nowrap, center, center);
 
+  gap: $XsSize3;
+}
+
+.action-btn {
+  @include flex-row(nowrap, center, center);
+
+  width: calc($XlSize3 + 2px);
+  height: calc($XlSize3 + 2px);
+  border-radius: $XsSize2;
+  border: 1px solid $WeakBorder;
+  background: var(--white);
+  color: $TextGray3;
+  transition: all 0.2s ease;
+
+  &:hover {
+    transform: translateY(-1px);
+  }
+
+  &.edit:hover {
+    border-color: var(--PrimaryColor);
+    color: var(--PrimaryColor);
+  }
+
+  &.show:hover {
+    border-color: var(--info-dark) !important;
+    color: var(--info-dark) !important;
+  }
+
+  &.delete:hover {
+    border-color: var(--Red);
+    color: var(--Red);
+  }
+}
 .invoice-page {
   .toolbar {
     @include flex(row, wrap, space-between, center);

@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
+import InvoiceModel from '../../../core/models/invoice.model';
 
 vi.mock('@/stores/formsStore', () => ({
   useFormsStore: () => ({ clearFormData: vi.fn() }),
@@ -37,5 +38,17 @@ describe('InvoiceController', () => {
       autoRetry: false,
       maxAutoRetries: 1,
     });
+  });
+
+  it('maps invoices to select options using invoice number', () => {
+    const controller = InvoiceController.getInstance() as unknown as {
+      toTitleInterface(invoice: InvoiceModel): { id: string | number; title: string; subtitle: string };
+    };
+
+    const option = controller.toTitleInterface(InvoiceModel.example);
+
+    expect(option.id).toBe(1);
+    expect(option.title).toBe('INV-2026-0001');
+    expect(option.subtitle).toBe('2026-07-05');
   });
 });

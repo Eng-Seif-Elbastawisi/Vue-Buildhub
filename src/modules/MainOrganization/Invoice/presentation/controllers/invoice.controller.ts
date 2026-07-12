@@ -1,6 +1,7 @@
 import type Params from '@/base/Core/Params/params';
 import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
 import type { ApiCallOptions } from '@/base/Data/ApiService/baseApiService';
+import TitleInterface from '@/base/Data/Models/titleInterface';
 import BaseController, {
   type ControllerConfig,
 } from '@/base/Presentation/Controller/baseController';
@@ -77,5 +78,13 @@ export default class InvoiceController extends BaseController<InvoiceModel, Invo
 
   async fetchOne(params: Params, options?: ApiCallOptions) {
     return await super.fetchOne(params, { ...options, useJson: true });
+  }
+
+  protected toTitleInterface(invoice: InvoiceModel): TitleInterface<string | number> {
+    return new TitleInterface({
+      id: invoice.id ?? '',
+      title: invoice.invoice_number ?? String(invoice.id ?? ''),
+      subtitle: invoice.invoice_date ?? '',
+    });
   }
 }
