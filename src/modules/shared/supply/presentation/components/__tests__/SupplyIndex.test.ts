@@ -2,14 +2,25 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { ref } from 'vue';
 import SupplyIndex from '../SupplyIndex.vue';
+
 vi.mock('@/stores/user', () => ({ useUserStore: () => ({ user: { isMaster: true } }) }));
 
 const fetchList = vi.fn().mockResolvedValue({});
+
 vi.mock('vue-router', () => ({
   useRoute: () => ({ query: {} }),
   useRouter: () => ({ push: vi.fn() }),
 }));
-vi.mock('vue-i18n', () => ({ useI18n: () => ({ locale: ref('en'), t: (key: string) => key }) }));
+
+vi.mock('vue-i18n', () => ({
+  createI18n: () => ({
+    global: {
+      t: (key: string) => key,
+    },
+  }),
+  useI18n: () => ({ locale: ref('en'), t: (key: string) => key }),
+}));
+
 vi.mock('../../controllers/supply.controller', () => ({
   default: {
     getInstance: () => ({ fetchList, delete: vi.fn(), listState: ref({}), pagination: ref(null) }),

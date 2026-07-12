@@ -1,5 +1,6 @@
 import TranslationParams from '@/base/Core/Params/translationParams';
 import { ServiceType } from '@/modules/MainOrganization/Project/core/constants/serviceType.enum';
+import { ConvertStatus } from '../constants/convert.status.enum';
 
 export type ProjectSelectItem = {
   id: number;
@@ -14,6 +15,19 @@ export type ProjectAttachmentModel = {
   alt?: string | null;
   type?: number;
   link?: string | null;
+  created_at?: string;
+};
+
+export type ProjectPreviewModel = {
+  id: number;
+  status?: number;
+  pricing_responsible?: ProjectSelectItem | null;
+  notification_type?: number;
+  notification_message?: string | null;
+  preview_date?: string;
+  preview_time?: string;
+  site_link?: string;
+  address?: string;
   created_at?: string;
 };
 
@@ -40,12 +54,17 @@ export default class ProjectShowModel {
   public readonly date?: string;
   public readonly notes?: string | null;
   public readonly attachments?: ProjectAttachmentModel[];
+
+  public readonly project_previews?: ProjectPreviewModel[];
   public readonly engineer?: ProjectSelectItem | null;
   public readonly engineer_id?: number;
   public readonly preview_date?: string;
   public readonly preview_time?: string;
   public readonly site_link?: string;
   public readonly address?: string;
+
+  public readonly convert_status?: ConvertStatus;
+  public readonly status?: ConvertStatus;
 
   constructor(data: {
     raw?: Record<string, unknown>;
@@ -70,12 +89,17 @@ export default class ProjectShowModel {
     date?: string;
     notes?: string | null;
     attachments?: ProjectAttachmentModel[];
+
+    project_previews?: ProjectPreviewModel[];
     engineer?: ProjectSelectItem | null;
     engineer_id?: number;
     preview_date?: string;
     preview_time?: string;
     site_link?: string;
     address?: string;
+
+    convert_status?: ConvertStatus;
+    status?: ConvertStatus;
   }) {
     this.raw = data.raw;
     this.id = data.id;
@@ -99,12 +123,17 @@ export default class ProjectShowModel {
     this.date = data.date;
     this.notes = data.notes;
     this.attachments = data.attachments;
+
+    this.project_previews = data.project_previews;
     this.engineer = data.engineer;
     this.engineer_id = data.engineer_id;
     this.preview_date = data.preview_date;
     this.preview_time = data.preview_time;
     this.site_link = data.site_link;
     this.address = data.address;
+
+    this.convert_status = data.convert_status;
+    this.status = data.status;
 
     Object.freeze(this);
   }
@@ -149,7 +178,7 @@ export default class ProjectShowModel {
   }
 
   static mapSelectItem(item: unknown): ProjectSelectItem | null {
-    if (!item) return null;
+    if (!item || typeof item !== 'object') return null;
 
     const data = item as Record<string, unknown>;
     const name = typeof data.name === 'string' ? data.name : '';
@@ -161,25 +190,52 @@ export default class ProjectShowModel {
     };
   }
 
+  static mapProjectPreview(item: unknown): ProjectPreviewModel | null {
+    if (!item || typeof item !== 'object') return null;
+
+    const data = item as Record<string, unknown>;
+
+    return {
+      id: Number(data.id),
+      status: data.status !== undefined ? Number(data.status) : undefined,
+
+      pricing_responsible: ProjectShowModel.mapSelectItem(data.pricing_responsible),
+
+      notification_type:
+        data.notification_type !== undefined ? Number(data.notification_type) : undefined,
+
+      notification_message: data.notification_message as string | null | undefined,
+
+      preview_date: data.preview_date as string | undefined,
+
+      preview_time: data.preview_time as string | undefined,
+
+      site_link: data.site_link as string | undefined,
+
+      address: data.address as string | undefined,
+
+      created_at: data.created_at as string | undefined,
+    };
+  }
+
   static fromJson(json: Record<string, unknown>): ProjectShowModel {
     if (!json) {
       throw new Error('Cannot create ProjectShowModel from null or undefined');
     }
 
     const client = ProjectShowModel.mapSelectItem(json.client);
+
     const clientData =
       json.client && typeof json.client === 'object'
         ? (json.client as Record<string, unknown>)
         : null;
-    const projectType = ProjectShowModel.mapSelectItem(json.project_type);
-    const engineer = ProjectShowModel.mapSelectItem(json.engineer);
 
-    /**
-     * مهم:
-     * الـ API الحالي بيرجع location_id فقط.
-     * لو backend رجّع location object، الكود ده هيقرأه.
-     * لو مرجعوش، selected city هتظهر كـ #13 فقط.
-     */
+    const projectType = ProjectShowModel.mapSelectItem(json.project_type);
+
+    const convertStatus = Number(
+      json.convert_status ?? json.status ?? ConvertStatus.PENDING,
+    ) as ConvertStatus;
+
     const location =
       json.location && typeof json.location === 'object'
         ? ProjectShowModel.mapSelectItem(json.location)
@@ -190,6 +246,23 @@ export default class ProjectShowModel {
               parent: null,
             }
           : null;
+
+    const projectPreviews = Array.isArray(json.project_previews)
+      ? json.project_previews
+          .map((item) => ProjectShowModel.mapProjectPreview(item))
+          .filter((item): item is ProjectPreviewModel => item !== null)
+      : [];
+
+    const previewData =
+      json.project_preview && typeof json.project_preview === 'object'
+        ? (json.project_preview as Record<string, unknown>)
+        : Array.isArray(json.project_previews) &&
+            json.project_previews[0] &&
+            typeof json.project_previews[0] === 'object'
+          ? (json.project_previews[0] as Record<string, unknown>)
+          : null;
+
+    const engineer = ProjectShowModel.mapSelectItem(json.engineer ?? previewData?.engineer);
 
     return new ProjectShowModel({
       raw: json,
@@ -217,6 +290,7 @@ export default class ProjectShowModel {
       location_id: json.location_id as number | undefined,
 
       service_type: json.service_type as ServiceType | undefined,
+
       date: json.date as string | undefined,
       notes: json.notes as string | null | undefined,
 
@@ -224,18 +298,24 @@ export default class ProjectShowModel {
         ? (json.attachments as ProjectAttachmentModel[])
         : [],
 
+      project_previews: projectPreviews,
       engineer,
-      engineer_id: engineer?.id ?? (json.engineer_id as number | undefined),
-      preview_date: json.preview_date as string | undefined,
-      preview_time: json.preview_time as string | undefined,
-      site_link: json.site_link as string | undefined,
-      address: json.address as string | undefined,
+      engineer_id:
+        engineer?.id ?? (json.engineer_id !== undefined ? Number(json.engineer_id) : undefined),
+      preview_date: (json.preview_date ?? previewData?.preview_date) as string | undefined,
+      preview_time: (json.preview_time ?? previewData?.preview_time) as string | undefined,
+      site_link: (json.site_link ?? previewData?.site_link) as string | undefined,
+      address: (json.address ?? previewData?.address) as string | undefined,
+
+      convert_status: convertStatus,
+      status: convertStatus,
     });
   }
 
   static example = new ProjectShowModel({
     id: 1,
     title: 'Commercial project',
+
     translations: new TranslationParams({
       title: {
         ar: 'مشروع تجاري',
@@ -246,28 +326,49 @@ export default class ProjectShowModel {
         en: 'Project description',
       },
     }),
+
     client_exist: true,
+
     client: {
       id: 3,
       title: 'Dieter Gonzales',
     },
+
     project_type: {
       id: 2,
       title: 'Villa',
     },
+
     location: {
       id: 13,
       title: '#13',
     },
+
     service_type: ServiceType.DESIGNONLY,
+
     attachments: [],
-    engineer: {
-      id: 15,
-      title: 'Site engineer',
-    },
-    preview_date: '2026-06-25',
-    preview_time: '10:30:00',
-    site_link: 'https://maps.google.com/?q=30.0444,31.2357',
-    address: 'Nasr City, Cairo, Egypt',
+
+    project_previews: [
+      {
+        id: 20,
+        status: 1,
+
+        pricing_responsible: {
+          id: 9,
+          title: 'Fleur Armstrong',
+        },
+
+        notification_type: 1,
+        notification_message: 'رسالة المعاينة',
+        preview_date: '2026-07-12',
+        preview_time: '15:38:00',
+        site_link: 'https://www.jojijoluraja.net',
+        address: 'عنوان الموقع',
+        created_at: '2026-07-12 11:39:12',
+      },
+    ],
+
+    convert_status: ConvertStatus.PENDING,
+    status: ConvertStatus.PENDING,
   });
 }

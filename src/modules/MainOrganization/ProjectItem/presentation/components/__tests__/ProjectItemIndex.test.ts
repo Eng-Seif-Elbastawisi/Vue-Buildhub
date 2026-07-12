@@ -5,6 +5,7 @@ import ProjectItemModel from '../../../core/models/project.Item.model';
 import ProjectItemIndex from '../ProjectItemIndex.vue';
 
 vi.mock('vue-i18n', () => ({
+  createI18n: () => ({ global: { t: (key: string) => key } }),
   useI18n: () => ({ t: (key: string) => key }),
 }));
 

@@ -18,11 +18,11 @@ describe('ShowProjectFloorParams', () => {
   });
 
   it('should have required validation rule', () => {
-    const result = ShowProjectFloorParams.validation.validate({ project_floor_id: undefined });
+    const result = ShowProjectFloorParams.validation.validate({ project_id: undefined });
 
     expect(result).toEqual({
       isValid: false,
-      errors: [{ field: 'project_floor_id', message: 'project_floor_id is required' }],
+      errors: [{ field: 'project_id', message: 'project_id is required' }],
     });
   });
 });

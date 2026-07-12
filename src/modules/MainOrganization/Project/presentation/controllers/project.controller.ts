@@ -112,4 +112,28 @@ export default class ProjectController extends BaseController<ProjectShowModel, 
       },
     });
   }
+
+  private handleProjectActionResponse(result: DataState<void>): DataState<void> {
+    if (result.hasError) {
+      this.handleErrorResponse(result);
+    }
+
+    return result;
+  }
+
+  async convertMeasurementToProject(params?: Record<string, unknown>): Promise<DataState<void>> {
+    const result = await this.repository.convertMeasurementToProject(params as any);
+
+    return this.handleProjectActionResponse(result);
+  }
+  async storeVersion(params?: Record<string, unknown>): Promise<DataState<void>> {
+    const result = await this.repository.storeVersion(params as any);
+
+    return this.handleProjectActionResponse(result);
+  }
+  async reviseVersion(params?: Record<string, unknown>): Promise<DataState<void>> {
+    const result = await this.repository.reviseVersion(params as any);
+
+    return this.handleProjectActionResponse(result);
+  }
 }
