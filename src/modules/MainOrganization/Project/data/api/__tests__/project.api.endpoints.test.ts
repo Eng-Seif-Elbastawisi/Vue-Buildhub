@@ -2,9 +2,12 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useUserStore } from '@/stores/user';
 import { ProjectApiEndpoints } from '../project.api.endpoints';
 
+import { ProjectApiEndpoints } from '../project.api.endpoints';
+import { useUserStore } from '@/stores/user
 vi.mock('@/stores/user', () => ({
   useUserStore: vi.fn(() => ({ user: { type: 1 } })),
 }));
+';
 
 describe('ProjectApiEndpoints', () => {
   beforeEach(() => {

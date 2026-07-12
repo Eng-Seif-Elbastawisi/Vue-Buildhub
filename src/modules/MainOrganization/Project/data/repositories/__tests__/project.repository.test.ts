@@ -1,22 +1,9 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
-import {
-  DataFailed,
-  DataSuccess,
-} from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
+import { describe, expect, it } from 'vitest';
 import ProjectModel from '../../../core/models/project.model';
 import ProjectShowModel from '../../../core/models/project.show.model';
-import ProjectApiService from '../../api/project.api-service';
 import ProjectRepository from '../project.repository';
 
-vi.mock('@/stores/user', () => ({
-  useUserStore: vi.fn(() => ({ user: { type: 1 } })),
-}));
-
 describe('ProjectRepository', () => {
-  beforeEach(() => {
-    vi.restoreAllMocks();
-  });
-
   it('returns the same singleton instance', () => {
     expect(ProjectRepository.getInstance()).toBe(ProjectRepository.getInstance());
   });
@@ -33,6 +20,7 @@ describe('ProjectRepository', () => {
       dataKey: 'data',
       paginationKey: 'meta',
     });
+
     expect(repository.parseItem({ id: 3, title: 'Commercial project' })).toBeInstanceOf(
       ProjectShowModel,
     );
