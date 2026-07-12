@@ -18,6 +18,7 @@ export type ProjectAttachmentModel = {
 };
 
 export default class ProjectShowModel {
+  public readonly raw?: Record<string, unknown>;
   public readonly id?: number;
   public readonly title?: string;
   public readonly translations?: TranslationParams;
@@ -47,6 +48,7 @@ export default class ProjectShowModel {
   public readonly address?: string;
 
   constructor(data: {
+    raw?: Record<string, unknown>;
     id?: number;
     title?: string;
     translations?: TranslationParams;
@@ -75,6 +77,7 @@ export default class ProjectShowModel {
     site_link?: string;
     address?: string;
   }) {
+    this.raw = data.raw;
     this.id = data.id;
     this.title = data.title;
     this.translations = data.translations;
@@ -145,13 +148,16 @@ export default class ProjectShowModel {
     return '';
   }
 
-  static mapSelectItem(item: any): ProjectSelectItem | null {
+  static mapSelectItem(item: unknown): ProjectSelectItem | null {
     if (!item) return null;
 
+    const data = item as Record<string, unknown>;
+    const name = typeof data.name === 'string' ? data.name : '';
+
     return {
-      id: Number(item.id),
-      title: item.name || ProjectShowModel.getPlainTitle(item.title) || `#${item.id}`,
-      parent: item.parent ? ProjectShowModel.mapSelectItem(item.parent) : null,
+      id: Number(data.id),
+      title: name || ProjectShowModel.getPlainTitle(data.title) || `#${data.id}`,
+      parent: data.parent ? ProjectShowModel.mapSelectItem(data.parent) : null,
     };
   }
 
@@ -161,6 +167,10 @@ export default class ProjectShowModel {
     }
 
     const client = ProjectShowModel.mapSelectItem(json.client);
+    const clientData =
+      json.client && typeof json.client === 'object'
+        ? (json.client as Record<string, unknown>)
+        : null;
     const projectType = ProjectShowModel.mapSelectItem(json.project_type);
     const engineer = ProjectShowModel.mapSelectItem(json.engineer);
 
@@ -182,6 +192,7 @@ export default class ProjectShowModel {
           : null;
 
     return new ProjectShowModel({
+      raw: json,
       id: json.id as number | undefined,
 
       title: ProjectShowModel.getPlainTitle(json.title),
@@ -195,9 +206,9 @@ export default class ProjectShowModel {
       client,
       client_id: client?.id,
       client_name: client?.title,
-      client_phone: (json.client as any)?.phone,
+      client_phone: clientData?.phone as string | undefined,
 
-      client_source: ProjectShowModel.mapSelectItem((json.client as any)?.client_source),
+      client_source: ProjectShowModel.mapSelectItem(clientData?.client_source),
 
       project_type: projectType,
       project_type_id: projectType?.id,

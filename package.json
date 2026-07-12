@@ -41,6 +41,7 @@
     "vue-i18n": "^11.2.8",
     "xlsx": "^0.18.5",
     "primevue": "^4.5.4",
+    "primeicons": "^7.0.0",
     "@primeuix/themes": "^2.0.2",
     "axios": "^1.13.2",
     "cropperjs": "^2.1.1",
