@@ -134,6 +134,21 @@
     background: var(--success-light);
     color: var(--success-dark);
   }
+
+  &.is-extra-paid {
+    background: var(--info-light);
+    color: var(--info-dark);
+  }
+
+  &.is-partial {
+    background: var(--warning-light);
+    color: var(--warning-dark);
+  }
+
+  &.is-unpaid {
+    background: var(--danger-light);
+    color: var(--danger-dark);
+  }
 }
 
 .invoice-show-card {
@@ -421,26 +436,54 @@
   }
 }
 
-.invoice-payments-card__list {
-  display: grid;
-  gap: 0.85rem;
+.invoice-payments-card__status {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
+  background: var(--success);
+  color: var(--white);
 }
 
-.invoice-payments-card__row {
-  display: grid;
-  grid-template-columns:
-    auto minmax(150px, 1.3fr) minmax(120px, 1fr) minmax(150px, 1fr) minmax(110px, 1fr)
-    auto;
-  gap: 1rem;
-  align-items: center;
-  padding: 1rem;
-  border: 1px solid var(--success-light);
+.invoice-payments-card__table-wrap {
+  max-height: 320px;
+  overflow: auto;
+  border: 1px solid var(--border-weak);
   border-radius: var(--radius-sm);
-  background: var(--success-light);
+  background: var(--white);
+}
 
-  p {
-    margin-bottom: 0.35rem;
+.invoice-payments-card__table {
+  width: 100%;
+  min-width: 780px;
+  border-spacing: 0;
+  border-collapse: separate;
+
+  th,
+  td {
+    padding: 0.95rem 1rem;
+    border-bottom: 1px solid var(--border-weak);
+    text-align: start;
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+
+  th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: var(--gray-50);
+    color: var(--gray-600);
+    font-family: 'Medium';
     font-size: var(--xs-size);
+  }
+
+  td {
+    color: var(--gray-700);
+    font-size: var(--sm-size);
+  }
+
+  tbody tr:last-child td {
+    border-bottom: 0;
   }
 
   strong {
@@ -449,12 +492,14 @@
   }
 }
 
-.invoice-payments-card__status {
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-full);
-  background: var(--success);
-  color: var(--white);
+.invoice-payments-card__payment {
+  @include flex-row(nowrap, flex-start, center);
+
+  gap: 0.7rem;
+}
+
+.invoice-payments-card__method {
+  color: var(--gray-600);
 }
 
 .invoice-timeline-card__list {
@@ -614,6 +659,12 @@ body.invoice-payment-dialog-open {
   }
 }
 
+@media (max-width: 1280px) {
+  .invoice-show-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 1180px) {
   .invoice-status-overview {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -653,14 +704,6 @@ body.invoice-payment-dialog-open {
   .invoice-client-project-card__grid,
   .invoice-payment-dialog__form {
     grid-template-columns: 1fr;
-  }
-
-  .invoice-payments-card__row {
-    grid-template-columns: auto 1fr auto;
-
-    > div:nth-of-type(n + 3) {
-      grid-column: 2 / -1;
-    }
   }
 
   .invoice-payment-dialog__actions,

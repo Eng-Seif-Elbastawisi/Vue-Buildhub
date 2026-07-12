@@ -49,7 +49,7 @@
       </span>
       <div>
         <p>{{ $t('invoice_show.export_status') }}</p>
-        <strong>{{ exportStatusLabel }}</strong>
+        <strong>{{ `${exportStatusLabel === '1' ? 'Exported' : 'Not Exported'}` }}</strong>
       </div>
     </article>
 

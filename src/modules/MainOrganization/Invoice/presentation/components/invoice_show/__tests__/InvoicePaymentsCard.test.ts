@@ -23,6 +23,8 @@ describe('InvoicePaymentsCard', () => {
     });
 
     expect(wrapper.text()).toContain('1000.00 EGP');
+    expect(wrapper.find('.invoice-payments-card__table-wrap').exists()).toBe(true);
+    expect(wrapper.find('table.invoice-payments-card__table').exists()).toBe(true);
 
     await wrapper.find('.invoice-show-btn').trigger('click');
     await wrapper.find('.invoice-show-icon-btn').trigger('click');

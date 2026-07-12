@@ -20,6 +20,7 @@ const invoiceData = vi.hoisted(() => ({
   invoice_number: 'INV-2026-0001',
   invoice_date: '2026-07-05',
   invoice_amount: 1000,
+  status: 2,
   currency: 'EGP',
   items: [],
   payments: [
@@ -100,6 +101,7 @@ describe('ShowInvoice', () => {
     expect(fetchInvoiceById).toHaveBeenCalledWith(7);
     expect(fetchInvoicePayments).toHaveBeenCalledWith(7);
     expect(wrapper.text()).toContain('INV-2026-0001');
+    expect(wrapper.text()).toContain('Partial');
     expect(wrapper.text()).toContain('Client Name');
   });
 });

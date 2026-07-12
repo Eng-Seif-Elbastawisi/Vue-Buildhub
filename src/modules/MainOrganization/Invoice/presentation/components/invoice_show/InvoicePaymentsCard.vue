@@ -34,40 +34,63 @@
       </button>
     </div>
 
-    <div v-if="payments.length" class="invoice-payments-card__list">
-      <article
-        v-for="payment in payments"
-        :key="payment.id ?? `${payment.payment_date}-${payment.payment_amount}`"
-        class="invoice-payments-card__row"
-      >
-        <span class="invoice-payments-card__status">
-          <i class="pi pi-check"></i>
-        </span>
-        <div>
-          <p>{{ $t('invoice_show.payment_received') }}</p>
-          <small>{{ paymentMethodLabel(payment.payment_method) }}</small>
-        </div>
-        <div>
-          <p>{{ $t('invoice_show.amount') }}</p>
-          <strong>{{ formatAmount(payment.payment_amount) }} {{ currency }}</strong>
-        </div>
-        <div>
-          <p>{{ $t('invoice_payment.payment_date') }}</p>
-          <strong>{{ formatDateTime(payment.payment_date) }}</strong>
-        </div>
-        <div>
-          <p>{{ $t('invoice_show.reference_no') }}</p>
-          <strong>{{ payment.id ? `#${payment.id}` : $t('invoice_show.not_available') }}</strong>
-        </div>
-        <button
-          class="invoice-show-icon-btn"
-          type="button"
-          :title="$t('invoice_show.download_receipt')"
-          @click="$emit('download', payment)"
-        >
-          <i class="pi pi-download"></i>
-        </button>
-      </article>
+    <div
+      v-if="payments.length"
+      class="invoice-payments-card__table-wrap"
+      tabindex="0"
+      :aria-label="$t('invoice_show.payments')"
+    >
+      <table class="invoice-payments-card__table">
+        <thead>
+          <tr>
+            <th scope="col">{{ $t('invoice_show.payment_received') }}</th>
+            <th scope="col">{{ $t('invoice_payment.payment_method') }}</th>
+            <th scope="col">{{ $t('invoice_show.amount') }}</th>
+            <th scope="col">{{ $t('invoice_payment.payment_date') }}</th>
+            <th scope="col">{{ $t('invoice_show.reference_no') }}</th>
+            <th scope="col">{{ $t('invoice_show.download_receipt') }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            v-for="payment in payments"
+            :key="payment.id ?? `${payment.payment_date}-${payment.payment_amount}`"
+          >
+            <td>
+              <div class="invoice-payments-card__payment">
+                <span class="invoice-payments-card__status">
+                  <i class="pi pi-check"></i>
+                </span>
+                <strong>{{ $t('invoice_show.payment_received') }}</strong>
+              </div>
+            </td>
+            <td>
+              <span class="invoice-payments-card__method">
+                {{ paymentMethodLabel(payment.payment_method) }}
+              </span>
+            </td>
+            <td>
+              <strong>{{ formatAmount(payment.payment_amount) }} {{ currency }}</strong>
+            </td>
+            <td>
+              <span>{{ formatDateTime(payment.payment_date) }}</span>
+            </td>
+            <td>
+              <span>{{ payment.id ? `#${payment.id}` : $t('invoice_show.not_available') }}</span>
+            </td>
+            <td>
+              <button
+                class="invoice-show-icon-btn"
+                type="button"
+                :title="$t('invoice_show.download_receipt')"
+                @click="$emit('download', payment)"
+              >
+                <i class="pi pi-download"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
     <p v-else class="invoice-show-empty">{{ $t('invoice_show.no_payments') }}</p>

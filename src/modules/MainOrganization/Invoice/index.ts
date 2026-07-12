@@ -2,6 +2,9 @@
 export { default as InvoiceModel } from './core/models/invoice.model';
 export { default as InvoiceShowModel } from './core/models/invoice.show.model';
 
+// Constants
+export { InvoiceStatusEnum, InvoiceStatusLabelKeys } from './core/constant/invoice.status.enum';
+
 // Params
 export { default as AddInvoiceParams } from './core/params/add.invoice.params';
 export { default as EditInvoiceParams } from './core/params/edit.invoice.params';

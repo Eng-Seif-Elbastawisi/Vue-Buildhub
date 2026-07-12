@@ -12,11 +12,16 @@
   import type InvoicePaymentModel from '@/modules/MainOrganization/InvoicePayment/core/models/invoice.payment.model';
   import type AddInvoicePaymentParams from '@/modules/MainOrganization/InvoicePayment/core/params/add.invoice.payment.params';
   import InvoicePaymentController from '@/modules/MainOrganization/InvoicePayment/presentation/controllers/invoice.payment.controller';
+  import {
+    InvoiceStatusEnum,
+    InvoiceStatusLabelKeys,
+    type InvoiceStatusEnum as InvoiceStatusEnumType,
+  } from '../../core/constant/invoice.status.enum';
   import type InvoiceShowModel from '../../core/models/invoice.show.model';
   import InvoiceController from '../controllers/invoice.controller';
   import AddInvoicePaymentDialog from './invoice_show/AddInvoicePaymentDialog.vue';
   import InvoiceClientProjectCard from './invoice_show/InvoiceClientProjectCard.vue';
-  import InvoiceItemsCard from './invoice_show/InvoiceItemsCard.vue';
+  // import InvoiceItemsCard from './invoice_show/InvoiceItemsCard.vue';
   import InvoiceNotesCard from './invoice_show/InvoiceNotesCard.vue';
   import InvoicePaymentSummary from './invoice_show/InvoicePaymentSummary.vue';
   import InvoicePaymentsCard from './invoice_show/InvoicePaymentsCard.vue';
@@ -60,6 +65,17 @@
   );
   const remainingAmount = computed(() => Math.max(totalAmount.value - paidAmount.value, 0));
   const isInvoicePaid = computed(() => totalAmount.value > 0 && remainingAmount.value <= 0.009);
+
+  const inferredInvoiceStatus = computed<InvoiceStatusEnumType>(() => {
+    if (paidAmount.value > totalAmount.value && totalAmount.value > 0) {
+      return InvoiceStatusEnum.EXTRA_PAID;
+    }
+
+    if (isInvoicePaid.value) return InvoiceStatusEnum.PAID;
+    if (paidAmount.value > 0) return InvoiceStatusEnum.PARTIAL;
+
+    return InvoiceStatusEnum.UNPAID;
+  });
 
   const valueOrEmpty = (value?: string | number | null) => {
     if (value === null || value === undefined || value === '') return emptyValue;
@@ -129,14 +145,47 @@
   const invoiceDateLabel = computed(() => formatDateTime(invoice.value?.invoice_date));
   const dueDateLabel = computed(() => formatDateTime(invoice.value?.due_date));
 
-  const statusLabel = computed(() => {
-    if (isInvoicePaid.value) return t('invoice_show.status_paid');
-    if (invoice.value?.status) return humanize(invoice.value.status);
+  const normalizeInvoiceStatus = (
+    value?: string | number | null,
+  ): InvoiceStatusEnumType | undefined => {
+    const numericValue = Number(value);
 
-    return t('invoice_show.status_pending');
+    if (
+      numericValue === InvoiceStatusEnum.UNPAID ||
+      numericValue === InvoiceStatusEnum.PARTIAL ||
+      numericValue === InvoiceStatusEnum.PAID ||
+      numericValue === InvoiceStatusEnum.EXTRA_PAID
+    ) {
+      return numericValue;
+    }
+
+    const normalizedValue = String(value ?? '')
+      .trim()
+      .toLowerCase();
+
+    if (normalizedValue === 'unpaid') return InvoiceStatusEnum.UNPAID;
+    if (normalizedValue === 'partial') return InvoiceStatusEnum.PARTIAL;
+    if (normalizedValue === 'paid') return InvoiceStatusEnum.PAID;
+    if (normalizedValue === 'extra_paid' || normalizedValue === 'extra paid') {
+      return InvoiceStatusEnum.EXTRA_PAID;
+    }
+
+    return undefined;
+  };
+
+  const currentInvoiceStatus = computed(
+    () => normalizeInvoiceStatus(invoice.value?.status) ?? inferredInvoiceStatus.value,
+  );
+
+  const statusLabel = computed(() => t(InvoiceStatusLabelKeys[currentInvoiceStatus.value]));
+
+  const statusClass = computed(() => {
+    if (currentInvoiceStatus.value === InvoiceStatusEnum.PAID) return 'is-paid';
+    if (currentInvoiceStatus.value === InvoiceStatusEnum.EXTRA_PAID) return 'is-extra-paid';
+    if (currentInvoiceStatus.value === InvoiceStatusEnum.PARTIAL) return 'is-partial';
+
+    return 'is-unpaid';
   });
-
-  const statusClass = computed(() => (isInvoicePaid.value ? 'is-paid' : 'is-pending'));
 
   const exportStatusLabel = computed(() => {
     if (!invoice.value?.export_status) return t('invoice_show.not_exported');
@@ -359,11 +408,11 @@
 
         <div class="invoice-show-layout">
           <main class="invoice-show-main">
-            <InvoiceItemsCard
+            <!-- <InvoiceItemsCard
               :items="(data as InvoiceShowModel).items"
               :currency="currency"
               :format-amount="formatAmount"
-            />
+            /> -->
             <InvoiceClientProjectCard
               :client-name="clientName"
               :client-phone="clientPhone"
