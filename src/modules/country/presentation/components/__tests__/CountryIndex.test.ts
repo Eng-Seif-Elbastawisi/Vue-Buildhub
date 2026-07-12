@@ -35,8 +35,8 @@ vi.mock('vue-i18n', () => ({
   }),
   useI18n: () => ({
     t: (key: string) => key,
-    d: (d: any) => d,
-    n: (n: any) => n,
+    d: (d: unknown) => d,
+    n: (n: unknown) => n,
   }),
 }));
 

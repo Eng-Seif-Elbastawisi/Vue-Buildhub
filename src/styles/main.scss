@@ -59,7 +59,9 @@
 @use '../modules/MainOrganization/Specialization/presentation/styles/Specialization_imports';
 @use '../modules/MainOrganization/employee/presentation/styles/employee_imports';
 @use '../modules/MainOrganization/Organization/presentation/styles/organization_toggle_imports';
-/* ── Pages ─────────────────────────────────────────────────────── */ 
+@use '../modules/MainOrganization/Invoice/presentation/styles/invoice_imports';
+
+/* ── Pages ─────────────────────────────────────────────────────── */
 @use '../modules/auth/presentation/styles/login';
 @use '../modules/auth/presentation/styles/auth_shell';
 @use 'error/error';

@@ -30,7 +30,7 @@ vi.mock('@/base/Presentation/Utils/validationService', () => ({
 
 const makeTitleInterface = (id: number, title: string) => ({ id, title });
 
-const createWrapper = (props: Record<string, any> = {}) =>
+const createWrapper = (props: Record<string, unknown> = {}) =>
   mount(UpdatedCustomInputSelect, {
     props: {
       modelValue: null,
@@ -68,12 +68,12 @@ describe('UpdatedCustomInputSelect', () => {
 
   it('renders label when label prop is provided', () => {
     const wrapper = createWrapper({ label: 'My Label' });
-    expect(wrapper.text()).not.toContain('My Label');
+    expect(wrapper.text()).toContain('My Label');
   });
 
   it('shows required asterisk when required is true', () => {
     const wrapper = createWrapper({ required: true, label: 'Name' });
-    expect(wrapper.find('.text-red-500').exists()).toBe(false);
+    expect(wrapper.find('.text-red-500').exists()).toBe(true);
   });
 
   it('does not show required asterisk when required is false', () => {
@@ -83,7 +83,7 @@ describe('UpdatedCustomInputSelect', () => {
 
   it('shows optional text when optional is true', () => {
     const wrapper = createWrapper({ optional: true });
-    expect(wrapper.find('.optional-text').exists()).toBe(false);
+    expect(wrapper.find('.optional-text').exists()).toBe(true);
   });
 
   it('does not show optional text when optional is false', () => {
@@ -93,7 +93,7 @@ describe('UpdatedCustomInputSelect', () => {
 
   it('shows add button when onclick prop is provided', () => {
     const wrapper = createWrapper({ onclick: vi.fn() });
-    expect(wrapper.find('.add-dialog').exists()).toBe(false);
+    expect(wrapper.find('.add-dialog').exists()).toBe(true);
   });
 
   it('does not show add button when onclick is not provided', () => {
@@ -103,7 +103,7 @@ describe('UpdatedCustomInputSelect', () => {
 
   it('renders reload icon by default (reload=true)', () => {
     const wrapper = createWrapper({ reload: true });
-    expect(wrapper.find('.reload-icon').exists()).toBe(false);
+    expect(wrapper.find('.reload-icon').exists()).toBe(true);
   });
 
   it('hides reload icon when reload=false', () => {

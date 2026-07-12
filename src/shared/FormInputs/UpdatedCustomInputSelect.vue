@@ -14,7 +14,7 @@
 
   import PlusIcon from '@/shared/icons/PlusIcon.vue';
 
-  import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
+  // import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
 
   import type TitleInterface from '@/base/Data/Models/titleInterface';
 
@@ -284,7 +284,7 @@
 </script>
 
 <template>
-  <!-- <div class="input-label flex justify-between w-full">
+  <div class="input-label flex justify-between w-full">
     <slot v-if="!hasHeader">
       <div class="flex items-center">
         <slot name="reloadHeader"></slot>
@@ -312,7 +312,7 @@
             {{ $t(label ?? '') }}
           </label>
 
-          <FieldHelpIcon
+          <!-- <FieldHelpIcon
             :label="$t(label ?? '')"
             :field-name="name ?? id"
             :field-id="id"
@@ -320,7 +320,7 @@
             :help-text="helpText"
             :help-examples="helpExamples"
             :show-help="showHelp"
-          />
+          /> -->
         </span>
 
         <slot name="LabelHeader"></slot>
@@ -328,7 +328,7 @@
     </slot>
 
     <slot v-else name="Header"></slot>
-  </div> -->
+  </div>
 
   <slot v-if="!hascontent">
     <component
