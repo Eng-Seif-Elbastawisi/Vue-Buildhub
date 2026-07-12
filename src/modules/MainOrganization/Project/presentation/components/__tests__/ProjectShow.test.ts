@@ -169,6 +169,10 @@ const mountProjectShow = () =>
         DataStatusBuilder: {
           template: '<div><slot name="success" /></div>',
         },
+        Image: {
+          props: ['src', 'alt'],
+          template: '<img :src="src" :alt="alt" />',
+        },
       },
     },
   });
