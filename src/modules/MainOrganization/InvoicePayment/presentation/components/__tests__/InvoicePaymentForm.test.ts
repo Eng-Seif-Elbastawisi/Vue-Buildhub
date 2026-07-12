@@ -69,6 +69,6 @@ describe('InvoicePaymentForm', () => {
 
     expect((wrapper.find('#payment_amount').element as HTMLInputElement).value).toBe('1000');
     expect((wrapper.find('#payment_date').element as HTMLInputElement).value).toBe('2026-07-05');
-    expect((wrapper.find('#payment_method').element as HTMLInputElement).value).toBe('1');
+    expect((wrapper.find('#payment_method').element as HTMLSelectElement).value).toBe('1');
   });
 });

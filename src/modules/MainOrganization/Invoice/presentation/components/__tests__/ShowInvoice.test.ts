@@ -1,9 +1,9 @@
-import { mount } from '@vue/test-utils';
+import { flushPromises, mount } from '@vue/test-utils';
 import { describe, expect, it, vi } from 'vitest';
 import ShowInvoice from '../ShowInvoice.vue';
 
 const fetchInvoiceById = vi.fn();
-const fetchPayments = vi.fn();
+const fetchInvoicePayments = vi.fn();
 const createInvoicePayment = vi.fn();
 const invoiceData = vi.hoisted(() => ({
   id: 7,
@@ -67,7 +67,7 @@ vi.mock(
   () => ({
     default: {
       getInstance: () => ({
-        fetchList: fetchPayments,
+        fetchInvoicePayments,
         createInvoicePayment,
       }),
     },
@@ -75,7 +75,7 @@ vi.mock(
 );
 
 describe('ShowInvoice', () => {
-  it('fetches invoice by route id and renders invoice details', () => {
+  it('fetches invoice and invoice payments by route id and renders invoice details', async () => {
     const wrapper = mount(ShowInvoice, {
       global: {
         mocks: {
@@ -95,8 +95,10 @@ describe('ShowInvoice', () => {
       },
     });
 
+    await flushPromises();
+
     expect(fetchInvoiceById).toHaveBeenCalledWith(7);
-    expect(fetchPayments).not.toHaveBeenCalled();
+    expect(fetchInvoicePayments).toHaveBeenCalledWith(7);
     expect(wrapper.text()).toContain('INV-2026-0001');
     expect(wrapper.text()).toContain('Client Name');
   });

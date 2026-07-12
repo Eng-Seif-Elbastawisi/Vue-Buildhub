@@ -1,11 +1,12 @@
 import type Params from '@/base/Core/Params/params';
 import { ClassValidation } from '@/base/Presentation/Utils/classValidation';
+import type { InvoicePaymentMethodEnum } from '../constant/invoice.payment.method.enum';
 
 export default class AddInvoicePaymentParams implements Params {
   public invoice_id?: number;
   public payment_amount?: number;
   public payment_date?: string;
-  public payment_method?: number;
+  public payment_method?: InvoicePaymentMethodEnum;
   public notes?: string | null;
 
   public static readonly validation = new ClassValidation().setRules({
@@ -19,7 +20,7 @@ export default class AddInvoicePaymentParams implements Params {
     invoice_id?: number;
     payment_amount?: number;
     payment_date?: string;
-    payment_method?: number;
+    payment_method?: InvoicePaymentMethodEnum;
     notes?: string | null;
   }) {
     this.invoice_id = data.invoice_id;

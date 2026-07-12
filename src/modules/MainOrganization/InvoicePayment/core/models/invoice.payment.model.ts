@@ -1,3 +1,5 @@
+import type { InvoicePaymentMethodEnum } from '../constant/invoice.payment.method.enum';
+
 export type InvoicePaymentInvoiceModel = {
   id?: number;
   invoice_number?: string;
@@ -9,7 +11,7 @@ export default class InvoicePaymentModel {
   public readonly invoice?: InvoicePaymentInvoiceModel | null;
   public readonly payment_amount?: number;
   public readonly payment_date?: string;
-  public readonly payment_method?: number;
+  public readonly payment_method?: InvoicePaymentMethodEnum;
   public readonly notes?: string | null;
 
   constructor(data: {
@@ -18,7 +20,7 @@ export default class InvoicePaymentModel {
     invoice?: InvoicePaymentInvoiceModel | null;
     payment_amount?: number;
     payment_date?: string;
-    payment_method?: number;
+    payment_method?: InvoicePaymentMethodEnum;
     notes?: string | null;
   }) {
     this.id = data.id;
@@ -54,7 +56,7 @@ export default class InvoicePaymentModel {
       invoice: InvoicePaymentModel.mapInvoice(json.invoice),
       payment_amount: Number(json.payment_amount ?? json.amount ?? 0),
       payment_date: (json.payment_date ?? json.date ?? json.created_at) as string | undefined,
-      payment_method: Number(json.payment_method ?? json.method ?? 0),
+      payment_method: Number(json.payment_method ?? json.method ?? 0) as InvoicePaymentMethodEnum,
       notes: json.notes as string | null | undefined,
     });
   }

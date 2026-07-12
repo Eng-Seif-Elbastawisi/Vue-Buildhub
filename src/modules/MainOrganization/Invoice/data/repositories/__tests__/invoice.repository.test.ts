@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
+import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
 import InvoiceModel from '../../../core/models/invoice.model';
 import InvoiceShowModel from '../../../core/models/invoice.show.model';
+import ExportInvoiceParams from '../../../core/params/export.invoice.params';
 import InvoiceRepository from '../invoice.repository';
 
 const invoiceJson = {
@@ -32,5 +34,15 @@ describe('InvoiceRepository', () => {
     expect(repository.parseItem(invoiceJson)).toBeInstanceOf(InvoiceShowModel);
     expect(repository.parseList([invoiceJson])).toEqual([expect.any(InvoiceModel)]);
     expect(repository.parseList({})).toEqual([]);
+  });
+
+  it('exports invoice with static data', async () => {
+    const result = await InvoiceRepository.getInstance().exportInvoice(
+      new ExportInvoiceParams({ invoice_id: 7 }),
+      { useStaticData: true },
+    );
+
+    expect(result).toBeInstanceOf(DataSuccess);
+    expect(result.data).toEqual({ invoice_id: 7 });
   });
 });

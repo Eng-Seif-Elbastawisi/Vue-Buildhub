@@ -1,4 +1,6 @@
 <script setup lang="ts">
+  import invoiceSummaryHero from '@/assets/images/ChatGPT Image Jul 12, 2026, 03_06_52 PM.png';
+
   defineProps<{
     totalAmount: number;
     paidAmount: number;
@@ -16,9 +18,9 @@
         <p>{{ $t('invoice_show.total_amount') }}</p>
         <strong>{{ formatAmount(totalAmount) }} {{ currency }}</strong>
       </div>
-      <span class="invoice-payment-summary__receipt">
-        <i class="pi pi-receipt"></i>
-      </span>
+      <figure class="invoice-payment-summary__receipt">
+        <img :src="invoiceSummaryHero" :alt="$t('invoice_show.invoice_illustration_alt')" />
+      </figure>
     </div>
 
     <dl class="invoice-payment-summary__rows">

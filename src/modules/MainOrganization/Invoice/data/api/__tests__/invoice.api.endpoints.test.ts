@@ -10,5 +10,6 @@ describe('InvoiceApiEndpoints', () => {
     expect(endpoints.store).toContain('mainportal/store_invoice');
     expect(endpoints.update).toContain('mainportal/update_invoice');
     expect(endpoints.delete).toContain('mainportal/delete_invoice');
+    expect(endpoints.export).toContain('mainportal/export_invoice');
   });
 });

@@ -1,14 +1,18 @@
 <script setup lang="ts">
-  import { computed, ref, watch } from 'vue';
+  import { computed, onUnmounted, ref, watch } from 'vue';
+  import { useI18n } from 'vue-i18n';
+  import type TitleInterface from '@/base/Data/Models/titleInterface';
+  import UpdatedCustomInputSelect from '@/shared/FormInputs/UpdatedCustomInputSelect.vue';
+  import {
+    InvoicePaymentMethodOptions,
+    type InvoicePaymentMethodEnum,
+  } from '@/modules/MainOrganization/InvoicePayment/core/constant/invoice.payment.method.enum';
   import AddInvoicePaymentParams from '@/modules/MainOrganization/InvoicePayment/core/params/add.invoice.payment.params';
 
   const props = defineProps<{
     visible: boolean;
     invoiceId: number;
     loading?: boolean;
-    remainingAmount: number;
-    currency: string;
-    formatAmount: (value?: number | string | null) => string;
   }>();
 
   const emit = defineEmits<{
@@ -16,17 +20,27 @@
     submit: [params: AddInvoicePaymentParams];
   }>();
 
+  const { t } = useI18n();
   const paymentAmount = ref<number | null>(null);
   const paymentDate = ref('');
-  const paymentMethod = ref<number | null>(null);
+  const paymentMethod = ref<TitleInterface<string | number> | null>(null);
   const notes = ref('');
-
-  const remainingText = computed(
-    () => `${props.formatAmount(props.remainingAmount)} ${props.currency}`,
+  const dialogBodyClass = 'invoice-payment-dialog-open';
+  const paymentMethodOptions = computed<TitleInterface<string | number>[]>(() =>
+    InvoicePaymentMethodOptions.map((option) => ({
+      id: option.value,
+      title: t(option.labelKey),
+    })),
   );
 
+  const setDialogBodyClass = (visible: boolean) => {
+    if (typeof document === 'undefined') return;
+
+    document.body.classList.toggle(dialogBodyClass, visible);
+  };
+
   const resetForm = () => {
-    paymentAmount.value = props.remainingAmount > 0 ? props.remainingAmount : null;
+    paymentAmount.value = null;
     paymentDate.value = new Date().toISOString().slice(0, 10);
     paymentMethod.value = null;
     notes.value = '';
@@ -39,7 +53,7 @@
         invoice_id: props.invoiceId,
         payment_amount: paymentAmount.value ?? undefined,
         payment_date: paymentDate.value,
-        payment_method: paymentMethod.value ?? undefined,
+        payment_method: paymentMethod.value?.id as InvoicePaymentMethodEnum | undefined,
         notes: notes.value || null,
       }),
     );
@@ -48,10 +62,15 @@
   watch(
     () => props.visible,
     (visible) => {
+      setDialogBodyClass(visible);
       if (visible) resetForm();
     },
     { immediate: true },
   );
+
+  onUnmounted(() => {
+    setDialogBodyClass(false);
+  });
 </script>
 
 <template>
@@ -67,7 +86,6 @@
       <section class="invoice-payment-dialog__panel">
         <header class="invoice-payment-dialog__header">
           <div>
-            <p>{{ $t('invoice_show.remaining_amount') }}: {{ remainingText }}</p>
             <h2>{{ $t('invoice_show.add_payment') }}</h2>
           </div>
           <button class="invoice-show-icon-btn" type="button" @click="$emit('close')">
@@ -99,17 +117,14 @@
           </div>
 
           <div class="field-group">
-            <label class="field-label" for="show_payment_method">
-              {{ $t('invoice_payment.payment_method') }}
-            </label>
-            <input
+            <UpdatedCustomInputSelect
               id="show_payment_method"
-              v-model.number="paymentMethod"
-              class="field-input"
-              min="0"
-              step="1"
-              type="number"
+              v-model="paymentMethod"
+              :label="$t('invoice_payment.payment_method')"
               :placeholder="$t('invoice_payment.payment_method_placeholder')"
+              :reload="false"
+              :static-options="paymentMethodOptions"
+              required
             />
           </div>
 

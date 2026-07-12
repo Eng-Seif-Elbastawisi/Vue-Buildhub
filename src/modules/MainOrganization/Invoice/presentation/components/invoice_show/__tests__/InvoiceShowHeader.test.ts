@@ -37,8 +37,10 @@ describe('InvoiceShowHeader', () => {
 
     await wrapper.findAll('button')[0].trigger('click');
     await wrapper.findAll('button')[1].trigger('click');
+    await wrapper.findAll('button')[2].trigger('click');
 
     expect(wrapper.emitted('download')).toHaveLength(1);
+    expect(wrapper.emitted('exportInvoice')).toHaveLength(1);
     expect(wrapper.emitted('share')).toHaveLength(1);
   });
 });

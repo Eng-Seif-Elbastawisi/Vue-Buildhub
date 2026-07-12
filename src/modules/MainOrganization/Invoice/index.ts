@@ -8,6 +8,7 @@ export { default as EditInvoiceParams } from './core/params/edit.invoice.params'
 export { default as DeleteInvoiceParams } from './core/params/delete.invoice.params';
 export { default as ShowInvoiceParams } from './core/params/show.invoice.params';
 export { default as IndexInvoiceParams } from './core/params/index.invoice.params';
+export { default as ExportInvoiceParams } from './core/params/export.invoice.params';
 
 // Repository
 export { default as InvoiceRepository } from './data/repositories/invoice.repository';

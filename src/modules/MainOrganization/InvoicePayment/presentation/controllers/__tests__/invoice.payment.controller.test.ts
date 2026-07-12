@@ -61,4 +61,12 @@ describe('InvoicePaymentController', () => {
     expect(result).toBeInstanceOf(DataSuccess);
     expect(push).not.toHaveBeenCalled();
   });
+
+  it('fetches invoice payments by invoice id', async () => {
+    const result = await InvoicePaymentController.getInstance().fetchInvoicePayments(4, {
+      useStaticData: true,
+    });
+
+    expect(result).toBeInstanceOf(DataSuccess);
+  });
 });

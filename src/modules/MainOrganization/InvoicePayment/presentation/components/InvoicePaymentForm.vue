@@ -7,6 +7,10 @@
   import UpdatedCustomInputSelect from '@/shared/FormInputs/UpdatedCustomInputSelect.vue';
   import InvoiceController from '@/modules/MainOrganization/Invoice/presentation/controllers/invoice.controller';
   import IndexInvoiceParams from '@/modules/MainOrganization/Invoice/core/params/index.invoice.params';
+  import {
+    InvoicePaymentMethodOptions,
+    type InvoicePaymentMethodEnum,
+  } from '../../core/constant/invoice.payment.method.enum';
   import AddInvoicePaymentParams from '../../core/params/add.invoice.payment.params';
   import type InvoicePaymentModel from '../../core/models/invoice.payment.model';
 
@@ -27,8 +31,9 @@
   const selectedInvoice = ref<TitleInterface<string | number> | null>(null);
   const paymentAmount = ref<number | null>(null);
   const paymentDate = ref('');
-  const paymentMethod = ref<number | null>(null);
+  const paymentMethod = ref<InvoicePaymentMethodEnum | null>(null);
   const notes = ref('');
+  const paymentMethodOptions = InvoicePaymentMethodOptions;
 
   const updateData = () => {
     emit(
@@ -77,7 +82,7 @@
       paymentMethod.value =
         payment?.payment_method === undefined || payment?.payment_method === null
           ? null
-          : Number(payment.payment_method);
+          : (Number(payment.payment_method) as InvoicePaymentMethodEnum);
       notes.value = payment?.notes ?? '';
 
       updateData();
@@ -131,7 +136,9 @@
 
       <div class="field-group">
         <span class="field-help-label-row field-help-label-row--block">
-          <label class="field-label" for="payment_date">{{ $t('invoice_payment.payment_date') }}</label>
+          <label class="field-label" for="payment_date">{{
+            $t('invoice_payment.payment_date')
+          }}</label>
           <FieldHelpIcon
             :label="$t('invoice_payment.payment_date')"
             field-name="date"
@@ -158,16 +165,19 @@
             field-id="payment_method"
           />
         </span>
-        <input
+        <select
           id="payment_method"
           v-model.number="paymentMethod"
           class="field-input"
-          min="0"
-          step="1"
-          type="number"
-          :placeholder="$t('invoice_payment.payment_method_placeholder')"
-          @input="updateData"
-        />
+          @change="updateData"
+        >
+          <option disabled :value="null">
+            {{ $t('invoice_payment.payment_method_placeholder') }}
+          </option>
+          <option v-for="option in paymentMethodOptions" :key="option.value" :value="option.value">
+            {{ $t(option.labelKey) }}
+          </option>
+        </select>
       </div>
 
       <div class="field-group col-span-2">

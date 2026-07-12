@@ -10,6 +10,7 @@ import { useFormsStore } from '@/stores/formsStore';
 import { useUserStore } from '@/stores/user';
 import type InvoiceModel from '../../core/models/invoice.model';
 import type InvoiceShowModel from '../../core/models/invoice.show.model';
+import ExportInvoiceParams from '../../core/params/export.invoice.params';
 import ShowInvoiceParams from '../../core/params/show.invoice.params';
 import InvoiceRepository from '../../data/repositories/invoice.repository';
 
@@ -84,6 +85,14 @@ export default class InvoiceController extends BaseController<InvoiceShowModel, 
 
   async fetchInvoiceById(invoiceId: number, options?: ApiCallOptions) {
     return await this.fetchOne(new ShowInvoiceParams({ invoice_id: invoiceId }), options);
+  }
+
+  async exportInvoice(invoiceId: number, options?: ApiCallOptions) {
+    const params = new ExportInvoiceParams({ invoice_id: invoiceId });
+
+    params.validateOrThrow();
+
+    return await this.repository.exportInvoice(params, { ...options, useJson: true });
   }
 
   protected toTitleInterface(

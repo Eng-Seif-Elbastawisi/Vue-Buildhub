@@ -65,4 +65,13 @@ describe('InvoiceController', () => {
     expect(result).toBeInstanceOf(DataSuccess);
     expect(result.data?.invoice_number).toBe('INV-2026-0001');
   });
+
+  it('exports invoice by invoice id', async () => {
+    const result = await InvoiceController.getInstance().exportInvoice(7, {
+      useStaticData: true,
+    });
+
+    expect(result).toBeInstanceOf(DataSuccess);
+    expect(result.data).toEqual({ invoice_id: 7 });
+  });
 });

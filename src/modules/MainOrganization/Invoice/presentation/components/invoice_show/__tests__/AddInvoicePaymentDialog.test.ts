@@ -1,8 +1,33 @@
 import { mount } from '@vue/test-utils';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 import AddInvoicePaymentDialog from '../AddInvoicePaymentDialog.vue';
 
-const formatAmount = (value?: number | string | null) => Number(value ?? 0).toFixed(2);
+const globalOptions = {
+  mocks: {
+    $t: (key: string) => key,
+  },
+  stubs: {
+    Teleport: true,
+    UpdatedCustomInputSelect: {
+      props: ['staticOptions', 'label'],
+      template: `
+        <select
+          id="show_payment_method"
+          class="payment-method-select"
+          @change="$emit('update:modelValue', staticOptions.find((option) => option.id === Number($event.target.value)))"
+        >
+          <option v-for="option in staticOptions" :key="option.id" :value="option.id">
+            {{ option.title }}
+          </option>
+        </select>
+      `,
+    },
+  },
+};
+
+afterEach(() => {
+  document.body.classList.remove('invoice-payment-dialog-open');
+});
 
 describe('AddInvoicePaymentDialog', () => {
   it('emits payment params linked to the current invoice', async () => {
@@ -10,18 +35,8 @@ describe('AddInvoicePaymentDialog', () => {
       props: {
         visible: true,
         invoiceId: 4,
-        remainingAmount: 1000,
-        currency: 'EGP',
-        formatAmount,
       },
-      global: {
-        mocks: {
-          $t: (key: string) => key,
-        },
-        stubs: {
-          Teleport: true,
-        },
-      },
+      global: globalOptions,
     });
 
     await wrapper.find('#show_payment_amount').setValue('750');
@@ -39,5 +54,18 @@ describe('AddInvoicePaymentDialog', () => {
       payment_method: 1,
       notes: 'First payment',
     });
+    expect(document.body.classList.contains('invoice-payment-dialog-open')).toBe(true);
+  });
+
+  it('does not render invoice financial data inside the payment crud dialog', () => {
+    const wrapper = mount(AddInvoicePaymentDialog, {
+      props: {
+        visible: true,
+        invoiceId: 4,
+      },
+      global: globalOptions,
+    });
+
+    expect(wrapper.text()).not.toContain('invoice_show.remaining_amount');
   });
 });

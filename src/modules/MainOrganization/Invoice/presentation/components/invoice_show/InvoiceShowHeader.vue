@@ -10,10 +10,12 @@
     indexPath: string;
     editPath: string;
     exportingPdf?: boolean;
+    exportingInvoice?: boolean;
   }>();
 
   defineEmits<{
     download: [];
+    exportInvoice: [];
     share: [];
   }>();
 </script>
@@ -52,13 +54,23 @@
         {{ exportingPdf ? $t('invoice_show.downloading') : $t('invoice_show.download_pdf') }}
       </button>
       <button
+        class="invoice-show-btn invoice-show-btn--outline"
+        type="button"
+        :disabled="exportingInvoice"
+        @click="$emit('exportInvoice')"
+        v-if="invoice.export_status === 0"
+      >
+        <i class="pi pi-upload"></i>
+        {{ exportingInvoice ? $t('invoice_show.exporting') : $t('invoice_show.export_invoice') }}
+      </button>
+      <!-- <button
         class="invoice-show-btn invoice-show-btn--light"
         type="button"
         @click="$emit('share')"
       >
         <i class="pi pi-share-alt"></i>
         {{ $t('invoice_show.share') }}
-      </button>
+      </button> -->
       <RouterLink class="invoice-show-btn invoice-show-btn--primary" :to="editPath">
         <i class="pi pi-pencil"></i>
         {{ $t('invoice.edit') }}

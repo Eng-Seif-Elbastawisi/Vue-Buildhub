@@ -9,6 +9,8 @@ import { useFormsStore } from '@/stores/formsStore';
 import { useUserStore } from '@/stores/user';
 import type InvoicePaymentModel from '../../core/models/invoice.payment.model';
 import AddInvoicePaymentParams from '../../core/params/add.invoice.payment.params';
+import IndexInvoicePaymentParams from '../../core/params/index.invoice.payment.params';
+import type { InvoicePaymentMethodEnum } from '../../core/constant/invoice.payment.method.enum';
 import InvoicePaymentRepository from '../../data/repositories/invoice.payment.repository';
 
 export default class InvoicePaymentController extends BaseController<
@@ -87,6 +89,10 @@ export default class InvoicePaymentController extends BaseController<
     return await super.fetchOne(params, { ...options, useJson: true });
   }
 
+  async fetchInvoicePayments(invoiceId: number, options?: ApiCallOptions) {
+    return await this.fetchList(new IndexInvoicePaymentParams('', 1, 100, 0, invoiceId), options);
+  }
+
   async createInvoicePayment(
     invoiceId: number,
     params: AddInvoicePaymentParams,
@@ -97,7 +103,7 @@ export default class InvoicePaymentController extends BaseController<
       invoice_id: invoiceId,
       payment_amount: data.payment_amount as number | undefined,
       payment_date: data.payment_date as string | undefined,
-      payment_method: data.payment_method as number | undefined,
+      payment_method: data.payment_method as InvoicePaymentMethodEnum | undefined,
       notes: data.notes as string | null | undefined,
     });
 

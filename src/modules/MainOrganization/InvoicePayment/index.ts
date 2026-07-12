@@ -1,6 +1,12 @@
 // Models
 export { default as InvoicePaymentModel } from './core/models/invoice.payment.model';
 
+// Constants
+export {
+  InvoicePaymentMethodEnum,
+  InvoicePaymentMethodOptions,
+} from './core/constant/invoice.payment.method.enum';
+
 // Params
 export { default as AddInvoicePaymentParams } from './core/params/add.invoice.payment.params';
 export { default as EditInvoicePaymentParams } from './core/params/edit.invoice.payment.params';

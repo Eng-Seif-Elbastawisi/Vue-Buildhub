@@ -8,9 +8,9 @@
   import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
   import { dialogManager } from '@/base/Presentation/Dialogs/dialog.manager';
   import { useUserStore } from '@/stores/user';
+  import { InvoicePaymentMethodEnum } from '@/modules/MainOrganization/InvoicePayment/core/constant/invoice.payment.method.enum';
   import type InvoicePaymentModel from '@/modules/MainOrganization/InvoicePayment/core/models/invoice.payment.model';
   import type AddInvoicePaymentParams from '@/modules/MainOrganization/InvoicePayment/core/params/add.invoice.payment.params';
-  import IndexInvoicePaymentParams from '@/modules/MainOrganization/InvoicePayment/core/params/index.invoice.payment.params';
   import InvoicePaymentController from '@/modules/MainOrganization/InvoicePayment/presentation/controllers/invoice.payment.controller';
   import type InvoiceShowModel from '../../core/models/invoice.show.model';
   import InvoiceController from '../controllers/invoice.controller';
@@ -37,6 +37,7 @@
   const paymentDialogOpen = ref(false);
   const creatingPayment = ref(false);
   const exportingPdf = ref(false);
+  const exportingInvoice = ref(false);
 
   const emptyValue = '-';
 
@@ -50,20 +51,7 @@
   const indexPath = computed(() => (user?.type === 1 ? '/admin/invoice' : '/organization/invoice'));
   const editPath = computed(() => `${indexPath.value}/edit/${invoiceId.value}`);
 
-  const invoiceHasEmbeddedPayments = computed(() => {
-    const raw = invoice.value?.raw;
-
-    return Boolean(
-      raw &&
-      ['invoice_payments', 'payments', 'payment_records'].some((key) =>
-        Array.isArray(raw[key] as unknown[]),
-      ),
-    );
-  });
-
-  const payments = computed(() =>
-    invoiceHasEmbeddedPayments.value ? (invoice.value?.payments ?? []) : loadedPayments.value,
-  );
+  const payments = computed(() => loadedPayments.value);
 
   const currency = computed(() => invoice.value?.currency || 'EGP');
   const totalAmount = computed(() => Number(invoice.value?.invoice_amount ?? 0));
@@ -157,9 +145,13 @@
   });
 
   const paymentMethodLabel = (value?: number | null) => {
-    if (value === 1) return t('invoice_show.payment_method_bank_transfer');
-    if (value === 2) return t('invoice_show.payment_method_cash');
-    if (value === 3) return t('invoice_show.payment_method_card');
+    if (value === InvoicePaymentMethodEnum.BANK_TRANSFER) {
+      return t('invoice_show.payment_method_bank_transfer');
+    }
+
+    if (value === InvoicePaymentMethodEnum.CASH) return t('invoice_show.payment_method_cash');
+    if (value === InvoicePaymentMethodEnum.CHEQUE) return t('invoice_show.payment_method_cheque');
+    if (value === InvoicePaymentMethodEnum.WALLET) return t('invoice_show.payment_method_wallet');
 
     return value ? `#${value}` : emptyValue;
   };
@@ -171,11 +163,9 @@
   };
 
   const fetchPayments = async () => {
-    if (!invoiceId.value || invoiceHasEmbeddedPayments.value) return;
+    if (!invoiceId.value) return;
 
-    const result = await paymentController.fetchList(
-      new IndexInvoicePaymentParams('', 1, 100, 0, invoiceId.value),
-    );
+    const result = await paymentController.fetchInvoicePayments(invoiceId.value);
 
     if (result instanceof DataSuccess) {
       loadedPayments.value = result.data ?? [];
@@ -293,6 +283,23 @@
     }
   };
 
+  const exportInvoice = async () => {
+    if (!invoiceId.value || exportingInvoice.value) return;
+
+    exportingInvoice.value = true;
+
+    try {
+      const result = await invoiceController.exportInvoice(invoiceId.value);
+
+      if (result instanceof DataSuccess) {
+        dialogManager.toastSuccess(t('invoice_show.export_success'));
+        await fetchInvoice();
+      }
+    } finally {
+      exportingInvoice.value = false;
+    }
+  };
+
   const downloadPaymentReceipt = (payment: InvoicePaymentModel) => {
     const pdf = new jsPDF('p', 'mm', 'a4');
 
@@ -336,7 +343,9 @@
           :index-path="indexPath"
           :edit-path="editPath"
           :exporting-pdf="exportingPdf"
+          :exporting-invoice="exportingInvoice"
           @download="downloadInvoicePdf"
+          @export-invoice="exportInvoice"
           @share="shareInvoice"
         />
 
@@ -398,9 +407,6 @@
           :visible="paymentDialogOpen"
           :invoice-id="invoiceId"
           :loading="creatingPayment"
-          :remaining-amount="remainingAmount"
-          :currency="currency"
-          :format-amount="formatAmount"
           @close="paymentDialogOpen = false"
           @submit="handleAddPayment"
         />
