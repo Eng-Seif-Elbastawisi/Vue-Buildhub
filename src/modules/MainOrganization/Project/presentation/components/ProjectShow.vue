@@ -840,7 +840,8 @@
       await fetchProject();
 
       const refreshedStatus = Number(
-        projectController.itemData.value?.convert_status ?? projectController.itemData.value?.status,
+        projectController.itemData.value?.convert_status ??
+          projectController.itemData.value?.status,
       );
 
       if (Number.isFinite(refreshedStatus)) {
@@ -1004,6 +1005,7 @@
               :preview-time-label="t('Project.preview_time')"
               :notification-type-label="t('ProjectShow.notification_type')"
               :notification-message-label="t('ProjectShow.notification_message')"
+              :pricing-responsible-label="t('ProjectShow.pricing_responsible')"
               :site-link-label="t('ProjectShow.site_link')"
               :address-label="t('address')"
               :empty-value="emptyValue"
