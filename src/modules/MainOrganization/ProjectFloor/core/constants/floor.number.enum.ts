@@ -1,5 +1,5 @@
 /**
- * Email type enumeration
+ * Floor number enumeration
  */
 export const FloorNumber = {
   BASEMENT: -1,
@@ -18,20 +18,32 @@ export const FloorNumber = {
 
 export type FloorNumber = (typeof FloorNumber)[keyof typeof FloorNumber];
 
-/**
- * Get i18n key for email type display name
- * Use this with $t() in components to get localized display names
- */
-export function getStatusNameKey(type: FloorNumber): string {
-  switch (type) {
+export function getFloorNumberNameKey(type?: number | FloorNumber | null): string {
+  switch (Number(type)) {
+    case FloorNumber.BASEMENT:
+      return 'project.BASEMENT';
     case FloorNumber.GROUND_FLOOR:
-      return 'Ground Floor';
+      return 'project.GROUND_FLOOR';
     case FloorNumber.FIRST_FLOOR:
-      return 'First Floor';
+      return 'project.FIRST_FLOOR';
     case FloorNumber.SECOND_FLOOR:
-      return 'Second Floor';
+      return 'project.SECOND_FLOOR';
     case FloorNumber.THIRD_FLOOR:
-      return 'Third Floor';
+      return 'project.THIRD_FLOOR';
+    case FloorNumber.FOURTH_FLOOR:
+      return 'project.FOURTH_FLOOR';
+    case FloorNumber.FIFTH_FLOOR:
+      return 'project.FIFTH_FLOOR';
+    case FloorNumber.SIXTH_FLOOR:
+      return 'project.SIXTH_FLOOR';
+    case FloorNumber.SEVENTH_FLOOR:
+      return 'project.SEVENTH_FLOOR';
+    case FloorNumber.EIGHTH_FLOOR:
+      return 'project.EIGHTH_FLOOR';
+    case FloorNumber.NINTH_FLOOR:
+      return 'project.NINTH_FLOOR';
+    case FloorNumber.TENTH_FLOOR:
+      return 'project.TENTH_FLOOR';
     default:
       return 'unknown';
   }

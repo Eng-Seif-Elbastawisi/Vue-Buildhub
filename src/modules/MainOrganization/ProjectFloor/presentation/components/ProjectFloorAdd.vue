@@ -14,12 +14,14 @@
 
   import router from '@/router/index';
   import { useUserStore } from '@/stores/user';
-
+  import { type FloorNumber } from '../../core/constants/floor.number.enum.ts';
+  import { useI18n } from 'vue-i18n';
+  import { getFloorNumberNameKey } from '../../core/constants/floor.number.enum';
   const controller = ProjectFloorController.getInstance();
 
   const route = useRoute();
   const userStore = useUserStore();
-
+  const { t } = useI18n();
   const params = ref<AddProjectFloorParams | null>(null);
   const loading = ref(false);
 
@@ -107,15 +109,16 @@
     }
   };
 
-  const floorTitle = (floorNumber?: number | string | null) => {
-    if (floorNumber === null || floorNumber === undefined) return '-';
-
-    return `${floorNumber}`;
-  };
-
   onMounted(async () => {
     await fetchProjectFloors();
   });
+  const floorTitle = (floorNumber?: number | string | null) => {
+    if (floorNumber === null || floorNumber === undefined) return '-';
+
+    const key = getFloorNumberNameKey(floorNumber as FloorNumber);
+
+    return key === 'unknown' ? String(floorNumber) : t(key);
+  };
 </script>
 
 <template>
