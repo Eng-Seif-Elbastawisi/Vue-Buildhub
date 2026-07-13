@@ -52,16 +52,11 @@ export default class ProjectItemController extends BaseController<
   }
 
   async create(params: Params, options?: ApiCallOptions, formKey?: string) {
-    const FormStore = useFormsStore();
-
     const result = await super.create(params, { ...options, useJson: true });
 
-    // if (result instanceof DataSuccess) {
-    //   router.push(
-    //     this.userStore.user?.type === 1 ? '/admin/project-item' : '/organization/project-item',
-    //   );
-    //   if (formKey) FormStore.clearFormData(formKey);
-    // }
+    if (result instanceof DataSuccess && formKey) {
+      useFormsStore().clearFormData(formKey);
+    }
 
     return result;
   }

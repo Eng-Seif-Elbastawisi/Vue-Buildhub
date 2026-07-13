@@ -1044,6 +1044,18 @@
   "no": "No",
   "Project.view_file": "View file",
   "Project.width": "Width",
+  "project.BASEMENT": "Basement",
+  "project.GROUND_FLOOR": "Ground floor",
+  "project.FIRST_FLOOR": "First floor",
+  "project.SECOND_FLOOR": "Second floor",
+  "project.THIRD_FLOOR": "Third floor",
+  "project.FOURTH_FLOOR": "Fourth floor",
+  "project.FIFTH_FLOOR": "Fifth floor",
+  "project.SIXTH_FLOOR": "Sixth floor",
+  "project.SEVENTH_FLOOR": "Seventh floor",
+  "project.EIGHTH_FLOOR": "Eighth floor",
+  "project.NINTH_FLOOR": "Ninth floor",
+  "project.TENTH_FLOOR": "Tenth floor",
   "ProjectFloor.add_space": "Add Space",
   "ProjectFloor.attachments": "Attachments",
   "ProjectFloor.choose_files": "Choose files",
@@ -1417,5 +1429,7 @@
   "country": "Country",
   "city": "City",
   "Governorate": "Governorate",
+  "ProjectFloor.ready_for_pricing": "Ready for pricing",
+  "ProjectFloor.need_additional_visit": "Need additional visit"
   "project_department": "project department"
 }

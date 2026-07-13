@@ -307,9 +307,9 @@
     return {
       local_id: Date.now(),
       item_id: numericId(selectedItem.value.id),
-      item_title: selectedItem.value.title,
+      item_title: selectedItem.value.title ?? '-',
       pricing_method: selectedPricingMethodId.value,
-      pricing_method_title: pricingMethod.value.title,
+      pricing_method_title: pricingMethod.value.title ?? '-',
       quantity: quantity.value,
 
       price: isSpaceRelated.value ? undefined : price.value,

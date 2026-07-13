@@ -1044,6 +1044,18 @@
   "no": "لا",
   "Project.view_file": "عرض الملف",
   "Project.width": "العرض",
+  "project.BASEMENT": "البدروم",
+  "project.GROUND_FLOOR": "الدور الأرضي",
+  "project.FIRST_FLOOR": "الدور الأول",
+  "project.SECOND_FLOOR": "الدور الثاني",
+  "project.THIRD_FLOOR": "الدور الثالث",
+  "project.FOURTH_FLOOR": "الدور الرابع",
+  "project.FIFTH_FLOOR": "الدور الخامس",
+  "project.SIXTH_FLOOR": "الدور السادس",
+  "project.SEVENTH_FLOOR": "الدور السابع",
+  "project.EIGHTH_FLOOR": "الدور الثامن",
+  "project.NINTH_FLOOR": "الدور التاسع",
+  "project.TENTH_FLOOR": "الدور العاشر",
   "ProjectFloor.add_space": "إضافة مساحة",
   "ProjectFloor.attachments": "المرفقات",
   "ProjectFloor.choose_files": "اختر الملفات",
@@ -1416,5 +1428,7 @@
   "field_help.discount.text": "يحدد هذا الحقل نوع أو قيمة الخصم المطبقة على حساب التسعير.",
   "country": "الدولة",
   "city": "المدينة",
-  "Governorate": "المحافظة"
+  "Governorate": "المحافظة",
+  "ProjectFloor.ready_for_pricing": "جاهز للتسعير",
+  "ProjectFloor.need_additional_visit": "تحتاج زيارة إضافية"
 }

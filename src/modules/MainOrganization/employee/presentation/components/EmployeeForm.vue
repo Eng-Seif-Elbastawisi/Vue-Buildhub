@@ -81,7 +81,7 @@
 
   const updateEmployeeType = (value: TitleInterface<EmployeeType> | null) => {
     selectedEmployeeType.value = value;
-    type.value = value?.id ?? EmployeeType.EMPLOYEE;
+    type.value = (value?.id as EmployeeType | undefined) ?? EmployeeType.EMPLOYEE;
     updateData();
   };
 </script>

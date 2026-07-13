@@ -61,7 +61,7 @@
   // employee type = 2
   const engineerParams = new IndexEmployeeParams('', 1, 100, 0, 2);
 
-  type PrimeDateValue = Date | Date[] | null | undefined;
+  type PrimeDateValue = Date | Date[] | (Date | null)[] | null | undefined;
 
   const normalizeDateValue = (value: PrimeDateValue): Date | null => {
     if (!value) return null;
@@ -107,7 +107,14 @@
 
     const [hours, minutes] = value.split(':').map(Number);
 
-    if (Number.isNaN(hours) || Number.isNaN(minutes)) return null;
+    if (
+      hours === undefined ||
+      minutes === undefined ||
+      Number.isNaN(hours) ||
+      Number.isNaN(minutes)
+    ) {
+      return null;
+    }
 
     const date = new Date();
     date.setHours(hours);
@@ -146,8 +153,10 @@
         preview_time: previewTime.value,
         site_link: siteLink.value,
         address: address.value,
-        notification_type: selectedNotificationType.value?.id ?? NotificationType.LOW,
-        status: status.value?.id ?? Status.NEED_ADDITIONAL_VISIT,
+        notification_type:
+          (selectedNotificationType.value?.id as NotificationType | undefined) ??
+          NotificationType.LOW,
+        status: (status.value?.id as Status | undefined) ?? Status.NEED_ADDITIONAL_VISIT,
         pricing_responsible_id: selectedPricingResponsible.value?.id
           ? Number(selectedPricingResponsible.value.id)
           : undefined,

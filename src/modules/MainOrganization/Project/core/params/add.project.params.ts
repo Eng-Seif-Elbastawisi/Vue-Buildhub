@@ -25,7 +25,7 @@ export default class AddProjectParams implements Params {
   public preview_time?: string;
   public site_link?: string;
   public address?: string;
-  public terms?: number[];
+  public terms?: string;
 
   public static readonly validation = new ClassValidation().setRules({});
 
@@ -47,7 +47,7 @@ export default class AddProjectParams implements Params {
     preview_time?: string;
     site_link?: string;
     address?: string;
-    terms?: number[];
+    terms?: string;
   }) {
     this.translations = data.translations;
     this.client_exist = data.client_exist;

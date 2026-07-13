@@ -44,7 +44,7 @@ export default class SystemIdentityController extends BaseController<
   async storeSetting(
     params: Params,
     options?: ApiCallOptions,
-  ): Promise<DataState<SystemIdentityShowModel>> {
+  ): Promise<DataState<SystemIdentityShowModel> | undefined> {
     return await super.create(params, { ...options, useJson: true });
   }
 

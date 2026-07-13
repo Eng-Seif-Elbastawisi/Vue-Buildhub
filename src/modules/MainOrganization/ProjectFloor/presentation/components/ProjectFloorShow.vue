@@ -70,6 +70,8 @@
     return floors[Number(floorNumber)] ?? String(floorNumber);
   };
 
+  const getDisplayIndex = (index: string | number) => Number(index) + 1;
+
   const fetchProjectFloors = async () => {
     /**
      * يجب أن يوجد project_id أو project_floor_id
@@ -298,7 +300,7 @@
                   class="space-row"
                 >
                   <div class="space-index">
-                    {{ index + 1 }}
+                    {{ getDisplayIndex(index) }}
                   </div>
 
                   <div class="space-name">

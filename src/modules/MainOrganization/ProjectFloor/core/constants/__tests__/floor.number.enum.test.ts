@@ -1,15 +1,16 @@
 import { describe, expect, it } from 'vitest';
-import { FloorNumber, getStatusNameKey } from '../floor.number.enum';
+import { FloorNumber, getFloorNumberNameKey } from '../floor.number.enum';
 
 describe('FloorNumber', () => {
-  it('maps supported floors to display names', () => {
-    expect(getStatusNameKey(FloorNumber.GROUND_FLOOR)).toBe('Ground Floor');
-    expect(getStatusNameKey(FloorNumber.FIRST_FLOOR)).toBe('First Floor');
-    expect(getStatusNameKey(FloorNumber.SECOND_FLOOR)).toBe('Second Floor');
-    expect(getStatusNameKey(FloorNumber.THIRD_FLOOR)).toBe('Third Floor');
+  it('maps supported floors to i18n keys', () => {
+    expect(getFloorNumberNameKey(FloorNumber.BASEMENT)).toBe('project.BASEMENT');
+    expect(getFloorNumberNameKey(FloorNumber.GROUND_FLOOR)).toBe('project.GROUND_FLOOR');
+    expect(getFloorNumberNameKey(FloorNumber.FIRST_FLOOR)).toBe('project.FIRST_FLOOR');
+    expect(getFloorNumberNameKey(FloorNumber.SECOND_FLOOR)).toBe('project.SECOND_FLOOR');
+    expect(getFloorNumberNameKey(FloorNumber.THIRD_FLOOR)).toBe('project.THIRD_FLOOR');
   });
 
   it('returns unknown for unsupported display mappings', () => {
-    expect(getStatusNameKey(FloorNumber.BASEMENT)).toBe('unknown');
+    expect(getFloorNumberNameKey(999)).toBe('unknown');
   });
 });
