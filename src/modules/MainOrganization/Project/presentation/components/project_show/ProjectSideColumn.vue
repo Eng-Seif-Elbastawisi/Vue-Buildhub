@@ -40,9 +40,21 @@
         <h2>{{ previewTitle }}</h2>
       </div>
 
-      <div v-if="!preview" class="empty-panel">
+      <RouterLink
+        v-if="!preview"
+        class="empty-panel empty-panel--link"
+        :to="`/project_preview/add?project_id=${25}`"
+      >
+        <i class="pi pi-plus-circle"></i>
+
+        <span>
+          {{ noPreviewLabel }}
+        </span>
+      </RouterLink>
+
+      <!-- <div v-if="!preview" class="empty-panel">
         {{ noPreviewLabel }}
-      </div>
+      </div> -->
 
       <div v-else class="preview-grid">
         <div class="side-info">
