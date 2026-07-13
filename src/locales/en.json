@@ -1430,6 +1430,6 @@
   "city": "City",
   "Governorate": "Governorate",
   "ProjectFloor.ready_for_pricing": "Ready for pricing",
-  "ProjectFloor.need_additional_visit": "Need additional visit"
+  "ProjectFloor.need_additional_visit": "Need additional visit",
   "project_department": "project department"
 }
