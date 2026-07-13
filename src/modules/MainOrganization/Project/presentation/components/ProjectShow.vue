@@ -12,10 +12,14 @@
   import ProjectController from '../controllers/project.controller';
   import { ServiceType } from '../../core/constants/serviceType.enum';
   import { ConvertStatus } from '../../core/constants/convert.status.enum';
+  import { ProjectItemPriceEnum } from '@/modules/MainOrganization/ProjectItem/core/constant/project.item.Price.enum';
+  import { ProjectPricingDiscountEnum } from '@/modules/MainOrganization/ProjectPricing/core/constant/project.pricing.discount.enum';
   import { FloorNumber } from '@/modules/MainOrganization/ProjectFloor/core/constants/floor.number.enum';
+  import ProjectDepartmentsSection from './project_show/ProjectDepartmentsSection.vue';
   import ProjectFloorsSection from './project_show/ProjectFloorsSection.vue';
   import ProjectInfoSection from './project_show/ProjectInfoSection.vue';
   import ProjectItemsSection from './project_show/ProjectItemsSection.vue';
+  import ProjectPricingSection from './project_show/ProjectPricingSection.vue';
   import ProjectShowHeader from './project_show/ProjectShowHeader.vue';
   import ProjectShowTabs from './project_show/ProjectShowTabs.vue';
   import ProjectSideColumn from './project_show/ProjectSideColumn.vue';
@@ -25,7 +29,9 @@
     FloorSpace,
     LocaleEntry,
     NamedEntity,
+    ProjectDepartmentItemRow,
     ProjectFloor,
+    ProjectInfoItem,
     ProjectShowRaw,
     TabItem,
   } from './project_show/projectShow.types';
@@ -88,7 +94,8 @@
     { id: 'project-data', label: t('Project.steps.project_data'), icon: 'pi pi-calendar' },
     { id: 'project-preview', label: t('Project.steps.project_preview'), icon: 'pi pi-id-card' },
     { id: 'project-floors', label: t('Project.steps.project_floors'), icon: 'pi pi-sitemap' },
-    { id: 'project-items', label: t('Project.steps.project_items'), icon: 'pi pi-sliders-h' },
+    { id: 'project-items', label: t('project_department'), icon: 'pi pi-sliders-h' },
+    { id: 'project-pricing', label: t('project_pricing.index.title'), icon: 'pi pi-wallet' },
   ]);
 
   const emptyValue = '—';
@@ -242,6 +249,10 @@
   const projectFloors = computed(() => project.value.project_floors ?? []);
   const projectItems = computed(() => project.value.project_department_items ?? []);
   const projectDepartments = computed(() => project.value.project_departments ?? []);
+  const projectPricing = computed(() => project.value.project_pricing ?? null);
+  const projectDepartmentItems = computed<ProjectDepartmentItemRow[]>(() => {
+    return projectDepartments.value.flatMap((department) => department.items ?? []);
+  });
   const attachments = computed(() => project.value.attachments ?? []);
 
   const flattenFloorSpaces = (floors: ProjectFloor[]) => {
@@ -294,8 +305,6 @@
 
     return floorHeights.reduce((total, height) => total + height, 0) / floorHeights.length;
   });
-
-  const previewCount = computed(() => (preview.value ? 1 : 0));
 
   const firstImage = computed(() => {
     return attachments.value.find((attachment) => {
@@ -390,7 +399,7 @@
     },
     {
       icon: 'pi pi-box',
-      value: projectItems.value.length.toString(),
+      value: (projectDepartmentItems.value.length || projectItems.value.length).toString(),
       label: t('ProjectShow.items'),
     },
     {
@@ -399,6 +408,58 @@
       label: t('ProjectShow.total_area'),
     },
   ]);
+
+  const getPricingMethodLabel = (method?: number | null) => {
+    const methodEntry = Object.entries(ProjectItemPriceEnum).find(
+      ([, value]) => Number(value) === Number(method),
+    );
+
+    if (!methodEntry) return valueOrEmpty(method);
+
+    return t(`project_item.pricing_methods.${methodEntry[0]}`);
+  };
+
+  const getDiscountTypeLabel = (type?: number | null) => {
+    const discountEntry = Object.entries(ProjectPricingDiscountEnum).find(
+      ([, value]) => Number(value) === Number(type),
+    );
+
+    if (!discountEntry) return valueOrEmpty(type);
+
+    return t(`project_pricing.discount_types.${discountEntry[0]}`);
+  };
+
+  const pricingInfo = computed<ProjectInfoItem[]>(() => [
+    {
+      icon: 'pi pi-percentage',
+      label: t('project_pricing.total_tax'),
+      value: formatNumber(projectPricing.value?.total_tax),
+    },
+    {
+      icon: 'pi pi-tag',
+      label: t('project_pricing.discount_type'),
+      value: getDiscountTypeLabel(projectPricing.value?.discount_type),
+    },
+    {
+      icon: 'pi pi-minus-circle',
+      label: t('project_pricing.discount_value'),
+      value: formatNumber(projectPricing.value?.discount_value),
+    },
+    {
+      icon: 'pi pi-calculator',
+      label: t('project_pricing.final_total'),
+      value: formatNumber(projectPricing.value?.price_after_discount),
+    },
+    {
+      icon: 'pi pi-calendar',
+      label: t('ProjectShow.created_at'),
+      value: formatDate(projectPricing.value?.created_at),
+    },
+  ]);
+
+  const sectionActiveClass = (sectionId: string) => ({
+    'project-card--active-section': activeTab.value === sectionId,
+  });
 
   const getFloorType = (floorNumber?: number | null) => {
     if (floorNumber === null || floorNumber === undefined) return emptyValue;
@@ -756,7 +817,35 @@
       }
 
       y = startPdfSection(pdf, t('Project.steps.project_items'), projectTitle.value);
-      if (projectItems.value.length) {
+      if (projectDepartments.value.length) {
+        drawPdfTable(
+          pdf,
+          [
+            t('ProjectShow.department'),
+            t('id'),
+            t('project_item.item'),
+            t('project_item.quantity'),
+            t('project_item.price'),
+            t('ProjectShow.final_price'),
+            t('project_item.pricing_method'),
+            t('ProjectShow.created_at'),
+          ],
+          projectDepartments.value.flatMap((department) =>
+            (department.items ?? []).map((item) => [
+              getEntityName(department.department),
+              valueOrEmpty(item.id),
+              getEntityName(item.item),
+              valueOrEmpty(item.quantity),
+              formatNumber(item.price),
+              formatNumber(item.final_price),
+              getPricingMethodLabel(item.pricing_method),
+              formatDate(item.created_at),
+            ]),
+          ),
+          y,
+          true,
+        );
+      } else if (projectItems.value.length) {
         drawPdfTable(
           pdf,
           [t('id'), t('title')],
@@ -768,6 +857,17 @@
         );
       } else {
         drawPdfEmpty(pdf, t('ProjectShow.no_project_items'), y);
+      }
+
+      y = startPdfSection(pdf, t('project_pricing.index.title'), projectTitle.value);
+      if (projectPricing.value) {
+        drawPdfKeyValueTable(
+          pdf,
+          pricingInfo.value.map((item) => [item.label, item.value]),
+          y,
+        );
+      } else {
+        drawPdfEmpty(pdf, t('ProjectShow.no_project_pricing'), y);
       }
 
       addPdfFooters(pdf);
@@ -920,11 +1020,13 @@
           <main class="project-dashboard">
             <section class="project-main-column">
               <ProjectInfoSection
+                :class="sectionActiveClass('project-data')"
                 :title="t('ProjectShow.project_information')"
                 :items="projectInfo"
               />
 
               <ProjectFloorsSection
+                :class="sectionActiveClass('project-floors')"
                 :title="t('ProjectShow.project_floors_summary')"
                 :floors="projectFloors"
                 :floor-spaces="floorSpaces"
@@ -984,7 +1086,40 @@
                 :is-image-attachment="isImageAttachment"
               />
 
+              <ProjectDepartmentsSection
+                v-if="projectDepartments.length"
+                :title="t('ProjectShow.project_departments')"
+                :class="sectionActiveClass('project-items')"
+                :departments="projectDepartments"
+                :empty-label="t('ProjectShow.no_project_items')"
+                :id-label="t('id')"
+                :department-label="t('ProjectShow.department')"
+                :department-count-label="t('ProjectShow.departments_count_label')"
+                :item-label="t('project_item.item')"
+                :items-label="t('ProjectShow.items_count_label')"
+                :item-count-label="t('ProjectShow.item_count_label')"
+                :quantity-label="t('project_item.quantity')"
+                :price-label="t('project_item.price')"
+                :unit-price-label="t('ProjectShow.unit_price')"
+                :final-price-label="t('ProjectShow.final_price')"
+                :pricing-method-label="t('project_item.pricing_method')"
+                :floor-label="t('ProjectShow.floor')"
+                :space-label="t('ProjectFloor.space')"
+                :created-at-label="t('ProjectShow.created_at')"
+                :total-label="t('project_item.total_label')"
+                :currency-label="t('ProjectShow.currency_egp')"
+                :hint-label="t('ProjectShow.departments_hint')"
+                :single-open-hint-label="t('ProjectShow.departments_single_open_hint')"
+                :value-or-empty="valueOrEmpty"
+                :format-number="formatNumber"
+                :format-date="formatDate"
+                :get-entity-name="getEntityName"
+                :get-pricing-method-label="getPricingMethodLabel"
+              />
+
               <ProjectItemsSection
+                v-else
+                :class="sectionActiveClass('project-items')"
                 :title="t('Project.steps.project_items')"
                 :items="projectItems"
                 :empty-label="t('ProjectShow.no_project_items')"
@@ -992,9 +1127,18 @@
                 :title-label="t('title')"
                 :value-or-empty="valueOrEmpty"
               />
+
+              <ProjectPricingSection
+                :class="sectionActiveClass('project-pricing')"
+                :title="t('project_pricing.index.title')"
+                :pricing="projectPricing"
+                :items="pricingInfo"
+                :empty-label="t('ProjectShow.no_project_pricing')"
+              />
             </section>
 
             <ProjectSideColumn
+              :class="{ 'project-side-column--active-preview': activeTab === 'project-preview' }"
               :image-source="firstImage || fallbackProjectImage"
               :project-title="projectTitle"
               :stats="stats"
@@ -1014,10 +1158,6 @@
               :value-or-empty="valueOrEmpty"
             />
           </main>
-
-          <section class="project-hidden-summary" aria-hidden="true">
-            {{ projectDepartments.length }} {{ previewCount }}
-          </section>
         </div>
       </template>
     </DataStatusBuilder>
