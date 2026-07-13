@@ -11,7 +11,9 @@ describe('ProjectShowTabs', () => {
           { id: 'project-preview', label: 'Project Preview', icon: 'pi pi-id-card' },
         ],
         activeTab: 'project-data',
-        ariaLabel: 'Project sections',
+      },
+      attrs: {
+        'aria-label': 'Project sections',
       },
     });
 

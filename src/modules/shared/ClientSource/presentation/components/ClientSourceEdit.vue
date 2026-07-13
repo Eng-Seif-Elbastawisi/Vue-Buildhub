@@ -1,6 +1,7 @@
 <script setup lang="ts">
   import { onMounted, ref } from 'vue';
   import { useRoute } from 'vue-router';
+  import AddClientSourceParams from '../../core/params/add.client.source.params.ts';
   import type EditClientSourceParams from '../../core/params/edit.client.source.params.ts';
   import ClientSourceController from '../controllers/client.source.controller.ts';
   import ShowClientSourceParams from '../../core/params/show.client.source.params.ts';
@@ -30,8 +31,8 @@
     }
   };
 
-  const updateData = (updatedParams: EditClientSourceParams) => {
-    params.value = updatedParams;
+  const updateData = (updatedParams: AddClientSourceParams | EditClientSourceParams) => {
+    params.value = updatedParams instanceof AddClientSourceParams ? null : updatedParams;
     // saveEmail();
   };
 

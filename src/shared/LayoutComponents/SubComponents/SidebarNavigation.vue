@@ -1042,6 +1042,7 @@
       gap: 4px;
       margin: 1rem 0;
     }
+
     .group-title {
       margin: 0 0 18px;
       padding: 0 8px;

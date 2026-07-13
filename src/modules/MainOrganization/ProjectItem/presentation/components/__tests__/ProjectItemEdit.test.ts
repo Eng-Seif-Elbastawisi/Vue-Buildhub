@@ -42,11 +42,15 @@ vi.mock('vue-router', () => ({
 
 const addParams = new AddProjectItemParams({
   project_id: 4,
-  price: 150,
-  quantity: 3,
-  item_id: 9,
-  pricing_method: ProjectItemPriceEnum.GENERAL_ITEM,
-  project_floor_id: 2,
+  items: [
+    {
+      price: 150,
+      quantity: 3,
+      item_id: 9,
+      pricing_method: ProjectItemPriceEnum.GENERAL_ITEM,
+      project_floor_id: 2,
+    },
+  ],
 });
 
 const global = {
@@ -93,6 +97,14 @@ describe('ProjectItemEdit', () => {
       '/item/edit/12',
     );
     expect(mockController.update.mock.calls[0]?.[0].project_item_id).toBe(12);
+    expect(mockController.update.mock.calls[0]?.[0].toMap()).toMatchObject({
+      project_item_id: 12,
+      item_id: 9,
+      pricing_method: ProjectItemPriceEnum.GENERAL_ITEM,
+      project_floor_id: 2,
+      price: 150,
+      quantity: 3,
+    });
   });
 
   it('renders controller errors', () => {

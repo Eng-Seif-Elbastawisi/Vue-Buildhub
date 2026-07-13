@@ -11,7 +11,6 @@
   import AddSupplyParams from '../../core/params/add.supply.params';
   import MeasurementController from '@/modules/shared/measurement/presentation/controllers/measurement.controller';
   import IndexMeasurementParams from '@/modules/shared/measurement/core/params/index.measurement.params';
-  import TranslationParams from '@/base/Core/Params/translationParams';
   import DocumentIcon from '@/shared/icons/DocaumentType/DocumentIcon.vue';
   import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
 
@@ -83,14 +82,13 @@
   );
 
   const updateData = () => {
-    const translationParams = new TranslationParams({ title: translations.value });
     emit(
       'updateData',
       new AddSupplyParams({
         price: price.value,
         brandId: brand.value?.id,
         measurementId: measurement.value?.id,
-        translations: translationParams,
+        translations: { title: translations.value },
       }),
     );
   };

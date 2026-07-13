@@ -36,7 +36,7 @@
     { key: 'project_floor_id', label: 'project_item.project_floor', width: '10%' },
   ];
 
-  const itemTitleFor = (item: ProjectItemModel) => item.item_id?.title ?? '-';
+  const itemTitleFor = (item: ProjectItemModel) => item.item?.title ?? '-';
   const pricingMethodFor = (item: ProjectItemModel) => {
     const key = pricingMethodKeys[item.pricing_method];
 

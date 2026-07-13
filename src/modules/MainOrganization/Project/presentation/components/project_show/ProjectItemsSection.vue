@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import type { RouteLocationRaw } from 'vue-router';
   import type { ProjectItemRow } from './projectShow.types';
 
   defineProps<{
@@ -8,7 +9,7 @@
     idLabel: string;
     titleLabel: string;
     addItem: string;
-    addItemTo: { path: string; query: Record<string, unknown> };
+    addItemTo: RouteLocationRaw;
     valueOrEmpty: (value?: string | number | null) => string;
   }>();
 

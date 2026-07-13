@@ -12,6 +12,8 @@
     return breadcrumb;
   });
 
+  const translateLabel = (label: unknown) => (typeof label === 'string' ? label : '');
+
   watch(
     () => route,
     () => {
@@ -26,7 +28,7 @@
     <div class="breadcrump">
       <Breadcrumb :model="items">
         <template #item="{ item }">
-          <span @click="$router.push(item.url!)">{{ $t(item.label) }}</span>
+          <span @click="$router.push(item.url!)">{{ $t(translateLabel(item.label)) }}</span>
         </template>
       </Breadcrumb>
     </div>

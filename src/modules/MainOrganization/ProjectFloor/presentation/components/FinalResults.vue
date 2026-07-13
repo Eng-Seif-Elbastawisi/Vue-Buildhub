@@ -150,9 +150,9 @@
       'submitFinalResult',
       new AddFinalProjectFloorResultParams({
         project_preview_id: props.projectPreviewId,
-        status: selectedStatus.value.id,
+        status: selectedStatus.value.id as Status,
         pricing_responsible_id: Number(selectedPricingResponsible.value.id),
-        notification_type: selectedNotificationType.value.id,
+        notification_type: selectedNotificationType.value.id as NotificationType,
         notification_message: notificationMessage.value,
       }),
     );
