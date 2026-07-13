@@ -885,7 +885,7 @@
   "close_sidebar": "إغلاق الشريط الجانبي",
   "ProjectPreview.list_title": "قائمة معاينات المشاريع",
   "ProjectPreview.list_description": "هنا يمكنك رؤية جميع معاينات المشاريع في النظام",
-  "ProjectPreview.visit_title": "الزيارة {رقم}",
+  "ProjectPreview.visit_title": "رقم الزيارة",
   "organization_toggle.sidebar_label": "التحكم في الجلب",
   "organization_toggle.page_label": "تحكم المنظمة",
   "organization_toggle.title": "التحكم في جلب المنظمة",
