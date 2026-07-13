@@ -476,7 +476,7 @@
 </script>
 
 <template>
-  <section class="pricing-card" dir="ltr">
+  <section class="pricing-card">
     <header class="pricing-header">
       <div>
         <h3>{{ $t('project_item.form_title') }}</h3>

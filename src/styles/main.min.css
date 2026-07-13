@@ -2969,7 +2969,7 @@ body::-webkit-scrollbar-thumb:hover {
   }
 }
 .content .content-wrapper {
-  width: 95%;
+  width: 90%;
   margin-inline: auto;
   padding-left: 2rem;
   display: flex;
