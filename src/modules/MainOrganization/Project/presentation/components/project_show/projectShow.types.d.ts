@@ -56,6 +56,35 @@ export type ProjectFloor = {
   created_at?: string | null;
 };
 
+export type ProjectDepartmentItemRow = {
+  id?: number;
+  uuid?: string;
+  item?: NamedEntity | null;
+  quantity?: string | number | null;
+  price?: string | number | null;
+  final_price?: string | number | null;
+  pricing_method?: number | null;
+  project_floor_id?: string | number | null;
+  project_floor_space_id?: string | number | null;
+  created_at?: string | null;
+};
+
+export type ProjectDepartmentRow = {
+  id?: number;
+  department?: NamedEntity | null;
+  items?: ProjectDepartmentItemRow[];
+  created_at?: string | null;
+};
+
+export type ProjectPricingRow = {
+  id?: number;
+  total_tax?: string | number | null;
+  discount_type?: number | null;
+  discount_value?: string | number | null;
+  price_after_discount?: string | number | null;
+  created_at?: string | null;
+};
+
 export type ProjectShowRaw = {
   id?: number;
   convert_status?: ConvertStatus | number | null;
@@ -80,8 +109,9 @@ export type ProjectShowRaw = {
   selected_version?: string | number | null;
   project_floors?: ProjectFloor[];
   project_floor_spaces?: FloorSpace[];
-  project_departments?: unknown[];
+  project_departments?: ProjectDepartmentRow[];
   project_department_items?: unknown[];
+  project_pricing?: ProjectPricingRow | null;
   attachments?: Attachment[];
   created_at?: string | null;
 };
