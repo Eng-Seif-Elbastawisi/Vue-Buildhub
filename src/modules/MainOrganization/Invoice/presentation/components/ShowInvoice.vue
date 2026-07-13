@@ -427,6 +427,7 @@
               :format-amount="formatAmount"
               :format-date-time="formatDateTime"
               :payment-method-label="paymentMethodLabel"
+              :invoice="data as InvoiceShowModel"
               @add="paymentDialogOpen = true"
               @download="downloadPaymentReceipt"
             />

@@ -197,7 +197,11 @@
   <aside class="sidebar-shell" :class="{ 'is-open': isPanelOpen }">
     <nav class="sidebar-rail" :aria-label="$t('sidebar_groups')">
       <div class="rail-brand">
-        <img class="rail-logo" :src="BuildHubLogo" :alt="$t('buildhub_logo')" />
+        <img
+          class="rail-logo"
+          :src="user?.setting?.logo ?? BuildHubLogo"
+          :alt="$t('buildhub_logo')"
+        />
       </div>
 
       <button
@@ -218,7 +222,11 @@
       <div class="sidebar-wrapper">
         <header class="brand-panel">
           <div class="brand-mark">
-            <img class="logo" :src="BuildHubLogo" :alt="$t('buildhub_logo')" />
+            <img
+              class="logo"
+              :src="user?.setting?.logo ?? BuildHubLogo"
+              :alt="$t('buildhub_logo')"
+            />
           </div>
 
           <div class="brand-copy">
@@ -1042,6 +1050,7 @@
       gap: 4px;
       margin: 1rem 0;
     }
+
     .group-title {
       margin: 0 0 18px;
       padding: 0 8px;
