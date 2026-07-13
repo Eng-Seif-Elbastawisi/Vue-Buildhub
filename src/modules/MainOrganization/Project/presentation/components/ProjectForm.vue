@@ -31,6 +31,9 @@
   import ProjectTypeController from '@/modules/shared/ProjectType/presentation/controllers/project-type.controller';
   import IndexProjectTypeParams from '@/modules/shared/ProjectType/core/params/index.project-type.params';
 
+  import TermController from '@/modules/MainOrganization/Term/presentation/controllers/term.controller';
+  import IndexTermParams from '@/modules/MainOrganization/Term/core/params/index.term.params';
+
   const emit = defineEmits<{
     updateData: [params: AddProjectParams];
   }>();
@@ -51,6 +54,9 @@
 
   const clientController = ClientController.getInstance();
   const indexClientParams = new IndexClientParams('', 1, 100, 0);
+
+  const termController = TermController.getInstance();
+  const indexTermParams = new IndexTermParams('', 1, 100, 0);
 
   const locationController = LocationController.getInstance();
 
@@ -77,6 +83,7 @@
   const selectedClientSource = ref<TitleInterface<number> | null>(null);
   const selectedProjectType = ref<TitleInterface<number> | null>(null);
   const selectedServiceType = ref<TitleInterface<number> | null>(null);
+  const selectedTerm = ref<TitleInterface<number>[]>([]);
 
   const selectedCountry = ref<TitleInterface<number> | null>(null);
   const selectedGovernorate = ref<TitleInterface<number> | null>(null);
@@ -85,18 +92,15 @@
   const client_name = ref<string>('');
   const client_phone = ref<string>('');
 
-  // date اللي هيتبعت للـ API
   const date = ref<string>('');
-
-  // date الخاص بـ PrimeVue DatePicker
   const selectedDate = ref<Date | null>(null);
 
   const notes = ref<string>('');
 
+  const termsText = ref<string>('');
+
   const attachments = ref<ProjectAttachmentParams[]>([]);
-
   const existingAttachmentFiles = ref<string[]>([]);
-
   const attachmentFiles = computed(() => existingAttachmentFiles.value);
 
   const governorateParams = computed(() => {
@@ -227,6 +231,12 @@
 
         notes: notes.value,
         date: date.value,
+
+        /**
+         * المطلوب:
+         * terms يتبعت string عادي.
+         */
+        terms: termsText.value,
       }),
     );
   };
@@ -315,6 +325,24 @@
     updateData();
   };
 
+  const updateTerms = (value: TitleInterface<number>[] | TitleInterface<number> | null) => {
+    if (!value) {
+      selectedTerm.value = [];
+      termsText.value = '';
+      updateData();
+      return;
+    }
+
+    selectedTerm.value = Array.isArray(value) ? value : [value];
+
+    termsText.value = selectedTerm.value
+      .map((term) => term.title)
+      .filter(Boolean)
+      .join('\n');
+
+    updateData();
+  };
+
   watch(
     () => props.Project,
     (Project) => {
@@ -327,6 +355,9 @@
         client_phone.value = '';
         date.value = '';
         selectedDate.value = null;
+        notes.value = '';
+        termsText.value = '';
+        selectedTerm.value = [];
         updateData();
         return;
       }
@@ -351,6 +382,11 @@
       selectedDate.value = parseApiDate(projectData.date);
 
       notes.value = projectData.notes ?? '';
+
+      /**
+       * في حالة edit/show لو الباك راجع terms كـ string
+       */
+      termsText.value = typeof projectData.terms === 'string' ? projectData.terms : '';
 
       existingAttachmentFiles.value = Array.isArray(projectData.attachments)
         ? projectData.attachments.map((attachment: any) => attachment.file).filter(Boolean)
@@ -491,6 +527,7 @@
               <label class="field-label" for="client_name">{{ $t('client_name') }}</label>
               <FieldHelpIcon :label="$t('client_name')" field-name="name" field-id="client_name" />
             </span>
+
             <input
               id="client_name"
               v-model="client_name"
@@ -509,6 +546,7 @@
                 field-id="client_phone"
               />
             </span>
+
             <input
               id="client_phone"
               v-model="client_phone"
@@ -568,6 +606,36 @@
         />
       </div>
 
+      <div class="field-group">
+        <UpdatedCustomInputSelect
+          id="term_id"
+          :model-value="selectedTerm"
+          :label="$t('term')"
+          :controller="termController"
+          :placeholder="$t('term_placeholder')"
+          :params="indexTermParams"
+          :type="2"
+          @update:model-value="updateTerms"
+        />
+      </div>
+
+      <div class="field-group col-span-2">
+        <span class="field-help-label-row field-help-label-row--block">
+          <label class="field-label" for="terms">
+            {{ $t('terms') }}
+          </label>
+          <FieldHelpIcon :label="$t('terms')" field-name="terms" field-id="terms" />
+        </span>
+
+        <textarea
+          id="terms"
+          v-model="termsText"
+          class="field-input field-textarea"
+          :placeholder="$t('terms_placeholder')"
+          @input="updateData"
+        />
+      </div>
+
       <div class="field-group col-span-2">
         <span class="field-help-label-row field-help-label-row--block">
           <label class="field-label">{{ $t('service_type') }}</label>
@@ -615,6 +683,7 @@
           <label class="field-label" for="notes">{{ $t('notes') }}</label>
           <FieldHelpIcon :label="$t('notes')" field-name="notes" field-id="notes" />
         </span>
+
         <textarea
           id="notes"
           v-model="notes"

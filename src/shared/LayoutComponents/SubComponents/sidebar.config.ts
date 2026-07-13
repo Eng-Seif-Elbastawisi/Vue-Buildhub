@@ -114,7 +114,15 @@ export const sidebarSections: SidebarSectionConfig[] = [
     items: [
       {
         path: '/project',
-        labelKey: 'projects',
+        labelKey: 'Request',
+        icon: EducationClassificationIcon,
+        badge: '0',
+        countKey: 'projects_count',
+        roles: ['organization'],
+      },
+      {
+        path: '/project/add',
+        labelKey: 'add project',
         icon: EducationClassificationIcon,
         badge: '0',
         countKey: 'projects_count',
@@ -273,6 +281,7 @@ export const sidebarSections: SidebarSectionConfig[] = [
         badge: '1',
         countKey: 'spaces_count',
       },
+
       // {
       //   path: '/invoice-payment',
       //   labelKey: 'Invoice Payment',
@@ -280,6 +289,11 @@ export const sidebarSections: SidebarSectionConfig[] = [
       //   badge: '1',
       //   countKey: 'invoice_payments_count',
       // },
+      {
+        path: '/term',
+        labelKey: 'term',
+        icon: ArticleIcon,
+      },
     ],
   },
   {

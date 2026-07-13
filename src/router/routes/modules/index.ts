@@ -4,6 +4,7 @@ import { SuppliersRoutes } from './Suppliers';
 import { ClientRoutes } from './client';
 import { EmployeeRoutes } from './employee';
 import { SpecializationRoutes } from './specialization';
+import { TermRoutes } from './term';
 import { ProjectRoutes } from './project';
 import { SystemIdentityRoutes } from '../shared/systemIdentity';
 import { ProjectPreviewRoutes } from './project_preview';
@@ -19,6 +20,7 @@ export const dashboardRoutes: RouteRecordRaw[] = [
   ...ClientRoutes,
   ...EmployeeRoutes,
   ...SpecializationRoutes,
+  ...TermRoutes,
   ...ProjectRoutes,
   ...ProjectPreviewRoutes,
   ...ProjectPricingRoutes,

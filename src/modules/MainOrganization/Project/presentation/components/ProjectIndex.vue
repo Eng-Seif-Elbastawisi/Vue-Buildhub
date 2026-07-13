@@ -11,6 +11,7 @@
   import ProjectController from '../controllers/project.controller';
   import { useUserStore } from '@/stores/user';
   import DeleteDialog from '@/base/Presentation/Dialogs/MainDialogs/DeleteDialog.vue';
+  import { ConvertStatus } from '../../core/constants/convert.status.enum';
 
   const controller = ProjectController.getInstance();
   const state = computed(() => controller.listState.value);
@@ -28,6 +29,8 @@
         route.query.page ? Number(route.query.page) : page,
         perPage.value,
         1,
+        null,
+        ConvertStatus.PENDING,
       ),
     );
   const onPageChange = (page: number) => {
