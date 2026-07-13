@@ -2,26 +2,32 @@
   import { computed } from 'vue';
   import type { ProjectPreview, ProjectStatItem } from './projectShow.types';
 
-  const props = defineProps<{
-    imageSource: string;
-    projectTitle: string;
-    stats: ProjectStatItem[];
-    preview: ProjectPreview | null;
-    previewTitle: string;
-    noPreviewLabel: string;
-    previewDateLabel: string;
-    previewTimeLabel: string;
-    notificationTypeLabel: string;
-    notificationMessageLabel: string;
-    siteLinkLabel: string;
-    addressLabel: string;
-    emptyValue: string;
-    termsLabel: string;
-    terms: string;
-    formatDate: (value?: string | null) => string;
-    formatTime: (value?: string | null) => string;
-    valueOrEmpty: (value?: string | number | null) => string;
-  }>();
+  const props = withDefaults(
+    defineProps<{
+      imageSource: string;
+      projectTitle: string;
+      stats: ProjectStatItem[];
+      preview: ProjectPreview | null;
+      previewTitle: string;
+      noPreviewLabel: string;
+      previewDateLabel: string;
+      previewTimeLabel: string;
+      notificationTypeLabel: string;
+      notificationMessageLabel: string;
+      siteLinkLabel: string;
+      addressLabel: string;
+      emptyValue: string;
+      termsLabel?: string;
+      terms?: string;
+      formatDate: (value?: string | null) => string;
+      formatTime: (value?: string | null) => string;
+      valueOrEmpty: (value?: string | number | null) => string;
+    }>(),
+    {
+      terms: '',
+      termsLabel: '',
+    },
+  );
 
   const termLines = computed(() =>
     props.terms
@@ -72,21 +78,21 @@
           <span>{{ previewDateLabel }}</span>
           <strong>{{ formatDate(preview.preview_date) }}</strong>
         </div>
-        <!-- <div class="side-info">
+        <div class="side-info">
           <i class="pi pi-bell"></i>
           <span>{{ notificationTypeLabel }}</span>
           <strong>{{ valueOrEmpty(preview.notification_type) }}</strong>
-        </div> -->
+        </div>
         <div class="side-info">
           <i class="pi pi-clock"></i>
           <span>{{ previewTimeLabel }}</span>
           <strong>{{ formatTime(preview.preview_time) }}</strong>
         </div>
-        <!-- <div class="side-info">
+        <div class="side-info">
           <i class="pi pi-comment"></i>
           <span>{{ notificationMessageLabel }}</span>
           <strong>{{ valueOrEmpty(preview.notification_message) }}</strong>
-        </div> -->
+        </div>
         <div class="side-info side-info--wide">
           <i class="pi pi-link"></i>
           <span>{{ siteLinkLabel }}</span>
