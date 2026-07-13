@@ -1430,5 +1430,10 @@
   "city": "المدينة",
   "Governorate": "المحافظة",
   "ProjectFloor.ready_for_pricing": "جاهز للتسعير",
-  "ProjectFloor.need_additional_visit": "تحتاج زيارة إضافية"
+  "ProjectFloor.need_additional_visit": "تحتاج زيارة إضافية",
+  "ProjectFloor.notification_normal": "عادي",
+  "ProjectFloor.notification_urgent": "عاجل",
+  "ProjectFloor.notification_very_urgent": "عاجل جدا",
+  "ProjectFloor.notification_critical": "حرج",
+  "ProjectFloor.notification_low": "منخفض"
 }

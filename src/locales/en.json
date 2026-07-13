@@ -20,6 +20,7 @@
   "system_identity.secondary": "Secondary color",
   "system_identity.accent": "Accent color",
   "system_identity.primary_color": "Primary color",
+  "Project.steps.project_items": "Project items",
   "system_identity.secondary_color": "Secondary color",
   "system_identity.accent_color": "Accent color",
   "system_identity.extracted_colors": "Extracted colors",
@@ -1431,5 +1432,10 @@
   "Governorate": "Governorate",
   "ProjectFloor.ready_for_pricing": "Ready for pricing",
   "ProjectFloor.need_additional_visit": "Need additional visit",
-  "project_department": "project department"
+  "project_department": "project department",
+  "ProjectFloor.notification_normal": "Normal",
+  "ProjectFloor.notification_urgent": "Urgent",
+  "ProjectFloor.notification_very_urgent": "Very urgent",
+  "ProjectFloor.notification_critical": "Critical",
+  "ProjectFloor.notification_low": "Low"
 }
