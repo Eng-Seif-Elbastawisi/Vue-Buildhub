@@ -933,7 +933,7 @@
                 :empty-label="t('ProjectShow.no_floors')"
                 :add-floor-label="t('ProjectShow.add_floor')"
                 :add-floor-to="{
-                  path: '/project_floor/add',
+                  path: '/organization/project_floor/add',
                   query: {
                     project_id: project.id,
                     project_preview_id: preview?.id,
@@ -985,6 +985,14 @@
               />
 
               <ProjectItemsSection
+                :add-item="t('ProjectShow.add_item')"
+                :add-item-to="{
+                  path: '/organization/project-item/add',
+                  query: {
+                    project_id: project.id,
+                    project_preview_id: preview?.id,
+                  },
+                }"
                 :title="t('Project.steps.project_items')"
                 :items="projectItems"
                 :empty-label="t('ProjectShow.no_project_items')"
