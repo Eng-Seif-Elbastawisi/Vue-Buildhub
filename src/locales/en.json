@@ -454,6 +454,7 @@
   "project.name": "Project name",
   "project.name_placeholder": "Enter project name",
   "project.type": "Project type",
+  "createdAt": "Created at",
   "project.type_placeholder": "Select project type",
   "project.add": "Add project",
   "project.edit": "Edit",

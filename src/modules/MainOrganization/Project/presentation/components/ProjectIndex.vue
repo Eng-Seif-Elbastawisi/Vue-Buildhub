@@ -27,8 +27,9 @@
   const router = useRouter();
   const perPage = ref(10);
   const headers: TableHeader[] = [
-    { key: 'title', label: 'title', width: '90%', sortable: true },
-    // { key: 'Project', label: 'project.type', width: '35%' },
+    { key: 'title', label: 'title', width: '30%', sortable: true },
+    { key: 'projectType', label: 'project.Type', width: '35%' },
+    { key: 'createdAt', label: 'createdAt', width: '20%' },
   ];
   const fetchProjects = async (page: number = 1) =>
     controller.fetchList(
@@ -89,6 +90,9 @@
           hoverable
           striped
         >
+          <template #cell-projectType="{ item }">
+            <span>{{ item?.projectType?.title || '-' }}</span>
+          </template>
           <template #actions="{ item }"
             ><div class="row-actions">
               <router-link

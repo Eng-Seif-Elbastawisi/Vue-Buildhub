@@ -2969,15 +2969,16 @@ body::-webkit-scrollbar-thumb:hover {
   }
 }
 .content .content-wrapper {
-  width: 90%;
-  margin-inline: auto;
-  padding-left: 2rem;
+  width: 100%;
+  /* padding-left: 2rem; */
   display: flex;
   flex-direction: column;
   flex-wrap: nowrap;
   justify-content: flex-start;
   align-items: stretch;
   overflow: hidden;
+  margin-inline-start: 60px;
+  margin-inline-end: auto;
 }
 @media (max-width: 1200px) {
   .content .content-wrapper {

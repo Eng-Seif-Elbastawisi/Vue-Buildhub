@@ -197,7 +197,7 @@
             <td
               v-for="header in headers"
               :key="header.key"
-              :style="{ textAlign: header.align || 'left' }"
+              :style="{ textAlign: header.align || 'start' }"
               class="td-data"
               @dblclick.stop="copyToClipboard((item as any)?.[header.key])"
             >

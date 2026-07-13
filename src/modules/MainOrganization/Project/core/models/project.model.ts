@@ -1,14 +1,25 @@
+import TitleModel from '@/base/Core/Models/titleModel';
 import TranslationParams from '@/base/Core/Params/translationParams';
 
 export default class ProjectModel {
   public readonly id?: number;
   public readonly title?: string;
   public readonly translations?: TranslationParams;
+  public readonly createdAt?: string;
+  public readonly projectType?: TitleModel;
 
-  constructor(data: { id?: number; title?: string; translations?: TranslationParams }) {
+  constructor(data: {
+    id?: number;
+    title?: string;
+    translations?: TranslationParams;
+    createdAt?: string;
+    projectType?: TitleModel;
+  }) {
     this.id = data.id;
     this.title = data.title;
     this.translations = data.translations;
+    this.createdAt = data.createdAt;
+    this.projectType = data.projectType;
 
     Object.freeze(this);
   }
@@ -45,6 +56,10 @@ export default class ProjectModel {
       translations: new TranslationParams({
         title: ProjectModel.mapTranslations(json.translations),
       }),
+      createdAt: json.created_at as string | undefined,
+      projectType: json.project_type
+        ? new TitleModel(json.project_type.title as string, json.project_type.id as number)
+        : undefined,
     });
   }
 

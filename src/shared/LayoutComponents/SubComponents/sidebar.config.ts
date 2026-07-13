@@ -116,24 +116,13 @@ export const sidebarSections: SidebarSectionConfig[] = [
         path: '/project',
         labelKey: 'Request',
         icon: EducationClassificationIcon,
-        badge: '0',
-        countKey: 'projects_count',
         roles: ['organization'],
       },
-      {
-        path: '/converted-projects',
-        labelKey: 'Project.list_title',
-        icon: EducationClassificationIcon,
-        badge: '0',
-        countKey: 'projects_count',
-        roles: ['organization'],
-      },
+
       {
         path: '/project/add',
-        labelKey: 'add project',
+        labelKey: 'add request',
         icon: EducationClassificationIcon,
-        badge: '0',
-        countKey: 'projects_count',
         roles: ['organization'],
       },
       {
@@ -144,6 +133,26 @@ export const sidebarSections: SidebarSectionConfig[] = [
         countKey: 'clients_count',
         roles: ['organization'],
       },
+    ],
+  },
+  {
+    key: 'projects',
+    labelKey: 'Projects',
+    icon: SidebarShieldIcon,
+    items: [
+      {
+        path: '/converted-projects',
+        labelKey: 'Project.list_title',
+        icon: EducationClassificationIcon,
+        roles: ['organization'],
+      },
+    ],
+  },
+  {
+    key: 'finance',
+    labelKey: 'Finance',
+    icon: SidebarShieldIcon,
+    items: [
       {
         path: '/invoice',
         labelKey: 'Invoice',
