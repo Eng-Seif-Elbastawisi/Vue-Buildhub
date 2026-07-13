@@ -140,25 +140,25 @@
     switch (status) {
       case ConvertStatus.PENDING:
         return {
-          label: t('project.convertStatus.pending'),
+          label: t('pending'),
           className: 'is-pending',
         };
 
       case ConvertStatus.CONVERT_TO_PROJECT:
         return {
-          label: t('project.convertStatus.convertToProject'),
+          label: t('convertToProject'),
           className: 'is-converted',
         };
 
       case ConvertStatus.SEND_TO_CLIENT:
         return {
-          label: t('project.convertStatus.sendToClient'),
+          label: t('sendToClient'),
           className: 'is-send-client',
         };
 
       case ConvertStatus.REVISE_VERSION:
         return {
-          label: t('project.convertStatus.reviseVersion'),
+          label: t('reviseVersion'),
           className: 'is-revised',
         };
 
@@ -795,7 +795,7 @@
             t('ProjectShow.height_m'),
             t('ProjectShow.area_m'),
             t('Project.notes'),
-            t('ProjectShow.attachments_count'),
+            // t('ProjectShow.attachments_count'),
           ],
           floorSpaces.value.map((space) => [
             getFloorNumberLabel(space.parentFloorNumber),
@@ -816,13 +816,13 @@
         drawPdfEmpty(pdf, t('ProjectShow.no_floor_spaces'), y);
       }
 
-      y = startPdfSection(pdf, t('Project.steps.project_items'), projectTitle.value);
+      y = startPdfSection(pdf, t('Project.steps.project_department'), projectTitle.value);
       if (projectDepartments.value.length) {
         drawPdfTable(
           pdf,
           [
-            t('ProjectShow.department'),
             t('id'),
+            t('ProjectShow.department'),
             t('project_item.item'),
             t('project_item.quantity'),
             t('project_item.price'),
@@ -832,8 +832,8 @@
           ],
           projectDepartments.value.flatMap((department) =>
             (department.items ?? []).map((item) => [
-              getEntityName(department.department),
               valueOrEmpty(item.id),
+              getEntityName(department.department),
               getEntityName(item.item),
               valueOrEmpty(item.quantity),
               formatNumber(item.price),
