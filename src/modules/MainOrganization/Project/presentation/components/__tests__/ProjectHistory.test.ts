@@ -90,7 +90,7 @@ describe('ProjectHistory', () => {
 
     expect(fetchProjectStatusHistories).toHaveBeenCalledTimes(1);
     expect(fetchProjectStatusHistories.mock.calls[0][0].toMap()).toEqual({ project_id: 27 });
-    expect(wrapper.text()).toContain('Project History');
+    expect(wrapper.text()).toContain('Project activity');
     expect(wrapper.text()).toContain('Project title');
     expect(wrapper.text()).toContain('you');
     expect(wrapper.text()).toContain('Revised version');
