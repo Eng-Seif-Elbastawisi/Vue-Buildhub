@@ -166,7 +166,7 @@
 </script>
 
 <template>
-  <section class="final-results-card" :class="{ disabled: loading }" dir="rtl">
+  <section class="final-results-card" :class="{ disabled: loading }" dir="ltr">
     <div class="section-head">
       <div class="section-head__icon">✅</div>
 

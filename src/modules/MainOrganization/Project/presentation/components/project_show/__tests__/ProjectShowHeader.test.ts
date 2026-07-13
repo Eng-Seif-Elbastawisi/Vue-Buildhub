@@ -13,6 +13,7 @@ const mountHeader = () =>
       downloadPdfLabel: 'Download PDF',
       generatingPdfLabel: 'Generating PDF...',
       editProjectLabel: 'Edit Project',
+      historyLabel: 'History',
       exportingPdf: false,
       formatDate: () => '08 Jul 2026',
       formatTime: () => '02:45 PM',
@@ -34,6 +35,7 @@ describe('ProjectShowHeader', () => {
     expect(wrapper.text()).toContain('Test Project');
     expect(wrapper.text()).toContain('Project Code: 24');
     expect(wrapper.text()).toContain('Active');
+    expect(wrapper.text()).toContain('History');
 
     await wrapper.find('button').trigger('click');
 

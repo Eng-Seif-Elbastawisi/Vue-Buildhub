@@ -41,4 +41,30 @@ describe('useSystemIdentityTheme', () => {
       theme.defaultPalette.primary,
     );
   });
+
+  it('can apply persisted user settings without overwriting a newer saved palette', () => {
+    theme.applyPalette({
+      name: 'Saved Identity',
+      primary: '#123456',
+      secondary: '#101418',
+      accent: '#ABCDEF',
+    });
+
+    theme.applySettingTheme(
+      {
+        name: 'Stale Login Identity',
+        primary_color: '#B87333',
+        secondary_color: '#101418',
+        accent_color: '#C47A35',
+      },
+      { persist: false },
+    );
+
+    expect(document.documentElement.style.getPropertyValue('--brand-primary')).toBe('#B87333');
+    expect(window.localStorage.getItem('systemIdentityPalette')).toContain('Saved Identity');
+
+    theme.loadSavedPalette();
+
+    expect(document.documentElement.style.getPropertyValue('--brand-primary')).toBe('#123456');
+  });
 });

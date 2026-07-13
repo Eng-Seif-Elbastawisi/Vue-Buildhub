@@ -15,6 +15,10 @@ export interface SystemIdentitySetting {
   third_color?: string | null;
 }
 
+interface ApplyPaletteOptions {
+  persist?: boolean;
+}
+
 interface ColorBucket {
   color: string;
   count: number;
@@ -184,12 +188,18 @@ const setCssVariables = (palette: SystemIdentityPalette) => {
   });
 };
 
-const applyPalette = (palette: SystemIdentityPalette) => {
+const applyPalette = (
+  palette: SystemIdentityPalette,
+  { persist = true }: ApplyPaletteOptions = {},
+) => {
   const normalized = sanitizePalette(palette);
 
   currentPalette.value = normalized;
   setCssVariables(normalized);
-  savePalette(normalized);
+
+  if (persist) {
+    savePalette(normalized);
+  }
 };
 
 const resetPalette = () => {
@@ -205,15 +215,21 @@ const clearSavedPalette = () => {
   window.localStorage.removeItem(STORAGE_KEY);
 };
 
-const applySettingTheme = (setting?: SystemIdentitySetting | null) => {
+const applySettingTheme = (
+  setting?: SystemIdentitySetting | null,
+  options?: ApplyPaletteOptions,
+) => {
   if (!setting?.primary_color || !setting.secondary_color) return;
 
-  applyPalette({
-    name: setting.name ?? defaultPalette.name,
-    primary: setting.primary_color,
-    secondary: setting.secondary_color,
-    accent: setting.accent_color ?? setting.third_color ?? defaultPalette.accent,
-  });
+  applyPalette(
+    {
+      name: setting.name ?? defaultPalette.name,
+      primary: setting.primary_color,
+      secondary: setting.secondary_color,
+      accent: setting.accent_color ?? setting.third_color ?? defaultPalette.accent,
+    },
+    options,
+  );
 };
 
 const loadSavedPalette = () => {

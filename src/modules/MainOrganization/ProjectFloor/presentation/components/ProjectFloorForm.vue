@@ -292,7 +292,7 @@
 <template>
   <ProjectPreviewIndex />
 
-  <div class="project-floor-form-card" dir="rtl">
+  <div class="project-floor-form-card" dir="ltr">
     <header class="form-header">
       <div class="form-header__content">
         <span class="form-header__eyebrow">

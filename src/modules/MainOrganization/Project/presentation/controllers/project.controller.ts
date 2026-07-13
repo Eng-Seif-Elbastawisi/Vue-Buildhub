@@ -1,20 +1,33 @@
 import type Params from '@/base/Core/Params/params';
 import type { DataState } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
-import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
+import {
+  DataFailed,
+  DataInitial,
+  DataLoading,
+  DataSuccess,
+} from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
+import type { ErrorModel } from '@/base/Core/NetworkStructure/Resources/errors/errorModel';
 import type { ApiCallOptions } from '@/base/Data/ApiService/baseApiService';
 import BaseController, {
   type ControllerConfig,
 } from '@/base/Presentation/Controller/baseController';
 import router from '@/router';
 import { useFormsStore } from '@/stores/formsStore';
+import { computed, ref, type ComputedRef, type Ref } from 'vue';
+import type ProjectHistoryModel from '../../core/models/project.history.model';
 import type ProjectModel from '../../core/models/project.model';
 import type ProjectShowModel from '../../core/models/project.show.model';
 import ProjectRepository from '../../data/repositories/project.repository';
 import { useUserStore } from '@/stores/user';
 import type ShowProjectParams from '../../core/params/show.project.params';
 
+type ProjectActionParams = Params | Record<string, unknown>;
+
 export default class ProjectController extends BaseController<ProjectShowModel, ProjectModel[]> {
   private static instance: ProjectController;
+  public historyState: Ref<DataState<ProjectHistoryModel>> = ref(
+    new DataInitial<ProjectHistoryModel>(null),
+  ) as Ref<DataState<ProjectHistoryModel>>;
 
   private get userStore() {
     return useUserStore();
@@ -121,19 +134,50 @@ export default class ProjectController extends BaseController<ProjectShowModel, 
     return result;
   }
 
-  async convertMeasurementToProject(params?: Record<string, unknown>): Promise<DataState<void>> {
-    const result = await this.repository.convertMeasurementToProject(params as any);
+  async convertMeasurementToProject(params?: ProjectActionParams): Promise<DataState<void>> {
+    const result = await this.repository.convertMeasurementToProject(params);
 
     return this.handleProjectActionResponse(result);
   }
-  async storeVersion(params?: Record<string, unknown>): Promise<DataState<void>> {
-    const result = await this.repository.storeVersion(params as any);
+  async storeVersion(params?: ProjectActionParams): Promise<DataState<void>> {
+    const result = await this.repository.storeVersion(params);
 
     return this.handleProjectActionResponse(result);
   }
-  async reviseVersion(params?: Record<string, unknown>): Promise<DataState<void>> {
-    const result = await this.repository.reviseVersion(params as any);
+  async reviseVersion(params?: ProjectActionParams): Promise<DataState<void>> {
+    const result = await this.repository.reviseVersion(params);
 
     return this.handleProjectActionResponse(result);
+  }
+
+  get historyData(): ComputedRef<ProjectHistoryModel | null> {
+    return computed(() => {
+      if (this.historyState.value instanceof DataSuccess) {
+        return this.historyState.value.data;
+      }
+
+      return null;
+    });
+  }
+
+  async fetchProjectStatusHistories(params: Params): Promise<DataState<ProjectHistoryModel>> {
+    this.historyState.value = new DataLoading<ProjectHistoryModel>();
+
+    try {
+      const result = await this.repository.fetchProjectStatusHistories(params);
+      this.historyState.value = result;
+
+      if (result.hasError) {
+        this.handleErrorResponse(result);
+      }
+
+      return result;
+    } catch (error) {
+      const failed = new DataFailed<ProjectHistoryModel>({ error: error as ErrorModel });
+      this.historyState.value = failed;
+      this.handleErrorResponse(failed);
+
+      return failed;
+    }
   }
 }

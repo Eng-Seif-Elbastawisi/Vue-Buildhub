@@ -6,7 +6,7 @@ import InvoiceShowHeader from '../InvoiceShowHeader.vue';
 const mountHeader = () =>
   mount(InvoiceShowHeader, {
     props: {
-      invoice: InvoiceShowModel.example,
+      invoice: new InvoiceShowModel({ ...InvoiceShowModel.example, export_status: 0 }),
       statusLabel: 'Paid',
       statusClass: 'is-paid',
       createdAtLabel: '05 Jul 2026',
@@ -35,12 +35,15 @@ describe('InvoiceShowHeader', () => {
     expect(wrapper.text()).toContain('INV-2026-0001');
     expect(wrapper.text()).toContain('Paid');
 
-    await wrapper.findAll('button')[0].trigger('click');
-    await wrapper.findAll('button')[1].trigger('click');
-    await wrapper.findAll('button')[2].trigger('click');
+    const buttons = wrapper.findAll('button');
+
+    expect(buttons).toHaveLength(2);
+
+    await buttons[0].trigger('click');
+    await buttons[1].trigger('click');
 
     expect(wrapper.emitted('download')).toHaveLength(1);
     expect(wrapper.emitted('exportInvoice')).toHaveLength(1);
-    expect(wrapper.emitted('share')).toHaveLength(1);
+    expect(wrapper.emitted('share')).toBeUndefined();
   });
 });
