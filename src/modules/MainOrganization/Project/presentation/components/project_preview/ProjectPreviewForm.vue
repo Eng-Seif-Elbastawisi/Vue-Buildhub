@@ -218,7 +218,7 @@
 </script>
 
 <template>
-  <section class="form-section" :class="{ disabled: loading }" dir="rtl">
+  <section class="form-section" :class="{ disabled: loading }" dir="ltr">
     <header>
       <h3>{{ $t('project.preview_title') }}</h3>
       <p>{{ $t('project.preview_description') }}</p>
