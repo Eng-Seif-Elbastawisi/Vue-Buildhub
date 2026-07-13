@@ -59,7 +59,7 @@
       <RouterLink
         v-if="!preview"
         class="empty-panel empty-panel--link"
-        :to="`/project_preview/add?project_id=${25}`"
+        :to="`/organization/project_preview/add?project_id=${25}`"
       >
         <i class="pi pi-plus-circle"></i>
 
