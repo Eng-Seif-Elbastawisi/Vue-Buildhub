@@ -13,6 +13,14 @@
   import DeleteDialog from '@/base/Presentation/Dialogs/MainDialogs/DeleteDialog.vue';
   import { ConvertStatus } from '../../core/constants/convert.status.enum';
 
+  interface ProjectIndexProps {
+    statuses?: ConvertStatus[] | null;
+  }
+
+  const props = withDefaults(defineProps<ProjectIndexProps>(), {
+    statuses: () => [ConvertStatus.PENDING],
+  });
+
   const controller = ProjectController.getInstance();
   const state = computed(() => controller.listState.value);
   const route = useRoute();
@@ -30,7 +38,7 @@
         perPage.value,
         1,
         null,
-        ConvertStatus.PENDING,
+        props.statuses,
       ),
     );
   const onPageChange = (page: number) => {
