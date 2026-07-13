@@ -71,10 +71,10 @@
         <i class="pi pi-share-alt"></i>
         {{ $t('invoice_show.share') }}
       </button> -->
-      <RouterLink class="invoice-show-btn invoice-show-btn--primary" :to="editPath">
+      <!-- <RouterLink class="invoice-show-btn invoice-show-btn--primary" :to="editPath">
         <i class="pi pi-pencil"></i>
         {{ $t('invoice.edit') }}
-      </RouterLink>
+      </RouterLink> -->
     </div>
   </header>
 </template>

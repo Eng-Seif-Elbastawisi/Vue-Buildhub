@@ -1,6 +1,7 @@
 import { mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
 import InvoicePaymentModel from '@/modules/MainOrganization/InvoicePayment/core/models/invoice.payment.model';
+import InvoiceShowModel from '@/modules/MainOrganization/Invoice/core/models/invoice.show.model';
 import InvoicePaymentsCard from '../InvoicePaymentsCard.vue';
 
 const formatAmount = (value?: number | string | null) => Number(value ?? 0).toFixed(2);
@@ -10,6 +11,7 @@ describe('InvoicePaymentsCard', () => {
     const wrapper = mount(InvoicePaymentsCard, {
       props: {
         payments: [InvoicePaymentModel.example],
+        invoice: new InvoiceShowModel({ ...InvoiceShowModel.example, export_status: 1 }),
         currency: 'EGP',
         formatAmount,
         formatDateTime: (value?: string | null) => value || '-',

@@ -1,5 +1,6 @@
 <script setup lang="ts">
   import type InvoicePaymentModel from '@/modules/MainOrganization/InvoicePayment/core/models/invoice.payment.model';
+  import type InvoiceShowModel from '../../../core/models/invoice.show.model';
 
   defineProps<{
     payments: InvoicePaymentModel[];
@@ -7,6 +8,7 @@
     formatAmount: (value?: number | string | null) => string;
     formatDateTime: (value?: string | null) => string;
     paymentMethodLabel: (value?: number | null) => string;
+    invoice: InvoiceShowModel;
   }>();
 
   defineEmits<{
@@ -25,6 +27,7 @@
         <h2>{{ $t('invoice_show.payments') }}</h2>
       </div>
       <button
+        v-if="invoice.export_status === 1"
         class="invoice-show-btn invoice-show-btn--outline"
         type="button"
         @click="$emit('add')"
