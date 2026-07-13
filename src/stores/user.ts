@@ -53,7 +53,7 @@ export const useUserStore = defineStore(
         logout();
       } else {
         if (user.value?.setting) {
-          useSystemIdentityTheme().applySettingTheme(user.value.setting);
+          useSystemIdentityTheme().applySettingTheme(user.value.setting, { persist: false });
         }
         setAutoLogout();
       }

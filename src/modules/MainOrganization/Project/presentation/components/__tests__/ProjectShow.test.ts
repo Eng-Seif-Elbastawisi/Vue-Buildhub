@@ -71,8 +71,36 @@ const projectResponse = ProjectShowModel.fromJson({
     },
   ],
   project_floor_spaces: [],
-  project_departments: [],
+  project_departments: [
+    {
+      id: 4,
+      created_at: '2026-07-08 09:36:38',
+      department: { id: 1, title: 'dddd' },
+      items: [
+        {
+          id: 9,
+          uuid: 'f643c531-d970-45d4-8d4f-5e90f02507fb',
+          item: { id: 5, title: 'Qui impedit nemo ea' },
+          quantity: 1,
+          price: 5,
+          final_price: 5,
+          pricing_method: 1,
+          project_floor_id: null,
+          project_floor_space_id: null,
+          created_at: '2026-07-08 09:36:38',
+        },
+      ],
+    },
+  ],
   project_department_items: [],
+  project_pricing: {
+    id: 6,
+    total_tax: 14,
+    discount_type: 2,
+    discount_value: 10,
+    price_after_discount: 661.77,
+    created_at: '2026-07-08 09:36:38',
+  },
   attachments: [],
   created_at: '2026-07-08 14:45:30',
 });
@@ -106,15 +134,27 @@ vi.mock('vue-i18n', () => ({
         'ProjectShow.completed': 'Completed',
         'ProjectShow.project_code': 'Project Code',
         'ProjectShow.created_at': 'Created at',
+        'ProjectShow.currency_egp': 'EGP',
+        'ProjectShow.department': 'Department',
+        'ProjectShow.departments_count_label': 'Departments',
+        'ProjectShow.departments_hint': 'Click a department to view its items',
+        'ProjectShow.departments_single_open_hint':
+          'Only one department is opened at a time to keep the page clean.',
+        'ProjectShow.final_price': 'Final price',
         'ProjectShow.client': 'Client',
         'ProjectShow.organization': 'Organization',
         'ProjectShow.project_manager': 'Project Manager',
         'ProjectShow.pricing_responsible': 'Pricing Responsible',
         'ProjectShow.project_date': 'Project Date',
+        'ProjectShow.project_departments': 'Project Departments',
         'ProjectShow.typical_floor': 'Typical Floor',
         'ProjectShow.total_area_all_spaces': 'Total Area (All Spaces)',
         'ProjectShow.no_project_items': 'No project items added yet',
+        'ProjectShow.no_project_pricing': 'No project pricing added yet',
         'ProjectShow.attachments_count': 'Attachments',
+        'ProjectShow.items_count_label': 'Items',
+        'ProjectShow.item_count_label': 'Items',
+        'ProjectShow.unit_price': 'Unit price',
         'Project.steps.project_data': 'Project Data',
         'Project.steps.project_preview': 'Project Preview',
         'Project.steps.project_floors': 'Project Floors',
@@ -130,6 +170,17 @@ vi.mock('vue-i18n', () => ({
         'Project.attachments': 'Attachments',
         'ProjectFloor.floor_numbers.SECOND_FLOOR': 'Second floor',
         'ProjectFloor.space': 'Space',
+        'project_item.item': 'Item',
+        'project_item.quantity': 'Quantity',
+        'project_item.price': 'Price',
+        'project_item.pricing_method': 'Pricing method',
+        'project_item.pricing_methods.GENERAL_ITEM': 'General item',
+        'project_pricing.index.title': 'Project Pricing',
+        'project_pricing.total_tax': 'Total tax',
+        'project_pricing.discount_type': 'Discount type',
+        'project_pricing.discount_value': 'Discount value',
+        'project_pricing.final_total': 'Final total',
+        'project_pricing.discount_types.PERCENTAGE': 'Percentage',
         status: 'Status',
         location: 'Location',
         project_type_id: 'Project Type',
@@ -173,6 +224,18 @@ const mountProjectShow = () =>
           props: ['src', 'alt'],
           template: '<img :src="src" :alt="alt" />',
         },
+        Accordion: {
+          template: '<div class="p-accordion"><slot /></div>',
+        },
+        AccordionPanel: {
+          template: '<section class="p-accordionpanel"><slot /></section>',
+        },
+        AccordionHeader: {
+          template: '<button class="p-accordionheader"><slot /></button>',
+        },
+        AccordionContent: {
+          template: '<div class="p-accordioncontent"><slot /></div>',
+        },
       },
     },
   });
@@ -192,7 +255,14 @@ describe('ProjectShow', () => {
     expect(wrapper.text()).toContain('Living Room');
     expect(wrapper.text()).toContain('Second floor');
     expect(wrapper.text()).toContain('5,742.00');
-    expect(wrapper.text()).toContain('No project items added yet');
+    expect(wrapper.text()).toContain('Project Departments');
+    expect(wrapper.text()).toContain('dddd');
+    expect(wrapper.text()).toContain('Qui impedit nemo ea');
+    expect(wrapper.text()).toContain('General item');
+    expect(wrapper.text()).toContain('5.00 EGP');
+    expect(wrapper.text()).toContain('Only one department is opened at a time');
+    expect(wrapper.text()).toContain('Project Pricing');
+    expect(wrapper.text()).toContain('661.77');
     expect(wrapper.find('img[src*="p1i2wAlkoI_1783600450.png"]').exists()).toBe(true);
   });
 });

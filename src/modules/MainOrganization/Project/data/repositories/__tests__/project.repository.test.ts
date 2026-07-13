@@ -48,13 +48,28 @@ describe('ProjectRepository', () => {
       data: { status: false, message: 'Cannot store version' },
       statusCode: 400,
     });
+    vi.spyOn(apiService, 'fetchProjectStatusHistories').mockResolvedValue({
+      data: {
+        status: true,
+        message: 'Project histories fetched successfully.',
+        data: {
+          project: { id: 27, title: 'Project History' },
+          histories: [{ id: 14, status: 4, created_at: '2026-07-12 09:49:51' }],
+        },
+      },
+      statusCode: 200,
+    });
 
     const success = await repository.convertMeasurementToProject({ project_id: 1 });
     const failed = await repository.storeVersion({ project_id: 1 });
+    const history = await repository.fetchProjectStatusHistories({ project_id: 27 });
 
     expect(success).toBeInstanceOf(DataSuccess);
     expect(success.message).toBe('Converted');
     expect(failed).toBeInstanceOf(DataFailed);
     expect(failed.error?.displayMessage).toBe('Cannot store version');
+    expect(history).toBeInstanceOf(DataSuccess);
+    expect(history.data?.project?.title).toBe('Project History');
+    expect(history.data?.histories[0].status).toBe(4);
   });
 });

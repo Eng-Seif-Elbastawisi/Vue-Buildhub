@@ -16,9 +16,9 @@ export type ServiceType = (typeof ServiceType)[keyof typeof ServiceType];
 export function getServiceTypeNameKey(type: ServiceType): string {
   switch (type) {
     case ServiceType.DESIGNONLY:
-      return 'designOnly';
+      return 'design Only';
     case ServiceType.EXECUTIONONLY:
-      return 'executionOnly';
+      return 'execution Only';
     case ServiceType.BOTH:
       return 'both';
     default:

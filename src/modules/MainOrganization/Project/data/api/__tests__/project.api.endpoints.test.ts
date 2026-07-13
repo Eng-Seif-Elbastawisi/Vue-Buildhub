@@ -24,6 +24,9 @@ describe('ProjectApiEndpoints', () => {
     );
     expect(endpoints.storeVersion).toContain('mainportal/store_version');
     expect(endpoints.reviseVersion).toContain('mainportal/revise_version');
+    expect(endpoints.fetchProjectStatusHistories).toContain(
+      'mainportal/fetch_project_status_histories',
+    );
   });
 
   it('builds organization project endpoints for non-master users', () => {
@@ -41,5 +44,8 @@ describe('ProjectApiEndpoints', () => {
     );
     expect(endpoints.storeVersion).toContain('organization/store_version');
     expect(endpoints.reviseVersion).toContain('organization/revise_version');
+    expect(endpoints.fetchProjectStatusHistories).toContain(
+      'organization/fetch_project_status_histories',
+    );
   });
 });

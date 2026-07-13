@@ -1,10 +1,15 @@
+import type Params from '@/base/Core/Params/params';
 import type { DataState } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
-import { DataFailed, DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
+import {
+  DataFailed,
+  DataSuccess,
+} from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
 import { ErrorModel, ErrorType } from '@/base/Core/NetworkStructure/Resources/errors/errorModel';
 import type { ApiResponse } from '@/base/Data/ApiService/baseApiService';
 import BaseRepository, { type RepositoryConfig } from '@/base/Domain/Repositories/baseRepository';
 import { HttpStatusCode } from 'axios';
 import ProjectModel from '../../core/models/project.model';
+import ProjectHistoryModel from '../../core/models/project.history.model';
 import ProjectShowModel from '../../core/models/project.show.model';
 import ProjectApiService from '../api/project.api-service';
 
@@ -12,6 +17,7 @@ type ProjectActionResponse = {
   status?: boolean;
   message?: string;
 };
+type ProjectActionParams = Params | Record<string, unknown>;
 
 export default class ProjectRepository extends BaseRepository<ProjectShowModel, ProjectModel[]> {
   private static instance: ProjectRepository;
@@ -46,7 +52,8 @@ export default class ProjectRepository extends BaseRepository<ProjectShowModel, 
     const isSuccess =
       [HttpStatusCode.Ok, HttpStatusCode.Created, HttpStatusCode.Accepted].includes(
         response.statusCode,
-      ) && (response.data.status ?? true);
+      ) &&
+      (response.data.status ?? true);
 
     if (isSuccess) {
       return new DataSuccess<void>({
@@ -69,15 +76,26 @@ export default class ProjectRepository extends BaseRepository<ProjectShowModel, 
     }
   }
 
-  async convertMeasurementToProject(params?: Record<string, unknown>): Promise<DataState<void>> {
+  async convertMeasurementToProject(params?: ProjectActionParams): Promise<DataState<void>> {
     return await this.executeProjectAction(() =>
-      this.apiService.convertMeasurementToProject(params as any),
+      this.apiService.convertMeasurementToProject(params),
     );
   }
-  async storeVersion(params?: Record<string, unknown>): Promise<DataState<void>> {
-    return await this.executeProjectAction(() => this.apiService.storeVersion(params as any));
+
+  async storeVersion(params?: ProjectActionParams): Promise<DataState<void>> {
+    return await this.executeProjectAction(() => this.apiService.storeVersion(params));
   }
-  async reviseVersion(params?: Record<string, unknown>): Promise<DataState<void>> {
-    return await this.executeProjectAction(() => this.apiService.reviseVersion(params as any));
+
+  async reviseVersion(params?: ProjectActionParams): Promise<DataState<void>> {
+    return await this.executeProjectAction(() => this.apiService.reviseVersion(params));
+  }
+
+  async fetchProjectStatusHistories(
+    params?: ProjectActionParams,
+  ): Promise<DataState<ProjectHistoryModel>> {
+    return await this.executeCustom(
+      () => this.apiService.fetchProjectStatusHistories(params),
+      (data) => ProjectHistoryModel.fromJson(data),
+    );
   }
 }

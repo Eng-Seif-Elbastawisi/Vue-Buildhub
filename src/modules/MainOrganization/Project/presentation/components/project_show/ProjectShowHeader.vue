@@ -10,6 +10,7 @@
     downloadPdfLabel: string;
     generatingPdfLabel: string;
     editProjectLabel: string;
+    historyLabel: string;
     exportingPdf: boolean;
     formatDate: (value?: string | null) => string;
     formatTime: (value?: string | null) => string;
@@ -51,6 +52,14 @@
           <i class="pi pi-download"></i>
           {{ exportingPdf ? generatingPdfLabel : downloadPdfLabel }}
         </button>
+
+        <RouterLink
+          class="project-action-btn"
+          :to="{ name: 'project-history', params: { project_id: project.id } }"
+        >
+          <i class="pi pi-history"></i>
+          {{ historyLabel }}
+        </RouterLink>
 
         <RouterLink
           class="project-action-btn project-action-btn--primary"
