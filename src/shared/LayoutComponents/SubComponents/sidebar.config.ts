@@ -121,6 +121,14 @@ export const sidebarSections: SidebarSectionConfig[] = [
         roles: ['organization'],
       },
       {
+        path: '/converted-projects',
+        labelKey: 'Project.list_title',
+        icon: EducationClassificationIcon,
+        badge: '0',
+        countKey: 'projects_count',
+        roles: ['organization'],
+      },
+      {
         path: '/project/add',
         labelKey: 'add project',
         icon: EducationClassificationIcon,

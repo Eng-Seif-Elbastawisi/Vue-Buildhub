@@ -3,7 +3,7 @@ import { ConvertStatus } from '@/modules/MainOrganization/Project/core/constants
 
 export default class IndexProjectParams extends IndexParams {
   public dateRemove?: string | null;
-  public status?: ConvertStatus | null;
+  public status?: ConvertStatus[] | null;
 
   constructor(
     word: string = '',
@@ -11,7 +11,7 @@ export default class IndexProjectParams extends IndexParams {
     perPage: number = 10,
     withPage: number = 1,
     dateRemove?: string | null,
-    status: ConvertStatus | null = ConvertStatus.PENDING,
+    status: ConvertStatus[] | null = [ConvertStatus.PENDING],
   ) {
     super(word, pageNumber, perPage, withPage);
 
@@ -26,7 +26,7 @@ export default class IndexProjectParams extends IndexParams {
       data.date_remove = this.dateRemove;
     }
 
-    if (this.status !== null && this.status !== undefined) {
+    if (this.status?.length) {
       data.status = this.status;
     }
 

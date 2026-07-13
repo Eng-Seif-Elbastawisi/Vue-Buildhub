@@ -10,6 +10,14 @@ export const ProjectRoutes: RouteRecordRaw[] = [
     },
   },
   {
+    path: 'converted-projects',
+    name: 'converted-projects',
+    component: () => import('@/views/MainOrganization/Project/IndexConvertedProject.vue'),
+    meta: {
+      breadcrumb: 'Project',
+    },
+  },
+  {
     path: 'project/add',
     name: 'add-project',
     component: () => import('@/views/MainOrganization/Project/AddProject.vue'),

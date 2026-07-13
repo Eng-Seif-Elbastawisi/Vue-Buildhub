@@ -39,4 +39,21 @@ describe('sidebarSections', () => {
       }),
     );
   });
+
+  it('includes separate pending and converted project entries', () => {
+    const items = sidebarSections.flatMap((section) => section.items);
+
+    expect(items.find((item) => item.path === '/project')).toEqual(
+      expect.objectContaining({
+        labelKey: 'Request',
+        roles: ['organization'],
+      }),
+    );
+    expect(items.find((item) => item.path === '/converted-projects')).toEqual(
+      expect.objectContaining({
+        labelKey: 'Project.list_title',
+        roles: ['organization'],
+      }),
+    );
+  });
 });
