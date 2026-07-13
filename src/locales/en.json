@@ -1402,5 +1402,7 @@
   "field_help.discount.text": "This field defines the discount type or value applied to the pricing calculation.",
   "country": "Country",
   "city": "City",
-  "Governorate": "Governorate"
+  "Governorate": "Governorate",
+  "ProjectFloor.ready_for_pricing": "Ready for pricing",
+  "ProjectFloor.need_additional_visit": "Need additional visit"
 }
