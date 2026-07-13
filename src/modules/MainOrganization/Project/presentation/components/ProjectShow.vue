@@ -805,9 +805,9 @@
             formatNumber(space.height),
             formatNumber(calculateArea(space)),
             valueOrEmpty(space.notes),
-            space.attachments?.length
-              ? space.attachments.map((attachment) => attachment.file).join('\n')
-              : emptyValue,
+            // space.attachments?.length
+            //   ? space.attachments.map((attachment) => attachment.file).join('\n')
+            //   : emptyValue,
           ]),
           y,
           true,
