@@ -16,13 +16,13 @@ export type ConvertStatus = (typeof ConvertStatus)[keyof typeof ConvertStatus];
 export function getConvertStatusNameKey(status: ConvertStatus): string {
   switch (status) {
     case ConvertStatus.PENDING:
-      return 'pending';
+      return 'project.convertStatus.pending';
     case ConvertStatus.CONVERT_TO_PROJECT:
-      return 'convert To Project';
+      return 'project.convertStatus.convertToProject';
     case ConvertStatus.SEND_TO_CLIENT:
-      return 'send To Client';
+      return 'project.convertStatus.sendToClient';
     case ConvertStatus.REVISE_VERSION:
-      return 'revise Version';
+      return 'project.convertStatus.reviseVersion';
     default:
       return 'unknown';
   }
