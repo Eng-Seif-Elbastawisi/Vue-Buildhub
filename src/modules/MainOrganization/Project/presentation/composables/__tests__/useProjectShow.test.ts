@@ -17,6 +17,7 @@ const itemData = {
     service_type: 3,
     date: '2026-07-08',
     notes: 'Project notes',
+    terms: 'First payment after approval\nSecond payment after delivery',
     site_description: 'Site description',
     project_floors: [],
     project_floor_spaces: [],
@@ -102,6 +103,9 @@ describe('useProjectShow', () => {
     expect(fetchOne.mock.calls[0][0].toMap()).toEqual({ project_id: 24 });
     expect(projectShow.headerProps.value.projectTitle).toBe('Project Alpha');
     expect(projectShow.tabsProps.value.activeTab).toBe('project-data');
+    expect(projectShow.sideColumnProps.value.terms).toBe(
+      'First payment after approval\nSecond payment after delivery',
+    );
     expect(projectShow.departmentsSectionProps.value.departments).toHaveLength(1);
     expect(projectShow.departmentsSectionProps.value.departments[0].department.title).toBe(
       'Engineering',
@@ -112,6 +116,14 @@ describe('useProjectShow', () => {
     expect(projectShow.tabsProps.value.activeTab).toBe('project-items');
     expect(projectShow.departmentsSectionProps.value.class).toEqual({
       'project-card--active-section': true,
+    });
+
+    projectShow.goToSection('project-terms');
+
+    expect(projectShow.tabsProps.value.activeTab).toBe('project-terms');
+    expect(projectShow.sideColumnProps.value.class).toEqual({
+      'project-side-column--active-preview': false,
+      'project-side-column--active-terms': true,
     });
   });
 });

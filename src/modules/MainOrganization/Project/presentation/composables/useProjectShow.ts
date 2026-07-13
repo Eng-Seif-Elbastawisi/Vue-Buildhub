@@ -217,6 +217,9 @@ export const useProjectShow = () => {
   const projectItems = computed(() => project.value.project_department_items ?? []);
   const projectDepartments = computed(() => project.value.project_departments ?? []);
   const projectPricing = computed(() => project.value.project_pricing ?? null);
+  const projectTerms = computed(() =>
+    valueOrEmpty(projectModel.value?.terms ?? project.value.terms),
+  );
   const projectDepartmentItems = computed<ProjectDepartmentItemRow[]>(() => {
     return projectDepartments.value.flatMap((department) => department.items ?? []);
   });
@@ -463,6 +466,7 @@ export const useProjectShow = () => {
     { id: 'project-floors', label: t('Project.steps.project_floors'), icon: 'pi pi-sitemap' },
     { id: 'project-items', label: t('project_department'), icon: 'pi pi-sliders-h' },
     { id: 'project-pricing', label: t('project_pricing.index.title'), icon: 'pi pi-wallet' },
+    { id: 'project-terms', label: t('terms'), icon: 'pi pi-file-edit' },
   ]);
 
   const getPdfFileName = () => {
@@ -1058,7 +1062,10 @@ export const useProjectShow = () => {
   }));
 
   const sideColumnProps = computed(() => ({
-    class: { 'project-side-column--active-preview': activeTab.value === 'project-preview' },
+    class: {
+      'project-side-column--active-preview': activeTab.value === 'project-preview',
+      'project-side-column--active-terms': activeTab.value === 'project-terms',
+    },
     imageSource: firstImage.value || fallbackProjectImage,
     projectTitle: projectTitle.value,
     stats: stats.value,
@@ -1071,6 +1078,8 @@ export const useProjectShow = () => {
     notificationMessageLabel: t('ProjectShow.notification_message'),
     siteLinkLabel: t('ProjectShow.site_link'),
     addressLabel: t('address'),
+    termsLabel: t('terms'),
+    terms: projectTerms.value,
     emptyValue,
     formatDate,
     formatTime,

@@ -1,24 +1,40 @@
 <script setup lang="ts">
+  import { computed } from 'vue';
   import type { ProjectPreview, ProjectStatItem } from './projectShow.types';
 
-  defineProps<{
-    imageSource: string;
-    projectTitle: string;
-    stats: ProjectStatItem[];
-    preview: ProjectPreview | null;
-    previewTitle: string;
-    noPreviewLabel: string;
-    previewDateLabel: string;
-    previewTimeLabel: string;
-    notificationTypeLabel: string;
-    notificationMessageLabel: string;
-    siteLinkLabel: string;
-    addressLabel: string;
-    emptyValue: string;
-    formatDate: (value?: string | null) => string;
-    formatTime: (value?: string | null) => string;
-    valueOrEmpty: (value?: string | number | null) => string;
-  }>();
+  const props = withDefaults(
+    defineProps<{
+      imageSource: string;
+      projectTitle: string;
+      stats: ProjectStatItem[];
+      preview: ProjectPreview | null;
+      previewTitle: string;
+      noPreviewLabel: string;
+      previewDateLabel: string;
+      previewTimeLabel: string;
+      notificationTypeLabel: string;
+      notificationMessageLabel: string;
+      siteLinkLabel: string;
+      addressLabel: string;
+      emptyValue: string;
+      termsLabel?: string;
+      terms?: string;
+      formatDate: (value?: string | null) => string;
+      formatTime: (value?: string | null) => string;
+      valueOrEmpty: (value?: string | number | null) => string;
+    }>(),
+    {
+      terms: '',
+      termsLabel: '',
+    },
+  );
+
+  const termLines = computed(() =>
+    props.terms
+      .split(/\r?\n/)
+      .map((line) => line.trim())
+      .filter(Boolean),
+  );
 </script>
 
 <template>
@@ -90,6 +106,23 @@
           <span>{{ addressLabel }}</span>
           <strong>{{ valueOrEmpty(preview.address) }}</strong>
         </div>
+      </div>
+    </article>
+
+    <article id="project-terms" class="project-card terms-card">
+      <div class="card-title">
+        <i class="pi pi-file-edit"></i>
+        <h2>{{ termsLabel }}</h2>
+      </div>
+
+      <div v-if="termLines.length" class="terms-list">
+        <p v-for="(line, index) in termLines" :key="`${index}-${line}`">
+          {{ line }}
+        </p>
+      </div>
+
+      <div v-else class="empty-panel">
+        {{ emptyValue }}
       </div>
     </article>
   </aside>
