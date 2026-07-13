@@ -55,7 +55,7 @@
 </script>
 
 <template>
-  <section class="items-table-card" dir="ltr">
+  <section class="items-table-card">
     <div class="table-summary">
       <div>
         <h3>{{ $t('project_item.selection_criteria_items') }}</h3>

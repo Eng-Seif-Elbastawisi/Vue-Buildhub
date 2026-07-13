@@ -65,7 +65,7 @@
 </script>
 
 <template>
-  <div class="project-preview-page" dir="ltr">
+  <div class="project-preview-page">
     <header class="page-header">
       <div>
         <h4>{{ $t('ProjectPreview.list_title') }}</h4>

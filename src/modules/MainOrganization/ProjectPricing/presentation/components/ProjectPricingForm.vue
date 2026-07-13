@@ -170,7 +170,7 @@
 </script>
 
 <template>
-  <section class="pricing-summary-card" :class="{ disabled: loading }" dir="ltr">
+  <section class="pricing-summary-card" :class="{ disabled: loading }">
     <div class="summary-grid">
       <article class="summary-box">
         <span class="summary-label">
