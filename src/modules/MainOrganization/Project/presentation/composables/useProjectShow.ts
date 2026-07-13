@@ -922,6 +922,7 @@ export const useProjectShow = () => {
     downloadPdfLabel: t('ProjectShow.download_pdf'),
     generatingPdfLabel: t('ProjectShow.generating_pdf'),
     editProjectLabel: t('ProjectShow.edit_project'),
+    historyLabel: t('ProjectShow.history'),
     exportingPdf: exportingPdf.value,
     formatDate,
     formatTime,

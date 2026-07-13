@@ -1,5 +1,8 @@
+import type Params from '@/base/Core/Params/params';
 import BaseApiService, { type ApiEndpoints } from '@/base/Data/ApiService/baseApiService';
 import { ProjectApiEndpoints } from './project.api.endpoints';
+
+type ProjectActionParams = Params | Record<string, unknown>;
 
 export default class ProjectApiService extends BaseApiService {
   private static instance: ProjectApiService;
@@ -20,13 +23,25 @@ export default class ProjectApiService extends BaseApiService {
     };
   }
 
-  async convertMeasurementToProject(params: any) {
-    return await this.customPost(this.projectEndpoints.convertMeasurementToProject, params);
+  async convertMeasurementToProject(params?: ProjectActionParams) {
+    return await this.customPost(
+      this.projectEndpoints.convertMeasurementToProject,
+      params as Params,
+    );
   }
-  async storeVersion(params: any) {
-    return await this.customPost(this.projectEndpoints.storeVersion, params);
+
+  async storeVersion(params?: ProjectActionParams) {
+    return await this.customPost(this.projectEndpoints.storeVersion, params as Params);
   }
-  async reviseVersion(params: any) {
-    return await this.customPost(this.projectEndpoints.reviseVersion, params);
+
+  async reviseVersion(params?: ProjectActionParams) {
+    return await this.customPost(this.projectEndpoints.reviseVersion, params as Params);
+  }
+
+  async fetchProjectStatusHistories(params?: ProjectActionParams) {
+    return await this.customPost(
+      this.projectEndpoints.fetchProjectStatusHistories,
+      params as Params,
+    );
   }
 }
