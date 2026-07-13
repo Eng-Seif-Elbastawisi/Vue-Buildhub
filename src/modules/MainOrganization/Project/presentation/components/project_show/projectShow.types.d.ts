@@ -103,6 +103,7 @@ export type ProjectShowRaw = {
   site_description?: string | null;
   technical_general_notes?: string | null;
   inspection_recommendations?: string | null;
+  terms?: string | null;
   expected_design_duration?: string | number | null;
   payment_method?: string | number | null;
   allowed_revision_count?: string | number | null;

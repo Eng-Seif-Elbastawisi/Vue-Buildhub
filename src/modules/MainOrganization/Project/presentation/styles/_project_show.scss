@@ -858,6 +858,26 @@
   background: var(--white);
 }
 
+.terms-card {
+  background: var(--white);
+}
+
+.terms-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.terms-list p {
+  margin: 0;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--border-weak);
+  border-radius: 8px;
+  background: var(--gray-50);
+  color: var(--gray-800);
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+
 .preview-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -988,6 +1008,13 @@
 }
 
 .project-side-column--active-preview .preview-card {
+  border-color: var(--PrimaryColor);
+  box-shadow:
+    0 0 0 3px var(--PrimaryColor-light),
+    var(--shadow-sm);
+}
+
+.project-side-column--active-terms .terms-card {
   border-color: var(--PrimaryColor);
   box-shadow:
     0 0 0 3px var(--PrimaryColor-light),

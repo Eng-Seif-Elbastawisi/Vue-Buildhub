@@ -29,6 +29,7 @@ export type ProjectPreviewModel = {
   site_link?: string;
   address?: string;
   created_at?: string;
+  terms?: string;
 };
 
 export default class ProjectShowModel {

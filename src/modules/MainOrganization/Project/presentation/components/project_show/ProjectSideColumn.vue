@@ -1,7 +1,8 @@
 <script setup lang="ts">
+  import { computed } from 'vue';
   import type { ProjectPreview, ProjectStatItem } from './projectShow.types';
 
-  defineProps<{
+  const props = defineProps<{
     imageSource: string;
     projectTitle: string;
     stats: ProjectStatItem[];
@@ -15,10 +16,19 @@
     siteLinkLabel: string;
     addressLabel: string;
     emptyValue: string;
+    termsLabel: string;
+    terms: string;
     formatDate: (value?: string | null) => string;
     formatTime: (value?: string | null) => string;
     valueOrEmpty: (value?: string | number | null) => string;
   }>();
+
+  const termLines = computed(() =>
+    props.terms
+      .split(/\r?\n/)
+      .map((line) => line.trim())
+      .filter(Boolean),
+  );
 </script>
 
 <template>
@@ -62,21 +72,21 @@
           <span>{{ previewDateLabel }}</span>
           <strong>{{ formatDate(preview.preview_date) }}</strong>
         </div>
-        <div class="side-info">
+        <!-- <div class="side-info">
           <i class="pi pi-bell"></i>
           <span>{{ notificationTypeLabel }}</span>
           <strong>{{ valueOrEmpty(preview.notification_type) }}</strong>
-        </div>
+        </div> -->
         <div class="side-info">
           <i class="pi pi-clock"></i>
           <span>{{ previewTimeLabel }}</span>
           <strong>{{ formatTime(preview.preview_time) }}</strong>
         </div>
-        <div class="side-info">
+        <!-- <div class="side-info">
           <i class="pi pi-comment"></i>
           <span>{{ notificationMessageLabel }}</span>
           <strong>{{ valueOrEmpty(preview.notification_message) }}</strong>
-        </div>
+        </div> -->
         <div class="side-info side-info--wide">
           <i class="pi pi-link"></i>
           <span>{{ siteLinkLabel }}</span>
@@ -90,6 +100,23 @@
           <span>{{ addressLabel }}</span>
           <strong>{{ valueOrEmpty(preview.address) }}</strong>
         </div>
+      </div>
+    </article>
+
+    <article id="project-terms" class="project-card terms-card">
+      <div class="card-title">
+        <i class="pi pi-file-edit"></i>
+        <h2>{{ termsLabel }}</h2>
+      </div>
+
+      <div v-if="termLines.length" class="terms-list">
+        <p v-for="(line, index) in termLines" :key="`${index}-${line}`">
+          {{ line }}
+        </p>
+      </div>
+
+      <div v-else class="empty-panel">
+        {{ emptyValue }}
       </div>
     </article>
   </aside>

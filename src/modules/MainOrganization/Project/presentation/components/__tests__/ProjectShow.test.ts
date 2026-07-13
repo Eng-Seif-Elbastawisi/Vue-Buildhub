@@ -34,6 +34,7 @@ const projectResponse = ProjectShowModel.fromJson({
   description: [{ locale: 'en', description: 'Project description' }],
   date: '2026-07-08',
   notes: 'Adipisci voluptas re',
+  terms: 'First payment after approval\nSecond payment after delivery',
   site_description: 'At quae dignissimos',
   project_floors: [
     {
@@ -159,6 +160,7 @@ vi.mock('vue-i18n', () => ({
         'Project.steps.project_preview': 'Project Preview',
         'Project.steps.project_floors': 'Project Floors',
         'Project.steps.project_items': 'Project Items',
+        terms: 'Terms',
         'Project.service_types.both': 'Design & Execution',
         'Project.service_type': 'Service Type',
         'Project.engineer': 'Engineer',
@@ -263,6 +265,9 @@ describe('ProjectShow', () => {
     expect(wrapper.text()).toContain('Only one department is opened at a time');
     expect(wrapper.text()).toContain('Project Pricing');
     expect(wrapper.text()).toContain('661.77');
+    expect(wrapper.text()).toContain('Terms');
+    expect(wrapper.text()).toContain('First payment after approval');
+    expect(wrapper.text()).toContain('Second payment after delivery');
     expect(wrapper.find('img[src*="p1i2wAlkoI_1783600450.png"]').exists()).toBe(true);
   });
 });
