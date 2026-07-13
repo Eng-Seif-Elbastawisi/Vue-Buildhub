@@ -147,7 +147,7 @@
 
           <div>
             <span class="project-history-eyebrow">{{ t('ProjectHistory.eyebrow') }}</span>
-            <!-- <h1>{{ t('ProjectHistory.title') }}</h1> -->
+            <h1>{{ t('ProjectHistory.title') }}</h1>
           </div>
         </header>
 
