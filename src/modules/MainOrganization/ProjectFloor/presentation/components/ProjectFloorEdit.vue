@@ -14,22 +14,14 @@
   const loading = ref(false);
   const updateData = (data: AddProjectFloorParams) => {
     params.value = new EditProjectFloorParams({
-      projectFloorId,
-      translations: data.translations,
-      client_exist: data.client_exist,
-      client_id: data.client_id,
-      client_name: data.client_name,
-      client_phone: data.client_phone,
-      client_source: data.client_source,
-      project_type_id: data.project_type_id,
-      location_id: data.location_id,
-      service_type: data.service_type,
-      attachments: data.attachments,
-      engineer_id: data.engineer_id,
-      preview_date: data.preview_date,
-      preview_time: data.preview_time,
-      site_link: data.site_link,
-      address: data.address,
+      id: projectFloorId,
+      project_id: data.project_id,
+      project_preview_id: data.project_preview_id,
+      floor_number: data.floor_number,
+      site_description: data.site_description,
+      technical_general_notes: data.technical_general_notes,
+      inspection_recommendations: data.inspection_recommendations,
+      spaces: data.spaces,
     });
   };
   const saveProjectFloor = async () => {
@@ -42,7 +34,9 @@
     }
   };
   onMounted(async () => {
-    await controller.fetchOne(new ShowProjectFloorParams({ projectFloorId, allLocales: true }));
+    await controller.fetchOne(
+      new ShowProjectFloorParams({ project_floor_id: projectFloorId, allLocales: true }),
+    );
   });
 </script>
 

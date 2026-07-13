@@ -1,7 +1,7 @@
 <script setup lang="ts">
-  import ProjectItemIndex from '@/modules/MainOrganization/ProjectItem/presentation/components/ProjectItemIndex.vue';
+  import ProjectItemIndexEdit from '@/modules/MainOrganization/ProjectItem/presentation/components/ProjectItemIndexEdit.vue';
 </script>
 
 <template>
-  <ProjectItemIndex />
+  <ProjectItemIndexEdit />
 </template>

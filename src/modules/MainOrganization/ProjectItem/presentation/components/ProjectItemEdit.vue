@@ -15,13 +15,20 @@
   const itemId = Number(route.params.id);
 
   const updateData = (data: AddProjectItemParams) => {
+    const item = data.items[0];
+
+    if (!item) {
+      params.value = null;
+      return;
+    }
+
     params.value = new EditProjectItemParams({
       project_item_id: itemId,
-      item_id: data.item_id,
-      pricing_method: data.pricing_method,
-      project_floor_id: data.project_floor_id,
-      price: data.price,
-      quantity: data.quantity,
+      item_id: item.item_id,
+      pricing_method: item.pricing_method,
+      project_floor_id: item.project_floor_id,
+      price: item.price,
+      quantity: item.quantity,
     });
   };
 

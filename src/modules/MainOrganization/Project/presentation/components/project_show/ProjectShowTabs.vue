@@ -1,11 +1,16 @@
 <script setup lang="ts">
+  import { computed, useAttrs } from 'vue';
   import type { TabItem } from './projectShow.types';
 
   defineProps<{
     tabs: TabItem[];
     activeTab: string;
-    ariaLabel: string;
   }>();
+
+  const attrs = useAttrs();
+  const ariaLabel = computed(() =>
+    typeof attrs['aria-label'] === 'string' ? attrs['aria-label'] : undefined,
+  );
 
   defineEmits<{
     select: [tabId: string];

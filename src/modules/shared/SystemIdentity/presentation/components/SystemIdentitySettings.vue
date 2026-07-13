@@ -16,7 +16,7 @@
   const statusKey = ref('');
   const { applyPalette } = useSystemIdentityTheme();
 
-  const identity = computed(() => controller.itemData.value);
+  const identity = computed(() => controller.itemData.value ?? undefined);
 
   const updateData = (updatedParams: StoreSystemIdentityParams) => {
     params.value = updatedParams;

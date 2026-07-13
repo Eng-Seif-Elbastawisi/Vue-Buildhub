@@ -103,6 +103,18 @@
   const existingAttachmentFiles = ref<string[]>([]);
   const attachmentFiles = computed(() => existingAttachmentFiles.value);
 
+  type PrimeDateValue = Date | Date[] | (Date | null)[] | null | undefined;
+
+  const normalizeDateValue = (value: PrimeDateValue): Date | null => {
+    if (!value) return null;
+
+    if (Array.isArray(value)) {
+      return value.find((dateValue): dateValue is Date => dateValue instanceof Date) ?? null;
+    }
+
+    return value;
+  };
+
   const governorateParams = computed(() => {
     return new IndexLocationParams(
       '',
@@ -147,9 +159,11 @@
     return new Date(year, month - 1, day);
   };
 
-  const updateDate = (value: Date | null) => {
-    selectedDate.value = value;
-    date.value = formatDateForApi(value);
+  const updateDate = (value: PrimeDateValue) => {
+    const dateValue = normalizeDateValue(value);
+
+    selectedDate.value = dateValue;
+    date.value = formatDateForApi(dateValue);
     updateData();
   };
 

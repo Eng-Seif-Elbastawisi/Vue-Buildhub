@@ -11,7 +11,6 @@
   import AddMaterialsParams from '../../core/params/add.materials.params';
   import MeasurementController from '@/modules/shared/measurement/presentation/controllers/measurement.controller';
   import IndexMeasurementParams from '@/modules/shared/measurement/core/params/index.measurement.params';
-  import TranslationParams from '@/base/Core/Params/translationParams';
   import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
 
   const emit = defineEmits<{
@@ -28,12 +27,21 @@
   const brandController = BrandController.getInstance();
   const brandParams = new IndexBrandParams('', 1, 100, 0, undefined, 1);
   const measurementController = MeasurementController.getInstance();
-  const measurementParams = new IndexMeasurementParams('', 1, 100, 0, undefined, 1);
+  const measurementParams = new IndexMeasurementParams('', 1, 100, 0);
 
   const translations = ref<Record<string, string>>({});
   const price = ref<number>();
   const brand = ref<TitleInterface<string | number> | null>(null);
   const measurement = ref<TitleInterface<string | number> | null>(null);
+
+  const toSelectOption = (item?: { id?: number; title?: string }) => {
+    return item?.id !== undefined && item.id !== null
+      ? {
+          id: item.id,
+          title: item.title ?? '',
+        }
+      : null;
+  };
 
   onBeforeRouteLeave((to, from) => {
     const savedData = props.formKey ? formStore.getFormData(props.formKey) : null;
@@ -50,21 +58,20 @@
 
       translations.value = { ...material.translations.title };
       price.value = material.price;
-      brand.value = material.brandId;
-      measurement.value = material.measurementId;
+      brand.value = toSelectOption(material.brandId);
+      measurement.value = toSelectOption(material.measurementId);
     },
     { immediate: true },
   );
 
   const updateData = () => {
-    const translationParams = new TranslationParams({ title: translations.value });
     emit(
       'updateData',
       new AddMaterialsParams({
         price: price.value,
         brandId: brand.value?.id,
         measurementId: measurement.value?.id,
-        translations: translationParams,
+        translations: { title: translations.value },
       }),
     );
   };

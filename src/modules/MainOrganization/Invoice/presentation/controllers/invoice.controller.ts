@@ -99,7 +99,7 @@ export default class InvoiceController extends BaseController<InvoiceShowModel, 
     invoice: InvoiceModel | InvoiceShowModel,
   ): TitleInterface<string | number> {
     return new TitleInterface({
-      id: invoice.id ?? '',
+      id: Number(invoice.id ?? 0),
       title: invoice.invoice_number ?? String(invoice.id ?? ''),
       subtitle: invoice.invoice_date ?? '',
     });
