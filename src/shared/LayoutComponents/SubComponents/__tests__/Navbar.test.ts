@@ -1,6 +1,14 @@
-import { describe, it, expect, vi } from 'vitest';
+import { beforeEach, describe, it, expect, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
 import Navbar from '../Navbar.vue';
+
+const mockLocale = vi.hoisted(() => ({ value: 'ar' }));
+
+vi.mock('vue-i18n', () => ({
+  useI18n: () => ({
+    locale: mockLocale,
+  }),
+}));
 
 // ── Stores ────────────────────────────────────────────────────────────────────
 vi.mock('@/stores/user', () => ({
@@ -28,6 +36,15 @@ vi.mock('@/assets/images/headerIMages/employee.jpg', () => ({
 }));
 
 describe('Navbar.vue', () => {
+  beforeEach(() => {
+    mockLocale.value = 'ar';
+    localStorage.clear();
+    document.documentElement.removeAttribute('lang');
+    document.documentElement.removeAttribute('dir');
+    document.body.removeAttribute('dir');
+    mockPush.mockClear();
+  });
+
   const mountOptions = {
     global: {
       mocks: {
@@ -90,5 +107,33 @@ describe('Navbar.vue', () => {
     await logoutBtn.trigger('click');
 
     expect(mockPush).toHaveBeenCalledWith('/login-admin');
+  });
+
+  it('applies the saved language on mount', () => {
+    localStorage.setItem('locale', 'en');
+
+    mount(Navbar, mountOptions);
+
+    expect(mockLocale.value).toBe('en');
+    expect(document.documentElement.lang).toBe('en');
+    expect(document.documentElement.dir).toBe('ltr');
+    expect(document.body.dir).toBe('ltr');
+  });
+
+  it('toggles language from Arabic to English', async () => {
+    const wrapper = mount(Navbar, mountOptions);
+    const languageButton = wrapper.find('.language-toggle');
+
+    expect(languageButton.text()).toBe('🇺🇸');
+    expect(languageButton.attributes('aria-label')).toBe('Switch language to English');
+    expect(languageButton.attributes('title')).toBe('Switch language to English');
+
+    await languageButton.trigger('click');
+
+    expect(mockLocale.value).toBe('en');
+    expect(localStorage.getItem('locale')).toBe('en');
+    expect(document.documentElement.lang).toBe('en');
+    expect(document.documentElement.dir).toBe('ltr');
+    expect(document.body.dir).toBe('ltr');
   });
 });
