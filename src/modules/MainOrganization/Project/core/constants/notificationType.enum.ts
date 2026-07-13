@@ -16,11 +16,11 @@ export type NotificationType = (typeof NotificationType)[keyof typeof Notificati
 export function getNotificationTypeNameKey(type: NotificationType): string {
   switch (type) {
     case NotificationType.NORMAL:
-      return 'project.notificationType.normal';
+      return 'normal';
     case NotificationType.URGENT:
-      return 'project.notificationType.urgent';
+      return 'urgent';
     case NotificationType.LOW:
-      return 'project.notificationType.low';
+      return 'low';
     default:
       return 'unknown';
   }

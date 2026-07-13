@@ -16,11 +16,11 @@ export type Status = (typeof Status)[keyof typeof Status];
 export function getStatusNameKey(type: Status): string {
   switch (type) {
     case Status.READY_FOR_PRICING:
-      return 'project.status.ready_for_pricing';
+      return 'ready For Pricing';
     case Status.NEED_ADDITIONAL_VISIT:
-      return 'project.status.need_additional_visit';
+      return 'need Additional Visit';
     case Status.NOT_READY_FOR_COMPLETION:
-      return 'project.status.not_ready_for_completion';
+      return 'not Ready For Completion';
     default:
       return 'unknown';
   }
