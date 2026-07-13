@@ -1,0 +1,10 @@
+export { default as TermModel } from './core/models/term.model';
+export { default as TermShowModel } from './core/models/term.show.model';
+export { default as AddTermParams } from './core/params/add.term.params';
+export { default as EditTermParams } from './core/params/edit.term.params';
+export { default as DeleteTermParams } from './core/params/delete.term.params';
+export { default as ShowTermParams } from './core/params/show.term.params';
+export { default as IndexTermParams } from './core/params/index.term.params';
+export { default as TermRepository } from './data/repositories/term.repository';
+export { default as TermController } from './presentation/controllers/term.controller';
+export { default as TermApiService } from './data/api/term.api-service';

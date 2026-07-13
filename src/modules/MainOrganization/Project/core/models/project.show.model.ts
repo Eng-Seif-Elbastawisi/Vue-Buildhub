@@ -66,6 +66,8 @@ export default class ProjectShowModel {
   public readonly convert_status?: ConvertStatus;
   public readonly status?: ConvertStatus;
 
+  public readonly terms?: string;
+
   constructor(data: {
     raw?: Record<string, unknown>;
     id?: number;
@@ -100,6 +102,8 @@ export default class ProjectShowModel {
 
     convert_status?: ConvertStatus;
     status?: ConvertStatus;
+
+    terms?: string;
   }) {
     this.raw = data.raw;
     this.id = data.id;
@@ -134,6 +138,8 @@ export default class ProjectShowModel {
 
     this.convert_status = data.convert_status;
     this.status = data.status;
+
+    this.terms = data.terms;
 
     Object.freeze(this);
   }
@@ -175,6 +181,35 @@ export default class ProjectShowModel {
     }
 
     return '';
+  }
+
+  static mapTerms(value: unknown): string {
+    if (!value) return '';
+
+    if (typeof value === 'string') {
+      return value;
+    }
+
+    if (Array.isArray(value)) {
+      return value
+        .map((item) => ProjectShowModel.mapTerms(item))
+        .filter(Boolean)
+        .join('\n');
+    }
+
+    if (typeof value === 'object') {
+      const data = value as Record<string, unknown>;
+
+      return (
+        ProjectShowModel.getPlainTitle(data.title) ||
+        (typeof data.name === 'string' ? data.name : '') ||
+        (typeof data.value === 'string' ? data.value : '') ||
+        (typeof data.description === 'string' ? data.description : '') ||
+        ''
+      );
+    }
+
+    return String(value);
   }
 
   static mapSelectItem(item: unknown): ProjectSelectItem | null {
@@ -309,6 +344,8 @@ export default class ProjectShowModel {
 
       convert_status: convertStatus,
       status: convertStatus,
+
+      terms: ProjectShowModel.mapTerms(json.terms),
     });
   }
 
@@ -345,6 +382,10 @@ export default class ProjectShowModel {
     },
 
     service_type: ServiceType.DESIGNONLY,
+
+    notes: 'Project notes',
+
+    terms: 'First payment after approval\nSecond payment after delivery',
 
     attachments: [],
 

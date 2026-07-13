@@ -25,6 +25,7 @@ export default class AddProjectParams implements Params {
   public preview_time?: string;
   public site_link?: string;
   public address?: string;
+  public terms?: number[];
 
   public static readonly validation = new ClassValidation().setRules({});
 
@@ -46,6 +47,7 @@ export default class AddProjectParams implements Params {
     preview_time?: string;
     site_link?: string;
     address?: string;
+    terms?: number[];
   }) {
     this.translations = data.translations;
     this.client_exist = data.client_exist;
@@ -64,6 +66,7 @@ export default class AddProjectParams implements Params {
     this.preview_time = data.preview_time;
     this.site_link = data.site_link;
     this.address = data.address;
+    this.terms = data.terms;
   }
 
   toMap(): Record<string, unknown> {
@@ -85,6 +88,7 @@ export default class AddProjectParams implements Params {
       preview_time: this.preview_time,
       site_link: this.site_link,
       address: this.address,
+      terms: this.terms,
     };
   }
 

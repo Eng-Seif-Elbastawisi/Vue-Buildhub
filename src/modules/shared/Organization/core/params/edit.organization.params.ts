@@ -9,6 +9,7 @@ export default class EditOrganizationParams implements Params {
   public employee_password?: string;
   public address?: string;
   public name?: string;
+  public logo?: string;
 
   public static readonly validation = new ClassValidation().setRules({
     organization_id: { required: true },
@@ -18,6 +19,7 @@ export default class EditOrganizationParams implements Params {
     employee_password: { required: false },
     address: { required: false },
     name: { required: false },
+    logo: { required: false },
   });
 
   constructor(data: {
@@ -28,6 +30,7 @@ export default class EditOrganizationParams implements Params {
     employee_password?: string;
     address?: string;
     name?: string;
+    logo?: string;
   }) {
     this.organization_id = data.organization_id;
     this.employee_name = data.employee_name;
@@ -36,6 +39,7 @@ export default class EditOrganizationParams implements Params {
     this.employee_password = data.employee_password;
     this.address = data.address;
     this.name = data.name;
+    this.logo = data.logo;
   }
 
   toMap(): { [p: string]: any } {
@@ -47,6 +51,7 @@ export default class EditOrganizationParams implements Params {
       employee_password: this.employee_password,
       address: this.address,
       name: this.name,
+      logo: this.logo,
     };
 
     return map;

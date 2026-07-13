@@ -6,6 +6,7 @@
   import type OrganizationShowModel from '../../core/models/organization.show.model';
   import AddOrganizationParams from '../../core/params/add.organization.params';
   import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
+  import HandleFilesUpload, { type UploadedFile } from '@/shared/FormInputs/HandleFilesUpload.vue';
 
   const emit = defineEmits<{
     updateData: [params: AddOrganizationParams];
@@ -27,7 +28,8 @@
   const employee_email = ref<string>('');
   const employee_phone = ref<string>('');
   const employee_password = ref<string>('');
-
+  const logo = ref<string>('');
+  const existingLogoFiles = ref<string[]>([]);
   onBeforeRouteLeave((to, from) => {
     const savedData = props.formKey ? formStore.getFormData(props.formKey) : null;
 
@@ -35,7 +37,6 @@
       formStore.showReturnWarning(props.formKey);
     }
   });
-
   const updateData = () => {
     emit(
       'updateData',
@@ -46,6 +47,8 @@
         employee_phone: employee_phone.value,
         employee_password: employee_password.value,
         address: address.value,
+
+        logo: logo.value || undefined,
       }),
     );
   };
@@ -57,16 +60,30 @@
     (organization) => {
       if (!organization) return;
 
+      const organizationData = organization as any;
+
       name.value = organization.name ?? '';
       employee_name.value = organization.default_employee.name ?? '';
       employee_email.value = organization.default_employee.employee_email ?? '';
       employee_phone.value = organization.default_employee.employee_phone ?? '';
-      // employee_password.value = organization.default_employee.employee_password ?? '';
       address.value = organization.address ?? '';
+
+      existingLogoFiles.value = organizationData.logo ? [organizationData.logo] : [];
+
+      logo.value = '';
+
       updateData();
     },
     { immediate: true },
   );
+  const updateLogo = (files: UploadedFile[]) => {
+    const firstFile = files[0];
+
+    logo.value =
+      firstFile?.base64 && firstFile.base64.startsWith('data:image/') ? firstFile.base64 : '';
+
+    updateData();
+  };
 </script>
 
 <template>
@@ -81,6 +98,18 @@
     </div>
 
     <div class="form-fields" :class="{ disabled: loading }">
+      <div class="field-group col-span-2">
+        <HandleFilesUpload
+          id="logo"
+          label="logo"
+          class-name="w-full"
+          accept="image/*"
+          :max-files="1"
+          :multiple="false"
+          :file="existingLogoFiles"
+          @change="updateLogo"
+        />
+      </div>
       <div class="field-group">
         <span class="field-help-label-row field-help-label-row--block">
           <label class="field-label" for="organization-name">{{ $t('Name') }}</label>
