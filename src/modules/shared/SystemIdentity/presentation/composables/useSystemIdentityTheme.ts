@@ -5,6 +5,7 @@ export interface SystemIdentityPalette {
   primary: string;
   secondary: string;
   accent: string;
+  logo?: string | null;
 }
 
 export interface SystemIdentitySetting {
@@ -13,6 +14,7 @@ export interface SystemIdentitySetting {
   secondary_color?: string | null;
   accent_color?: string | null;
   third_color?: string | null;
+  logo?: string | null;
 }
 
 interface ApplyPaletteOptions {
@@ -227,6 +229,7 @@ const applySettingTheme = (
       primary: setting.primary_color,
       secondary: setting.secondary_color,
       accent: setting.accent_color ?? setting.third_color ?? defaultPalette.accent,
+      logo: setting.logo,
     },
     options,
   );

@@ -12,9 +12,7 @@ import type OrganizationShowModel from '../../core/models/organization.show.mode
 import type ShowOrganizationParams from '../../core/params/show.organization.params';
 import type OrganizationModel from '../../core/models/organization.model';
 import OrganizationRepository from '../../data/repositories/organization.repository';
-import { useUserStore } from '@/stores/user';
 
-const { user } = useUserStore();
 export default class OrganizationController extends BaseController<
   OrganizationShowModel,
   OrganizationModel[]
@@ -55,7 +53,7 @@ export default class OrganizationController extends BaseController<
 
     if (result instanceof DataSuccess) {
       // router.push({ name: 'Organization' });
-      router.push(user?.isMaster ? '/admin/organization' : '/organization/organization');
+      router.push('/admin/organization');
       if (formKey) FormStore.clearFormData(formKey);
     }
 
@@ -69,7 +67,7 @@ export default class OrganizationController extends BaseController<
 
     if (result instanceof DataSuccess) {
       // router.push({ name: 'Organization' });
-      router.push(user?.isMaster ? '/admin/organization' : '/organization/organization');
+      router.push('/admin/organization');
       if (formKey) FormStore.clearFormData(formKey);
     }
 
