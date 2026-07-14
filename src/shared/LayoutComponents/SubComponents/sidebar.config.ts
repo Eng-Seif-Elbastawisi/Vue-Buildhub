@@ -8,34 +8,48 @@ import SidebarShieldIcon from '@/shared/icons/SidebarIcons/SidebarShieldIcon.vue
 
 export type SidebarRole = 'admin' | 'organization';
 
+export type SidebarCountValue = number | string;
+
+export interface SidebarProjectCounts {
+  total_count?: SidebarCountValue;
+  pending_count?: SidebarCountValue;
+  convert_to_project_count?: SidebarCountValue;
+  send_to_client_count?: SidebarCountValue;
+  revise_version_count?: SidebarCountValue;
+}
+
 export interface SidebarCountsPayload {
-  projects_count?: number | string;
-  project_previews_count?: number | string;
-  countries_count?: number | string;
-  governorates_count?: number | string;
-  cities_count?: number | string;
-  regions_count?: number | string;
-  places_count?: number | string;
-  departments_count?: number | string;
-  stages_count?: number | string;
-  project_types_count?: number | string;
-  supplies_count?: number | string;
-  materials_count?: number | string;
-  brands_count?: number | string;
-  spaces_count?: number | string;
-  measurement_units_count?: number | string;
-  client_sources_count?: number | string;
-  items_count?: number | string;
-  clients_count?: number | string;
-  employees_count?: number | string;
-  specializations_count?: number | string;
-  suppliers_count?: number | string;
-  invoices_count?: number | string;
-  invoice_payments_count?: number | string;
+  projects_count?: SidebarCountValue;
+  project_previews_count?: SidebarCountValue;
+  countries_count?: SidebarCountValue;
+  governorates_count?: SidebarCountValue;
+  cities_count?: SidebarCountValue;
+  regions_count?: SidebarCountValue;
+  places_count?: SidebarCountValue;
+  departments_count?: SidebarCountValue;
+  stages_count?: SidebarCountValue;
+  project_types_count?: SidebarCountValue;
+  supplies_count?: SidebarCountValue;
+  materials_count?: SidebarCountValue;
+  brands_count?: SidebarCountValue;
+  spaces_count?: SidebarCountValue;
+  measurement_units_count?: SidebarCountValue;
+  client_sources_count?: SidebarCountValue;
+  items_count?: SidebarCountValue;
+  clients_count?: SidebarCountValue;
+  employees_count?: SidebarCountValue;
+  specializations_count?: SidebarCountValue;
+  suppliers_count?: SidebarCountValue;
+  invoices_count?: SidebarCountValue;
+  invoice_payments_count?: SidebarCountValue;
+  term_count?: SidebarCountValue;
+
   organization?: {
     id: number;
     name: string;
   };
+
+  projects?: SidebarProjectCounts;
 }
 
 export interface SidebarCountsApiResponse {
@@ -44,7 +58,40 @@ export interface SidebarCountsApiResponse {
   data: SidebarCountsPayload;
 }
 
-export type SidebarCountKey = keyof SidebarCountsPayload;
+export type SidebarRootCountKey =
+  | 'projects_count'
+  | 'project_previews_count'
+  | 'countries_count'
+  | 'governorates_count'
+  | 'cities_count'
+  | 'regions_count'
+  | 'places_count'
+  | 'departments_count'
+  | 'stages_count'
+  | 'project_types_count'
+  | 'supplies_count'
+  | 'materials_count'
+  | 'brands_count'
+  | 'spaces_count'
+  | 'measurement_units_count'
+  | 'client_sources_count'
+  | 'items_count'
+  | 'clients_count'
+  | 'employees_count'
+  | 'specializations_count'
+  | 'suppliers_count'
+  | 'invoices_count'
+  | 'invoice_payments_count'
+  | 'term_count';
+
+export type SidebarProjectCountKey =
+  | 'projects.total_count'
+  | 'projects.pending_count'
+  | 'projects.convert_to_project_count'
+  | 'projects.send_to_client_count'
+  | 'projects.revise_version_count';
+
+export type SidebarCountKey = SidebarRootCountKey | SidebarProjectCountKey;
 
 export interface SidebarItemConfig {
   path: string;
@@ -63,40 +110,61 @@ export interface SidebarSectionConfig {
   items: SidebarItemConfig[];
 }
 
-const getSidebarCountText = (
-  count: SidebarCountsPayload[SidebarCountKey] | undefined,
-): string | undefined => {
+const getSidebarCountText = (count: unknown): string | undefined => {
   if (typeof count === 'number') {
-    return Number.isFinite(count) ? `${count}` : undefined;
+    return Number.isFinite(count) ? String(count) : undefined;
   }
 
   if (typeof count === 'string') {
-    return count.trim() !== '' ? count : undefined;
+    const normalizedCount = count.trim();
+
+    return normalizedCount !== '' ? normalizedCount : undefined;
   }
 
   return undefined;
 };
 
-const cloneSidebarSections = (sections: SidebarSectionConfig[]) => {
+const getNestedCount = (
+  counts: Partial<SidebarCountsPayload>,
+  countKey: SidebarCountKey,
+): unknown => {
+  return countKey.split('.').reduce<unknown>((currentValue, key) => {
+    if (currentValue === null || typeof currentValue !== 'object') {
+      return undefined;
+    }
+
+    return (currentValue as Record<string, unknown>)[key];
+  }, counts);
+};
+
+const cloneSidebarSections = (sections: SidebarSectionConfig[]): SidebarSectionConfig[] => {
   return sections.map((section) => ({
     ...section,
+
     items: section.items.map((item) => ({
       ...item,
     })),
   }));
 };
 
-export const getSidebarSections = () => {
+export const getSidebarSections = (): SidebarSectionConfig[] => {
   return cloneSidebarSections(sidebarSections);
 };
 
-export const getSidebarSectionsWithCounts = (counts: Partial<SidebarCountsPayload> = {}) => {
+export const getSidebarSectionsWithCounts = (
+  counts: Partial<SidebarCountsPayload> = {},
+): SidebarSectionConfig[] => {
   return getSidebarSections().map((section) => ({
     ...section,
-    items: section.items.map((item) => {
-      if (!item.countKey) return item;
 
-      const count = getSidebarCountText(counts[item.countKey]);
+    items: section.items.map((item) => {
+      if (!item.countKey) {
+        return item;
+      }
+
+      const rawCount = getNestedCount(counts, item.countKey);
+
+      const count = getSidebarCountText(rawCount);
 
       return {
         ...item,
@@ -111,119 +179,124 @@ export const sidebarSections: SidebarSectionConfig[] = [
     key: 'crm',
     labelKey: 'CRM',
     icon: SidebarUsersIcon,
+
     items: [
       {
-        path: '/project',
-        labelKey: 'Request',
+        path: '/project/add',
+        labelKey: 'add_request',
         icon: EducationClassificationIcon,
         roles: ['organization'],
+      },
+      {
+        path: '/project',
+        labelKey: 'requests',
+        icon: EducationClassificationIcon,
+        roles: ['organization'],
+        countKey: 'projects.pending_count',
       },
 
-      {
-        path: '/project/add',
-        labelKey: 'add request',
-        icon: EducationClassificationIcon,
-        roles: ['organization'],
-      },
       {
         path: '/client',
         labelKey: 'clients',
         icon: EducationClassificationIcon,
-        badge: '2',
         countKey: 'clients_count',
         roles: ['organization'],
       },
     ],
   },
+
   {
-    key: 'projects',
-    labelKey: 'Projects',
+    key: 'design',
+    labelKey: 'design',
     icon: SidebarShieldIcon,
+
     items: [
       {
         path: '/converted-projects',
-        labelKey: 'Project.list_title',
+        labelKey: 'design',
         icon: EducationClassificationIcon,
         roles: ['organization'],
+        countKey: 'projects.total_count',
       },
     ],
   },
+
   {
     key: 'finance',
     labelKey: 'Finance',
     icon: SidebarShieldIcon,
+
     items: [
       {
         path: '/invoice',
         labelKey: 'Invoice',
         icon: ArticleIcon,
-        badge: '1',
         countKey: 'invoices_count',
         roles: ['organization'],
       },
     ],
   },
+
   {
     key: 'setup',
-    labelKey: 'الإعدادات',
+    labelKey: 'Setting',
     icon: SidebarSlidersIcon,
+
     items: [
       {
         path: '/stages',
         labelKey: 'Stages',
         icon: EducationClassificationIcon,
-        badge: '1',
         countKey: 'stages_count',
       },
+
       {
         path: '/departments',
         labelKey: 'Departments',
         icon: EducationClassificationIcon,
-        badge: '1',
         countKey: 'departments_count',
       },
+
       {
         path: '/measurement',
         labelKey: 'Measurement',
         icon: EducationClassificationIcon,
-        badge: '1',
         countKey: 'measurement_units_count',
       },
+
       {
         path: '/item',
         labelKey: 'Items',
         icon: EducationClassificationIcon,
-        badge: '1',
         countKey: 'items_count',
       },
+
       {
         path: '/admin',
         labelKey: 'Admins',
         icon: EducationClassificationIcon,
         roles: ['admin'],
-        badge: '1',
       },
+
       {
         path: '/organization',
         labelKey: 'Organizations',
         icon: EducationClassificationIcon,
         roles: ['admin'],
-        badge: '1',
       },
 
       {
         path: '/client-source',
         labelKey: 'Client Source',
         icon: EducationClassificationIcon,
-        badge: '1',
         countKey: 'client_sources_count',
       },
+
       {
         path: '/specialization',
         labelKey: 'Specialization',
         icon: EducationClassificationIcon,
         roles: ['organization'],
-        badge: '1',
         countKey: 'specializations_count',
       },
 
@@ -232,71 +305,69 @@ export const sidebarSections: SidebarSectionConfig[] = [
         labelKey: 'Suppliers',
         icon: ArticleIcon,
         roles: ['organization'],
-        badge: '1',
         countKey: 'suppliers_count',
       },
+
       {
         path: '/brand',
         labelKey: 'Brand',
         icon: ArticleIcon,
-        badge: '1',
         countKey: 'brands_count',
       },
+
       {
         path: '/supply',
         labelKey: 'Supply',
-        icon: ArticleIcon,
-        badge: '1',
         countKey: 'supplies_count',
       },
+
       {
         path: '/projectType',
         labelKey: 'Project Types',
         icon: ArticleIcon,
-        badge: '1',
         countKey: 'project_types_count',
       },
+
       {
         path: '/location',
         labelKey: 'country',
         icon: ArticleIcon,
-        badge: '1',
         countKey: 'countries_count',
       },
+
       {
         path: '/location-governorate',
         labelKey: 'Governorate',
         icon: ArticleIcon,
-        badge: '1',
         countKey: 'governorates_count',
       },
+
       {
         path: '/location-city',
         labelKey: 'city',
         icon: ArticleIcon,
-        badge: '1',
         countKey: 'cities_count',
       },
+
       {
         path: '/employee',
         labelKey: 'Employee',
         icon: ArticleIcon,
         roles: ['organization'],
-        badge: '1',
         countKey: 'employees_count',
       },
+
       {
         path: '/material',
         labelKey: 'Material',
         icon: ArticleIcon,
-        badge: '1',
         countKey: 'materials_count',
       },
+
       {
         path: '/space',
         labelKey: 'Space',
         icon: ArticleIcon,
-        badge: '1',
         countKey: 'spaces_count',
       },
 
@@ -304,35 +375,37 @@ export const sidebarSections: SidebarSectionConfig[] = [
       //   path: '/invoice-payment',
       //   labelKey: 'Invoice Payment',
       //   icon: ArticleIcon,
-      //   badge: '1',
       //   countKey: 'invoice_payments_count',
       // },
+
       {
         path: '/term',
         labelKey: 'term',
         icon: ArticleIcon,
         roles: ['organization'],
+        countKey: 'term_count',
       },
     ],
   },
+
   {
     key: 'suppliers',
     labelKey: 'Suppliers',
     icon: SidebarShieldIcon,
+
     items: [
       {
         path: '/system-identity',
         labelKey: 'system_identity.title',
         icon: EducationClassificationIcon,
         roles: ['organization', 'admin'],
-        badge: '1',
       },
+
       {
         path: '/organization-toggle',
         labelKey: 'Organization',
         icon: EducationClassificationIcon,
         roles: ['organization'],
-        badge: '1',
       },
     ],
   },

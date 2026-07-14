@@ -20,8 +20,7 @@ class HeaderHandler {
     const userStore = this.userStore;
     const CountryStore = useCountryStore();
 
-    const token: string | undefined =
-      userStore?.user?.apiToken 
+    const token: string | undefined = userStore?.user?.apiToken;
     if (userStore?.user !== null) {
       if (isAuth) {
         headers['Authorization'] = 'Bearer ' + token;
@@ -30,7 +29,7 @@ class HeaderHandler {
       }
     }
 
-    const savedLocale = localStorage.getItem('lang') || 'en';
+    const savedLocale = localStorage.getItem('locale') || 'en';
     // console.log(savedLocale , 'savedLocale')
     if (savedLocale) {
       headers['Accept-Language'] = savedLocale;

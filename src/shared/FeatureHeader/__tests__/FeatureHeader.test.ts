@@ -13,9 +13,9 @@ vi.mock('vue-router', () => ({
   }),
 }));
 
-vi.mock('../LayoutComponents/SubComponents/RouteHelper', () => ({
+vi.mock('../../LayoutComponents/SubComponents/RouteHelper', () => ({
   buildBreadcrumb: vi.fn().mockReturnValue([
-    { label: 'Home', url: '/' },
+    { labelKey: 'home', url: '/' },
     { label: 'Feature', url: '/feature' },
   ]),
 }));
@@ -23,6 +23,9 @@ vi.mock('../LayoutComponents/SubComponents/RouteHelper', () => ({
 const globalConfig = {
   stubs: {
     Breadcrumb: true,
+  },
+  mocks: {
+    $t: (key: string) => (key === 'home' ? 'Home' : key),
   },
 };
 
@@ -41,6 +44,6 @@ describe('FeatureHeader.vue', () => {
     const wrapper = mount(FeatureHeader, { global: globalConfig });
     const title = wrapper.find('.title');
     expect(title.exists()).toBe(true);
-    expect(title.text()).toContain('home');
+    expect(title.text()).toContain('Feature');
   });
 });

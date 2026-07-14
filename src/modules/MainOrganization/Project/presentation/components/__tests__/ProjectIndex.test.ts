@@ -72,7 +72,7 @@ describe('ProjectIndex', () => {
     expect(fetchList.mock.calls[0][0].toMap()).toMatchObject({
       status: [ConvertStatus.PENDING],
     });
-    expect(wrapper.text()).toContain('Projects');
+    expect(wrapper.text()).toContain('Requests');
     expect(wrapper.text()).toContain('Add Project');
     expect(wrapper.find('button.action-btn.delete').attributes('title')).toBe('Delete');
   });

@@ -15,14 +15,14 @@ describe('buildBreadcrumb', () => {
     const route = makeRoute({ country_code: 'eg' }, []);
     const router = makeRouter([]);
     const crumbs = buildBreadcrumb(route, router);
-    expect(crumbs[0]).toEqual({ label: 'home', url: '/' });
+    expect(crumbs[0]).toEqual({ labelKey: 'home', url: '/' });
   });
 
   it('should use "/" as the Home url when no country_code param exists', () => {
     const route = makeRoute({}, []);
     const router = makeRouter([]);
     const crumbs = buildBreadcrumb(route, router);
-    expect(crumbs[0]).toEqual({ label: 'home', url: '/' });
+    expect(crumbs[0]).toEqual({ labelKey: 'home', url: '/' });
   });
 
   it('should add breadcrumb entries for matched routes that have meta.breadcrumb', () => {
@@ -36,7 +36,7 @@ describe('buildBreadcrumb', () => {
     const crumbs = buildBreadcrumb(route, router);
 
     expect(crumbs).toHaveLength(2);
-    // expect(crumbs[1].label).toBe('Employees');
+    expect(crumbs[1]?.labelKey).toBe('Employees');
   });
 
   it('should skip matched routes without meta.breadcrumb', () => {
@@ -64,7 +64,7 @@ describe('buildBreadcrumb', () => {
     const router = makeRouter([matchedRoute]);
     const crumbs = buildBreadcrumb(route, router);
 
-    const dashboardCrumbs = crumbs.filter((c) => c.label === 'Dashboard');
+    const dashboardCrumbs = crumbs.filter((c) => c.labelKey === 'Dashboard');
     expect(dashboardCrumbs).toHaveLength(1);
   });
 
@@ -83,9 +83,23 @@ describe('buildBreadcrumb', () => {
     const router = makeRouter([parentRoute, childRoute]);
     const crumbs = buildBreadcrumb(route, router);
 
-    const labels = crumbs.map((c) => c.label);
+    const labels = crumbs.map((c) => c.labelKey);
     expect(labels).toContain('Admin');
     expect(labels).toContain('Users');
     expect(labels.indexOf('Admin')).toBeLessThan(labels.indexOf('Users'));
+  });
+
+  it('preserves dynamic breadcrumb labels without treating them as translation keys', () => {
+    const matchedRoute = {
+      name: 'ProjectDetails',
+      meta: { breadcrumb: { label: 'BuildHub Tower' } },
+      path: '/projects/:projectId',
+    };
+    const route = makeRoute({ projectId: '42' }, [matchedRoute]);
+
+    const crumbs = buildBreadcrumb(route, makeRouter([matchedRoute]));
+
+    expect(crumbs[1]).toMatchObject({ label: 'BuildHub Tower' });
+    expect(crumbs[1]?.labelKey).toBeUndefined();
   });
 });

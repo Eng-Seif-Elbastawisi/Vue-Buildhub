@@ -45,13 +45,13 @@ describe('sidebarSections', () => {
 
     expect(items.find((item) => item.path === '/project')).toEqual(
       expect.objectContaining({
-        labelKey: 'Request',
+        labelKey: 'requests',
         roles: ['organization'],
       }),
     );
     expect(items.find((item) => item.path === '/converted-projects')).toEqual(
       expect.objectContaining({
-        labelKey: 'Project.list_title',
+        labelKey: 'design',
         roles: ['organization'],
       }),
     );
