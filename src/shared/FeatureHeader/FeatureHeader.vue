@@ -1,24 +1,24 @@
 <script setup lang="ts">
   import Breadcrumb from 'primevue/breadcrumb';
-  import { computed, watch } from 'vue';
+  import { computed } from 'vue';
+  import { useI18n } from 'vue-i18n';
   import { useRoute, useRouter } from 'vue-router';
-  import { buildBreadcrumb } from '../LayoutComponents/SubComponents/RouteHelper';
+  import {
+    buildBreadcrumb,
+    type BreadcrumbItem,
+  } from '../LayoutComponents/SubComponents/RouteHelper';
   import FeatureHeader from '@/assets/images/FeatureHeader.jpg';
   const route = useRoute();
   const router = useRouter();
+  const { t, locale } = useI18n();
 
   const items = computed(() => {
-    const breadcrumb = buildBreadcrumb(route, router);
-    return breadcrumb;
+    void locale.value;
+    return buildBreadcrumb(route, router);
   });
 
-  watch(
-    () => route,
-    () => {
-      buildBreadcrumb(route, router);
-    },
-    { immediate: true, deep: true },
-  );
+  const getLabel = (item?: BreadcrumbItem) =>
+    item?.labelKey ? t(item.labelKey) : (item?.label ?? '');
 </script>
 
 <template>
@@ -26,12 +26,12 @@
     <img class="header-img" :src="FeatureHeader" :alt="$t('feature_header_image_alt')" />
     <div class="content">
       <p class="title">
-        {{ items[items.length - 1]?.label }}
+        {{ getLabel(items[items.length - 1]) }}
       </p>
       <div class="breadcrump">
         <Breadcrumb :model="items">
           <template #item="{ item }">
-            <span @click="$router.push(item.url!)">{{ item.label }}</span>
+            <span @click="$router.push(item.url!)">{{ getLabel(item) }}</span>
           </template>
           <template #separator> / </template>
         </Breadcrumb>

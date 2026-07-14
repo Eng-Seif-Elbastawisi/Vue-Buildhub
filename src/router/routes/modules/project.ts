@@ -6,7 +6,7 @@ export const ProjectRoutes: RouteRecordRaw[] = [
     name: 'project',
     component: () => import('@/views/MainOrganization/Project/IndexProject.vue'),
     meta: {
-      breadcrumb: 'project',
+      breadcrumb: 'requests',
     },
   },
   {

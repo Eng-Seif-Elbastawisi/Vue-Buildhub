@@ -1,12 +1,13 @@
 import type { RouteLocationMatched } from 'vue-router';
 
-type BreadCrumbItem = {
-  label: string;
+export interface BreadcrumbItem {
+  label?: string;
+  labelKey?: string;
   url?: string;
-};
+}
 
-export const buildBreadcrumb = (route: any, router: any): BreadCrumbItem[] => {
-  const result: BreadCrumbItem[] = [];
+export const buildBreadcrumb = (route: any, router: any): BreadcrumbItem[] => {
+  const result: BreadcrumbItem[] = [];
 
   const getUrlWithParams = (_r: RouteLocationMatched, route: any) => {
     const Params = Object.values(route.params)[0];
@@ -14,7 +15,7 @@ export const buildBreadcrumb = (route: any, router: any): BreadCrumbItem[] => {
   };
 
   result.push({
-    label: 'home',
+    labelKey: 'home',
     url: '/',
   });
 
@@ -29,8 +30,12 @@ export const buildBreadcrumb = (route: any, router: any): BreadCrumbItem[] => {
       if (parentRoute) addRoute(parentRoute as any);
     }
 
+    const breadcrumb = r.meta.breadcrumb;
+    const breadcrumbLabel =
+      typeof breadcrumb === 'string' ? { labelKey: breadcrumb } : (breadcrumb as BreadcrumbItem);
+
     result.push({
-      label: (r.meta.breadcrumb || r.name) as string,
+      ...breadcrumbLabel,
       url: r.path.replace(/\/:[^/]+(\?)?/g, `/${String(getUrlWithParams(r, route))}`),
     });
 

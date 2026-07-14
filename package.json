@@ -35,13 +35,6 @@
     ]
   },
   "dependencies": {
-    "pinia": "^3.0.4",
-    "vue": "^3.5.32",
-    "vue-router": "^5.0.4",
-    "vue-i18n": "^11.2.8",
-    "xlsx": "^0.18.5",
-    "primevue": "^4.5.4",
-    "primeicons": "^7.0.0",
     "@primeuix/themes": "^2.0.2",
     "axios": "^1.13.2",
     "cropperjs": "^2.1.1",
@@ -49,7 +42,14 @@
     "html2canvas": "^1.4.1",
     "jspdf": "^4.2.1",
     "jspdf-autotable": "^5.0.7",
-    "pinia-plugin-persistedstate": "^4.7.1"
+    "pinia": "^3.0.4",
+    "pinia-plugin-persistedstate": "^4.7.1",
+    "primeicons": "^7.0.0",
+    "primevue": "^4.5.4",
+    "vue": "^3.5.32",
+    "vue-i18n": "^11.2.8",
+    "vue-router": "^5.0.4",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@commitlint/cli": "^20.5.0",
@@ -63,6 +63,7 @@
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",
     "@vitejs/plugin-vue": "^6.0.1",
+    "@vitest/coverage-v8": "^4.1.10",
     "@vue/test-utils": "^2.4.6",
     "@vue/tsconfig": "^0.8.1",
     "eslint": "^8.57.1",
