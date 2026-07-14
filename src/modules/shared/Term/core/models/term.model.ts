@@ -9,7 +9,7 @@ export default class TermModel {
   constructor(data: {
     id?: number;
     title?: string;
-    translations?: { title: Record<string, string> };
+    translations?: { title: Record<string, string>; description: Record<string, string> };
     department?: TitleInterface<number>;
   }) {
     this.id = data.id;
@@ -27,7 +27,7 @@ export default class TermModel {
     const data = json as {
       id?: number;
       title?: string;
-      translations?: { title?: Record<string, string> };
+      translations?: { title?: Record<string, string>; description?: Record<string, string> };
       department?: { id?: number; title?: string };
       department_id?: number;
       department_title?: string;
@@ -36,7 +36,10 @@ export default class TermModel {
     return new TermModel({
       id: data.id,
       title: data.title,
-      translations: { title: data.translations?.title ?? { en: data.title ?? '' } },
+      translations: {
+        title: data.translations?.title ?? { en: data.title ?? '' },
+        description: data.translations?.description ?? { en: data.description ?? '' },
+      },
       department: new TitleInterface({
         id: data.department?.id ?? data.department_id ?? 0,
         title: data.department?.title ?? data.department_title ?? '',
@@ -47,7 +50,10 @@ export default class TermModel {
   static example(): TermModel {
     return new TermModel({
       id: 1,
-      translations: { title: { en: 'First Term', ar: 'الفصل الأول' } },
+      translations: {
+        title: { en: 'First Term', ar: 'الفصل الأول' },
+        description: { en: 'First Term Description', ar: 'وصف الفصل الأول' },
+      },
       department: new TitleInterface({
         id: 1,
         title: 'Engineering',

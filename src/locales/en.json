@@ -1382,6 +1382,9 @@
   "Project.steps.project_floors_description": "Project floors",
   "Project.steps.project_department": "Project Departments",
   "Project.steps.project_department_description": "Project departments",
+  "Project.steps.project_items_description": "Project items",
+  "Project.validation.cant_send_empty_data": "Cannot submit empty project data",
+  "Project.validation.title_required": "Project title is required",
   "upload_files": "Upload files",
   "validation.required": "{field} is required",
   "validation.select_required": "Selection is required",
@@ -1620,5 +1623,10 @@
   "location-city": "Location city",
   "location-governorate": "Location governorate",
   "term": "Terms",
-  "Show terms": "Show terms"
+  "Show terms": "Show terms",
+  "types.design": "Design",
+  "types.supervision": "Supervision",
+  "types.both": "Both",
+  "types": "Types",
+  "Enter types": "Enter types"
 }
