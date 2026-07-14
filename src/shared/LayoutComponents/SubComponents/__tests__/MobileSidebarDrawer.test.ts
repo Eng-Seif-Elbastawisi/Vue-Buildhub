@@ -36,10 +36,15 @@ describe('MobileSidebarDrawer', () => {
       },
     });
 
-    expect(wrapper.text()).toContain('CRM');
-    expect(wrapper.text()).toContain('Stages');
+    expect(wrapper.text()).toContain('sidebar.crm');
+    expect(wrapper.text()).toContain('sidebar.stages');
     expect(wrapper.findAll('.drawer-section').length).toBeGreaterThan(1);
     expect(wrapper.find('.drawer-section-header').exists()).toBe(true);
+    expect(wrapper.find('.drawer-subgroup').exists()).toBe(true);
+    expect(wrapper.find('.drawer-item.is-disabled').exists()).toBe(true);
+    expect(
+      wrapper.findAll('a').every((link) => !link.attributes('href')?.includes('undefined')),
+    ).toBe(true);
   });
 
   it('closes when the backdrop is clicked', async () => {

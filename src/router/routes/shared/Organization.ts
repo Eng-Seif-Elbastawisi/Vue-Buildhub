@@ -29,7 +29,7 @@ export const organizationRoutes: RouteRecordRaw[] = [
     },
   },
   {
-    path: 'organization-toggle',
+    path: 'organization-toggle', 
     name: 'Organization Toggle',
     component: () => import('@/views/MainOrganization/Organization/OrganizationToggle.vue'),
     meta: {

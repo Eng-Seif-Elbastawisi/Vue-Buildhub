@@ -47,10 +47,10 @@ describe('SidebarNavigation.vue', () => {
   it('renders menu groups and items', () => {
     const wrapper = mount(SidebarNavigation, mountOptions);
 
-    expect(wrapper.text()).toContain('Setting');
-    expect(wrapper.text()).toContain('Stages');
-    expect(wrapper.text()).toContain('Departments');
-    expect(wrapper.text()).toContain('Client Source');
+    expect(wrapper.text()).toContain('sidebar.sys_config');
+    expect(wrapper.text()).toContain('sidebar.construction_config');
+    expect(wrapper.text()).toContain('sidebar.stages');
+    expect(wrapper.text()).toContain('sidebar.client_source');
   });
 
   it('applies active class based on current route', () => {
@@ -58,7 +58,7 @@ describe('SidebarNavigation.vue', () => {
 
     const activeLink = wrapper.find('a.active');
     expect(activeLink.exists()).toBe(true);
-    expect(activeLink.text()).toContain('Stages');
+    expect(activeLink.text()).toContain('sidebar.stages');
   });
 
   it('emits clickItem event when a menu item is clicked', async () => {

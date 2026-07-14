@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { computed, onMounted, ref } from 'vue';
+  import { computed, ref, watch } from 'vue';
   import { useI18n } from 'vue-i18n';
   import { useRoute, useRouter } from 'vue-router';
   import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
@@ -13,6 +13,12 @@
   import DeleteInvoiceParams from '../../core/params/delete.invoice.params';
   import IndexInvoiceParams from '../../core/params/index.invoice.params';
   import type InvoiceModel from '../../core/models/invoice.model';
+  import {
+    InvoiceStatusClassNames,
+    InvoiceStatusEnum,
+    InvoiceStatusLabelKeys,
+    normalizeInvoiceStatus,
+  } from '../../core/constant/invoice.status.enum';
   import InvoiceController from '../controllers/invoice.controller';
 
   const controller = InvoiceController.getInstance();
@@ -25,10 +31,11 @@
   const word = ref('');
 
   const headers: TableHeader[] = [
-    { key: 'invoice_number', label: 'invoice.invoice_number', width: '22%', sortable: true },
-    { key: 'project', label: 'invoice.project', width: '24%' },
-    { key: 'invoice_date', label: 'invoice.invoice_date', width: '18%', sortable: true },
-    { key: 'invoice_amount', label: 'invoice.invoice_amount', width: '18%', sortable: true },
+    { key: 'invoice_number', label: 'invoice.invoice_number', width: '18%', sortable: true },
+    { key: 'project', label: 'invoice.project', width: '20%' },
+    { key: 'invoice_date', label: 'invoice.invoice_date', width: '15%', sortable: true },
+    { key: 'invoice_amount', label: 'invoice.invoice_amount', width: '15%', sortable: true },
+    { key: 'status', label: 'invoice_show.status', width: '14%' },
     { key: 'notes', label: 'invoice.notes', width: '18%' },
   ];
 
@@ -36,6 +43,22 @@
   const showBasePath = computed(() =>
     user?.type === 1 ? '/admin/invoices' : '/organization/invoices',
   );
+  const routeStatus = computed(() => {
+    const status = Array.isArray(route.query.status) ? route.query.status[0] : route.query.status;
+
+    return normalizeInvoiceStatus(status);
+  });
+  const currentPage = computed(() => {
+    const page = Number(route.query.page ?? 1);
+
+    return Number.isFinite(page) && page > 0 ? page : 1;
+  });
+  const titleKey = computed(() => {
+    if (routeStatus.value === InvoiceStatusEnum.PAID) return 'sidebar.paid_invoices';
+    if (routeStatus.value === InvoiceStatusEnum.UNPAID) return 'sidebar.unpaid_invoices';
+
+    return 'invoice.index.title';
+  });
 
   const projectTitleFor = (invoice: InvoiceModel) => {
     return invoice.project?.title || invoice.project?.name || invoice.project_id || '-';
@@ -45,14 +68,21 @@
     return Number(amount ?? 0).toLocaleString();
   };
 
+  const statusLabelFor = (invoice: InvoiceModel) => {
+    const status = normalizeInvoiceStatus(invoice.status);
+
+    return status ? t(InvoiceStatusLabelKeys[status]) : '-';
+  };
+
+  const statusClassFor = (invoice: InvoiceModel) => {
+    const status = normalizeInvoiceStatus(invoice.status);
+
+    return status ? InvoiceStatusClassNames[status] : 'is-unknown';
+  };
+
   const fetchInvoices = async (page: number = 1, searchWord: string = '') => {
     await controller.fetchList(
-      new IndexInvoiceParams(
-        searchWord,
-        route.query.page ? Number(route.query.page) : page,
-        perPage.value,
-        1,
-      ),
+      new IndexInvoiceParams(searchWord, page, perPage.value, 1, null, routeStatus.value),
     );
   };
 
@@ -60,16 +90,13 @@
     void router.push({
       query: {
         ...route.query,
-        page: Number(route.query.page ?? 1),
+        page: '1',
         word: word.value || undefined,
       },
     });
-
-    void fetchInvoices(1, word.value);
   });
 
   const onPageChange = (page: number) => {
-    void fetchInvoices(page);
     void router.push({
       query: { ...route.query, page: String(page), word: word.value || undefined },
     });
@@ -85,17 +112,25 @@
     await fetchInvoices();
   };
 
-  onMounted(async () => {
+  const syncWordFromRoute = () => {
     word.value = route.query.word ? String(route.query.word) : '';
-    await fetchInvoices(route.query.page ? Number(route.query.page) : 1, word.value);
-  });
+  };
+
+  watch(
+    () => [route.query.status, route.query.page, route.query.word],
+    () => {
+      syncWordFromRoute();
+      void fetchInvoices(currentPage.value, word.value);
+    },
+    { immediate: true },
+  );
 </script>
 
 <template>
   <div class="invoice-page">
     <div class="invoice-header">
       <div>
-        <h4>{{ $t('invoice.index.title') }}</h4>
+        <h4>{{ $t(titleKey) }}</h4>
         <p>{{ $t('invoice.index.description') }}</p>
       </div>
     </div>
@@ -137,6 +172,12 @@
 
           <template #cell-invoice_amount="{ item }">
             {{ formatAmount(item.invoice_amount) }}
+          </template>
+
+          <template #cell-status="{ item }">
+            <span class="invoice-status-badge" :class="statusClassFor(item)">
+              {{ statusLabelFor(item) }}
+            </span>
           </template>
 
           <template #actions="{ item }">
