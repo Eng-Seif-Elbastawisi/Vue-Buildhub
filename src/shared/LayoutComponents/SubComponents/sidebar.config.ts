@@ -1,24 +1,37 @@
 import type { Component } from 'vue';
 
 import {
-  SidebarAdminIcon,
   SidebarAddRequestIcon,
   SidebarBrandTagIcon,
+  SidebarCanceledIcon,
   SidebarCityIcon,
   SidebarClientIcon,
   SidebarClientSourceIcon,
+  SidebarCollectionIcon,
+  SidebarConstructionConfigIcon,
   SidebarCountryIcon,
+  SidebarDesignConfigIcon,
+  SidebarDesignOffersIcon,
+  SidebarDesignProjectsIcon,
   SidebarDepartmentIcon,
-  SidebarEmployeeIcon,
   SidebarFinanceIcon,
+  SidebarFullPackageIcon,
+  SidebarGeneralSettingIcon,
   SidebarGovernorateIcon,
+  SidebarHoldIcon,
+  SidebarInProgressIcon,
   SidebarInvoiceIcon,
   SidebarItemIcon,
+  SidebarLocationsSetupIcon,
   SidebarMaterialIcon,
   SidebarMeasurementIcon,
-  SidebarOrganizationIcon,
+  SidebarOfferIcon,
+  SidebarPaidInvoiceIcon,
+  SidebarPlanIcon,
+  SidebarProductivityIcon,
   SidebarProjectIcon,
   SidebarProjectTypeIcon,
+  SidebarReportIcon,
   SidebarRequestIcon,
   SidebarSettingsPrimeIcon,
   SidebarSpaceIcon,
@@ -26,9 +39,12 @@ import {
   SidebarStageIcon,
   SidebarSupplierIcon,
   SidebarSupplyIcon,
+  SidebarSysColorsIcon,
+  SidebarSysDataIcon,
   SidebarSystemIcon,
   SidebarTermIcon,
-  SidebarToggleIcon,
+  SidebarUnpaidInvoiceIcon,
+  SidebarUpcomingPaymentIcon,
 } from '@/shared/icons/SidebarIcons/sidebarPrimeIcons';
 
 export type SidebarRole = 'admin' | 'organization';
@@ -119,13 +135,15 @@ export type SidebarProjectCountKey =
 export type SidebarCountKey = SidebarRootCountKey | SidebarProjectCountKey;
 
 export interface SidebarItemConfig {
-  path: string;
+  type?: 'item' | 'group';
+  path?: string;
   labelKey: string;
   icon?: Component;
   badge?: string;
   hasArrow?: boolean;
   roles?: SidebarRole[];
   countKey?: SidebarCountKey;
+  disabled?: boolean;
 }
 
 export interface SidebarSectionConfig {
@@ -202,19 +220,19 @@ export const getSidebarSectionsWithCounts = (
 export const sidebarSections: SidebarSectionConfig[] = [
   {
     key: 'crm',
-    labelKey: 'CRM',
+    labelKey: 'sidebar.crm',
     icon: SidebarRequestIcon,
 
     items: [
       {
         path: '/project/add',
-        labelKey: 'Add request',
+        labelKey: 'sidebar.add_request',
         icon: SidebarAddRequestIcon,
         roles: ['organization'],
       },
       {
         path: '/project',
-        labelKey: 'requests',
+        labelKey: 'sidebar.requests',
         icon: SidebarRequestIcon,
         roles: ['organization'],
         countKey: 'projects.pending_count',
@@ -222,7 +240,7 @@ export const sidebarSections: SidebarSectionConfig[] = [
 
       {
         path: '/client',
-        labelKey: 'clients',
+        labelKey: 'sidebar.clients',
         icon: SidebarClientIcon,
         countKey: 'clients_count',
         roles: ['organization'],
@@ -230,31 +248,102 @@ export const sidebarSections: SidebarSectionConfig[] = [
     ],
   },
 
+  // {
+  //   key: 'design-offers',
+  //   labelKey: 'sidebar.design_offers',
+  //   icon: SidebarDesignOffersIcon,
+
+  //   items: [
+  //     {
+  //       path: '/project-pricing',
+  //       labelKey: 'sidebar.offers',
+  //       icon: SidebarOfferIcon,
+  //       roles: ['organization'],
+  //     },
+
+  //     {
+  //       labelKey: 'sidebar.hold',
+  //       icon: SidebarHoldIcon,
+  //       roles: ['organization'],
+  //       disabled: true,
+  //     },
+
+  //     {
+  //       labelKey: 'sidebar.canceled',
+  //       icon: SidebarCanceledIcon,
+  //       roles: ['organization'],
+  //       disabled: true,
+  //     },
+  //   ],
+  // },
+
   {
-    key: 'design',
-    labelKey: 'design',
-    icon: SidebarProjectIcon,
+    key: 'design-projects',
+    labelKey: 'sidebar.design_projects',
+    icon: SidebarDesignProjectsIcon,
 
     items: [
       {
         path: '/converted-projects',
-        labelKey: 'design',
+        labelKey: 'sidebar.project',
         icon: SidebarProjectIcon,
         roles: ['organization'],
         countKey: 'projects.total_count',
+      },
+
+      {
+        labelKey: 'sidebar.plan',
+        icon: SidebarPlanIcon,
+        roles: ['organization'],
+        disabled: true,
+      },
+
+      {
+        labelKey: 'sidebar.in_progress',
+        icon: SidebarInProgressIcon,
+        roles: ['organization'],
+        disabled: true,
+      },
+
+      {
+        labelKey: 'sidebar.full_packages',
+        icon: SidebarFullPackageIcon,
+        roles: ['organization'],
+        disabled: true,
       },
     ],
   },
 
   {
-    key: 'finance',
-    labelKey: 'Finance',
+    key: 'accounting',
+    labelKey: 'sidebar.accounting',
     icon: SidebarFinanceIcon,
 
     items: [
       {
+        path: '/invoice/add',
+        labelKey: 'sidebar.new_invoices',
+        icon: SidebarInvoiceIcon,
+        roles: ['organization'],
+      },
+
+      {
+        labelKey: 'sidebar.paid_invoices',
+        icon: SidebarPaidInvoiceIcon,
+        roles: ['organization'],
+        disabled: true,
+      },
+
+      {
+        labelKey: 'sidebar.unpaid_invoices',
+        icon: SidebarUnpaidInvoiceIcon,
+        roles: ['organization'],
+        disabled: true,
+      },
+
+      {
         path: '/invoice',
-        labelKey: 'Invoice',
+        labelKey: 'sidebar.all_invoices',
         icon: SidebarInvoiceIcon,
         countKey: 'invoices_count',
         roles: ['organization'],
@@ -263,63 +352,172 @@ export const sidebarSections: SidebarSectionConfig[] = [
   },
 
   {
-    key: 'setup',
-    labelKey: 'Setting',
+    key: 'reports',
+    labelKey: 'sidebar.reports',
+    icon: SidebarReportIcon,
+
+    items: [
+      {
+        labelKey: 'sidebar.requests',
+        icon: SidebarRequestIcon,
+        roles: ['organization'],
+        disabled: true,
+      },
+
+      {
+        labelKey: 'sidebar.offers',
+        icon: SidebarOfferIcon,
+        roles: ['organization'],
+        disabled: true,
+      },
+
+      {
+        labelKey: 'sidebar.collection',
+        icon: SidebarCollectionIcon,
+        roles: ['organization'],
+        disabled: true,
+      },
+
+      {
+        labelKey: 'sidebar.upcoming_payment',
+        icon: SidebarUpcomingPaymentIcon,
+        roles: ['organization'],
+        disabled: true,
+      },
+
+      {
+        labelKey: 'sidebar.productivity',
+        icon: SidebarProductivityIcon,
+        roles: ['organization'],
+        disabled: true,
+      },
+    ],
+  },
+
+  {
+    key: 'sys-config',
+    labelKey: 'sidebar.sys_config',
     icon: SidebarSettingsPrimeIcon,
 
     items: [
       {
+        type: 'group',
+        labelKey: 'sidebar.general_setting',
+        icon: SidebarGeneralSettingIcon,
+      },
+
+      {
+        path: '/client-source',
+        labelKey: 'sidebar.client_source',
+        icon: SidebarClientSourceIcon,
+        countKey: 'client_sources_count',
+      },
+
+      {
+        path: '/terms',
+        labelKey: 'sidebar.terms',
+        icon: SidebarTermIcon,
+        countKey: 'term_count',
+      },
+
+      {
+        path: '/projectType',
+        labelKey: 'sidebar.project_types',
+        icon: SidebarProjectTypeIcon,
+        countKey: 'project_types_count',
+      },
+
+      {
+        path: '/space',
+        labelKey: 'sidebar.spaces',
+        icon: SidebarSpaceIcon,
+        countKey: 'spaces_count',
+      },
+
+      {
+        type: 'group',
+        labelKey: 'sidebar.locations_setup',
+        icon: SidebarLocationsSetupIcon,
+      },
+
+      {
+        path: '/location',
+        labelKey: 'sidebar.country',
+        icon: SidebarCountryIcon,
+        countKey: 'countries_count',
+      },
+
+      {
+        path: '/location-governorate',
+        labelKey: 'sidebar.governorate',
+        icon: SidebarGovernorateIcon,
+        countKey: 'governorates_count',
+      },
+
+      {
+        path: '/location-city',
+        labelKey: 'sidebar.city',
+        icon: SidebarCityIcon,
+        countKey: 'cities_count',
+      },
+
+      {
+        type: 'group',
+        labelKey: 'sidebar.design_config',
+        icon: SidebarDesignConfigIcon,
+      },
+
+      {
+        path: '/departments',
+        labelKey: 'sidebar.departments',
+        icon: SidebarDepartmentIcon,
+        countKey: 'departments_count',
+      },
+
+      {
+        path: '/item',
+        labelKey: 'sidebar.items',
+        icon: SidebarItemIcon,
+        countKey: 'items_count',
+      },
+
+      {
+        type: 'group',
+        labelKey: 'sidebar.construction_config',
+        icon: SidebarConstructionConfigIcon,
+      },
+
+      {
         path: '/stages',
-        labelKey: 'Stages',
+        labelKey: 'sidebar.stages',
         icon: SidebarStageIcon,
         countKey: 'stages_count',
       },
 
       {
         path: '/departments',
-        labelKey: 'Departments',
+        labelKey: 'sidebar.departments',
         icon: SidebarDepartmentIcon,
         countKey: 'departments_count',
       },
 
       {
-        path: '/measurement',
-        labelKey: 'Measurement',
-        icon: SidebarMeasurementIcon,
-        countKey: 'measurement_units_count',
-      },
-
-      {
         path: '/item',
-        labelKey: 'Items',
+        labelKey: 'sidebar.items',
         icon: SidebarItemIcon,
         countKey: 'items_count',
       },
 
       {
-        path: '/admin',
-        labelKey: 'Admins',
-        icon: SidebarAdminIcon,
-        roles: ['admin'],
-      },
-
-      {
-        path: '/organization',
-        labelKey: 'Organizations',
-        icon: SidebarOrganizationIcon,
-        roles: ['admin'],
-      },
-
-      {
-        path: '/client-source',
-        labelKey: 'Client Source',
-        icon: SidebarClientSourceIcon,
-        countKey: 'client_sources_count',
+        path: '/measurement',
+        labelKey: 'sidebar.measurements',
+        icon: SidebarMeasurementIcon,
+        countKey: 'measurement_units_count',
       },
 
       {
         path: '/specialization',
-        labelKey: 'Specialization',
+        labelKey: 'sidebar.specialization',
         icon: SidebarSpecializationIcon,
         roles: ['organization'],
         countKey: 'specializations_count',
@@ -327,111 +525,53 @@ export const sidebarSections: SidebarSectionConfig[] = [
 
       {
         path: '/suppliers',
-        labelKey: 'Suppliers',
+        labelKey: 'sidebar.suppliers',
         icon: SidebarSupplierIcon,
         roles: ['organization'],
         countKey: 'suppliers_count',
       },
 
       {
+        path: '/material',
+        labelKey: 'sidebar.materials',
+        icon: SidebarMaterialIcon,
+        countKey: 'materials_count',
+      },
+
+      {
         path: '/brand',
-        labelKey: 'Brand',
+        labelKey: 'sidebar.brands',
         icon: SidebarBrandTagIcon,
         countKey: 'brands_count',
       },
 
       {
         path: '/supply',
-        labelKey: 'Supply',
+        labelKey: 'sidebar.supply',
         icon: SidebarSupplyIcon,
         countKey: 'supplies_count',
-      },
-
-      {
-        path: '/projectType',
-        labelKey: 'Project Types',
-        icon: SidebarProjectTypeIcon,
-        countKey: 'project_types_count',
-      },
-
-      {
-        path: '/location',
-        labelKey: 'country',
-        icon: SidebarCountryIcon,
-        countKey: 'countries_count',
-      },
-
-      {
-        path: '/location-governorate',
-        labelKey: 'Governorate',
-        icon: SidebarGovernorateIcon,
-        countKey: 'governorates_count',
-      },
-
-      {
-        path: '/location-city',
-        labelKey: 'city',
-        icon: SidebarCityIcon,
-        countKey: 'cities_count',
-      },
-
-      {
-        path: '/employee',
-        labelKey: 'Employee',
-        icon: SidebarEmployeeIcon,
-        roles: ['organization'],
-        countKey: 'employees_count',
-      },
-
-      {
-        path: '/material',
-        labelKey: 'Material',
-        icon: SidebarMaterialIcon,
-        countKey: 'materials_count',
-      },
-
-      {
-        path: '/space',
-        labelKey: 'Space',
-        icon: SidebarSpaceIcon,
-        countKey: 'spaces_count',
-      },
-
-      // {
-      //   path: '/invoice-payment',
-      //   labelKey: 'Invoice Payment',
-      //   icon: SidebarInvoiceIcon,
-      //   countKey: 'invoice_payments_count',
-      // },
-
-      {
-        path: '/term',
-        labelKey: 'term',
-        icon: SidebarTermIcon,
-        roles: ['organization'],
-        countKey: 'term_count',
       },
     ],
   },
 
   {
-    key: 'system',
-    labelKey: 'System',
+    key: 'sys-identity',
+    labelKey: 'sidebar.sys_identity',
     icon: SidebarSystemIcon,
 
     items: [
       {
-        path: '/system-identity',
-        labelKey: 'system_identity.title',
-        icon: SidebarSystemIcon,
+        path: '/system-identity?section=colors',
+        labelKey: 'sidebar.sys_colors',
+        icon: SidebarSysColorsIcon,
         roles: ['organization', 'admin'],
       },
 
       {
         path: '/organization-toggle',
-        labelKey: 'organization_toggle.sidebar_label',
-        icon: SidebarToggleIcon,
-        roles: ['organization'],
+        labelKey: 'sidebar.sys_data',
+        icon: SidebarSysDataIcon,
+        roles: ['organization', 'admin'],
       },
     ],
   },

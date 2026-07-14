@@ -16,7 +16,9 @@
     getSidebarSections,
     getSidebarSectionsWithCounts,
     type SidebarCountsPayload,
+    type SidebarItemConfig,
     type SidebarRole,
+    type SidebarSectionConfig,
   } from './sidebar.config';
 
   const props = defineProps<{
@@ -34,6 +36,23 @@
   const expandedSections = ref<string[]>([]);
   const sidebarSectionsState = ref(getSidebarSections());
 
+  interface SidebarItem {
+    type?: SidebarItemConfig['type'];
+    path?: string;
+    labelKey: string;
+    icon?: SidebarSectionConfig['icon'];
+    badge?: string;
+    hasArrow?: boolean;
+    disabled?: boolean;
+    link?: string;
+  }
+
+  interface SidebarSection {
+    key: string;
+    labelKey: string;
+    items: SidebarItem[];
+  }
+
   const currentRole = computed<SidebarRole>(() => {
     return user.value?.isMaster || Number(user.value?.type) === 1 ? 'admin' : 'organization';
   });
@@ -42,21 +61,30 @@
     return currentRole.value === 'admin' ? '/admin' : '/organization';
   });
 
-  const menu = computed(() => {
+  const menu = computed<SidebarSection[]>(() => {
     return sidebarSectionsState.value
-      .map((section) => ({
-        ...section,
-        items: section.items
+      .map((section) => {
+        const items = section.items
           .filter((item) => {
             if (!item.roles) return true;
 
             return item.roles.includes(currentRole.value);
           })
-          .map((item) => ({
-            ...item,
-            link: `${appPrefix.value}${item.path}`,
-          })),
-      }))
+          .map((item) => {
+            const link = item.path ? `${appPrefix.value}${item.path}` : undefined;
+
+            return {
+              ...item,
+              link,
+            };
+          });
+
+        return {
+          key: section.key,
+          labelKey: section.labelKey,
+          items,
+        };
+      })
       .filter((section) => section.items.length > 0);
   });
 
@@ -76,8 +104,28 @@
     }
   };
 
-  const isActiveRoute = (link: string) => {
-    return route.path === link || route.path.startsWith(`${link}/`);
+  const getLinkPath = (link: string) => {
+    return link.split('?')[0] || link;
+  };
+
+  const isActiveRoute = (link?: string) => {
+    if (!link) return false;
+
+    const linkPath = getLinkPath(link);
+
+    return route.path === linkPath || route.path.startsWith(`${linkPath}/`);
+  };
+
+  const isGroupItem = (item: SidebarItem) => {
+    return item.type === 'group';
+  };
+
+  const isDisabledItem = (item: SidebarItem) => {
+    return item.disabled || !item.link || isGroupItem(item);
+  };
+
+  const getItemKey = (item: SidebarItem) => {
+    return `${item.type ?? 'item'}-${item.labelKey}-${item.link ?? item.path ?? 'static'}`;
   };
 
   const getDefaultExpandedSections = () => {
@@ -175,20 +223,53 @@
 
               <AccordionContent class="drawer-section-content">
                 <div class="drawer-section-links">
-                  <router-link
-                    v-for="item in section.items"
-                    :key="item.link"
-                    :to="item.link"
-                    class="drawer-item"
-                    :class="{ active: isActiveRoute(item.link) }"
-                    @click="close"
-                  >
-                    <span class="item-icon">
-                      <component :is="item.icon" v-if="item.icon" class="icon" />
-                    </span>
-                    <span class="item-label">{{ $t(item.labelKey) }}</span>
-                    <span v-if="item.badge" class="badge">{{ item.badge }}</span>
-                  </router-link>
+                  <template v-for="item in section.items" :key="getItemKey(item)">
+                    <div
+                      v-if="isGroupItem(item)"
+                      class="drawer-subgroup"
+                      :title="$t(item.labelKey)"
+                    >
+                      <span class="drawer-subgroup__icon">
+                        <component :is="item.icon" v-if="item.icon" class="icon" />
+                      </span>
+
+                      <span class="drawer-subgroup__label">
+                        {{ $t(item.labelKey) }}
+                      </span>
+                    </div>
+
+                    <router-link
+                      v-else-if="!isDisabledItem(item)"
+                      :to="item.link ?? ''"
+                      class="drawer-item"
+                      :class="{ active: isActiveRoute(item.link) }"
+                      @click="close"
+                    >
+                      <span class="item-icon">
+                        <component :is="item.icon" v-if="item.icon" class="icon" />
+                      </span>
+
+                      <span class="item-label">{{ $t(item.labelKey) }}</span>
+
+                      <span v-if="item.badge" class="badge">{{ item.badge }}</span>
+                    </router-link>
+
+                    <button
+                      v-else
+                      type="button"
+                      class="drawer-item is-disabled"
+                      disabled
+                      aria-disabled="true"
+                    >
+                      <span class="item-icon">
+                        <component :is="item.icon" v-if="item.icon" class="icon" />
+                      </span>
+
+                      <span class="item-label">{{ $t(item.labelKey) }}</span>
+
+                      <span v-if="item.badge" class="badge">{{ item.badge }}</span>
+                    </button>
+                  </template>
                 </div>
               </AccordionContent>
             </AccordionPanel>
@@ -261,7 +342,8 @@
   .drawer-brand,
   .user-card,
   .logout-btn,
-  .drawer-item {
+  .drawer-item,
+  .drawer-subgroup {
     display: flex;
     align-items: center;
   }
@@ -395,9 +477,49 @@
     background: var(--gray-100);
   }
 
+  .drawer-item.is-disabled {
+    border: 0;
+    color: var(--gray-400);
+    background: transparent;
+    cursor: not-allowed;
+    opacity: 0.72;
+  }
+
+  .drawer-item.is-disabled:hover {
+    color: var(--gray-400);
+    background: transparent;
+  }
+
   .drawer-item.active {
     color: var(--BgWhite);
     background: var(--PrimaryColor);
+  }
+
+  .drawer-subgroup {
+    gap: 8px;
+    min-height: 32px;
+    padding: 8px 6px 4px;
+    color: var(--gray-500);
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+
+  .drawer-subgroup__icon {
+    display: grid;
+    place-items: center;
+    flex: 0 0 24px;
+    width: 24px;
+    height: 24px;
+    border-radius: var(--radius-xs);
+    background: var(--gray-100);
+  }
+
+  .drawer-subgroup__label {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .item-icon {

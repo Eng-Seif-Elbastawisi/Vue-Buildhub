@@ -16,6 +16,7 @@
     type SidebarRole,
     type SidebarCountsPayload,
     type SidebarSectionConfig,
+    type SidebarItemConfig,
   } from './sidebar.config';
 
   const route = useRoute();
@@ -36,12 +37,14 @@
   const searchQuery = ref('');
 
   interface SidebarItem {
-    path: string;
+    type?: SidebarItemConfig['type'];
+    path?: string;
     labelKey: string;
     icon?: SidebarSectionConfig['icon'];
     badge?: string;
     hasArrow?: boolean;
-    link: string;
+    disabled?: boolean;
+    link?: string;
   }
 
   interface SidebarSection {
@@ -72,10 +75,14 @@
 
             return item.roles.includes(currentRole.value);
           })
-          .map((item) => ({
-            ...item,
-            link: `${appPrefix.value}${item.path}`,
-          }));
+          .map((item) => {
+            const link = item.path ? `${appPrefix.value}${item.path}` : undefined;
+
+            return {
+              ...item,
+              link,
+            };
+          });
 
         return {
           key: section.key,
@@ -106,8 +113,28 @@
     }
   };
 
-  const isActiveRoute = (link: string) => {
-    return route.path === link || route.path.startsWith(`${link}/`);
+  const getLinkPath = (link: string) => {
+    return link.split('?')[0] || link;
+  };
+
+  const isActiveRoute = (link?: string) => {
+    if (!link) return false;
+
+    const linkPath = getLinkPath(link);
+
+    return route.path === linkPath || route.path.startsWith(`${linkPath}/`);
+  };
+
+  const isGroupItem = (item: SidebarItem) => {
+    return item.type === 'group';
+  };
+
+  const isDisabledItem = (item: SidebarItem) => {
+    return item.disabled || !item.link || isGroupItem(item);
+  };
+
+  const getItemKey = (item: SidebarItem) => {
+    return `${item.type ?? 'item'}-${item.labelKey}-${item.link ?? item.path ?? 'static'}`;
   };
 
   const activeSection = computed(() => {
@@ -126,7 +153,7 @@
         const sectionLabel = t(section.labelKey).toLowerCase();
         const filteredItems = section.items.filter((item) => {
           const label = t(item.labelKey).toLowerCase();
-          const searchText = `${label} ${sectionLabel} ${item.path}`.toLowerCase();
+          const searchText = `${label} ${sectionLabel} ${item.path ?? ''}`.toLowerCase();
 
           return searchText.includes(query);
         });
@@ -265,10 +292,83 @@
                 {{ $t(section.labelKey) }}
               </p>
 
+              <template v-for="item in section.items" :key="getItemKey(item)">
+                <div v-if="isGroupItem(item)" class="menu-subgroup" :title="$t(item.labelKey)">
+                  <span class="menu-subgroup__icon">
+                    <component :is="item.icon" v-if="item.icon" class="icon" />
+                  </span>
+
+                  <span class="menu-subgroup__label">
+                    {{ $t(item.labelKey) }}
+                  </span>
+                </div>
+
+                <router-link
+                  v-else-if="!isDisabledItem(item)"
+                  :to="item.link ?? ''"
+                  class="menu-item"
+                  :class="{ active: isActiveRoute(item.link) }"
+                  :title="$t(item.labelKey)"
+                  @click="handleItemClick"
+                >
+                  <span class="item-icon">
+                    <component :is="item.icon" v-if="item.icon" class="icon" />
+                  </span>
+
+                  <span class="label">
+                    {{ $t(item.labelKey) }}
+                  </span>
+
+                  <span v-if="item.badge" class="badge">
+                    {{ item.badge }}
+                  </span>
+
+                  <span v-if="item.hasArrow" class="arrow">›</span>
+                </router-link>
+
+                <button
+                  v-else
+                  type="button"
+                  class="menu-item is-disabled"
+                  :title="$t(item.labelKey)"
+                  disabled
+                  aria-disabled="true"
+                >
+                  <span class="item-icon">
+                    <component :is="item.icon" v-if="item.icon" class="icon" />
+                  </span>
+
+                  <span class="label">
+                    {{ $t(item.labelKey) }}
+                  </span>
+
+                  <span v-if="item.badge" class="badge">
+                    {{ item.badge }}
+                  </span>
+                </button>
+              </template>
+            </section>
+          </template>
+
+          <section v-else-if="selectedSection" class="menu-group">
+            <p class="group-title">
+              {{ $t(selectedSection.labelKey) }}
+            </p>
+
+            <template v-for="item in selectedSection.items" :key="getItemKey(item)">
+              <div v-if="isGroupItem(item)" class="menu-subgroup" :title="$t(item.labelKey)">
+                <span class="menu-subgroup__icon">
+                  <component :is="item.icon" v-if="item.icon" class="icon" />
+                </span>
+
+                <span class="menu-subgroup__label">
+                  {{ $t(item.labelKey) }}
+                </span>
+              </div>
+
               <router-link
-                v-for="item in section.items"
-                :key="item.link"
-                :to="item.link"
+                v-else-if="!isDisabledItem(item)"
+                :to="item.link ?? ''"
                 class="menu-item"
                 :class="{ active: isActiveRoute(item.link) }"
                 :title="$t(item.labelKey)"
@@ -288,37 +388,28 @@
 
                 <span v-if="item.hasArrow" class="arrow">›</span>
               </router-link>
-            </section>
-          </template>
 
-          <section v-else-if="selectedSection" class="menu-group">
-            <p class="group-title">
-              {{ $t(selectedSection.labelKey) }}
-            </p>
+              <button
+                v-else
+                type="button"
+                class="menu-item is-disabled"
+                :title="$t(item.labelKey)"
+                disabled
+                aria-disabled="true"
+              >
+                <span class="item-icon">
+                  <component :is="item.icon" v-if="item.icon" class="icon" />
+                </span>
 
-            <router-link
-              v-for="item in selectedSection.items"
-              :key="item.link"
-              :to="item.link"
-              class="menu-item"
-              :class="{ active: isActiveRoute(item.link) }"
-              :title="$t(item.labelKey)"
-              @click="handleItemClick"
-            >
-              <span class="item-icon">
-                <component :is="item.icon" v-if="item.icon" class="icon" />
-              </span>
+                <span class="label">
+                  {{ $t(item.labelKey) }}
+                </span>
 
-              <span class="label">
-                {{ $t(item.labelKey) }}
-              </span>
-
-              <span v-if="item.badge" class="badge">
-                {{ item.badge }}
-              </span>
-
-              <span v-if="item.hasArrow" class="arrow">›</span>
-            </router-link>
+                <span v-if="item.badge" class="badge">
+                  {{ item.badge }}
+                </span>
+              </button>
+            </template>
           </section>
         </div>
 
@@ -1241,5 +1332,43 @@
         height: 40px;
       }
     }
+  }
+
+  .menu-subgroup {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 28px;
+    margin: 14px 6px 4px;
+    padding: 0 4px;
+    color: var(--sidebar-group-title);
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 0;
+    text-transform: uppercase;
+  }
+
+  .menu-subgroup__icon {
+    display: grid;
+    place-items: center;
+    flex: 0 0 22px;
+    width: 22px;
+    height: 22px;
+    color: var(--sidebar-group-title);
+  }
+
+  .menu-subgroup__label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .menu-item.is-disabled,
+  .menu-item.is-disabled:hover {
+    color: var(--sidebar-muted);
+    background: transparent;
+    cursor: not-allowed;
+    opacity: 0.68;
+    transform: none;
   }
 </style>

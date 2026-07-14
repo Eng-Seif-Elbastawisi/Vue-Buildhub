@@ -21,28 +21,70 @@ describe('sidebarSections', () => {
     );
   });
 
-  it('includes the organization system identity page in config', () => {
-    const systemIdentityItem = sidebarSections
-      .flatMap((section) => section.items)
-      .find((item) => item.path === '/system-identity');
+  it('uses the requested sidebar section order', () => {
+    expect(sidebarSections.map((section) => section.labelKey)).toEqual([
+      'sidebar.crm',
+      'sidebar.design_offers',
+      'sidebar.design_projects',
+      'sidebar.accounting',
+      'sidebar.reports',
+      'sidebar.sys_config',
+      'sidebar.sys_identity',
+    ]);
+  });
 
-    expect(systemIdentityItem).toEqual(
-      expect.objectContaining({
-        labelKey: 'system_identity.title',
-        roles: ['organization', 'admin'],
-      }),
+  it('keeps the sys config group order', () => {
+    const sysConfig = sidebarSections.find((section) => section.key === 'sys-config');
+
+    expect(
+      sysConfig?.items.filter((item) => item.type === 'group').map((item) => item.labelKey),
+    ).toEqual([
+      'sidebar.general_setting',
+      'sidebar.locations_setup',
+      'sidebar.design_config',
+      'sidebar.construction_config',
+    ]);
+  });
+
+  it('does not create pathless enabled links', () => {
+    const pathlessItems = sidebarSections
+      .flatMap((section) => section.items)
+      .filter((item) => !item.path);
+
+    expect(pathlessItems.every((item) => item.type === 'group' || item.disabled)).toBe(true);
+  });
+
+  it('marks unavailable sidebar destinations as disabled', () => {
+    const disabledLabels = sidebarSections
+      .flatMap((section) => section.items)
+      .filter((item) => item.disabled)
+      .map((item) => item.labelKey);
+
+    expect(disabledLabels).toEqual(
+      expect.arrayContaining([
+        'sidebar.hold',
+        'sidebar.canceled',
+        'sidebar.plan',
+        'sidebar.in_progress',
+        'sidebar.full_packages',
+        'sidebar.paid_invoices',
+        'sidebar.unpaid_invoices',
+        'sidebar.collection',
+        'sidebar.upcoming_payment',
+        'sidebar.productivity',
+      ]),
     );
   });
 
-  it('includes the organization fetch toggle page in config', () => {
-    const organizationToggleItem = sidebarSections
+  it('includes the organization system identity page in config', () => {
+    const systemIdentityItem = sidebarSections
       .flatMap((section) => section.items)
-      .find((item) => item.path === '/organization-toggle');
+      .find((item) => item.path === '/system-identity?section=colors');
 
-    expect(organizationToggleItem).toEqual(
+    expect(systemIdentityItem).toEqual(
       expect.objectContaining({
-        labelKey: 'organization_toggle.sidebar_label',
-        roles: ['organization'],
+        labelKey: 'sidebar.sys_colors',
+        roles: ['organization', 'admin'],
       }),
     );
   });
@@ -52,19 +94,19 @@ describe('sidebarSections', () => {
 
     expect(items.find((item) => item.path === '/project')).toEqual(
       expect.objectContaining({
-        labelKey: 'requests',
+        labelKey: 'sidebar.requests',
         roles: ['organization'],
       }),
     );
     expect(items.find((item) => item.path === '/project/add')).toEqual(
       expect.objectContaining({
-        labelKey: 'Add request',
+        labelKey: 'sidebar.add_request',
         roles: ['organization'],
       }),
     );
     expect(items.find((item) => item.path === '/converted-projects')).toEqual(
       expect.objectContaining({
-        labelKey: 'design',
+        labelKey: 'sidebar.project',
         roles: ['organization'],
       }),
     );
