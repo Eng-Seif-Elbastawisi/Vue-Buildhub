@@ -12,6 +12,8 @@
     return breadcrumb;
   });
 
+  const translateLabel = (label: unknown) => (typeof label === 'string' ? label : '');
+
   watch(
     () => route,
     () => {
@@ -26,12 +28,12 @@
     <img class="header-img" :src="FeatureHeader" :alt="$t('feature_header_image_alt')" />
     <div class="content">
       <p class="title">
-        {{ items[items.length - 1]?.label }}
+        {{ $t(translateLabel(items[items.length - 1]?.label)) }}
       </p>
       <div class="breadcrump">
         <Breadcrumb :model="items">
           <template #item="{ item }">
-            <span @click="$router.push(item.url!)">{{ item.label }}</span>
+            <span @click="$router.push(item.url!)">{{ $t(translateLabel(item.label)) }}</span>
           </template>
           <template #separator> / </template>
         </Breadcrumb>

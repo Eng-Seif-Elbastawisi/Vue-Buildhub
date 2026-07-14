@@ -41,6 +41,6 @@ describe('FeatureHeader.vue', () => {
     const wrapper = mount(FeatureHeader, { global: globalConfig });
     const title = wrapper.find('.title');
     expect(title.exists()).toBe(true);
-    expect(title.text()).toContain('home');
+    expect(title.text()).toContain('Home');
   });
 });
