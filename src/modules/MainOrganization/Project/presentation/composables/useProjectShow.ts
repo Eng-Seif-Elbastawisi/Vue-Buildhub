@@ -339,12 +339,6 @@ export const useProjectShow = () => {
       value: valueOrEmpty(project.value.site_description),
     },
     {
-      icon: 'pi pi-shield',
-      label: t('status'),
-      value: getStatusMeta(project.value.status).label,
-      badge: getStatusMeta(project.value.status).className,
-    },
-    {
       icon: 'pi pi-user',
       label: t('ProjectShow.pricing_responsible'),
       value: getEntityName(preview.value?.pricing_responsible),
@@ -354,6 +348,12 @@ export const useProjectShow = () => {
       label: t('Project.notes'),
       value: valueOrEmpty(project.value.notes),
     },
+    //     {
+    //   icon: 'pi pi-shield',
+    //   label: t('status'),
+    //   value: getStatusMeta(project.value.status).label,
+    //   badge: getStatusMeta(project.value.status).className,
+    // },
   ]);
 
   const stats = computed(() => [

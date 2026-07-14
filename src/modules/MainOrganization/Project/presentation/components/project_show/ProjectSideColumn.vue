@@ -78,21 +78,21 @@
           <span>{{ previewDateLabel }}</span>
           <strong>{{ formatDate(preview.preview_date) }}</strong>
         </div>
-        <div class="side-info">
+        <!-- <div class="side-info">
           <i class="pi pi-bell"></i>
           <span>{{ notificationTypeLabel }}</span>
           <strong>{{ valueOrEmpty(preview.notification_type) }}</strong>
-        </div>
+        </div> -->
         <div class="side-info">
           <i class="pi pi-clock"></i>
           <span>{{ previewTimeLabel }}</span>
           <strong>{{ formatTime(preview.preview_time) }}</strong>
         </div>
-        <div class="side-info">
+        <!-- <div class="side-info">
           <i class="pi pi-comment"></i>
           <span>{{ notificationMessageLabel }}</span>
           <strong>{{ valueOrEmpty(preview.notification_message) }}</strong>
-        </div>
+        </div> -->
         <div class="side-info side-info--wide">
           <i class="pi pi-link"></i>
           <span>{{ siteLinkLabel }}</span>
