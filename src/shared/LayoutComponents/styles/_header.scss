@@ -146,7 +146,7 @@
       // }
       .mega-menu {
         position: absolute;
-        right: 50px;
+        inset-inline-end: 50px;
         top: 90px;
         width: 220px;
         background: var(--BgWhite);
