@@ -1,22 +1,35 @@
 import TitleInterface from '@/base/Data/Models/titleInterface';
+import { Type } from '../constants/Type.enum';
 
 export default class DepartmentModel {
   public readonly id?: number;
   public readonly title: string;
   public readonly translations: { title: Record<string, string> };
   public readonly stage: TitleInterface<number>;
+  public readonly type?: Type;
 
   constructor(data: {
     id?: number;
     translations?: { title: Record<string, string> };
     title?: string;
     stage: TitleInterface<number>;
+    type?: Type;
   }) {
     this.id = data.id;
-    this.translations = data.translations ?? { title: { en: data.title ?? '' } };
+
+    this.translations = data.translations ?? {
+      title: {
+        en: data.title ?? '',
+      },
+    };
+
     this.title =
       data.title ?? this.translations.title.en ?? Object.values(this.translations.title)[0] ?? '';
+
     this.stage = data.stage;
+
+    this.type = data.type;
+
     Object.freeze(this);
   }
 
@@ -24,30 +37,54 @@ export default class DepartmentModel {
     if (!json || typeof json !== 'object') {
       throw new Error('Cannot create DepartmentModel from invalid data');
     }
+
     const data = json as {
       id?: number;
-      translations?: { title?: unknown };
+
+      translations?: {
+        title?: unknown;
+      };
+
       title?: unknown;
-      stage?: { id?: number; title?: unknown };
+
+      stage?: {
+        id?: number;
+        title?: unknown;
+      };
+
       stage_id?: number;
       stage_title?: unknown;
+
+      type?: number;
     };
+
     const translatedTitle = DepartmentModel.mapTranslations(data.translations?.title);
+
     const titleTranslations =
       Object.keys(translatedTitle).length > 0
         ? translatedTitle
         : DepartmentModel.mapTranslations(data.title);
+
     const stageTitleSource = data.stage?.title ?? data.stage_title;
+
     const stageTitleTranslations = DepartmentModel.mapTranslations(stageTitleSource);
 
     return new DepartmentModel({
       id: data.id,
+
       title: DepartmentModel.toDefaultTitle(titleTranslations, data.title),
-      translations: { title: titleTranslations },
+
+      translations: {
+        title: titleTranslations,
+      },
+
       stage: new TitleInterface({
         id: data.stage?.id ?? data.stage_id ?? 0,
+
         title: DepartmentModel.toBilingualLabel(stageTitleTranslations, stageTitleSource),
       }),
+
+      type: typeof data.type === 'number' ? (data.type as Type) : undefined,
     });
   }
 
@@ -55,13 +92,17 @@ export default class DepartmentModel {
     if (!value) return {};
 
     if (typeof value === 'string' || typeof value === 'number') {
-      return { en: String(value) };
+      return {
+        en: String(value),
+      };
     }
 
     if (Array.isArray(value)) {
       return value.reduce<Record<string, string>>((result, item) => {
         const translation = item as Record<string, unknown>;
+
         const locale = translation.locale ?? translation.lang ?? translation.language;
+
         const text = translation[key] ?? translation.value ?? translation.title ?? translation.name;
 
         if (locale && text !== undefined && text !== null) {
@@ -74,10 +115,6 @@ export default class DepartmentModel {
 
     if (typeof value === 'object') {
       const record = value as Record<string, unknown>;
-
-      if (record.title && typeof record.title === 'object') {
-        return DepartmentModel.mapTranslations(record.title, key);
-      }
 
       return Object.entries(record).reduce<Record<string, string>>((result, [locale, text]) => {
         if (text !== undefined && text !== null && typeof text !== 'object') {
@@ -96,7 +133,9 @@ export default class DepartmentModel {
     const ar = translations.ar?.trim();
 
     if (en && ar) return `${en} / ${ar}`;
+
     if (en) return en;
+
     if (ar) return ar;
 
     return DepartmentModel.stringifyText(fallback);
@@ -112,24 +151,34 @@ export default class DepartmentModel {
   }
 
   private static stringifyText(value: unknown): string {
-    if (value === undefined || value === null) return '';
-    if (typeof value === 'string' || typeof value === 'number') return String(value);
+    if (value === undefined || value === null) {
+      return '';
+    }
+
+    if (typeof value === 'string' || typeof value === 'number') {
+      return String(value);
+    }
+
     return '';
   }
 
   static example(): DepartmentModel {
     return new DepartmentModel({
       id: 1,
+
       translations: {
         title: {
-          ar: 'منصة التعلم الذكي',
-          en: 'Smart Learning Platform',
+          ar: 'قسم التصميم',
+          en: 'Design Department',
         },
       },
+
       stage: new TitleInterface({
         id: 1,
         title: 'Engineering',
       }),
+
+      type: Type.DESIGN,
     });
   }
 }

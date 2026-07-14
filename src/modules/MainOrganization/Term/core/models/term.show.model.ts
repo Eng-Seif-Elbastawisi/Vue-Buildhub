@@ -3,82 +3,149 @@ import TranslationParams from '@/base/Core/Params/translationParams';
 export default class TermModel {
   public readonly id?: number;
   public readonly title?: string;
+  public readonly description?: string;
   public readonly translations?: TranslationParams;
 
-  constructor(data: { id?: number; title?: string; translations?: TranslationParams }) {
+  constructor(data: {
+    id?: number;
+    title?: string;
+    description?: string;
+    translations?: TranslationParams;
+  }) {
     this.id = data.id;
     this.title = data.title;
+    this.description = data.description;
     this.translations = data.translations;
 
     Object.freeze(this);
   }
 
-  static mapTranslations(translations: unknown, key: string = 'title'): Record<string, string> {
-    if (!translations) return {};
+  static mapTranslations(
+    translations: unknown,
+    key: 'title' | 'description',
+  ): Record<string, string> {
+    if (!translations) {
+      return {};
+    }
 
     if (Array.isArray(translations)) {
       return translations.reduce<Record<string, string>>((result, translation) => {
-        const item = translation as Record<string, string>;
+        if (!translation || typeof translation !== 'object') {
+          return result;
+        }
 
-        const locale = item.locale;
-        const value = item[key];
+        const item = translation as Record<string, unknown>;
 
-        if (locale && value) {
-          result[locale] = value;
+        const locale = typeof item.locale === 'string' ? item.locale : undefined;
+
+        const translatedValue = typeof item[key] === 'string' ? item[key] : undefined;
+
+        if (locale && translatedValue !== undefined) {
+          result[locale] = translatedValue;
         }
 
         return result;
       }, {});
     }
 
-    const value = translations as {
-      title?: Record<string, string>;
-    };
+    if (typeof translations === 'object') {
+      const translationObject = translations as Record<string, unknown>;
 
-    return value?.title ?? (translations as Record<string, string>) ?? {};
+      if (Array.isArray(translationObject[key])) {
+        return TermModel.mapTranslations(translationObject[key], key);
+      }
+
+      const nestedTranslations = translationObject[key];
+
+      if (
+        nestedTranslations &&
+        typeof nestedTranslations === 'object' &&
+        !Array.isArray(nestedTranslations)
+      ) {
+        return Object.entries(nestedTranslations as Record<string, unknown>).reduce<
+          Record<string, string>
+        >((result, [locale, value]) => {
+          if (typeof value === 'string') {
+            result[locale] = value;
+          }
+
+          return result;
+        }, {});
+      }
+
+      return Object.entries(translationObject).reduce<Record<string, string>>(
+        (result, [locale, value]) => {
+          if (typeof value === 'string') {
+            result[locale] = value;
+          }
+
+          return result;
+        },
+        {},
+      );
+    }
+
+    return {};
   }
 
-  static getPlainTitle(json: Record<string, unknown>): string | undefined {
-    const title = json.title;
-
-    if (typeof title === 'string') {
-      return title;
+  static getPlainValue(value: unknown, key: 'title' | 'description'): string | undefined {
+    if (typeof value === 'string') {
+      return value;
     }
 
-    if (Array.isArray(title)) {
-      const enTitle = title.find((item) => item?.locale === 'en')?.title;
-      const arTitle = title.find((item) => item?.locale === 'ar')?.title;
-      const firstTitle = title[0]?.title;
-
-      return enTitle || arTitle || firstTitle;
+    if (!Array.isArray(value)) {
+      return undefined;
     }
 
-    return undefined;
+    const translations = value.filter(
+      (item): item is Record<string, unknown> => Boolean(item) && typeof item === 'object',
+    );
+
+    const currentValue =
+      translations.find((item) => item.locale === 'en')?.[key] ??
+      translations.find((item) => item.locale === 'ar')?.[key] ??
+      translations[0]?.[key];
+
+    return typeof currentValue === 'string' ? currentValue : undefined;
   }
 
   static fromJson(json: Record<string, unknown>): TermModel {
-    if (!json) {
+    if (!json || typeof json !== 'object') {
       throw new Error('Cannot create TermModel from null or undefined');
     }
 
-    return new TermModel({
-      id: json.id as number | undefined,
+    const titleTranslations = TermModel.mapTranslations(json.title, 'title');
 
-      title: TermModel.getPlainTitle(json),
+    const descriptionTranslations = TermModel.mapTranslations(json.description, 'description');
+
+    return new TermModel({
+      id: typeof json.id === 'number' ? json.id : undefined,
+
+      title: TermModel.getPlainValue(json.title, 'title'),
+
+      description: TermModel.getPlainValue(json.description, 'description'),
 
       translations: new TranslationParams({
-        title: TermModel.mapTranslations(json.translations ?? json.title),
+        title: titleTranslations,
+        description: descriptionTranslations,
       }),
     });
   }
 
   static example = new TermModel({
     id: 1,
-    title: 'Commercial project',
+    title: 'First Term',
+    description: 'First Term Description',
+
     translations: new TranslationParams({
       title: {
-        ar: 'مشروع تجاري',
-        en: 'Commercial project',
+        ar: 'الفصل الأول',
+        en: 'First Term',
+      },
+
+      description: {
+        ar: 'وصف الفصل الأول',
+        en: 'First Term Description',
       },
     }),
   });
