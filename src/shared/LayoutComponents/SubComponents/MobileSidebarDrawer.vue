@@ -104,16 +104,37 @@
     }
   };
 
-  const getLinkPath = (link: string) => {
-    return link.split('?')[0] || link;
+  const getLinkParts = (link: string) => {
+    const [path = link, query = ''] = link.split('?');
+
+    return {
+      path,
+      query: new URLSearchParams(query),
+    };
   };
 
   const isActiveRoute = (link?: string) => {
     if (!link) return false;
 
-    const linkPath = getLinkPath(link);
+    const linkParts = getLinkParts(link);
+    const routeMatches =
+      route.path === linkParts.path ||
+      (linkParts.query.size === 0 && route.path.startsWith(`${linkParts.path}/`));
 
-    return route.path === linkPath || route.path.startsWith(`${linkPath}/`);
+    if (!routeMatches) return false;
+
+    if (linkParts.query.size === 0) {
+      return !Object.keys(route.query ?? {}).some((key) => !['page', 'word'].includes(key));
+    }
+
+    for (const [key, value] of linkParts.query.entries()) {
+      const routeValue = route.query?.[key];
+      const normalizedRouteValue = Array.isArray(routeValue) ? routeValue[0] : routeValue;
+
+      if (String(normalizedRouteValue ?? '') !== value) return false;
+    }
+
+    return true;
   };
 
   const isGroupItem = (item: SidebarItem) => {

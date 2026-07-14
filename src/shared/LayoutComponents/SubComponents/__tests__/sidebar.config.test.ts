@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { InvoiceStatusEnum } from '@/modules/MainOrganization/Invoice/core/constant/invoice.status.enum';
 import { sidebarSections } from '../sidebar.config';
 
 describe('sidebarSections', () => {
@@ -67,8 +68,6 @@ describe('sidebarSections', () => {
         'sidebar.plan',
         'sidebar.in_progress',
         'sidebar.full_packages',
-        'sidebar.paid_invoices',
-        'sidebar.unpaid_invoices',
         'sidebar.collection',
         'sidebar.upcoming_payment',
         'sidebar.productivity',
@@ -110,5 +109,25 @@ describe('sidebarSections', () => {
         roles: ['organization'],
       }),
     );
+  });
+
+  it('links paid and unpaid invoices to the invoice page with status filters', () => {
+    const items = sidebarSections.flatMap((section) => section.items);
+    const paidInvoices = items.find((item) => item.labelKey === 'sidebar.paid_invoices');
+    const unpaidInvoices = items.find((item) => item.labelKey === 'sidebar.unpaid_invoices');
+
+    expect(paidInvoices).toEqual(
+      expect.objectContaining({
+        path: `/invoice?status=${InvoiceStatusEnum.PAID}`,
+      }),
+    );
+    expect(paidInvoices?.disabled).toBeUndefined();
+
+    expect(unpaidInvoices).toEqual(
+      expect.objectContaining({
+        path: `/invoice?status=${InvoiceStatusEnum.UNPAID}`,
+      }),
+    );
+    expect(unpaidInvoices?.disabled).toBeUndefined();
   });
 });

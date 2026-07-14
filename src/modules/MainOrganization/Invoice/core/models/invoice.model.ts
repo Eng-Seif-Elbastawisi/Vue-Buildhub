@@ -12,6 +12,7 @@ export default class InvoiceModel {
   public readonly invoice_date?: string;
   public readonly invoice_amount?: number;
   public readonly notes?: string | null;
+  public readonly status?: string | number;
 
   constructor(data: {
     id?: number;
@@ -21,6 +22,7 @@ export default class InvoiceModel {
     invoice_date?: string;
     invoice_amount?: number;
     notes?: string | null;
+    status?: string | number;
   }) {
     this.id = data.id;
     this.project_id = data.project_id;
@@ -29,6 +31,7 @@ export default class InvoiceModel {
     this.invoice_date = data.invoice_date;
     this.invoice_amount = data.invoice_amount;
     this.notes = data.notes;
+    this.status = data.status;
 
     Object.freeze(this);
   }
@@ -73,6 +76,7 @@ export default class InvoiceModel {
       invoice_date: json.invoice_date as string | undefined,
       invoice_amount: Number(json.invoice_amount ?? 0),
       notes: json.notes as string | null | undefined,
+      status: (json.status ?? json.invoice_status) as string | number | undefined,
     });
   }
 
@@ -84,5 +88,6 @@ export default class InvoiceModel {
     invoice_date: '2026-07-05',
     invoice_amount: 15000,
     notes: 'First design invoice',
+    status: 'paid',
   });
 }

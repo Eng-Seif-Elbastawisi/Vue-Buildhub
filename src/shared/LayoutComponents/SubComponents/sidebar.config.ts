@@ -1,4 +1,5 @@
 import type { Component } from 'vue';
+import { InvoiceStatusEnum } from '@/modules/MainOrganization/Invoice/core/constant/invoice.status.enum';
 
 import {
   SidebarAddRequestIcon,
@@ -320,6 +321,13 @@ export const sidebarSections: SidebarSectionConfig[] = [
     icon: SidebarFinanceIcon,
 
     items: [
+            {
+        path: '/invoice',
+        labelKey: 'sidebar.all_invoices',
+        icon: SidebarInvoiceIcon,
+        countKey: 'invoices_count',
+        roles: ['organization'],
+      },
       {
         path: '/invoice/add',
         labelKey: 'sidebar.new_invoices',
@@ -328,26 +336,20 @@ export const sidebarSections: SidebarSectionConfig[] = [
       },
 
       {
+        path: `/invoice?status=${InvoiceStatusEnum.PAID}`,
         labelKey: 'sidebar.paid_invoices',
         icon: SidebarPaidInvoiceIcon,
         roles: ['organization'],
-        disabled: true,
       },
 
       {
+        path: `/invoice?status=${InvoiceStatusEnum.UNPAID}`,
         labelKey: 'sidebar.unpaid_invoices',
         icon: SidebarUnpaidInvoiceIcon,
         roles: ['organization'],
-        disabled: true,
       },
 
-      {
-        path: '/invoice',
-        labelKey: 'sidebar.all_invoices',
-        icon: SidebarInvoiceIcon,
-        countKey: 'invoices_count',
-        roles: ['organization'],
-      },
+
     ],
   },
 
