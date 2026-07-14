@@ -47,7 +47,7 @@ describe('SidebarNavigation.vue', () => {
   it('renders menu groups and items', () => {
     const wrapper = mount(SidebarNavigation, mountOptions);
 
-    expect(wrapper.text()).toContain('الإعدادات');
+    expect(wrapper.text()).toContain('Settings');
     expect(wrapper.text()).toContain('Stages');
     expect(wrapper.text()).toContain('Departments');
     expect(wrapper.text()).toContain('Client Source');

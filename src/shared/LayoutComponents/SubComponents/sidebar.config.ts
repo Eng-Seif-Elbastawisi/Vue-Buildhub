@@ -1,10 +1,37 @@
 import type { Component } from 'vue';
 
-import EducationClassificationIcon from '@/shared/icons/SidebarIcons/EducationClassificationIcon.vue';
-import ArticleIcon from '@/shared/icons/ArticleIcon.vue';
 import SidebarUsersIcon from '@/shared/icons/SidebarIcons/SidebarUsersIcon.vue';
-import SidebarSlidersIcon from '@/shared/icons/SidebarIcons/SidebarSlidersIcon.vue';
 import SidebarShieldIcon from '@/shared/icons/SidebarIcons/SidebarShieldIcon.vue';
+import {
+  SidebarAdminIcon,
+  SidebarAddRequestIcon,
+  SidebarBrandTagIcon,
+  SidebarCityIcon,
+  SidebarClientIcon,
+  SidebarClientSourceIcon,
+  SidebarCountryIcon,
+  SidebarDepartmentIcon,
+  SidebarEmployeeIcon,
+  SidebarFinanceIcon,
+  SidebarGovernorateIcon,
+  SidebarInvoiceIcon,
+  SidebarItemIcon,
+  SidebarMaterialIcon,
+  SidebarMeasurementIcon,
+  SidebarOrganizationIcon,
+  SidebarProjectIcon,
+  SidebarProjectTypeIcon,
+  SidebarRequestIcon,
+  SidebarSettingsPrimeIcon,
+  SidebarSpaceIcon,
+  SidebarSpecializationIcon,
+  SidebarStageIcon,
+  SidebarSupplierIcon,
+  SidebarSupplyIcon,
+  SidebarSystemIcon,
+  SidebarTermIcon,
+  SidebarToggleIcon,
+} from '@/shared/icons/SidebarIcons/sidebarPrimeIcons';
 
 export type SidebarRole = 'admin' | 'organization';
 
@@ -115,20 +142,20 @@ export const sidebarSections: SidebarSectionConfig[] = [
       {
         path: '/project',
         labelKey: 'Request',
-        icon: EducationClassificationIcon,
+        icon: SidebarRequestIcon,
         roles: ['organization'],
       },
 
       {
         path: '/project/add',
-        labelKey: 'add request',
-        icon: EducationClassificationIcon,
+        labelKey: 'Add request',
+        icon: SidebarAddRequestIcon,
         roles: ['organization'],
       },
       {
         path: '/client',
-        labelKey: 'clients',
-        icon: EducationClassificationIcon,
+        labelKey: 'Clients',
+        icon: SidebarClientIcon,
         badge: '2',
         countKey: 'clients_count',
         roles: ['organization'],
@@ -138,12 +165,12 @@ export const sidebarSections: SidebarSectionConfig[] = [
   {
     key: 'projects',
     labelKey: 'Projects',
-    icon: SidebarShieldIcon,
+    icon: SidebarProjectIcon,
     items: [
       {
         path: '/converted-projects',
         labelKey: 'Project.list_title',
-        icon: EducationClassificationIcon,
+        icon: SidebarProjectIcon,
         roles: ['organization'],
       },
     ],
@@ -151,12 +178,12 @@ export const sidebarSections: SidebarSectionConfig[] = [
   {
     key: 'finance',
     labelKey: 'Finance',
-    icon: SidebarShieldIcon,
+    icon: SidebarFinanceIcon,
     items: [
       {
         path: '/invoice',
         labelKey: 'Invoice',
-        icon: ArticleIcon,
+        icon: SidebarInvoiceIcon,
         badge: '1',
         countKey: 'invoices_count',
         roles: ['organization'],
@@ -165,48 +192,48 @@ export const sidebarSections: SidebarSectionConfig[] = [
   },
   {
     key: 'setup',
-    labelKey: 'الإعدادات',
-    icon: SidebarSlidersIcon,
+    labelKey: 'Settings',
+    icon: SidebarSettingsPrimeIcon,
     items: [
       {
         path: '/stages',
         labelKey: 'Stages',
-        icon: EducationClassificationIcon,
+        icon: SidebarStageIcon,
         badge: '1',
         countKey: 'stages_count',
       },
       {
         path: '/departments',
         labelKey: 'Departments',
-        icon: EducationClassificationIcon,
+        icon: SidebarDepartmentIcon,
         badge: '1',
         countKey: 'departments_count',
       },
       {
         path: '/measurement',
         labelKey: 'Measurement',
-        icon: EducationClassificationIcon,
+        icon: SidebarMeasurementIcon,
         badge: '1',
         countKey: 'measurement_units_count',
       },
       {
         path: '/item',
         labelKey: 'Items',
-        icon: EducationClassificationIcon,
+        icon: SidebarItemIcon,
         badge: '1',
         countKey: 'items_count',
       },
       {
         path: '/admin',
         labelKey: 'Admins',
-        icon: EducationClassificationIcon,
+        icon: SidebarAdminIcon,
         roles: ['admin'],
         badge: '1',
       },
       {
         path: '/organization',
         labelKey: 'Organizations',
-        icon: EducationClassificationIcon,
+        icon: SidebarOrganizationIcon,
         roles: ['admin'],
         badge: '1',
       },
@@ -214,14 +241,14 @@ export const sidebarSections: SidebarSectionConfig[] = [
       {
         path: '/client-source',
         labelKey: 'Client Source',
-        icon: EducationClassificationIcon,
+        icon: SidebarClientSourceIcon,
         badge: '1',
         countKey: 'client_sources_count',
       },
       {
         path: '/specialization',
         labelKey: 'Specialization',
-        icon: EducationClassificationIcon,
+        icon: SidebarSpecializationIcon,
         roles: ['organization'],
         badge: '1',
         countKey: 'specializations_count',
@@ -230,7 +257,7 @@ export const sidebarSections: SidebarSectionConfig[] = [
       {
         path: '/suppliers',
         labelKey: 'Suppliers',
-        icon: ArticleIcon,
+        icon: SidebarSupplierIcon,
         roles: ['organization'],
         badge: '1',
         countKey: 'suppliers_count',
@@ -238,49 +265,49 @@ export const sidebarSections: SidebarSectionConfig[] = [
       {
         path: '/brand',
         labelKey: 'Brand',
-        icon: ArticleIcon,
+        icon: SidebarBrandTagIcon,
         badge: '1',
         countKey: 'brands_count',
       },
       {
         path: '/supply',
         labelKey: 'Supply',
-        icon: ArticleIcon,
+        icon: SidebarSupplyIcon,
         badge: '1',
         countKey: 'supplies_count',
       },
       {
         path: '/projectType',
         labelKey: 'Project Types',
-        icon: ArticleIcon,
+        icon: SidebarProjectTypeIcon,
         badge: '1',
         countKey: 'project_types_count',
       },
       {
         path: '/location',
         labelKey: 'country',
-        icon: ArticleIcon,
+        icon: SidebarCountryIcon,
         badge: '1',
         countKey: 'countries_count',
       },
       {
         path: '/location-governorate',
         labelKey: 'Governorate',
-        icon: ArticleIcon,
+        icon: SidebarGovernorateIcon,
         badge: '1',
         countKey: 'governorates_count',
       },
       {
         path: '/location-city',
         labelKey: 'city',
-        icon: ArticleIcon,
+        icon: SidebarCityIcon,
         badge: '1',
         countKey: 'cities_count',
       },
       {
         path: '/employee',
         labelKey: 'Employee',
-        icon: ArticleIcon,
+        icon: SidebarEmployeeIcon,
         roles: ['organization'],
         badge: '1',
         countKey: 'employees_count',
@@ -288,14 +315,14 @@ export const sidebarSections: SidebarSectionConfig[] = [
       {
         path: '/material',
         labelKey: 'Material',
-        icon: ArticleIcon,
+        icon: SidebarMaterialIcon,
         badge: '1',
         countKey: 'materials_count',
       },
       {
         path: '/space',
         labelKey: 'Space',
-        icon: ArticleIcon,
+        icon: SidebarSpaceIcon,
         badge: '1',
         countKey: 'spaces_count',
       },
@@ -310,27 +337,27 @@ export const sidebarSections: SidebarSectionConfig[] = [
       {
         path: '/term',
         labelKey: 'term',
-        icon: ArticleIcon,
+        icon: SidebarTermIcon,
         roles: ['organization'],
       },
     ],
   },
   {
-    key: 'suppliers',
-    labelKey: 'Suppliers',
+    key: 'system',
+    labelKey: 'System',
     icon: SidebarShieldIcon,
     items: [
       {
         path: '/system-identity',
         labelKey: 'system_identity.title',
-        icon: EducationClassificationIcon,
+        icon: SidebarSystemIcon,
         roles: ['organization', 'admin'],
         badge: '1',
       },
       {
         path: '/organization-toggle',
-        labelKey: 'Organization',
-        icon: EducationClassificationIcon,
+        labelKey: 'organization_toggle.sidebar_label',
+        icon: SidebarToggleIcon,
         roles: ['organization'],
         badge: '1',
       },
