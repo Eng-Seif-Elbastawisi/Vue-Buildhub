@@ -2796,7 +2796,7 @@ html[dir='rtl'] .input-search .icon-remove {
 }
 .header .setting .user .mega-menu {
   position: absolute;
-  right: 50px;
+  inset-inline-end: 50px;
   top: 90px;
   width: 220px;
   background: var(--BgWhite);
@@ -3181,7 +3181,7 @@ body::-webkit-scrollbar-thumb:hover {
 }
 .sidebar .sidebar-wrapper .mega-menu {
   position: absolute;
-  right: 50px;
+  inset-inline-end: 50px;
   top: 90px;
   width: 240px;
   background: #16181f;

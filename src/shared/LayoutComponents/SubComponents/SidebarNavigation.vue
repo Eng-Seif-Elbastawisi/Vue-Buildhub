@@ -323,7 +323,7 @@
         </div>
 
         <footer class="sidebar-footer">
-          <div class="auth-container">
+          <!-- <div class="auth-container">
             <div class="auth-data">
               <img
                 :src="user?.image || 'https://cyber.comolho.com/static/img/avatar.png'"
@@ -340,7 +340,7 @@
                 </span>
               </div>
             </div>
-          </div>
+          </div> -->
 
           <button type="button" class="menu-item danger" :title="$t('logout')" @click="logout">
             <span class="item-icon">
@@ -688,6 +688,14 @@
   .icon {
     width: 20px;
     height: 20px;
+  }
+
+  .rail-icon.pi,
+  .icon.pi {
+    display: grid;
+    place-items: center;
+    font-size: 18px;
+    line-height: 1;
   }
 
   .rail-icon svg,
@@ -1101,6 +1109,14 @@
     .icon {
       width: 20px;
       height: 20px;
+    }
+
+    .rail-icon.pi,
+    .icon.pi {
+      display: grid;
+      place-items: center;
+      font-size: 18px;
+      line-height: 1;
     }
 
     .rail-icon svg,

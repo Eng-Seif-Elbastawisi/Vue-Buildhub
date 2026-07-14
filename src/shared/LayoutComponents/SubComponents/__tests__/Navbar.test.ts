@@ -1,8 +1,17 @@
 import { beforeEach, describe, it, expect, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
+import { readFileSync } from 'node:fs';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import Navbar from '../Navbar.vue';
 
 const mockLocale = vi.hoisted(() => ({ value: 'ar' }));
+const currentDir = dirname(fileURLToPath(import.meta.url));
+const headerStyles = readFileSync(resolve(currentDir, '../../styles/_header.scss'), 'utf8');
+const importedGlobalStyles = readFileSync(
+  resolve(currentDir, '../../../../styles/main.min.css'),
+  'utf8',
+);
 
 vi.mock('vue-i18n', () => ({
   useI18n: () => ({
@@ -135,5 +144,11 @@ describe('Navbar.vue', () => {
     expect(document.documentElement.lang).toBe('en');
     expect(document.documentElement.dir).toBe('ltr');
     expect(document.body.dir).toBe('ltr');
+  });
+
+  it('positions the mega menu with RTL-aware logical inset', () => {
+    expect(headerStyles).toContain('inset-inline-end: 50px;');
+    expect(headerStyles).not.toContain('right: 50px;');
+    expect(importedGlobalStyles).toContain('inset-inline-end: 50px;');
   });
 });

@@ -14,6 +14,13 @@ describe('sidebarSections', () => {
     expect(sidebarSections.flatMap((section) => section.items).length).toBeGreaterThan(0);
   });
 
+  it('assigns an icon to every section and item', () => {
+    expect(sidebarSections.every((section) => section.icon)).toBe(true);
+    expect(sidebarSections.flatMap((section) => section.items).every((item) => item.icon)).toBe(
+      true,
+    );
+  });
+
   it('includes the organization system identity page in config', () => {
     const systemIdentityItem = sidebarSections
       .flatMap((section) => section.items)
@@ -34,7 +41,7 @@ describe('sidebarSections', () => {
 
     expect(organizationToggleItem).toEqual(
       expect.objectContaining({
-        labelKey: 'Organization',
+        labelKey: 'organization_toggle.sidebar_label',
         roles: ['organization'],
       }),
     );
@@ -46,6 +53,12 @@ describe('sidebarSections', () => {
     expect(items.find((item) => item.path === '/project')).toEqual(
       expect.objectContaining({
         labelKey: 'requests',
+        roles: ['organization'],
+      }),
+    );
+    expect(items.find((item) => item.path === '/project/add')).toEqual(
+      expect.objectContaining({
+        labelKey: 'Add request',
         roles: ['organization'],
       }),
     );

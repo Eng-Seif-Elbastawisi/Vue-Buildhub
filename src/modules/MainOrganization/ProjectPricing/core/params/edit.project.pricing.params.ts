@@ -1,5 +1,6 @@
 import type Params from '@/base/Core/Params/params';
 import { ClassValidation } from '@/base/Presentation/Utils/classValidation';
+import { requiredSelectRule } from '@/base/Presentation/Utils/input_title';
 import { type ProjectPricingDiscountEnum } from '../constant/project.pricing.discount.enum';
 
 export default class EditProjectPricingParams implements Params {
@@ -11,7 +12,7 @@ export default class EditProjectPricingParams implements Params {
   public static readonly validation = new ClassValidation().setRules({
     // project_pricing_id: { required: true },
     // total_tax: { required: true },
-    // discount_type: { required: true },
+    discount_type: requiredSelectRule(),
     // discount_value: { required: true },
   });
 

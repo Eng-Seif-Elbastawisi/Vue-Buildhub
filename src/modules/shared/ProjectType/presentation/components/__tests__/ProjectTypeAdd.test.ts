@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { flushPromises, mount } from '@vue/test-utils';
 import { ref } from 'vue';
+import TranslationParams from '@/base/Core/Params/translationParams';
 import AddProjectTypeParams from '../../../core/params/add.project-type.params';
 import ProjectTypeAdd from '../ProjectTypeAdd.vue';
 const create = vi.fn();
@@ -11,7 +12,13 @@ vi.mock('../../controllers/project-type.controller', () => ({
 const FormStub = {
   emits: ['updateData'],
   template: '<button class="form" @click="$emit(\'updateData\', params)">form</button>',
-  data: () => ({ params: new AddProjectTypeParams({ name: 'Mall', projectType: 4 }) }),
+  data: () => ({
+    params: new AddProjectTypeParams({
+      name: 'Mall',
+      projectType: 4,
+      translations: new TranslationParams({ title: { en: 'Mall' } }),
+    }),
+  }),
 };
 describe('ProjectTypeAdd', () => {
   it('creates form data', async () => {

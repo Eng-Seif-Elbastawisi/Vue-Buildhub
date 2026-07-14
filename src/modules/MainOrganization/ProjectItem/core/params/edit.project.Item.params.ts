@@ -1,5 +1,6 @@
 import type Params from '@/base/Core/Params/params';
 import { ClassValidation } from '@/base/Presentation/Utils/classValidation';
+import { requiredSelectRule } from '@/base/Presentation/Utils/input_title';
 import { type ProjectItemPriceEnum } from '../constant/project.item.Price.enum';
 
 export default class EditProjectItemParams implements Params {
@@ -14,8 +15,8 @@ export default class EditProjectItemParams implements Params {
     // project_item_id: { required: true },
     // price: { required: true },
     // quantity: { required: true },
-    // item_id: { required: true },
-    // pricing_method: { required: true },
+    item_id: requiredSelectRule(),
+    pricing_method: requiredSelectRule(),
     // project_floor_id: { required: true },
   });
 

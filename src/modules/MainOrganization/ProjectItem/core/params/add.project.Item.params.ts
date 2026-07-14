@@ -1,5 +1,11 @@
 import type Params from '@/base/Core/Params/params';
-import { ClassValidation } from '@/base/Presentation/Utils/classValidation';
+import {
+  ClassValidation,
+  type FieldError,
+  ValidationError,
+} from '@/base/Presentation/Utils/classValidation';
+import { hasSelectValue, requiredSelectRule } from '@/base/Presentation/Utils/input_title';
+import { translate } from '@/locales/i18n';
 import { ProjectItemPriceEnum } from '../constant/project.item.Price.enum';
 
 export interface ProjectItemPayload {
@@ -18,7 +24,7 @@ export default class AddProjectItemParams implements Params {
 
   public static readonly validation = new ClassValidation().setRules({
     project_id: { required: true },
-    department_id: { required: true },
+    department_id: requiredSelectRule(),
     items: { required: true },
   });
 
@@ -57,11 +63,63 @@ export default class AddProjectItemParams implements Params {
     };
   }
 
+  private getItemSelectErrors(): FieldError[] {
+    const errors: FieldError[] = [];
+
+    this.items.forEach((item, index) => {
+      const fieldPrefix = `items.${index}`;
+
+      if (!hasSelectValue(item.item_id)) {
+        errors.push({
+          field: `${fieldPrefix}.item_id`,
+          message: translate('validation.select_required'),
+        });
+      }
+
+      if (!hasSelectValue(item.pricing_method)) {
+        errors.push({
+          field: `${fieldPrefix}.pricing_method`,
+          message: translate('validation.select_required'),
+        });
+      }
+
+      if (
+        item.pricing_method === ProjectItemPriceEnum.SPACE_RELATED &&
+        !hasSelectValue(item.project_floor_space_id)
+      ) {
+        errors.push({
+          field: `${fieldPrefix}.project_floor_space_id`,
+          message: translate('validation.select_required'),
+        });
+      }
+
+      if (
+        item.pricing_method === ProjectItemPriceEnum.FULL_FLOOR_RELATED &&
+        !hasSelectValue(item.project_floor_id)
+      ) {
+        errors.push({
+          field: `${fieldPrefix}.project_floor_id`,
+          message: translate('validation.select_required'),
+        });
+      }
+    });
+
+    return errors;
+  }
+
   validate() {
-    return AddProjectItemParams.validation.validate(this);
+    const validation = AddProjectItemParams.validation.validate(this);
+    const errors = [...validation.errors, ...this.getItemSelectErrors()];
+
+    return { isValid: errors.length === 0, errors };
   }
 
   validateOrThrow() {
-    return AddProjectItemParams.validation.validateOrThrow(this);
+    const validation = this.validate();
+
+    if (!validation.isValid) {
+      const validationError = new ValidationError(validation.errors);
+      validationError.openDialog();
+    }
   }
 }
