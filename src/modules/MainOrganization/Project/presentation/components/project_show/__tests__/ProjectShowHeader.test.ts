@@ -2,7 +2,7 @@ import { mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
 import ProjectShowHeader from '../ProjectShowHeader.vue';
 
-const mountHeader = () =>
+const mountHeader = (props: Record<string, unknown> = {}) =>
   mount(ProjectShowHeader, {
     props: {
       project: { id: 24, date: '2026-07-08', created_at: '2026-07-08 14:45:30' },
@@ -17,6 +17,7 @@ const mountHeader = () =>
       exportingPdf: false,
       formatDate: () => '08 Jul 2026',
       formatTime: () => '02:45 PM',
+      ...props,
     },
     global: {
       stubs: {
@@ -40,5 +41,26 @@ describe('ProjectShowHeader', () => {
     await wrapper.find('button').trigger('click');
 
     expect(wrapper.emitted('downloadPdf')).toHaveLength(1);
+  });
+
+  it('renders convert status action and emits it', async () => {
+    const wrapper = mountHeader({
+      convertActionLabel: 'Store Version',
+      convertActionDisabled: false,
+    });
+
+    expect(wrapper.text()).toContain('Store Version');
+
+    const buttons = wrapper.findAll('button');
+    await buttons[1].trigger('click');
+
+    expect(wrapper.emitted('convertStatusAction')).toHaveLength(1);
+  });
+
+  it('hides convert status action when no label is provided', () => {
+    const wrapper = mountHeader();
+
+    expect(wrapper.text()).not.toContain('Store Version');
+    expect(wrapper.findAll('button')).toHaveLength(1);
   });
 });

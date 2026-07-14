@@ -109,6 +109,7 @@ export type ProjectShowRaw = {
   allowed_revision_count?: string | number | null;
   selected_version?: string | number | null;
   project_floors?: ProjectFloor[];
+  project_previews?: ProjectPreview[];
   project_floor_spaces?: FloorSpace[];
   project_departments?: ProjectDepartmentRow[];
   project_department_items?: unknown[];

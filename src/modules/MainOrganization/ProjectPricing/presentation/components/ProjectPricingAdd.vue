@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { computed, onMounted, ref } from 'vue';
-  import { useRoute } from 'vue-router';
+  import { useRoute, useRouter } from 'vue-router';
 
   import ProjectPricingController from '../controllers/project.pricing.controller';
   import type AddProjectPricingParams from '../../core/params/add.project.pricing.params';
@@ -93,6 +93,7 @@
     }
   };
 
+  const router = useRouter();
   const saveItem = async () => {
     if (!params.value) return;
 
@@ -101,9 +102,14 @@
     try {
       await controller.create(params.value, undefined, formKey);
       await fetchProjectPricing();
+      backToEditProject();
     } finally {
       loading.value = false;
     }
+  };
+
+  const backToEditProject = () => {
+    router.push(`/organization/project/show/${route.query.project_id}`);
   };
 
   onMounted(async () => {

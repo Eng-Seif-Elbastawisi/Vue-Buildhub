@@ -17,6 +17,7 @@
     projectDepartments,
     fetchProject,
     downloadProjectPdf,
+    handleConvertStatusAction,
     goToSection,
     headerProps,
     tabsProps,
@@ -65,7 +66,11 @@
 
       <template #success>
         <div class="project-pdf-content">
-          <ProjectShowHeader v-bind="headerProps" @download-pdf="downloadProjectPdf" />
+          <ProjectShowHeader
+            v-bind="headerProps"
+            @download-pdf="downloadProjectPdf"
+            @convert-status-action="handleConvertStatusAction"
+          />
 
           <ProjectShowTabs v-bind="tabsProps" @select="goToSection" />
 

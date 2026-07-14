@@ -1,5 +1,10 @@
 <script setup lang="ts">
-  import { computed } from 'vue';
+  import { computed, ref } from 'vue';
+  import Accordion from 'primevue/accordion';
+  import AccordionPanel from 'primevue/accordionpanel';
+  import AccordionHeader from 'primevue/accordionheader';
+  import AccordionContent from 'primevue/accordioncontent';
+  import type { RouteLocationRaw } from 'vue-router';
   import type { ProjectPreview, ProjectStatItem } from './projectShow.types';
 
   const props = withDefaults(
@@ -8,6 +13,8 @@
       projectTitle: string;
       stats: ProjectStatItem[];
       preview: ProjectPreview | null;
+      previews?: ProjectPreview[];
+      addItemTo: RouteLocationRaw;
       previewTitle: string;
       noPreviewLabel: string;
       previewDateLabel: string;
@@ -24,10 +31,19 @@
       valueOrEmpty: (value?: string | number | null) => string;
     }>(),
     {
+      previews: () => [],
       terms: '',
       termsLabel: '',
     },
   );
+
+  const displayPreviews = computed(() => {
+    if (props.previews.length) return props.previews;
+    if (props.preview) return [props.preview];
+
+    return [];
+  });
+  const activePreview = ref('0');
 
   const termLines = computed(() =>
     props.terms
@@ -57,9 +73,9 @@
       </div>
 
       <RouterLink
-        v-if="!preview"
+        v-if="!displayPreviews.length"
         class="empty-panel empty-panel--link"
-        :to="`/organization/project_preview/add?project_id=${25}`"
+        :to="addItemTo"
       >
         <i class="pi pi-plus-circle"></i>
 
@@ -72,41 +88,70 @@
         {{ noPreviewLabel }}
       </div> -->
 
-      <div v-else class="preview-grid">
-        <div class="side-info">
-          <i class="pi pi-calendar"></i>
-          <span>{{ previewDateLabel }}</span>
-          <strong>{{ formatDate(preview.preview_date) }}</strong>
-        </div>
-        <!-- <div class="side-info">
-          <i class="pi pi-bell"></i>
-          <span>{{ notificationTypeLabel }}</span>
-          <strong>{{ valueOrEmpty(preview.notification_type) }}</strong>
-        </div> -->
-        <div class="side-info">
-          <i class="pi pi-clock"></i>
-          <span>{{ previewTimeLabel }}</span>
-          <strong>{{ formatTime(preview.preview_time) }}</strong>
-        </div>
-        <!-- <div class="side-info">
-          <i class="pi pi-comment"></i>
-          <span>{{ notificationMessageLabel }}</span>
-          <strong>{{ valueOrEmpty(preview.notification_message) }}</strong>
-        </div> -->
-        <div class="side-info side-info--wide">
-          <i class="pi pi-link"></i>
-          <span>{{ siteLinkLabel }}</span>
-          <a v-if="preview.site_link" :href="preview.site_link" target="_blank" rel="noopener">
-            {{ preview.site_link }}
-          </a>
-          <strong v-else>{{ emptyValue }}</strong>
-        </div>
-        <div class="side-info side-info--wide">
-          <i class="pi pi-map-marker"></i>
-          <span>{{ addressLabel }}</span>
-          <strong>{{ valueOrEmpty(preview.address) }}</strong>
-        </div>
-      </div>
+      <Accordion v-else v-model:value="activePreview" class="department-accordion">
+        <AccordionPanel
+          v-for="(previewItem, index) in displayPreviews"
+          :key="previewItem.id ?? index"
+          :value="index.toString()"
+          class="department-panel"
+        >
+          <AccordionHeader class="department-panel__header">
+            <div class="department-header-content">
+              <span class="department-icon" aria-hidden="true">
+                <i class="pi pi-calendar"></i>
+              </span>
+
+              <div class="department-title-group">
+                <span>{{ previewDateLabel }}</span>
+                <strong>{{ formatDate(previewItem.preview_date) }}</strong>
+                <small>
+                  <i class="pi pi-clock"></i>
+                  {{ previewTimeLabel }} {{ formatTime(previewItem.preview_time) }}
+                </small>
+              </div>
+
+              <div class="department-header-meta">
+                <span class="department-count-pill">
+                  {{ valueOrEmpty(previewItem.notification_type) }}
+                </span>
+              </div>
+            </div>
+          </AccordionHeader>
+
+          <AccordionContent class="department-panel__content">
+            <div class="preview-grid">
+              <div class="side-info">
+                <i class="pi pi-bell"></i>
+                <span>{{ notificationTypeLabel }}</span>
+                <strong>{{ valueOrEmpty(previewItem.notification_type) }}</strong>
+              </div>
+              <div class="side-info">
+                <i class="pi pi-comment"></i>
+                <span>{{ notificationMessageLabel }}</span>
+                <strong>{{ valueOrEmpty(previewItem.notification_message) }}</strong>
+              </div>
+              <div class="side-info side-info--wide">
+                <i class="pi pi-link"></i>
+                <span>{{ siteLinkLabel }}</span>
+                <a
+                  v-if="previewItem.site_link"
+                  :href="previewItem.site_link"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  {{ previewItem.site_link }}
+                </a>
+                <strong v-else>{{ emptyValue }}</strong>
+              </div>
+              <div class="side-info side-info--wide">
+                <i class="pi pi-map-marker"></i>
+                <span>{{ addressLabel }}</span>
+                <strong>{{ valueOrEmpty(previewItem.address) }}</strong>
+              </div>
+            </div>
+          </AccordionContent>
+        </AccordionPanel>
+      </Accordion>
     </article>
 
     <article id="project-terms" class="project-card terms-card">

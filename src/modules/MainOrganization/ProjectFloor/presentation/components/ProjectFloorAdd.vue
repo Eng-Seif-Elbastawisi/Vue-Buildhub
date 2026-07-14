@@ -95,7 +95,7 @@
     loading.value = true;
 
     try {
-      await controller.getProject(finalParams.toMap());
+      await controller.getProject(finalParams);
 
       await router.push({
         path: `${getPrefix()}/project-item/add`,

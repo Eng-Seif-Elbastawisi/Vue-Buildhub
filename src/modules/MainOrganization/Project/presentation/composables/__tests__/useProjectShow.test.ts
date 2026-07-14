@@ -19,6 +19,26 @@ const itemData = {
     notes: 'Project notes',
     terms: 'First payment after approval\nSecond payment after delivery',
     site_description: 'Site description',
+    project_previews: [
+      {
+        id: 38,
+        notification_type: 1,
+        notification_message: 'Preview ready',
+        preview_date: '2026-07-16',
+        preview_time: '13:40:00',
+        site_link: 'http://localhost:5173/organization/project_preview/add?project_id=32',
+        address: 'Preview address',
+      },
+      {
+        id: 37,
+        notification_type: 2,
+        notification_message: 'Second preview',
+        preview_date: '2026-07-20',
+        preview_time: '12:39:00',
+        site_link: 'http://localhost:5173/organization/project_preview/add?project_id=32',
+        address: 'Second preview address',
+      },
+    ],
     project_floors: [],
     project_floor_spaces: [],
     project_department_items: [],
@@ -102,10 +122,16 @@ describe('useProjectShow', () => {
     expect(fetchOne).toHaveBeenCalledTimes(1);
     expect(fetchOne.mock.calls[0][0].toMap()).toEqual({ project_id: 24 });
     expect(projectShow.headerProps.value.projectTitle).toBe('Project Alpha');
+    expect(projectShow.headerProps.value.convertActionLabel).toBe(
+      'project.convertActions.convertMeasurementToProject',
+    );
     expect(projectShow.tabsProps.value.activeTab).toBe('project-data');
     expect(projectShow.sideColumnProps.value.terms).toBe(
       'First payment after approval\nSecond payment after delivery',
     );
+    expect(projectShow.sideColumnProps.value.preview?.id).toBe(38);
+    expect(projectShow.sideColumnProps.value.previews).toHaveLength(2);
+    expect(projectShow.sideColumnProps.value.preview?.notification_message).toBe('Preview ready');
     expect(projectShow.departmentsSectionProps.value.departments).toHaveLength(1);
     expect(projectShow.departmentsSectionProps.value.departments[0].department.title).toBe(
       'Engineering',

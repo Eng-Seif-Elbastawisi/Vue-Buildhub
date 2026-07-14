@@ -1,4 +1,5 @@
 import BaseApiService, { type ApiEndpoints } from '@/base/Data/ApiService/baseApiService';
+import type Params from '@/base/Core/Params/params';
 import { ProjectFloorApiEndpoints } from './project.floor.api.endpoints';
 
 export default class ProjectFloorApiService extends BaseApiService {
@@ -21,7 +22,7 @@ export default class ProjectFloorApiService extends BaseApiService {
     };
   }
 
-  async getProject(params?: Record<string, unknown>) {
-    return await this.customPost(this.projectFloorEndpoints.getProject, params as any);
+  async getProject(params?: Params) {
+    return await this.customPost(this.projectFloorEndpoints.getProject, params);
   }
 }

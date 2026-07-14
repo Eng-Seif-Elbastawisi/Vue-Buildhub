@@ -1,4 +1,5 @@
 import BaseRepository, { type RepositoryConfig } from '@/base/Domain/Repositories/baseRepository';
+import type Params from '@/base/Core/Params/params';
 import ProjectFloorModel from '../../core/models/project.floor.model';
 import ProjectFloorShowModel from '../../core/models/project.floor.show.model';
 import ProjectFloorApiService from '../api/project.floor.api-service';
@@ -34,7 +35,7 @@ export default class ProjectFloorRepository extends BaseRepository<
     return Array.isArray(data) ? data.map((item) => ProjectFloorModel.fromJson(item)) : [];
   }
 
-  async getProject(params?: Record<string, unknown>) {
-    return await this.apiService.getProject(params as any);
+  async getProject(params?: Params) {
+    return await this.apiService.getProject(params);
   }
 }

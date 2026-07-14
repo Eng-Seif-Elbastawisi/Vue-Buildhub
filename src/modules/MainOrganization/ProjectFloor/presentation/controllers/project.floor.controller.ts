@@ -85,7 +85,7 @@ export default class ProjectFloorController extends BaseController<
       },
     });
   }
-  async getProject(params?: Record<string, unknown>) {
+  async getProject(params?: Params) {
     return await this.repository.getProject(params);
   }
 }

@@ -12,12 +12,15 @@
     editProjectLabel: string;
     historyLabel: string;
     exportingPdf: boolean;
+    convertActionLabel?: string;
+    convertActionDisabled?: boolean;
     formatDate: (value?: string | null) => string;
     formatTime: (value?: string | null) => string;
   }>();
 
   defineEmits<{
     downloadPdf: [];
+    convertStatusAction: [];
   }>();
 </script>
 
@@ -51,6 +54,17 @@
         >
           <i class="pi pi-download"></i>
           {{ exportingPdf ? generatingPdfLabel : downloadPdfLabel }}
+        </button>
+
+        <button
+          v-if="convertActionLabel"
+          class="project-action-btn project-action-btn--primary"
+          type="button"
+          :disabled="convertActionDisabled"
+          @click="$emit('convertStatusAction')"
+        >
+          <i class="pi pi-sync"></i>
+          {{ convertActionLabel }}
         </button>
 
         <RouterLink

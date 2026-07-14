@@ -137,6 +137,24 @@ export const useProjectShow = () => {
     }
   };
 
+  const convertActionLabel = computed(() => {
+    switch (currentConvertStatus.value) {
+      case ConvertStatus.PENDING:
+        return t('project.convertActions.convertMeasurementToProject');
+
+      case ConvertStatus.CONVERT_TO_PROJECT:
+        return t('project.convertActions.storeVersion');
+
+      case ConvertStatus.SEND_TO_CLIENT:
+        return t('project.convertActions.reviseVersion');
+
+      default:
+        return '';
+    }
+  });
+
+  const isConvertActionDisabled = computed(() => loading.value);
+
   const getServiceTypeLabel = (type?: number | null) => {
     if (type === ServiceType.DESIGNONLY) return t('Project.service_types.designOnly');
     if (type === ServiceType.EXECUTIONONLY) return t('Project.service_types.executionOnly');
@@ -206,13 +224,19 @@ export const useProjectShow = () => {
     return parts.filter((part) => part && part !== emptyValue).join(' > ') || emptyValue;
   };
 
-  const getFirstProjectPreview = () => {
-    return (
-      project.value.project_floors?.find((floor) => floor.project_preview)?.project_preview ?? null
-    );
+  const getProjectPreviews = () => {
+    const projectPreviews = project.value.project_previews ?? [];
+    if (projectPreviews.length) return projectPreviews;
+
+    return (project.value.project_floors ?? [])
+      .map((floor) => floor.project_preview)
+      .filter((projectPreview): projectPreview is NonNullable<typeof projectPreview> =>
+        Boolean(projectPreview),
+      );
   };
 
-  const preview = computed(() => getFirstProjectPreview());
+  const previews = computed(() => getProjectPreviews());
+  const preview = computed(() => previews.value[0] ?? null);
   const projectFloors = computed(() => project.value.project_floors ?? []);
   const projectItems = computed(() => project.value.project_department_items ?? []);
   const projectDepartments = computed(() => project.value.project_departments ?? []);
@@ -928,6 +952,8 @@ export const useProjectShow = () => {
     editProjectLabel: t('ProjectShow.edit_project'),
     historyLabel: t('ProjectShow.history'),
     exportingPdf: exportingPdf.value,
+    convertActionLabel: convertActionLabel.value,
+    convertActionDisabled: isConvertActionDisabled.value,
     formatDate,
     formatTime,
   }));
@@ -1070,6 +1096,13 @@ export const useProjectShow = () => {
     projectTitle: projectTitle.value,
     stats: stats.value,
     preview: preview.value,
+    previews: previews.value,
+    addItemTo: {
+      path: '/organization/project_preview/add',
+      query: {
+        project_id: project.value.id ?? projectId.value,
+      },
+    },
     previewTitle: t('Project.steps.project_preview'),
     noPreviewLabel: t('ProjectShow.no_preview'),
     previewDateLabel: t('Project.preview_date'),
