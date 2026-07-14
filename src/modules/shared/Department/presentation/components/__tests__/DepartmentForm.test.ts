@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
 import TitleInterface from '@/base/Data/Models/titleInterface';
+import { Type } from '../../../core/constants/Type.enum';
 import DepartmentModel from '../../../core/models/department.model';
 import type AddDepartmentParams from '../../../core/params/add.department.params';
 import type EditDepartmentParams from '../../../core/params/edit.department.params';
@@ -18,11 +19,18 @@ const MultiLangInputStub = {
 };
 
 const SelectStub = {
-  props: ['modelValue'],
+  props: ['id', 'modelValue'],
   emits: ['update:modelValue'],
-  template:
-    '<button class="stage-select" @click="$emit(\'update:modelValue\', newStage)">{{ modelValue?.title ?? "stage" }}</button>',
-  data: () => ({ newStage: new TitleInterface({ id: 7, title: 'Secondary' }) }),
+  template: `<button
+      :class="id === 'type' ? 'type-select' : 'stage-select'"
+      @click="$emit('update:modelValue', id === 'type' ? newType : newStage)"
+    >
+      {{ modelValue?.title ?? id }}
+    </button>`,
+  data: () => ({
+    newStage: new TitleInterface({ id: 7, title: 'Secondary' }),
+    newType: new TitleInterface({ id: Type.BOTH, title: 'Both' }),
+  }),
 };
 
 const mountForm = (props = {}) =>
@@ -43,12 +51,14 @@ describe('DepartmentForm', () => {
 
     await wrapper.find('.multi-lang-input').trigger('click');
     await wrapper.find('.stage-select').trigger('click');
+    await wrapper.find('.type-select').trigger('click');
 
     const events = wrapper.emitted('updateData') ?? [];
     const params = events.at(-1)?.[0] as AddDepartmentParams;
     expect(params.toMap()).toEqual({
       translations: expect.objectContaining({ title: { en: 'Science', ar: 'العلوم' } }),
       stage_id: 7,
+      type: Type.BOTH,
     });
   });
 
@@ -57,6 +67,7 @@ describe('DepartmentForm', () => {
       id: 5,
       translations: { title: { en: 'Existing', ar: 'القائم' } },
       stage: new TitleInterface({ id: 3, title: 'Primary' }),
+      type: Type.SUPERVISION,
     });
 
     const wrapper = mountForm({ department });
@@ -67,6 +78,7 @@ describe('DepartmentForm', () => {
       department_id: 5,
       translations: expect.objectContaining({ title: { en: 'Existing', ar: 'القائم' } }),
       stage_id: 3,
+      type: Type.SUPERVISION,
     });
   });
 
@@ -99,12 +111,14 @@ describe('DepartmentForm', () => {
   it('clears title and selected stage when resetKey changes', async () => {
     const wrapper = mountForm({ department: DepartmentModel.example(), resetKey: 0 });
 
-    expect(wrapper.find('.title-en').text()).toBe('Smart Learning Platform');
+    expect(wrapper.find('.title-en').text()).toBe('Design Department');
     expect(wrapper.find('.stage-select').text()).toBe('Engineering');
+    expect(wrapper.find('.type-select').text()).toBe('Design');
 
     await wrapper.setProps({ resetKey: 1 });
 
     expect(wrapper.find('.title-en').text()).toBe('');
-    expect(wrapper.find('.stage-select').text()).toBe('stage');
+    expect(wrapper.find('.stage-select').text()).toBe('doc-branch');
+    expect(wrapper.find('.type-select').text()).toBe('type');
   });
 });

@@ -31,11 +31,8 @@
 
   const discountMode = ref<'value' | 'percentage'>('value');
 
-  const DiscountEnum = ProjectPricingDiscountEnum as any;
-
-  const VALUE_DISCOUNT_ID = DiscountEnum.VALUE ?? DiscountEnum.FIXED ?? DiscountEnum.AMOUNT ?? 1;
-  const PERCENTAGE_DISCOUNT_ID =
-    DiscountEnum.PERCENTAGE ?? DiscountEnum.PERCENT ?? DiscountEnum.RATIO ?? 2;
+  const VALUE_DISCOUNT_ID = ProjectPricingDiscountEnum.FIXED;
+  const PERCENTAGE_DISCOUNT_ID = ProjectPricingDiscountEnum.PERCENTAGE;
 
   const totalDesignItems = computed(() => Number(props.totalItemsPrice ?? 0));
 
@@ -55,37 +52,6 @@
 
   const isPercentageDiscount = computed(() => {
     return discountMode.value === 'percentage';
-  });
-
-  const discountAmount = computed(() => {
-    const value = Number(discountValue.value ?? 0);
-
-    if (isPercentageDiscount.value) {
-      return (totalDesignItems.value * value) / 100;
-    }
-
-    return value;
-  });
-
-  const taxAmount = computed(() => {
-    return (totalDesignItems.value * Number(totalTax.value ?? 0)) / 100;
-  });
-
-  const finalTotal = computed(() => {
-    const total = totalDesignItems.value + taxAmount.value - discountAmount.value;
-
-    return total < 0 ? 0 : total;
-  });
-
-  const displayedFinalTotal = computed(() => {
-    if (
-      props.item?.price_after_discount !== undefined &&
-      props.item?.price_after_discount !== null
-    ) {
-      return Number(props.item.price_after_discount);
-    }
-
-    return finalTotal.value;
   });
 
   const optionFromId = (id?: number | string): TitleInterface<string | number> | null => {
@@ -246,16 +212,6 @@
           @input="updateData"
         />
       </article>
-
-      <article class="summary-box">
-        <span class="summary-label">
-          {{ $t('project_pricing.final_total') }}
-        </span>
-
-        <strong class="summary-value">
-          {{ formatMoney(displayedFinalTotal) }}
-        </strong>
-      </article>
     </div>
   </section>
 </template>
@@ -265,7 +221,7 @@
     padding: 1rem 0;
     border-top: 1px solid rgba(214, 207, 198, 0.75);
     border-bottom: 1px solid rgba(214, 207, 198, 0.75);
-    background: #fff;
+    background: var(--bg-main);
 
     &.disabled {
       pointer-events: none;
@@ -275,7 +231,7 @@
 
   .summary-grid {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 0.85rem;
   }
 
@@ -288,18 +244,18 @@
     padding: 1.15rem;
     border: 1px solid rgba(214, 207, 198, 0.95);
     border-radius: 18px;
-    background: #fff;
+    background: var(--bg-main);
   }
 
   .summary-label {
-    color: #667085;
+    color: var(--gray-500);
     font-family: 'Medium';
     font-size: var(--sm-size);
     line-height: 1.4;
   }
 
   .summary-value {
-    color: #0f172a;
+    color: var(--gray-900);
     font-family: 'Bold';
     font-size: 1.45rem;
     line-height: 1;
@@ -324,7 +280,7 @@
     padding: 0.2rem;
     border: 1px solid rgba(214, 207, 198, 0.95);
     border-radius: 999px;
-    background: #f3f4f6;
+    background: var(--gray-100);
 
     button {
       min-width: 42px;
@@ -333,15 +289,15 @@
       border: 0;
       border-radius: 999px;
       background: transparent;
-      color: #1f2937;
+      color: var(--gray-800);
       cursor: pointer;
       font-family: 'Bold';
       font-size: var(--xs-size);
       transition: all 0.2s ease;
 
       &.active {
-        background: #111827;
-        color: #fff;
+        background: var(--gray-900);
+        color: var(--bg-main);
         box-shadow: 0 6px 14px rgba(15, 23, 42, 0.18);
       }
     }
@@ -353,8 +309,8 @@
     padding: 0.55rem 0.85rem;
     border: 1px solid rgba(214, 207, 198, 0.95);
     border-radius: 9px;
-    background: #fff;
-    color: #111827;
+    background: var(--bg-main);
+    color: var(--gray-900);
     outline: none;
     text-align: center;
     font-family: 'Medium';

@@ -1669,5 +1669,10 @@
   "location-city": "المدينة",
   "location-governorate": "المحافظة",
   "term": "الشروط",
-  "Show terms": "عرض الشروط"
+  "Show terms": "عرض الشروط",
+  "types.design": "تصميم",
+  "types.supervision": "اشراف",
+  "types.both": "كلاهما",
+  "types": "ادخال البيانات",
+  "Enter types": "ادخل البيانات"
 }

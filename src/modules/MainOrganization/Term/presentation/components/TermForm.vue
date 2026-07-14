@@ -1,8 +1,7 @@
 <script setup lang="ts">
-  import { onMounted, ref, watch } from 'vue';
+  import { ref, watch } from 'vue';
 
   import TranslationParams from '@/base/Core/Params/translationParams';
-
   import MultiLangInput from '@/shared/MultiLangInput.vue';
 
   import type TermShowModel from '../../core/models/term.show.model';
@@ -13,42 +12,68 @@
   }>();
 
   const props = defineProps<{
-    Term?: TermShowModel;
+    term?: TermShowModel;
     loading?: boolean;
   }>();
 
   const translations = ref<Record<string, string>>({});
+  const descriptionTranslations = ref<Record<string, string>>({});
 
   const updateData = () => {
     emit(
       'updateData',
       new AddTermParams({
         translations: new TranslationParams({
-          title: translations.value,
+          title: {
+            ...translations.value,
+          },
+          description: {
+            ...descriptionTranslations.value,
+          },
         }),
       }),
     );
   };
 
   const updateTranslations = (value: Record<string, string>) => {
-    translations.value = value;
+    translations.value = {
+      ...value,
+    };
+
     updateData();
   };
 
-  onMounted(updateData);
+  const updateDescriptionTranslations = (value: Record<string, string>) => {
+    descriptionTranslations.value = {
+      ...value,
+    };
+
+    updateData();
+  };
 
   watch(
-    () => props.Term,
-    (Term) => {
-      if (!Term) return;
+    () => props.term,
+    (term) => {
+      if (!term) {
+        translations.value = {};
+        descriptionTranslations.value = {};
+        return;
+      }
 
       translations.value = {
-        ...(Term.translations?.title ?? {}),
+        ...(term.translations?.title ?? {}),
+      };
+
+      descriptionTranslations.value = {
+        ...(term.translations?.description ?? {}),
       };
 
       updateData();
     },
-    { immediate: true },
+    {
+      immediate: true,
+      deep: true,
+    },
   );
 </script>
 
@@ -70,6 +95,17 @@
           @update:model-value="updateTranslations"
         />
       </div>
+
+      <div class="field-group">
+        <MultiLangInput
+          field-key="description"
+          :label="$t('description')"
+          :languages="['ar', 'en']"
+          :model-value="descriptionTranslations"
+          type="description"
+          @update:model-value="updateDescriptionTranslations"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -87,7 +123,7 @@
 
   .form-fields {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(1, minmax(0, 1fr));
     gap: 1rem;
     align-items: end;
 

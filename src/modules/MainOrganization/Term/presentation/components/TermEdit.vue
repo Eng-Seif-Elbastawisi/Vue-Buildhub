@@ -34,7 +34,7 @@
 
 <template>
   <div class="Term-crud-page">
-    <TermForm :Term="controller.itemData.value!" :loading="loading" @update-data="updateData" />
+    <TermForm :term="controller.itemData.value!" :loading="loading" @update-data="updateData" />
     <button
       :class="{ 'btn--loading': loading }"
       class="btn btn-primary"
