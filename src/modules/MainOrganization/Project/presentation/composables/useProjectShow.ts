@@ -107,25 +107,25 @@ export const useProjectShow = () => {
     switch (status) {
       case ConvertStatus.PENDING:
         return {
-          label: t('pending'),
+          label: t('project.convertStatus.pending'),
           className: 'is-pending',
         };
 
       case ConvertStatus.CONVERT_TO_PROJECT:
         return {
-          label: t('convertToProject'),
+          label: t('project.convertStatus.convertToProject'),
           className: 'is-converted',
         };
 
       case ConvertStatus.SEND_TO_CLIENT:
         return {
-          label: t('sendToClient'),
+          label: t('project.convertStatus.sendToClient'),
           className: 'is-send-client',
         };
 
       case ConvertStatus.REVISE_VERSION:
         return {
-          label: t('reviseVersion'),
+          label: t('project.convertStatus.reviseVersion'),
           className: 'is-revised',
         };
 

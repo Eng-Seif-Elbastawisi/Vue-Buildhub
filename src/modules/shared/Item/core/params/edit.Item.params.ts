@@ -1,5 +1,7 @@
 import type Params from '@/base/Core/Params/params';
 import { ClassValidation } from '@/base/Presentation/Utils/classValidation';
+import { hasTitleTranslation, requiredSelectRule } from '@/base/Presentation/Utils/input_title';
+import { translate } from '@/locales/i18n';
 import { type ItemStatusEnum } from '../constant/item.status.enum';
 import { type ItemTypeEnum } from '../constant/item.type.enum copy';
 
@@ -16,14 +18,17 @@ export default class EditItemParams implements Params {
 
   public static readonly validation = new ClassValidation().setRules({
     // item_id: { required: true },
-    // type: { required: true },
-    // status: { required: true },
-    // stage_id: { required: true },
-    // department_id: { required: true },
-    // measurement_unit_id: { required: true },
+    type: requiredSelectRule(),
+    status: requiredSelectRule(),
+    stage_id: requiredSelectRule(),
+    department_id: requiredSelectRule(),
+    measurement_unit_id: requiredSelectRule(),
     // price: { required: true },
     // notes: { required: true },
-    // translations: { required: true },
+    translations: {
+      required: true,
+      custom: (value) => hasTitleTranslation(value) || translate('validation.title_required'),
+    },
   });
 
   constructor(data: {

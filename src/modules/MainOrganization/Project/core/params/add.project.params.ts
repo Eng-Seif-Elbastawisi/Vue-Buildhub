@@ -1,6 +1,16 @@
 import type Params from '@/base/Core/Params/params';
-import { ClassValidation } from '@/base/Presentation/Utils/classValidation';
+import {
+  ClassValidation,
+  type FieldError,
+  ValidationError,
+} from '@/base/Presentation/Utils/classValidation';
 import type TranslationParams from '@/base/Core/Params/translationParams';
+import {
+  hasSelectValue,
+  hasTitleTranslation,
+  requiredSelectRule,
+} from '@/base/Presentation/Utils/input_title';
+import { translate } from '@/locales/i18n';
 import { type ServiceType } from '@/modules/MainOrganization/Project/core/constants/serviceType.enum';
 
 export interface ProjectAttachmentParams {
@@ -27,7 +37,17 @@ export default class AddProjectParams implements Params {
   public address?: string;
   public terms?: string;
 
-  public static readonly validation = new ClassValidation().setRules({});
+  public static readonly validation = new ClassValidation().setRules({
+    translations: {
+      required: true,
+      custom: (value?: TranslationParams) =>
+        hasTitleTranslation(value) || translate('validation.title_required'),
+    },
+    client_exist: requiredSelectRule(),
+    project_type_id: requiredSelectRule(),
+    location_id: requiredSelectRule(),
+    service_type: requiredSelectRule(),
+  });
 
   constructor(data: {
     translations?: TranslationParams;
@@ -92,11 +112,39 @@ export default class AddProjectParams implements Params {
     };
   }
 
+  private getConditionalErrors(): FieldError[] {
+    const errors: FieldError[] = [];
+
+    if (this.client_exist === true && !hasSelectValue(this.client_id)) {
+      errors.push({
+        field: 'client_id',
+        message: translate('validation.select_required'),
+      });
+    }
+
+    if (this.client_exist === false && !hasSelectValue(this.client_source)) {
+      errors.push({
+        field: 'client_source',
+        message: translate('validation.select_required'),
+      });
+    }
+
+    return errors;
+  }
+
   validate() {
-    return AddProjectParams.validation.validate(this);
+    const validation = AddProjectParams.validation.validate(this);
+    const errors = [...validation.errors, ...this.getConditionalErrors()];
+
+    return { isValid: errors.length === 0, errors };
   }
 
   validateOrThrow() {
-    return AddProjectParams.validation.validateOrThrow(this);
+    const validation = this.validate();
+
+    if (!validation.isValid) {
+      const validationError = new ValidationError(validation.errors);
+      validationError.openDialog();
+    }
   }
 }

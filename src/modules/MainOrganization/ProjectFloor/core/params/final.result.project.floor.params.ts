@@ -1,5 +1,6 @@
 import type Params from '@/base/Core/Params/params';
 import { ClassValidation } from '@/base/Presentation/Utils/classValidation';
+import { requiredSelectRule } from '@/base/Presentation/Utils/input_title';
 import { type Status } from '../constants/status.enum';
 import { type NotificationType } from '../constants/notificationType.enum';
 
@@ -12,9 +13,9 @@ export default class AddFinalProjectFloorResultParams implements Params {
 
   public static readonly validation = new ClassValidation().setRules({
     project_preview_id: { required: true },
-    status: { required: true },
-    pricing_responsible_id: { required: true },
-    notification_type: { required: true },
+    status: requiredSelectRule(),
+    pricing_responsible_id: requiredSelectRule(),
+    notification_type: requiredSelectRule(),
     notification_message: { required: true },
   });
 

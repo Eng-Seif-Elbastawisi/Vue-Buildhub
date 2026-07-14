@@ -1,14 +1,19 @@
 import type Params from '@/base/Core/Params/params';
 import type TranslationParams from '@/base/Core/Params/translationParams';
 import { ClassValidation } from '@/base/Presentation/Utils/classValidation';
+import { hasTitleTranslation, requiredSelectRule } from '@/base/Presentation/Utils/input_title';
+import { translate } from '@/locales/i18n';
 
 export default class AddTermParams implements Params {
   public readonly translations: TranslationParams;
   public readonly departmentId: number;
 
   public static readonly validation = new ClassValidation().setRules({
-    translations: { required: true },
-    departmentId: { required: true },
+    translations: {
+      required: true,
+      custom: (value) => hasTitleTranslation(value) || translate('validation.title_required'),
+    },
+    departmentId: requiredSelectRule(),
   });
 
   constructor(data: { translations: TranslationParams; departmentId: number }) {

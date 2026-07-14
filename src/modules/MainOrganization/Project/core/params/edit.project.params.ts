@@ -1,6 +1,8 @@
 import type Params from '@/base/Core/Params/params';
 import { ClassValidation } from '@/base/Presentation/Utils/classValidation';
 import type TranslationParams from '@/base/Core/Params/translationParams';
+import { hasTitleTranslation, requiredSelectRule } from '@/base/Presentation/Utils/input_title';
+import { translate } from '@/locales/i18n';
 import { type ServiceType } from '@/modules/MainOrganization/Project/core/constants/serviceType.enum';
 
 export interface ProjectAttachmentParams {
@@ -27,7 +29,17 @@ export default class EditProjectParams implements Params {
   public site_link?: string;
   public address?: string;
 
-  public static readonly validation = new ClassValidation().setRules({});
+  public static readonly validation = new ClassValidation().setRules({
+    projectId: { required: true },
+    translations: {
+      required: true,
+      custom: (value?: TranslationParams) =>
+        hasTitleTranslation(value) || translate('validation.title_required'),
+    },
+    project_type_id: requiredSelectRule(),
+    location_id: requiredSelectRule(),
+    service_type: requiredSelectRule(),
+  });
 
   constructor(data: {
     projectId?: number;

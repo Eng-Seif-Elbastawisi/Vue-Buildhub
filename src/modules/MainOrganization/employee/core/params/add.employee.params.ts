@@ -1,5 +1,6 @@
 import type Params from '@/base/Core/Params/params';
 import { ClassValidation } from '@/base/Presentation/Utils/classValidation';
+import { requiredSelectRule } from '@/base/Presentation/Utils/input_title';
 import { type EmployeeType } from '../constants/type.enum';
 
 /**
@@ -17,10 +18,16 @@ export default class AddEmployeeParams implements Params {
     email: { required: true },
     phone: { required: true },
     password: { required: true, minLength: 6 },
-    type: { required: true },
+    type: requiredSelectRule(),
   });
 
-  constructor(data: { name: string; email: string; phone: string; password: string; type: EmployeeType }) {
+  constructor(data: {
+    name: string;
+    email: string;
+    phone: string;
+    password: string;
+    type: EmployeeType;
+  }) {
     this.name = data.name;
     this.email = data.email;
     this.phone = data.phone;

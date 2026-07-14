@@ -1,5 +1,7 @@
 import type Params from '@/base/Core/Params/params';
 import { ClassValidation } from '@/base/Presentation/Utils/classValidation';
+import { hasTitleTranslation, requiredSelectRule } from '@/base/Presentation/Utils/input_title';
+import { translate } from '@/locales/i18n';
 
 export default class EditMaterialParams implements Params {
   public material_id?: number;
@@ -11,9 +13,12 @@ export default class EditMaterialParams implements Params {
   public static readonly validation = new ClassValidation().setRules({
     material_id: { required: true },
     price: { required: true },
-    brandId: { required: true },
-    measurementId: { required: true },
-    translations: { required: true },
+    brandId: requiredSelectRule(),
+    measurementId: requiredSelectRule(),
+    translations: {
+      required: true,
+      custom: (value) => hasTitleTranslation(value) || translate('validation.title_required'),
+    },
   });
 
   constructor(data: {

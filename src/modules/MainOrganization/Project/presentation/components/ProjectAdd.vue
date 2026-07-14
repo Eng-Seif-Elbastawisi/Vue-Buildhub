@@ -1,6 +1,8 @@
 <script setup lang="ts">
   import { ref } from 'vue';
+  import { useI18n } from 'vue-i18n';
   import { useRoute } from 'vue-router';
+  import { dialogManager } from '@/base/Presentation/Dialogs/dialog.manager';
   import type AddProjectParams from '../../core/params/add.project.params.ts';
   import ProjectController from '../controllers/project.controller.ts';
   import ProjectForm from './ProjectForm.vue';
@@ -8,11 +10,29 @@
 
   const controller = ProjectController.getInstance();
   const route = useRoute();
+  const { t } = useI18n();
   const params = ref<AddProjectParams | null>(null);
   const loading = ref(false);
 
+  const canSubmitProject = () => {
+    if (!params.value) {
+      dialogManager.toastWarning(t('Project.validation.cant_send_empty_data'));
+      return false;
+    }
+
+    const validation = params.value.validate();
+    if (!validation.isValid) {
+      dialogManager.toastWarning(
+        validation.errors[0]?.message || t('Project.validation.cant_send_empty_data'),
+      );
+      return false;
+    }
+
+    return true;
+  };
+
   const saveProject = async () => {
-    if (!params.value) return;
+    if (!canSubmitProject() || !params.value) return;
     loading.value = true;
     try {
       await controller.create(params.value, undefined, route.fullPath);

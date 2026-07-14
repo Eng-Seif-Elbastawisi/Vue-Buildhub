@@ -1,5 +1,8 @@
 import type Params from '@/base/Core/Params/params';
+import type TranslationParams from '@/base/Core/Params/translationParams';
 import { ClassValidation } from '@/base/Presentation/Utils/classValidation';
+import { hasTitleTranslation } from '@/base/Presentation/Utils/input_title';
+import { translate } from '@/locales/i18n';
 
 /**
  * Parameters for updating an existing country
@@ -10,7 +13,11 @@ export default class EditStageParams implements Params {
 
   public static readonly validation = new ClassValidation().setRules({
     id: { required: true, minLength: 1, maxLength: 100 },
-    translations: { required: true, minLength: 2, maxLength: 100 },
+    translations: {
+      required: true,
+      custom: (value?: TranslationParams) =>
+        hasTitleTranslation(value) || translate('validation.title_required'),
+    },
   });
 
   constructor(data: { id: number; translations?: { title: Record<string, string> } }) {

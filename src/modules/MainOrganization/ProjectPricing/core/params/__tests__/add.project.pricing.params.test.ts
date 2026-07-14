@@ -16,4 +16,17 @@ describe('AddProjectPricingParams', () => {
     expect(params.toMap()).toEqual(payload);
     expect(params.validate().isValid).toBe(true);
   });
+
+  it('requires discount type selection', () => {
+    const params = new AddProjectPricingParams({
+      project_id: 4,
+      total_tax: 14,
+      discount_value: 250,
+    });
+
+    expect(params.validate()).toMatchObject({
+      isValid: false,
+      errors: [{ field: 'discount_type' }],
+    });
+  });
 });

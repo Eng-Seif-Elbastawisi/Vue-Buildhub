@@ -1,5 +1,7 @@
 import type Params from '@/base/Core/Params/params';
 import { ClassValidation } from '@/base/Presentation/Utils/classValidation';
+import { hasTitleTranslation } from '@/base/Presentation/Utils/input_title';
+import { translate } from '@/locales/i18n';
 import type { ProjectType } from '../constant/project-type.enum';
 import type TranslationParams from '@/base/Core/Params/translationParams';
 
@@ -7,15 +9,24 @@ export default class EditProjectTypeParams implements Params {
   public projectId?: number;
   public name?: string;
   public projectType?: ProjectType;
-    public translations?: TranslationParams;
+  public translations?: TranslationParams;
 
   public static readonly validation = new ClassValidation().setRules({
     // projectId: { required: true },
     // name: { required: true },
     // projectType: { required: true },
+    translations: {
+      required: true,
+      custom: (value) => hasTitleTranslation(value) || translate('validation.title_required'),
+    },
   });
 
-  constructor(data: { projectId?: number; name?: string; projectType?: ProjectType,translations?: TranslationParams }) {
+  constructor(data: {
+    projectId?: number;
+    name?: string;
+    projectType?: ProjectType;
+    translations?: TranslationParams;
+  }) {
     this.projectId = data.projectId;
     this.name = data.name;
     this.projectType = data.projectType;
@@ -23,7 +34,12 @@ export default class EditProjectTypeParams implements Params {
   }
 
   toMap(): Record<string, unknown> {
-    return { project_type_id: this.projectId, name: this.name, project_type: this.projectType  , translations: this.translations?.toMap()};
+    return {
+      project_type_id: this.projectId,
+      name: this.name,
+      project_type: this.projectType,
+      translations: this.translations?.toMap(),
+    };
   }
 
   validate() {

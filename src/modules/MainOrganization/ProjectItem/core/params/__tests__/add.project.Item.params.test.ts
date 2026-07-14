@@ -66,4 +66,22 @@ describe('AddProjectItemParams', () => {
       ],
     });
   });
+
+  it('requires select values inside each item payload', () => {
+    const params = new AddProjectItemParams({
+      project_id: 4,
+      department_id: 7,
+      items: [
+        {
+          quantity: 3,
+          pricing_method: ProjectItemPriceEnum.FULL_FLOOR_RELATED,
+        },
+      ],
+    });
+
+    expect(params.validate()).toMatchObject({
+      isValid: false,
+      errors: [{ field: 'items.0.item_id' }, { field: 'items.0.project_floor_id' }],
+    });
+  });
 });

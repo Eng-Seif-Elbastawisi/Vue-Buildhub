@@ -1,5 +1,6 @@
 import type Params from '@/base/Core/Params/params';
 import { ClassValidation } from '@/base/Presentation/Utils/classValidation';
+import { requiredSelectRule } from '@/base/Presentation/Utils/input_title';
 import type { InvoicePaymentMethodEnum } from '../constant/invoice.payment.method.enum';
 
 export default class EditInvoicePaymentParams implements Params {
@@ -15,7 +16,7 @@ export default class EditInvoicePaymentParams implements Params {
     invoice_id: { required: true },
     payment_amount: { required: true },
     payment_date: { required: true },
-    payment_method: { required: true },
+    payment_method: requiredSelectRule(),
   });
 
   constructor(data: {
