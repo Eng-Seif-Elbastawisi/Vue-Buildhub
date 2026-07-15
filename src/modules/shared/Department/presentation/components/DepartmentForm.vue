@@ -1,6 +1,5 @@
 <script setup lang="ts">
-  import { computed, onMounted, ref, watch } from 'vue';
-  import { useI18n } from 'vue-i18n';
+  import { onMounted, ref, watch } from 'vue';
 
   import TitleInterface from '@/base/Data/Models/titleInterface';
   import TranslationParams from '@/base/Core/Params/translationParams';
@@ -14,7 +13,7 @@
   import AddDepartmentParams from '../../core/params/add.department.params';
   import EditDepartmentParams from '../../core/params/edit.department.params';
   import DepartmentModel from '../../core/models/department.model';
-  import { Type } from '../../core/constants/Type.enum';
+  import { DepartmentTypeEnum } from '../../core/constants/Type.enum';
 
   const emit = defineEmits<{
     updateData: [params: AddDepartmentParams | EditDepartmentParams];
@@ -24,44 +23,18 @@
     department?: DepartmentModel;
     loading?: boolean;
     resetKey?: number;
+    type?: DepartmentTypeEnum;
   }>();
-
-  const { t } = useI18n();
 
   const title = ref<Record<string, string>>({});
 
   const selectedStage = ref<TitleInterface<number>>();
 
-  const selectedType = ref<TitleInterface<number>>();
-
   const stageParams = new IndexStageParams();
 
   const stageController = StageController.getInstance();
 
-  const typeOptions = computed<TitleInterface<number>[]>(() => [
-    new TitleInterface({
-      id: Type.DESIGN,
-      title: t('types.design'),
-    }),
-
-    new TitleInterface({
-      id: Type.SUPERVISION,
-      title: t('types.supervision'),
-    }),
-
-    new TitleInterface({
-      id: Type.BOTH,
-      title: t('types.both'),
-    }),
-  ]);
-
-  const getTypeOption = (typeId?: number): TitleInterface<number> | undefined => {
-    if (typeId === undefined || typeId === null) {
-      return undefined;
-    }
-
-    return typeOptions.value.find((option) => Number(option.id) === Number(typeId));
-  };
+  const getFormType = (): DepartmentTypeEnum | undefined => props.type ?? props.department?.type;
 
   const updateData = () => {
     const translations = new TranslationParams({
@@ -72,7 +45,7 @@
 
     const stageId = selectedStage.value?.id ? Number(selectedStage.value.id) : undefined;
 
-    const type = selectedType.value?.id ? Number(selectedType.value.id) : undefined;
+    const type = getFormType();
 
     if (props.department?.id) {
       emit(
@@ -81,7 +54,7 @@
           id: props.department.id,
           translations,
           stageId: stageId ?? 0,
-          type: type ?? 0,
+          type: type as DepartmentTypeEnum,
         }),
       );
 
@@ -93,7 +66,7 @@
       new AddDepartmentParams({
         translations,
         stageId: stageId ?? 0,
-        type: type ?? 0,
+        type: type as DepartmentTypeEnum,
       }),
     );
   };
@@ -108,12 +81,6 @@
 
   const updateStage = (value?: TitleInterface<number>) => {
     selectedStage.value = value;
-
-    updateData();
-  };
-
-  const updateType = (value?: TitleInterface<number>) => {
-    selectedType.value = value;
 
     updateData();
   };
@@ -136,17 +103,12 @@
       selectedStage.value = undefined;
     }
 
-    selectedType.value = getTypeOption(
-      department.type !== undefined ? Number(department.type) : undefined,
-    );
-
     updateData();
   };
 
   const resetForm = () => {
     title.value = {};
     selectedStage.value = undefined;
-    selectedType.value = undefined;
 
     updateData();
   };
@@ -160,6 +122,7 @@
       }
 
       fillDepartmentData(department);
+      updateData();
     },
     {
       immediate: true,
@@ -174,6 +137,13 @@
       }
 
       resetForm();
+    },
+  );
+
+  watch(
+    () => props.type,
+    () => {
+      updateData();
     },
   );
 
@@ -207,17 +177,6 @@
         :placeholder="$t('Enter subject name')"
         :reload="true"
         @update:model-value="updateStage"
-      />
-    </div>
-
-    <div class="field-group" :class="{ disabled: loading }">
-      <UpdatedCustomInputSelect
-        id="type"
-        v-model="selectedType"
-        :label="$t('types')"
-        :static-options="typeOptions"
-        :placeholder="$t('Enter types')"
-        @update:model-value="updateType"
       />
     </div>
   </div>

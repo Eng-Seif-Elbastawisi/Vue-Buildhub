@@ -141,6 +141,7 @@
           :controller="locationController"
           :placeholder="$t('location.country_placeholder')"
           :params="countryParams"
+          :required="true"
           @update:model-value="handleCountryChange"
         />
       </div>
@@ -154,6 +155,7 @@
           :controller="locationController"
           :placeholder="$t('location.governorate_placeholder')"
           :params="governorateParams"
+          :required="true"
           @update:model-value="handleGovernorateChange"
         />
       </div>

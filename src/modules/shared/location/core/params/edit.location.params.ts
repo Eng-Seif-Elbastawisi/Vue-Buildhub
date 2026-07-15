@@ -1,15 +1,26 @@
 import type Params from '@/base/Core/Params/params';
-import { ClassValidation } from '@/base/Presentation/Utils/classValidation';
-import { hasTitleTranslation, requiredSelectRule } from '@/base/Presentation/Utils/input_title';
+import {
+  ClassValidation,
+  ValidationError,
+  type FieldError,
+} from '@/base/Presentation/Utils/classValidation';
+import {
+  hasSelectValue,
+  hasTitleTranslation,
+  requiredSelectRule,
+} from '@/base/Presentation/Utils/input_title';
 import { translate } from '@/locales/i18n';
-import { type LocationTypeEnum } from '../constant/location.type.enum';
+import {
+  LocationTypeEnum,
+  type LocationTypeEnum as LocationType,
+} from '../constant/location.type.enum';
 import type TranslationParams from '@/base/Core/Params/translationParams';
 
 export default class EditLocationParams implements Params {
   public location_id?: number;
   public parentId?: number;
   public code?: string;
-  public type?: LocationTypeEnum;
+  public type?: LocationType;
   public translations?: TranslationParams;
 
   public static readonly validation = new ClassValidation().setRules({
@@ -26,7 +37,7 @@ export default class EditLocationParams implements Params {
     location_id?: number;
     parentId?: number;
     code?: string;
-    type?: LocationTypeEnum;
+    type?: LocationType;
     translations?: TranslationParams;
   }) {
     this.location_id = data.location_id;
@@ -49,10 +60,27 @@ export default class EditLocationParams implements Params {
   }
 
   validate() {
-    return EditLocationParams.validation.validate(this);
+    const validationResult = EditLocationParams.validation.validate(this);
+    const errors: FieldError[] = [...validationResult.errors];
+
+    if (
+      (this.type === LocationTypeEnum.GOVERNORATE || this.type === LocationTypeEnum.CITY) &&
+      !hasSelectValue(this.parentId)
+    ) {
+      errors.push({
+        field: 'parentId',
+        message: translate('validation.select_required'),
+      });
+    }
+
+    return { isValid: errors.length === 0, errors };
   }
 
   validateOrThrow() {
-    return EditLocationParams.validation.validateOrThrow(this);
+    const validationResult = this.validate();
+
+    if (!validationResult.isValid) {
+      new ValidationError(validationResult.errors).openDialog();
+    }
   }
 }

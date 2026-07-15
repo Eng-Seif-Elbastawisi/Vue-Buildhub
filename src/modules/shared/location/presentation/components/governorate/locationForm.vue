@@ -106,6 +106,7 @@
           :controller="locationController"
           :placeholder="$t('location.country_placeholder')"
           :params="countryParams"
+          :required="true"
           @update:model-value="updateData"
         />
       </div>

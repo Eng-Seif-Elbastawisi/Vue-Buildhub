@@ -29,10 +29,10 @@ const global = {
         "<button class=\"multi-lang-input\" @click=\"$emit('update:modelValue', { en: 'Giza', ar: 'الجيزة' })\" />",
     },
     UpdatedCustomInputSelect: {
-      props: ['modelValue', 'id'],
+      props: ['modelValue', 'id', 'required'],
       emits: ['update:modelValue'],
       template:
-        '<button :class="`select-${id}`" @click="$emit(\'update:modelValue\', { id: id === \'country\' ? 1 : 2, title: id })" />',
+        '<button :class="`select-${id}`" :data-required="required" @click="$emit(\'update:modelValue\', { id: id === \'country\' ? 1 : 2, title: id })" />',
     },
   },
   mocks: {
@@ -58,6 +58,13 @@ describe('CityLocationForm', () => {
 
     const emittedParams = wrapper.emitted('updateData')?.at(-1)?.[0] as AddLocationParams;
     expect(emittedParams.parentId).toBe(2);
+  });
+
+  it('marks country and governorate selects as required', () => {
+    const wrapper = mount(LocationForm, { global });
+
+    expect(wrapper.find('.select-country').attributes('data-required')).toBe('true');
+    expect(wrapper.find('.select-governorate').attributes('data-required')).toBe('true');
   });
 
   it('hydrates values from an existing city location', () => {

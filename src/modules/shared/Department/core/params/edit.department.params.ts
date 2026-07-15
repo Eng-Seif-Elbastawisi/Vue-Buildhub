@@ -3,13 +3,13 @@ import { ClassValidation } from '@/base/Presentation/Utils/classValidation';
 import { hasTitleTranslation, requiredSelectRule } from '@/base/Presentation/Utils/input_title';
 import { translate } from '@/locales/i18n';
 import type TranslationParams from '@/base/Core/Params/translationParams';
-import type { Type } from '../constants/Type.enum';
+import type { DepartmentTypeEnum } from '../constants/Type.enum';
 
 export default class EditDepartmentParams implements Params {
   public readonly id: number;
   public readonly translations: TranslationParams;
   public readonly stageId: number;
-  public readonly type: Type;
+  public readonly type: DepartmentTypeEnum;
 
   public static readonly validation = new ClassValidation().setRules({
     id: { required: true },
@@ -21,7 +21,14 @@ export default class EditDepartmentParams implements Params {
     type: requiredSelectRule(),
   });
 
-  constructor(data: { id: number; translations: TranslationParams; stageId: number; type: Type }) {
+  constructor(
+    data: {
+      id: number;
+      translations: TranslationParams;
+      stageId: number;
+      type: DepartmentTypeEnum;
+    },
+  ) {
     this.id = data.id;
     this.translations = data.translations;
     this.stageId = data.stageId;

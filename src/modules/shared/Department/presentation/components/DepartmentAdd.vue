@@ -6,11 +6,12 @@
   import type AddDepartmentParams from '../../core/params/add.department.params';
   import type DepartmentModel from '../../core/models/department.model';
   import EditDepartmentParams from '../../core/params/edit.department.params.ts';
+  import type { DepartmentTypeEnum } from '../../core/constants/Type.enum';
 
   const controller = DepartmentController.getInstance();
   const params = ref<AddDepartmentParams | EditDepartmentParams | null>(null);
   const loading = ref(false);
-  const props = defineProps<{ department?: DepartmentModel }>();
+  const props = defineProps<{ department?: DepartmentModel; type?: DepartmentTypeEnum }>();
   const emit = defineEmits<{
     saved: [];
     cancel: [];
@@ -58,6 +59,7 @@
     <DepartmentForm
       :loading="loading"
       :department="props.department"
+      :type="props.type"
       :reset-key="resetKey"
       @update-data="updateData"
     />
