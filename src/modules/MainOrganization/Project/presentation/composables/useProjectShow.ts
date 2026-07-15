@@ -1,8 +1,10 @@
 import { computed, onMounted, ref } from 'vue';
 import { jsPDF } from 'jspdf';
-import autoTable, { type RowInput } from 'jspdf-autotable';
+import autoTable, { type CellHookData, type RowInput } from 'jspdf-autotable';
 import { useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
+import pdfArabicBoldFontUrl from '@/assets/fonts/Noto/NotoNaskhArabic-Bold.ttf?url';
+import pdfArabicRegularFontUrl from '@/assets/fonts/Noto/NotoNaskhArabic-Regular.ttf?url';
 import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
 import fallbackProjectImage from '@/assets/images/ChatGPT Image Jul 1, 2026, 11_19_16 AM.png';
 import { ProjectItemPriceEnum } from '@/modules/MainOrganization/ProjectItem/core/constant/project.item.Price.enum';
@@ -31,6 +33,14 @@ type PdfTableDocument = jsPDF & {
     finalY?: number;
   };
 };
+
+type PdfFontStyle = 'normal' | 'bold';
+
+const pdfArabicFontFamily = 'NotoNaskhArabic';
+let pdfArabicFontFiles: {
+  regular: string;
+  bold: string;
+} | null = null;
 
 export const useProjectShow = () => {
   const route = useRoute();
@@ -568,6 +578,70 @@ export const useProjectShow = () => {
 
   const pdfAlign = () => (isPdfRtl() ? 'right' : 'left');
 
+  const pdfFontFamily = () => (isPdfRtl() ? pdfArabicFontFamily : 'helvetica');
+
+  const setPdfFont = (pdf: jsPDF, style: PdfFontStyle = 'normal') => {
+    pdf.setFont(pdfFontFamily(), style);
+  };
+
+  const arrayBufferToBase64 = (buffer: ArrayBuffer) => {
+    const bytes = new Uint8Array(buffer);
+    const chunkSize = 0x8000;
+    let binary = '';
+
+    for (let index = 0; index < bytes.length; index += chunkSize) {
+      binary += String.fromCharCode(...bytes.subarray(index, index + chunkSize));
+    }
+
+    return window.btoa(binary);
+  };
+
+  const fetchPdfFont = async (fontUrl: string) => {
+    const response = await fetch(fontUrl);
+
+    return arrayBufferToBase64(await response.arrayBuffer());
+  };
+
+  const loadPdfArabicFonts = async () => {
+    if (pdfArabicFontFiles) return pdfArabicFontFiles;
+
+    const [regular, bold] = await Promise.all([
+      fetchPdfFont(pdfArabicRegularFontUrl),
+      fetchPdfFont(pdfArabicBoldFontUrl),
+    ]);
+
+    pdfArabicFontFiles = { regular, bold };
+
+    return pdfArabicFontFiles;
+  };
+
+  const setupPdfDocument = async (pdf: jsPDF) => {
+    if (!isPdfRtl()) {
+      pdf.setR2L(false);
+      return;
+    }
+
+    const fonts = await loadPdfArabicFonts();
+
+    pdf.addFileToVFS('NotoNaskhArabic-Regular.ttf', fonts.regular);
+    pdf.addFont('NotoNaskhArabic-Regular.ttf', pdfArabicFontFamily, 'normal');
+    pdf.addFileToVFS('NotoNaskhArabic-Bold.ttf', fonts.bold);
+    pdf.addFont('NotoNaskhArabic-Bold.ttf', pdfArabicFontFamily, 'bold');
+    pdf.setR2L(false);
+  };
+
+  const formatPdfText = (pdf: jsPDF, text: string | number | null | undefined) => {
+    const pdfText = valueOrEmpty(text);
+
+    return isPdfRtl() && /[\u0600-\u06FF]/.test(pdfText) ? pdf.processArabic(pdfText) : pdfText;
+  };
+
+  const formatPdfTableCell = (pdf: jsPDF, cellData: CellHookData) => {
+    if (!isPdfRtl()) return;
+
+    cellData.cell.text = cellData.cell.text.map((line) => formatPdfText(pdf, line));
+  };
+
   const pdfTextX = (pdf: jsPDF) => {
     const pageWidth = pdf.internal.pageSize.getWidth();
 
@@ -585,7 +659,7 @@ export const useProjectShow = () => {
     y: number,
     options: { align?: 'left' | 'center' | 'right'; maxWidth?: number } = {},
   ) => {
-    pdf.text(String(text), x, y, options);
+    pdf.text(formatPdfText(pdf, text), x, y, options);
   };
 
   const startPdfSection = (pdf: jsPDF, title: string, subtitle?: string, shouldAddPage = true) => {
@@ -598,7 +672,7 @@ export const useProjectShow = () => {
     pdf.setFillColor(...pdfColors.primary);
     pdf.rect(0, 0, pageWidth, 18, 'F');
     pdf.setTextColor(...pdfColors.white);
-    pdf.setFont('helvetica', 'bold');
+    setPdfFont(pdf, 'bold');
     pdf.setFontSize(11);
     writePdfText(pdf, 'BuildHub', pdfMargin, 11.5);
     writePdfText(
@@ -620,7 +694,7 @@ export const useProjectShow = () => {
 
     if (subtitle) {
       pdf.setTextColor(...pdfColors.muted);
-      pdf.setFont('helvetica', 'normal');
+      setPdfFont(pdf);
       pdf.setFontSize(9);
       writePdfText(pdf, subtitle, pdfTextX(pdf), 42, {
         align: pdfAlign(),
@@ -646,11 +720,11 @@ export const useProjectShow = () => {
       pdf.setDrawColor(...pdfColors.border);
       pdf.roundedRect(x, startY, cardWidth, 24, 2.5, 2.5, 'FD');
       pdf.setTextColor(...pdfColors.dark);
-      pdf.setFont('helvetica', 'bold');
+      setPdfFont(pdf, 'bold');
       pdf.setFontSize(10);
       writePdfText(pdf, stat.value, x + 4, startY + 9, { maxWidth: cardWidth - 8 });
       pdf.setTextColor(...pdfColors.muted);
-      pdf.setFont('helvetica', 'normal');
+      setPdfFont(pdf);
       pdf.setFontSize(7.5);
       writePdfText(pdf, stat.label, x + 4, startY + 17, { maxWidth: cardWidth - 8 });
     });
@@ -672,7 +746,7 @@ export const useProjectShow = () => {
       theme: 'grid',
       margin: { left: pdfMargin, right: pdfMargin, bottom: 18 },
       styles: {
-        font: 'helvetica',
+        font: pdfFontFamily(),
         fontSize: compact ? 7.5 : 8.5,
         cellPadding: compact ? 2.2 : 3,
         overflow: 'linebreak',
@@ -691,6 +765,7 @@ export const useProjectShow = () => {
       alternateRowStyles: {
         fillColor: pdfColors.soft,
       },
+      didParseCell: (cellData) => formatPdfTableCell(pdf, cellData),
       rowPageBreak: 'auto',
       showHead: 'everyPage',
     });
@@ -709,7 +784,7 @@ export const useProjectShow = () => {
       theme: 'grid',
       margin: { left: pdfMargin, right: pdfMargin, bottom: 18 },
       styles: {
-        font: 'helvetica',
+        font: pdfFontFamily(),
         fontSize: 8.8,
         cellPadding: 3,
         overflow: 'linebreak',
@@ -726,6 +801,7 @@ export const useProjectShow = () => {
         : {
             0: { fontStyle: 'bold', fillColor: pdfColors.soft, cellWidth: 55 },
           },
+      didParseCell: (cellData) => formatPdfTableCell(pdf, cellData),
     });
 
     return getLastTableY(pdf, startY);
@@ -738,7 +814,7 @@ export const useProjectShow = () => {
     pdf.setFillColor(...pdfColors.soft);
     pdf.roundedRect(pdfMargin, startY, pageWidth - pdfMargin * 2, 32, 2.5, 2.5, 'FD');
     pdf.setTextColor(...pdfColors.muted);
-    pdf.setFont('helvetica', 'bold');
+    setPdfFont(pdf, 'bold');
     pdf.setFontSize(10);
     writePdfText(pdf, message, pageWidth / 2, startY + 18, { align: 'center' });
 
@@ -772,7 +848,7 @@ export const useProjectShow = () => {
       pdf.setDrawColor(...pdfColors.border);
       pdf.line(pdfMargin, pageHeight - 14, pageWidth - pdfMargin, pageHeight - 14);
       pdf.setTextColor(...pdfColors.muted);
-      pdf.setFont('helvetica', 'normal');
+      setPdfFont(pdf);
       pdf.setFontSize(8);
       writePdfText(pdf, projectTitle.value, pdfMargin, pageHeight - 8, { maxWidth: 120 });
       writePdfText(pdf, `${page} / ${pageCount}`, pageWidth - pdfMargin, pageHeight - 8, {
@@ -788,6 +864,7 @@ export const useProjectShow = () => {
 
     try {
       const pdf = new jsPDF('p', 'mm', 'a4');
+      await setupPdfDocument(pdf);
 
       let y = startPdfSection(pdf, t('ProjectShow.project_information'), projectTitle.value, false);
       y = drawPdfSummaryCards(pdf, y);

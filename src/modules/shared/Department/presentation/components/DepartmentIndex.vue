@@ -284,3 +284,32 @@
     </DataStatusBuilder>
   </div>
 </template>
+
+<style scoped scss>
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 64px 20px;
+    text-align: center;
+
+    svg {
+      color: var(--gray-300);
+      margin-bottom: 16px;
+    }
+
+    h3 {
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: var(--gray-700);
+      margin: 0 0 4px;
+    }
+
+    p {
+      font-size: 0.875rem;
+      color: var(--gray-400);
+      margin: 0 0 20px;
+    }
+  }
+</style>
