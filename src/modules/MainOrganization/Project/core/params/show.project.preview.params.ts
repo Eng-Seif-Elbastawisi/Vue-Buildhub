@@ -13,7 +13,7 @@ export default class ShowProjectPreviewParams implements Params {
     this.allLocales = data.allLocales;
   }
   toMap(): Record<string, number | boolean> {
-    const map: Record<string, number | boolean> = { preview_id: this.previewId };
+    const map: Record<string, number | boolean> = { project_preview_id: this.previewId };
     if (this.allLocales) map.allLocales = this.allLocales;
     return map;
   }

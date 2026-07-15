@@ -17,18 +17,30 @@
   import IndexSpaceParams from '@/modules/shared/Space/core/params/index.space.params';
   import SpaceController from '@/modules/shared/Space/presentation/controllers/space.controller';
   import type ProjectFloorModel from '../../core/models/project.floor.model.ts';
+  import type ProjectFloorShowModel from '../../core/models/project.floor.show.model.ts';
 
   const emit = defineEmits<{
     updateData: [params: AddProjectFloorParams];
   }>();
 
-  const props = defineProps<{
-    projectFloor?: ProjectFloorModel;
-    projectId?: number;
-    projectPreviewId?: number;
-    loading?: boolean;
-    isEdit?: boolean;
-  }>();
+  const props = withDefaults(
+    defineProps<{
+      projectFloor?: ProjectFloorModel | ProjectFloorShowModel;
+      projectId?: number;
+      projectPreviewId?: number;
+      loading?: boolean;
+      isEdit?: boolean;
+      validationErrors?: Record<string, string>;
+    }>(),
+    {
+      projectFloor: undefined,
+      projectId: undefined,
+      projectPreviewId: undefined,
+      loading: false,
+      isEdit: false,
+      validationErrors: () => ({}),
+    },
+  );
 
   const { t } = useI18n();
 
@@ -105,20 +117,37 @@
   ]);
 
   const spaceOptions = computed<TitleInterface<number>[]>(() => {
-    const data = ((spaceController.listState.value as any)?.data ?? []) as any[];
+    const data = spaceController.listState.value.data ?? [];
 
     return data.map((item) => ({
       id: Number(item.id),
-      title: item.title ?? item.name ?? `#${item.id}`,
+      title: item.title ?? `#${item.id}`,
     }));
   });
 
-  const getProjectId = () => {
-    return props.projectFloor?.project_id ?? props.projectId ?? 0;
+  const getValidationError = (...fields: string[]): string => {
+    for (const field of fields) {
+      const message = props.validationErrors[field];
+      if (message) return message;
+    }
+
+    return '';
   };
 
-  const getProjectPreviewId = () => {
-    return props.projectFloor?.project_preview_id ?? props.projectPreviewId ?? 0;
+  const getSpaceValidationError = (index: number, field: string): string => {
+    return getValidationError(
+      `spaces.${index}.${field}`,
+      `spaces[${index}].${field}`,
+      `spaces.${index}.space.${field}`,
+    );
+  };
+
+  const getProjectId = (): number | undefined => {
+    return props.projectFloor?.project_id ?? props.projectId;
+  };
+
+  const getProjectPreviewId = (): number | undefined => {
+    return props.projectFloor?.project_preview_id ?? props.projectPreviewId;
   };
 
   const getDefaultFloorNumber = () => {
@@ -132,15 +161,22 @@
       width: Number(item.width || 0),
       height: Number(item.height || 0),
       notes: item.notes,
-      attachments: item.attachments,
+      attachments: item.attachments.map((attachment) => ({
+        file: attachment.file,
+        alt: attachment.alt,
+        link: attachment.link,
+      })),
     }));
   };
 
   const updateData = () => {
+    const projectId = getProjectId();
+    if (projectId === undefined) return;
+
     emit(
       'updateData',
       new AddProjectFloorParams({
-        project_id: getProjectId(),
+        project_id: projectId,
         project_preview_id: getProjectPreviewId(),
         floor_number: selectedFloorNumber.value?.id as FloorNumber,
         site_description: siteDescription.value,
@@ -341,6 +377,9 @@
               :placeholder="$t('ProjectFloor.floor_number_placeholder')"
               @update:model-value="updateFloorNumber"
             />
+            <small v-if="getValidationError('floor_number')" class="field-error">
+              {{ getValidationError('floor_number') }}
+            </small>
           </div>
 
           <div class="picker-field picker-field--space">
@@ -403,6 +442,9 @@
           <div class="empty-spaces__icon">＋</div>
           <h5>{{ $t('ProjectFloor.no_spaces_title') }}</h5>
           <p>{{ $t('ProjectFloor.no_spaces_description') }}</p>
+          <small v-if="getValidationError('spaces')" class="field-error">
+            {{ getValidationError('spaces') }}
+          </small>
         </div>
 
         <div v-else class="spaces-table">
@@ -435,6 +477,9 @@
             <div class="space-row__cell space-row__name">
               <span class="mobile-label">{{ $t('ProjectFloor.space') }}</span>
               <strong>{{ item.space.title }}</strong>
+              <small v-if="getSpaceValidationError(index, 'space_id')" class="field-error">
+                {{ getSpaceValidationError(index, 'space_id') }}
+              </small>
             </div>
 
             <div class="space-row__cell">
@@ -448,6 +493,9 @@
                 :placeholder="$t('ProjectFloor.length_placeholder')"
                 @input="updateData"
               />
+              <small v-if="getSpaceValidationError(index, 'length')" class="field-error">
+                {{ getSpaceValidationError(index, 'length') }}
+              </small>
             </div>
 
             <div class="space-row__cell">
@@ -461,6 +509,9 @@
                 :placeholder="$t('ProjectFloor.width_placeholder')"
                 @input="updateData"
               />
+              <small v-if="getSpaceValidationError(index, 'width')" class="field-error">
+                {{ getSpaceValidationError(index, 'width') }}
+              </small>
             </div>
 
             <div class="space-row__cell">
@@ -474,6 +525,9 @@
                 :placeholder="$t('ProjectFloor.height_placeholder')"
                 @input="updateData"
               />
+              <small v-if="getSpaceValidationError(index, 'height')" class="field-error">
+                {{ getSpaceValidationError(index, 'height') }}
+              </small>
             </div>
 
             <div class="space-row__cell">
@@ -492,6 +546,9 @@
                   }}
                 </span>
               </label>
+              <small v-if="getSpaceValidationError(index, 'attachments')" class="field-error">
+                {{ getSpaceValidationError(index, 'attachments') }}
+              </small>
             </div>
 
             <div class="space-row__cell">
@@ -503,6 +560,9 @@
                 :placeholder="$t('ProjectFloor.notes_placeholder')"
                 @input="updateData"
               />
+              <small v-if="getSpaceValidationError(index, 'notes')" class="field-error">
+                {{ getSpaceValidationError(index, 'notes') }}
+              </small>
             </div>
 
             <div class="space-row__actions">
@@ -545,6 +605,9 @@
               :placeholder="$t('ProjectFloor.site_description_placeholder')"
               @input="updateData"
             />
+            <small v-if="getValidationError('site_description')" class="field-error">
+              {{ getValidationError('site_description') }}
+            </small>
           </div>
 
           <div class="note-field">
@@ -569,6 +632,9 @@
               :placeholder="$t('ProjectFloor.technical_general_notes_placeholder')"
               @input="updateData"
             />
+            <small v-if="getValidationError('technical_general_notes')" class="field-error">
+              {{ getValidationError('technical_general_notes') }}
+            </small>
           </div>
 
           <div class="note-field">
@@ -593,6 +659,9 @@
               :placeholder="$t('ProjectFloor.inspection_recommendations_placeholder')"
               @input="updateData"
             />
+            <small v-if="getValidationError('inspection_recommendations')" class="field-error">
+              {{ getValidationError('inspection_recommendations') }}
+            </small>
           </div>
         </div>
       </section>
@@ -1085,6 +1154,13 @@
     min-height: 100px;
     resize: vertical;
     line-height: 1.8;
+  }
+
+  .field-error {
+    display: block;
+    color: var(--danger-dark);
+    font-size: var(--xs-size);
+    line-height: 1.5;
   }
 
   .mobile-label {

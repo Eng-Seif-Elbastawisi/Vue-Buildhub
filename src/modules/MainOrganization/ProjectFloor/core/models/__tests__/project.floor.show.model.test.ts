@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+import { FloorNumber } from '../../constants/floor.number.enum';
 import ProjectFloorShowModel from '../project.floor.show.model';
 
 describe('ProjectFloorShowModel', () => {
@@ -53,5 +54,39 @@ describe('ProjectFloorShowModel', () => {
       attachments: [{ id: 3, file: 'space.pdf', alt: 'Space file' }],
     });
     expect(model.spaces[0].space).toEqual({ id: 9, title: 'Reception' });
+  });
+
+  it('preserves scalar ids and maps nested floor and translated space objects', () => {
+    const model = ProjectFloorShowModel.fromJson({
+      id: 33,
+      project_id: 24,
+      project_preview_id: 15,
+      floor: { id: 200, number: 0, title: 'Ground floor' },
+      site_description: 'Current site description',
+      technical_general_notes: 'Current technical notes',
+      inspection_recommendations: 'Current recommendations',
+      spaces: [
+        {
+          space: {
+            id: 8,
+            title: [
+              { locale: 'ar', title: 'استقبال' },
+              { locale: 'en', title: 'Reception' },
+            ],
+          },
+          length: '12.50',
+          width: '8.25',
+          height: '3.20',
+          notes: null,
+        },
+      ],
+    });
+
+    expect(model.project_id).toBe(24);
+    expect(model.project_preview_id).toBe(15);
+    expect(model.project_preview?.id).toBe(15);
+    expect(model.floor_number).toBe(FloorNumber.GROUND_FLOOR);
+    expect(model.spaces[0]?.space).toEqual({ id: 8, title: 'Reception' });
+    expect(model.spaces[0]?.notes).toBe('');
   });
 });

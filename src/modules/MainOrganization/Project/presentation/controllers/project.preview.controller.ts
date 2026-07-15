@@ -55,29 +55,36 @@ export default class ProjectPreviewController extends BaseController<
     return this.userStore.user?.type === 1 ? '/mainportal' : '/organization';
   }
 
-  private getProjectId(params: Params, data: any): number | undefined {
-    return data?.project_id ?? (params as any)?.project_id;
+  private getPositiveInteger(value: unknown): number | undefined {
+    const numberValue = Number(value);
+
+    return Number.isInteger(numberValue) && numberValue > 0 ? numberValue : undefined;
   }
 
-  private getProjectPreviewId(data: any): number | undefined {
-    return data?.id ?? data?.project_preview_id;
+  private getProjectId(params: Params, data?: ProjectPreviewShowModel | null): number | undefined {
+    return (
+      this.getPositiveInteger(data?.project_id) ??
+      this.getPositiveInteger(params.toMap().project_id)
+    );
+  }
+
+  private getProjectPreviewId(data?: ProjectPreviewShowModel | null): number | undefined {
+    return this.getPositiveInteger(data?.id) ?? this.getPositiveInteger(data?.project_preview_id);
   }
 
   async create(params: Params, options?: ApiCallOptions, formKey?: string) {
     const result = await super.create(params, { ...options, useJson: true });
 
     if (result instanceof DataSuccess) {
-      const data = result.data as any;
-
-      const projectId = this.getProjectId(params, data);
-      const projectPreviewId = this.getProjectPreviewId(data);
+      const projectId = this.getProjectId(params, result.data);
+      const projectPreviewId = this.getProjectPreviewId(result.data);
 
       if (formKey) {
         useFormsStore().clearFormData(formKey);
       }
 
       if (projectId && projectPreviewId) {
-        router.push({
+        await router.push({
           path: `${this.getPrefix()}/project_floor/add`,
           query: {
             project_id: projectId,
@@ -88,7 +95,7 @@ export default class ProjectPreviewController extends BaseController<
         return result;
       }
 
-      router.push(
+      await router.push(
         this.userStore.user?.type === 1 ? '/mainportal/project' : '/organization/project',
       );
     }
@@ -100,15 +107,15 @@ export default class ProjectPreviewController extends BaseController<
     const result = await super.update(params, { ...options, useJson: true });
 
     if (result instanceof DataSuccess) {
-      router.push(
-        this.userStore.user?.type === 1
-          ? '/mainportal/project-preview'
-          : '/organization/project-preview',
-      );
+      const projectId = this.getProjectId(params, result.data);
 
       if (formKey) {
         useFormsStore().clearFormData(formKey);
       }
+
+      await router.push(
+        projectId ? `${this.getPrefix()}/project/show/${projectId}` : `${this.getPrefix()}/project`,
+      );
     }
 
     return result;

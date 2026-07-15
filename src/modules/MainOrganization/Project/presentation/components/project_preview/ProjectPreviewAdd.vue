@@ -1,6 +1,10 @@
 <script setup lang="ts">
   import { computed, ref } from 'vue';
+  import { useI18n } from 'vue-i18n';
   import { useRoute } from 'vue-router';
+
+  import { dialogManager } from '@/base/Presentation/Dialogs/dialog.manager';
+  import type { FieldError } from '@/base/Presentation/Utils/classValidation';
 
   import AddProjectPreviewParams from '../../../core/params/add.project.preview.params';
   import ProjectPreviewController from '../../controllers/project.preview.controller';
@@ -9,9 +13,11 @@
 
   const controller = ProjectPreviewController.getInstance();
   const route = useRoute();
+  const { t } = useI18n();
 
   const params = ref<AddProjectPreviewParams | null>(null);
   const loading = ref(false);
+  const validationErrors = ref<Record<string, string>>({});
 
   const projectId = computed(() => Number(route.params.id || route.query.project_id));
 
@@ -23,20 +29,65 @@
       preview_time: value.preview_time,
       site_link: value.site_link,
       address: value.address,
+      notification_type: value.notification_type,
+      status: value.status,
+      pricing_responsible_id: value.pricing_responsible_id,
+      notification_message: value.notification_message,
     });
   };
 
   const updateData = (value: AddProjectPreviewParams) => {
     params.value = withProjectId(value);
+    validationErrors.value = {};
+  };
+
+  const mapValidationErrors = (errors: FieldError[]) => {
+    return Object.fromEntries(errors.map((error) => [error.field, error.message]));
+  };
+
+  const mapServerValidationErrors = (errors?: Record<string, string[]>) => {
+    if (!errors) return {};
+
+    return Object.fromEntries(
+      Object.entries(errors).map(([field, messages]) => [field, messages[0] ?? '']),
+    );
+  };
+
+  const getValidatedParams = (): AddProjectPreviewParams | null => {
+    if (!params.value || !Number.isInteger(projectId.value) || projectId.value <= 0) {
+      dialogManager.toastWarning(t('Project.validation.cant_send_empty_data'));
+      return null;
+    }
+
+    const requestParams = withProjectId(params.value);
+    const validation = requestParams.validate();
+
+    validationErrors.value = mapValidationErrors(validation.errors);
+
+    if (!validation.isValid) {
+      dialogManager.toastWarning(
+        validation.errors[0]?.message || t('Project.validation.cant_send_empty_data'),
+      );
+      return null;
+    }
+
+    return requestParams;
   };
 
   const saveProjectPreview = async () => {
-    if (!params.value || !projectId.value) return;
+    if (loading.value) return;
+
+    const requestParams = getValidatedParams();
+    if (!requestParams) return;
 
     loading.value = true;
 
     try {
-      await controller.create(withProjectId(params.value), undefined, route.fullPath);
+      const result = await controller.create(requestParams, undefined, route.fullPath);
+
+      if (result?.hasError) {
+        validationErrors.value = mapServerValidationErrors(result.error?.validationErrors);
+      }
     } finally {
       loading.value = false;
     }
@@ -46,7 +97,12 @@
 <template>
   <div class="ProjectPreviewAdd-crud-page">
     <ProjectSteps :current-step="2" />
-    <ProjectPreviewForm :loading="loading" :project-id="projectId" @update-data="updateData" />
+    <ProjectPreviewForm
+      :loading="loading"
+      :project-id="projectId"
+      :validation-errors="validationErrors"
+      @update-data="updateData"
+    />
 
     <button
       :class="{ 'btn--loading': loading }"

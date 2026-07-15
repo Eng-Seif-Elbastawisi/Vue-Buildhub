@@ -45,6 +45,48 @@
   });
   const activePreview = ref('0');
 
+  const toPositiveInteger = (value: unknown): number | undefined => {
+    const normalizedValue = Array.isArray(value) ? value[0] : value;
+    const numberValue = Number(normalizedValue);
+
+    return Number.isInteger(numberValue) && numberValue > 0 ? numberValue : undefined;
+  };
+
+  const getProjectId = (): number | undefined => {
+    if (
+      typeof props.addItemTo !== 'object' ||
+      props.addItemTo === null ||
+      !('query' in props.addItemTo)
+    ) {
+      return undefined;
+    }
+
+    return toPositiveInteger(props.addItemTo.query?.project_id);
+  };
+
+  const hasValidPreviewId = (previewItem: ProjectPreview) => {
+    return toPositiveInteger(previewItem.id) !== undefined;
+  };
+
+  const getEditPreviewRoute = (previewItem: ProjectPreview): RouteLocationRaw => {
+    const projectPreviewId = toPositiveInteger(previewItem.id);
+    const projectId = getProjectId();
+
+    return {
+      name: 'edit-project_preview',
+      params: {
+        project_preview_id: projectPreviewId,
+      },
+      ...(projectId
+        ? {
+            query: {
+              project_id: projectId,
+            },
+          }
+        : {}),
+    };
+  };
+
   const termLines = computed(() =>
     props.terms
       .split(/\r?\n/)
@@ -149,6 +191,15 @@
                 <strong>{{ valueOrEmpty(previewItem.address) }}</strong>
               </div>
             </div>
+
+            <RouterLink
+              v-if="hasValidPreviewId(previewItem)"
+              class="project-action-btn project-action-btn--primary preview-edit-action"
+              :to="getEditPreviewRoute(previewItem)"
+            >
+              <i class="pi pi-pencil"></i>
+              {{ $t('Edit') }} {{ $t('Project.steps.project_preview') }}
+            </RouterLink>
           </AccordionContent>
         </AccordionPanel>
       </Accordion>
@@ -172,3 +223,10 @@
     </article>
   </aside>
 </template>
+
+<style scoped>
+  .preview-edit-action {
+    width: 100%;
+    margin-top: 1rem;
+  }
+</style>

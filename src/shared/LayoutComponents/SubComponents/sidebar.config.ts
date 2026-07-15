@@ -54,6 +54,14 @@ export type SidebarRole = 'admin' | 'organization';
 
 export type SidebarCountValue = number | string;
 
+export interface SidebarLocationCounts {
+  countries_count?: SidebarCountValue;
+  governorates_count?: SidebarCountValue;
+  cities_count?: SidebarCountValue;
+  regions_count?: SidebarCountValue;
+  places_count?: SidebarCountValue;
+}
+
 export interface SidebarProjectCounts {
   total_count?: SidebarCountValue;
   pending_count?: SidebarCountValue;
@@ -65,11 +73,6 @@ export interface SidebarProjectCounts {
 export interface SidebarCountsPayload {
   projects_count?: SidebarCountValue;
   project_previews_count?: SidebarCountValue;
-  countries_count?: SidebarCountValue;
-  governorates_count?: SidebarCountValue;
-  cities_count?: SidebarCountValue;
-  regions_count?: SidebarCountValue;
-  places_count?: SidebarCountValue;
   departments_count?: SidebarCountValue;
   stages_count?: SidebarCountValue;
   project_types_count?: SidebarCountValue;
@@ -94,6 +97,7 @@ export interface SidebarCountsPayload {
   };
 
   projects?: SidebarProjectCounts;
+  locations?: SidebarLocationCounts;
 }
 
 export interface SidebarCountsApiResponse {
@@ -105,11 +109,6 @@ export interface SidebarCountsApiResponse {
 export type SidebarRootCountKey =
   | 'projects_count'
   | 'project_previews_count'
-  | 'countries_count'
-  | 'governorates_count'
-  | 'cities_count'
-  | 'regions_count'
-  | 'places_count'
   | 'departments_count'
   | 'stages_count'
   | 'project_types_count'
@@ -128,6 +127,13 @@ export type SidebarRootCountKey =
   | 'invoice_payments_count'
   | 'term_count';
 
+export type SidebarLocationCountKey =
+  | 'locations.countries_count'
+  | 'locations.governorates_count'
+  | 'locations.cities_count'
+  | 'locations.regions_count'
+  | 'locations.places_count';
+
 export type SidebarProjectCountKey =
   | 'projects.total_count'
   | 'projects.pending_count'
@@ -135,7 +141,10 @@ export type SidebarProjectCountKey =
   | 'projects.send_to_client_count'
   | 'projects.revise_version_count';
 
-export type SidebarCountKey = SidebarRootCountKey | SidebarProjectCountKey;
+export type SidebarCountKey =
+  | SidebarRootCountKey
+  | SidebarProjectCountKey
+  | SidebarLocationCountKey;
 
 export interface SidebarItemConfig {
   type?: 'item' | 'group';
@@ -446,21 +455,21 @@ export const sidebarSections: SidebarSectionConfig[] = [
         path: '/location',
         labelKey: 'sidebar.country',
         icon: SidebarCountryIcon,
-        countKey: 'countries_count',
+        countKey: 'locations.countries_count',
       },
 
       {
         path: '/location-governorate',
         labelKey: 'sidebar.governorate',
         icon: SidebarGovernorateIcon,
-        countKey: 'governorates_count',
+        countKey: 'locations.governorates_count',
       },
 
       {
         path: '/location-city',
         labelKey: 'sidebar.city',
         icon: SidebarCityIcon,
-        countKey: 'cities_count',
+        countKey: 'locations.cities_count',
       },
 
       {
