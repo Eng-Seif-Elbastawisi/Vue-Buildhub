@@ -38,4 +38,28 @@ describe('EditProjectFloorParams', () => {
       spaces,
     });
   });
+
+  it('uses the same required fields and validation behavior as add params', () => {
+    const params = new EditProjectFloorParams({
+      id: 0,
+      project_id: 0,
+      project_preview_id: 0,
+      floor_number: 99 as FloorNumber,
+      site_description: '',
+      technical_general_notes: '',
+      inspection_recommendations: '',
+    });
+
+    expect(params.validate().errors.map((error) => error.field)).toEqual([
+      'id',
+      'project_id',
+      'project_preview_id',
+      'floor_number',
+      'site_description',
+      'technical_general_notes',
+      'inspection_recommendations',
+      'spaces',
+    ]);
+    expect(params.toMap()).not.toHaveProperty('spaces');
+  });
 });

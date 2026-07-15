@@ -5,6 +5,7 @@ import type { ApiCallOptions } from '@/base/Data/ApiService/baseApiService';
 import BaseController, {
   type ControllerConfig,
 } from '@/base/Presentation/Controller/baseController';
+import router from '@/router';
 import { useFormsStore } from '@/stores/formsStore';
 import type ProjectFloorModel from '../../core/models/project.floor.model';
 import type ProjectFloorShowModel from '../../core/models/project.floor.show.model';
@@ -41,6 +42,27 @@ export default class ProjectFloorController extends BaseController<
     return ProjectFloorController.instance;
   }
 
+  private getPositiveInteger(value: unknown): number | undefined {
+    const numberValue = Number(value);
+
+    return Number.isInteger(numberValue) && numberValue > 0 ? numberValue : undefined;
+  }
+
+  private getProjectId(params: Params, data?: ProjectFloorShowModel | null): number | undefined {
+    return (
+      this.getPositiveInteger(data?.project_id) ??
+      this.getPositiveInteger(data?.project?.id) ??
+      this.getPositiveInteger(params.toMap().project_id)
+    );
+  }
+
+  private getProjectFloorId(
+    params: Params,
+    data?: ProjectFloorShowModel | null,
+  ): number | undefined {
+    return this.getPositiveInteger(data?.id) ?? this.getPositiveInteger(params.toMap().id);
+  }
+
   async create(params: Params, options?: ApiCallOptions, formKey?: string) {
     const result = await super.create(params, { ...options, useJson: true });
     if (result instanceof DataSuccess) {
@@ -59,13 +81,21 @@ export default class ProjectFloorController extends BaseController<
   async update(params: Params, options?: ApiCallOptions, formKey?: string) {
     const result = await super.update(params, { ...options, useJson: true });
     if (result instanceof DataSuccess) {
-      // router.push(
-      //   this.userStore.user?.type === 1
-      //     ? '/mainportal/project-preview'
-      //     : '/organization/project-preview',
-      // );
+      const projectId = this.getProjectId(params, result.data);
+      const projectFloorId = this.getProjectFloorId(params, result.data);
 
       if (formKey) useFormsStore().clearFormData(formKey);
+
+      if (projectId) {
+        await router.push({ name: 'show-project', params: { project_id: projectId } });
+      } else if (projectFloorId) {
+        await router.push({
+          name: 'show-project_floor',
+          params: { project_floor_id: projectFloorId },
+        });
+      } else {
+        await router.push({ name: 'project' });
+      }
     }
     return result;
   }

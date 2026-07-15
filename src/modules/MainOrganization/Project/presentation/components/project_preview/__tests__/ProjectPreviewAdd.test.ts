@@ -1,5 +1,7 @@
 import { flushPromises, mount } from '@vue/test-utils';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { NotificationType } from '../../../../core/constants/notificationType.enum';
+import { Status } from '../../../../core/constants/status.enum';
 import AddProjectPreviewParams from '../../../../core/params/add.project.preview.params';
 import ProjectPreviewAdd from '../ProjectPreviewAdd.vue';
 
@@ -39,6 +41,10 @@ const params = new AddProjectPreviewParams({
   preview_time: '10:30',
   site_link: 'https://maps.google.com/?q=30.0444,31.2357',
   address: 'Nasr City, Cairo, Egypt',
+  status: Status.READY_FOR_PRICING,
+  pricing_responsible_id: 18,
+  notification_type: NotificationType.URGENT,
+  notification_message: 'Preview is ready for pricing',
 });
 
 const global = {
@@ -83,6 +89,10 @@ describe('ProjectPreviewAdd', () => {
       preview_time: '10:30',
       site_link: 'https://maps.google.com/?q=30.0444,31.2357',
       address: 'Nasr City, Cairo, Egypt',
+      status: Status.READY_FOR_PRICING,
+      pricing_responsible_id: 18,
+      notification_type: NotificationType.URGENT,
+      notification_message: 'Preview is ready for pricing',
     });
   });
 

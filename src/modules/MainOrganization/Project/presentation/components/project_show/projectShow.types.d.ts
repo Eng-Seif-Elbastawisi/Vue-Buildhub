@@ -49,6 +49,8 @@ export type ProjectPreview = {
 
 export type ProjectFloor = {
   id?: number;
+  project_id?: number | null;
+  project_preview_id?: number | null;
   floor_number?: number | null;
   status?: number | null;
   project_preview?: ProjectPreview | null;

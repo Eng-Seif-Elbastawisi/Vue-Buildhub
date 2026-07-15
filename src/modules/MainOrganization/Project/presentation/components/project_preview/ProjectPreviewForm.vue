@@ -6,6 +6,7 @@
   import UpdatedCustomInputSelect from '@/shared/FormInputs/UpdatedCustomInputSelect.vue';
   import IndexEmployeeParams from '@/modules/MainOrganization/employee/core/params/index.employee.params';
   import EmployeeController from '@/modules/MainOrganization/employee/presentation/controllers/employee.controller';
+  import { EmployeeType } from '@/modules/MainOrganization/employee/core/constants/type.enum';
   import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
 
   import type ProjectPreviewShowModel from '../../../core/models/project.preview.show.model';
@@ -20,17 +21,27 @@
 
   const { t } = useI18n();
 
-  const props = defineProps<{
-    projectPreview?: ProjectPreviewShowModel;
-    projectId?: number;
-    loading?: boolean;
-    isEdit?: boolean;
-  }>();
+  const props = withDefaults(
+    defineProps<{
+      projectPreview?: ProjectPreviewShowModel;
+      projectId?: number;
+      loading?: boolean;
+      isEdit?: boolean;
+      validationErrors?: Record<string, string>;
+    }>(),
+    {
+      projectPreview: undefined,
+      projectId: undefined,
+      loading: false,
+      isEdit: false,
+      validationErrors: () => ({}),
+    },
+  );
 
   const selectedEngineer = ref<TitleInterface<number> | null>(null);
   const selectedPricingResponsible = ref<TitleInterface<number> | null>(null);
   const selectedNotificationType = ref<TitleInterface<NotificationType> | null>(null);
-  const status = ref<TitleInterface<Status> | null>(null);
+  const selectedStatus = ref<TitleInterface<Status> | null>(null);
 
   // Values sent to API
   const previewDate = ref<string>('');
@@ -42,7 +53,7 @@
 
   const siteLink = ref<string>('');
   const address = ref<string>('');
-  const notification_message = ref<string>('');
+  const notificationMessage = ref<string>('');
 
   const employeeController = EmployeeController.getInstance();
 
@@ -58,10 +69,16 @@
     { id: Status.READY_FOR_PRICING, title: t('project.status_ready_for_pricing') },
   ]);
 
-  // employee type = 2
-  const engineerParams = new IndexEmployeeParams('', 1, 100, 0, 2);
+  const engineerParams = new IndexEmployeeParams('', 1, 100, 0, EmployeeType.ENGINEER);
+  const pricingResponsibleParams = new IndexEmployeeParams(
+    '',
+    1,
+    100,
+    0,
+    EmployeeType.PRICING_RESPONSIBLE,
+  );
 
-  type PrimeDateValue = Date | Date[] | (Date | null)[] | null | undefined;
+  type PrimeDateValue = Date | string | Date[] | (Date | null)[] | null | undefined;
 
   const normalizeDateValue = (value: PrimeDateValue): Date | null => {
     if (!value) return null;
@@ -70,7 +87,7 @@
       return value[0] ?? null;
     }
 
-    return value;
+    return value instanceof Date ? value : null;
   };
 
   const formatDateForApi = (value: Date | null): string => {
@@ -86,11 +103,22 @@
   const parseApiDate = (value?: string | null): Date | null => {
     if (!value) return null;
 
-    const [year, month, day] = value.split('-').map(Number);
+    const match = /^(\d{4})-(\d{2})-(\d{2})/.exec(value.trim());
+    if (!match) return null;
+
+    const year = Number(match[1]);
+    const month = Number(match[2]);
+    const day = Number(match[3]);
 
     if (!year || !month || !day) return null;
 
-    return new Date(year, month - 1, day);
+    const date = new Date(year, month - 1, day);
+
+    if (date.getFullYear() !== year || date.getMonth() !== month - 1 || date.getDate() !== day) {
+      return null;
+    }
+
+    return date;
   };
 
   const formatTimeForApi = (value: Date | null): string => {
@@ -98,20 +126,31 @@
 
     const hours = String(value.getHours()).padStart(2, '0');
     const minutes = String(value.getMinutes()).padStart(2, '0');
+    const seconds = String(value.getSeconds()).padStart(2, '0');
 
-    return `${hours}:${minutes}`;
+    return `${hours}:${minutes}:${seconds}`;
   };
 
   const parseApiTime = (value?: string | null): Date | null => {
     if (!value) return null;
 
-    const [hours, minutes] = value.split(':').map(Number);
+    const match = /^(\d{1,2}):(\d{2})(?::(\d{2}))?/.exec(value.trim());
+    if (!match) return null;
+
+    const hours = Number(match[1]);
+    const minutes = Number(match[2]);
+    const seconds = Number(match[3] ?? 0);
 
     if (
-      hours === undefined ||
-      minutes === undefined ||
       Number.isNaN(hours) ||
-      Number.isNaN(minutes)
+      Number.isNaN(minutes) ||
+      Number.isNaN(seconds) ||
+      hours < 0 ||
+      hours > 23 ||
+      minutes < 0 ||
+      minutes > 59 ||
+      seconds < 0 ||
+      seconds > 59
     ) {
       return null;
     }
@@ -119,14 +158,14 @@
     const date = new Date();
     date.setHours(hours);
     date.setMinutes(minutes);
-    date.setSeconds(0);
+    date.setSeconds(seconds);
     date.setMilliseconds(0);
 
     return date;
   };
 
   const updatePreviewDate = (value: PrimeDateValue) => {
-    const dateValue = normalizeDateValue(value);
+    const dateValue = typeof value === 'string' ? parseApiDate(value) : normalizeDateValue(value);
 
     selectedPreviewDate.value = dateValue;
     previewDate.value = formatDateForApi(dateValue);
@@ -135,7 +174,7 @@
   };
 
   const updatePreviewTime = (value: PrimeDateValue) => {
-    const timeValue = normalizeDateValue(value);
+    const timeValue = typeof value === 'string' ? parseApiTime(value) : normalizeDateValue(value);
 
     selectedPreviewTime.value = timeValue;
     previewTime.value = formatTimeForApi(timeValue);
@@ -143,24 +182,38 @@
     updateData();
   };
 
+  const getOptionalTextValue = (
+    value: string,
+    originalValue?: string | null,
+  ): string | undefined => {
+    if (props.isEdit && originalValue == null && value === '') return undefined;
+
+    return value;
+  };
+
   const updateData = () => {
     emit(
       'updateData',
       new AddProjectPreviewParams({
-        project_id: props.projectId,
+        project_id: props.projectId ?? props.projectPreview?.project_id,
         engineer_id: selectedEngineer.value?.id ? Number(selectedEngineer.value.id) : undefined,
         preview_date: previewDate.value,
         preview_time: previewTime.value,
-        site_link: siteLink.value,
-        address: address.value,
+        site_link: getOptionalTextValue(siteLink.value, props.projectPreview?.site_link),
+        address: getOptionalTextValue(address.value, props.projectPreview?.address),
         notification_type:
           (selectedNotificationType.value?.id as NotificationType | undefined) ??
-          NotificationType.LOW,
-        status: (status.value?.id as Status | undefined) ?? Status.NEED_ADDITIONAL_VISIT,
+          (props.isEdit ? undefined : NotificationType.LOW),
+        status:
+          (selectedStatus.value?.id as Status | undefined) ??
+          (props.isEdit ? undefined : Status.NEED_ADDITIONAL_VISIT),
         pricing_responsible_id: selectedPricingResponsible.value?.id
           ? Number(selectedPricingResponsible.value.id)
           : undefined,
-        notification_message: notification_message.value,
+        notification_message: getOptionalTextValue(
+          notificationMessage.value,
+          props.projectPreview?.notification_message,
+        ),
       }),
     );
   };
@@ -170,48 +223,79 @@
     updateData();
   };
 
-  onMounted(updateData);
+  const updatePricingResponsible = (value: TitleInterface<number> | null) => {
+    selectedPricingResponsible.value = value;
+    updateData();
+  };
+
+  const updateNotificationType = (value: TitleInterface<NotificationType> | null) => {
+    selectedNotificationType.value = value;
+    updateData();
+  };
+
+  const updateStatus = (value: TitleInterface<Status> | null) => {
+    selectedStatus.value = value;
+    updateData();
+  };
+
+  const setDefaultSelectValues = () => {
+    if (props.isEdit) return;
+
+    selectedNotificationType.value ??=
+      notificationTypeOptions.value.find((item) => item.id === NotificationType.LOW) ?? null;
+    selectedStatus.value ??=
+      statusOptions.value.find((item) => item.id === Status.NEED_ADDITIONAL_VISIT) ?? null;
+  };
+
+  onMounted(() => {
+    setDefaultSelectValues();
+    updateData();
+  });
 
   watch(
     () => props.projectPreview,
     (projectPreview) => {
       if (!projectPreview) return;
 
-      const projectData = projectPreview as any;
+      const engineerId = projectPreview.engineer?.id ?? projectPreview.engineer_id;
+      const pricingResponsibleId =
+        projectPreview.pricing_responsible?.id ?? projectPreview.pricing_responsible_id;
 
-      selectedEngineer.value = projectData.engineer
+      selectedEngineer.value = engineerId
         ? {
-            id: projectData.engineer.id,
-            title: projectData.engineer.title,
+            id: engineerId,
+            title: projectPreview.engineer?.title ?? `#${engineerId}`,
           }
         : null;
 
-      selectedPricingResponsible.value = projectData.pricing_responsible
+      selectedPricingResponsible.value = pricingResponsibleId
         ? {
-            id: projectData.pricing_responsible.id,
-            title: projectData.pricing_responsible.title || projectData.pricing_responsible.name,
+            id: pricingResponsibleId,
+            title: projectPreview.pricing_responsible?.title ?? `#${pricingResponsibleId}`,
           }
         : null;
 
       selectedNotificationType.value =
-        notificationTypeOptions.value.find((item) => item.id === projectData.notification_type) ??
-        notificationTypeOptions.value.find((item) => item.id === NotificationType.LOW) ??
-        null;
+        projectPreview.notification_type == null
+          ? null
+          : (notificationTypeOptions.value.find(
+              (item) => item.id === projectPreview.notification_type,
+            ) ?? null);
 
-      status.value =
-        statusOptions.value.find((item) => item.id === projectData.status) ??
-        statusOptions.value.find((item) => item.id === Status.NEED_ADDITIONAL_VISIT) ??
-        null;
+      selectedStatus.value =
+        projectPreview.status == null
+          ? null
+          : (statusOptions.value.find((item) => item.id === projectPreview.status) ?? null);
 
-      previewDate.value = projectData.preview_date ?? '';
-      previewTime.value = projectData.preview_time ?? '';
+      selectedPreviewDate.value = parseApiDate(projectPreview.preview_date);
+      selectedPreviewTime.value = parseApiTime(projectPreview.preview_time);
 
-      selectedPreviewDate.value = parseApiDate(projectData.preview_date);
-      selectedPreviewTime.value = parseApiTime(projectData.preview_time);
+      previewDate.value = formatDateForApi(selectedPreviewDate.value);
+      previewTime.value = formatTimeForApi(selectedPreviewTime.value);
 
-      siteLink.value = projectData.site_link ?? '';
-      address.value = projectData.address ?? '';
-      notification_message.value = projectData.notification_message ?? '';
+      siteLink.value = projectPreview.site_link ?? '';
+      address.value = projectPreview.address ?? '';
+      notificationMessage.value = projectPreview.notification_message ?? '';
 
       updateData();
     },
@@ -227,7 +311,7 @@
 </script>
 
 <template>
-  <section class="form-section" :class="{ disabled: loading }">
+  <section class="form-section" :class="{ disabled: loading }" :data-mode="isEdit ? 'edit' : 'add'">
     <header>
       <h3>{{ $t('project.preview_title') }}</h3>
       <p>{{ $t('project.preview_description') }}</p>
@@ -253,8 +337,12 @@
           :controller="employeeController"
           :params="engineerParams"
           :placeholder="$t('project.preview_engineer_placeholder')"
+          required
           @update:model-value="updateEngineer"
         />
+        <small v-if="validationErrors.engineer_id" class="field-error">
+          {{ validationErrors.engineer_id }}
+        </small>
       </div>
 
       <div class="field-block">
@@ -279,8 +367,12 @@
           :manual-input="false"
           class="prime-date-picker"
           input-class="field-input"
+          :invalid="Boolean(validationErrors.preview_date)"
           @update:model-value="updatePreviewDate"
         />
+        <small v-if="validationErrors.preview_date" class="field-error">
+          {{ validationErrors.preview_date }}
+        </small>
       </div>
 
       <div class="field-block">
@@ -306,8 +398,12 @@
           :manual-input="false"
           class="prime-date-picker"
           input-class="field-input"
+          :invalid="Boolean(validationErrors.preview_time)"
           @update:model-value="updatePreviewTime"
         />
+        <small v-if="validationErrors.preview_time" class="field-error">
+          {{ validationErrors.preview_time }}
+        </small>
       </div>
 
       <div class="field-block">
@@ -331,6 +427,9 @@
           :placeholder="$t('project.site_link_placeholder')"
           @input="updateData"
         />
+        <small v-if="validationErrors.site_link" class="field-error">
+          {{ validationErrors.site_link }}
+        </small>
       </div>
 
       <div class="field-block col-span-3">
@@ -349,6 +448,9 @@
           :placeholder="$t('project.preview_address_placeholder')"
           @input="updateData"
         />
+        <small v-if="validationErrors.address" class="field-error">
+          {{ validationErrors.address }}
+        </small>
       </div>
     </div>
   </section>
@@ -430,6 +532,12 @@
 
   .field-input:focus {
     border-color: var(--PrimaryColor);
+  }
+
+  .field-error {
+    color: var(--danger-dark);
+    font-family: 'Medium';
+    font-size: var(--xs-size);
   }
 
   .prime-date-picker {
