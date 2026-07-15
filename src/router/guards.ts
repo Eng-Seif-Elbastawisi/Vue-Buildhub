@@ -1,7 +1,7 @@
 import type { RouteLocationNormalized } from 'vue-router';
 import { useUserStore } from '@/stores/user';
-import { UserType } from '@/modules/auth/core/constants/userType.enum';
-import { hasUsableAuthToken } from '@/modules/auth/core/utils/authToken';
+// import { UserType } from '@/modules/auth/core/constants/userType.enum';
+// import { hasUsableAuthToken } from '@/modules/auth/core/utils/authToken';
 
 type RoleRouteAccess = {
   homePath: string;
@@ -29,7 +29,9 @@ const startsWithPath = (path: string, prefix: string) => {
   return path === prefix || path.startsWith(`${prefix}/`);
 };
 
-const getLoginPathByTarget = (path: string) => {
+export const isLoginPath = (path: string) => LOGIN_PATHS.includes(path);
+
+export const getLoginPathByTarget = (path: string) => {
   if (startsWithPath(path, '/admin') || startsWithPath(path, '/mainportal')) {
     return '/login-admin';
   }
@@ -44,7 +46,7 @@ export function authGuard(to: RouteLocationNormalized) {
 
   const routeAccess = ROLE_ROUTE_ACCESS[userType];
 
-  const isLoginPage = LOGIN_PATHS.includes(to.path);
+  const isLoginPage = isLoginPath(to.path);
   const isProtectedPage = PROTECTED_PREFIXES.some((prefix) => startsWithPath(to.path, prefix));
 
   // مش عامل login
