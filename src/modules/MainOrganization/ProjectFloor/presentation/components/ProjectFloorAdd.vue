@@ -33,34 +33,35 @@
     return userStore.user?.type === 1 ? '/mainportal' : '/organization';
   };
 
-  const projectId = computed(() => {
-    const value = Number(route.query.project_id);
+  const toPositiveInteger = (value: unknown): number | undefined => {
+    const normalizedValue = Array.isArray(value) ? value[0] : value;
+    const numberValue = Number(normalizedValue);
 
-    return Number.isNaN(value) ? 0 : value;
-  });
+    return Number.isInteger(numberValue) && numberValue > 0 ? numberValue : undefined;
+  };
 
-  const projectPreviewId = computed(() => {
-    const value = Number(route.query.project_preview_id);
+  const projectId = computed(() => toPositiveInteger(route.query.project_id));
+  const projectPreviewId = computed(() => toPositiveInteger(route.query.project_preview_id));
 
-    return Number.isNaN(value) ? 0 : value;
-  });
+  const toRecord = (value: unknown): Record<string, unknown> | undefined => {
+    return value && typeof value === 'object' ? (value as Record<string, unknown>) : undefined;
+  };
 
   const projectFloors = computed<ProjectFloorModel[]>(() => {
-    const state = controller.listState.value as any;
+    const state = toRecord(controller.listState.value);
+    const stateData = state?.data;
+    const responseData = toRecord(state?.response)?.data;
+    const candidates = [
+      toRecord(stateData)?.data,
+      toRecord(responseData)?.data,
+      stateData,
+      responseData,
+    ];
 
-    const data =
-      state?.data?.data ??
-      state?.response?.data?.data ??
-      state?.data ??
-      state?.response?.data ??
-      [];
-
-    if (Array.isArray(data)) {
-      return data as ProjectFloorModel[];
-    }
-
-    if (Array.isArray(data?.data)) {
-      return data.data as ProjectFloorModel[];
+    for (const candidate of candidates) {
+      if (Array.isArray(candidate)) {
+        return candidate as ProjectFloorModel[];
+      }
     }
 
     return [];
@@ -71,6 +72,8 @@
   });
 
   const fetchProjectFloors = async () => {
+    if (projectId.value === undefined) return;
+
     await controller.fetchList(new IndexProjectFloorParams('', 1, 100, 1, null, projectId.value));
   };
 
@@ -201,6 +204,7 @@
     </section>
 
     <FinalResults
+      v-if="projectPreviewId !== undefined"
       :project-id="projectId"
       :project-preview-id="projectPreviewId"
       :loading="loading"

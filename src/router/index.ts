@@ -35,6 +35,7 @@ const router = createRouter({
     },
     {
       path: '/organization',
+      alias: '/mainportal',
       name: 'Organization App',
       component: () => import('@/views/AppLayout.vue'),
       children: [...dashboardRoutes, ...addSuffix(sharedRoutes, 'Organization')],

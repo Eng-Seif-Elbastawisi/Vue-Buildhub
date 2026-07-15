@@ -20,8 +20,11 @@ import type ProjectShowModel from '../../core/models/project.show.model';
 import ProjectRepository from '../../data/repositories/project.repository';
 import { useUserStore } from '@/stores/user';
 import type ShowProjectParams from '../../core/params/show.project.params';
+import { dialogManager } from '@/base/Presentation/Dialogs/dialog.manager';
+import { translate } from '@/locales/i18n';
 
 type ProjectActionParams = Params | Record<string, unknown>;
+export type ProjectNextStep = 'preview' | 'floor';
 
 export default class ProjectController extends BaseController<ProjectShowModel, ProjectModel[]> {
   private static instance: ProjectController;
@@ -65,34 +68,45 @@ export default class ProjectController extends BaseController<ProjectShowModel, 
     return this.userStore.user?.type === 1 ? '/mainportal' : '/organization';
   }
 
-  private getProjectIdFromResult(result: DataSuccess<ProjectShowModel>): number | undefined {
-    const data = result.data as ProjectShowModel | undefined;
+  private getPositiveInteger(value: unknown): number | undefined {
+    const numberValue = Number(value);
 
-    return data?.id;
+    return Number.isInteger(numberValue) && numberValue > 0 ? numberValue : undefined;
   }
 
-  async create(params: Params, options?: ApiCallOptions, formKey?: string) {
+  private getProjectIdFromResult(result: DataSuccess<ProjectShowModel>): number | undefined {
+    return this.getPositiveInteger(result.data?.id);
+  }
+
+  async create(
+    params: Params,
+    options?: ApiCallOptions,
+    formKey?: string,
+    nextStep: ProjectNextStep = 'preview',
+  ) {
     const result = await super.create(params, { ...options, useJson: true });
 
     if (result instanceof DataSuccess) {
-      const projectId = this.getProjectIdFromResult(result as DataSuccess<ProjectShowModel>);
+      const projectId = this.getProjectIdFromResult(result);
+
+      if (projectId === undefined) {
+        dialogManager.toastError(translate('Project.validation.created_project_id_missing'));
+        return result;
+      }
 
       if (formKey) {
         useFormsStore().clearFormData(formKey);
       }
 
-      if (projectId) {
-        router.push({
-          name: 'add-project_preview',
-          query: {
-            project_id: projectId,
-          },
-        });
-
-        return result;
-      }
-
-      router.push(`${this.getPrefix()}/project`);
+      await router.push({
+        path:
+          nextStep === 'preview'
+            ? `${this.getPrefix()}/project_preview/add`
+            : `${this.getPrefix()}/project_floor/add`,
+        query: {
+          project_id: projectId,
+        },
+      });
     }
 
     return result;

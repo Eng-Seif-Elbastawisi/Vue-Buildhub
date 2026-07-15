@@ -39,7 +39,7 @@ export const mapProjectFloorSpacesToPayload = (
 
 export default class AddProjectFloorParams implements Params {
   public project_id: number;
-  public project_preview_id: number;
+  public project_preview_id?: number;
   public floor_number: FloorNumber;
   public site_description: string;
   public technical_general_notes: string;
@@ -52,7 +52,6 @@ export default class AddProjectFloorParams implements Params {
       custom: (value) => Number.isInteger(Number(value)) && Number(value) > 0,
     },
     project_preview_id: {
-      required: true,
       custom: (value) => Number.isInteger(Number(value)) && Number(value) > 0,
     },
     floor_number: {
@@ -67,7 +66,7 @@ export default class AddProjectFloorParams implements Params {
 
   constructor(data: {
     project_id: number;
-    project_preview_id: number;
+    project_preview_id?: number;
     floor_number: FloorNumber;
     site_description: string;
     technical_general_notes: string;
@@ -86,7 +85,9 @@ export default class AddProjectFloorParams implements Params {
   toMap(): Record<string, unknown> {
     const map: Record<string, unknown> = {
       project_id: this.project_id,
-      project_preview_id: this.project_preview_id,
+      ...(Number.isInteger(this.project_preview_id) && Number(this.project_preview_id) > 0
+        ? { project_preview_id: this.project_preview_id }
+        : {}),
       floor_number: this.floor_number,
       site_description: this.site_description,
       technical_general_notes: this.technical_general_notes,

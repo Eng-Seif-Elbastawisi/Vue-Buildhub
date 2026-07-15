@@ -136,4 +136,19 @@ describe('ProjectFloorForm', () => {
     expect(wrapper.text()).toContain('Site description is required');
     expect(wrapper.text()).toContain('Length must be positive');
   });
+
+  it('emits a valid floor payload without project_preview_id when no preview exists', async () => {
+    const wrapper = mount(ProjectFloorForm, {
+      props: { projectId: 24 },
+      global,
+    });
+    await flushPromises();
+
+    const emittedParams = wrapper.emitted<AddProjectFloorParams[]>('updateData')?.at(-1)?.[0];
+
+    expect(emittedParams).toBeInstanceOf(AddProjectFloorParams);
+    expect(emittedParams?.project_id).toBe(24);
+    expect(emittedParams?.project_preview_id).toBeUndefined();
+    expect(emittedParams?.toMap()).not.toHaveProperty('project_preview_id');
+  });
 });

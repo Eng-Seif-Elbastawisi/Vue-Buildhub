@@ -70,13 +70,6 @@
   ]);
 
   const engineerParams = new IndexEmployeeParams('', 1, 100, 0, EmployeeType.ENGINEER);
-  const pricingResponsibleParams = new IndexEmployeeParams(
-    '',
-    1,
-    100,
-    0,
-    EmployeeType.PRICING_RESPONSIBLE,
-  );
 
   type PrimeDateValue = Date | string | Date[] | (Date | null)[] | null | undefined;
 
@@ -220,21 +213,6 @@
 
   const updateEngineer = (value: TitleInterface<number> | null) => {
     selectedEngineer.value = value;
-    updateData();
-  };
-
-  const updatePricingResponsible = (value: TitleInterface<number> | null) => {
-    selectedPricingResponsible.value = value;
-    updateData();
-  };
-
-  const updateNotificationType = (value: TitleInterface<NotificationType> | null) => {
-    selectedNotificationType.value = value;
-    updateData();
-  };
-
-  const updateStatus = (value: TitleInterface<Status> | null) => {
-    selectedStatus.value = value;
     updateData();
   };
 

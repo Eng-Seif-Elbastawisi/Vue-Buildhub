@@ -1,14 +1,25 @@
 import type { RouteLocationNormalized } from 'vue-router';
 import { useUserStore } from '@/stores/user';
 
-const ROLE_PATHS: Record<number, string> = {
-  1: '/admin',
-  2: '/organization',
+type RoleRouteAccess = {
+  homePath: string;
+  allowedPrefixes: string[];
+};
+
+const ROLE_ROUTE_ACCESS: Record<number, RoleRouteAccess> = {
+  1: {
+    homePath: '/admin',
+    allowedPrefixes: ['/admin', '/mainportal'],
+  },
+  2: {
+    homePath: '/organization',
+    allowedPrefixes: ['/organization'],
+  },
 };
 
 const LOGIN_PATHS = ['/login-admin', '/login-organization'];
 
-const PROTECTED_PREFIXES = ['/admin', '/organization'];
+const PROTECTED_PREFIXES = ['/admin', '/mainportal', '/organization'];
 
 const DEFAULT_LOGIN_PATH = '/login-organization';
 
@@ -17,7 +28,7 @@ const startsWithPath = (path: string, prefix: string) => {
 };
 
 const getLoginPathByTarget = (path: string) => {
-  if (startsWithPath(path, '/admin')) {
+  if (startsWithPath(path, '/admin') || startsWithPath(path, '/mainportal')) {
     return '/login-admin';
   }
 
@@ -29,13 +40,13 @@ export function authGuard(to: RouteLocationNormalized) {
 
   const userType = Number(userStore.user?.type);
 
-  const userAppPath = ROLE_PATHS[userType];
+  const routeAccess = ROLE_ROUTE_ACCESS[userType];
 
   const isLoginPage = LOGIN_PATHS.includes(to.path);
   const isProtectedPage = PROTECTED_PREFIXES.some((prefix) => startsWithPath(to.path, prefix));
 
   // مش عامل login
-  if (!userAppPath) {
+  if (!routeAccess) {
     if (isLoginPage) return true;
 
     return getLoginPathByTarget(to.path);
@@ -43,12 +54,16 @@ export function authGuard(to: RouteLocationNormalized) {
 
   // عامل login وبيحاول يدخل صفحة login
   if (isLoginPage) {
-    return userAppPath;
+    return routeAccess.homePath;
   }
 
   // عامل login بس داخل path مش بتاع role بتاعه
-  if (isProtectedPage && !startsWithPath(to.path, userAppPath)) {
-    return userAppPath;
+  const canAccessProtectedPage = routeAccess.allowedPrefixes.some((prefix) =>
+    startsWithPath(to.path, prefix),
+  );
+
+  if (isProtectedPage && !canAccessProtectedPage) {
+    return routeAccess.homePath;
   }
 
   return true;

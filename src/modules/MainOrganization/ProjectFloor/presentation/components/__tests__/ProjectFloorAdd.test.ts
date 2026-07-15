@@ -10,15 +10,17 @@ const mocks = vi.hoisted(() => ({
   create: vi.fn(),
   getProject: vi.fn(),
   push: vi.fn(),
+  routeQuery: {
+    project_id: '24',
+    project_preview_id: '15',
+  } as Record<string, string | string[] | undefined>,
+  routeFullPath: '/organization/project_floor/add?project_id=24&project_preview_id=15',
 }));
 
 vi.mock('vue-router', () => ({
   useRoute: () => ({
-    query: {
-      project_id: '24',
-      project_preview_id: '15',
-    },
-    fullPath: '/organization/project-floor/add?project_id=24&project_preview_id=15',
+    query: mocks.routeQuery,
+    fullPath: mocks.routeFullPath,
   }),
 }));
 
@@ -79,6 +81,11 @@ vi.mock('../../controllers/project.floor.controller', () => ({
 
 describe('ProjectFloorAdd.vue', () => {
   beforeEach(() => {
+    mocks.routeQuery = {
+      project_id: '24',
+      project_preview_id: '15',
+    };
+    mocks.routeFullPath = '/organization/project_floor/add?project_id=24&project_preview_id=15';
     mocks.fetchList.mockResolvedValue(undefined);
     mocks.create.mockResolvedValue(undefined);
     mocks.getProject.mockResolvedValue(undefined);
@@ -135,5 +142,37 @@ describe('ProjectFloorAdd.vue', () => {
         project_item: 9,
       },
     });
+  });
+
+  it('supports direct entry with only project_id and does not render preview-only final results', async () => {
+    mocks.routeQuery = { project_id: ['24'] };
+    mocks.routeFullPath = '/organization/project_floor/add?project_id=24';
+
+    const wrapper = mount(ProjectFloorAdd, {
+      global: {
+        stubs: {
+          ProjectSteps: {
+            template: '<div />',
+          },
+          ProjectFloorForm: {
+            name: 'ProjectFloorForm',
+            props: ['projectId', 'projectPreviewId'],
+            template: '<div />',
+          },
+          FinalResults: {
+            name: 'FinalResults',
+            template: '<div />',
+          },
+        },
+      },
+    });
+    await flushPromises();
+
+    const form = wrapper.findComponent({ name: 'ProjectFloorForm' });
+
+    expect(form.props('projectId')).toBe(24);
+    expect(form.props('projectPreviewId')).toBeUndefined();
+    expect(wrapper.findComponent({ name: 'FinalResults' }).exists()).toBe(false);
+    expect(mocks.fetchList).toHaveBeenCalledWith(expect.objectContaining({ projectId: 24 }));
   });
 });

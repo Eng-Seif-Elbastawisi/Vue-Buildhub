@@ -142,12 +142,12 @@
     );
   };
 
-  const getProjectId = () => {
-    return props.projectFloor?.project_id ?? props.projectId ?? 0;
+  const getProjectId = (): number | undefined => {
+    return props.projectFloor?.project_id ?? props.projectId;
   };
 
-  const getProjectPreviewId = () => {
-    return props.projectFloor?.project_preview_id ?? props.projectPreviewId ?? 0;
+  const getProjectPreviewId = (): number | undefined => {
+    return props.projectFloor?.project_preview_id ?? props.projectPreviewId;
   };
 
   const getDefaultFloorNumber = () => {
@@ -170,10 +170,13 @@
   };
 
   const updateData = () => {
+    const projectId = getProjectId();
+    if (projectId === undefined) return;
+
     emit(
       'updateData',
       new AddProjectFloorParams({
-        project_id: getProjectId(),
+        project_id: projectId,
         project_preview_id: getProjectPreviewId(),
         floor_number: selectedFloorNumber.value?.id as FloorNumber,
         site_description: siteDescription.value,
