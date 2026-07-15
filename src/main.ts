@@ -10,6 +10,8 @@ import i18n from './locales/i18n';
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate';
 import ToastService from 'primevue/toastservice';
 import { useSystemIdentityTheme } from '@/modules/shared/SystemIdentity/presentation/composables/useSystemIdentityTheme';
+import NetworkService from '@/base/Core/NetworkStructure/networking/networkService';
+import { handleUnauthorizedResponse } from '@/base/Core/NetworkStructure/networking/utils/unauthorizedHandler';
 
 const pinia = createPinia();
 
@@ -29,6 +31,7 @@ const app = createApp(App)
 import { useUserStore } from '@/stores/user';
 const userStore = useUserStore();
 userStore.initFromPersist();
+NetworkService.instance.setUnauthorizedHandler(() => handleUnauthorizedResponse(router));
 
 const { loadSavedPalette } = useSystemIdentityTheme();
 loadSavedPalette();

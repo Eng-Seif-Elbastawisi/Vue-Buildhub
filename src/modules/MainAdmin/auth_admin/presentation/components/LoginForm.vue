@@ -8,6 +8,7 @@
   import LoadingIcon from '@/assets/images/loading.webp';
   import { useUserStore } from '@/stores/user';
   import { useRouter } from 'vue-router';
+  import { UserType } from '@/modules/auth/core/constants/userType.enum';
   // import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
 
   withDefaults(
@@ -31,7 +32,7 @@
     const params = new LoginParams(email.value, password.value);
     await controller.login(params);
 
-    if (useUserStore().user?.type === 1) {
+    if (useUserStore().user?.type === UserType.ADMIN) {
       router.push({ name: 'Admin' });
     } else {
       router.push({ name: 'Employee' });

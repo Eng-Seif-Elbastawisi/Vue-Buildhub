@@ -1,9 +1,11 @@
 import type { RouteLocationNormalized } from 'vue-router';
 import { useUserStore } from '@/stores/user';
+import { UserType } from '@/modules/auth/core/constants/userType.enum';
+import { hasUsableAuthToken } from '@/modules/auth/core/utils/authToken';
 
-const ROLE_PATHS: Record<number, string> = {
-  1: '/admin',
-  2: '/organization',
+const ROLE_PATHS: Record<UserType, string> = {
+  [UserType.ADMIN]: '/admin',
+  [UserType.ORGANIZATION]: '/organization',
 };
 
 const LOGIN_PATHS = ['/login-admin', '/login-organization'];
@@ -16,7 +18,9 @@ const startsWithPath = (path: string, prefix: string) => {
   return path === prefix || path.startsWith(`${prefix}/`);
 };
 
-const getLoginPathByTarget = (path: string) => {
+export const isLoginPath = (path: string) => LOGIN_PATHS.includes(path);
+
+export const getLoginPathByTarget = (path: string) => {
   if (startsWithPath(path, '/admin')) {
     return '/login-admin';
   }
@@ -26,27 +30,26 @@ const getLoginPathByTarget = (path: string) => {
 
 export function authGuard(to: RouteLocationNormalized) {
   const userStore = useUserStore();
-
-  const userType = Number(userStore.user?.type);
-
-  const userAppPath = ROLE_PATHS[userType];
-
-  const isLoginPage = LOGIN_PATHS.includes(to.path);
+  const userType = Number(userStore.user?.type) as UserType;
+  const hasAuthenticatedSession = userStore.isAuth && hasUsableAuthToken(userStore.user?.apiToken);
+  const userAppPath = hasAuthenticatedSession ? ROLE_PATHS[userType] : undefined;
+  const isLoginPage = isLoginPath(to.path);
   const isProtectedPage = PROTECTED_PREFIXES.some((prefix) => startsWithPath(to.path, prefix));
 
-  // مش عامل login
   if (!userAppPath) {
     if (isLoginPage) return true;
 
     return getLoginPathByTarget(to.path);
   }
 
-  // عامل login وبيحاول يدخل صفحة login
   if (isLoginPage) {
     return userAppPath;
   }
 
-  // عامل login بس داخل path مش بتاع role بتاعه
+  if (to.meta.allowedUserTypes && !to.meta.allowedUserTypes.includes(userType)) {
+    return userAppPath;
+  }
+
   if (isProtectedPage && !startsWithPath(to.path, userAppPath)) {
     return userAppPath;
   }

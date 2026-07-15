@@ -10,6 +10,7 @@
 
   import { useUserStore } from '@/stores/user';
   import SidebarCountsApiService from './sidebar.counts.api-service';
+  import { UserType } from '@/modules/auth/core/constants/userType.enum';
   import {
     getSidebarSections,
     getSidebarSectionsWithCounts,
@@ -52,7 +53,7 @@
   }
 
   const currentRole = computed<SidebarRole>(() => {
-    return user.value?.isMaster || Number(user.value?.type) === 1 ? 'admin' : 'organization';
+    return user.value?.isMaster || user.value?.type === UserType.ADMIN ? 'admin' : 'organization';
   });
 
   const organizationName = computed(() => {

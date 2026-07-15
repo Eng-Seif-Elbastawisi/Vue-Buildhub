@@ -57,9 +57,7 @@ export default class ProjectModel {
         title: ProjectModel.mapTranslations(json.translations),
       }),
       createdAt: json.created_at as string | undefined,
-      projectType: json.project_type
-        ? new TitleModel(json.project_type.title as string, json.project_type.id as number)
-        : undefined,
+      projectType: json.project_type ? TitleModel.fromMap(json.project_type) : undefined,
     });
   }
 

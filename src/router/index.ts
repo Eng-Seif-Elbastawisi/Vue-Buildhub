@@ -4,6 +4,7 @@ import { authGuard } from './guards';
 import { adminRoutes } from './routes/admin';
 import { addSuffix } from './helpers';
 import { sharedRoutes } from './routes/shared';
+import { UserType } from '@/modules/auth/core/constants/userType.enum';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -31,12 +32,14 @@ const router = createRouter({
       path: '/admin',
       name: 'dashboard',
       component: () => import('@/views/AppLayout.vue'),
+      meta: { allowedUserTypes: [UserType.ADMIN] },
       children: [...adminRoutes, ...addSuffix(sharedRoutes, 'Admin')],
     },
     {
       path: '/organization',
       name: 'Organization App',
       component: () => import('@/views/AppLayout.vue'),
+      meta: { allowedUserTypes: [UserType.ORGANIZATION] },
       children: [...dashboardRoutes, ...addSuffix(sharedRoutes, 'Organization')],
     },
     {
