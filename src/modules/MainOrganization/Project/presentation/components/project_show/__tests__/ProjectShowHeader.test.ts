@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
+import { nextTick } from 'vue';
 import { ConvertStatus } from '../../../../core/constants/convert.status.enum';
 import ProjectShowHeader from '../ProjectShowHeader.vue';
 
@@ -17,20 +18,16 @@ const mountHeader = (props: Record<string, unknown> = {}) =>
       historyLabel: 'History',
       actionsLabel: 'Actions',
       exportingPdf: false,
-      changeStatusLabel: 'Change Status',
+      statusActions: [
+        { status: ConvertStatus.SEND_TO_CLIENT, label: 'Sent to client', tone: 'info' },
+      ],
       changeStatusModalTitle: 'Change Project Status',
-      statusLabel: 'Status',
       notesLabel: 'Notes',
       notesPlaceholder: 'Add notes',
       cancelLabel: 'Cancel',
       saveStatusLabel: 'Save Status',
       changingStatusLabel: 'Saving status...',
       changeStatusLoading: false,
-      statusOptions: [
-        { value: ConvertStatus.PENDING, label: 'Pending' },
-        { value: ConvertStatus.ACCEPT_CLIENT, label: 'Accepted by client' },
-      ],
-      currentStatus: ConvertStatus.PENDING,
       formatDate: () => '08 Jul 2026',
       formatTime: () => '02:45 PM',
       ...props,
@@ -94,18 +91,57 @@ describe('ProjectShowHeader', () => {
     await wrapper.find('.project-actions__trigger').trigger('click');
     await wrapper
       .findAll('.project-actions__item')
-      .find((item) => item.text().includes('Change Status'))
+      .find((item) => item.text().includes('Sent to client'))
       ?.trigger('click');
+    await nextTick();
 
     expect(wrapper.text()).toContain('Change Project Status');
     expect(wrapper.find('input[readonly]').exists()).toBe(false);
+    expect(wrapper.find('select').exists()).toBe(false);
 
-    await wrapper.find('select').setValue(String(ConvertStatus.ACCEPT_CLIENT));
     await wrapper.find('textarea').setValue('Client approved');
     await wrapper.find('form').trigger('submit.prevent');
 
     expect(wrapper.emitted('changeProjectStatus')).toEqual([
-      [{ status: ConvertStatus.ACCEPT_CLIENT, notes: 'Client approved' }],
+      [{ status: ConvertStatus.SEND_TO_CLIENT, notes: 'Client approved' }],
     ]);
+  });
+
+  it('renders accept and reject actions for sent-to-client projects', async () => {
+    const wrapper = mountHeader({
+      statusActions: [
+        { status: ConvertStatus.ACCEPT_CLIENT, label: 'Accepted by client', tone: 'success' },
+        { status: ConvertStatus.REJECT_CLIENT, label: 'Rejected by client', tone: 'danger' },
+      ],
+    });
+
+    await wrapper.find('.project-actions__trigger').trigger('click');
+
+    expect(wrapper.text()).toContain('Accepted by client');
+    expect(wrapper.text()).toContain('Rejected by client');
+
+    await wrapper
+      .findAll('.project-actions__item')
+      .find((item) => item.text().includes('Rejected by client'))
+      ?.trigger('click');
+    await nextTick();
+    await wrapper.find('textarea').setValue('Client rejected');
+    await wrapper.find('form').trigger('submit.prevent');
+
+    expect(wrapper.emitted('changeProjectStatus')).toEqual([
+      [{ status: ConvertStatus.REJECT_CLIENT, notes: 'Client rejected' }],
+    ]);
+  });
+
+  it('does not render status actions when the project is accepted', async () => {
+    const wrapper = mountHeader({
+      statusActions: [],
+    });
+
+    await wrapper.find('.project-actions__trigger').trigger('click');
+
+    expect(wrapper.text()).not.toContain('Sent to client');
+    expect(wrapper.text()).not.toContain('Accepted by client');
+    expect(wrapper.text()).not.toContain('Rejected by client');
   });
 });

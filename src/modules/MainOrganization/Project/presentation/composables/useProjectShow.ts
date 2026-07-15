@@ -158,9 +158,6 @@ export const useProjectShow = () => {
       case ConvertStatus.CONVERT_TO_PROJECT:
         return t('project.convertActions.storeVersion');
 
-      case ConvertStatus.SEND_TO_CLIENT:
-        return t('project.convertActions.reviseVersion');
-
       default:
         return '';
     }
@@ -168,12 +165,46 @@ export const useProjectShow = () => {
 
   const isConvertActionDisabled = computed(() => loading.value);
 
-  const changeStatusOptions = computed(() =>
-    Object.values(ConvertStatus).map((status) => ({
-      value: status,
-      label: getConvertStatusMeta(status).label,
-    })),
-  );
+  const statusActions = computed(() => {
+    switch (currentConvertStatus.value) {
+      case ConvertStatus.PENDING:
+      case ConvertStatus.CONVERT_TO_PROJECT:
+      case ConvertStatus.REVISE_VERSION:
+        return [
+          {
+            status: ConvertStatus.SEND_TO_CLIENT,
+            label: getConvertStatusMeta(ConvertStatus.SEND_TO_CLIENT).label,
+            tone: 'info' as const,
+          },
+        ];
+
+      case ConvertStatus.SEND_TO_CLIENT:
+        return [
+          {
+            status: ConvertStatus.ACCEPT_CLIENT,
+            label: getConvertStatusMeta(ConvertStatus.ACCEPT_CLIENT).label,
+            tone: 'success' as const,
+          },
+          {
+            status: ConvertStatus.REJECT_CLIENT,
+            label: getConvertStatusMeta(ConvertStatus.REJECT_CLIENT).label,
+            tone: 'danger' as const,
+          },
+        ];
+
+      case ConvertStatus.REJECT_CLIENT:
+        return [
+          {
+            status: ConvertStatus.REVISE_VERSION,
+            label: getConvertStatusMeta(ConvertStatus.REVISE_VERSION).label,
+            tone: 'warning' as const,
+          },
+        ];
+
+      default:
+        return [];
+    }
+  });
 
   const getServiceTypeLabel = (type?: number | null) => {
     if (type === ServiceType.DESIGNONLY) return t('Project.service_types.designOnly');
@@ -998,17 +1029,14 @@ export const useProjectShow = () => {
     exportingPdf: exportingPdf.value,
     convertActionLabel: convertActionLabel.value,
     convertActionDisabled: isConvertActionDisabled.value,
-    changeStatusLabel: t('ProjectShow.change_status'),
+    statusActions: statusActions.value,
     changeStatusModalTitle: t('ProjectShow.change_status_title'),
-    statusLabel: t('status'),
     notesLabel: t('Project.notes'),
     notesPlaceholder: t('ProjectShow.change_status_notes_placeholder'),
     cancelLabel: t('cancel'),
     saveStatusLabel: t('ProjectShow.save_status'),
     changingStatusLabel: t('ProjectShow.changing_status'),
     changeStatusLoading: loading.value,
-    statusOptions: changeStatusOptions.value,
-    currentStatus: currentConvertStatus.value,
     formatDate,
     formatTime,
   }));

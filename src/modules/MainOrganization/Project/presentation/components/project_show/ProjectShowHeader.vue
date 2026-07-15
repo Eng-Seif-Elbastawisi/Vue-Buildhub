@@ -3,9 +3,10 @@
   import type { ConvertStatus } from '../../../core/constants/convert.status.enum';
   import type { ProjectShowRaw, StatusMeta } from './projectShow.types';
 
-  type StatusOption = {
-    value: ConvertStatus;
+  type StatusAction = {
+    status: ConvertStatus;
     label: string;
+    tone: 'success' | 'danger' | 'warning' | 'info';
   };
 
   const props = defineProps<{
@@ -22,17 +23,14 @@
     exportingPdf: boolean;
     convertActionLabel?: string;
     convertActionDisabled?: boolean;
-    changeStatusLabel: string;
+    statusActions: StatusAction[];
     changeStatusModalTitle: string;
-    statusLabel: string;
     notesLabel: string;
     notesPlaceholder: string;
     cancelLabel: string;
     saveStatusLabel: string;
     changingStatusLabel: string;
     changeStatusLoading?: boolean;
-    statusOptions: StatusOption[];
-    currentStatus: ConvertStatus;
     formatDate: (value?: string | null) => string;
     formatTime: (value?: string | null) => string;
   }>();
@@ -46,7 +44,7 @@
   const isStatusModalOpen = ref(false);
   const isActionsMenuOpen = ref(false);
   const actionsMenuRef = ref<HTMLElement | null>(null);
-  const selectedStatus = ref<ConvertStatus>(props.currentStatus);
+  const activeStatusTarget = ref<ConvertStatus | null>(null);
   const notes = ref('');
 
   const closeActionsMenu = () => {
@@ -73,8 +71,8 @@
     closeActionsMenu();
   };
 
-  const openStatusModal = () => {
-    selectedStatus.value = props.currentStatus;
+  const openStatusModal = (status: ConvertStatus) => {
+    activeStatusTarget.value = status;
     notes.value = '';
     isStatusModalOpen.value = true;
     closeActionsMenu();
@@ -87,8 +85,10 @@
   };
 
   const submitStatusChange = () => {
+    if (activeStatusTarget.value === null) return;
+
     emit('changeProjectStatus', {
-      status: selectedStatus.value,
+      status: activeStatusTarget.value,
       notes: notes.value,
     });
   };
@@ -169,18 +169,21 @@
           </button>
 
           <button
+            v-for="statusAction in statusActions"
+            :key="statusAction.status"
             class="project-actions__item"
+            :class="`project-actions__item--${statusAction.tone}`"
             type="button"
             role="menuitem"
             :disabled="changeStatusLoading"
-            @click="openStatusModal"
+            @click="openStatusModal(statusAction.status)"
           >
             <i class="pi pi-flag"></i>
-            {{ changeStatusLabel }}
+            {{ statusAction.label }}
           </button>
 
           <RouterLink
-            class="project-actions__item"
+            class="project-actions__item project-actions__item--neutral"
             role="menuitem"
             :to="{ name: 'project-history', params: { project_id: project.id } }"
             @click="closeActionsMenu"
@@ -190,7 +193,7 @@
           </RouterLink>
 
           <RouterLink
-            class="project-actions__item project-actions__item--primary"
+            class="project-actions__item project-actions__item--primary project-actions__item--neutral"
             role="menuitem"
             :to="{ name: 'edit-project', params: { project_id: project.id } }"
             @click="closeActionsMenu"
@@ -219,15 +222,6 @@
         </header>
 
         <div class="project-status-modal__grid">
-          <!-- <label class="project-status-field project-status-field--full">
-            <span>{{ statusLabel }}</span>
-            <select v-model.number="selectedStatus" required>
-              <option v-for="option in statusOptions" :key="option.value" :value="option.value">
-                {{ option.label }}
-              </option>
-            </select>
-          </label> -->
-
           <label class="project-status-field project-status-field--full">
             <span>{{ notesLabel }}</span>
             <textarea v-model="notes" :placeholder="notesPlaceholder" rows="4"></textarea>

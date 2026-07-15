@@ -300,15 +300,16 @@ describe('ProjectShow', () => {
       .findAll('button')
       .find((button) => button.text().includes('Actions'))
       ?.trigger('click');
+    await nextTick();
 
     const changeStatusButton = wrapper
       .findAll('button')
-      .find((button) => button.text().includes('Change Status'));
+      .find((button) => button.text().includes('Sent to client'));
 
     expect(changeStatusButton).toBeTruthy();
 
     await changeStatusButton?.trigger('click');
-    await wrapper.find('select').setValue('5');
+    await nextTick();
     await wrapper.find('textarea').setValue('Approved by client');
     await wrapper.find('form').trigger('submit.prevent');
     await flushPromises();
@@ -316,7 +317,7 @@ describe('ProjectShow', () => {
     expect(changeProjectStatus).toHaveBeenCalledTimes(1);
     expect(changeProjectStatus.mock.calls[0][0].toMap()).toEqual({
       project_id: 24,
-      status: 5,
+      status: 3,
       notes: 'Approved by client',
     });
   });

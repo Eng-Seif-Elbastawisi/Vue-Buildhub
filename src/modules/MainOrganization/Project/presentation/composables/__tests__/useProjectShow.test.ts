@@ -2,12 +2,14 @@ import { mount } from '@vue/test-utils';
 import { nextTick } from 'vue';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useProjectShow } from '../useProjectShow';
+import { ConvertStatus } from '../../../core/constants/convert.status.enum';
 
 const fetchOne = vi.fn();
 const itemData = {
   value: {
     id: 24,
     status: 1,
+    convert_status: 1,
     title: [{ locale: 'en', title: 'Project Alpha' }],
     client: { id: 16, name: 'Marny Barnett', phone: '+1 (855) 934-1348' },
     organization: { id: 1, name: 'Techlab', address: 'Techlab Headquarters' },
@@ -113,6 +115,8 @@ const mountComposable = () => {
 describe('useProjectShow', () => {
   beforeEach(() => {
     fetchOne.mockClear();
+    itemData.value.status = ConvertStatus.PENDING;
+    itemData.value.convert_status = ConvertStatus.PENDING;
   });
 
   it('fetches the project and exposes grouped props for the show page sections', async () => {
@@ -125,6 +129,13 @@ describe('useProjectShow', () => {
     expect(projectShow.headerProps.value.convertActionLabel).toBe(
       'project.convertActions.convertMeasurementToProject',
     );
+    expect(projectShow.headerProps.value.statusActions).toEqual([
+      {
+        status: ConvertStatus.SEND_TO_CLIENT,
+        label: 'project.convertStatus.sendToClient',
+        tone: 'info',
+      },
+    ]);
     expect(projectShow.tabsProps.value.activeTab).toBe('project-data');
     expect(projectShow.sideColumnProps.value.terms).toBe(
       'First payment after approval\nSecond payment after delivery',
@@ -151,5 +162,49 @@ describe('useProjectShow', () => {
       'project-side-column--active-preview': false,
       'project-side-column--active-terms': true,
     });
+  });
+
+  it('exposes status actions based on the current status badge', async () => {
+    itemData.value.convert_status = ConvertStatus.SEND_TO_CLIENT;
+    itemData.value.status = ConvertStatus.SEND_TO_CLIENT;
+
+    const sentToClientProjectShow = mountComposable();
+    await nextTick();
+
+    expect(sentToClientProjectShow.headerProps.value.convertActionLabel).toBe('');
+    expect(sentToClientProjectShow.headerProps.value.statusActions).toEqual([
+      {
+        status: ConvertStatus.ACCEPT_CLIENT,
+        label: 'project.convertStatus.acceptClient',
+        tone: 'success',
+      },
+      {
+        status: ConvertStatus.REJECT_CLIENT,
+        label: 'project.convertStatus.rejectClient',
+        tone: 'danger',
+      },
+    ]);
+
+    itemData.value.convert_status = ConvertStatus.ACCEPT_CLIENT;
+    itemData.value.status = ConvertStatus.ACCEPT_CLIENT;
+
+    const acceptedProjectShow = mountComposable();
+    await nextTick();
+
+    expect(acceptedProjectShow.headerProps.value.statusActions).toEqual([]);
+
+    itemData.value.convert_status = ConvertStatus.REJECT_CLIENT;
+    itemData.value.status = ConvertStatus.REJECT_CLIENT;
+
+    const rejectedProjectShow = mountComposable();
+    await nextTick();
+
+    expect(rejectedProjectShow.headerProps.value.statusActions).toEqual([
+      {
+        status: ConvertStatus.REVISE_VERSION,
+        label: 'project.convertStatus.reviseVersion',
+        tone: 'warning',
+      },
+    ]);
   });
 });
