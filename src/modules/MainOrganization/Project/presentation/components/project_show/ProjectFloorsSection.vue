@@ -1,7 +1,9 @@
 <script setup lang="ts">
+  import type { RouteLocationRaw } from 'vue-router';
+
   import type { FloorSpace, ProjectFloor, StatusMeta } from './projectShow.types';
 
-  defineProps<{
+  const props = defineProps<{
     title: string;
     floors: ProjectFloor[];
     floorSpaces: FloorSpace[];
@@ -9,7 +11,7 @@
     averageHeight: number;
     emptyLabel: string;
     addFloorLabel?: string;
-    addFloorTo?: Record<string, unknown>;
+    addFloorTo?: RouteLocationRaw;
     floorLabel: string;
     typeLabel: string;
     spacesLabel: string;
@@ -30,6 +32,46 @@
     formatNumber: (value?: number | string | null, fractionDigits?: number) => string;
     formatArea: (value?: number | string | null) => string;
   }>();
+
+  const toPositiveInteger = (value: unknown): number | undefined => {
+    const normalizedValue = Array.isArray(value) ? value[0] : value;
+    const numberValue = Number(normalizedValue);
+
+    return Number.isInteger(numberValue) && numberValue > 0 ? numberValue : undefined;
+  };
+
+  const getAddFloorQuery = (): Record<string, unknown> => {
+    if (!props.addFloorTo || typeof props.addFloorTo === 'string') return {};
+    if (!('query' in props.addFloorTo) || !props.addFloorTo.query) return {};
+
+    return props.addFloorTo.query;
+  };
+
+  const hasValidFloorId = (floor: ProjectFloor): boolean => {
+    return toPositiveInteger(floor.id) !== undefined;
+  };
+
+  const getEditFloorRoute = (floor: ProjectFloor): RouteLocationRaw => {
+    const addFloorQuery = getAddFloorQuery();
+    const projectId =
+      toPositiveInteger(floor.project_id) ?? toPositiveInteger(addFloorQuery.project_id);
+    const projectPreviewId =
+      toPositiveInteger(floor.project_preview?.id) ??
+      toPositiveInteger(floor.project_preview_id) ??
+      toPositiveInteger(addFloorQuery.project_preview_id);
+    const query: Record<string, number> = {};
+
+    if (projectId) query.project_id = projectId;
+    if (projectPreviewId) query.project_preview_id = projectPreviewId;
+
+    return {
+      name: 'edit-project_floor',
+      params: {
+        project_floor_id: toPositiveInteger(floor.id),
+      },
+      query,
+    };
+  };
 </script>
 
 <template>
@@ -39,7 +81,11 @@
       <h2>{{ title }}</h2>
     </div>
 
-    <RouterLink v-if="!floors.length && addFloorTo" class="empty-panel empty-panel--link" :to="addFloorTo">
+    <RouterLink
+      v-if="!floors.length && addFloorTo"
+      class="empty-panel empty-panel--link"
+      :to="addFloorTo"
+    >
       <i class="pi pi-plus-circle"></i>
 
       <span>
@@ -66,6 +112,7 @@
               <th>{{ totalAreaMeterLabel }}</th>
               <th>{{ totalHeightMeterLabel }}</th>
               <th>{{ statusLabel }}</th>
+              <th>{{ $t('general.actions') }}</th>
             </tr>
           </thead>
           <tbody>
@@ -82,6 +129,16 @@
                 >
                   {{ Number(floor.status) === 1 ? completedLabel : inProgressLabel }}
                 </span>
+              </td>
+              <td class="floor-actions-cell">
+                <RouterLink
+                  v-if="hasValidFloorId(floor)"
+                  class="project-action-btn project-action-btn--primary floor-edit-action"
+                  :to="getEditFloorRoute(floor)"
+                >
+                  <i class="pi pi-pencil"></i>
+                  <span>{{ $t('ProjectFloor.edit_action') }}</span>
+                </RouterLink>
               </td>
             </tr>
           </tbody>

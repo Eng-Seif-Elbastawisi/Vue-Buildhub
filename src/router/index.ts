@@ -37,6 +37,7 @@ const router = createRouter({
     },
     {
       path: '/organization',
+      alias: '/mainportal',
       name: 'Organization App',
       component: () => import('@/views/AppLayout.vue'),
       meta: { allowedUserTypes: [UserType.ORGANIZATION] },

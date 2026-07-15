@@ -24,6 +24,12 @@ const accordionStubs = {
   },
 };
 
+const routerLinkStub = {
+  name: 'RouterLink',
+  props: ['to'],
+  template: '<a><slot /></a>',
+};
+
 describe('ProjectSideColumn', () => {
   it('renders stats and preview details', () => {
     const wrapper = mount(ProjectSideColumn, {
@@ -54,7 +60,10 @@ describe('ProjectSideColumn', () => {
         valueOrEmpty: (value?: string | number | null) => String(value ?? '—'),
       },
       global: {
-        stubs: accordionStubs,
+        stubs: {
+          ...accordionStubs,
+          RouterLink: routerLinkStub,
+        },
       },
     });
 
@@ -62,6 +71,7 @@ describe('ProjectSideColumn', () => {
     expect(wrapper.text()).toContain('Floors');
     expect(wrapper.text()).toContain('Preview ready');
     expect(wrapper.find('a[href="https://example.com/site"]').exists()).toBe(true);
+    expect(wrapper.find('.preview-edit-action').exists()).toBe(false);
   });
 
   it('renders all preview entries', () => {
@@ -104,7 +114,10 @@ describe('ProjectSideColumn', () => {
         valueOrEmpty: (value?: string | number | null) => String(value ?? '—'),
       },
       global: {
-        stubs: accordionStubs,
+        stubs: {
+          ...accordionStubs,
+          RouterLink: routerLinkStub,
+        },
       },
     });
 
@@ -113,6 +126,20 @@ describe('ProjectSideColumn', () => {
     expect(wrapper.text()).toContain('Previous preview');
     expect(wrapper.find('a[href="https://example.com/latest"]').exists()).toBe(true);
     expect(wrapper.find('a[href="https://example.com/previous"]').exists()).toBe(true);
+
+    const editLinks = wrapper.findAllComponents({ name: 'RouterLink' });
+    expect(editLinks).toHaveLength(2);
+    expect(editLinks[0]?.props('to')).toEqual({
+      name: 'edit-project_preview',
+      params: { project_preview_id: 39 },
+      query: { project_id: 24 },
+    });
+    expect(editLinks[1]?.props('to')).toEqual({
+      name: 'edit-project_preview',
+      params: { project_preview_id: 38 },
+      query: { project_id: 24 },
+    });
+    expect(wrapper.text()).toContain('Edit Project Preview');
   });
 
   it('routes to add preview when no preview exists', () => {
@@ -139,11 +166,7 @@ describe('ProjectSideColumn', () => {
       global: {
         stubs: {
           ...accordionStubs,
-          RouterLink: {
-            name: 'RouterLink',
-            props: ['to'],
-            template: '<a><slot /></a>',
-          },
+          RouterLink: routerLinkStub,
         },
       },
     });

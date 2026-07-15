@@ -36,4 +36,98 @@ describe('AddProjectFloorParams', () => {
       spaces,
     });
   });
+
+  it('validates every required add field and accepts numeric floor enum values', () => {
+    const validParams = new AddProjectFloorParams({
+      project_id: 10,
+      project_preview_id: 15,
+      floor_number: FloorNumber.GROUND_FLOOR,
+      site_description: 'Site description',
+      technical_general_notes: 'Technical notes',
+      inspection_recommendations: 'Inspection recommendations',
+      spaces: [{ space_id: 1, length: 12, width: 8, height: 3 }],
+    });
+
+    expect(validParams.validate()).toEqual({ isValid: true, errors: [] });
+
+    const invalidParams = new AddProjectFloorParams({
+      project_id: 0,
+      project_preview_id: 0,
+      floor_number: 99 as FloorNumber,
+      site_description: '',
+      technical_general_notes: '',
+      inspection_recommendations: '',
+    });
+
+    expect(invalidParams.validate().errors.map((error) => error.field)).toEqual([
+      'project_id',
+      'project_preview_id',
+      'floor_number',
+      'site_description',
+      'technical_general_notes',
+      'inspection_recommendations',
+      'spaces',
+    ]);
+    expect(invalidParams.toMap()).not.toHaveProperty('spaces');
+  });
+
+  it('omits nested undefined values while preserving backend null values', () => {
+    const params = new AddProjectFloorParams({
+      project_id: 10,
+      project_preview_id: 15,
+      floor_number: FloorNumber.FIRST_FLOOR,
+      site_description: 'Site description',
+      technical_general_notes: 'Technical notes',
+      inspection_recommendations: 'Recommendations',
+      spaces: [
+        {
+          space_id: 8,
+          length: 12,
+          width: 8,
+          height: 3,
+          notes: undefined,
+          attachments: [{ file: 'floor.pdf', alt: undefined, link: null }],
+        },
+      ],
+    });
+
+    expect(params.toMap().spaces).toEqual([
+      {
+        space_id: 8,
+        length: 12,
+        width: 8,
+        height: 3,
+        attachments: [{ file: 'floor.pdf', link: null }],
+      },
+    ]);
+  });
+
+  it('accepts a floor without a preview and omits project_preview_id from the payload', () => {
+    const params = new AddProjectFloorParams({
+      project_id: 10,
+      floor_number: FloorNumber.FIRST_FLOOR,
+      site_description: 'Site description',
+      technical_general_notes: 'Technical notes',
+      inspection_recommendations: 'Recommendations',
+      spaces: [{ space_id: 8, length: 12, width: 8, height: 3 }],
+    });
+
+    expect(params.validate()).toEqual({ isValid: true, errors: [] });
+    expect(params.toMap()).not.toHaveProperty('project_preview_id');
+  });
+
+  it('never includes zero as a project preview id in the payload', () => {
+    const params = new AddProjectFloorParams({
+      project_id: 10,
+      project_preview_id: 0,
+      floor_number: FloorNumber.FIRST_FLOOR,
+      site_description: 'Site description',
+      technical_general_notes: 'Technical notes',
+      inspection_recommendations: 'Recommendations',
+      spaces: [{ space_id: 8, length: 12, width: 8, height: 3 }],
+    });
+
+    expect(params.validate().errors.map((error) => error.field)).toContain('project_preview_id');
+    expect(params.toMap()).not.toHaveProperty('project_preview_id');
+  });
 });

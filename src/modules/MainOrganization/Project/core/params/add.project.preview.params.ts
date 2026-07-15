@@ -20,12 +20,6 @@ export default class AddProjectPreviewParams implements Params {
     preview_date: { required: true },
     preview_time: { required: true },
     project_id: { required: true },
-
-    // خلي دول required بس لو الفورم بيبعتهم فعلاً
-    // notification_type: { required: true },
-    // status: { required: true },
-    // pricing_responsible_id: { required: true },
-    // notification_message: { required: true },
   });
 
   constructor(data: {
@@ -53,7 +47,7 @@ export default class AddProjectPreviewParams implements Params {
   }
 
   toMap(): Record<string, unknown> {
-    return {
+    const map: Record<string, unknown> = {
       engineer_id: this.engineer_id,
       preview_date: this.preview_date,
       preview_time: this.preview_time,
@@ -65,6 +59,8 @@ export default class AddProjectPreviewParams implements Params {
       pricing_responsible_id: this.pricing_responsible_id,
       notification_message: this.notification_message,
     };
+
+    return Object.fromEntries(Object.entries(map).filter(([, value]) => value !== undefined));
   }
 
   validate() {

@@ -2,9 +2,10 @@
   import { ref } from 'vue';
   import { useI18n } from 'vue-i18n';
   import { useRoute } from 'vue-router';
+  import RadioButton from 'primevue/radiobutton';
   import { dialogManager } from '@/base/Presentation/Dialogs/dialog.manager';
   import type AddProjectParams from '../../core/params/add.project.params.ts';
-  import ProjectController from '../controllers/project.controller.ts';
+  import ProjectController, { type ProjectNextStep } from '../controllers/project.controller.ts';
   import ProjectForm from './ProjectForm.vue';
   import ProjectSteps from './ProjectSteps.vue';
 
@@ -13,6 +14,7 @@
   const { t } = useI18n();
   const params = ref<AddProjectParams | null>(null);
   const loading = ref(false);
+  const nextStep = ref<ProjectNextStep>('preview');
 
   const canSubmitProject = () => {
     if (!params.value) {
@@ -35,7 +37,7 @@
     if (!canSubmitProject() || !params.value) return;
     loading.value = true;
     try {
-      await controller.create(params.value, undefined, route.fullPath);
+      await controller.create(params.value, undefined, route.fullPath, nextStep.value);
     } finally {
       loading.value = false;
     }
@@ -46,6 +48,41 @@
   <div class="Project-crud-page">
     <ProjectSteps :current-step="1" />
     <ProjectForm :loading="loading" :is-edit="false" @update-data="params = $event" />
+
+    <fieldset class="next-step-selector" :disabled="loading">
+      <legend>{{ $t('Project.next_step') }}</legend>
+
+      <div class="next-step-options">
+        <label
+          class="next-step-option"
+          :class="{ 'next-step-option--selected': nextStep === 'preview' }"
+          for="project-next-step-preview"
+        >
+          <RadioButton
+            v-model="nextStep"
+            input-id="project-next-step-preview"
+            name="project-next-step"
+            value="preview"
+          />
+          <span>{{ $t('Project.add_preview_first') }}</span>
+        </label>
+
+        <label
+          class="next-step-option"
+          :class="{ 'next-step-option--selected': nextStep === 'floor' }"
+          for="project-next-step-floor"
+        >
+          <RadioButton
+            v-model="nextStep"
+            input-id="project-next-step-floor"
+            name="project-next-step"
+            value="floor"
+          />
+          <span>{{ $t('Project.continue_without_preview') }}</span>
+        </label>
+      </div>
+    </fieldset>
+
     <button
       :class="{ 'btn--loading': loading }"
       class="btn btn-primary"
@@ -79,5 +116,55 @@
 
   .btn-primary {
     width: 100%;
+  }
+
+  .next-step-selector {
+    min-width: 0;
+    margin: 0;
+    padding: 1rem;
+    border: 1px solid var(--border-weak);
+    border-radius: 18px;
+    background: var(--white);
+  }
+
+  .next-step-selector legend {
+    padding-inline: 0.5rem;
+    color: var(--gray-8);
+    font-family: 'Bold';
+  }
+
+  .next-step-options {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+
+  .next-step-option {
+    display: flex;
+    min-height: 56px;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.875rem 1rem;
+    border: 1px solid var(--border-weak);
+    border-radius: 14px;
+    color: var(--gray-6);
+    cursor: pointer;
+    transition:
+      border-color 0.2s ease,
+      background-color 0.2s ease,
+      color 0.2s ease;
+  }
+
+  .next-step-option--selected {
+    border-color: var(--PrimaryColor);
+    background: var(--PrimaryColor-light);
+    color: var(--PrimaryColor);
+    font-family: 'Medium';
+  }
+
+  @media (max-width: 640px) {
+    .next-step-options {
+      grid-template-columns: 1fr;
+    }
   }
 </style>
