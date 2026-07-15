@@ -1,18 +1,15 @@
-import { EmailType } from '../constants/emailType.enum';
+import { UserType } from '../constants/userType.enum';
 import { isValidEmail } from '../utils/email.validation';
 import type { SystemIdentitySetting } from '@/modules/shared/SystemIdentity/presentation/composables/useSystemIdentityTheme';
 
 /**
- * Email model representing employee email data
- *
- * This model handles email information for employees including
- * validation, type categorization, and API serialization.
+ * Authenticated user data mapped from the login response.
  */
 export default class UserModel {
   public readonly id?: number;
   public readonly name: string;
   public readonly email: string;
-  public readonly type: EmailType;
+  public readonly type?: UserType;
   public readonly employeeId?: number;
   public readonly createdAt?: string;
   public readonly updatedAt?: string;
@@ -27,7 +24,7 @@ export default class UserModel {
     id?: number;
     email: string;
     name: string;
-    type?: EmailType;
+    type?: UserType;
     employeeId?: number;
     createdAt?: string;
     updatedAt?: string;
@@ -41,7 +38,7 @@ export default class UserModel {
     this.id = data.id;
     this.email = data.email;
     this.name = data.name;
-    this.type = data.type || EmailType.EMPLOYEE;
+    this.type = data.type;
     this.employeeId = data.employeeId;
     this.createdAt = data.createdAt;
     this.updatedAt = data.updatedAt;
@@ -54,9 +51,9 @@ export default class UserModel {
   }
 
   /**
-   * Create EmailModel from API response
+   * Create UserModel from an API response.
    * @param json - Raw JSON data from API
-   * @returns EmailModel instance
+   * @returns UserModel instance
    * @throws Error if email is invalid
    */
   static fromJson(json: any): UserModel {
@@ -67,7 +64,7 @@ export default class UserModel {
     return new UserModel({
       id: json.id,
       email: json.email,
-      type: json.type || EmailType.EMPLOYEE,
+      type: json.type,
       name: json.name,
       employeeId: json.employee_id,
       createdAt: json.created_at,
@@ -106,11 +103,8 @@ export default class UserModel {
       id: 3,
       name: 'Omar Mostafa',
       email: '[EMAIL_ADDRESS]',
-      type: EmailType.EMPLOYEE,
+      type: UserType.ADMIN,
       employeeId: 3,
-      apiToken:
-        'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vZmFrZS1kZXYuZWR1aHViLmFwcy9hcGkvYXV0aGVudGljYXRlIiwiaWF0IjoxNzUxMzM5MTYyLCJleHAiOjE3NTE0MjU1NjIsIm5iZiI6MTc1MTMzOTE2MiwianRpIjoiWkM1RmNTS1BWMVpuWUtQZSIsInN1YiI6IjMiLCJwcnYiOiIyM2JlNWM4ZmQ5MjI5NTY2MzA4NmY5NWE1Y2Y2Yjg0OTI3ZGU2ZDMwIiwidHlwZSI6M30.g2Yj4pWlD67e6JmY7l6fQ2k6n8y6JmY7l6fQ2k6n8y6',
-      refreshToken: '',
       image: 'https://cyber.comolho.com/static/img/avatar.png',
     });
   }
@@ -132,20 +126,12 @@ export default class UserModel {
     return this.employeeId === employeeId;
   }
 
-  /**
-   * Check if this is a work email
-   * @returns true if email type is WORK
-   */
-  isWorkEmail(): boolean {
-    return this.type === EmailType.WORK;
+  isAdmin(): boolean {
+    return this.type === UserType.ADMIN;
   }
 
-  /**
-   * Check if this is a personal email
-   * @returns true if email type is PERSONAL
-   */
-  isPersonalEmail(): boolean {
-    return this.type === EmailType.PERSONAL;
+  isOrganizationUser(): boolean {
+    return this.type === UserType.ORGANIZATION;
   }
 
   /**

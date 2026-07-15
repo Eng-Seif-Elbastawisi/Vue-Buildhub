@@ -1,21 +1,33 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { RouteLocationNormalized } from 'vue-router';
 import { authGuard } from './guards';
+import { UserType } from '@/modules/auth/core/constants/userType.enum';
 
 const mockUserStore = vi.hoisted(() => ({
-  user: null as { type?: number } | null,
+  user: null as { type?: number; apiToken?: string } | null,
+  isAuth: false,
 }));
 
 vi.mock('@/stores/user', () => ({
   useUserStore: () => mockUserStore,
 }));
 
-const makeRoute = (path: string): RouteLocationNormalized => ({ path }) as RouteLocationNormalized;
+const makeRoute = (
+  path: string,
+  allowedUserTypes?: readonly (typeof UserType)[keyof typeof UserType][],
+): RouteLocationNormalized =>
+  ({ path, meta: { allowedUserTypes } }) as unknown as RouteLocationNormalized;
+
+const authenticateAs = (type: (typeof UserType)[keyof typeof UserType]) => {
+  mockUserStore.user = { type, apiToken: 'test-token' };
+  mockUserStore.isAuth = true;
+};
 
 describe('authGuard', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockUserStore.user = null;
+    mockUserStore.isAuth = false;
   });
 
   it('redirects unauthenticated users to the target login page', () => {
@@ -24,26 +36,46 @@ describe('authGuard', () => {
   });
 
   it('allows authenticated organization users into organization routes', () => {
-    mockUserStore.user = { type: 2 };
+    authenticateAs(UserType.ORGANIZATION);
 
     expect(authGuard(makeRoute('/organization/employees'))).toBe(true);
   });
 
   it('redirects organization users away from admin routes', () => {
-    mockUserStore.user = { type: 2 };
+    authenticateAs(UserType.ORGANIZATION);
 
     expect(authGuard(makeRoute('/admin'))).toBe('/organization');
   });
 
   it('redirects admin users away from organization routes', () => {
-    mockUserStore.user = { type: 1 };
+    authenticateAs(UserType.ADMIN);
 
     expect(authGuard(makeRoute('/organization'))).toBe('/admin');
   });
 
   it('redirects authenticated users from login to their app', () => {
-    mockUserStore.user = { type: 1 };
+    authenticateAs(UserType.ADMIN);
 
     expect(authGuard(makeRoute('/login-admin'))).toBe('/admin');
+  });
+
+  it('rejects a persisted user that has no usable token', () => {
+    mockUserStore.user = { type: UserType.ADMIN, apiToken: 'undefined' };
+    mockUserStore.isAuth = true;
+
+    expect(authGuard(makeRoute('/admin'))).toBe('/login-admin');
+  });
+
+  it('rejects a persisted user that has no recognized user type', () => {
+    mockUserStore.user = { apiToken: 'test-token' };
+    mockUserStore.isAuth = true;
+
+    expect(authGuard(makeRoute('/admin'))).toBe('/login-admin');
+  });
+
+  it('blocks organization users from admin-only routes under their prefix', () => {
+    authenticateAs(UserType.ORGANIZATION);
+
+    expect(authGuard(makeRoute('/organization/admin', [UserType.ADMIN]))).toBe('/organization');
   });
 });

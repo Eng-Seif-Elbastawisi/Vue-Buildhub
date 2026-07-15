@@ -63,6 +63,7 @@ function generateRequestId(): string {
 export default class NetworkService {
   private axiosInstance: AxiosInstance;
   private static _instance: NetworkService;
+  private unauthorizedHandler: (() => void) | null = null;
 
   /** Active request controllers for cancellation */
   private activeRequests: Map<string, AbortController> = new Map();
@@ -80,6 +81,10 @@ export default class NetworkService {
       this._instance = new NetworkService();
     }
     return this._instance;
+  }
+
+  setUnauthorizedHandler(handler: () => void): void {
+    this.unauthorizedHandler = handler;
   }
 
   /**
@@ -154,6 +159,10 @@ export default class NetworkService {
             message: error.message,
             url: error.config?.url,
           });
+        }
+
+        if (error.response?.status === 401) {
+          this.unauthorizedHandler?.();
         }
 
         return Promise.reject(error);

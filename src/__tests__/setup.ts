@@ -5,6 +5,8 @@ import { beforeEach, vi } from 'vitest';
 import en from '@/locales/en.json';
 import ar from '@/locales/ar.json';
 import { useUserStore } from '@/stores/user';
+import UserModel from '@/modules/auth/core/models/user.model';
+import { UserType } from '@/modules/auth/core/constants/userType.enum';
 
 const expandFlatMessages = (messages: Record<string, string>) => {
   const expanded: Record<string, unknown> = { ...messages };
@@ -74,7 +76,16 @@ config.global.stubs = {
 
 const setDefaultUser = () => {
   setActivePinia(createPinia());
-  useUserStore().setUser({ id: 1, name: 'Admin', type: 1, isMaster: true } as any);
+  useUserStore().setUser(
+    new UserModel({
+      id: 1,
+      name: 'Admin',
+      email: 'admin@example.com',
+      type: UserType.ADMIN,
+      isMaster: true,
+      apiToken: 'test-token',
+    }),
+  );
 };
 
 setDefaultUser();

@@ -13,6 +13,7 @@
   import SidebarNavigation from './SidebarNavigation.vue';
   import HeaderSidebarIcon from '@/shared/icons/HeaderIcons/HeaderSidebarIcon.vue';
   import { useRouteSearch } from '@/stores/routerSearch';
+  import { UserType } from '@/modules/auth/core/constants/userType.enum';
 
   const userStore = useUserStore();
   const router = useRouter();
@@ -51,7 +52,7 @@
   };
 
   const currentRole = computed(() => {
-    return user?.type == 1 ? 'mainportal' : 'organization';
+    return user?.type === UserType.ADMIN ? 'mainportal' : 'organization';
   });
 
   const logout = () => {

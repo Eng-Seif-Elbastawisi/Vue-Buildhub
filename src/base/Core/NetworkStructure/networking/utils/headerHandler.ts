@@ -1,10 +1,9 @@
 import { useCountryStore } from '@/stores/country';
 import { useUserStore } from '@/stores/user';
+import { getUsableAuthToken } from '@/modules/auth/core/utils/authToken';
 
 class HeaderHandler {
   private static _instance: HeaderHandler;
-
-  private userStore = useUserStore();
 
   private constructor() {}
 
@@ -17,16 +16,12 @@ class HeaderHandler {
 
   getHeader(isAuth = false): { [key: string]: string } {
     const headers: { [key: string]: string } = {};
-    const userStore = this.userStore;
-    const CountryStore = useCountryStore();
+    const userStore = useUserStore();
+    const countryStore = useCountryStore();
+    const token = getUsableAuthToken(userStore.user?.apiToken);
 
-    const token: string | undefined = userStore?.user?.apiToken;
-    if (userStore?.user !== null) {
-      if (isAuth) {
-        headers['Authorization'] = 'Bearer ' + token;
-      } else {
-        headers['Authorization'] = 'Bearer ' + token;
-      }
+    if (isAuth && token) {
+      headers.Authorization = `Bearer ${token}`;
     }
 
     const savedLocale = localStorage.getItem('locale') || 'en';
@@ -41,9 +36,8 @@ class HeaderHandler {
     // }
 
     headers['Content-Type'] = 'application/json';
-    headers['Accept'] = 'application/json';
-    headers['Authorization'] = 'Bearer ' + token;
-    headers['x-country'] = CountryStore.getCountryCode();
+    headers.Accept = 'application/json';
+    headers['x-country'] = countryStore.getCountryCode();
     return headers;
   }
 }
