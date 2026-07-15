@@ -18,6 +18,7 @@
     fetchProject,
     downloadProjectPdf,
     handleConvertStatusAction,
+    handleChangeProjectStatus,
     goToSection,
     headerProps,
     tabsProps,
@@ -70,6 +71,7 @@
             v-bind="headerProps"
             @download-pdf="downloadProjectPdf"
             @convert-status-action="handleConvertStatusAction"
+            @change-project-status="handleChangeProjectStatus"
           />
 
           <ProjectShowTabs v-bind="tabsProps" @select="goToSection" />

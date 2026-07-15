@@ -90,6 +90,10 @@ export default class ProjectRepository extends BaseRepository<ProjectShowModel, 
     return await this.executeProjectAction(() => this.apiService.reviseVersion(params));
   }
 
+  async changeProjectStatus(params?: ProjectActionParams): Promise<DataState<void>> {
+    return await this.executeProjectAction(() => this.apiService.changeProjectStatus(params));
+  }
+
   async fetchProjectStatusHistories(
     params?: ProjectActionParams,
   ): Promise<DataState<ProjectHistoryModel>> {

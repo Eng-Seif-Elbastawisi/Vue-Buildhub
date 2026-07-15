@@ -86,6 +86,18 @@
           className: 'is-revised',
         };
 
+      case ConvertStatus.ACCEPT_CLIENT:
+        return {
+          label: t('ProjectHistory.status.accepted_client'),
+          className: 'is-converted',
+        };
+
+      case ConvertStatus.REJECT_CLIENT:
+        return {
+          label: t('ProjectHistory.status.rejected_client'),
+          className: 'is-muted',
+        };
+
       default:
         return {
           label: t('unknown'),

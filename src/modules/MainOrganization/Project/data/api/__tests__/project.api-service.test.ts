@@ -17,6 +17,7 @@ describe('ProjectApiService', () => {
     await service.convertMeasurementToProject({ project_id: 1 });
     await service.storeVersion({ project_id: 1 });
     await service.reviseVersion({ project_id: 1 });
+    await service.changeProjectStatus({ project_id: 1, status: 5, notes: 'Approved' });
     await service.fetchProjectStatusHistories({ project_id: 1 });
 
     expect(spy).toHaveBeenCalledWith(
@@ -28,6 +29,11 @@ describe('ProjectApiService', () => {
     });
     expect(spy).toHaveBeenCalledWith(expect.stringContaining('/mainportal/revise_version'), {
       project_id: 1,
+    });
+    expect(spy).toHaveBeenCalledWith(expect.stringContaining('/mainportal/change_project_status'), {
+      project_id: 1,
+      status: 5,
+      notes: 'Approved',
     });
     expect(spy).toHaveBeenCalledWith(
       expect.stringContaining('/mainportal/fetch_project_status_histories'),

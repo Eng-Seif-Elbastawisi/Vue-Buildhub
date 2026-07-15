@@ -38,6 +38,10 @@ export default class ProjectApiService extends BaseApiService {
     return await this.customPost(this.projectEndpoints.reviseVersion, params as Params);
   }
 
+  async changeProjectStatus(params?: ProjectActionParams) {
+    return await this.customPost(this.projectEndpoints.changeProjectStatus, params as Params);
+  }
+
   async fetchProjectStatusHistories(params?: ProjectActionParams) {
     return await this.customPost(
       this.projectEndpoints.fetchProjectStatusHistories,

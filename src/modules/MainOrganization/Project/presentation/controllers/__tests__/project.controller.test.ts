@@ -46,14 +46,17 @@ describe('ProjectController', () => {
     vi.spyOn(repository, 'convertMeasurementToProject').mockResolvedValue(failed('Convert failed'));
     vi.spyOn(repository, 'storeVersion').mockResolvedValue(failed('Store version failed'));
     vi.spyOn(repository, 'reviseVersion').mockResolvedValue(failed('Revise version failed'));
+    vi.spyOn(repository, 'changeProjectStatus').mockResolvedValue(failed('Change status failed'));
 
     await controller.convertMeasurementToProject({ project_id: 1 });
     await controller.storeVersion({ project_id: 1 });
     await controller.reviseVersion({ project_id: 1 });
+    await controller.changeProjectStatus({ project_id: 1, status: 5, notes: 'Approved' });
 
     expect(toastError).toHaveBeenNthCalledWith(1, 'Convert failed');
     expect(toastError).toHaveBeenNthCalledWith(2, 'Store version failed');
     expect(toastError).toHaveBeenNthCalledWith(3, 'Revise version failed');
+    expect(toastError).toHaveBeenNthCalledWith(4, 'Change status failed');
   });
 
   it('stores project history data in the history state', async () => {
