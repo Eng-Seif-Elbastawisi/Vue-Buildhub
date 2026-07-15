@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { ItemServiceTypeEnum } from '../../constant/item.service.type.enum';
 import IndexItemParams from '../index.Item.params';
 
 describe('IndexItemParams', () => {
@@ -13,6 +14,14 @@ describe('IndexItemParams', () => {
       page: 2,
       per_page: 25,
       date_remove: '2026-06-18',
+    });
+  });
+
+  it('maps item service type filter', () => {
+    expect(
+      new IndexItemParams('', 1, 10, 1, null, ItemServiceTypeEnum.DESIGN).toMap(),
+    ).toMatchObject({
+      service_type: ItemServiceTypeEnum.DESIGN,
     });
   });
 });

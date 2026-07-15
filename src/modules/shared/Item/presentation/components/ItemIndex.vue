@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { computed, onMounted, ref } from 'vue';
+  import { computed, onMounted, ref, watch } from 'vue';
   import { useI18n } from 'vue-i18n';
   import { useRoute, useRouter } from 'vue-router';
   import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
@@ -14,6 +14,7 @@
   import IndexItemParams from '../../core/params/index.Item.params';
   import { debounce } from '@/base/Presentation/Utils/debouced';
   import IndexAddIcon from '@/shared/icons/IndexAddIcon.vue';
+  import { ItemServiceTypeEnum } from '../../core/constant/item.service.type.enum';
 
   const controller = ItemController.getInstance();
   const state = computed(() => controller.listState.value);
@@ -37,30 +38,46 @@
     item.translations.title[locale.value] ?? item.translations.title.en ?? '-';
   //const typeFor = (item: ItemModel) => t(`item.types.`);
 
+  const getRoutePage = (): number => {
+    const queryPage = Array.isArray(route.query.page) ? route.query.page[0] : route.query.page;
+    const page = Number(queryPage);
+
+    return Number.isFinite(page) && page > 0 ? page : 1;
+  };
+
+  const getRouteWord = (): string => {
+    const queryWord = Array.isArray(route.query.word) ? route.query.word[0] : route.query.word;
+
+    return queryWord ? String(queryWord) : '';
+  };
+
+  const getServiceType = (): ItemServiceTypeEnum | undefined => {
+    const queryType = Array.isArray(route.query.service_type)
+      ? route.query.service_type[0]
+      : route.query.service_type;
+    const serviceType = Number(queryType);
+
+    return Object.values(ItemServiceTypeEnum).includes(serviceType as ItemServiceTypeEnum)
+      ? (serviceType as ItemServiceTypeEnum)
+      : undefined;
+  };
+
   const fetchItems = async (page: number = 1, searchWord: string = '') => {
     await controller.fetchList(
-      new IndexItemParams(
-        searchWord,
-        route.query.page ? Number(route.query.page) : page,
-        perPage.value,
-        1,
-      ),
+      new IndexItemParams(searchWord, page, perPage.value, 1, null, getServiceType()),
     );
   };
   const Search = debounce(() => {
     router.push({
       query: {
         ...route.query,
-        page: Number(route.query.page ?? 1),
+        page: 1,
         word: word.value || undefined,
       },
     });
-
-    fetchItems(1, word.value);
   });
 
   const onPageChange = (page: number) => {
-    void fetchItems(page);
     void router.push({
       query: { ...route.query, page: String(page), word: word.value || undefined },
     });
@@ -68,7 +85,7 @@
 
   const onPerPageChange = (count: number) => {
     perPage.value = count;
-    void fetchItems(1);
+    void fetchItems(getRoutePage(), word.value);
   };
 
   const deleteItem = async (id: number) => {
@@ -77,9 +94,17 @@
   };
 
   onMounted(async () => {
-    word.value = route.query.word ? String(route.query.word) : '';
-    await fetchItems(route.query.page ? Number(route.query.page) : 1, word.value);
+    word.value = getRouteWord();
+    await fetchItems(getRoutePage(), word.value);
   });
+
+  watch(
+    () => [route.query.service_type, route.query.page, route.query.word],
+    async () => {
+      word.value = getRouteWord();
+      await fetchItems(getRoutePage(), word.value);
+    },
+  );
   const { user } = useUserStore();
 </script>
 

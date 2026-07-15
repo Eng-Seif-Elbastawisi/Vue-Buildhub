@@ -3,6 +3,8 @@ import { ref } from 'vue';
 import type UserModel from '@/modules/auth/core/models/user.model';
 import { useSystemIdentityTheme } from '@/modules/shared/SystemIdentity/presentation/composables/useSystemIdentityTheme';
 
+export const USER_AUTH_STORAGE_KEY = 'user';
+
 let autoLogoutTimer: ReturnType<typeof setTimeout> | null = null;
 
 export const useUserStore = defineStore(
@@ -29,8 +31,7 @@ export const useUserStore = defineStore(
       user.value = null;
       isAuth.value = false;
       expiresAt.value = null;
-      useSystemIdentityTheme().clearSavedPalette();
-      localStorage.clear();
+      localStorage.removeItem(USER_AUTH_STORAGE_KEY);
     };
 
     const setAutoLogout = () => {
@@ -63,7 +64,7 @@ export const useUserStore = defineStore(
   },
   {
     persist: {
-      key: 'user',
+      key: USER_AUTH_STORAGE_KEY,
       storage: localStorage,
     },
   },

@@ -2,6 +2,7 @@ import { flushPromises, mount } from '@vue/test-utils';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ItemStatusEnum } from '../../../core/constant/item.status.enum';
 import { ItemTypeEnum } from '../../../core/constant/item.type.enum copy';
+import { ItemServiceTypeEnum } from '../../../core/constant/item.service.type.enum';
 import DeleteItemParams from '../../../core/params/delete.Item.params';
 import ItemIndex from '../ItemIndex.vue';
 
@@ -75,6 +76,17 @@ describe('ItemIndex', () => {
     await flushPromises();
 
     expect(mockController.fetchList).toHaveBeenCalledTimes(1);
+  });
+
+  it('passes service type query to item index params', async () => {
+    route.query = { service_type: String(ItemServiceTypeEnum.DESIGN) };
+
+    mount(ItemIndex, { global });
+    await flushPromises();
+
+    expect(mockController.fetchList.mock.calls[0]?.[0].toMap()).toMatchObject({
+      service_type: ItemServiceTypeEnum.DESIGN,
+    });
   });
 
   it('deletes an item and refreshes the list', async () => {

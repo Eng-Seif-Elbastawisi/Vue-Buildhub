@@ -1,10 +1,12 @@
-import { mount } from '@vue/test-utils';
-import { describe, expect, it, vi } from 'vitest';
+import { flushPromises, mount } from '@vue/test-utils';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
 import { nextTick } from 'vue';
 import ProjectShowModel from '../../../core/models/project.show.model';
 import ProjectShow from '../ProjectShow.vue';
 
 const fetchOne = vi.fn();
+const changeProjectStatus = vi.fn().mockResolvedValue(new DataSuccess<void>({}));
 
 const projectResponse = ProjectShowModel.fromJson({
   id: 24,
@@ -136,6 +138,12 @@ vi.mock('vue-i18n', () => ({
         'ProjectShow.project_code': 'Project Code',
         'ProjectShow.created_at': 'Created at',
         'ProjectShow.currency_egp': 'EGP',
+        'ProjectShow.change_status': 'Change Status',
+        'ProjectShow.change_status_title': 'Change Project Status',
+        'ProjectShow.change_status_notes_placeholder': 'Add notes about this status change',
+        'ProjectShow.save_status': 'Save Status',
+        'ProjectShow.changing_status': 'Saving status...',
+        'general.actions': 'Actions',
         'ProjectShow.department': 'Department',
         'ProjectShow.departments_count_label': 'Departments',
         'ProjectShow.departments_hint': 'Click a department to view its items',
@@ -166,6 +174,12 @@ vi.mock('vue-i18n', () => ({
         'Project.engineer': 'Engineer',
         'Project.site_description': 'Site Description',
         'Project.notes': 'Notes',
+        'project.convertStatus.pending': 'Pending',
+        'project.convertStatus.convertToProject': 'Converted to project',
+        'project.convertStatus.sendToClient': 'Sent to client',
+        'project.convertStatus.reviseVersion': 'Revised version',
+        'project.convertStatus.acceptClient': 'Accepted by client',
+        'project.convertStatus.rejectClient': 'Rejected by client',
         'Project.spaces': 'Spaces',
         'Project.preview_date': 'Preview Date',
         'Project.preview_time': 'Preview Time',
@@ -184,6 +198,7 @@ vi.mock('vue-i18n', () => ({
         'project_pricing.final_total': 'Final total',
         'project_pricing.discount_types.PERCENTAGE': 'Percentage',
         status: 'Status',
+        cancel: 'Cancel',
         location: 'Location',
         project_type_id: 'Project Type',
         id: 'ID',
@@ -207,6 +222,7 @@ vi.mock('../../controllers/project.controller', () => ({
       itemData: { value: projectResponse },
       errorMessage: { value: null },
       fetchOne,
+      changeProjectStatus,
     }),
   },
 }));
@@ -243,6 +259,11 @@ const mountProjectShow = () =>
   });
 
 describe('ProjectShow', () => {
+  beforeEach(() => {
+    fetchOne.mockClear();
+    changeProjectStatus.mockClear();
+  });
+
   it('fetches the project and renders show-project data from the same controller response', async () => {
     const wrapper = mountProjectShow();
     await nextTick();
@@ -269,5 +290,35 @@ describe('ProjectShow', () => {
     expect(wrapper.text()).toContain('First payment after approval');
     expect(wrapper.text()).toContain('Second payment after delivery');
     expect(wrapper.find('img[src*="p1i2wAlkoI_1783600450.png"]').exists()).toBe(true);
+  });
+
+  it('sends selected project status and notes from the header modal', async () => {
+    const wrapper = mountProjectShow();
+    await nextTick();
+
+    await wrapper
+      .findAll('button')
+      .find((button) => button.text().includes('Actions'))
+      ?.trigger('click');
+    await nextTick();
+
+    const changeStatusButton = wrapper
+      .findAll('button')
+      .find((button) => button.text().includes('Sent to client'));
+
+    expect(changeStatusButton).toBeTruthy();
+
+    await changeStatusButton?.trigger('click');
+    await nextTick();
+    await wrapper.find('textarea').setValue('Approved by client');
+    await wrapper.find('form').trigger('submit.prevent');
+    await flushPromises();
+
+    expect(changeProjectStatus).toHaveBeenCalledTimes(1);
+    expect(changeProjectStatus.mock.calls[0][0].toMap()).toEqual({
+      project_id: 24,
+      status: 3,
+      notes: 'Approved by client',
+    });
   });
 });

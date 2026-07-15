@@ -25,9 +25,9 @@
   const word = ref('');
 
   const headers: TableHeader[] = [
-    { key: 'title', label: 'title', width: '55%', sortable: true },
+    { key: 'title', label: 'title', width: 'p5%', sortable: true },
     // { key: 'code', label: 'code', width: '30%' },
-    { key: 'type', label: 'type', width: '40%' },
+    // { key: 'type', label: 'type', width: '40%' },
   ];
 
   const typeLabels = Object.fromEntries(

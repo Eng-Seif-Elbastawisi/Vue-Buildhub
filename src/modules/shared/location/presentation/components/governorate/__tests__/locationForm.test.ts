@@ -29,10 +29,10 @@ const global = {
         "<button class=\"multi-lang-input\" @click=\"$emit('update:modelValue', { en: 'Cairo Governorate', ar: 'القاهرة' })\" />",
     },
     UpdatedCustomInputSelect: {
-      props: ['modelValue'],
+      props: ['modelValue', 'required'],
       emits: ['update:modelValue'],
       template:
-        '<button class="country-select-stub" @click="$emit(\'update:modelValue\', { id: 1, title: \'Egypt\' })" />',
+        '<button class="country-select-stub" :data-required="required" @click="$emit(\'update:modelValue\', { id: 1, title: \'Egypt\' })" />',
     },
   },
   mocks: {
@@ -58,6 +58,12 @@ describe('GovernorateLocationForm', () => {
 
     const emittedParams = wrapper.emitted('updateData')?.at(-1)?.[0] as AddLocationParams;
     expect(emittedParams.parentId).toBe(1);
+  });
+
+  it('marks country select as required', () => {
+    const wrapper = mount(LocationForm, { global });
+
+    expect(wrapper.find('.country-select-stub').attributes('data-required')).toBe('true');
   });
 
   it('hydrates values from an existing governorate location', () => {

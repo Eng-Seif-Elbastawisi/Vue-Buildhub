@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { InvoiceStatusEnum } from '@/modules/MainOrganization/Invoice/core/constant/invoice.status.enum';
+import { ItemServiceTypeEnum } from '@/modules/shared/Item/core/constant/item.service.type.enum';
 import { sidebarSections } from '../sidebar.config';
 
 describe('sidebarSections', () => {
@@ -129,5 +130,19 @@ describe('sidebarSections', () => {
       }),
     );
     expect(unpaidInvoices?.disabled).toBeUndefined();
+  });
+
+  it('links design and construction items to the item page with service type filters', () => {
+    const itemPaths = sidebarSections
+      .flatMap((section) => section.items)
+      .filter((item) => item.labelKey === 'sidebar.items')
+      .map((item) => item.path);
+
+    expect(itemPaths).toEqual(
+      expect.arrayContaining([
+        `/item?service_type=${ItemServiceTypeEnum.DESIGN}`,
+        `/item?service_type=${ItemServiceTypeEnum.SUPERVISION}`,
+      ]),
+    );
   });
 });

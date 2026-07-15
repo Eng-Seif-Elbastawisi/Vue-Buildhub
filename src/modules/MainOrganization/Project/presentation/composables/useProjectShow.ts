@@ -9,6 +9,7 @@ import { ProjectItemPriceEnum } from '@/modules/MainOrganization/ProjectItem/cor
 import { ProjectPricingDiscountEnum } from '@/modules/MainOrganization/ProjectPricing/core/constant/project.pricing.discount.enum';
 import { FloorNumber } from '@/modules/MainOrganization/ProjectFloor/core/constants/floor.number.enum';
 import ShowProjectParams from '../../core/params/show.project.params';
+import ChangeProjectStatusParams from '../../core/params/change.project.status.params';
 import type ProjectShowModel from '../../core/models/project.show.model';
 import { ServiceType } from '../../core/constants/serviceType.enum';
 import { ConvertStatus } from '../../core/constants/convert.status.enum';
@@ -129,6 +130,18 @@ export const useProjectShow = () => {
           className: 'is-revised',
         };
 
+      case ConvertStatus.ACCEPT_CLIENT:
+        return {
+          label: t('project.convertStatus.acceptClient'),
+          className: 'is-converted',
+        };
+
+      case ConvertStatus.REJECT_CLIENT:
+        return {
+          label: t('project.convertStatus.rejectClient'),
+          className: 'is-muted',
+        };
+
       default:
         return {
           label: t('project.convertStatus.pending'),
@@ -145,15 +158,53 @@ export const useProjectShow = () => {
       case ConvertStatus.CONVERT_TO_PROJECT:
         return t('project.convertActions.storeVersion');
 
-      case ConvertStatus.SEND_TO_CLIENT:
-        return t('project.convertActions.reviseVersion');
-
       default:
         return '';
     }
   });
 
   const isConvertActionDisabled = computed(() => loading.value);
+
+  const statusActions = computed(() => {
+    switch (currentConvertStatus.value) {
+      case ConvertStatus.PENDING:
+      case ConvertStatus.CONVERT_TO_PROJECT:
+      case ConvertStatus.REVISE_VERSION:
+        return [
+          {
+            status: ConvertStatus.SEND_TO_CLIENT,
+            label: getConvertStatusMeta(ConvertStatus.SEND_TO_CLIENT).label,
+            tone: 'info' as const,
+          },
+        ];
+
+      case ConvertStatus.SEND_TO_CLIENT:
+        return [
+          {
+            status: ConvertStatus.ACCEPT_CLIENT,
+            label: getConvertStatusMeta(ConvertStatus.ACCEPT_CLIENT).label,
+            tone: 'success' as const,
+          },
+          {
+            status: ConvertStatus.REJECT_CLIENT,
+            label: getConvertStatusMeta(ConvertStatus.REJECT_CLIENT).label,
+            tone: 'danger' as const,
+          },
+        ];
+
+      case ConvertStatus.REJECT_CLIENT:
+        return [
+          {
+            status: ConvertStatus.REVISE_VERSION,
+            label: getConvertStatusMeta(ConvertStatus.REVISE_VERSION).label,
+            tone: 'warning' as const,
+          },
+        ];
+
+      default:
+        return [];
+    }
+  });
 
   const getServiceTypeLabel = (type?: number | null) => {
     if (type === ServiceType.DESIGNONLY) return t('Project.service_types.designOnly');
@@ -941,6 +992,29 @@ export const useProjectShow = () => {
     }
   };
 
+  const handleChangeProjectStatus = async (payload: { status: ConvertStatus; notes: string }) => {
+    if (!projectId.value || loading.value) return;
+
+    loading.value = true;
+
+    try {
+      const result = await projectController.changeProjectStatus(
+        new ChangeProjectStatusParams({
+          projectId: projectId.value,
+          status: payload.status,
+          notes: payload.notes,
+        }),
+      );
+
+      if (!(result instanceof DataSuccess)) return;
+
+      localConvertStatus.value = payload.status;
+      await fetchProject();
+    } finally {
+      loading.value = false;
+    }
+  };
+
   const headerProps = computed(() => ({
     project: project.value,
     projectTitle: projectTitle.value,
@@ -951,9 +1025,18 @@ export const useProjectShow = () => {
     generatingPdfLabel: t('ProjectShow.generating_pdf'),
     editProjectLabel: t('ProjectShow.edit_project'),
     historyLabel: t('ProjectShow.history'),
+    actionsLabel: t('general.actions'),
     exportingPdf: exportingPdf.value,
     convertActionLabel: convertActionLabel.value,
     convertActionDisabled: isConvertActionDisabled.value,
+    statusActions: statusActions.value,
+    changeStatusModalTitle: t('ProjectShow.change_status_title'),
+    notesLabel: t('Project.notes'),
+    notesPlaceholder: t('ProjectShow.change_status_notes_placeholder'),
+    cancelLabel: t('cancel'),
+    saveStatusLabel: t('ProjectShow.save_status'),
+    changingStatusLabel: t('ProjectShow.changing_status'),
+    changeStatusLoading: loading.value,
     formatDate,
     formatTime,
   }));
@@ -1130,6 +1213,7 @@ export const useProjectShow = () => {
     fetchProject,
     downloadProjectPdf,
     handleConvertStatusAction,
+    handleChangeProjectStatus,
     goToSection,
     headerProps,
     tabsProps,

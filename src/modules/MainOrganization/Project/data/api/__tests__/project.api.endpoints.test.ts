@@ -24,6 +24,7 @@ describe('ProjectApiEndpoints', () => {
     );
     expect(endpoints.storeVersion).toContain('mainportal/store_version');
     expect(endpoints.reviseVersion).toContain('mainportal/revise_version');
+    expect(endpoints.changeProjectStatus).toContain('mainportal/change_project_status');
     expect(endpoints.fetchProjectStatusHistories).toContain(
       'mainportal/fetch_project_status_histories',
     );
@@ -44,6 +45,7 @@ describe('ProjectApiEndpoints', () => {
     );
     expect(endpoints.storeVersion).toContain('organization/store_version');
     expect(endpoints.reviseVersion).toContain('organization/revise_version');
+    expect(endpoints.changeProjectStatus).toContain('organization/change_project_status');
     expect(endpoints.fetchProjectStatusHistories).toContain(
       'organization/fetch_project_status_histories',
     );

@@ -47,6 +47,8 @@ import {
   SidebarUnpaidInvoiceIcon,
   SidebarUpcomingPaymentIcon,
 } from '@/shared/icons/SidebarIcons/sidebarPrimeIcons';
+import { DepartmentTypeEnum } from '@/modules/shared/Department/core/constants/Type.enum';
+import { ItemServiceTypeEnum } from '@/modules/shared/Item/core/constant/item.service.type.enum';
 
 export type SidebarRole = 'admin' | 'organization';
 
@@ -477,14 +479,14 @@ export const sidebarSections: SidebarSectionConfig[] = [
       },
 
       {
-        path: '/departments',
+        path: `/departments?type=${DepartmentTypeEnum.DESIGN}`,
         labelKey: 'sidebar.departments',
         icon: SidebarDepartmentIcon,
         countKey: 'departments_count',
       },
 
       {
-        path: '/item',
+        path: `/item?service_type=${ItemServiceTypeEnum.DESIGN}`,
         labelKey: 'sidebar.items',
         icon: SidebarItemIcon,
         countKey: 'items_count',
@@ -504,14 +506,14 @@ export const sidebarSections: SidebarSectionConfig[] = [
       },
 
       {
-        path: '/departments',
+        path: `/departments?type=${DepartmentTypeEnum.SUPERVISION}`,
         labelKey: 'sidebar.departments',
         icon: SidebarDepartmentIcon,
         countKey: 'departments_count',
       },
 
       {
-        path: '/item',
+        path: `/item?service_type=${ItemServiceTypeEnum.SUPERVISION}`,
         labelKey: 'sidebar.items',
         icon: SidebarItemIcon,
         countKey: 'items_count',

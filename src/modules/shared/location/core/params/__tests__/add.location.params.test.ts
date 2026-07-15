@@ -22,4 +22,28 @@ describe('AddLocationParams', () => {
     });
     expect(params.validate().isValid).toBe(true);
   });
+
+  it('requires governorate parent for city create payloads', () => {
+    const params = new AddLocationParams({
+      type: LocationTypeEnum.CITY,
+      translations,
+    });
+
+    expect(params.validate().isValid).toBe(false);
+    expect(params.validate().errors).toEqual(
+      expect.arrayContaining([expect.objectContaining({ field: 'parentId' })]),
+    );
+  });
+
+  it('requires country parent for governorate create payloads', () => {
+    const params = new AddLocationParams({
+      type: LocationTypeEnum.GOVERNORATE,
+      translations,
+    });
+
+    expect(params.validate().isValid).toBe(false);
+    expect(params.validate().errors).toEqual(
+      expect.arrayContaining([expect.objectContaining({ field: 'parentId' })]),
+    );
+  });
 });

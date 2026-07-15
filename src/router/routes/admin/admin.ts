@@ -1,4 +1,5 @@
 import type { RouteRecordRaw } from '@/router/types';
+import { UserType } from '@/modules/auth/core/constants/userType.enum';
 
 export const adminCrudRoutes: RouteRecordRaw[] = [
   {
@@ -7,6 +8,7 @@ export const adminCrudRoutes: RouteRecordRaw[] = [
     component: () => import('@/views/MainAdmin/Admin/IndexAdmin.vue'),
     meta: {
       breadcrumb: 'Admin',
+      allowedUserTypes: [UserType.ADMIN],
     },
   },
   {
@@ -16,6 +18,7 @@ export const adminCrudRoutes: RouteRecordRaw[] = [
     meta: {
       breadcrumb: 'Add Admin',
       parent: 'Admin',
+      allowedUserTypes: [UserType.ADMIN],
     },
   },
   {
@@ -26,6 +29,7 @@ export const adminCrudRoutes: RouteRecordRaw[] = [
     meta: {
       breadcrumb: 'Edit Admin',
       parent: 'Admin',
+      allowedUserTypes: [UserType.ADMIN],
     },
   },
 ];

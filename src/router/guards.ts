@@ -1,5 +1,7 @@
 import type { RouteLocationNormalized } from 'vue-router';
 import { useUserStore } from '@/stores/user';
+import { UserType } from '@/modules/auth/core/constants/userType.enum';
+import { hasUsableAuthToken } from '@/modules/auth/core/utils/authToken';
 
 type RoleRouteAccess = {
   homePath: string;
@@ -52,7 +54,6 @@ export function authGuard(to: RouteLocationNormalized) {
     return getLoginPathByTarget(to.path);
   }
 
-  // عامل login وبيحاول يدخل صفحة login
   if (isLoginPage) {
     return routeAccess.homePath;
   }

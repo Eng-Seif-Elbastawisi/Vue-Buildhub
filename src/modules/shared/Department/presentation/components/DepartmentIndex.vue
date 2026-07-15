@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { onMounted, ref, computed } from 'vue';
+  import { computed, onMounted, ref, watch } from 'vue';
   import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
   import AppTable, { type TableHeader } from '@/shared/HelpersComponents/AppTable.vue';
   import Pagination from '@/shared/HelpersComponents/Pagination.vue';
@@ -13,6 +13,7 @@
   import type DepartmentModel from '@/modules/shared/Department/core/models/department.model';
   import DepartmentAdd from './DepartmentAdd.vue';
   import ShowDepartmentParams from '../../core/params/show.department.params';
+  import { DepartmentTypeEnum } from '../../core/constants/Type.enum';
 
   // Controller instance
   const controller = DepartmentController.getInstance();
@@ -27,13 +28,36 @@
   const perPage = ref(10);
   const word = ref('');
 
+  const getDepartmentType = (): DepartmentTypeEnum | undefined => {
+    const queryType = Array.isArray(route.query.type) ? route.query.type[0] : route.query.type;
+    const type = Number(queryType);
+
+    return Object.values(DepartmentTypeEnum).includes(type as DepartmentTypeEnum)
+      ? (type as DepartmentTypeEnum)
+      : undefined;
+  };
+
+  const getRoutePage = (): number => {
+    const queryPage = Array.isArray(route.query.page) ? route.query.page[0] : route.query.page;
+    const page = Number(queryPage);
+
+    return Number.isFinite(page) && page > 0 ? page : 1;
+  };
+
+  const getRouteWord = (): string => {
+    const queryWord = Array.isArray(route.query.word) ? route.query.word[0] : route.query.word;
+
+    return queryWord ? String(queryWord) : '';
+  };
+
   const fetchDepartments = async (page: number = 1, word: string = '') => {
     await controller.fetchList(
-      new IndexDepartmentParams(
+      new IndexDepartmentParams({
         word,
-        route.query.page ? Number(route.query.page) : page,
-        perPage.value,
-      ),
+        page,
+        perPage: perPage.value,
+        type: getDepartmentType(),
+      }),
     );
   };
 
@@ -41,16 +65,13 @@
     router.push({
       query: {
         ...route.query,
-        page: Number(route.query.page ?? 1),
+        page: 1,
         word: word.value || undefined,
       },
     });
-
-    fetchDepartments(1, word.value);
   });
 
   const onPageChange = (page: number) => {
-    fetchDepartments(page);
     router.push({
       query: {
         ...route.query,
@@ -62,16 +83,22 @@
 
   const onPerPageChange = (count: number) => {
     perPage.value = count;
-    fetchDepartments(1);
+    fetchDepartments(getRoutePage(), word.value);
   };
 
   onMounted(async () => {
-    if (route.query.word) {
-      word.value = String(route.query.word);
-    }
+    word.value = getRouteWord();
 
-    await fetchDepartments(route.query.page ? Number(route.query.page) : 1, word.value);
+    await fetchDepartments(getRoutePage(), word.value);
   });
+
+  watch(
+    () => [route.query.type, route.query.page, route.query.word],
+    async () => {
+      word.value = getRouteWord();
+      await fetchDepartments(getRoutePage(), word.value);
+    },
+  );
 
   const deleteCountry = async (id: number) => {
     await controller.delete(new DepartmentIdParams(id));
@@ -153,6 +180,7 @@
     <DepartmentAdd
       :key="formKey"
       :department="selectedDepartment"
+      :type="getDepartmentType()"
       @cancel="onDepartmentCancelled"
       @update-data="onDepartmentSaved"
       @saved="onDepartmentSaved"

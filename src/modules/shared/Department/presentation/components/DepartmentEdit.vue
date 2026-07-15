@@ -6,12 +6,22 @@
   import DepartmentForm from './DepartmentForm.vue';
   import DepartmentIdParams from '../../core/params/department-id.params';
   import type EditDepartmentParams from '../../core/params/edit.department.params';
+  import { DepartmentTypeEnum } from '../../core/constants/Type.enum';
 
   const controller = DepartmentController.getInstance();
   const route = useRoute();
   const params = ref<EditDepartmentParams | null>(null);
   const loading = ref(false);
   const resetKey = ref(0);
+
+  const getDepartmentType = (): DepartmentTypeEnum | undefined => {
+    const queryType = Array.isArray(route.query.type) ? route.query.type[0] : route.query.type;
+    const type = Number(queryType);
+
+    return Object.values(DepartmentTypeEnum).includes(type as DepartmentTypeEnum)
+      ? (type as DepartmentTypeEnum)
+      : undefined;
+  };
 
   const save = async () => {
     if (!params.value) return;
@@ -37,6 +47,7 @@
     <DepartmentForm
       :department="controller.itemData.value ?? undefined"
       :loading="loading"
+      :type="getDepartmentType()"
       :reset-key="resetKey"
       @update-data="(value) => (params = value as EditDepartmentParams)"
     />

@@ -3,16 +3,17 @@
  */
 
 // Models
-export { default as UserModel } from "./core/models/user.model";
+export { default as UserModel } from './core/models/user.model';
+export { UserType } from './core/constants/userType.enum';
 
 // Params
-export { default as LoginParams } from "./core/params/login.params";
+export { default as LoginParams } from './core/params/login.params';
 
 // Repository
-export { default as LoginRepository } from "./data/repositories/login.repository";
+export { default as LoginRepository } from './data/repositories/login.repository';
 
 // Controller
-export { default as LoginController } from "./presentation/controllers/login.controller";
+export { default as LoginController } from './presentation/controllers/login.controller';
 
 // API Service
-export { default as LoginApiService } from "./data/api/login.api-service";
+export { default as LoginApiService } from './data/api/login.api-service';

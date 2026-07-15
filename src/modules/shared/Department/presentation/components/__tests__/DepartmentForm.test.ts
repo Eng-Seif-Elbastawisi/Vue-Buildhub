@@ -22,14 +22,13 @@ const SelectStub = {
   props: ['id', 'modelValue'],
   emits: ['update:modelValue'],
   template: `<button
-      :class="id === 'type' ? 'type-select' : 'stage-select'"
-      @click="$emit('update:modelValue', id === 'type' ? newType : newStage)"
+      class="stage-select"
+      @click="$emit('update:modelValue', newStage)"
     >
       {{ modelValue?.title ?? id }}
     </button>`,
   data: () => ({
     newStage: new TitleInterface({ id: 7, title: 'Secondary' }),
-    newType: new TitleInterface({ id: Type.BOTH, title: 'Both' }),
   }),
 };
 
@@ -47,11 +46,10 @@ const mountForm = (props = {}) =>
 
 describe('DepartmentForm', () => {
   it('emits add params containing translated title and selected stage id', async () => {
-    const wrapper = mountForm();
+    const wrapper = mountForm({ type: Type.BOTH });
 
     await wrapper.find('.multi-lang-input').trigger('click');
     await wrapper.find('.stage-select').trigger('click');
-    await wrapper.find('.type-select').trigger('click');
 
     const events = wrapper.emitted('updateData') ?? [];
     const params = events.at(-1)?.[0] as AddDepartmentParams;
@@ -79,6 +77,24 @@ describe('DepartmentForm', () => {
       translations: expect.objectContaining({ title: { en: 'Existing', ar: 'القائم' } }),
       stage_id: 3,
       type: Type.SUPERVISION,
+    });
+  });
+
+  it('uses route type prop when editing an existing department', () => {
+    const department = new DepartmentModel({
+      id: 5,
+      translations: { title: { en: 'Existing', ar: 'القائم' } },
+      stage: new TitleInterface({ id: 3, title: 'Primary' }),
+      type: Type.SUPERVISION,
+    });
+
+    const wrapper = mountForm({ department, type: Type.DESIGN });
+
+    const events = wrapper.emitted('updateData') ?? [];
+    const params = events.at(-1)?.[0] as EditDepartmentParams;
+    expect(params.toMap()).toMatchObject({
+      department_id: 5,
+      type: Type.DESIGN,
     });
   });
 
@@ -113,12 +129,10 @@ describe('DepartmentForm', () => {
 
     expect(wrapper.find('.title-en').text()).toBe('Design Department');
     expect(wrapper.find('.stage-select').text()).toBe('Engineering');
-    expect(wrapper.find('.type-select').text()).toBe('Design');
 
     await wrapper.setProps({ resetKey: 1 });
 
     expect(wrapper.find('.title-en').text()).toBe('');
     expect(wrapper.find('.stage-select').text()).toBe('doc-branch');
-    expect(wrapper.find('.type-select').text()).toBe('type');
   });
 });

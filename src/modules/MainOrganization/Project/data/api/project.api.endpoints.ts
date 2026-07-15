@@ -14,5 +14,6 @@ export class ProjectApiEndpoints extends BaseEndpoints {
   readonly convertMeasurementToProject = this.url('convert_measurement_to_project');
   readonly storeVersion = this.url('store_version');
   readonly reviseVersion = this.url('revise_version');
+  readonly changeProjectStatus = this.url('change_project_status');
   readonly fetchProjectStatusHistories = this.url('fetch_project_status_histories');
 }

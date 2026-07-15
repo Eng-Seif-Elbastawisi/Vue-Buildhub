@@ -164,6 +164,12 @@ export default class ProjectController extends BaseController<ProjectShowModel, 
     return this.handleProjectActionResponse(result);
   }
 
+  async changeProjectStatus(params?: ProjectActionParams): Promise<DataState<void>> {
+    const result = await this.repository.changeProjectStatus(params);
+
+    return this.handleProjectActionResponse(result);
+  }
+
   get historyData(): ComputedRef<ProjectHistoryModel | null> {
     return computed(() => {
       if (this.historyState.value instanceof DataSuccess) {

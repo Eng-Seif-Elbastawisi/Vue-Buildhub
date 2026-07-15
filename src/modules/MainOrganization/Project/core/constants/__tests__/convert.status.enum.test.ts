@@ -13,6 +13,12 @@ describe('ConvertStatus constants', () => {
     expect(getConvertStatusNameKey(ConvertStatus.REVISE_VERSION)).toBe(
       'project.convertStatus.reviseVersion',
     );
+    expect(getConvertStatusNameKey(ConvertStatus.ACCEPT_CLIENT)).toBe(
+      'project.convertStatus.acceptClient',
+    );
+    expect(getConvertStatusNameKey(ConvertStatus.REJECT_CLIENT)).toBe(
+      'project.convertStatus.rejectClient',
+    );
   });
 
   it('returns unknown for unsupported statuses', () => {

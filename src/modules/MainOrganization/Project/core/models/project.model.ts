@@ -93,11 +93,6 @@ export default class ProjectModel {
       throw new Error('Cannot create ProjectModel from null or undefined');
     }
 
-    const projectTypeJson =
-      json.project_type && typeof json.project_type === 'object'
-        ? (json.project_type as Record<string, unknown>)
-        : undefined;
-
     const clientJson =
       json.client && typeof json.client === 'object'
         ? (json.client as Record<string, unknown>)
@@ -121,12 +116,6 @@ export default class ProjectModel {
       translations: new TranslationParams({
         title: ProjectModel.mapTranslations(json.translations),
       }),
-
-      createdAt: typeof json.created_at === 'string' ? json.created_at : undefined,
-
-      projectType: projectTypeJson
-        ? new TitleModel(String(projectTypeJson.title ?? ''), Number(projectTypeJson.id))
-        : undefined,
 
       status: typeof json.status === 'number' ? (json.status as ConvertStatus) : undefined,
 
@@ -163,6 +152,8 @@ export default class ProjectModel {
         typeof json.total_price === 'string' || typeof json.total_price === 'number'
           ? String(json.total_price)
           : undefined,
+      createdAt: json.created_at as string | undefined,
+      projectType: TitleModel.fromMap(json.project_type),
     });
   }
 

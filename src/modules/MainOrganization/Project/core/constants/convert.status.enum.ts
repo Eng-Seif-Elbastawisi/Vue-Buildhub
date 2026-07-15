@@ -6,6 +6,8 @@ export const ConvertStatus = {
   CONVERT_TO_PROJECT: 2,
   SEND_TO_CLIENT: 3,
   REVISE_VERSION: 4,
+  ACCEPT_CLIENT: 5,
+  REJECT_CLIENT: 6,
 } as const;
 export type ConvertStatus = (typeof ConvertStatus)[keyof typeof ConvertStatus];
 
@@ -23,6 +25,10 @@ export function getConvertStatusNameKey(status: ConvertStatus): string {
       return 'project.convertStatus.sendToClient';
     case ConvertStatus.REVISE_VERSION:
       return 'project.convertStatus.reviseVersion';
+    case ConvertStatus.ACCEPT_CLIENT:
+      return 'project.convertStatus.acceptClient';
+    case ConvertStatus.REJECT_CLIENT:
+      return 'project.convertStatus.rejectClient';
     default:
       return 'unknown';
   }

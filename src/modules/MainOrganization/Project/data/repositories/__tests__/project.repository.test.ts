@@ -48,6 +48,10 @@ describe('ProjectRepository', () => {
       data: { status: false, message: 'Cannot store version' },
       statusCode: 400,
     });
+    vi.spyOn(apiService, 'changeProjectStatus').mockResolvedValue({
+      data: { status: true, message: 'Status changed' },
+      statusCode: 200,
+    });
     vi.spyOn(apiService, 'fetchProjectStatusHistories').mockResolvedValue({
       data: {
         status: true,
@@ -62,12 +66,19 @@ describe('ProjectRepository', () => {
 
     const success = await repository.convertMeasurementToProject({ project_id: 1 });
     const failed = await repository.storeVersion({ project_id: 1 });
+    const changed = await repository.changeProjectStatus({
+      project_id: 1,
+      status: 5,
+      notes: 'Approved',
+    });
     const history = await repository.fetchProjectStatusHistories({ project_id: 27 });
 
     expect(success).toBeInstanceOf(DataSuccess);
     expect(success.message).toBe('Converted');
     expect(failed).toBeInstanceOf(DataFailed);
     expect(failed.error?.displayMessage).toBe('Cannot store version');
+    expect(changed).toBeInstanceOf(DataSuccess);
+    expect(changed.message).toBe('Status changed');
     expect(history).toBeInstanceOf(DataSuccess);
     expect(history.data?.project?.title).toBe('Project History');
     expect(history.data?.histories[0].status).toBe(4);
