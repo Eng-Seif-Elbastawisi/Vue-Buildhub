@@ -57,7 +57,7 @@ export default class EditItemParams implements Params {
     const map: Record<string, unknown> = {
       item_id: this.item_id,
       type: this.type,
-      service_type: this.status,
+      status: this.status,
       stage_id: this.stage_id,
       department_id: this.department_id,
       measurement_unit_id: this.measurement_unit_id,

@@ -47,7 +47,7 @@ export default class AddItemParams implements Params {
   toMap(): Record<string, unknown> {
     return {
       type: this.type,
-      service_type: this.status,
+      status: this.status,
       stage_id: this.stage_id,
       department_id: this.department_id,
       measurement_unit_id: this.measurement_unit_id,
