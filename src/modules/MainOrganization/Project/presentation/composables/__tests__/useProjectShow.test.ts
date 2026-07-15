@@ -4,6 +4,73 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useProjectShow } from '../useProjectShow';
 import { ConvertStatus } from '../../../core/constants/convert.status.enum';
 
+const mockLocale = vi.hoisted(() => ({ value: 'en' }));
+const pdfMocks = vi.hoisted(() => {
+  type AutoTableOptions = {
+    startY?: number;
+    styles?: {
+      font?: string;
+    };
+    didParseCell?: (data: { cell: { text: string[] } }) => void;
+  };
+
+  const instances: Array<{
+    lastAutoTable?: { finalY: number };
+    internal: { pageSize: { getWidth: () => number; getHeight: () => number } };
+    setFillColor: ReturnType<typeof vi.fn>;
+    rect: ReturnType<typeof vi.fn>;
+    setTextColor: ReturnType<typeof vi.fn>;
+    setFont: ReturnType<typeof vi.fn>;
+    setFontSize: ReturnType<typeof vi.fn>;
+    text: ReturnType<typeof vi.fn>;
+    addPage: ReturnType<typeof vi.fn>;
+    setDrawColor: ReturnType<typeof vi.fn>;
+    line: ReturnType<typeof vi.fn>;
+    roundedRect: ReturnType<typeof vi.fn>;
+    getNumberOfPages: ReturnType<typeof vi.fn>;
+    setPage: ReturnType<typeof vi.fn>;
+    save: ReturnType<typeof vi.fn>;
+    addFileToVFS: ReturnType<typeof vi.fn>;
+    addFont: ReturnType<typeof vi.fn>;
+    setR2L: ReturnType<typeof vi.fn>;
+    processArabic: ReturnType<typeof vi.fn>;
+  }> = [];
+
+  const jsPDF = vi.fn(function () {
+    const pdf = {
+      internal: { pageSize: { getWidth: () => 210, getHeight: () => 297 } },
+      setFillColor: vi.fn(),
+      rect: vi.fn(),
+      setTextColor: vi.fn(),
+      setFont: vi.fn(),
+      setFontSize: vi.fn(),
+      text: vi.fn(),
+      addPage: vi.fn(),
+      setDrawColor: vi.fn(),
+      line: vi.fn(),
+      roundedRect: vi.fn(),
+      getNumberOfPages: vi.fn(() => 1),
+      setPage: vi.fn(),
+      save: vi.fn(),
+      addFileToVFS: vi.fn(),
+      addFont: vi.fn(),
+      setR2L: vi.fn(),
+      processArabic: vi.fn((text: string) => `arabic:${text}`),
+    };
+
+    instances.push(pdf);
+
+    return pdf;
+  });
+
+  const autoTable = vi.fn((pdf: (typeof instances)[number], options: AutoTableOptions) => {
+    options.didParseCell?.({ cell: { text: ['مرحبا'] } });
+    pdf.lastAutoTable = { finalY: (options.startY ?? 0) + 10 };
+  });
+
+  return { autoTable, instances, jsPDF };
+});
+
 const fetchOne = vi.fn();
 const itemData = {
   value: {
@@ -79,9 +146,17 @@ vi.mock('vue-i18n', () => ({
     },
   }),
   useI18n: () => ({
-    locale: { value: 'en' },
+    locale: mockLocale,
     t: (key: string) => key,
   }),
+}));
+
+vi.mock('jspdf', () => ({
+  jsPDF: pdfMocks.jsPDF,
+}));
+
+vi.mock('jspdf-autotable', () => ({
+  default: pdfMocks.autoTable,
 }));
 
 vi.mock('../../controllers/project.controller', () => ({
@@ -115,6 +190,10 @@ const mountComposable = () => {
 describe('useProjectShow', () => {
   beforeEach(() => {
     fetchOne.mockClear();
+    mockLocale.value = 'en';
+    pdfMocks.instances.length = 0;
+    pdfMocks.jsPDF.mockClear();
+    pdfMocks.autoTable.mockClear();
     itemData.value.status = ConvertStatus.PENDING;
     itemData.value.convert_status = ConvertStatus.PENDING;
   });
@@ -206,5 +285,41 @@ describe('useProjectShow', () => {
         tone: 'warning',
       },
     ]);
+  });
+
+  it('uses an embedded Arabic font and processes Arabic text in exported PDF tables', async () => {
+    mockLocale.value = 'ar';
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => ({
+        arrayBuffer: async () => new Uint8Array([1, 2, 3]).buffer,
+      })),
+    );
+
+    const projectShow = mountComposable();
+    await nextTick();
+
+    await projectShow.downloadProjectPdf();
+
+    const pdf = pdfMocks.instances.at(-1);
+
+    expect(pdf).toBeDefined();
+    expect(pdf?.setR2L).toHaveBeenCalledWith(false);
+    expect(pdf?.setR2L).not.toHaveBeenCalledWith(true);
+    expect(pdf?.addFont).toHaveBeenCalledWith(
+      'NotoNaskhArabic-Regular.ttf',
+      'NotoNaskhArabic',
+      'normal',
+    );
+    expect(pdf?.addFont).toHaveBeenCalledWith(
+      'NotoNaskhArabic-Bold.ttf',
+      'NotoNaskhArabic',
+      'bold',
+    );
+    expect(pdf?.setFont).toHaveBeenCalledWith('NotoNaskhArabic', 'bold');
+    expect(pdfMocks.autoTable).toHaveBeenCalled();
+    expect(pdfMocks.autoTable.mock.calls[0][1].styles.font).toBe('NotoNaskhArabic');
+    expect(pdf?.processArabic).toHaveBeenCalledWith('مرحبا');
+    expect(pdf?.save).toHaveBeenCalled();
   });
 });
