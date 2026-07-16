@@ -14,7 +14,11 @@
   import IndexItemParams from '../../core/params/index.Item.params';
   import { debounce } from '@/base/Presentation/Utils/debouced';
   import IndexAddIcon from '@/shared/icons/IndexAddIcon.vue';
-  import { ItemServiceTypeEnum } from '../../core/constant/item.service.type.enum';
+  import type { ItemServiceTypeEnum } from '../../core/constant/item.service.type.enum';
+  import {
+    getItemServiceTypeFromQuery,
+    getItemServiceTypeQuery,
+  } from '../utils/itemRouteServiceType';
 
   const controller = ItemController.getInstance();
   const state = computed(() => controller.listState.value);
@@ -23,6 +27,7 @@
   const { locale } = useI18n();
   const perPage = ref(10);
   const word = ref('');
+  const { user } = useUserStore();
 
   const headers: TableHeader[] = [
     { key: 'title', label: 'title', width: '35%', sortable: true },
@@ -52,15 +57,20 @@
   };
 
   const getServiceType = (): ItemServiceTypeEnum | undefined => {
-    const queryType = Array.isArray(route.query.service_type)
-      ? route.query.service_type[0]
-      : route.query.service_type;
-    const serviceType = Number(queryType);
-
-    return Object.values(ItemServiceTypeEnum).includes(serviceType as ItemServiceTypeEnum)
-      ? (serviceType as ItemServiceTypeEnum)
-      : undefined;
+    return getItemServiceTypeFromQuery(route.query.service_type);
   };
+
+  const serviceTypeQuery = computed(() => getItemServiceTypeQuery(route.query.service_type));
+
+  const addRoute = computed(() => ({
+    path: user?.type === 1 ? '/admin/item/add' : '/organization/item/add',
+    query: serviceTypeQuery.value,
+  }));
+
+  const editRouteFor = (id: number) => ({
+    path: user?.type === 1 ? `/admin/item/edit/${id}` : `/organization/item/edit/${id}`,
+    query: serviceTypeQuery.value,
+  });
 
   const fetchItems = async (page: number = 1, searchWord: string = '') => {
     await controller.fetchList(
@@ -105,7 +115,6 @@
       await fetchItems(getRoutePage(), word.value);
     },
   );
-  const { user } = useUserStore();
 </script>
 
 <template>
@@ -141,10 +150,7 @@
         />
       </div>
       <div class="action-buttons">
-        <router-link
-          class="btn btn-primary"
-          :to="user?.type === 1 ? '/admin/item/add' : '/organization/item/add'"
-        >
+        <router-link class="btn btn-primary" :to="addRoute">
           <IndexAddIcon /> {{ $t('item.add') }}
         </router-link>
       </div>
@@ -166,11 +172,7 @@
             <div class="row-actions">
               <router-link
                 class="action-btn edit"
-                :to="
-                  user?.type === 1
-                    ? `/admin/item/edit/${item.id}`
-                    : `/organization/item/edit/${item.id}`
-                "
+                :to="editRouteFor(item.id!)"
                 :title="$t('item.edit')"
               >
                 <svg
@@ -226,11 +228,7 @@
         <div class="empty-state">
           <h3>{{ $t('item.empty_title') }}</h3>
           <p>{{ $t('item.empty_description') }}</p>
-          <router-link
-            class="btn btn-primary"
-            :to="user?.type === 1 ? '/admin/item/add' : '/organization/item/add'"
-            >{{ $t('item.add') }}</router-link
-          >
+          <router-link class="btn btn-primary" :to="addRoute">{{ $t('item.add') }}</router-link>
         </div>
       </template>
 

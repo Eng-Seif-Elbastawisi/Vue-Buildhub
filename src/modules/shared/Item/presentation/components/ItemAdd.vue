@@ -2,14 +2,26 @@
   import { ref } from 'vue';
   import { useRoute } from 'vue-router';
   import ItemController from '../controllers/Item.controller.ts';
-  import type AddItemParams from '../../core/params/add.Item.params.ts';
+  import AddItemParams from '../../core/params/add.Item.params.ts';
   import ItemForm from './ItemForm.vue';
+  import { getItemServiceTypeFromQuery } from '../utils/itemRouteServiceType';
 
   const controller = ItemController.getInstance();
   const route = useRoute();
   const formKey = route.fullPath;
   const params = ref<AddItemParams | null>(null);
   const loading = ref(false);
+
+  const updateData = (itemParams: AddItemParams) => {
+    const serviceType = getItemServiceTypeFromQuery(route.query.service_type);
+
+    params.value = serviceType
+      ? new AddItemParams({
+          ...itemParams,
+          service_type: serviceType,
+        })
+      : itemParams;
+  };
 
   const saveItem = async () => {
     if (!params.value) return;
@@ -24,7 +36,7 @@
 
 <template>
   <div class="item-crud-page">
-    <ItemForm :form-key="formKey" :loading="loading" @update-data="params = $event" />
+    <ItemForm :form-key="formKey" :loading="loading" @update-data="updateData" />
 
     <div class="actions" :class="{ disabled: loading }">
       <button

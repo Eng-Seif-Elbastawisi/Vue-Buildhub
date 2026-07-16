@@ -17,10 +17,10 @@ const MultiLangInputStub = {
 };
 
 const SelectStub = {
-  props: ['id'],
+  props: ['id', 'params'],
   emits: ['update:modelValue'],
   template:
-    '<button :class="id" @click="$emit(\'update:modelValue\', optionFor(id))">select</button>',
+    '<button :class="id" :data-params="stringifyParams(params)" @click="$emit(\'update:modelValue\', optionFor(id))">select</button>',
   methods: {
     optionFor(id: string) {
       const options: Record<string, { id: number; title: string }> = {
@@ -32,8 +32,24 @@ const SelectStub = {
       };
       return options[id];
     },
+    stringifyParams(params?: { toMap: () => Record<string, unknown> }) {
+      return JSON.stringify(params?.toMap() ?? {});
+    },
   },
 };
+
+const filterScenarios = [
+  {
+    selectClass: '.item-stage',
+    filteredClass: '.item-department',
+    expectedParams: { stage_id: 12 },
+  },
+  {
+    selectClass: '.item-department',
+    filteredClass: '.item-stage',
+    expectedParams: { department_id: 11 },
+  },
+] as const;
 
 describe('ItemForm', () => {
   beforeEach(() => {
@@ -71,6 +87,26 @@ describe('ItemForm', () => {
       translations: { title: { en: 'Item', ar: 'Item AR' } },
     });
   });
+
+  it.each(filterScenarios)(
+    'filters $filteredClass options after selecting $selectClass',
+    async ({ selectClass, filteredClass, expectedParams }) => {
+      const wrapper = mount(ItemForm, {
+        global: {
+          mocks: { $t: (key: string) => key },
+          stubs: { MultiLangInput: MultiLangInputStub, UpdatedCustomInputSelect: SelectStub },
+        },
+      });
+
+      await wrapper.find(selectClass).trigger('click');
+
+      const filteredParams = JSON.parse(
+        wrapper.find(filteredClass).attributes('data-params') ?? '{}',
+      );
+
+      expect(filteredParams).toMatchObject(expectedParams);
+    },
+  );
 
   it('prefills values from an existing item', () => {
     const wrapper = mount(ItemForm, {

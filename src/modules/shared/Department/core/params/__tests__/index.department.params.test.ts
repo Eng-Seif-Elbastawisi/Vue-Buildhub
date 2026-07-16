@@ -26,4 +26,18 @@ describe('IndexDepartmentParams', () => {
       type: DepartmentTypeEnum.DESIGN,
     });
   });
+
+  it('serializes stage filter from object params', () => {
+    expect(
+      new IndexDepartmentParams({
+        perPage: 100,
+        withPage: 0,
+        stageId: 12,
+      }).toMap(),
+    ).toMatchObject({
+      per_page: 100,
+      with_pagination: 0,
+      stage_id: 12,
+    });
+  });
 });

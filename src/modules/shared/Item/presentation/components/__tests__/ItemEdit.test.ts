@@ -1,5 +1,6 @@
 import { flushPromises, mount } from '@vue/test-utils';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { ItemServiceTypeEnum } from '../../../core/constant/item.service.type.enum';
 import { ItemStatusEnum } from '../../../core/constant/item.status.enum';
 import { ItemTypeEnum } from '../../../core/constant/item.type.enum copy';
 import ItemShowModel from '../../../core/models/Item.show.model';
@@ -9,6 +10,11 @@ import ShowItemParams from '../../../core/params/show.Item.params';
 import ItemEdit from '../ItemEdit.vue';
 
 const push = vi.hoisted(() => vi.fn());
+const route = vi.hoisted(() => ({
+  fullPath: '/item/edit/12',
+  params: { id: '12' },
+  query: {} as Record<string, string>,
+}));
 const mockController = vi.hoisted(() => ({
   fetchOne: vi.fn(),
   update: vi.fn(),
@@ -21,7 +27,7 @@ vi.mock('../../controllers/Item.controller', () => ({
 }));
 
 vi.mock('vue-router', () => ({
-  useRoute: () => ({ fullPath: '/item/edit/12', params: { id: '12' } }),
+  useRoute: () => route,
   useRouter: () => ({ push }),
 }));
 
@@ -52,6 +58,9 @@ const global = {
 describe('ItemEdit', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    route.fullPath = '/item/edit/12';
+    route.params = { id: '12' };
+    route.query = {};
     mockController.fetchOne.mockResolvedValue({});
     mockController.update.mockResolvedValue({});
     mockController.itemData.value = ItemShowModel.example;
@@ -80,6 +89,25 @@ describe('ItemEdit', () => {
       '/item/edit/12',
     );
     expect(mockController.update.mock.calls[0]?.[0].item_id).toBe(12);
+  });
+
+  it('adds route service type to update params', async () => {
+    route.fullPath = '/item/edit/12?service_type=1';
+    route.query = { service_type: String(ItemServiceTypeEnum.DESIGN) };
+    const wrapper = mount(ItemEdit, { global });
+
+    await wrapper.find('.item-form-stub').trigger('click');
+    await wrapper.find('button').trigger('click');
+    await flushPromises();
+
+    expect(mockController.update).toHaveBeenCalledWith(
+      expect.any(EditItemParams),
+      undefined,
+      '/item/edit/12?service_type=1',
+    );
+    expect(mockController.update.mock.calls[0]?.[0].toMap()).toMatchObject({
+      service_type: ItemServiceTypeEnum.DESIGN,
+    });
   });
 
   it('renders controller errors', () => {

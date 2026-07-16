@@ -1,17 +1,44 @@
 import IndexParams from '@/base/Core/Params/indexParams';
 
+type IndexStageParamsData = {
+  word?: string;
+  page?: number;
+  perPage?: number;
+  withPage?: number;
+  departmentId?: number;
+};
+
 export default class IndexStageParams extends IndexParams {
+  public departmentId?: number;
+
+  constructor(data?: IndexStageParamsData);
+  constructor(word?: string, pageNumber?: number, perPage?: number, withPage?: number);
   constructor(
-    word: string = '',
+    dataOrWord: IndexStageParamsData | string = '',
     pageNumber: number = 1,
     perPage: number = 10,
     withPage: number = 1,
   ) {
-    super(word, pageNumber, perPage, withPage);
+    if (typeof dataOrWord === 'object') {
+      super(
+        dataOrWord.word ?? '',
+        dataOrWord.page ?? 1,
+        dataOrWord.perPage ?? 10,
+        dataOrWord.withPage ?? 1,
+      );
+      this.departmentId = dataOrWord.departmentId;
+      return;
+    }
+
+    super(dataOrWord, pageNumber, perPage, withPage);
   }
 
   toMap(): Record<string, string | number | number[] | null> {
     const data = super.toMap();
+    if (this.departmentId !== undefined) {
+      data.department_id = this.departmentId;
+    }
+
     return data;
   }
 }
