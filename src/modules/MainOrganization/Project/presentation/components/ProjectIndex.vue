@@ -360,11 +360,11 @@
 
           <template v-else>
             <h3>
-              {{ $t('Project.list_title') }}
+              {{ $t('project.empty_title') }}
             </h3>
 
             <p>
-              {{ $t('Project.list_description') }}
+              {{ $t('project.empty_description') }}
             </p>
           </template>
 

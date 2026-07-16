@@ -1,9 +1,14 @@
 import { mount } from '@vue/test-utils';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { ref } from 'vue';
 import AddInvoiceParams from '../../../core/params/add.invoice.params';
 import InvoiceAdd from '../InvoiceAdd.vue';
 
 const create = vi.fn();
+const errorMessage = ref<string | null>(null);
+const reset = vi.fn(() => {
+  errorMessage.value = null;
+});
 
 vi.mock('vue-router', () => ({
   useRoute: () => ({ fullPath: '/invoice/add' }),
@@ -19,12 +24,36 @@ vi.mock('../../controllers/invoice.controller', () => ({
   default: {
     getInstance: () => ({
       create,
-      errorMessage: { value: null },
+      errorMessage,
+      reset,
     }),
   },
 }));
 
 describe('InvoiceAdd', () => {
+  beforeEach(() => {
+    create.mockClear();
+    reset.mockClear();
+    errorMessage.value = null;
+  });
+
+  it('does not show empty-search feedback after navigating to the add page', () => {
+    errorMessage.value = 'Invoices Fetched Successfully.';
+
+    const wrapper = mount(InvoiceAdd, {
+      global: {
+        mocks: {
+          $t: (key: string) => key,
+        },
+        stubs: {
+          InvoiceForm: true,
+        },
+      },
+    });
+
+    expect(wrapper.find('.invoice-error').exists()).toBe(false);
+  });
+
   it('creates invoice with emitted form params', async () => {
     const params = new AddInvoiceParams({
       project_id: 10,

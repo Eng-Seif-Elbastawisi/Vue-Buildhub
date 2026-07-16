@@ -6,6 +6,8 @@
   import InvoiceForm from './InvoiceForm.vue';
 
   const controller = InvoiceController.getInstance();
+  controller.reset();
+
   const route = useRoute();
   const formKey = route.fullPath;
   const params = ref<AddInvoiceParams | null>(null);

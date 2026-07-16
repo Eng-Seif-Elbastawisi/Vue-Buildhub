@@ -98,7 +98,7 @@
     <p class="document-index-dexription">
       {{ $t('Manage and organize all uploaded documents in one place') }}
     </p>
-    <div class="badge">{{ $t('All Brands') }}</div>
+    <!-- <div class="badge">{{ $t('All Brands') }}</div> -->
     <div class="index-header">
       <div class="toolbar">
         <div class="search-field">
@@ -118,7 +118,7 @@
           </span>
           <input
             v-model="word"
-            :placeholder="$t('search_suppliers')"
+            :placeholder="$t('search_brands')"
             class="search-input"
             type="text"
             @input="Search"
@@ -274,8 +274,8 @@
             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
             <polyline points="14 2 14 8 20 8" />
           </svg>
-          <h3>{{ $t('no_Suppliers_yet') }}</h3>
-          <p>{{ $t('add_first_Supplier') }}</p>
+          <h3>{{ $t('brand.empty_title') }}</h3>
+          <p>{{ $t('brand.empty_description') }}</p>
           <router-link
             :to="user?.isMaster ? '/admin/brand/add' : '/organization/brand/add'"
             class="btn-add empty-cta"
@@ -291,7 +291,7 @@
             >
               <path d="M12 5v14M5 12h14" />
             </svg>
-            <span>{{ $t('add_Supplier') }}</span>
+            <span>{{ $t('brand.add') }}</span>
           </router-link>
         </div>
       </template>

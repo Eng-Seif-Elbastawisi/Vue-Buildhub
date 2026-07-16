@@ -67,6 +67,14 @@ describe('StageIndex.vue', () => {
     expect(wrapper.find('input.search-input').exists()).toBe(true);
   });
 
+  it('shows stage-specific copy when the list is empty', () => {
+    const wrapper = mount(StageIndex, mountOptions);
+
+    expect(wrapper.text()).toContain('stage.empty_title');
+    expect(wrapper.text()).toContain('stage.empty_description');
+    expect(wrapper.text()).not.toContain('no_emails_yet');
+  });
+
   it('calls fetchList on mount', () => {
     mount(StageIndex, mountOptions);
     expect(mockFetchList).toHaveBeenCalledTimes(1);

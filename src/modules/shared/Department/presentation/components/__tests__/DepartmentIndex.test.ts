@@ -8,6 +8,7 @@ const controllerMocks = vi.hoisted(() => ({
   fetchList: vi.fn(),
   delete: vi.fn(),
   fetchOne: vi.fn(),
+  reset: vi.fn(),
   resetItem: vi.fn(),
 }));
 
@@ -17,6 +18,7 @@ vi.mock('@/modules/shared/Department/presentation/controllers/department.control
       fetchList: controllerMocks.fetchList,
       delete: controllerMocks.delete,
       fetchOne: controllerMocks.fetchOne,
+      reset: controllerMocks.reset,
       resetItem: controllerMocks.resetItem,
       pagination: { value: null },
       listState: { value: { status: 'success', data: [] } },
@@ -69,6 +71,14 @@ describe('DepartmentIndex', () => {
   });
 
   it('is defined', () => expect(DepartmentIndex).toBeDefined());
+
+  it('shows department-specific copy when the list is empty', async () => {
+    const wrapper = await mountComponent();
+
+    expect(wrapper.text()).toContain('department.empty_title');
+    expect(wrapper.text()).toContain('department.empty_description');
+    expect(wrapper.text()).not.toContain('no_emails_yet');
+  });
 
   it('fetches departments again when the type query changes on the same page', async () => {
     await mountComponent(`/departments?type=${DepartmentTypeEnum.DESIGN}`);

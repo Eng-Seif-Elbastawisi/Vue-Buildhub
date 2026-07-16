@@ -19,7 +19,7 @@ describe('ProjectTypeIndex', () => {
       global: {
         mocks: { $t: (key: string) => key },
         stubs: {
-          DataStatusBuilder: true,
+          DataStatusBuilder: { template: '<div><slot name="empty" /></div>' },
           AppTable: true,
           Pagination: true,
           TableSkelaton: true,
@@ -29,6 +29,9 @@ describe('ProjectTypeIndex', () => {
       },
     });
     expect(wrapper.text()).toContain('project.list_title');
+    expect(wrapper.text()).toContain('project_type.empty_title');
+    expect(wrapper.text()).toContain('project_type.empty_description');
+    expect(wrapper.text()).not.toContain('project.empty_title');
     expect(fetchList).toHaveBeenCalledTimes(1);
   });
 });

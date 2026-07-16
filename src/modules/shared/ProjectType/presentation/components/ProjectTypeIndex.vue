@@ -88,7 +88,7 @@
           </span>
           <input
             v-model="word"
-            :placeholder="$t('search_suppliers')"
+            :placeholder="$t('search_project_types')"
             class="search-input"
             type="text"
             @input="Search"
@@ -188,12 +188,12 @@
       </template>
       <template #empty
         ><div class="empty-state">
-          <h3>{{ $t('project.empty_title') }}</h3>
-          <p>{{ $t('project.empty_description') }}</p>
+          <h3>{{ $t('project_type.empty_title') }}</h3>
+          <p>{{ $t('project_type.empty_description') }}</p>
           <router-link
             class="btn btn-primary"
             :to="user?.isMaster ? '/admin/projectType/add' : '/organization/projectType/add'"
-            >{{ $t('project.add') }}</router-link
+            >{{ $t('project_type.add') }}</router-link
           >
         </div></template
       >

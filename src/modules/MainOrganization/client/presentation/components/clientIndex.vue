@@ -102,7 +102,7 @@
           </span>
           <input
             v-model="word"
-            :placeholder="$t('search_suppliers')"
+            :placeholder="$t('search_clients')"
             class="search-input"
             type="text"
             @input="Search"

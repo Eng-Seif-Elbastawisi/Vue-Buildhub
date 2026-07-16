@@ -101,7 +101,7 @@
     <p class="document-index-dexription">
       {{ $t('Manage and organize all uploaded documents in one place') }}
     </p>
-    <div class="badge">{{ $t('All Suppliers') }}</div>
+    <!-- <div class="badge">{{ $t('All Suppliers') }}</div> -->
     <div class="index-header">
       <div class="toolbar">
         <div class="search-field">

@@ -128,16 +128,8 @@
                     </svg>
                   </button>
                 </template>
-              </DeleteDialog>
-              <!-- <DeleteDialog
-                :title="$t('project.delete_title')"
-                :message="$t('project.delete_message')"
-                :hasbtn="true"
-                @delete="deleteProject(item.id!)"
-                ><template #btn><IndexDelete /></template
-              ></DeleteDialog> -->
-            </div></template
-          >
+              </DeleteDialog></div
+          ></template>
         </AppTable>
         <Pagination
           :pagination="controller.pagination.value"
@@ -147,10 +139,10 @@
       </template>
       <template #empty
         ><div class="empty-state">
-          <h3>{{ $t('Project.list_title') }}</h3>
-          <p>{{ $t('Project.list_description') }}</p>
-          <router-link class="btn btn-primary" to="/Project/add">{{
-            $t('Project.add')
+          <h3>{{ $t('project_floor.empty_title') }}</h3>
+          <p>{{ $t('project_floor.empty_description') }}</p>
+          <router-link class="btn btn-primary" :to="{ name: 'add-project_floor' }">{{
+            $t('project_floor.add')
           }}</router-link>
         </div>
       </template>

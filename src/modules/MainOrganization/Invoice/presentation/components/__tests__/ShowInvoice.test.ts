@@ -76,6 +76,23 @@ vi.mock(
 );
 
 describe('ShowInvoice', () => {
+  it('shows invoice-specific copy when invoice details are empty', () => {
+    const wrapper = mount(ShowInvoice, {
+      global: {
+        mocks: {
+          $t: (key: string) => key,
+        },
+        stubs: {
+          DataStatusBuilder: {
+            template: '<div><slot name="empty" /></div>',
+          },
+        },
+      },
+    });
+
+    expect(wrapper.text()).toContain('invoice_show.empty');
+  });
+
   it('fetches invoice and invoice payments by route id and renders invoice details', async () => {
     const wrapper = mount(ShowInvoice, {
       global: {

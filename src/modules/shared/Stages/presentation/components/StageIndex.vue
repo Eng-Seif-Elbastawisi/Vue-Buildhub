@@ -135,7 +135,7 @@
           </span>
           <input
             v-model="word"
-            :placeholder="$t('search_by_country_name_or_code')"
+            :placeholder="$t('search_stages')"
             class="search-input"
             type="text"
             @input="Search"
@@ -228,8 +228,8 @@
             <rect x="2" y="4" width="20" height="16" rx="2" />
             <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
           </svg>
-          <h3>{{ $t('no_emails_yet') }}</h3>
-          <p>{{ $t('add_first_employee_email') }}</p>
+          <h3>{{ $t('stage.empty_title') }}</h3>
+          <p>{{ $t('stage.empty_description') }}</p>
           <router-link :to="formRoute" class="btn-add empty-cta">
             <svg
               width="18"
@@ -242,7 +242,7 @@
             >
               <path d="M12 5v14M5 12h14" />
             </svg>
-            <span>{{ $t('add_email') }}</span>
+            <span>{{ $t('stage.add') }}</span>
           </router-link>
         </div>
       </template>

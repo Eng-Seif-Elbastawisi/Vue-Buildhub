@@ -1,5 +1,5 @@
 import { flushPromises, mount } from '@vue/test-utils';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import DeleteLocationParams from '../../../../core/params/delete.location.params';
 import IndexLocationParams from '../../../../core/params/index.location.params';
 import { LocationTypeEnum } from '../../../../core/constant/location.type.enum';
@@ -72,12 +72,34 @@ describe('GovernorateLocationIndex', () => {
     mockController.delete.mockResolvedValue({});
   });
 
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   it('fetches governorate locations on mount', async () => {
     mount(LocationIndex, { global });
     await flushPromises();
 
     expect(mockController.fetchList).toHaveBeenCalledWith(expect.any(IndexLocationParams));
     expect(mockController.fetchList.mock.calls[0]?.[0].type).toBe(LocationTypeEnum.GOVERNORATE);
+  });
+
+  it('searches governorate locations from the toolbar input', async () => {
+    vi.useFakeTimers();
+    const wrapper = mount(LocationIndex, { global });
+    await flushPromises();
+
+    await wrapper.find<HTMLInputElement>('.search-input').setValue('Cairo');
+    vi.runAllTimers();
+    await flushPromises();
+
+    expect(push).toHaveBeenCalledWith({
+      query: { page: 1, word: 'Cairo' },
+    });
+    expect(mockController.fetchList.mock.calls[1]?.[0].toMap()).toMatchObject({
+      word: 'Cairo',
+      type: LocationTypeEnum.GOVERNORATE,
+    });
   });
 
   it('deletes a governorate location and refreshes the list', async () => {
