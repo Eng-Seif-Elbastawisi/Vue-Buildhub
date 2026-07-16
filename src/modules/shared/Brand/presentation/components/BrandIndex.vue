@@ -118,7 +118,7 @@
           </span>
           <input
             v-model="word"
-            :placeholder="$t('search_suppliers')"
+            :placeholder="$t('search_brands')"
             class="search-input"
             type="text"
             @input="Search"

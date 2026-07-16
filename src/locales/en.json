@@ -1690,7 +1690,20 @@
   "types.both": "Both",
   "types": "Types",
   "Enter types": "Enter types",
-  "search_country": "search country",
-  "search_governorate": "search governorate",
-  "search_city": "search city"
+  "search_country": "Search countries",
+  "search_governorate": "Search governorates",
+  "search_city": "Search cities",
+  "search_client_sources": "Search client sources",
+  "search_stages": "Search stages",
+  "search_measurements": "Search measurements",
+  "search_materials": "Search materials",
+  "search_supplies": "Search supplies",
+  "search_brands": "Search brands",
+  "search_spaces": "Search spaces",
+  "search_items": "Search items",
+  "search_terms": "Search terms",
+  "search_project_types": "Search project types",
+  "search_clients": "Search clients",
+  "search_employees": "Search employees",
+  "search_specializations": "Search specializations"
 }

@@ -1689,7 +1689,20 @@
   "types.both": "كلاهما",
   "types": "ادخال البيانات",
   "Enter types": "ادخل البيانات",
-  "search_country": "ابحث عن دولة",
-  "search_governorate": "ابحث عن محافظة",
-  "search_city": "ابحث عن مدينة"
+  "search_country": "ابحث في الدول",
+  "search_governorate": "ابحث في المحافظات",
+  "search_city": "ابحث في المدن",
+  "search_client_sources": "ابحث في مصادر العملاء",
+  "search_stages": "ابحث في المراحل",
+  "search_measurements": "ابحث في وحدات القياس",
+  "search_materials": "ابحث في الخامات",
+  "search_supplies": "ابحث في التوريدات",
+  "search_brands": "ابحث في العلامات التجارية",
+  "search_spaces": "ابحث في المساحات",
+  "search_items": "ابحث في البنود",
+  "search_terms": "ابحث في الشروط",
+  "search_project_types": "ابحث في أنواع المشاريع",
+  "search_clients": "ابحث في العملاء",
+  "search_employees": "ابحث في الموظفين",
+  "search_specializations": "ابحث في التخصصات"
 }

@@ -88,7 +88,7 @@
           </span>
           <input
             v-model="word"
-            :placeholder="$t('search_suppliers')"
+            :placeholder="$t('search_project_types')"
             class="search-input"
             type="text"
             @input="Search"

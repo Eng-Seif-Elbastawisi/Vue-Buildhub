@@ -135,7 +135,7 @@
           </span>
           <input
             v-model="word"
-            :placeholder="$t('search_by_country_name_or_code')"
+            :placeholder="$t('search_stages')"
             class="search-input"
             type="text"
             @input="Search"
