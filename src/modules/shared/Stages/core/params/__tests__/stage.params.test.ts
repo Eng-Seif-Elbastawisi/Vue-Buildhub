@@ -29,6 +29,14 @@ describe('stage params', () => {
     expect(new IndexStageParams().toMap()).toEqual({ with_pagination: 1, page: 1, per_page: 10 });
   });
 
+  it('maps department filter for stage lists', () => {
+    expect(
+      new IndexStageParams({ perPage: 100, withPage: 0, departmentId: 11 }).toMap(),
+    ).toMatchObject({
+      department_id: 11,
+    });
+  });
+
   it('maps and validates identifiers', () => {
     expect(new ShowStageParams({ id: 4 }).toMap()).toEqual({ stage_id: 4 });
     expect(new DeleteStageParams(4).toMap()).toEqual({ stage_id: 4 });

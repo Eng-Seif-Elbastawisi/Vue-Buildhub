@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { ItemServiceTypeEnum } from '../../constant/item.service.type.enum';
 import { ItemStatusEnum } from '../../constant/item.status.enum';
 import { ItemTypeEnum } from '../../constant/item.type.enum copy';
 import AddItemParams from '../add.Item.params';
@@ -20,5 +21,16 @@ describe('AddItemParams', () => {
 
     expect(params.toMap()).toEqual(payload);
     expect(params.validate().isValid).toBe(true);
+  });
+
+  it('maps service type when present', () => {
+    const params = new AddItemParams({
+      ...payload,
+      service_type: ItemServiceTypeEnum.DESIGN,
+    });
+
+    expect(params.toMap()).toMatchObject({
+      service_type: ItemServiceTypeEnum.DESIGN,
+    });
   });
 });

@@ -7,10 +7,12 @@ type IndexDepartmentParamsData = {
   perPage?: number;
   withPage?: number;
   type?: DepartmentTypeEnum;
+  stageId?: number;
 };
 
 export default class IndexDepartmentParams extends IndexParams {
   public type?: DepartmentTypeEnum;
+  public stageId?: number;
 
   constructor(data?: IndexDepartmentParamsData);
   constructor(
@@ -35,6 +37,7 @@ export default class IndexDepartmentParams extends IndexParams {
         dataOrWord.withPage ?? 1,
       );
       this.type = dataOrWord.type;
+      this.stageId = dataOrWord.stageId;
       return;
     }
 
@@ -47,6 +50,10 @@ export default class IndexDepartmentParams extends IndexParams {
 
     if (this.type !== undefined) {
       data.type = this.type;
+    }
+
+    if (this.stageId !== undefined) {
+      data.stage_id = this.stageId;
     }
 
     return data;

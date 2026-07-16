@@ -1,6 +1,6 @@
 <script setup lang="ts">
-  import { onMounted, ref, watch } from 'vue';
-  import { onBeforeRouteLeave } from 'vue-router';
+  import { computed, onMounted, ref, watch } from 'vue';
+  import { onBeforeRouteLeave, useRoute } from 'vue-router';
   import type TitleInterface from '@/base/Data/Models/titleInterface';
   import UpdatedCustomInputSelect from '@/shared/FormInputs/UpdatedCustomInputSelect.vue';
   import MultiLangInput from '@/shared/MultiLangInput.vue';
@@ -16,10 +16,12 @@
   import { ItemStatusEnum } from '../../core/constant/item.status.enum';
   import type ItemShowModel from '../../core/models/Item.show.model';
   import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
+  import type { DepartmentTypeEnum } from '@/modules/shared/Department/core/constants/Type.enum';
 
   const emit = defineEmits<{
     updateData: [params: AddItemParams];
   }>();
+  const route = useRoute();
 
   const props = defineProps<{
     item?: ItemShowModel;
@@ -31,9 +33,7 @@
   const departmentController = DepartmentController.getInstance();
   const measurementController = MeasurementController.getInstance();
   const stageController = StageController.getInstance();
-  const departmentParams = new IndexDepartmentParams('', 1, 100, 0);
   const measurementParams = new IndexMeasurementParams('', 1, 100, 0);
-  const stageParams = new IndexStageParams('', 1, 100, 0);
   const itemTypeOptions = Object.entries(ItemTypeEnum).map(([title, id]) => ({ id, title }));
   const statusOptions = Object.entries(ItemStatusEnum).map(([title, id]) => ({ id, title }));
 
@@ -55,6 +55,25 @@
       : null;
   };
   const numericId = (value?: string | number) => (value == null ? undefined : Number(value));
+  const selectedDepartmentId = computed(() => numericId(selectedDepartment.value?.id));
+  const selectedStageId = computed(() => numericId(selectedStage.value?.id));
+  const departmentParams = computed(
+    () =>
+      new IndexDepartmentParams({
+        perPage: 100,
+        withPage: 0,
+        stageId: selectedStageId.value,
+        type: Number(route.query.service_type) as DepartmentTypeEnum,
+      }),
+  );
+  const stageParams = computed(
+    () =>
+      new IndexStageParams({
+        perPage: 100,
+        withPage: 0,
+        departmentId: selectedDepartmentId.value,
+      }),
+  );
 
   onBeforeRouteLeave((to, from) => {
     const savedData = props.formKey ? formStore.getFormData(props.formKey) : null;
@@ -101,6 +120,16 @@
   }
 
   onMounted(updateData);
+
+  const updateDepartment = (department: TitleInterface<string | number> | null) => {
+    selectedDepartment.value = department;
+    updateData();
+  };
+
+  const updateStage = (stage: TitleInterface<string | number> | null) => {
+    selectedStage.value = stage;
+    updateData();
+  };
 
   const updateTranslations = (value: Record<string, string>) => {
     translations.value = value;
@@ -172,20 +201,6 @@
 
       <div class="field-group">
         <UpdatedCustomInputSelect
-          id="item-department"
-          v-model="selectedDepartment"
-          :controller="departmentController"
-          :label="$t('item.department')"
-          :params="departmentParams"
-          :placeholder="$t('item.department_placeholder')"
-          :reload="true"
-          required
-          @update:model-value="updateData"
-        />
-      </div>
-
-      <div class="field-group">
-        <UpdatedCustomInputSelect
           id="item-stage"
           v-model="selectedStage"
           :controller="stageController"
@@ -194,7 +209,21 @@
           :placeholder="$t('item.stage_placeholder')"
           :reload="true"
           required
-          @update:model-value="updateData"
+          @update:model-value="updateStage"
+        />
+      </div>
+
+      <div class="field-group">
+        <UpdatedCustomInputSelect
+          id="item-department"
+          v-model="selectedDepartment"
+          :controller="departmentController"
+          :label="$t('item.department')"
+          :params="departmentParams"
+          :placeholder="$t('item.department_placeholder')"
+          :reload="true"
+          required
+          @update:model-value="updateDepartment"
         />
       </div>
 

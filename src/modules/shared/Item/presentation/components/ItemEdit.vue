@@ -7,6 +7,7 @@
   import EditItemParams from '../../core/params/edit.Item.params.ts';
   import ShowItemParams from '../../core/params/show.Item.params.ts';
   import { useUserStore } from '@/stores/user.ts';
+  import { getItemServiceTypeFromQuery } from '../utils/itemRouteServiceType';
   const userStore = useUserStore();
   const router = useRouter();
   const controller = ItemController.getInstance();
@@ -16,17 +17,18 @@
   const loading = ref(false);
   const itemId = Number(route.params.id);
 
-  const updateData = (data: AddItemParams) => {
+  const updateData = (itemParams: AddItemParams) => {
     params.value = new EditItemParams({
       item_id: itemId,
-      translations: data.translations,
-      type: data.type,
-      status: data.status,
-      stage_id: data.stage_id,
-      department_id: data.department_id,
-      measurement_unit_id: data.measurement_unit_id,
-      price: data.price,
-      notes: data.notes,
+      translations: itemParams.translations,
+      type: itemParams.type,
+      status: itemParams.status,
+      service_type: getItemServiceTypeFromQuery(route.query.service_type),
+      stage_id: itemParams.stage_id,
+      department_id: itemParams.department_id,
+      measurement_unit_id: itemParams.measurement_unit_id,
+      price: itemParams.price,
+      notes: itemParams.notes,
     });
   };
 

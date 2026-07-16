@@ -56,7 +56,11 @@ const global = {
         '<button class="delete-dialog-stub" @click="$emit(\'delete\')"><slot name="btn" /></button>',
     },
     TableSkelaton: true,
-    'router-link': true,
+    'router-link': {
+      props: ['to'],
+      template: '<a :data-to="stringify(to)"><slot /></a>',
+      setup: () => ({ stringify: JSON.stringify }),
+    },
   },
   mocks: {
     $t: (key: string) => key,
@@ -86,6 +90,24 @@ describe('ItemIndex', () => {
 
     expect(mockController.fetchList.mock.calls[0]?.[0].toMap()).toMatchObject({
       service_type: ItemServiceTypeEnum.DESIGN,
+    });
+  });
+
+  it('carries service type query to add and edit routes', () => {
+    route.query = { service_type: String(ItemServiceTypeEnum.DESIGN) };
+    const wrapper = mount(ItemIndex, { global });
+
+    const routes = wrapper
+      .findAll('[data-to]')
+      .map((link) => JSON.parse(link.attributes('data-to') ?? '{}'));
+
+    expect(routes).toContainEqual({
+      path: '/organization/item/add',
+      query: { service_type: String(ItemServiceTypeEnum.DESIGN) },
+    });
+    expect(routes).toContainEqual({
+      path: '/organization/item/edit/7',
+      query: { service_type: String(ItemServiceTypeEnum.DESIGN) },
     });
   });
 

@@ -1,5 +1,6 @@
 import { flushPromises, mount } from '@vue/test-utils';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { ItemServiceTypeEnum } from '../../../core/constant/item.service.type.enum';
 import { ItemStatusEnum } from '../../../core/constant/item.status.enum';
 import { ItemTypeEnum } from '../../../core/constant/item.type.enum copy';
 import AddItemParams from '../../../core/params/add.Item.params';
@@ -9,13 +10,17 @@ const mockController = vi.hoisted(() => ({
   create: vi.fn(),
   errorMessage: { value: null as string | null },
 }));
+const route = vi.hoisted(() => ({
+  fullPath: '/item/add',
+  query: {} as Record<string, string>,
+}));
 
 vi.mock('../../controllers/Item.controller', () => ({
   default: { getInstance: () => mockController },
 }));
 
 vi.mock('vue-router', () => ({
-  useRoute: () => ({ fullPath: '/item/add' }),
+  useRoute: () => route,
 }));
 
 const params = new AddItemParams({
@@ -45,6 +50,8 @@ const global = {
 describe('ItemAdd', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    route.fullPath = '/item/add';
+    route.query = {};
     mockController.create.mockResolvedValue({});
     mockController.errorMessage.value = null;
   });
@@ -57,6 +64,25 @@ describe('ItemAdd', () => {
     await flushPromises();
 
     expect(mockController.create).toHaveBeenCalledWith(params, undefined, '/item/add');
+  });
+
+  it('adds route service type to create params', async () => {
+    route.fullPath = '/item/add?service_type=2';
+    route.query = { service_type: String(ItemServiceTypeEnum.SUPERVISION) };
+    const wrapper = mount(ItemAdd, { global });
+
+    await wrapper.find('.item-form-stub').trigger('click');
+    await wrapper.find('button').trigger('click');
+    await flushPromises();
+
+    expect(mockController.create).toHaveBeenCalledWith(
+      expect.any(AddItemParams),
+      undefined,
+      '/item/add?service_type=2',
+    );
+    expect(mockController.create.mock.calls[0]?.[0].toMap()).toMatchObject({
+      service_type: ItemServiceTypeEnum.SUPERVISION,
+    });
   });
 
   it('renders controller errors', () => {

@@ -4,10 +4,12 @@ import { hasTitleTranslation, requiredSelectRule } from '@/base/Presentation/Uti
 import { translate } from '@/locales/i18n';
 import type { ItemTypeEnum } from '../constant/item.type.enum copy';
 import type { ItemStatusEnum } from '../constant/item.status.enum';
+import type { ItemServiceTypeEnum } from '../constant/item.service.type.enum';
 
 export default class AddItemParams implements Params {
   public type?: ItemTypeEnum;
   public status?: ItemStatusEnum;
+  public service_type?: ItemServiceTypeEnum;
   public stage_id?: number;
   public department_id?: number;
   public measurement_unit_id?: number;
@@ -28,6 +30,7 @@ export default class AddItemParams implements Params {
   constructor(data: {
     type?: ItemTypeEnum;
     status?: ItemStatusEnum;
+    service_type?: ItemServiceTypeEnum;
     stage_id?: number;
     department_id?: number;
     measurement_unit_id?: number;
@@ -37,6 +40,7 @@ export default class AddItemParams implements Params {
   }) {
     this.type = data.type;
     this.status = data.status;
+    this.service_type = data.service_type;
     this.stage_id = data.stage_id;
     this.department_id = data.department_id;
     this.measurement_unit_id = data.measurement_unit_id;
@@ -45,7 +49,7 @@ export default class AddItemParams implements Params {
     this.translations = data.translations;
   }
   toMap(): Record<string, unknown> {
-    return {
+    const map: Record<string, unknown> = {
       type: this.type,
       status: this.status,
       stage_id: this.stage_id,
@@ -55,6 +59,12 @@ export default class AddItemParams implements Params {
       notes: this.notes,
       translations: this.translations,
     };
+
+    if (this.service_type) {
+      map.service_type = this.service_type;
+    }
+
+    return map;
   }
   validate() {
     return AddItemParams.validation.validate(this);
