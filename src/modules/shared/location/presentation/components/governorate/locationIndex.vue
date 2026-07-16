@@ -13,6 +13,8 @@
   import LocationController from '../../controllers/location.controller';
   import IndexLocationParams from '../../../core/params/index.location.params';
   import { LocationTypeEnum } from '../../../core/constant/location.type.enum';
+  import IndexAddIcon from '@/shared/icons/IndexAddIcon.vue';
+  import { debounce } from '@/base/Presentation/Utils/debouced';
 
   const controller = LocationController.getInstance();
   const state = computed(() => controller.listState.value);
@@ -48,6 +50,16 @@
     );
   };
 
+  const Search = debounce(() => {
+    router.push({
+      query: {
+        ...route.query,
+        page: Number(route.query.page ?? 1),
+        word: word.value || undefined,
+      },
+    });
+    fetchLocations(1, word.value);
+  });
   const onPageChange = (page: number) => {
     void fetchLocations(page);
     void router.push({
@@ -79,16 +91,41 @@
         <h4>{{ $t('location.list_title') }}</h4>
         <p>{{ $t('location.list_description') }}</p>
       </div>
-      <router-link
-        class="btn btn-primary"
-        :to="
-          user?.type === 1
-            ? '/admin/location-governorate/add'
-            : '/organization/location-governorate/add'
-        "
-      >
-        {{ $t('location.add') }}</router-link
-      >
+      <div class="toolbar">
+        <div class="search-field">
+          <span class="search-icon">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <path d="m21 21-4.35-4.35" />
+            </svg>
+          </span>
+          <input
+            v-model="word"
+            :placeholder="$t('search_governorate')"
+            class="search-input"
+            type="text"
+            @input="Search"
+          />
+        </div>
+        <router-link
+          class="btn btn-primary"
+          :to="
+            user?.type === 1
+              ? '/admin/location-governorate/add'
+              : '/organization/location-governorate/add'
+          "
+        >
+          <IndexAddIcon /> {{ $t('location.add') }}</router-link
+        >
+      </div>
     </div>
 
     <DataStatusBuilder :controller="state" :on-retry="async () => await fetchLocations()">
@@ -193,10 +230,6 @@
 </template>
 
 <style scoped lang="scss">
-  .location-header {
-    flex-direction: row;
-  }
-
   .material-page,
   .material-header,
   .row-actions {
