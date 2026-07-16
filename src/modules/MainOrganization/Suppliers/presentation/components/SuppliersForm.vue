@@ -80,6 +80,7 @@
             type="text"
             :placeholder="$t('supplier.name_placeholder')"
             class="field-input"
+            min="1"
             @input="updateData"
           />
         </div>

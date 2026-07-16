@@ -1,9 +1,12 @@
 <script setup lang="ts">
-import DashboardLayout from "@/shared/LayoutComponents/DashboardLayout.vue";
+  import { useI18n } from 'vue-i18n';
+  import DashboardLayout from '@/shared/LayoutComponents/DashboardLayout.vue';
+
+  const { locale } = useI18n();
 </script>
 
 <template>
   <DashboardLayout>
-    <RouterView />
+    <RouterView :key="locale" />
   </DashboardLayout>
 </template>
