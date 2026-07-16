@@ -61,7 +61,7 @@
 
       <template #empty>
         <section class="project-state-card">
-          {{ t('no_data') }}
+          {{ t('project_show.empty') }}
         </section>
       </template>
 

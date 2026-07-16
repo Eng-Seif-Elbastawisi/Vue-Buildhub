@@ -171,10 +171,10 @@
       <UpdatedCustomInputSelect
         id="doc-branch"
         v-model="selectedStage"
-        :label="$t('subject name')"
+        :label="$t('stage')"
         :params="stageParams"
         :controller="stageController"
-        :placeholder="$t('Enter subject name')"
+        :placeholder="$t('select_stage')"
         :reload="true"
         @update:model-value="updateStage"
       />

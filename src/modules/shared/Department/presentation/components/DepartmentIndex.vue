@@ -17,6 +17,7 @@
 
   // Controller instance
   const controller = DepartmentController.getInstance();
+  // controller.reset();
   const state = computed(() => controller.listState.value);
   const router = useRouter();
   const route = useRoute();
@@ -105,8 +106,6 @@
     await fetchDepartments();
   };
 
-  // const formRoute = computed(() => '/stages/add');
-
   const SelectedRow = ref<DepartmentModel[]>([]);
   const setSelectef = (items: DepartmentModel[]) => {
     SelectedRow.value = items;
@@ -164,7 +163,7 @@
           </span>
           <input
             v-model="word"
-            :placeholder="$t('search_by_country_name_or_code')"
+            :placeholder="$t('search_departments')"
             class="search-input"
             type="text"
             @input="Search"
@@ -263,22 +262,8 @@
             <rect x="2" y="4" width="20" height="16" rx="2" />
             <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
           </svg>
-          <h3>{{ $t('no_emails_yet') }}</h3>
-          <p>{{ $t('add_first_employee_email') }}</p>
-          <!-- <router-link :to="formRoute" class="btn-add empty-cta">
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2.5"
-              stroke-linecap="round"
-            >
-              <path d="M12 5v14M5 12h14" />
-            </svg>
-            <span>{{ $t('add_email') }}</span>
-          </router-link> -->
+          <h3>{{ $t('department.empty_title') }}</h3>
+          <p>{{ $t('department.empty_description') }}</p>
         </div>
       </template>
     </DataStatusBuilder>

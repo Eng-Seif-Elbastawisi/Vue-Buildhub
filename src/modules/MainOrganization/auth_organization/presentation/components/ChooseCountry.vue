@@ -71,6 +71,12 @@
           <!-- </div> -->
         </div>
       </template>
+      <template #empty>
+        <div class="empty-state">
+          <h3>{{ $t('country_selection.empty_title') }}</h3>
+          <p>{{ $t('country_selection.empty_description') }}</p>
+        </div>
+      </template>
     </DataStatusBuilder>
     <button
       :class="['btn btn-primary', { disabled: !selectedCountryId }]"
