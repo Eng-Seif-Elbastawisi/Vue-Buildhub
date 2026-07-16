@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { computed, onMounted, ref } from 'vue';
+  import { computed, onMounted, ref, watch } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
 
   import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
@@ -8,6 +8,7 @@
   import TableSkelaton from '@/shared/HelpersComponents/TableSkelaton.vue';
   import DeleteDialog from '@/base/Presentation/Dialogs/MainDialogs/DeleteDialog.vue';
   import { useUserStore } from '@/stores/user';
+  import { DepartmentTypeEnum } from '@/modules/shared/Department/core/constants/Type.enum';
 
   import type ProjectModel from '../../core/models/project.model';
   import DeleteProjectParams from '../../core/params/delete.project.params';
@@ -34,6 +35,27 @@
   const { user } = useUserStore();
 
   const perPage = ref(10);
+
+  const parseServiceType = (routeServiceType: unknown): DepartmentTypeEnum[] => {
+    const normalizedServiceType = Array.isArray(routeServiceType)
+      ? routeServiceType[0]
+      : routeServiceType;
+    const numericServiceType = Number(normalizedServiceType);
+
+    if (
+      numericServiceType === DepartmentTypeEnum.DESIGN ||
+      numericServiceType === DepartmentTypeEnum.SUPERVISION ||
+      numericServiceType === DepartmentTypeEnum.BOTH
+    ) {
+      return [numericServiceType];
+    }
+
+    return [];
+  };
+
+  const serviceType = computed<DepartmentTypeEnum[]>(() =>
+    parseServiceType(route.query.service_type),
+  );
 
   const isPendingPage = computed(() => {
     return (
@@ -108,6 +130,7 @@
         1,
         null,
         props.statuses,
+        serviceType.value,
       ),
     );
   };
@@ -149,6 +172,13 @@
   onMounted(async () => {
     await fetchProjects();
   });
+
+  watch(
+    () => route.query.service_type,
+    async () => {
+      await fetchProjects();
+    },
+  );
 </script>
 
 <template>
