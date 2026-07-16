@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { InvoiceStatusEnum } from '@/modules/MainOrganization/Invoice/core/constant/invoice.status.enum';
+import { DepartmentTypeEnum } from '@/modules/shared/Department/core/constants/Type.enum';
 import { ItemServiceTypeEnum } from '@/modules/shared/Item/core/constant/item.service.type.enum';
 import { sidebarSections } from '../sidebar.config';
 
@@ -89,7 +90,7 @@ describe('sidebarSections', () => {
     );
   });
 
-  it('includes separate pending and converted project entries', () => {
+  it('links design and supervision projects to the project page with service type filters', () => {
     const items = sidebarSections.flatMap((section) => section.items);
 
     expect(items.find((item) => item.path === '/project')).toEqual(
@@ -104,12 +105,24 @@ describe('sidebarSections', () => {
         roles: ['organization'],
       }),
     );
-    expect(items.find((item) => item.path === '/converted-projects')).toEqual(
+
+    expect(
+      items.find((item) => item.path === `/project?service_type=${DepartmentTypeEnum.DESIGN}`),
+    ).toEqual(
       expect.objectContaining({
-        labelKey: 'sidebar.project',
+        labelKey: 'sidebar.design_projects',
         roles: ['organization'],
       }),
     );
+    expect(
+      items.find((item) => item.path === `/project?service_type=${DepartmentTypeEnum.SUPERVISION}`),
+    ).toEqual(
+      expect.objectContaining({
+        labelKey: 'sidebar.supervision_projects',
+        roles: ['organization'],
+      }),
+    );
+    expect(items.some((item) => item.path === '/project-pricing')).toBe(false);
   });
 
   it('links paid and unpaid invoices to the invoice page with status filters', () => {

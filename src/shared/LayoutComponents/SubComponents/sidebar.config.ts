@@ -61,7 +61,17 @@ export interface SidebarLocationCounts {
   regions_count?: SidebarCountValue;
   places_count?: SidebarCountValue;
 }
+export interface SidebarItemCounts {
+  design_count?: SidebarCountValue;
+  supervision_count?: SidebarCountValue;
+  both_count?: SidebarCountValue;
+}
 
+export interface SidebarDepartmentCounts {
+  design_count?: SidebarCountValue;
+  supervision_count?: SidebarCountValue;
+  both_count?: SidebarCountValue;
+}
 export interface SidebarProjectCounts {
   total_count?: SidebarCountValue;
   pending_count?: SidebarCountValue;
@@ -98,6 +108,9 @@ export interface SidebarCountsPayload {
 
   projects?: SidebarProjectCounts;
   locations?: SidebarLocationCounts;
+
+  items?: SidebarItemCounts;
+  departments?: SidebarDepartmentCounts;
 }
 
 export interface SidebarCountsApiResponse {
@@ -260,34 +273,34 @@ export const sidebarSections: SidebarSectionConfig[] = [
     ],
   },
 
-  // {
-  //   key: 'design-offers',
-  //   labelKey: 'sidebar.design_offers',
-  //   icon: SidebarDesignOffersIcon,
+  {
+    key: 'design-offers',
+    labelKey: 'sidebar.design_offers',
+    icon: SidebarDesignOffersIcon,
 
-  //   items: [
-  //     {
-  //       path: '/project-pricing',
-  //       labelKey: 'sidebar.offers',
-  //       icon: SidebarOfferIcon,
-  //       roles: ['organization'],
-  //     },
+    items: [
+      {
+        path: `/project?service_type=${DepartmentTypeEnum.SUPERVISION}`,
+        labelKey: 'sidebar.supervision_projects',
+        icon: SidebarProjectIcon,
+        roles: ['organization'],
+      },
 
-  //     {
-  //       labelKey: 'sidebar.hold',
-  //       icon: SidebarHoldIcon,
-  //       roles: ['organization'],
-  //       disabled: true,
-  //     },
+      {
+        labelKey: 'sidebar.hold',
+        icon: SidebarHoldIcon,
+        roles: ['organization'],
+        disabled: true,
+      },
 
-  //     {
-  //       labelKey: 'sidebar.canceled',
-  //       icon: SidebarCanceledIcon,
-  //       roles: ['organization'],
-  //       disabled: true,
-  //     },
-  //   ],
-  // },
+      {
+        labelKey: 'sidebar.canceled',
+        icon: SidebarCanceledIcon,
+        roles: ['organization'],
+        disabled: true,
+      },
+    ],
+  },
 
   {
     key: 'design-projects',
@@ -296,8 +309,8 @@ export const sidebarSections: SidebarSectionConfig[] = [
 
     items: [
       {
-        path: '/converted-projects',
-        labelKey: 'sidebar.project',
+        path: `/project?service_type=${DepartmentTypeEnum.DESIGN}`,
+        labelKey: 'sidebar.design_projects',
         icon: SidebarProjectIcon,
         roles: ['organization'],
         countKey: 'projects.total_count',
@@ -482,14 +495,14 @@ export const sidebarSections: SidebarSectionConfig[] = [
         path: `/departments?type=${DepartmentTypeEnum.DESIGN}`,
         labelKey: 'sidebar.departments',
         icon: SidebarDepartmentIcon,
-        countKey: 'departments_count',
+        countKey: 'departments.design_count',
       },
 
       {
         path: `/item?service_type=${ItemServiceTypeEnum.DESIGN}`,
         labelKey: 'sidebar.items',
         icon: SidebarItemIcon,
-        countKey: 'items_count',
+        countKey: 'items.design_count',
       },
 
       {
@@ -509,14 +522,14 @@ export const sidebarSections: SidebarSectionConfig[] = [
         path: `/departments?type=${DepartmentTypeEnum.SUPERVISION}`,
         labelKey: 'sidebar.departments',
         icon: SidebarDepartmentIcon,
-        countKey: 'departments_count',
+        countKey: 'departments.supervision_count',
       },
 
       {
         path: `/item?service_type=${ItemServiceTypeEnum.SUPERVISION}`,
         labelKey: 'sidebar.items',
         icon: SidebarItemIcon,
-        countKey: 'items_count',
+        countKey: 'items.supervision_count',
       },
 
       {
