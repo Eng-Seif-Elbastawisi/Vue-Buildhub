@@ -62,6 +62,14 @@ describe('ClientSourceIndex', () => {
     expect(wrapper.find('input.search-input').exists()).toBe(true);
   });
 
+  it('shows client-source-specific copy when the list is empty', () => {
+    const wrapper = mount(ClientSourceIndex, mountOptions);
+
+    expect(wrapper.text()).toContain('client_source.empty_title');
+    expect(wrapper.text()).toContain('client_source.empty_description');
+    expect(wrapper.text()).not.toContain('no_emails_yet');
+  });
+
   it('calls fetchList on mount', () => {
     mount(ClientSourceIndex, mountOptions);
     expect(mockFetchList).toHaveBeenCalledTimes(1);

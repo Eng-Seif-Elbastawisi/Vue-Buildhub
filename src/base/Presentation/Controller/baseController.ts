@@ -2,6 +2,7 @@ import type { Ref, ComputedRef } from 'vue';
 import { ref, computed } from 'vue';
 import {
   DataFailed,
+  DataEmpty,
   DataInitial,
   DataLoading,
   type DataState,
@@ -206,6 +207,11 @@ export default abstract class BaseController<T, TList = T[]> {
   get errorMessage(): ComputedRef<string | null> {
     return computed(() => {
       const state = this.itemState.value.hasError ? this.itemState.value : this.listState.value;
+
+      if (state instanceof DataEmpty) {
+        return null;
+      }
+
       return state.error?.displayMessage || state.error?.title || null;
     });
   }
@@ -633,7 +639,7 @@ export default abstract class BaseController<T, TList = T[]> {
    * Handle list response (override for custom dialogs/notifications).
    */
   protected handleListResponse(_result: DataState<TList>, _successMessage?: string): void {
-    if (_result.hasError && !_result.error?.displayMessage.includes('success')) {
+    if (_result.hasError && !(_result instanceof DataEmpty)) {
       this.handleErrorResponse(_result);
     }
     // else if (

@@ -184,8 +184,8 @@
 
       <template #empty>
         <div class="empty-state">
-          <h3>{{ $t('admin.empty_title') }}</h3>
-          <p>{{ $t('admin.empty_description') }}</p>
+          <h3>{{ $t('employee.empty_title') }}</h3>
+          <p>{{ $t('employee.empty_description') }}</p>
           <router-link class="btn btn-primary" to="/organization/employee/add">{{
             $t('employee.add')
           }}</router-link>

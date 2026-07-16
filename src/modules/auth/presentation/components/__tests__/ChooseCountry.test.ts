@@ -82,6 +82,21 @@ describe('ChooseCountry.vue', () => {
     expect(wrapper.find('section.auth-layout').exists()).toBe(true);
   });
 
+  it('shows country-selection-specific copy when no countries are available', () => {
+    const wrapper = mount(ChooseCountry, {
+      global: {
+        ...mountOptions.global,
+        stubs: {
+          ...mountOptions.global.stubs,
+          DataStatusBuilder: { template: '<div><slot name="empty" /></div>' },
+        },
+      },
+    });
+
+    expect(wrapper.text()).toContain('country_selection.empty_title');
+    expect(wrapper.text()).toContain('country_selection.empty_description');
+  });
+
   it('navigates to login on continue button click', async () => {
     const wrapper = mount(ChooseCountry, mountOptions);
 

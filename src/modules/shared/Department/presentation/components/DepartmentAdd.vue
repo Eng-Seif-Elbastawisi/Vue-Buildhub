@@ -9,6 +9,7 @@
   import type { DepartmentTypeEnum } from '../../core/constants/Type.enum';
 
   const controller = DepartmentController.getInstance();
+  controller.resetItem();
   const params = ref<AddDepartmentParams | EditDepartmentParams | null>(null);
   const loading = ref(false);
   const props = defineProps<{ department?: DepartmentModel; type?: DepartmentTypeEnum }>();

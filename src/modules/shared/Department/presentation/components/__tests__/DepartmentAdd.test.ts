@@ -7,6 +7,7 @@ import DepartmentAdd from '../DepartmentAdd.vue';
 const mockController = vi.hoisted(() => ({
   create: vi.fn(),
   update: vi.fn(),
+  resetItem: vi.fn(),
   errorMessage: { value: null as string | null },
 }));
 

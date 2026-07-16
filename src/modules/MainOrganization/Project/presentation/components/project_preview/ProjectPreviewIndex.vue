@@ -117,6 +117,13 @@
         </div>
       </template>
 
+      <template #empty>
+        <div class="empty-state">
+          <h3>{{ $t('project_preview.empty_title') }}</h3>
+          <p>{{ $t('project_preview.empty_description') }}</p>
+        </div>
+      </template>
+
       <template #loader>
         <TableSkelaton :rows="5" :columns="1" :has-actions="false" :show-index="false" />
       </template>

@@ -202,8 +202,8 @@
 
       <template #empty>
         <div class="empty-state">
-          <h3>{{ $t('location.empty_title') }}</h3>
-          <p>{{ $t('location.empty_description') }}</p>
+          <h3>{{ $t('governorate.empty_title') }}</h3>
+          <p>{{ $t('governorate.empty_description') }}</p>
           <router-link
             class="btn btn-primary"
             :to="
@@ -211,7 +211,7 @@
                 ? '/admin/location-governorate/add'
                 : '/organization/location-governorate/add'
             "
-            >{{ $t('location.add') }}</router-link
+            >{{ $t('location-governorate.add') }}</router-link
           >
         </div>
       </template>

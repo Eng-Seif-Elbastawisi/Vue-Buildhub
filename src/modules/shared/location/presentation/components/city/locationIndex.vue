@@ -199,8 +199,8 @@
 
       <template #empty>
         <div class="empty-state">
-          <h3>{{ $t('location.empty_title') }}</h3>
-          <p>{{ $t('location.empty_description') }}</p>
+          <h3>{{ $t('city.empty_title') }}</h3>
+          <p>{{ $t('city.empty_description') }}</p>
           <router-link
             class="btn btn-primary"
             :to="user?.type === 1 ? '/admin/location-city/add' : '/organization/location-city/add'"

@@ -471,6 +471,12 @@
       <InvoiceShowSkeleton />
     </template>
 
+    <template #empty>
+      <div class="invoice-show-error">
+        <p>{{ $t('invoice_show.empty') }}</p>
+      </div>
+    </template>
+
     <template #failed="{ retry }">
       <div class="invoice-show-error">
         <p>{{ $t('invoice_show.load_failed') }}</p>
