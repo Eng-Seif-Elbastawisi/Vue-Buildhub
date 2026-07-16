@@ -2,8 +2,10 @@ import { createI18n } from 'vue-i18n';
 import ar from './ar.json';
 import en from './en.json';
 
+const savedLocale = localStorage.getItem('locale');
+
 export const i18n = createI18n({
-  locale: 'en',
+  locale: savedLocale === 'ar' ? 'ar' : 'en',
   fallbackLocale: 'en',
   messages: {
     en,

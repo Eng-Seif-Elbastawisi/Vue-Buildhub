@@ -7,6 +7,7 @@ import UserModel from '@/modules/auth/core/models/user.model';
 describe('HeaderHandler', () => {
   beforeEach(() => {
     setActivePinia(createPinia());
+    localStorage.clear();
   });
 
   it.each([undefined, '', 'undefined', 'null', 'Bearer'])(
@@ -31,5 +32,13 @@ describe('HeaderHandler', () => {
 
     expect(HeaderHandler.Instance.getHeader(true).Authorization).toBe('Bearer opaque-token');
     expect(HeaderHandler.Instance.getHeader(false)).not.toHaveProperty('Authorization');
+  });
+
+  it('uses the latest saved language for subsequent requests', () => {
+    localStorage.setItem('locale', 'en');
+    expect(HeaderHandler.Instance.getHeader()['Accept-Language']).toBe('en');
+
+    localStorage.setItem('locale', 'ar');
+    expect(HeaderHandler.Instance.getHeader()['Accept-Language']).toBe('ar');
   });
 });
