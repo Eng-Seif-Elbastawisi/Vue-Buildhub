@@ -1,12 +1,19 @@
 import { describe, expect, it } from 'vitest';
 import { ConvertStatus } from '@/modules/MainOrganization/Project/core/constants/convert.status.enum';
+import { DepartmentTypeEnum } from '@/modules/shared/Department/core/constants/Type.enum';
 import IndexProjectParams from '../index.project.params';
 
 describe('IndexProjectParams', () => {
   it('adds optional project filters to the index map', () => {
-    const params = new IndexProjectParams('villa', 2, 20, 1, '2026-06-25', [
-      ConvertStatus.SEND_TO_CLIENT,
-    ]);
+    const params = new IndexProjectParams(
+      'villa',
+      2,
+      20,
+      1,
+      '2026-06-25',
+      [ConvertStatus.SEND_TO_CLIENT],
+      [DepartmentTypeEnum.SUPERVISION],
+    );
 
     expect(params.toMap()).toMatchObject({
       word: 'villa',
@@ -15,6 +22,7 @@ describe('IndexProjectParams', () => {
       with_pagination: 1,
       date_remove: '2026-06-25',
       status: [ConvertStatus.SEND_TO_CLIENT],
+      service_type: [DepartmentTypeEnum.SUPERVISION],
     });
   });
 
@@ -28,5 +36,12 @@ describe('IndexProjectParams', () => {
 
     expect(new IndexProjectParams('', 1, 10, 1, null, null).toMap()).not.toHaveProperty('status');
     expect(new IndexProjectParams('', 1, 10, 1, null, []).toMap()).not.toHaveProperty('status');
+  });
+
+  it('omits service type when it is undefined or empty', () => {
+    expect(new IndexProjectParams().toMap()).not.toHaveProperty('service_type');
+    expect(new IndexProjectParams('', 1, 10, 1, null, null, []).toMap()).not.toHaveProperty(
+      'service_type',
+    );
   });
 });

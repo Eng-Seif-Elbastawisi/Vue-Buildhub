@@ -1,15 +1,17 @@
 import { mount } from '@vue/test-utils';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { nextTick } from 'vue';
+import { nextTick, reactive } from 'vue';
 import { ConvertStatus } from '@/modules/MainOrganization/Project/core/constants/convert.status.enum';
+import { DepartmentTypeEnum } from '@/modules/shared/Department/core/constants/Type.enum';
 import ProjectIndex from '../ProjectIndex.vue';
 
 const fetchList = vi.fn();
 const deleteProject = vi.fn();
 const routerPush = vi.fn();
+const routeQuery = reactive<Record<string, string | string[] | undefined>>({});
 
 vi.mock('vue-router', () => ({
-  useRoute: () => ({ query: {} }),
+  useRoute: () => ({ query: routeQuery }),
   useRouter: () => ({ push: routerPush }),
 }));
 
@@ -62,6 +64,7 @@ const mountProjectIndex = (props = {}) =>
 describe('ProjectIndex', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    Object.keys(routeQuery).forEach((key) => delete routeQuery[key]);
   });
 
   it('renders translated project index actions and fetches the list', async () => {
@@ -94,6 +97,34 @@ describe('ProjectIndex', () => {
         ConvertStatus.REVISE_VERSION,
       ],
     });
+  });
+
+  it('sends the route service type as an array and refetches when it changes', async () => {
+    routeQuery.service_type = String(DepartmentTypeEnum.DESIGN);
+    mountProjectIndex();
+    await nextTick();
+
+    expect(fetchList.mock.calls.at(-1)?.[0].toMap()).toMatchObject({
+      service_type: [DepartmentTypeEnum.DESIGN],
+    });
+
+    routeQuery.service_type = [
+      String(DepartmentTypeEnum.SUPERVISION),
+      String(DepartmentTypeEnum.DESIGN),
+    ];
+    await nextTick();
+
+    expect(fetchList.mock.calls.at(-1)?.[0].toMap()).toMatchObject({
+      service_type: [DepartmentTypeEnum.SUPERVISION],
+    });
+  });
+
+  it('omits invalid route service types from the list request', async () => {
+    routeQuery.service_type = 'invalid';
+    mountProjectIndex();
+    await nextTick();
+
+    expect(fetchList.mock.calls.at(-1)?.[0].toMap()).not.toHaveProperty('service_type');
   });
 
   it('deletes a project from the row action', async () => {

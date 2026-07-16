@@ -1,9 +1,11 @@
 import IndexParams from '@/base/Core/Params/indexParams';
 import { ConvertStatus } from '@/modules/MainOrganization/Project/core/constants/convert.status.enum';
+import type { DepartmentTypeEnum } from '@/modules/shared/Department/core/constants/Type.enum';
 
 export default class IndexProjectParams extends IndexParams {
   public dateRemove?: string | null;
   public status?: ConvertStatus[] | null;
+  public readonly service_type?: DepartmentTypeEnum[];
 
   constructor(
     word: string = '',
@@ -12,11 +14,13 @@ export default class IndexProjectParams extends IndexParams {
     withPage: number = 1,
     dateRemove?: string | null,
     status: ConvertStatus[] | null = [ConvertStatus.PENDING],
+    serviceType?: DepartmentTypeEnum[],
   ) {
     super(word, pageNumber, perPage, withPage);
 
     this.dateRemove = dateRemove;
     this.status = status;
+    this.service_type = serviceType;
   }
 
   toMap(): Record<string, string | number | number[] | null> {
@@ -28,6 +32,10 @@ export default class IndexProjectParams extends IndexParams {
 
     if (this.status?.length) {
       data.status = this.status;
+    }
+
+    if (Array.isArray(this.service_type) && this.service_type.length > 0) {
+      data.service_type = this.service_type;
     }
 
     return data;
