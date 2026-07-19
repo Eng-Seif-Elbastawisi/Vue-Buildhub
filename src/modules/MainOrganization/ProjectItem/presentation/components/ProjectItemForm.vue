@@ -49,10 +49,10 @@
   const { t } = useI18n();
 
   const generalItemController = GeneralItemController.getInstance();
-  const generalItemParams = new IndexItemParams('', 1, 100, 0);
+  const generalItemParams = new IndexItemParams('', 1, 100, 0, undefined, undefined, 1);
 
   const departmentController = DepartmentController.getInstance();
-  const departmentParams = new IndexDepartmentParams('', 1, 100, 0);
+  const departmentParams = new IndexDepartmentParams('', 1, 100, 0, 1);
 
   const projectFloorController = ProjectFloorController.getInstance();
   const projectFloorParams = new IndexProjectFloorParams('', 1, 100, 0, null, props.project);
