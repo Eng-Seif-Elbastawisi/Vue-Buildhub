@@ -25,8 +25,11 @@ export default class InvoiceShowModel {
   public readonly project_id?: number;
   public readonly project?: InvoiceProjectModel | null;
   public readonly invoice_number?: string;
+  public readonly title?: string | null;
   public readonly invoice_date?: string;
   public readonly invoice_amount?: number;
+  public readonly paid_amount?: number;
+  public readonly remaining_amount?: number;
   public readonly notes?: string | null;
   public readonly status?: string | number;
   public readonly export_status?: string | number;
@@ -35,6 +38,7 @@ export default class InvoiceShowModel {
   public readonly client?: InvoiceRelatedEntityModel | null;
   public readonly items: InvoiceItemModel[];
   public readonly payments: InvoicePaymentModel[];
+  public readonly children: InvoiceShowModel[];
   public readonly created_at?: string;
   public readonly due_date?: string;
   public readonly currency?: string;
@@ -45,8 +49,11 @@ export default class InvoiceShowModel {
     project_id?: number;
     project?: InvoiceProjectModel | null;
     invoice_number?: string;
+    title?: string | null;
     invoice_date?: string;
     invoice_amount?: number;
+    paid_amount?: number;
+    remaining_amount?: number;
     notes?: string | null;
     status?: string | number;
     export_status?: string | number;
@@ -55,6 +62,7 @@ export default class InvoiceShowModel {
     client?: InvoiceRelatedEntityModel | null;
     items?: InvoiceItemModel[];
     payments?: InvoicePaymentModel[];
+    children?: InvoiceShowModel[];
     created_at?: string;
     due_date?: string;
     currency?: string;
@@ -64,8 +72,11 @@ export default class InvoiceShowModel {
     this.project_id = data.project_id;
     this.project = data.project;
     this.invoice_number = data.invoice_number;
+    this.title = data.title;
     this.invoice_date = data.invoice_date;
     this.invoice_amount = data.invoice_amount;
+    this.paid_amount = data.paid_amount;
+    this.remaining_amount = data.remaining_amount;
     this.notes = data.notes;
     this.status = data.status;
     this.export_status = data.export_status;
@@ -74,6 +85,7 @@ export default class InvoiceShowModel {
     this.client = data.client;
     this.items = data.items ?? [];
     this.payments = data.payments ?? [];
+    this.children = data.children ?? [];
     this.created_at = data.created_at;
     this.due_date = data.due_date;
     this.currency = data.currency;
@@ -140,6 +152,20 @@ export default class InvoiceShowModel {
     );
   }
 
+  static mapChildren(children: unknown): InvoiceShowModel[] {
+    if (!Array.isArray(children)) return [];
+
+    return children.map((child) => InvoiceShowModel.fromJson(child as Record<string, unknown>));
+  }
+
+  static toOptionalNumber(value: unknown): number | undefined {
+    if (value === null || value === undefined || value === '') return undefined;
+
+    const numericValue = Number(value);
+
+    return Number.isFinite(numericValue) ? numericValue : undefined;
+  }
+
   static fromJson(json: Record<string, unknown>): InvoiceShowModel {
     if (!json) throw new Error('Cannot create InvoiceShowModel from null or undefined');
 
@@ -155,8 +181,11 @@ export default class InvoiceShowModel {
       project_id: baseInvoice.project_id,
       project: baseInvoice.project,
       invoice_number: baseInvoice.invoice_number,
+      title: InvoiceModel.getPlainTitle(json.title) || null,
       invoice_date: baseInvoice.invoice_date,
       invoice_amount: baseInvoice.invoice_amount,
+      paid_amount: InvoiceShowModel.toOptionalNumber(json.paid_amount),
+      remaining_amount: InvoiceShowModel.toOptionalNumber(json.remaining_amount),
       notes: baseInvoice.notes,
       status: (json.status ?? json.invoice_status) as string | number | undefined,
       export_status: (json.export_status ?? json.invoice_export_status) as
@@ -168,6 +197,7 @@ export default class InvoiceShowModel {
       client: InvoiceShowModel.mapRelatedEntity(json.client),
       items: InvoiceShowModel.mapItems(items),
       payments: InvoiceShowModel.mapPayments(payments),
+      children: InvoiceShowModel.mapChildren(json.children),
       created_at: json.created_at as string | undefined,
       due_date: (json.due_date ?? json.invoice_due_date) as string | undefined,
       currency: (json.currency ?? json.currency_code) as string | undefined,
@@ -180,8 +210,11 @@ export default class InvoiceShowModel {
     project_id: 10,
     project: { id: 10, title: 'Commercial project' },
     invoice_number: 'INV-2026-0001',
+    title: 'Commercial invoice',
     invoice_date: '2026-07-05',
     invoice_amount: 15000,
+    paid_amount: 1000,
+    remaining_amount: 14000,
     notes: 'First design invoice',
     status: 'paid',
     export_status: 'not_exported',
@@ -203,5 +236,6 @@ export default class InvoiceShowModel {
     created_at: '2026-07-05 09:52:00',
     due_date: '2026-07-12',
     currency: 'EGP',
+    children: [],
   });
 }

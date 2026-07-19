@@ -10,6 +10,8 @@ describe('InvoiceShowModel', () => {
       invoice_number: 'INV-2026-0001',
       invoice_date: '2026-07-05',
       invoice_amount: 15000,
+      paid_amount: '500.00',
+      remaining_amount: '14500.00',
       status: 'paid',
       export_status: 'not_exported',
       organization: { id: 1, name: 'Techlab' },
@@ -34,6 +36,15 @@ describe('InvoiceShowModel', () => {
           payment_method: 1,
         },
       ],
+      children: [
+        {
+          id: 23,
+          invoice_number: 'INV-sig-2026-0005.1',
+          title: 'First child invoice',
+          notes: 'First child note',
+          invoice_amount: '3333.00',
+        },
+      ],
     });
 
     expect(model.invoice_number).toBe('INV-2026-0001');
@@ -47,6 +58,14 @@ describe('InvoiceShowModel', () => {
       total: 9750,
     });
     expect(model.payments[0].payment_amount).toBe(1000);
+    expect(model.paid_amount).toBe(500);
+    expect(model.remaining_amount).toBe(14500);
+    expect(model.children[0]).toMatchObject({
+      id: 23,
+      title: 'First child invoice',
+      notes: 'First child note',
+      invoice_amount: 3333,
+    });
   });
 
   it('throws for empty response data', () => {

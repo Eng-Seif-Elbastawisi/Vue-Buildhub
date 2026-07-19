@@ -190,15 +190,16 @@
                 <i class="pi pi-eye"></i>
               </router-link>
 
-              <router-link
+              <!-- <router-link
                 class="action-btn edit"
                 :to="`${basePath}/edit/${item.id}`"
                 :title="t('invoice.edit')"
               >
                 <i class="pi pi-pencil"></i>
-              </router-link>
+              </router-link> -->
 
               <DeleteDialog
+                v-if="item.status === InvoiceStatusEnum.UNPAID"
                 :title="$t('invoice.delete_title')"
                 :message="$t('invoice.delete_message')"
                 :hasbtn="true"
@@ -243,3 +244,9 @@
     </DataStatusBuilder>
   </div>
 </template>
+
+<style lang="scss" scoped>
+  .row-actions {
+    justify-content: start !important;
+  }
+</style>

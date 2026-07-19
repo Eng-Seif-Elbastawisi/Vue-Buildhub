@@ -20,6 +20,7 @@
   import type InvoiceShowModel from '../../core/models/invoice.show.model';
   import InvoiceController from '../controllers/invoice.controller';
   import AddInvoicePaymentDialog from './invoice_show/AddInvoicePaymentDialog.vue';
+  import InvoiceChildrenCard from './invoice_show/InvoiceChildrenCard.vue';
   import InvoiceClientProjectCard from './invoice_show/InvoiceClientProjectCard.vue';
   // import InvoiceItemsCard from './invoice_show/InvoiceItemsCard.vue';
   import InvoiceNotesCard from './invoice_show/InvoiceNotesCard.vue';
@@ -40,6 +41,7 @@
   const invoice = computed(() => invoiceController.itemData.value);
   const loadedPayments = ref<InvoicePaymentModel[]>([]);
   const paymentDialogOpen = ref(false);
+  const paymentInvoiceId = ref(0);
   const creatingPayment = ref(false);
   const exportingPdf = ref(false);
   const exportingInvoice = ref(false);
@@ -60,10 +62,13 @@
 
   const currency = computed(() => invoice.value?.currency || 'EGP');
   const totalAmount = computed(() => Number(invoice.value?.invoice_amount ?? 0));
-  const paidAmount = computed(() =>
+  const paymentsPaidAmount = computed(() =>
     payments.value.reduce((total, payment) => total + Number(payment.payment_amount ?? 0), 0),
   );
-  const remainingAmount = computed(() => Math.max(totalAmount.value - paidAmount.value, 0));
+  const paidAmount = computed(() => invoice.value?.paid_amount ?? paymentsPaidAmount.value);
+  const remainingAmount = computed(
+    () => invoice.value?.remaining_amount ?? Math.max(totalAmount.value - paidAmount.value, 0),
+  );
   const isInvoicePaid = computed(() => totalAmount.value > 0 && remainingAmount.value <= 0.009);
 
   const inferredInvoiceStatus = computed<InvoiceStatusEnumType>(() => {
@@ -226,13 +231,20 @@
     await fetchPayments();
   };
 
+  const openPaymentDialog = (targetInvoiceId: number = invoiceId.value) => {
+    if (!targetInvoiceId) return;
+
+    paymentInvoiceId.value = targetInvoiceId;
+    paymentDialogOpen.value = true;
+  };
+
   const handleAddPayment = async (params: AddInvoicePaymentParams) => {
-    if (!invoiceId.value) return;
+    if (!paymentInvoiceId.value) return;
 
     creatingPayment.value = true;
 
     try {
-      const result = await paymentController.createInvoicePayment(invoiceId.value, params);
+      const result = await paymentController.createInvoicePayment(paymentInvoiceId.value, params);
 
       if (result instanceof DataSuccess) {
         paymentDialogOpen.value = false;
@@ -428,8 +440,14 @@
               :format-date-time="formatDateTime"
               :payment-method-label="paymentMethodLabel"
               :invoice="data as InvoiceShowModel"
-              @add="paymentDialogOpen = true"
+              @add="openPaymentDialog()"
               @download="downloadPaymentReceipt"
+            />
+            <InvoiceChildrenCard
+              :children="(data as InvoiceShowModel).children"
+              :currency="currency"
+              :format-amount="formatAmount"
+              @pay="openPaymentDialog"
             />
           </main>
 
@@ -455,7 +473,7 @@
 
         <AddInvoicePaymentDialog
           :visible="paymentDialogOpen"
-          :invoice-id="invoiceId"
+          :invoice-id="paymentInvoiceId"
           :loading="creatingPayment"
           @close="paymentDialogOpen = false"
           @submit="handleAddPayment"
