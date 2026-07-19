@@ -280,12 +280,11 @@ export const sidebarSections: SidebarSectionConfig[] = [
 
     items: [
       {
-        path: `/project?service_type=${DepartmentTypeEnum.SUPERVISION}`,
-        labelKey: 'sidebar.supervision_projects',
+        path: `/offers-projects?service_type=${DepartmentTypeEnum.DESIGN},${DepartmentTypeEnum.BOTH}`,
+        labelKey: 'sidebar.supervision_offers',
         icon: SidebarProjectIcon,
         roles: ['organization'],
       },
-
       {
         labelKey: 'sidebar.hold',
         icon: SidebarHoldIcon,
@@ -309,13 +308,12 @@ export const sidebarSections: SidebarSectionConfig[] = [
 
     items: [
       {
-        path: `/project?service_type=${DepartmentTypeEnum.DESIGN}`,
+        path: `/converted-projects?service_type=${DepartmentTypeEnum.DESIGN},${DepartmentTypeEnum.BOTH}`,
         labelKey: 'sidebar.design_projects',
         icon: SidebarProjectIcon,
         roles: ['organization'],
         countKey: 'projects.total_count',
       },
-
       {
         labelKey: 'sidebar.plan',
         icon: SidebarPlanIcon,

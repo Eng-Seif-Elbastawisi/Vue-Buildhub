@@ -1,6 +1,7 @@
 <script setup lang="ts">
-  import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
-  import type { ConvertStatus } from '../../../core/constants/convert.status.enum';
+  import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+
+  import { ConvertStatus } from '../../../core/constants/convert.status.enum';
   import type { ProjectShowRaw, StatusMeta } from './projectShow.types';
 
   type StatusAction = {
@@ -46,6 +47,14 @@
   const actionsMenuRef = ref<HTMLElement | null>(null);
   const activeStatusTarget = ref<ConvertStatus | null>(null);
   const notes = ref('');
+
+  const canEditProject = computed(() => {
+    const projectStatus = Number(props.project.status);
+
+    return [ConvertStatus.PENDING, ConvertStatus.REVISE_VERSION].includes(
+      projectStatus as ConvertStatus,
+    );
+  });
 
   const closeActionsMenu = () => {
     isActionsMenuOpen.value = false;
@@ -117,18 +126,28 @@
       <div class="project-hero__content">
         <div class="project-title-row">
           <h1>{{ projectTitle }}</h1>
+
           <span class="status-badge" :class="statusMeta.className">
             {{ statusMeta.label }}
           </span>
         </div>
 
         <div class="project-meta-row">
-          <span><i class="pi pi-id-card"></i>{{ projectCodeLabel }}: {{ project.id }}</span>
-          <span><i class="pi pi-calendar"></i>{{ formatDate(project.date) }}</span>
-          <span
-            ><i class="pi pi-clock"></i>{{ createdAtLabel }}
-            {{ formatTime(project.created_at) }}</span
-          >
+          <span>
+            <i class="pi pi-id-card"></i>
+            {{ projectCodeLabel }}: {{ project.id }}
+          </span>
+
+          <span>
+            <i class="pi pi-calendar"></i>
+            {{ formatDate(project.date) }}
+          </span>
+
+          <span>
+            <i class="pi pi-clock"></i>
+            {{ createdAtLabel }}
+            {{ formatTime(project.created_at) }}
+          </span>
         </div>
       </div>
 
@@ -153,6 +172,7 @@
             @click="triggerDownloadPdf"
           >
             <i class="pi pi-download"></i>
+
             {{ exportingPdf ? generatingPdfLabel : downloadPdfLabel }}
           </button>
 
@@ -185,7 +205,12 @@
           <RouterLink
             class="project-actions__item project-actions__item--neutral"
             role="menuitem"
-            :to="{ name: 'project-history', params: { project_id: project.id } }"
+            :to="{
+              name: 'project-history',
+              params: {
+                project_id: project.id,
+              },
+            }"
             @click="closeActionsMenu"
           >
             <i class="pi pi-history"></i>
@@ -193,9 +218,15 @@
           </RouterLink>
 
           <RouterLink
+            v-if="canEditProject"
             class="project-actions__item project-actions__item--primary project-actions__item--neutral"
             role="menuitem"
-            :to="{ name: 'edit-project', params: { project_id: project.id } }"
+            :to="{
+              name: 'edit-project',
+              params: {
+                project_id: project.id,
+              },
+            }"
             @click="closeActionsMenu"
           >
             <i class="pi pi-pencil"></i>
@@ -211,6 +242,7 @@
       <form class="project-status-modal__panel" @submit.prevent="submitStatusChange">
         <header class="project-status-modal__header">
           <h2>{{ changeStatusModalTitle }}</h2>
+
           <button
             class="project-status-modal__close"
             type="button"
@@ -224,6 +256,7 @@
         <div class="project-status-modal__grid">
           <label class="project-status-field project-status-field--full">
             <span>{{ notesLabel }}</span>
+
             <textarea v-model="notes" :placeholder="notesPlaceholder" rows="4"></textarea>
           </label>
         </div>
