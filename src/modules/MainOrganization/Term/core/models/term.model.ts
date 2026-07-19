@@ -4,26 +4,26 @@ export default class TermModel {
   public readonly id?: number;
 
   /**
-   * القيمة التي سيعرضها الـ select.
-   * نضع فيها description، ولو غير موجودة نستخدم title.
+   * القيمة التي سيعرضها الـ Select.
    */
   public readonly title?: string;
 
+  /**
+   * القيمة التي ستظهر داخل الـ Textarea.
+   */
   public readonly description?: string;
-  public readonly originalTitle?: string;
+
   public readonly translations?: TranslationParams;
 
   constructor(data: {
     id?: number;
     title?: string;
     description?: string;
-    originalTitle?: string;
     translations?: TranslationParams;
   }) {
     this.id = data.id;
     this.title = data.title;
     this.description = data.description;
-    this.originalTitle = data.originalTitle;
     this.translations = data.translations;
 
     Object.freeze(this);
@@ -128,10 +128,6 @@ export default class TermModel {
       throw new Error('Cannot create TermModel from null or undefined');
     }
 
-    const originalTitle = TermModel.getPlainValue(json.title, 'title');
-
-    const description = TermModel.getPlainValue(json.description, 'description');
-
     const titleTranslations = TermModel.mapTranslations(json.translations ?? json.title, 'title');
 
     const descriptionTranslations = TermModel.mapTranslations(
@@ -139,18 +135,37 @@ export default class TermModel {
       'description',
     );
 
+    const title =
+      TermModel.getPlainValue(json.title, 'title') ??
+      titleTranslations.en ??
+      titleTranslations.ar ??
+      Object.values(titleTranslations)[0] ??
+      '-';
+
+    const description =
+      TermModel.getPlainValue(json.description, 'description') ??
+      descriptionTranslations.en ??
+      descriptionTranslations.ar ??
+      Object.values(descriptionTranslations)[0] ??
+      '';
+
     return new TermModel({
-      id: typeof json.id === 'number' ? json.id : undefined,
+      id:
+        typeof json.id === 'number'
+          ? json.id
+          : Number.isFinite(Number(json.id))
+            ? Number(json.id)
+            : undefined,
 
       /**
-       * UpdatedCustomInputSelect يعرض title،
-       * لذلك نضع description هنا.
+       * الـ Select يعرض title فقط.
        */
-      title: description || originalTitle || '-',
+      title,
 
+      /**
+       * الـ Textarea يعرض description.
+       */
       description,
-
-      originalTitle,
 
       translations: new TranslationParams({
         title: titleTranslations,
@@ -162,8 +177,8 @@ export default class TermModel {
   static example = new TermModel({
     id: 1,
 
-    title: 'First Term Description',
-    originalTitle: 'First Term',
+    title: 'First Term',
+
     description: 'First Term Description',
 
     translations: new TranslationParams({
