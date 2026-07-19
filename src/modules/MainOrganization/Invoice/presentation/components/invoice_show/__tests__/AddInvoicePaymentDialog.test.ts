@@ -30,6 +30,19 @@ afterEach(() => {
 });
 
 describe('AddInvoicePaymentDialog', () => {
+  it('uses the remaining amount as the default payment amount when opened', () => {
+    const wrapper = mount(AddInvoicePaymentDialog, {
+      props: {
+        visible: true,
+        invoiceId: 4,
+        remainingAmount: 1250.5,
+      },
+      global: globalOptions,
+    });
+
+    expect(wrapper.find<HTMLInputElement>('#show_payment_amount').element.value).toBe('1250.5');
+  });
+
   it('emits payment params linked to the current invoice', async () => {
     const wrapper = mount(AddInvoicePaymentDialog, {
       props: {
