@@ -47,6 +47,6 @@ describe('InvoiceChildrenCard', () => {
 
     await wrapper.find('.invoice-children-card__pay').trigger('click');
 
-    expect(wrapper.emitted('pay')?.[0]).toEqual([23]);
+    expect(wrapper.emitted('pay')?.[0]).toEqual([23, 2833]);
   });
 });

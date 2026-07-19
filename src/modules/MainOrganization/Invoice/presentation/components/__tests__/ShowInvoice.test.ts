@@ -46,6 +46,7 @@ const invoiceData = vi.hoisted(() => ({
       title: 'First child invoice',
       notes: 'First child note',
       invoice_amount: 3333,
+      remaining_amount: 2833,
     },
   ],
 }));
@@ -173,6 +174,7 @@ describe('ShowInvoice', () => {
 
     expect(paymentDialog.props('visible')).toBe(true);
     expect(paymentDialog.props('invoiceId')).toBe(23);
+    expect(paymentDialog.find<HTMLInputElement>('#show_payment_amount').element.value).toBe('2833');
 
     paymentDialog.vm.$emit('submit', paymentParams);
     await flushPromises();

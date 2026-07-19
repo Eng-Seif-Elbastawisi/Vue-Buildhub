@@ -42,6 +42,7 @@
   const loadedPayments = ref<InvoicePaymentModel[]>([]);
   const paymentDialogOpen = ref(false);
   const paymentInvoiceId = ref(0);
+  const paymentRemainingAmount = ref<number>();
   const creatingPayment = ref(false);
   const exportingPdf = ref(false);
   const exportingInvoice = ref(false);
@@ -231,10 +232,15 @@
     await fetchPayments();
   };
 
-  const openPaymentDialog = (targetInvoiceId: number = invoiceId.value) => {
+  const openPaymentDialog = (
+    targetInvoiceId: number = invoiceId.value,
+    targetRemainingAmount?: number,
+  ) => {
     if (!targetInvoiceId) return;
 
     paymentInvoiceId.value = targetInvoiceId;
+    paymentRemainingAmount.value =
+      targetRemainingAmount ?? (targetInvoiceId === invoiceId.value ? remainingAmount.value : undefined);
     paymentDialogOpen.value = true;
   };
 
@@ -474,6 +480,7 @@
         <AddInvoicePaymentDialog
           :visible="paymentDialogOpen"
           :invoice-id="paymentInvoiceId"
+          :remaining-amount="paymentRemainingAmount"
           :loading="creatingPayment"
           @close="paymentDialogOpen = false"
           @submit="handleAddPayment"

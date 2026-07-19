@@ -15,7 +15,7 @@
   }>();
 
   defineEmits<{
-    pay: [invoiceId: number];
+    pay: [invoiceId: number, remainingAmount?: number];
   }>();
 
   const { t } = useI18n();
@@ -90,7 +90,7 @@
           v-if="child.id && canPayChild(child)"
           class="invoice-show-btn invoice-show-btn--outline invoice-children-card__pay"
           type="button"
-          @click="$emit('pay', child.id)"
+          @click="$emit('pay', child.id, child.remaining_amount)"
         >
           <i class="pi pi-credit-card"></i>
           {{ $t('invoice_show.pay_invoice') }}

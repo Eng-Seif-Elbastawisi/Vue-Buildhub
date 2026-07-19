@@ -12,6 +12,7 @@
   const props = defineProps<{
     visible: boolean;
     invoiceId: number;
+    remainingAmount?: number;
     loading?: boolean;
   }>();
 
@@ -40,7 +41,9 @@
   };
 
   const resetForm = () => {
-    paymentAmount.value = null;
+    const remainingAmount = Number(props.remainingAmount);
+
+    paymentAmount.value = Number.isFinite(remainingAmount) ? remainingAmount : null;
     paymentDate.value = new Date().toISOString().slice(0, 10);
     paymentMethod.value = null;
     notes.value = '';
