@@ -475,6 +475,11 @@
   }
 
   .status-4 {
+    color: var(--success-dark);
+    background-color: var(--warning);
+  }
+
+  .status-5 {
     color: var(--low-color);
     background-color: var(--PrimaryColor-light);
   }
