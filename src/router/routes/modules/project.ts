@@ -18,6 +18,15 @@ export const ProjectRoutes: RouteRecordRaw[] = [
     },
   },
   {
+    path: 'offers-projects',
+    name: 'offers-projects',
+    component: () => import('@/views/MainOrganization/Project/IndexOfferProject.vue'),
+    meta: {
+      breadcrumb: 'Offer Project',
+    },
+  },
+
+  {
     path: 'project/add',
     name: 'add-project',
     component: () => import('@/views/MainOrganization/Project/AddProject.vue'),
