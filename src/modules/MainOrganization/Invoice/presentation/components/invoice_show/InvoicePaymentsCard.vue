@@ -18,7 +18,7 @@
 </script>
 
 <template>
-  <section class="invoice-show-card invoice-payments-card">
+  <section v-if="invoice.children?.length === 0" class="invoice-show-card invoice-payments-card">
     <div class="invoice-show-card__header invoice-show-card__header--between">
       <div class="invoice-show-card__title">
         <span class="invoice-show-icon invoice-show-icon--primary">

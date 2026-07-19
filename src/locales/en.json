@@ -688,6 +688,8 @@
   "invoice_show.fully_paid": "This invoice is fully paid",
   "invoice_show.payment_pending": "This invoice still has a remaining balance",
   "invoice_show.payments": "Payments",
+  "invoice_show.child_invoices": "Child invoices",
+  "invoice_show.pay_invoice": "Pay invoice",
   "invoice_show.add_payment": "Add payment",
   "invoice_show.payment_received": "Payment received",
   "invoice_show.amount": "Amount",

@@ -514,6 +514,8 @@
   "invoice_show.fully_paid": "هذه الفاتورة مدفوعة بالكامل",
   "invoice_show.payment_pending": "ما زال هناك مبلغ متبق على هذه الفاتورة",
   "invoice_show.payments": "المدفوعات",
+  "invoice_show.child_invoices": "الفواتير الفرعية",
+  "invoice_show.pay_invoice": "دفع الفاتورة",
   "invoice_show.add_payment": "إضافة دفعة",
   "invoice_show.payment_received": "تم استلام دفعة",
   "invoice_show.amount": "المبلغ",
