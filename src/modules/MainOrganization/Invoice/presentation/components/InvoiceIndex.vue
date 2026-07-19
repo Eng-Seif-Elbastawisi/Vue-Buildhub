@@ -190,13 +190,13 @@
                 <i class="pi pi-eye"></i>
               </router-link>
 
-              <router-link
+              <!-- <router-link
                 class="action-btn edit"
                 :to="`${basePath}/edit/${item.id}`"
                 :title="t('invoice.edit')"
               >
                 <i class="pi pi-pencil"></i>
-              </router-link>
+              </router-link> -->
 
               <DeleteDialog
                 :title="$t('invoice.delete_title')"

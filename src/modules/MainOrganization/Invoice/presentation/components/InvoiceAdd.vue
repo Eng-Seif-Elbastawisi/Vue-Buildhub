@@ -28,7 +28,12 @@
 
 <template>
   <div class="invoice-crud-page">
-    <InvoiceForm :form-key="formKey" :loading="loading" @update-data="params = $event" />
+    <InvoiceForm
+      enable-grouping
+      :form-key="formKey"
+      :loading="loading"
+      @update-data="params = $event"
+    />
 
     <div class="invoice-actions" :class="{ disabled: loading }">
       <button

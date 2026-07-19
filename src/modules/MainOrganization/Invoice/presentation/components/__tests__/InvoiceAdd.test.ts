@@ -1,6 +1,7 @@
 import { mount } from '@vue/test-utils';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ref } from 'vue';
+import { InvoiceTypeEnum } from '../../../core/constant/invoice.type.enum';
 import AddInvoiceParams from '../../../core/params/add.invoice.params';
 import InvoiceAdd from '../InvoiceAdd.vue';
 
@@ -56,6 +57,7 @@ describe('InvoiceAdd', () => {
 
   it('creates invoice with emitted form params', async () => {
     const params = new AddInvoiceParams({
+      type: InvoiceTypeEnum.SINGLE,
       project_id: 10,
       invoice_number: 'INV-2026-0001',
       invoice_date: '2026-07-05',

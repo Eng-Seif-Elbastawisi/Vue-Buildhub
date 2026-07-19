@@ -1,5 +1,6 @@
 <script setup lang="ts">
-  import { ref, watch } from 'vue';
+  import { computed, ref, watch } from 'vue';
+  import { useI18n } from 'vue-i18n';
   import { onBeforeRouteLeave } from 'vue-router';
   import type TitleInterface from '@/base/Data/Models/titleInterface';
   import { useFormsStore } from '@/stores/formsStore';
@@ -7,8 +8,15 @@
   import UpdatedCustomInputSelect from '@/shared/FormInputs/UpdatedCustomInputSelect.vue';
   import IndexProjectParams from '@/modules/MainOrganization/Project/core/params/index.project.params';
   import ProjectController from '@/modules/MainOrganization/Project/presentation/controllers/project.controller';
-  import AddInvoiceParams from '../../core/params/add.invoice.params';
+  import {
+    InvoiceTypeEnum,
+    InvoiceTypeLabelKeys,
+    type InvoiceTypeEnum as InvoiceType,
+  } from '../../core/constant/invoice.type.enum';
   import type InvoiceModel from '../../core/models/invoice.model';
+  import AddInvoiceParams from '../../core/params/add.invoice.params';
+  import IndexInvoiceParams from '../../core/params/index.invoice.params';
+  import InvoiceController from '../controllers/invoice.controller';
 
   const emit = defineEmits<{
     updateData: [params: AddInvoiceParams];
@@ -18,24 +26,58 @@
     invoice?: InvoiceModel | null;
     loading?: boolean;
     formKey?: string;
+    enableGrouping?: boolean;
   }>();
 
+  const { t } = useI18n();
   const formStore = useFormsStore();
   const projectController = ProjectController.getInstance();
+  const invoiceController = InvoiceController.getInstance();
   const projectParams = new IndexProjectParams('', 1, 100, 0);
+  const invoiceTypeOptions = computed<TitleInterface<string | number>[]>(() =>
+    Object.values(InvoiceTypeEnum).map((invoiceTypeId) => ({
+      id: invoiceTypeId,
+      title: t(InvoiceTypeLabelKeys[invoiceTypeId]),
+    })),
+  );
+  const getSingleInvoiceTypeOption = (): TitleInterface<string | number> => ({
+    id: InvoiceTypeEnum.SINGLE,
+    title: t(InvoiceTypeLabelKeys[InvoiceTypeEnum.SINGLE]),
+  });
 
+  const selectedInvoiceType = ref<TitleInterface<string | number> | null>(
+    props.enableGrouping ? null : getSingleInvoiceTypeOption(),
+  );
   const selectedProject = ref<TitleInterface<string | number> | null>(null);
-  const invoiceNumber = ref('');
+  const selectedInvoices = ref<TitleInterface<string | number>[]>([]);
+  // const invoiceNumber = ref('');
+  const exportStatus = ref<number>(0);
   const invoiceDate = ref('');
   const invoiceAmount = ref<number | null>(null);
   const notes = ref('');
+  const invoiceType = computed(() => selectedInvoiceType.value?.id as InvoiceType | undefined);
+  const isGroupInvoice = computed(() => invoiceType.value === InvoiceTypeEnum.GROUP);
+  const invoiceParams = computed(
+    () =>
+      new IndexInvoiceParams(
+        '',
+        1,
+        100,
+        0,
+        selectedProject.value?.id ? Number(selectedProject.value.id) : undefined,
+        null,
+        exportStatus.value,
+      ),
+  );
 
   const updateData = () => {
     emit(
       'updateData',
       new AddInvoiceParams({
+        type: invoiceType.value,
         project_id: selectedProject.value?.id ? Number(selectedProject.value.id) : undefined,
-        invoice_number: invoiceNumber.value,
+        invoice_ids: selectedInvoices.value.map((invoice) => Number(invoice.id)),
+        // invoice_number: invoiceNumber.value,
         invoice_date: invoiceDate.value,
         invoice_amount: invoiceAmount.value ?? undefined,
         notes: notes.value || null,
@@ -43,8 +85,33 @@
     );
   };
 
-  const updateProject = (value: TitleInterface<string | number> | null) => {
-    selectedProject.value = value;
+  const updateInvoiceType = (selectedType: TitleInterface<string | number> | null) => {
+    selectedInvoiceType.value = selectedType;
+    selectedInvoices.value = [];
+    updateData();
+  };
+
+  const updateProject = (selectedProjectOption: TitleInterface<string | number> | null) => {
+    selectedProject.value = selectedProjectOption;
+    selectedInvoices.value = [];
+    updateData();
+  };
+
+  const updateInvoices = (
+    selectedInvoiceOptions:
+      | TitleInterface<string | number>[]
+      | TitleInterface<string | number>
+      | null,
+  ) => {
+    if (!selectedInvoiceOptions) {
+      selectedInvoices.value = [];
+      updateData();
+      return;
+    }
+
+    selectedInvoices.value = Array.isArray(selectedInvoiceOptions)
+      ? selectedInvoiceOptions
+      : [selectedInvoiceOptions];
     updateData();
   };
 
@@ -63,13 +130,17 @@
   watch(
     () => props.invoice,
     (invoice) => {
+      if (!props.enableGrouping) {
+        selectedInvoiceType.value = getSingleInvoiceTypeOption();
+      }
+
       selectedProject.value = invoice?.project_id
         ? {
             id: invoice.project_id,
             title: getProjectTitle(invoice),
           }
         : null;
-      invoiceNumber.value = invoice?.invoice_number ?? '';
+      // invoiceNumber.value = invoice?.invoice_number ?? '';
       invoiceDate.value = invoice?.invoice_date ?? '';
       invoiceAmount.value =
         invoice?.invoice_amount === undefined || invoice?.invoice_amount === null
@@ -91,7 +162,18 @@
     </header>
 
     <div class="invoice-form-grid" :class="{ disabled: loading }">
-      <div class="field-group">
+      <div v-if="enableGrouping" class="field-group col-span-2">
+        <UpdatedCustomInputSelect
+          id="invoice_type"
+          :model-value="selectedInvoiceType"
+          :label="$t('invoice.type')"
+          :placeholder="$t('invoice.type_placeholder')"
+          :static-options="invoiceTypeOptions"
+          @update:model-value="updateInvoiceType"
+        />
+      </div>
+
+      <div v-if="invoiceType" class="field-group">
         <UpdatedCustomInputSelect
           id="invoice_project_id"
           :model-value="selectedProject"
@@ -103,7 +185,20 @@
         />
       </div>
 
-      <div class="field-group">
+      <div v-if="isGroupInvoice && selectedProject" class="field-group">
+        <UpdatedCustomInputSelect
+          id="invoice_ids"
+          :model-value="selectedInvoices"
+          :label="$t('invoice.group_invoices')"
+          :controller="invoiceController"
+          :placeholder="$t('invoice.group_invoices_placeholder')"
+          :params="invoiceParams"
+          :type="2"
+          @update:model-value="updateInvoices"
+        />
+      </div>
+
+      <!-- <div v-if="invoiceType" class="field-group">
         <span class="field-help-label-row field-help-label-row--block">
           <label class="field-label" for="invoice_number">{{ $t('invoice.invoice_number') }}</label>
           <FieldHelpIcon
@@ -119,9 +214,9 @@
           :placeholder="$t('invoice.invoice_number_placeholder')"
           @input="updateData"
         />
-      </div>
+      </div> -->
 
-      <div class="field-group">
+      <div v-if="invoiceType" class="field-group">
         <span class="field-help-label-row field-help-label-row--block">
           <label class="field-label" for="invoice_date">{{ $t('invoice.invoice_date') }}</label>
           <FieldHelpIcon
@@ -139,7 +234,7 @@
         />
       </div>
 
-      <div class="field-group">
+      <div v-if="invoiceType" class="field-group">
         <span class="field-help-label-row field-help-label-row--block">
           <label class="field-label" for="invoice_amount">{{ $t('invoice.invoice_amount') }}</label>
           <FieldHelpIcon
@@ -160,7 +255,7 @@
         />
       </div>
 
-      <div class="field-group col-span-2">
+      <div v-if="invoiceType" class="field-group col-span-2">
         <span class="field-help-label-row field-help-label-row--block">
           <label class="field-label" for="invoice_notes">{{ $t('invoice.notes') }}</label>
           <FieldHelpIcon :label="$t('invoice.notes')" field-name="notes" field-id="invoice_notes" />
