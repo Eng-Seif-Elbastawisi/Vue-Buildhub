@@ -1,3 +1,4 @@
+```vue
 <script setup lang="ts">
   import { computed, onMounted, ref, watch } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
@@ -37,25 +38,38 @@
   const perPage = ref(10);
 
   const parseServiceType = (routeServiceType: unknown): DepartmentTypeEnum[] => {
-    const normalizedServiceType = Array.isArray(routeServiceType)
-      ? routeServiceType[0]
-      : routeServiceType;
-    const numericServiceType = Number(normalizedServiceType);
+    const values = Array.isArray(routeServiceType)
+      ? routeServiceType
+      : routeServiceType
+        ? [routeServiceType]
+        : [];
 
-    if (
-      numericServiceType === DepartmentTypeEnum.DESIGN ||
-      numericServiceType === DepartmentTypeEnum.SUPERVISION ||
-      numericServiceType === DepartmentTypeEnum.BOTH
-    ) {
-      return [numericServiceType];
-    }
-
-    return [];
+    return values
+      .flatMap((value) => String(value).split(','))
+      .map(Number)
+      .filter(
+        (value): value is DepartmentTypeEnum =>
+          value === DepartmentTypeEnum.DESIGN ||
+          value === DepartmentTypeEnum.SUPERVISION ||
+          value === DepartmentTypeEnum.BOTH,
+      );
   };
 
   const serviceType = computed<DepartmentTypeEnum[]>(() =>
     parseServiceType(route.query.service_type),
   );
+
+  /**
+   * إخفاء زري التعديل والحذف في صفحات:
+   * Design
+   * Supervision
+   */
+  const hideEditAndDeleteActions = computed(() => {
+    return (
+      serviceType.value.includes(DepartmentTypeEnum.DESIGN) ||
+      serviceType.value.includes(DepartmentTypeEnum.SUPERVISION)
+    );
+  });
 
   const isPendingPage = computed(() => {
     return (
@@ -160,6 +174,12 @@
   };
 
   const deleteProject = async (id: number) => {
+    /**
+     * حماية إضافية حتى لا يتم الحذف برمجيًا
+     * في صفحات التصميم أو الإشراف.
+     */
+    if (hideEditAndDeleteActions.value) return;
+
     await controller.delete(
       new DeleteProjectParams({
         projectId: id,
@@ -266,11 +286,12 @@
               {{ $t(getConvertStatusNameKey(item.status)) }}
             </span>
 
-            <span v-else> - </span>
+            <span v-else>-</span>
           </template>
 
           <template #actions="{ item }">
             <div class="row-actions">
+              <!-- زر العرض يظل ظاهرًا دائمًا -->
               <router-link
                 class="action-btn edit"
                 :to="
@@ -283,7 +304,9 @@
                 <i class="pi pi-eye"></i>
               </router-link>
 
+              <!-- إخفاء التعديل في Design وSupervision -->
               <router-link
+                v-if="!hideEditAndDeleteActions"
                 class="action-btn edit"
                 :to="
                   user?.isMaster
@@ -308,7 +331,9 @@
                 </svg>
               </router-link>
 
+              <!-- إخفاء الحذف في Design وSupervision -->
               <DeleteDialog
+                v-if="!hideEditAndDeleteActions"
                 :title="$t('Are you sure you want to remove this project?')"
                 :message="$t('This action cannot be undone.')"
                 :hasbtn="true"
@@ -489,3 +514,4 @@
     text-align: center;
   }
 </style>
+```
