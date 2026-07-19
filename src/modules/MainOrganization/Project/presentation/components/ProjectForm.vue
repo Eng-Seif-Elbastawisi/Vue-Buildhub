@@ -33,6 +33,7 @@
 
   import TermController from '@/modules/MainOrganization/Term/presentation/controllers/term.controller';
   import IndexTermParams from '@/modules/MainOrganization/Term/core/params/index.term.params';
+  import type TermModel from '@/modules/MainOrganization/Term/core/models/term.model';
 
   const emit = defineEmits<{
     updateData: [params: AddProjectParams];
@@ -57,6 +58,14 @@
 
   const termController = TermController.getInstance();
   const indexTermParams = new IndexTermParams('', 1, 100, 0);
+
+  const termOptions = computed<TermModel[]>(() => {
+    const termState = termController.listState.value as any;
+
+    const data = termState?.data ?? termState?.value?.data ?? termState?.items ?? [];
+
+    return Array.isArray(data) ? data : [];
+  });
 
   const locationController = LocationController.getInstance();
 
@@ -84,7 +93,6 @@
   const selectedProjectType = ref<TitleInterface<number> | null>(null);
   const selectedServiceType = ref<TitleInterface<number> | null>(null);
   const selectedTerm = ref<TitleInterface<number>[]>([]);
-
   const selectedCountry = ref<TitleInterface<number> | null>(null);
   const selectedGovernorate = ref<TitleInterface<number> | null>(null);
   const selectedCity = ref<TitleInterface<number> | null>(null);
@@ -347,16 +355,33 @@
       return;
     }
 
-    selectedTerm.value = Array.isArray(value) ? value : [value];
+    const selectedValues = Array.isArray(value) ? value : [value];
 
-    termsText.value = selectedTerm.value
-      .map((term) => term.title)
-      .filter(Boolean)
+    /**
+     * الـ Select يحتفظ ويعرض id + title فقط.
+     */
+    selectedTerm.value = selectedValues.map((term) => ({
+      id: Number(term.id),
+      title: term.title,
+    }));
+
+    /**
+     * نصل إلى TermModel الكامل من بيانات الـ controller
+     * باستخدام id، ثم نعرض description داخل الـ textarea.
+     */
+    termsText.value = selectedValues
+      .map((selectedItem) => {
+        const fullTerm = termOptions.value.find(
+          (term) => Number(term.id) === Number(selectedItem.id),
+        );
+
+        return fullTerm?.description ?? '';
+      })
+      .filter((description): description is string => Boolean(description.trim()))
       .join('\n');
 
     updateData();
   };
-
   watch(
     () => props.Project,
     (Project) => {
