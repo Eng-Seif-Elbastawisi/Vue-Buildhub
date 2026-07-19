@@ -73,7 +73,7 @@ describe('InvoiceAdd', () => {
         stubs: {
           InvoiceForm: {
             template:
-              '<button class="emit-form" type="button" @click="$emit(\'updateData\', params)">form</button>',
+              '<div><button class="emit-form" type="button" @click="$emit(\'updateData\', params)">form</button><button class="submit-form" type="button" @click="$emit(\'submit\')">submit</button></div>',
             setup() {
               return { params };
             },
@@ -83,7 +83,7 @@ describe('InvoiceAdd', () => {
     });
 
     await wrapper.find('.emit-form').trigger('click');
-    await wrapper.find('.btn').trigger('click');
+    await wrapper.find('.submit-form').trigger('click');
 
     expect(create).toHaveBeenCalledWith(params, undefined, '/invoice/add');
   });

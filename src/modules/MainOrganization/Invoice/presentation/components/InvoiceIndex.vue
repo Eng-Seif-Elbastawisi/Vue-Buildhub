@@ -199,6 +199,7 @@
               </router-link> -->
 
               <DeleteDialog
+                v-if="item.status === InvoiceStatusEnum.UNPAID"
                 :title="$t('invoice.delete_title')"
                 :message="$t('invoice.delete_message')"
                 :hasbtn="true"
@@ -243,3 +244,9 @@
     </DataStatusBuilder>
   </div>
 </template>
+
+<style lang="scss" scoped>
+  .row-actions {
+    justify-content: start !important;
+  }
+</style>

@@ -33,6 +33,20 @@ const UpdatedCustomInputSelectStub = {
   template: '<div class="select-stub" :data-select-id="id">{{ label }}</div>',
 };
 
+const AppButtonStub = {
+  name: 'AppButton',
+  props: ['disabled', 'loading', 'title'],
+  emits: ['click'],
+  template:
+    '<button class="app-button-stub" type="button" :disabled="disabled || loading" @click="$emit(\'click\', $event)"><slot /></button>',
+};
+
+const MultiLangInputStub = {
+  name: 'MultiLangInput',
+  props: ['fieldKey', 'label', 'languages', 'modelValue', 'type'],
+  template: '<div class="multi-lang-stub" :data-field-key="fieldKey">{{ label }}</div>',
+};
+
 const mountForm = (invoice?: InvoiceModel, enableGrouping = false) =>
   mount(InvoiceForm, {
     props: {
@@ -45,7 +59,11 @@ const mountForm = (invoice?: InvoiceModel, enableGrouping = false) =>
         $t: (key: string) => key,
       },
       stubs: {
+        AppButton: AppButtonStub,
         FieldHelpIcon: true,
+        GroupIcon: true,
+        InvoiceDocumentIcon: true,
+        MultiLangInput: MultiLangInputStub,
         UpdatedCustomInputSelect: UpdatedCustomInputSelectStub,
       },
     },
@@ -61,15 +79,41 @@ const findSelect = (wrapper: ReturnType<typeof mountForm>, id: string) => {
   return select;
 };
 
+const selectInvoiceType = async (
+  wrapper: ReturnType<typeof mountForm>,
+  invoiceType: InvoiceTypeEnum,
+) => {
+  await wrapper.find(`#invoice_type_${invoiceType}`).setValue(true);
+};
+
 describe('InvoiceForm', () => {
-  it('emits invoice params from project select and inputs', async () => {
-    const wrapper = mountForm();
+  it('renders the approved two-card structure with exactly two invoice type options', () => {
+    const wrapper = mountForm(undefined, true);
+
+    expect(wrapper.findAll('.invoice-form__card')).toHaveLength(2);
+    expect(wrapper.find('.invoice-form__details').exists()).toBe(true);
+    expect(wrapper.find('.invoice-form__type').exists()).toBe(true);
+    expect(wrapper.findAll('input[type="radio"][name="invoice_type"]')).toHaveLength(2);
+    expect(wrapper.find('[data-select-id="invoice_type"]').exists()).toBe(false);
+  });
+
+  it('defaults to SINGLE, renders the standard fields, and hides the invoices selector', async () => {
+    const wrapper = mountForm(undefined, true);
+
+    expect(
+      wrapper.find(`#invoice_type_${InvoiceTypeEnum.SINGLE}`).attributes('checked'),
+    ).toBeDefined();
+    expect(findSelect(wrapper, 'invoice_project_id').exists()).toBe(true);
+    expect(wrapper.find('#invoice_date').exists()).toBe(true);
+    expect(wrapper.find('#invoice_amount').exists()).toBe(true);
+    expect(wrapper.find('#invoice_notes').exists()).toBe(true);
+    expect(wrapper.find('[data-select-id="invoice_ids"]').exists()).toBe(false);
+    expect(wrapper.find('[data-field-key="title"]').exists()).toBe(false);
 
     findSelect(wrapper, 'invoice_project_id').vm.$emit('update:modelValue', {
       id: 10,
       title: 'Project 10',
     });
-    await wrapper.find('#invoice_number').setValue('INV-2026-0001');
     await wrapper.find('#invoice_date').setValue('2026-07-05');
     await wrapper.find('#invoice_amount').setValue('15000');
     await wrapper.find('#invoice_notes').setValue('First design invoice');
@@ -78,30 +122,20 @@ describe('InvoiceForm', () => {
       toMap: () => Record<string, unknown>;
     };
 
-    expect(emitted.toMap()).toEqual({
-      type: InvoiceTypeEnum.SINGLE,
+    expect(emitted.toMap()).toMatchObject({
+      invoice_type: InvoiceTypeEnum.SINGLE,
       project_id: 10,
-      invoice_number: 'INV-2026-0001',
       invoice_date: '2026-07-05',
       invoice_amount: 15000,
       notes: 'First design invoice',
     });
+    expect(emitted.toMap()).not.toHaveProperty('invoice_ids');
   });
 
-  it('shows project invoices as a project-filtered multi-select in group mode', async () => {
+  it('selects GROUP and keeps the project-filtered invoices field as a multi-select', async () => {
     const wrapper = mountForm(undefined, true);
 
-    expect(findSelect(wrapper, 'invoice_type').props('staticOptions')).toEqual([
-      { id: InvoiceTypeEnum.SINGLE, title: 'Single' },
-      { id: InvoiceTypeEnum.GROUP, title: 'Group' },
-    ]);
-    expect(wrapper.find('[data-select-id="invoice_project_id"]').exists()).toBe(false);
-
-    findSelect(wrapper, 'invoice_type').vm.$emit('update:modelValue', {
-      id: InvoiceTypeEnum.GROUP,
-      title: 'Group',
-    });
-    await wrapper.vm.$nextTick();
+    await selectInvoiceType(wrapper, InvoiceTypeEnum.GROUP);
 
     findSelect(wrapper, 'invoice_project_id').vm.$emit('update:modelValue', {
       id: 10,
@@ -110,56 +144,81 @@ describe('InvoiceForm', () => {
     await wrapper.vm.$nextTick();
 
     const invoiceSelect = findSelect(wrapper, 'invoice_ids');
+    const titleInput = wrapper.findComponent(MultiLangInputStub);
 
     expect(invoiceSelect.props('type')).toBe(2);
-    expect(invoiceSelect.props('params').toMap()).toMatchObject({ project_id: 10 });
-
-    await wrapper.find('#invoice_number').setValue('GROUP-2026-0001');
-    await wrapper.find('#invoice_date').setValue('2026-07-19');
-    await wrapper.find('#invoice_amount').setValue('30000');
-    await wrapper.find('#invoice_notes').setValue('Grouped invoices');
+    expect(titleInput.exists()).toBe(true);
+    expect(titleInput.props('languages')).toEqual(['en']);
+    expect(invoiceSelect.props('params').toMap()).toMatchObject({
+      project_id: 10,
+      export_status: 0,
+    });
 
     invoiceSelect.vm.$emit('update:modelValue', [
       { id: 1, title: 'INV-1' },
       { id: 2, title: 'INV-2' },
     ]);
-    await wrapper.vm.$nextTick();
+    titleInput.vm.$emit('update:modelValue', {
+      en: 'Design invoices group',
+      ar: 'مجموعة فواتير التصميم',
+    });
+
+    expect(wrapper.find('#invoice_date').exists()).toBe(false);
+    expect(wrapper.find('#invoice_amount').exists()).toBe(false);
+    expect(wrapper.find('#invoice_notes').exists()).toBe(false);
 
     const emitted = wrapper.emitted('updateData')?.at(-1)?.[0] as {
       toMap: () => Record<string, unknown>;
     };
 
     expect(emitted.toMap()).toEqual({
-      type: InvoiceTypeEnum.GROUP,
+      invoice_type: InvoiceTypeEnum.GROUP,
       project_id: 10,
+      title: 'Design invoices group',
       invoice_ids: [1, 2],
-      invoice_number: 'GROUP-2026-0001',
-      invoice_date: '2026-07-19',
-      invoice_amount: 30000,
-      notes: 'Grouped invoices',
     });
-    expect(wrapper.find('#invoice_number').exists()).toBe(true);
   });
 
-  it('does not render the invoices select in single mode', async () => {
+  it('clears group-only invoice values when switching back to SINGLE', async () => {
     const wrapper = mountForm(undefined, true);
 
-    findSelect(wrapper, 'invoice_type').vm.$emit('update:modelValue', {
-      id: InvoiceTypeEnum.SINGLE,
-      title: 'Single',
+    await selectInvoiceType(wrapper, InvoiceTypeEnum.GROUP);
+    findSelect(wrapper, 'invoice_project_id').vm.$emit('update:modelValue', {
+      id: 10,
+      title: 'Project 10',
     });
     await wrapper.vm.$nextTick();
+    findSelect(wrapper, 'invoice_ids').vm.$emit('update:modelValue', [{ id: 1, title: 'INV-1' }]);
 
-    expect(wrapper.find('#invoice_number').exists()).toBe(true);
+    await selectInvoiceType(wrapper, InvoiceTypeEnum.SINGLE);
+
+    const emitted = wrapper.emitted('updateData')?.at(-1)?.[0] as {
+      toMap: () => Record<string, unknown>;
+    };
+
     expect(wrapper.find('[data-select-id="invoice_ids"]').exists()).toBe(false);
+    expect(wrapper.find('[data-field-key="title"]').exists()).toBe(false);
+    expect(emitted.toMap()).not.toHaveProperty('invoice_ids');
+    expect(emitted.toMap()).not.toHaveProperty('title');
+    expect(emitted.toMap()).toMatchObject({ invoice_type: InvoiceTypeEnum.SINGLE });
   });
 
-  it('hydrates fields from invoice data in edit mode', () => {
+  it('emits submit from the save button and preserves its loading state', async () => {
+    const wrapper = mountForm(undefined, true);
+
+    await wrapper.find('.app-button-stub').trigger('click');
+
+    expect(wrapper.emitted('submit')).toHaveLength(1);
+
+    await wrapper.setProps({ loading: true });
+
+    expect(wrapper.find('.app-button-stub').attributes('disabled')).toBeDefined();
+  });
+
+  it('hydrates the existing editable fields from invoice data', () => {
     const wrapper = mountForm(InvoiceModel.example);
 
-    expect((wrapper.find('#invoice_number').element as HTMLInputElement).value).toBe(
-      'INV-2026-0001',
-    );
     expect((wrapper.find('#invoice_date').element as HTMLInputElement).value).toBe('2026-07-05');
+    expect((wrapper.find('#invoice_amount').element as HTMLInputElement).value).toBe('15000');
   });
 });

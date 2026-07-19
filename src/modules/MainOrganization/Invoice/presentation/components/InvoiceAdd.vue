@@ -33,27 +33,11 @@
       :form-key="formKey"
       :loading="loading"
       @update-data="params = $event"
+      @submit="saveInvoice"
     />
 
-    <div class="invoice-actions" :class="{ disabled: loading }">
-      <button
-        class="btn btn-primary w-full"
-        type="button"
-        :class="{ 'btn--loading': loading }"
-        :disabled="loading"
-        @click="saveInvoice"
-      >
-        <span v-if="loading" class="loader"></span>
-        <span v-else>{{ $t('invoice.save') }}</span>
-      </button>
-    </div>
-
-    <div v-if="controller.errorMessage.value" class="invoice-error">
+    <div v-if="controller.errorMessage.value" class="invoice-error" aria-live="polite">
       {{ controller.errorMessage.value }}
     </div>
   </div>
 </template>
-
-<!-- <style lang="scss">
-  @use '../styles/invoice';
-</style> -->

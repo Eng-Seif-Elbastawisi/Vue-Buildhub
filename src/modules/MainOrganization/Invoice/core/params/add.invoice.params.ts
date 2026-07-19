@@ -12,6 +12,7 @@ import {
 export default class AddInvoiceParams implements Params {
   public type?: InvoiceType;
   public project_id?: number;
+  public title?: string;
   public invoice_ids?: number[];
   public invoice_number?: string;
   public invoice_date?: string;
@@ -28,18 +29,19 @@ export default class AddInvoiceParams implements Params {
   });
 
   private static readonly detailsValidation = new ClassValidation().setRules({
-    // invoice_number: { required: true },
     invoice_date: { required: true },
     invoice_amount: { required: true },
   });
 
   private static readonly groupValidation = new ClassValidation().setRules({
+    title: { required: true },
     invoice_ids: { required: true },
   });
 
   constructor(data: {
     type?: InvoiceType;
     project_id?: number;
+    title?: string;
     invoice_ids?: number[];
     invoice_number?: string;
     invoice_date?: string;
@@ -48,6 +50,7 @@ export default class AddInvoiceParams implements Params {
   }) {
     this.type = data.type;
     this.project_id = data.project_id;
+    this.title = data.title;
     this.invoice_ids = data.invoice_ids;
     this.invoice_number = data.invoice_number;
     this.invoice_date = data.invoice_date;
@@ -56,23 +59,25 @@ export default class AddInvoiceParams implements Params {
   }
 
   toMap(): Record<string, unknown> {
-    const invoiceDetails = {
+    const invoiceBase = {
       invoice_type: this.type,
       project_id: this.project_id,
-      invoice_number: this.invoice_number,
-      invoice_date: this.invoice_date,
-      invoice_amount: this.invoice_amount,
-      notes: this.notes,
     };
 
     if (this.type === InvoiceTypeEnum.GROUP) {
       return {
-        ...invoiceDetails,
+        ...invoiceBase,
+        title: this.title,
         invoice_ids: this.invoice_ids,
       };
     }
 
-    return invoiceDetails;
+    return {
+      ...invoiceBase,
+      invoice_date: this.invoice_date,
+      invoice_amount: this.invoice_amount,
+      notes: this.notes,
+    };
   }
 
   private getConditionalErrors(): FieldError[] {
@@ -81,10 +86,7 @@ export default class AddInvoiceParams implements Params {
     }
 
     if (this.type === InvoiceTypeEnum.GROUP) {
-      return [
-        ...AddInvoiceParams.detailsValidation.validate(this).errors,
-        ...AddInvoiceParams.groupValidation.validate(this).errors,
-      ];
+      return AddInvoiceParams.groupValidation.validate(this).errors;
     }
 
     return [];

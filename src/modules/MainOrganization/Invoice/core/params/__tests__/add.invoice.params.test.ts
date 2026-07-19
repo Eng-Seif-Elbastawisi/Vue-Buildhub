@@ -17,9 +17,8 @@ describe('AddInvoiceParams', () => {
     });
 
     expect(params.toMap()).toEqual({
-      type: InvoiceTypeEnum.SINGLE,
+      invoice_type: InvoiceTypeEnum.SINGLE,
       project_id: 10,
-      invoice_number: 'INV-2026-0001',
       invoice_date: '2026-07-05',
       invoice_amount: 15000,
       notes: 'First design invoice',
@@ -31,21 +30,15 @@ describe('AddInvoiceParams', () => {
     const params = new AddInvoiceParams({
       type: InvoiceTypeEnum.GROUP,
       project_id: 10,
+      title: 'Design invoices group',
       invoice_ids: [1, 2],
-      invoice_number: 'GROUP-2026-0001',
-      invoice_date: '2026-07-19',
-      invoice_amount: 30000,
-      notes: 'Grouped invoices',
     });
 
     expect(params.toMap()).toEqual({
-      type: InvoiceTypeEnum.GROUP,
+      invoice_type: InvoiceTypeEnum.GROUP,
       project_id: 10,
+      title: 'Design invoices group',
       invoice_ids: [1, 2],
-      invoice_number: 'GROUP-2026-0001',
-      invoice_date: '2026-07-19',
-      invoice_amount: 30000,
-      notes: 'Grouped invoices',
     });
     expect(params.validate().isValid).toBe(true);
   });
@@ -55,14 +48,9 @@ describe('AddInvoiceParams', () => {
       'single invoice fields',
       InvoiceTypeEnum.SINGLE,
       undefined,
-      ['invoice_number', 'invoice_date', 'invoice_amount'],
+      ['invoice_date', 'invoice_amount'],
     ],
-    [
-      'group invoice details and selection',
-      InvoiceTypeEnum.GROUP,
-      [],
-      ['invoice_number', 'invoice_date', 'invoice_amount', 'invoice_ids'],
-    ],
+    ['group invoice details and selection', InvoiceTypeEnum.GROUP, [], ['title', 'invoice_ids']],
   ])('requires %s for the selected type', (_scenario, type, invoiceIds, expectedFields) => {
     const params = new AddInvoiceParams({
       type,
