@@ -357,18 +357,11 @@
 
     const selectedValues = Array.isArray(value) ? value : [value];
 
-    /**
-     * الـ Select يحتفظ ويعرض id + title فقط.
-     */
     selectedTerm.value = selectedValues.map((term) => ({
       id: Number(term.id),
       title: term.title,
     }));
 
-    /**
-     * نصل إلى TermModel الكامل من بيانات الـ controller
-     * باستخدام id، ثم نعرض description داخل الـ textarea.
-     */
     termsText.value = selectedValues
       .map((selectedItem) => {
         const fullTerm = termOptions.value.find(
