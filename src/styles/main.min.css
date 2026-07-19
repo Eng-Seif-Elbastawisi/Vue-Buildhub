@@ -8220,6 +8220,38 @@ body::-webkit-scrollbar-thumb:hover {
 .row-actions {
   gap: 0.75rem;
 }
+.invoice-status-badge {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: center;
+  width: max-content;
+  min-height: 30px;
+  padding: 0.35rem 0.7rem;
+  border-radius: var(--radius-full);
+  background: var(--gray-100);
+  color: var(--gray-600);
+  font-family: "Medium";
+  font-size: var(--xs-size);
+  white-space: nowrap;
+}
+.invoice-status-badge.is-paid {
+  background: var(--success-light);
+  color: var(--success-dark);
+}
+.invoice-status-badge.is-extra-paid {
+  background: var(--info-light);
+  color: var(--info-dark);
+}
+.invoice-status-badge.is-partial {
+  background: var(--warning-light);
+  color: var(--warning-dark);
+}
+.invoice-status-badge.is-unpaid {
+  background: var(--danger-light);
+  color: var(--danger-dark);
+}
 .invoice-form-card {
   display: flex;
   flex-direction: column;

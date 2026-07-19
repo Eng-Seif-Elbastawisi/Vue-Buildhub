@@ -35,7 +35,7 @@ describe('InvoiceIndex', () => {
     routeQuery = {};
   });
 
-  it('fetches and renders invoice rows', async () => {
+  it('fetches and renders invoice rows with payment status badges', async () => {
     const wrapper = mount(InvoiceIndex, {
       global: {
         mocks: {
@@ -55,7 +55,13 @@ describe('InvoiceIndex', () => {
           },
           DataStatusBuilder: {
             data() {
-              return { rows: [InvoiceModel.example] };
+              return {
+                rows: [
+                  InvoiceModel.example,
+                  new InvoiceModel({ id: 2, invoice_number: 'INV-UNPAID', status: 'unpaid' }),
+                  new InvoiceModel({ id: 3, invoice_number: 'INV-PARTIAL', status: 'partial' }),
+                ],
+              };
             },
             template: '<div><slot name="success" :data="rows" /></div>',
           },
@@ -73,6 +79,8 @@ describe('InvoiceIndex', () => {
     expect(wrapper.text()).toContain('INV-2026-0001');
     expect(wrapper.text()).toContain('Commercial project');
     expect(wrapper.find('.invoice-status-badge.is-paid').text()).toBe('Paid');
+    expect(wrapper.find('.invoice-status-badge.is-unpaid').text()).toBe('Unpaid');
+    expect(wrapper.find('.invoice-status-badge.is-partial').text()).toBe('Partial');
 
     await wrapper.find('.delete-dialog').trigger('click');
 
