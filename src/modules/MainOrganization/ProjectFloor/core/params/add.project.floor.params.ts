@@ -58,9 +58,9 @@ export default class AddProjectFloorParams implements Params {
       required: true,
       custom: (value) => Object.values(FloorNumber).includes(Number(value) as FloorNumber),
     },
-    site_description: { required: true },
-    technical_general_notes: { required: true },
-    inspection_recommendations: { required: true },
+    // site_description: { required: true },
+    // technical_general_notes: { required: true },
+    // inspection_recommendations: { required: true },
     spaces: { required: true },
   });
 

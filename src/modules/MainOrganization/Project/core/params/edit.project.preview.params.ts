@@ -22,6 +22,8 @@ export default class EditProjectPreviewParams implements Params {
     preview_date: { required: true },
     preview_time: { required: true },
     project_id: { required: true },
+    site_link: { required: true },
+    address: { required: true },
   });
 
   constructor(data: {

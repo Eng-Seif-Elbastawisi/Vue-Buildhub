@@ -254,10 +254,6 @@
         notes: notes.value,
         date: date.value,
 
-        /**
-         * المطلوب:
-         * terms يتبعت string عادي.
-         */
         terms: termsText.value,
       }),
     );
