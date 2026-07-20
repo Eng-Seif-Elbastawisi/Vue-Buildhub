@@ -478,201 +478,290 @@
 <template>
   <section class="pricing-card">
     <header class="pricing-header">
-      <div>
-        <h3>{{ $t('project_item.form_title') }}</h3>
+      <div class="pricing-header__content">
+        <span class="pricing-header__icon">
+          <i class="pi pi-box"></i>
+        </span>
+
+        <div>
+          <h3>{{ $t('project_item.form_title') }}</h3>
+          <p>{{ $t('project_item.form_description') }}</p>
+        </div>
+      </div>
+
+      <div class="pricing-header__count">
+        <span>{{ $t('project_item.selected_items') }}</span>
+        <strong>{{ localItems.length }}</strong>
       </div>
     </header>
 
     <div class="add-panel" :class="{ disabled: loading }">
-      <div class="form-row">
-        <div class="field-box field-box--department">
-          <span class="field-help-label-row">
-            <label class="mini-label">{{ $t('department.title') }}</label>
-            <FieldHelpIcon
-              :label="$t('department.title')"
-              field-name="department_id"
-              field-id="department_id"
+      <div class="form-section">
+        <div class="form-section__header">
+          <span class="form-section__number">01</span>
+
+          <div>
+            <h4>{{ $t('project_item.basic_information') }}</h4>
+            <p>{{ $t('project_item.basic_information_description') }}</p>
+          </div>
+        </div>
+
+        <div class="form-grid form-grid--main">
+          <div class="field-box">
+            <span class="field-help-label-row">
+              <label class="mini-label">{{ $t('department.title') }}</label>
+
+              <FieldHelpIcon
+                :label="$t('department.title')"
+                field-name="department_id"
+                field-id="department_id"
+              />
+            </span>
+
+            <UpdatedCustomInputSelect
+              id="department_id"
+              v-model="selectedDepartment"
+              :controller="departmentController"
+              :params="departmentParams"
+              :placeholder="$t('department.placeholder')"
+              :reload="true"
+              required
+              @update:model-value="updateData"
             />
-          </span>
-
-          <UpdatedCustomInputSelect
-            id="department_id"
-            v-model="selectedDepartment"
-            :controller="departmentController"
-            :params="departmentParams"
-            :placeholder="$t('department.placeholder')"
-            :reload="true"
-            required
-            @update:model-value="updateData"
-          />
-        </div>
-
-        <div class="field-box field-box--method">
-          <span class="field-help-label-row">
-            <label class="mini-label">{{ $t('project_item.pricing_method') }}</label>
-            <FieldHelpIcon
-              :label="$t('project_item.pricing_method')"
-              field-name="type"
-              field-id="project-item-pricing-method"
-            />
-          </span>
-
-          <UpdatedCustomInputSelect
-            id="project-item-pricing-method"
-            :model-value="pricingMethod"
-            :placeholder="$t('project_item.pricing_method_placeholder')"
-            :static-options="pricingMethodOptions"
-            required
-            @update:model-value="updatePricingMethod"
-          />
-        </div>
-
-        <div v-if="isFullFloorRelated" class="field-box field-box--floor">
-          <span class="field-help-label-row">
-            <label class="mini-label">{{ $t('ProjectFloor.floor_number') }}</label>
-            <FieldHelpIcon
-              :label="$t('ProjectFloor.floor_number')"
-              field-name="floor_number"
-              field-id="floor_number"
-            />
-          </span>
-
-          <UpdatedCustomInputSelect
-            id="floor_number"
-            :model-value="selectedFloorNumber"
-            :static-options="projectFloorOptions"
-            :placeholder="$t('ProjectFloor.floor_number_placeholder')"
-            required
-            @update:model-value="updateFloorNumber"
-          />
-        </div>
-
-        <div v-if="isSpaceRelated" class="field-box field-box--floor">
-          <span class="field-help-label-row">
-            <label class="mini-label">{{ $t('ProjectFloor.space') }}</label>
-            <FieldHelpIcon
-              :label="$t('ProjectFloor.space')"
-              field-name="space"
-              field-id="space_id"
-            />
-          </span>
-
-          <UpdatedCustomInputSelect
-            id="space_id"
-            :model-value="selectedSpace"
-            :static-options="projectFloorSpaceOptions"
-            :placeholder="$t('ProjectFloor.space_placeholder')"
-            @update:model-value="updateSelectedSpace"
-          />
-        </div>
-
-        <div class="field-box field-box--item">
-          <span class="field-help-label-row">
-            <label class="mini-label">{{ $t('project_item.item') }}</label>
-            <FieldHelpIcon
-              :label="$t('project_item.item')"
-              field-name="material"
-              field-id="project-item-item"
-            />
-          </span>
-
-          <UpdatedCustomInputSelect
-            id="project-item-item"
-            v-model="selectedItem"
-            :controller="generalItemController"
-            :params="generalItemParams"
-            :placeholder="$t('project_item.item_placeholder')"
-            :reload="true"
-            required
-            @update:model-value="updateData"
-          />
-        </div>
-
-        <div class="field-box field-box--qty">
-          <span class="field-help-label-row">
-            <label class="mini-label">{{ $t('project_item.quantity') }}</label>
-            <FieldHelpIcon :label="$t('project_item.quantity')" field-name="quantity" />
-          </span>
-
-          <input
-            v-model.number="quantity"
-            class="field-input"
-            min="0"
-            step="1"
-            type="number"
-            @input="updateData"
-          />
-        </div>
-
-        <div v-if="isGeneralItem || isFullFloorRelated" class="field-box field-box--price">
-          <span class="field-help-label-row">
-            <label class="mini-label">{{ $t('project_item.price') }}</label>
-            <FieldHelpIcon :label="$t('project_item.price')" field-name="price" />
-          </span>
-
-          <input
-            v-model.number="price"
-            class="field-input"
-            min="0"
-            step="0.01"
-            type="number"
-            @input="updateData"
-          />
-        </div>
-
-        <div v-if="isGeneralItem || isFullFloorRelated" class="field-box field-box--total">
-          <span class="field-help-label-row">
-            <label class="mini-label">{{ $t('project_item.total_label') }}</label>
-            <FieldHelpIcon :label="$t('project_item.total_label')" field-name="total" />
-          </span>
-
-          <input class="field-input readonly-input" :value="total" readonly />
-        </div>
-
-        <button type="button" class="add-btn" :disabled="loading" @click="addItemToList">
-          {{ $t('general.add') }}
-        </button>
-      </div>
-
-      <div class="local-items-table">
-        <div class="local-table-summary">
-          <strong>{{ $t('project_item.selected_items') }}</strong>
-          <span>{{ localItems.length }}</span>
-        </div>
-
-        <div v-if="!localItems.length" class="empty-local-row">
-          {{ $t('project_item.no_items') }}
-        </div>
-
-        <div v-else class="local-table">
-          <div class="local-table-head">
-            <span>{{ $t('project_item.item') }}</span>
-            <span>{{ $t('project_item.related_label') }}</span>
-            <span>{{ $t('project_item.pricing_method') }}</span>
-            <span>{{ $t('project_item.quantity') }}</span>
-            <span>{{ $t('project_item.price') }}</span>
-            <span>{{ $t('project_item.total_label') }}</span>
-            <span>{{ $t('general.actions') }}</span>
           </div>
 
-          <div v-for="item in localItems" :key="item.local_id" class="local-table-row">
-            <span>{{ item.item_title }}</span>
-            <span>{{ item.related_title }}</span>
-            <span>{{ item.pricing_method_title }}</span>
-            <span>{{ item.quantity }}</span>
-            <span>{{ item.price ?? '-' }}</span>
-            <span>{{ item.total ?? '-' }}</span>
+          <div class="field-box">
+            <span class="field-help-label-row">
+              <label class="mini-label">{{ $t('project_item.item') }}</label>
 
-            <button type="button" class="remove-btn" @click="removeItem(item.local_id)">
-              {{ $t('general.delete') }}
+              <FieldHelpIcon
+                :label="$t('project_item.item')"
+                field-name="material"
+                field-id="project-item-item"
+              />
+            </span>
+
+            <UpdatedCustomInputSelect
+              id="project-item-item"
+              v-model="selectedItem"
+              :controller="generalItemController"
+              :params="generalItemParams"
+              :placeholder="$t('project_item.item_placeholder')"
+              :reload="true"
+              required
+              @update:model-value="updateData"
+            />
+          </div>
+
+          <div class="field-box">
+            <span class="field-help-label-row">
+              <label class="mini-label">{{ $t('project_item.pricing_method') }}</label>
+
+              <FieldHelpIcon
+                :label="$t('project_item.pricing_method')"
+                field-name="type"
+                field-id="project-item-pricing-method"
+              />
+            </span>
+
+            <UpdatedCustomInputSelect
+              id="project-item-pricing-method"
+              :model-value="pricingMethod"
+              :placeholder="$t('project_item.pricing_method_placeholder')"
+              :static-options="pricingMethodOptions"
+              required
+              @update:model-value="updatePricingMethod"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div v-if="isFullFloorRelated || isSpaceRelated" class="form-section form-section--related">
+        <div class="form-section__header">
+          <span class="form-section__number">02</span>
+
+          <div>
+            <h4>{{ $t('project_item.related_label') }}</h4>
+            <p>{{ $t('project_item.related_description') }}</p>
+          </div>
+        </div>
+
+        <div class="form-grid form-grid--related">
+          <div v-if="isFullFloorRelated" class="field-box">
+            <span class="field-help-label-row">
+              <label class="mini-label">{{ $t('ProjectFloor.floor_number') }}</label>
+
+              <FieldHelpIcon
+                :label="$t('ProjectFloor.floor_number')"
+                field-name="floor_number"
+                field-id="floor_number"
+              />
+            </span>
+
+            <UpdatedCustomInputSelect
+              id="floor_number"
+              :model-value="selectedFloorNumber"
+              :static-options="projectFloorOptions"
+              :placeholder="$t('ProjectFloor.floor_number_placeholder')"
+              required
+              @update:model-value="updateFloorNumber"
+            />
+          </div>
+
+          <div v-if="isSpaceRelated" class="field-box">
+            <span class="field-help-label-row">
+              <label class="mini-label">{{ $t('ProjectFloor.space') }}</label>
+
+              <FieldHelpIcon
+                :label="$t('ProjectFloor.space')"
+                field-name="space"
+                field-id="space_id"
+              />
+            </span>
+
+            <UpdatedCustomInputSelect
+              id="space_id"
+              :model-value="selectedSpace"
+              :static-options="projectFloorSpaceOptions"
+              :placeholder="$t('ProjectFloor.space_placeholder')"
+              @update:model-value="updateSelectedSpace"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section__header">
+          <span class="form-section__number">
+            {{ isFullFloorRelated || isSpaceRelated ? '03' : '02' }}
+          </span>
+
+          <div>
+            <h4>{{ $t('project_item.pricing_details') }}</h4>
+            <p>{{ $t('project_item.pricing_details_description') }}</p>
+          </div>
+        </div>
+
+        <div class="form-grid form-grid--pricing">
+          <div class="field-box">
+            <span class="field-help-label-row">
+              <label class="mini-label">{{ $t('project_item.quantity') }}</label>
+
+              <FieldHelpIcon :label="$t('project_item.quantity')" field-name="quantity" />
+            </span>
+
+            <input
+              v-model.number="quantity"
+              class="field-input"
+              min="0"
+              step="1"
+              type="number"
+              @input="updateData"
+            />
+          </div>
+
+          <div v-if="isGeneralItem || isFullFloorRelated" class="field-box">
+            <span class="field-help-label-row">
+              <label class="mini-label">{{ $t('project_item.price') }}</label>
+
+              <FieldHelpIcon :label="$t('project_item.price')" field-name="price" />
+            </span>
+
+            <input
+              v-model.number="price"
+              class="field-input"
+              min="0"
+              step="0.01"
+              type="number"
+              @input="updateData"
+            />
+          </div>
+
+          <div v-if="isGeneralItem || isFullFloorRelated" class="field-box">
+            <span class="field-help-label-row">
+              <label class="mini-label">{{ $t('project_item.total_label') }}</label>
+
+              <FieldHelpIcon :label="$t('project_item.total_label')" field-name="total" />
+            </span>
+
+            <div class="total-field">
+              <span>{{ total.toLocaleString() }}</span>
+            </div>
+          </div>
+
+          <div class="field-box field-box--action">
+            <span class="field-help-label-row field-help-label-row--ghost">
+              <label class="mini-label">{{ $t('general.actions') }}</label>
+            </span>
+
+            <button type="button" class="add-btn" :disabled="loading" @click="addItemToList">
+              <i class="pi pi-plus"></i>
+              <span>{{ $t('general.add') }}</span>
             </button>
           </div>
         </div>
+      </div>
 
-        <div class="local-total">
-          <span>{{ $t('project_item.total_label') }}</span>
-          <strong>{{ localItemsTotal.toLocaleString() }}</strong>
+      <div class="items-section">
+        <div class="items-section__header">
+          <div>
+            <h4>{{ $t('project_item.selected_items') }}</h4>
+            <p>{{ $t('project_item.selected_items_description') }}</p>
+          </div>
+
+          <span class="items-section__badge">
+            {{ localItems.length }}
+          </span>
         </div>
+
+        <div v-if="!localItems.length" class="empty-local-row">
+          <span class="empty-local-row__icon">
+            <i class="pi pi-inbox"></i>
+          </span>
+
+          <strong>{{ $t('project_item.no_items') }}</strong>
+        </div>
+
+        <div v-else class="local-table-wrap">
+          <div class="local-table">
+            <div class="local-table-head">
+              <span>{{ $t('project_item.item') }}</span>
+              <span>{{ $t('project_item.related_label') }}</span>
+              <span>{{ $t('project_item.pricing_method') }}</span>
+              <span>{{ $t('project_item.quantity') }}</span>
+              <span>{{ $t('project_item.price') }}</span>
+              <span>{{ $t('project_item.total_label') }}</span>
+              <span>{{ $t('general.actions') }}</span>
+            </div>
+
+            <div v-for="item in localItems" :key="item.local_id" class="local-table-row">
+              <span class="local-table-row__primary">
+                {{ item.item_title }}
+              </span>
+
+              <span>{{ item.related_title }}</span>
+              <span>{{ item.pricing_method_title }}</span>
+              <span>{{ item.quantity }}</span>
+              <span>{{ item.price ?? '-' }}</span>
+              <span class="local-table-row__total">{{ item.total ?? '-' }}</span>
+
+              <button
+                type="button"
+                class="remove-btn"
+                :title="$t('general.delete')"
+                @click="removeItem(item.local_id)"
+              >
+                <i class="pi pi-trash"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <footer class="local-total">
+          <span>{{ $t('project_item.total_label') }}</span>
+
+          <strong>{{ localItemsTotal.toLocaleString() }}</strong>
+        </footer>
       </div>
     </div>
   </section>
@@ -680,204 +769,437 @@
 
 <style scoped lang="scss">
   .pricing-card {
-    display: flex;
-    flex-direction: column;
-    gap: 0.85rem;
-    padding: 1rem;
-    border: 1px solid rgba(214, 207, 198, 0.9);
-    border-radius: 18px;
-    background: #fff;
+    overflow: hidden;
+    border: 1px solid var(--border-weak);
+    border-radius: 28px;
+    background: var(--BgWhite);
+    box-shadow: 0 18px 50px rgba(15, 23, 42, 0.06);
   }
 
   .pricing-header {
     display: flex;
-    justify-content: flex-start;
-    text-align: right;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border-weak);
+    background: linear-gradient(
+      135deg,
+      var(--BgWhite),
+      color-mix(in sRGB, var(--PrimaryColor-light) 45%, var(--BgWhite))
+    );
+  }
+
+  .pricing-header__content {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    gap: 1rem;
 
     h3 {
       margin: 0;
-      color: #111827;
+      color: var(--bread-crumb-color-span);
       font-family: 'Bold';
-      font-size: 1rem;
+      font-size: 1.15rem;
+    }
+
+    p {
+      margin: 0.3rem 0 0;
+      color: var(--gray-5);
+      font-size: var(--xs-size);
+    }
+  }
+
+  .pricing-header__icon {
+    display: inline-flex;
+    width: 48px;
+    height: 48px;
+    flex: 0 0 48px;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid color-mix(in sRGB, var(--PrimaryColor) 18%, transparent);
+    border-radius: 16px;
+    background: var(--BgWhite);
+    color: var(--PrimaryColor);
+    box-shadow: 0 8px 24px color-mix(in sRGB, var(--PrimaryColor) 12%, transparent);
+  }
+
+  .pricing-header__count {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 0.7rem;
+    color: var(--gray-5);
+    font-family: 'Medium';
+    font-size: var(--xs-size);
+
+    strong {
+      display: inline-flex;
+      min-width: 38px;
+      height: 38px;
+      align-items: center;
+      justify-content: center;
+      border-radius: 12px;
+      background: var(--PrimaryColor);
+      color: #fff;
+      font-family: 'Bold';
     }
   }
 
   .add-panel {
-    padding: 0.75rem;
-    border: 1px solid rgba(214, 207, 198, 0.85);
-    border-radius: 14px;
-    background: #fafbfc;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1.25rem;
+    background: color-mix(in sRGB, var(--bg-main) 72%, var(--BgWhite));
 
     &.disabled {
       pointer-events: none;
-      opacity: 0.7;
+      opacity: 0.65;
     }
   }
 
-  .form-row {
+  .form-section,
+  .items-section {
+    padding: 1.15rem;
+    border: 1px solid var(--border-weak);
+    border-radius: 20px;
+    background: var(--BgWhite);
+  }
+
+  .form-section--related {
+    background: color-mix(in sRGB, var(--PrimaryColor-light) 24%, var(--BgWhite));
+  }
+
+  .form-section__header,
+  .items-section__header {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    margin-bottom: 1rem;
+
+    h4 {
+      margin: 0;
+      color: var(--bread-crumb-color-span);
+      font-family: 'Bold';
+      font-size: 0.95rem;
+    }
+
+    p {
+      margin: 0.25rem 0 0;
+      color: var(--gray-5);
+      font-size: var(--xs-size);
+    }
+  }
+
+  .form-section__number {
+    display: inline-flex;
+    width: 34px;
+    height: 34px;
+    flex: 0 0 34px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background: var(--PrimaryColor-light);
+    color: var(--PrimaryColor);
+    font-family: 'Bold';
+    font-size: 0.78rem;
+  }
+
+  .form-grid {
     display: grid;
-    grid-template-columns:
-      minmax(150px, 1fr)
-      minmax(150px, 1fr)
-      minmax(150px, 1fr)
-      minmax(170px, 1.1fr)
-      minmax(110px, 0.7fr)
-      minmax(150px, 0.8fr)
-      minmax(150px, 0.8fr)
-      minmax(140px, 0.7fr);
-    gap: 0.55rem;
+    gap: 1rem;
     align-items: end;
   }
 
+  .form-grid--main {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .form-grid--related {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .form-grid--pricing {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
   .field-box {
+    display: flex;
     min-width: 0;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .field-help-label-row {
+    display: flex;
+    min-height: 24px;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .field-help-label-row--ghost {
+    visibility: hidden;
   }
 
   .mini-label {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 0.3rem;
-    color: #334155;
+    color: var(--gray-6);
     font-family: 'Bold';
-    font-size: 0.75rem;
+    font-size: 0.78rem;
+  }
+
+  .field-input,
+  .total-field,
+  .add-btn {
+    width: 100%;
+    min-height: 48px;
+    border-radius: 14px;
   }
 
   .field-input {
-    width: 100%;
-    min-height: 42px;
-    padding: 0.55rem 0.75rem;
-    border: 1px solid rgba(210, 199, 187, 0.95);
-    border-radius: 9px;
-    background: #fff;
-    color: #111827;
+    padding: 0.75rem 0.9rem;
+    border: 1px solid var(--border-weak);
+    background: var(--BgWhite);
+    color: var(--bread-crumb-color-span);
     outline: none;
-    text-align: center;
     font-family: 'Medium';
     font-size: var(--sm-size);
+    transition:
+      border-color 0.2s ease,
+      box-shadow 0.2s ease;
+
+    &:focus {
+      border-color: var(--PrimaryColor);
+      box-shadow: 0 0 0 3px var(--PrimaryColor-light);
+    }
   }
 
-  .readonly-input {
-    background: #fff;
-    color: #111827;
+  .total-field {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid color-mix(in sRGB, var(--PrimaryColor) 20%, var(--border-weak));
+    background: var(--PrimaryColor-light);
+    color: var(--PrimaryColor);
+    font-family: 'Bold';
   }
 
   .add-btn {
-    min-height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
     border: 0;
-    border-radius: 10px;
-    background: linear-gradient(135deg, #b77733, #050505);
+    background: var(--PrimaryColor);
     color: #fff;
     cursor: pointer;
     font-family: 'Bold';
-    transition: all 0.25s ease;
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease,
+      opacity 0.2s ease;
 
     &:disabled {
       cursor: not-allowed;
-      opacity: 0.65;
+      opacity: 0.55;
     }
 
     &:hover:not(:disabled) {
       transform: translateY(-1px);
-      box-shadow: 0 12px 24px rgba(117, 70, 28, 0.18);
+      box-shadow: 0 10px 24px color-mix(in sRGB, var(--PrimaryColor) 24%, transparent);
     }
   }
 
-  .local-items-table {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    margin-top: 1rem;
+  .items-section {
+    padding: 0;
+    overflow: hidden;
   }
 
-  .local-table-summary,
-  .local-total {
-    display: flex;
-    align-items: center;
+  .items-section__header {
     justify-content: space-between;
-    padding: 0.75rem 1rem;
-    border-radius: 14px;
-    background: #fff;
-    color: #111827;
+    margin: 0;
+    padding: 1rem 1.15rem;
+    border-bottom: 1px solid var(--border-weak);
+    background: var(--bg-main);
+  }
+
+  .items-section__badge {
+    display: inline-flex;
+    min-width: 34px;
+    height: 34px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background: var(--PrimaryColor-light);
+    color: var(--PrimaryColor);
     font-family: 'Bold';
-
-    span {
-      color: #64748b;
-    }
-
-    strong {
-      color: var(--PrimaryColor);
-    }
   }
 
   .empty-local-row {
-    padding: 1rem;
-    border: 1px dashed rgba(148, 163, 184, 0.45);
-    border-radius: 14px;
-    background: #fff;
-    color: #64748b;
+    display: flex;
+    min-height: 170px;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 0.75rem;
+    color: var(--gray-5);
     text-align: center;
-    font-family: 'Medium';
+
+    strong {
+      font-family: 'Medium';
+    }
+  }
+
+  .empty-local-row__icon {
+    display: inline-flex;
+    width: 54px;
+    height: 54px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 18px;
+    background: var(--bg-main);
+    color: var(--PrimaryColor);
+    font-size: 1.2rem;
+  }
+
+  .local-table-wrap {
+    overflow-x: auto;
   }
 
   .local-table {
-    overflow: hidden;
-    border: 1px solid rgba(214, 207, 198, 0.75);
-    border-radius: 14px;
-    background: #fff;
+    min-width: 980px;
   }
 
   .local-table-head,
   .local-table-row {
     display: grid;
     grid-template-columns:
-      minmax(160px, 1.2fr)
-      minmax(130px, 1fr)
-      minmax(130px, 1fr)
+      minmax(170px, 1.3fr)
+      minmax(140px, 1fr)
+      minmax(150px, 1fr)
       minmax(90px, 0.6fr)
       minmax(100px, 0.7fr)
-      minmax(100px, 0.7fr)
-      minmax(90px, 0.6fr);
-    gap: 0.65rem;
+      minmax(110px, 0.75fr)
+      56px;
+    gap: 0.75rem;
     align-items: center;
+    padding: 0.8rem 1rem;
   }
 
   .local-table-head {
-    padding: 0.75rem 1rem;
-    background: #f8fafc;
-    color: #1e293b;
+    background: var(--bg-main);
+    color: var(--gray-6);
     font-family: 'Bold';
-    font-size: 0.75rem;
+    font-size: 0.76rem;
   }
 
   .local-table-row {
-    padding: 0.75rem 1rem;
-    border-top: 1px solid rgba(214, 207, 198, 0.75);
-    color: #334155;
+    min-height: 58px;
+    border-top: 1px solid var(--border-weak);
+    color: var(--bread-crumb-color-span);
     font-family: 'Medium';
     font-size: var(--sm-size);
+
+    > span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
   }
 
-  .remove-btn {
-    min-height: 34px;
-    border: 1px solid rgba(239, 68, 68, 0.35);
-    border-radius: 9px;
-    background: #fff;
-    color: #ef4444;
-    cursor: pointer;
+  .local-table-row__primary,
+  .local-table-row__total {
+    color: var(--bread-crumb-color-span);
     font-family: 'Bold';
   }
 
-  @media (max-width: 1200px) {
-    .form-row,
-    .local-table-head,
-    .local-table-row {
+  .local-table-row__total {
+    color: var(--PrimaryColor);
+  }
+
+  .remove-btn {
+    display: inline-flex;
+    width: 36px;
+    height: 36px;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(239, 68, 68, 0.24);
+    border-radius: 10px;
+    background: var(--BgWhite);
+    color: var(--Red);
+    cursor: pointer;
+    transition:
+      background 0.2s ease,
+      transform 0.2s ease;
+
+    &:hover {
+      transform: translateY(-1px);
+      background: var(--danger-light);
+    }
+  }
+
+  .local-total {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 1.15rem;
+    border-top: 1px solid var(--border-weak);
+    background: linear-gradient(135deg, var(--PrimaryColor-light), var(--BgWhite));
+
+    span {
+      color: var(--gray-6);
+      font-family: 'Bold';
+    }
+
+    strong {
+      color: var(--PrimaryColor);
+      font-family: 'Bold';
+      font-size: 1.05rem;
+    }
+  }
+
+  .add-panel :deep(.input-label) {
+    display: none;
+  }
+
+  .add-panel :deep(.p-select),
+  .add-panel :deep(.custom-select),
+  .add-panel :deep(.form-control) {
+    min-height: 48px;
+    border-radius: 14px;
+  }
+
+  @media (max-width: 1100px) {
+    .form-grid--main,
+    .form-grid--pricing {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
 
   @media (max-width: 768px) {
-    .form-row {
+    .pricing-header {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .pricing-header__count {
+      width: 100%;
+      justify-content: space-between;
+    }
+
+    .form-grid--main,
+    .form-grid--related,
+    .form-grid--pricing {
       grid-template-columns: 1fr;
+    }
+
+    .field-help-label-row--ghost {
+      display: none;
+    }
+
+    .local-table {
+      min-width: 0;
     }
 
     .local-table-head {
@@ -886,10 +1208,16 @@
 
     .local-table-row {
       grid-template-columns: 1fr;
-    }
-  }
+      gap: 0.45rem;
+      padding: 1rem;
 
-  .add-panel :deep(.input-label) {
-    display: none;
+      > span {
+        white-space: normal;
+      }
+    }
+
+    .remove-btn {
+      width: 100%;
+    }
   }
 </style>

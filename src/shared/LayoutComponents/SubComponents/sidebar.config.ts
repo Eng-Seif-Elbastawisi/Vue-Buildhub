@@ -312,7 +312,6 @@ export const sidebarSections: SidebarSectionConfig[] = [
         labelKey: 'sidebar.design_projects',
         icon: SidebarProjectIcon,
         roles: ['organization'],
-        countKey: 'projects.total_count',
       },
       {
         labelKey: 'sidebar.plan',
