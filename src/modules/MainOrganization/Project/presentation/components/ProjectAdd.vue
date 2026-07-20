@@ -1,41 +1,60 @@
+```vue
 <script setup lang="ts">
   import { ref } from 'vue';
   import { useI18n } from 'vue-i18n';
   import { useRoute } from 'vue-router';
+
   import RadioButton from 'primevue/radiobutton';
+
   import { dialogManager } from '@/base/Presentation/Dialogs/dialog.manager';
-  import type AddProjectParams from '../../core/params/add.project.params.ts';
-  import ProjectController, { type ProjectNextStep } from '../controllers/project.controller.ts';
+
+  import type AddProjectParams from '../../core/params/add.project.params';
+  import ProjectController, { type ProjectNextStep } from '../controllers/project.controller';
+
   import ProjectForm from './ProjectForm.vue';
   import ProjectSteps from './ProjectSteps.vue';
 
   const controller = ProjectController.getInstance();
+
   const route = useRoute();
+
   const { t } = useI18n();
+
   const params = ref<AddProjectParams | null>(null);
+
   const loading = ref(false);
+
   const nextStep = ref<ProjectNextStep>('preview');
 
-  const canSubmitProject = () => {
+  const canSubmitProject = (): boolean => {
     if (!params.value) {
       dialogManager.toastWarning(t('Project.validation.cant_send_empty_data'));
+
       return false;
     }
 
     const validation = params.value.validate();
+
     if (!validation.isValid) {
       dialogManager.toastWarning(
         validation.errors[0]?.message || t('Project.validation.cant_send_empty_data'),
       );
+
       return false;
     }
 
     return true;
   };
 
-  const saveProject = async () => {
-    if (!canSubmitProject() || !params.value) return;
+  const saveProject = async (): Promise<void> => {
+    if (!params.value) return;
+
+    params.value.with_preview = nextStep.value === 'preview' ? 1 : 0;
+
+    if (!canSubmitProject()) return;
+
     loading.value = true;
+
     try {
       await controller.create(params.value, undefined, route.fullPath, nextStep.value);
     } finally {
@@ -47,15 +66,20 @@
 <template>
   <div class="Project-crud-page">
     <ProjectSteps :current-step="1" />
+
     <ProjectForm :loading="loading" :is-edit="false" @update-data="params = $event" />
 
     <fieldset class="next-step-selector" :disabled="loading">
-      <legend>{{ $t('Project.next_step') }}</legend>
+      <legend>
+        {{ $t('Project.next_step') }}
+      </legend>
 
       <div class="next-step-options">
         <label
           class="next-step-option"
-          :class="{ 'next-step-option--selected': nextStep === 'preview' }"
+          :class="{
+            'next-step-option--selected': nextStep === 'preview',
+          }"
           for="project-next-step-preview"
         >
           <RadioButton
@@ -64,12 +88,17 @@
             name="project-next-step"
             value="preview"
           />
-          <span>{{ $t('Project.add_preview_first') }}</span>
+
+          <span>
+            {{ $t('Project.add_preview_first') }}
+          </span>
         </label>
 
         <label
           class="next-step-option"
-          :class="{ 'next-step-option--selected': nextStep === 'floor' }"
+          :class="{
+            'next-step-option--selected': nextStep === 'floor',
+          }"
           for="project-next-step-floor"
         >
           <RadioButton
@@ -78,20 +107,24 @@
             name="project-next-step"
             value="floor"
           />
-          <span>{{ $t('Project.continue_without_preview') }}</span>
+
+          <span>
+            {{ $t('Project.continue_without_preview') }}
+          </span>
         </label>
       </div>
     </fieldset>
 
     <button
-      :class="{ 'btn--loading': loading }"
       class="btn btn-primary"
+      :class="{ 'btn--loading': loading }"
       type="button"
       :disabled="loading"
       @click="saveProject"
     >
       {{ $t('Project.save') }}
     </button>
+
     <div v-if="controller.errorMessage.value" class="error">
       {{ controller.errorMessage.value }}
     </div>
@@ -108,10 +141,10 @@
   .error {
     margin-top: 20px;
     padding: 10px;
-    background-color: var(--danger-light);
-    color: var(--danger-dark);
     border: 1px solid #f5c6cb;
     border-radius: 4px;
+    background-color: var(--danger-light);
+    color: var(--danger-dark);
   }
 
   .btn-primary {
@@ -155,11 +188,21 @@
       color 0.2s ease;
   }
 
+  .next-step-option:hover {
+    border-color: var(--PrimaryColor);
+    background: var(--PrimaryColor-light);
+  }
+
   .next-step-option--selected {
     border-color: var(--PrimaryColor);
     background: var(--PrimaryColor-light);
     color: var(--PrimaryColor);
     font-family: 'Medium';
+  }
+
+  .next-step-selector:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
   }
 
   @media (max-width: 640px) {

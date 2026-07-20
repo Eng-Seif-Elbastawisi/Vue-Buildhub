@@ -117,17 +117,19 @@
   };
 
   const submitFinalResult = async (finalParams: AddFinalProjectFloorResultParams) => {
+    const currentProjectId = projectId.value;
+
+    if (!currentProjectId || loading.value) {
+      return;
+    }
+
     loading.value = true;
 
     try {
       await controller.getProject(finalParams);
 
       await router.push({
-        path: `${getPrefix()}/project-item/add`,
-        query: {
-          project_id: projectId.value,
-          project_item: projectItem.value,
-        },
+        path: `${getPrefix()}/Project/show/${currentProjectId}`,
       });
     } finally {
       loading.value = false;
@@ -135,26 +137,25 @@
   };
 
   const goToNextStep = async () => {
-    if (loading.value || projectId.value === undefined || projectItem.value <= 0) {
+    const currentProjectId = projectId.value;
+
+    if (!currentProjectId || loading.value) {
       return;
     }
 
     await router.push({
-      path: `${getPrefix()}/project-item/add`,
-      query: {
-        project_id: projectId.value,
-        project_item: projectItem.value,
-      },
+      path: `${getPrefix()}/Project/show/${currentProjectId}`,
     });
   };
-
   const goToProjectShow = async () => {
-    if (loading.value || projectId.value === undefined) {
+    const currentProjectId = projectId.value;
+
+    if (!currentProjectId || loading.value) {
       return;
     }
 
     await router.push({
-      path: `${getPrefix()}/Project/show/${projectId.value}`,
+      path: `${getPrefix()}/Project/show/${currentProjectId}`,
     });
   };
 
