@@ -122,17 +122,17 @@ export const useProjectShow = () => {
       projectModel.value?.convert_status ??
       project.value.convert_status ??
       project.value.status ??
-      ConvertStatus.PENDING;
+      ConvertStatus.WAITING_PREVIEW;
 
     return Number(value) as ConvertStatus;
   });
 
   const getConvertStatusMeta = (status: ConvertStatus) => {
     switch (status) {
-      case ConvertStatus.PENDING:
+      case ConvertStatus.READY_TO_SENT:
         return {
-          label: t('project.convertStatus.pending'),
-          className: 'is-pending',
+          label: t('project.convertStatus.readyToSent'),
+          className: 'is-converted',
         };
 
       case ConvertStatus.CONVERT_TO_PROJECT:
@@ -165,6 +165,23 @@ export const useProjectShow = () => {
           className: 'is-muted',
         };
 
+      case ConvertStatus.WAITING_PRICING:
+        return {
+          label: t('project.convertStatus.waitingPricing'),
+          className: 'is-muted',
+        };
+      case ConvertStatus.WAITING_PREVIEW:
+        return {
+          label: t('project.convertStatus.waitingPreview'),
+          className: 'is-muted',
+        };
+
+      case ConvertStatus.WAITING_PREVIEW_RESULT:
+        return {
+          label: t('project.convertStatus.waitingPreviewResult'),
+          className: 'is-muted',
+        };
+
       default:
         return {
           label: t('project.convertStatus.pending'),
@@ -175,7 +192,7 @@ export const useProjectShow = () => {
 
   const convertActionLabel = computed(() => {
     switch (currentConvertStatus.value) {
-      case ConvertStatus.PENDING:
+      case ConvertStatus.WAITING_PREVIEW:
         return t('project.convertActions.convertMeasurementToProject');
 
       case ConvertStatus.CONVERT_TO_PROJECT:
@@ -1014,9 +1031,9 @@ export const useProjectShow = () => {
       let result;
 
       switch (oldStatus) {
-        case ConvertStatus.PENDING:
-          result = await projectController.convertMeasurementToProject(payload);
-          break;
+        // case ConvertStatus.PENDING:
+        //   result = await projectController.convertMeasurementToProject(payload);
+        //   break;
 
         case ConvertStatus.CONVERT_TO_PROJECT:
           result = await projectController.storeVersion(payload);
