@@ -8,6 +8,7 @@
   import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
   import { dialogManager } from '@/base/Presentation/Dialogs/dialog.manager';
   import { useUserStore } from '@/stores/user';
+  import { useSystemIdentityTheme } from '@/modules/shared/SystemIdentity/presentation/composables/useSystemIdentityTheme';
   import { InvoicePaymentMethodEnum } from '@/modules/MainOrganization/InvoicePayment/core/constant/invoice.payment.method.enum';
   import type InvoicePaymentModel from '@/modules/MainOrganization/InvoicePayment/core/models/invoice.payment.model';
   import type AddInvoicePaymentParams from '@/modules/MainOrganization/InvoicePayment/core/params/add.invoice.payment.params';
@@ -34,6 +35,7 @@
   const route = useRoute();
   const { t } = useI18n();
   const { user } = useUserStore();
+  const { currentPalette } = useSystemIdentityTheme();
   const invoiceController = InvoiceController.getInstance();
   const paymentController = InvoicePaymentController.getInstance();
 
@@ -46,6 +48,12 @@
   const creatingPayment = ref(false);
   const exportingPdf = ref(false);
   const exportingInvoice = ref(false);
+
+  const paletteStyle = computed(() => ({
+    '--palette-primary': currentPalette.value.primary,
+    '--palette-secondary': currentPalette.value.secondary,
+    '--palette-accent': currentPalette.value.accent,
+  }));
 
   const emptyValue = '-';
 
@@ -240,7 +248,8 @@
 
     paymentInvoiceId.value = targetInvoiceId;
     paymentRemainingAmount.value =
-      targetRemainingAmount ?? (targetInvoiceId === invoiceId.value ? remainingAmount.value : undefined);
+      targetRemainingAmount ??
+      (targetInvoiceId === invoiceId.value ? remainingAmount.value : undefined);
     paymentDialogOpen.value = true;
   };
 
@@ -400,7 +409,7 @@
 <template>
   <DataStatusBuilder :controller="invoiceState" :on-retry="refreshInvoice">
     <template #success="{ data }">
-      <div v-if="data" class="invoice-show-page">
+      <div v-if="data" class="invoice-show-page" :style="paletteStyle">
         <InvoiceShowHeader
           :invoice="data as InvoiceShowModel"
           :status-label="statusLabel"
@@ -414,15 +423,15 @@
           @download="downloadInvoicePdf"
           @export-invoice="exportInvoice"
           @share="shareInvoice"
-        />
-
-        <InvoiceStatusOverview
-          :invoice-date="invoiceDateLabel"
-          :due-date="dueDateLabel"
-          :status-label="statusLabel"
-          :export-status-label="exportStatusLabel"
-          :currency="currency"
-        />
+        >
+          <InvoiceStatusOverview
+            :invoice-date="invoiceDateLabel"
+            :due-date="dueDateLabel"
+            :status-label="statusLabel"
+            :export-status-label="exportStatusLabel"
+            :currency="currency"
+          />
+        </InvoiceShowHeader>
 
         <div class="invoice-show-layout">
           <main class="invoice-show-main">

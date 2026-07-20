@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import invoiceSummaryHero from '@/assets/images/ChatGPT Image Jul 12, 2026, 03_06_52 PM.png';
+  import paymentCoinsIcon from '@/assets/images/payment-coins-icon.png';
 
   defineProps<{
     totalAmount: number;
@@ -18,9 +18,9 @@
         <p>{{ $t('invoice_show.total_amount') }}</p>
         <strong>{{ formatAmount(totalAmount) }} {{ currency }}</strong>
       </div>
-      <figure class="invoice-payment-summary__receipt">
-        <img :src="invoiceSummaryHero" :alt="$t('invoice_show.invoice_illustration_alt')" />
-      </figure>
+      <span class="invoice-payment-summary__payment-icon invoice-show-asset-icon">
+        <img :src="paymentCoinsIcon" alt="" aria-hidden="true" />
+      </span>
     </div>
 
     <dl class="invoice-payment-summary__rows">
@@ -35,7 +35,7 @@
     </dl>
 
     <div class="invoice-payment-summary__notice" :class="{ 'is-paid': isPaid }">
-      <i :class="isPaid ? 'pi pi-check-circle' : 'pi pi-info-circle'"></i>
+      <i :class="isPaid ? 'pi pi-check-circle' : 'pi pi-info-circle'" aria-hidden="true"></i>
       <span>
         {{ isPaid ? $t('invoice_show.fully_paid') : $t('invoice_show.payment_pending') }}
       </span>
