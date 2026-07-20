@@ -10,6 +10,10 @@ describe('InvoiceModel', () => {
       project: {
         id: 10,
         title: [{ locale: 'en', title: 'Commercial Project' }],
+        attachments: [
+          { file: 'https://assets.test/project-plan.pdf' },
+          { file: 'https://assets.test/project-photo.webp' },
+        ],
       },
       invoice_number: 'INV-2026-0001',
       invoice_date: '2026-07-05',
@@ -21,6 +25,7 @@ describe('InvoiceModel', () => {
     expect(model.id).toBe(3);
     expect(model.project_id).toBe(10);
     expect(model.project?.title).toBe('Commercial Project');
+    expect(model.project?.image).toBe('https://assets.test/project-photo.webp');
     expect(model.invoice_amount).toBe(15000);
     expect(model.notes).toBe('First design invoice');
     expect(model.status).toBe(InvoiceStatusEnum.PAID);

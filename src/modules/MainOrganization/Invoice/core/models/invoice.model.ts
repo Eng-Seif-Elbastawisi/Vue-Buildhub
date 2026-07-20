@@ -2,6 +2,7 @@ export type InvoiceProjectModel = {
   id?: number;
   title?: string;
   name?: string;
+  image?: string;
 };
 
 export default class InvoiceModel {
@@ -60,7 +61,29 @@ export default class InvoiceModel {
       id: data.id as number | undefined,
       title: InvoiceModel.getPlainTitle(data.title),
       name: data.name as string | undefined,
+      image: InvoiceModel.getProjectImage(data),
     };
+  }
+
+  static getProjectImage(data: Record<string, unknown>): string | undefined {
+    const attachments = Array.isArray(data.attachments)
+      ? (data.attachments as Array<Record<string, unknown>>)
+      : [];
+    const directImage = [
+      data.image,
+      data.photo,
+      data.project_image,
+      data.image_url,
+      data.cover,
+    ].find((candidate): candidate is string => typeof candidate === 'string' && candidate !== '');
+    const attachmentImage = attachments
+      .map((attachment) => attachment.file ?? attachment.link)
+      .find(
+        (candidate): candidate is string =>
+          typeof candidate === 'string' && /\.(png|jpe?g|webp|gif)(?:[?#]|$)/i.test(candidate),
+      );
+
+    return directImage ?? attachmentImage;
   }
 
   static fromJson(json: Record<string, unknown>): InvoiceModel {

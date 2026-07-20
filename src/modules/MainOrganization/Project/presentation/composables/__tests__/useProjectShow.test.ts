@@ -34,6 +34,8 @@ const pdfMocks = vi.hoisted(() => {
     addFont: ReturnType<typeof vi.fn>;
     setR2L: ReturnType<typeof vi.fn>;
     processArabic: ReturnType<typeof vi.fn>;
+    getImageProperties: ReturnType<typeof vi.fn>;
+    addImage: ReturnType<typeof vi.fn>;
   }> = [];
 
   const jsPDF = vi.fn(function () {
@@ -56,6 +58,8 @@ const pdfMocks = vi.hoisted(() => {
       addFont: vi.fn(),
       setR2L: vi.fn(),
       processArabic: vi.fn((text: string) => `arabic:${text}`),
+      getImageProperties: vi.fn(() => ({ width: 200, height: 100 })),
+      addImage: vi.fn(),
     };
 
     instances.push(pdf);
@@ -157,6 +161,21 @@ vi.mock('jspdf', () => ({
 
 vi.mock('jspdf-autotable', () => ({
   default: pdfMocks.autoTable,
+}));
+
+vi.mock('@/stores/user', () => ({
+  useUserStore: () => ({
+    user: {
+      email: 'employee@techlab.test',
+      setting: {
+        logo: 'data:image/png;base64,company-logo',
+        organization: {
+          name: 'Techlab',
+          address: 'Techlab Headquarters',
+        },
+      },
+    },
+  }),
 }));
 
 vi.mock('../../controllers/project.controller', () => ({
@@ -321,5 +340,26 @@ describe('useProjectShow', () => {
     expect(pdfMocks.autoTable.mock.calls[0][1].styles.font).toBe('NotoNaskhArabic');
     expect(pdf?.processArabic).toHaveBeenCalledWith('مرحبا');
     expect(pdf?.save).toHaveBeenCalled();
+  });
+
+  it('adds the company logo and identity details to the project PDF', async () => {
+    const projectShow = mountComposable();
+    await nextTick();
+
+    await projectShow.downloadProjectPdf();
+
+    const pdf = pdfMocks.instances.at(-1);
+    const renderedText = pdf?.text.mock.calls.map(([text]) => text);
+
+    expect(pdf?.addImage).toHaveBeenCalledWith('data:image/png;base64,company-logo', 16, 8, 12, 6);
+    expect(pdf?.text).toHaveBeenCalledWith('Project Alpha', 194, 12, {
+      align: 'right',
+      maxWidth: 90,
+    });
+    expect(pdf?.text.mock.calls.filter(([, x, y]) => x === 194 && y === 19)).toEqual([]);
+    expect(pdf?.addPage).toHaveBeenCalledTimes(1);
+    expect(renderedText).toContain('Techlab');
+    expect(renderedText).toContain('email: employee@techlab.test | phone: —');
+    expect(renderedText).toContain('address: Techlab Headquarters');
   });
 });

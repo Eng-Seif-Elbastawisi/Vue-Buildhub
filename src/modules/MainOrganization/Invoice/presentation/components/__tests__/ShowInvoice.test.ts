@@ -1,5 +1,5 @@
 import { flushPromises, mount } from '@vue/test-utils';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import AddInvoicePaymentParams from '@/modules/MainOrganization/InvoicePayment/core/params/add.invoice.payment.params';
 import AddInvoicePaymentDialog from '../invoice_show/AddInvoicePaymentDialog.vue';
 import ShowInvoice from '../ShowInvoice.vue';
@@ -7,6 +7,35 @@ import ShowInvoice from '../ShowInvoice.vue';
 const fetchInvoiceById = vi.fn();
 const fetchInvoicePayments = vi.fn();
 const createInvoicePayment = vi.fn();
+const pdfMocks = vi.hoisted(() => {
+  const instances: Array<Record<string, unknown>> = [];
+  const jsPDF = vi.fn(function () {
+    const pdf = {
+      internal: {
+        pageSize: {
+          getWidth: () => 210,
+          getHeight: () => 297,
+        },
+      },
+      getNumberOfPages: vi.fn(() => 1),
+      setPage: vi.fn(),
+      setFont: vi.fn(),
+      setFontSize: vi.fn(),
+      setDrawColor: vi.fn(),
+      line: vi.fn(),
+      text: vi.fn(),
+      getImageProperties: vi.fn(() => ({ width: 100, height: 100 })),
+      addImage: vi.fn(),
+      save: vi.fn(),
+    };
+
+    instances.push(pdf);
+
+    return pdf;
+  });
+
+  return { autoTable: vi.fn(), instances, jsPDF };
+});
 const invoiceData = vi.hoisted(() => ({
   id: 7,
   raw: {
@@ -35,9 +64,13 @@ const invoiceData = vi.hoisted(() => ({
       payment_method: 1,
     },
   ],
-  project: { id: 10, title: 'Tower project' },
+  project: {
+    id: 10,
+    title: 'Tower project',
+    image: 'data:image/webp;base64,project-photo',
+  },
   client: { id: 3, name: 'Client Name' },
-  organization: { id: 1, name: 'Techlab' },
+  organization: { id: 99, name: 'Invoice organization' },
   created_by_employee: { id: 2, name: 'Techlab Employee' },
   children: [
     {
@@ -56,7 +89,32 @@ vi.mock('vue-router', () => ({
 }));
 
 vi.mock('@/stores/user', () => ({
-  useUserStore: () => ({ user: { type: 2 } }),
+  useUserStore: () => ({
+    user: {
+      id: 1,
+      name: 'Techlab Employee',
+      email: 'employee@techlab.com',
+      type: 2,
+      setting: {
+        id: 1,
+        organization: {
+          id: 1,
+          name: 'Techlab',
+          address: 'Techlab Headquarters',
+        },
+        employee: { id: 1, name: 'Techlab Employee' },
+        logo: 'data:image/png;base64,company-logo',
+      },
+    },
+  }),
+}));
+
+vi.mock('jspdf', () => ({
+  jsPDF: pdfMocks.jsPDF,
+}));
+
+vi.mock('jspdf-autotable', () => ({
+  default: pdfMocks.autoTable,
 }));
 
 vi.mock('@/base/Presentation/Dialogs/dialog.manager', () => ({
@@ -89,7 +147,37 @@ vi.mock(
   }),
 );
 
+const mountSuccessfulInvoice = () =>
+  mount(ShowInvoice, {
+    global: {
+      mocks: {
+        $t: (key: string, params?: Record<string, string>) =>
+          params?.number ? `${key} ${params.number}` : key,
+      },
+      stubs: {
+        RouterLink: {
+          props: ['to'],
+          template: '<a><slot /></a>',
+        },
+        Teleport: true,
+        DataStatusBuilder: {
+          template: '<div><slot name="success" :data="$attrs.controller.data" /></div>',
+        },
+        UpdatedCustomInputSelect: true,
+      },
+    },
+  });
+
 describe('ShowInvoice', () => {
+  beforeEach(() => {
+    fetchInvoiceById.mockClear();
+    fetchInvoicePayments.mockClear();
+    createInvoicePayment.mockClear();
+    pdfMocks.autoTable.mockClear();
+    pdfMocks.jsPDF.mockClear();
+    pdfMocks.instances.length = 0;
+  });
+
   it('shows invoice-specific copy when invoice details are empty', () => {
     const wrapper = mount(ShowInvoice, {
       global: {
@@ -108,25 +196,7 @@ describe('ShowInvoice', () => {
   });
 
   it('fetches invoice and invoice payments by route id and renders invoice details', async () => {
-    const wrapper = mount(ShowInvoice, {
-      global: {
-        mocks: {
-          $t: (key: string, params?: Record<string, string>) =>
-            params?.number ? `${key} ${params.number}` : key,
-        },
-        stubs: {
-          RouterLink: {
-            props: ['to'],
-            template: '<a><slot /></a>',
-          },
-          Teleport: true,
-          DataStatusBuilder: {
-            template: '<div><slot name="success" :data="$attrs.controller.data" /></div>',
-          },
-          UpdatedCustomInputSelect: true,
-        },
-      },
-    });
+    const wrapper = mountSuccessfulInvoice();
 
     await flushPromises();
 
@@ -142,24 +212,7 @@ describe('ShowInvoice', () => {
   });
 
   it('opens the existing payment dialog and pays the selected child invoice', async () => {
-    const wrapper = mount(ShowInvoice, {
-      global: {
-        mocks: {
-          $t: (key: string) => key,
-        },
-        stubs: {
-          RouterLink: {
-            props: ['to'],
-            template: '<a><slot /></a>',
-          },
-          Teleport: true,
-          DataStatusBuilder: {
-            template: '<div><slot name="success" :data="$attrs.controller.data" /></div>',
-          },
-          UpdatedCustomInputSelect: true,
-        },
-      },
-    });
+    const wrapper = mountSuccessfulInvoice();
 
     await flushPromises();
     await wrapper.find('.invoice-children-card__pay').trigger('click');
@@ -180,5 +233,30 @@ describe('ShowInvoice', () => {
     await flushPromises();
 
     expect(createInvoicePayment).toHaveBeenCalledWith(23, paymentParams);
+  });
+
+  it('uses the compact company identity header without a project photo in the invoice PDF', async () => {
+    const wrapper = mountSuccessfulInvoice();
+
+    await flushPromises();
+    await wrapper.find('.invoice-show-header__actions button').trigger('click');
+    await flushPromises();
+
+    const pdf = pdfMocks.instances[0] as {
+      addImage: ReturnType<typeof vi.fn>;
+      save: ReturnType<typeof vi.fn>;
+      text: ReturnType<typeof vi.fn>;
+    };
+    const renderedText = pdf.text.mock.calls.map(([text]) => text);
+
+    expect(pdf.addImage).toHaveBeenCalledWith('data:image/png;base64,company-logo', 16, 5, 12, 12);
+    expect(pdf.addImage).toHaveBeenCalledTimes(1);
+    expect(renderedText).toContain('Techlab');
+    expect(renderedText).toContain('Invoice summary');
+    expect(renderedText).not.toContain('Invoice organization');
+    expect(renderedText).toContain('Email: employee@techlab.com | Phone: -');
+    expect(renderedText).toContain('Address: Techlab Headquarters');
+    expect(pdfMocks.autoTable.mock.calls[0]?.[1]).toMatchObject({ startY: 30 });
+    expect(pdf.save).toHaveBeenCalledWith('INV-2026-0001.pdf');
   });
 });

@@ -9,12 +9,27 @@ export interface SystemIdentityPalette {
 }
 
 export interface SystemIdentitySetting {
+  id?: number;
   name?: string | null;
   primary_color?: string | null;
   secondary_color?: string | null;
   accent_color?: string | null;
   third_color?: string | null;
+  email?: string | null;
+  phone?: string | null;
+  address?: string | null;
   logo?: string | null;
+  organization?: SystemIdentityContact | null;
+  employee?: SystemIdentityContact | null;
+  created_at?: string | null;
+}
+
+export interface SystemIdentityContact {
+  id?: number;
+  name?: string | null;
+  email?: string | null;
+  phone?: string | null;
+  address?: string | null;
 }
 
 interface ApplyPaletteOptions {
