@@ -51,9 +51,11 @@
   const canEditProject = computed(() => {
     const projectStatus = Number(props.project.status);
 
-    return [ConvertStatus.PENDING, ConvertStatus.REVISE_VERSION].includes(
-      projectStatus as ConvertStatus,
-    );
+    return [
+      ConvertStatus.WAITING_PREVIEW,
+      ConvertStatus.WAITING_PREVIEW_RESULT,
+      ConvertStatus.REVISE_VERSION,
+    ].includes(projectStatus as ConvertStatus);
   });
 
   const closeActionsMenu = () => {

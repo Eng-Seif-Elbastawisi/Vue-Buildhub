@@ -190,8 +190,7 @@ export const useProjectShow = () => {
 
   const statusActions = computed(() => {
     switch (currentConvertStatus.value) {
-      case ConvertStatus.PENDING:
-      case ConvertStatus.CONVERT_TO_PROJECT:
+      case ConvertStatus.READY_TO_SENT:
       case ConvertStatus.REVISE_VERSION:
         return [
           {
@@ -1253,6 +1252,7 @@ export const useProjectShow = () => {
     stats: stats.value,
     preview: preview.value,
     previews: previews.value,
+    hasProjectFloors: projectFloors.value.length > 0,
     addItemTo: {
       path: '/organization/project_preview/add',
       query: {

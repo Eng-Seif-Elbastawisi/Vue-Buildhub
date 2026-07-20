@@ -1046,6 +1046,8 @@
   "ProjectPreview.list_title": "قائمة معاينات المشاريع",
   "ProjectPreview.list_description": "هنا يمكنك رؤية جميع معاينات المشاريع في النظام",
   "ProjectPreview.visit_title": "رقم الزيارة",
+  "ProjectPreview.evaluation_warning_title": "لا يمكن كتابة التقييم الآن",
+  "ProjectPreview.evaluation_warning_description": "المتابعة وكتابة التقييم الآن ستؤدي إلى تعديل تاريخ المعاينة المحدد حاليًا ({date}).",
   "project_preview.empty_title": "لا توجد معاينات مشاريع بعد",
   "project_preview.empty_description": "أضف معاينة مشروع لبدء تسجيل زيارات الموقع",
   "organization_toggle.sidebar_label": "التحكم في الجلب",

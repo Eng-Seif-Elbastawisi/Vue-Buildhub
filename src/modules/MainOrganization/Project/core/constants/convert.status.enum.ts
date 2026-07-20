@@ -5,6 +5,7 @@ export const ConvertStatus = {
   WAITING_PREVIEW: 1,
   WAITING_PREVIEW_RESULT: 2,
   WAITING_PRICING: 3,
+  READY_TO_SENT: 4,
   CONVERT_TO_PROJECT: 10,
   SEND_TO_CLIENT: 11,
   REVISE_VERSION: 12,
@@ -36,6 +37,8 @@ export function getConvertStatusNameKey(status: ConvertStatus): string {
       return 'project.convertStatus.acceptClient';
     case ConvertStatus.REJECT_CLIENT:
       return 'project.convertStatus.rejectClient';
+    case ConvertStatus.READY_TO_SENT:
+      return 'project.convertStatus.readyToSent';
     default:
       return 'unknown';
   }

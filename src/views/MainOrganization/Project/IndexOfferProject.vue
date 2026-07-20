@@ -6,6 +6,7 @@
     ConvertStatus.SEND_TO_CLIENT,
     ConvertStatus.REJECT_CLIENT,
     ConvertStatus.WAITING_PRICING,
+    ConvertStatus.READY_TO_SENT,
   ];
 </script>
 

@@ -14,6 +14,7 @@
       stats: ProjectStatItem[];
       preview: ProjectPreview | null;
       previews?: ProjectPreview[];
+      hasProjectFloors: boolean;
       addItemTo: RouteLocationRaw;
       previewTitle: string;
       noPreviewLabel: string;
@@ -162,7 +163,7 @@
 
           <AccordionContent class="department-panel__content">
             <div class="preview-grid">
-              <div class="side-info">
+              <!-- <div class="side-info">
                 <i class="pi pi-bell"></i>
                 <span>{{ notificationTypeLabel }}</span>
                 <strong>{{ valueOrEmpty(previewItem.notification_type) }}</strong>
@@ -171,8 +172,8 @@
                 <i class="pi pi-comment"></i>
                 <span>{{ notificationMessageLabel }}</span>
                 <strong>{{ valueOrEmpty(previewItem.notification_message) }}</strong>
-              </div>
-              <div class="side-info side-info--wide">
+              </div> -->
+              <div class="side-info side-info--wide border-top-0">
                 <i class="pi pi-link"></i>
                 <span>{{ siteLinkLabel }}</span>
                 <a
@@ -193,7 +194,7 @@
             </div>
 
             <RouterLink
-              v-if="hasValidPreviewId(previewItem)"
+              v-if="hasValidPreviewId(previewItem) && !hasProjectFloors"
               class="project-action-btn project-action-btn--primary preview-edit-action"
               :to="getEditPreviewRoute(previewItem)"
             >
@@ -228,5 +229,9 @@
   .preview-edit-action {
     width: 100%;
     margin-top: 1rem;
+  }
+
+  .side-info--wide.border-top-0 {
+    border-top: 0;
   }
 </style>

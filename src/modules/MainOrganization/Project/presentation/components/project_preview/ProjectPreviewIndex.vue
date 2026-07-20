@@ -51,6 +51,16 @@
     return [date, time].filter(Boolean).join(' ');
   };
 
+  const isPreviewUpcoming = (preview: ProjectPreviewModel) => {
+    const previewDate = preview.preview_date?.trim();
+    if (!previewDate) return false;
+
+    const previewTime = preview.preview_time?.trim() || '00:00:00';
+    const scheduledTimestamp = new Date(`${previewDate}T${previewTime}`).getTime();
+
+    return Number.isFinite(scheduledTimestamp) && scheduledTimestamp > Date.now();
+  };
+
   const getEngineerName = (item: ProjectPreviewModel) => {
     return item.engineer?.title ?? 'غير محدد';
   };
@@ -110,6 +120,28 @@
                 <div class="preview-card__row">
                   <span class="preview-card__icon">📍</span>
                   <span>{{ getAddress(item) }}</span>
+                </div>
+              </div>
+
+              <div
+                v-if="isPreviewUpcoming(item)"
+                class="preview-card__warning"
+                role="status"
+                aria-live="polite"
+              >
+                <span class="preview-card__warning-icon" aria-hidden="true">
+                  <i class="pi pi-exclamation-triangle"></i>
+                </span>
+
+                <div>
+                  <strong>{{ $t('ProjectPreview.evaluation_warning_title') }}</strong>
+                  <p>
+                    {{
+                      $t('ProjectPreview.evaluation_warning_description', {
+                        date: formatDateTime(item),
+                      })
+                    }}
+                  </p>
                 </div>
               </div>
             </div>
@@ -257,6 +289,45 @@
     background: var(--white);
     border: 1px solid var(--border-weak);
     font-size: 0.78rem;
+  }
+
+  .preview-card__warning {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.85rem 0.95rem;
+    border: 1px solid color-mix(in sRGB, var(--warning) 34%, transparent);
+    border-radius: 14px;
+    color: var(--warning-dark);
+    background: linear-gradient(
+      135deg,
+      var(--warning-light),
+      color-mix(in sRGB, var(--warning-light) 72%, transparent)
+    );
+
+    strong {
+      display: block;
+      font-family: 'Bold';
+      font-size: 0.9rem;
+    }
+
+    p {
+      margin: 0.2rem 0 0;
+      color: inherit;
+      font-size: 0.8rem;
+      line-height: 1.55;
+    }
+  }
+
+  .preview-card__warning-icon {
+    display: grid;
+    flex: 0 0 34px;
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    color: var(--warning-dark);
+    background: color-mix(in sRGB, var(--warning) 18%, transparent);
+    place-items: center;
   }
 
   @media (max-width: 768px) {
