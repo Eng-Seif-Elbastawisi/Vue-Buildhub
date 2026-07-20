@@ -4,11 +4,11 @@
 
   import type TitleInterface from '@/base/Data/Models/titleInterface';
   import UpdatedCustomInputSelect from '@/shared/FormInputs/UpdatedCustomInputSelect.vue';
-  import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
 
   import AddProjectFloorParams, {
+    type ProjectFloorAttachmentParams,
+    type ProjectFloorItemParams,
     type ProjectFloorSpaceParams,
-    type ProjectFloorSpaceAttachmentParams,
   } from '../../core/params/add.project.floor.params';
   import { FloorNumber } from '../../core/constants/floor.number.enum';
 
@@ -16,8 +16,8 @@
 
   import IndexSpaceParams from '@/modules/shared/Space/core/params/index.space.params';
   import SpaceController from '@/modules/shared/Space/presentation/controllers/space.controller';
-  import type ProjectFloorModel from '../../core/models/project.floor.model.ts';
-  import type ProjectFloorShowModel from '../../core/models/project.floor.show.model.ts';
+  import type ProjectFloorModel from '../../core/models/project.floor.model';
+  import type ProjectFloorShowModel from '../../core/models/project.floor.show.model';
 
   const emit = defineEmits<{
     updateData: [params: AddProjectFloorParams];
@@ -47,77 +47,51 @@
   const spaceController = SpaceController.getInstance();
   const spaceParams = new IndexSpaceParams('', 1, 100, 0);
 
-  const selectedFloorNumber = ref<TitleInterface<FloorNumber> | null>(null);
-  const selectedSpace = ref<TitleInterface<number>[]>([]);
-
-  const siteDescription = ref<string>('');
-  const technicalGeneralNotes = ref<string>('');
-  const inspectionRecommendations = ref<string>('');
-
   type SpaceRow = {
     space: TitleInterface<number>;
     length: string;
     width: string;
     height: string;
     notes: string;
-    attachments: ProjectFloorSpaceAttachmentParams[];
+    attachments: ProjectFloorAttachmentParams[];
   };
 
-  const spaces = ref<SpaceRow[]>([]);
+  type LocalFloor = {
+    localId: number;
+    floorNumber: TitleInterface<FloorNumber>;
+    spaces: SpaceRow[];
+    attachments: ProjectFloorAttachmentParams[];
+  };
+
+  const selectedFloorNumber = ref<TitleInterface<FloorNumber> | null>(null);
+  const selectedSpace = ref<TitleInterface<number>[]>([]);
+  const currentSpaces = ref<SpaceRow[]>([]);
+  const floors = ref<LocalFloor[]>([]);
+
+  const siteDescription = ref('');
+  const technicalGeneralNotes = ref('');
+  const inspectionRecommendations = ref('');
 
   const floorNumberOptions = computed<TitleInterface<FloorNumber>[]>(() => [
-    {
-      id: FloorNumber.BASEMENT,
-      title: t('project.BASEMENT'),
-    },
-    {
-      id: FloorNumber.GROUND_FLOOR,
-      title: t('project.GROUND_FLOOR'),
-    },
-    {
-      id: FloorNumber.FIRST_FLOOR,
-      title: t('project.FIRST_FLOOR'),
-    },
-    {
-      id: FloorNumber.SECOND_FLOOR,
-      title: t('project.SECOND_FLOOR'),
-    },
-    {
-      id: FloorNumber.THIRD_FLOOR,
-      title: t('project.THIRD_FLOOR'),
-    },
-    {
-      id: FloorNumber.FOURTH_FLOOR,
-      title: t('project.FOURTH_FLOOR'),
-    },
-    {
-      id: FloorNumber.FIFTH_FLOOR,
-      title: t('project.FIFTH_FLOOR'),
-    },
-    {
-      id: FloorNumber.SIXTH_FLOOR,
-      title: t('project.SIXTH_FLOOR'),
-    },
-    {
-      id: FloorNumber.SEVENTH_FLOOR,
-      title: t('project.SEVENTH_FLOOR'),
-    },
-    {
-      id: FloorNumber.EIGHTH_FLOOR,
-      title: t('project.EIGHTH_FLOOR'),
-    },
-    {
-      id: FloorNumber.NINTH_FLOOR,
-      title: t('project.NINTH_FLOOR'),
-    },
-    {
-      id: FloorNumber.TENTH_FLOOR,
-      title: t('project.TENTH_FLOOR'),
-    },
+    { id: FloorNumber.BASEMENT, title: t('project.BASEMENT') },
+    { id: FloorNumber.GROUND_FLOOR, title: t('project.GROUND_FLOOR') },
+    { id: FloorNumber.FIRST_FLOOR, title: t('project.FIRST_FLOOR') },
+    { id: FloorNumber.SECOND_FLOOR, title: t('project.SECOND_FLOOR') },
+    { id: FloorNumber.THIRD_FLOOR, title: t('project.THIRD_FLOOR') },
+    { id: FloorNumber.FOURTH_FLOOR, title: t('project.FOURTH_FLOOR') },
+    { id: FloorNumber.FIFTH_FLOOR, title: t('project.FIFTH_FLOOR') },
+    { id: FloorNumber.SIXTH_FLOOR, title: t('project.SIXTH_FLOOR') },
+    { id: FloorNumber.SEVENTH_FLOOR, title: t('project.SEVENTH_FLOOR') },
+    { id: FloorNumber.EIGHTH_FLOOR, title: t('project.EIGHTH_FLOOR') },
+    { id: FloorNumber.NINTH_FLOOR, title: t('project.NINTH_FLOOR') },
+    { id: FloorNumber.TENTH_FLOOR, title: t('project.TENTH_FLOOR') },
   ]);
 
   const spaceOptions = computed<TitleInterface<number>[]>(() => {
-    const data = spaceController.listState.value.data ?? [];
+    const state = spaceController.listState.value as any;
+    const data = state?.data?.data ?? state?.data ?? state?.response?.data?.data ?? [];
+
+    if (!Array.isArray(data)) return [];
 
     return data.map((item) => ({
       id: Number(item.id),
@@ -125,22 +99,9 @@
     }));
   });
 
-  const getValidationError = (...fields: string[]): string => {
-    for (const field of fields) {
-      const message = props.validationErrors[field];
-      if (message) return message;
-    }
-
-    return '';
-  };
-
-  const getSpaceValidationError = (index: number, field: string): string => {
-    return getValidationError(
-      `spaces.${index}.${field}`,
-      `spaces[${index}].${field}`,
-      `spaces.${index}.space.${field}`,
-    );
-  };
+  const totalSpacesCount = computed(() => {
+    return floors.value.reduce((total, floor) => total + floor.spaces.length, 0);
+  });
 
   const getProjectId = (): number | undefined => {
     return props.projectFloor?.project_id ?? props.projectId;
@@ -154,8 +115,17 @@
     return floorNumberOptions.value.find((item) => item.id === FloorNumber.GROUND_FLOOR) ?? null;
   };
 
-  const mapSpacesToParams = (): ProjectFloorSpaceParams[] => {
-    return spaces.value.map((item) => ({
+  const fileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result));
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const mapSpaceRowsToParams = (rows: SpaceRow[]): ProjectFloorSpaceParams[] => {
+    return rows.map((item) => ({
       space_id: Number(item.space.id),
       length: Number(item.length || 0),
       width: Number(item.width || 0),
@@ -169,27 +139,33 @@
     }));
   };
 
+  const mapFloorsToParams = (): ProjectFloorItemParams[] => {
+    return floors.value.map((floor) => ({
+      floor_number: floor.floorNumber.id,
+      attachments: floor.attachments,
+      spaces: mapSpaceRowsToParams(floor.spaces),
+    }));
+  };
+
   const updateData = () => {
     const projectId = getProjectId();
-    if (projectId === undefined) return;
+    if (!projectId) return;
 
     emit(
       'updateData',
       new AddProjectFloorParams({
         project_id: projectId,
         project_preview_id: getProjectPreviewId(),
-        floor_number: selectedFloorNumber.value?.id as FloorNumber,
         site_description: siteDescription.value,
         technical_general_notes: technicalGeneralNotes.value,
         inspection_recommendations: inspectionRecommendations.value,
-        spaces: mapSpacesToParams(),
+        floors: mapFloorsToParams(),
       }),
     );
   };
 
   const updateFloorNumber = (value: TitleInterface<FloorNumber> | null) => {
     selectedFloorNumber.value = value;
-    updateData();
   };
 
   const updateSelectedSpace = (value: TitleInterface<number>[] | TitleInterface<number> | null) => {
@@ -202,17 +178,16 @@
   };
 
   const addSpace = () => {
-    if (!selectedFloorNumber.value) return;
     if (!selectedSpace.value.length) return;
 
     selectedSpace.value.forEach((space) => {
-      const alreadyExists = spaces.value.some((item) => {
-        return Number(item.space.id) === Number(space.id);
-      });
+      const alreadyExists = currentSpaces.value.some(
+        (item) => Number(item.space.id) === Number(space.id),
+      );
 
       if (alreadyExists) return;
 
-      spaces.value.push({
+      currentSpaces.value.push({
         space: { ...space },
         length: '',
         width: '',
@@ -223,25 +198,13 @@
     });
 
     selectedSpace.value = [];
-    updateData();
   };
 
-  const removeSpace = (index: number) => {
-    spaces.value.splice(index, 1);
-    updateData();
+  const removeCurrentSpace = (index: number) => {
+    currentSpaces.value.splice(index, 1);
   };
 
-  const fileToBase64 = (file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-
-      reader.onload = () => resolve(String(reader.result));
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
-  };
-
-  const updateSpaceAttachments = async (event: Event, index: number) => {
+  const updateCurrentSpaceAttachments = async (event: Event, index: number) => {
     const input = event.target as HTMLInputElement;
     const files = Array.from(input.files ?? []);
 
@@ -253,24 +216,73 @@
       })),
     );
 
-    if (spaces.value[index]) {
-      spaces.value[index].attachments = attachments;
+    if (currentSpaces.value[index]) {
+      currentSpaces.value[index].attachments = attachments;
+    }
+  };
+
+  const addFloor = () => {
+    if (!selectedFloorNumber.value || !currentSpaces.value.length) return;
+
+    const existingFloorIndex = floors.value.findIndex(
+      (floor) => Number(floor.floorNumber.id) === Number(selectedFloorNumber.value?.id),
+    );
+
+    const floorData: LocalFloor = {
+      localId: existingFloorIndex >= 0 ? floors.value[existingFloorIndex].localId : Date.now(),
+      floorNumber: { ...selectedFloorNumber.value },
+      spaces: currentSpaces.value.map((space) => ({
+        ...space,
+        space: { ...space.space },
+        attachments: [...space.attachments],
+      })),
+      attachments: [],
+    };
+
+    if (existingFloorIndex >= 0) {
+      floors.value.splice(existingFloorIndex, 1, floorData);
+    } else {
+      floors.value.push(floorData);
     }
 
+    selectedFloorNumber.value = getDefaultFloorNumber();
+    selectedSpace.value = [];
+    currentSpaces.value = [];
+    updateData();
+  };
+
+  const editFloor = (index: number) => {
+    const floor = floors.value[index];
+    if (!floor) return;
+
+    selectedFloorNumber.value = { ...floor.floorNumber };
+    currentSpaces.value = floor.spaces.map((space) => ({
+      ...space,
+      space: { ...space.space },
+      attachments: [...space.attachments],
+    }));
+
+    floors.value.splice(index, 1);
+    updateData();
+  };
+
+  const removeFloor = (index: number) => {
+    floors.value.splice(index, 1);
     updateData();
   };
 
   const resetForm = () => {
     selectedFloorNumber.value = getDefaultFloorNumber();
     selectedSpace.value = [];
-    spaces.value = [];
-
+    currentSpaces.value = [];
+    floors.value = [];
+    siteDescription.value = '';
+    technicalGeneralNotes.value = '';
+    inspectionRecommendations.value = '';
     updateData();
   };
 
-  defineExpose({
-    resetForm,
-  });
+  defineExpose({ resetForm });
 
   watch(
     () => props.projectFloor,
@@ -278,46 +290,55 @@
       if (!projectFloor) {
         selectedFloorNumber.value = getDefaultFloorNumber();
         selectedSpace.value = [];
+        currentSpaces.value = [];
+        floors.value = [];
         siteDescription.value = '';
         technicalGeneralNotes.value = '';
         inspectionRecommendations.value = '';
-        spaces.value = [];
         updateData();
         return;
       }
-
-      selectedFloorNumber.value =
-        floorNumberOptions.value.find(
-          (item) => Number(item.id) === Number(projectFloor.floor_number),
-        ) ?? getDefaultFloorNumber();
 
       siteDescription.value = projectFloor.site_description ?? '';
       technicalGeneralNotes.value = projectFloor.technical_general_notes ?? '';
       inspectionRecommendations.value = projectFloor.inspection_recommendations ?? '';
 
-      spaces.value = Array.isArray(projectFloor.spaces)
-        ? projectFloor.spaces.map((item) => ({
-            space: {
-              id: Number(item.space?.id ?? item.space_id),
-              title: item.space?.title ?? `#${item.space?.id ?? item.space_id}`,
-            },
-            length: String(item.length ?? ''),
-            width: String(item.width ?? ''),
-            height: String(item.height ?? ''),
-            notes: item.notes ?? '',
-            attachments: item.attachments ?? [],
-          }))
-        : [];
+      const floorNumber =
+        floorNumberOptions.value.find(
+          (item) => Number(item.id) === Number(projectFloor.floor_number),
+        ) ?? getDefaultFloorNumber();
+
+      if (floorNumber) {
+        floors.value = [
+          {
+            localId: Number(projectFloor.id ?? Date.now()),
+            floorNumber,
+            attachments: [],
+            spaces: Array.isArray(projectFloor.spaces)
+              ? projectFloor.spaces.map((item) => ({
+                  space: {
+                    id: Number(item.space?.id ?? item.space_id),
+                    title: item.space?.title ?? `#${item.space?.id ?? item.space_id}`,
+                  },
+                  length: String(item.length ?? ''),
+                  width: String(item.width ?? ''),
+                  height: String(item.height ?? ''),
+                  notes: item.notes ?? '',
+                  attachments: item.attachments ?? [],
+                }))
+              : [],
+          },
+        ];
+      }
 
       updateData();
     },
     { immediate: true },
   );
+
   watch(
     () => [props.projectId, props.projectPreviewId],
-    () => {
-      updateData();
-    },
+    () => updateData(),
   );
 
   onMounted(async () => {
@@ -330,27 +351,28 @@
 
   <div class="project-floor-form-card">
     <header class="form-header">
-      <div class="form-header__content">
-        <span class="form-header__eyebrow">
-          {{ $t('ProjectFloor.form_title') }}
-        </span>
-
+      <div>
+        <span class="form-header__eyebrow">{{ $t('ProjectFloor.form_title') }}</span>
         <h3>{{ $t('ProjectFloor.floor_data') }}</h3>
-
         <p>{{ $t('ProjectFloor.form_description') }}</p>
       </div>
 
-      <div class="form-header__summary">
-        <span>{{ $t('ProjectFloor.selected_spaces') }}</span>
-        <strong>{{ spaces.length }}</strong>
+      <div class="form-summary">
+        <div>
+          <span>{{ $t('ProjectFloor.floors') }}</span>
+          <strong>{{ floors.length }}</strong>
+        </div>
+        <div>
+          <span>{{ $t('ProjectFloor.selected_spaces') }}</span>
+          <strong>{{ totalSpacesCount }}</strong>
+        </div>
       </div>
     </header>
 
     <div class="form-body" :class="{ disabled: loading }">
-      <section class="section-card section-card--hero">
+      <section class="section-card">
         <div class="section-head">
-          <div class="section-head__icon">🏢</div>
-
+          <span class="section-head__icon">🏢</span>
           <div>
             <h4>{{ $t('ProjectFloor.floor_data') }}</h4>
             <p>{{ $t('ProjectFloor.floor_data_description') }}</p>
@@ -358,18 +380,8 @@
         </div>
 
         <div class="picker-panel">
-          <div class="picker-field picker-field--floor">
-            <span class="field-help-label-row field-help-label-row--block">
-              <label class="field-label" for="floor_number">
-                {{ $t('ProjectFloor.floor_number') }}
-              </label>
-              <FieldHelpIcon
-                :label="$t('ProjectFloor.floor_number')"
-                field-name="floor_number"
-                field-id="floor_number"
-              />
-            </span>
-
+          <div class="picker-field">
+            <label class="field-label">{{ $t('ProjectFloor.floor_number') }}</label>
             <UpdatedCustomInputSelect
               id="floor_number"
               :model-value="selectedFloorNumber"
@@ -377,23 +389,10 @@
               :placeholder="$t('ProjectFloor.floor_number_placeholder')"
               @update:model-value="updateFloorNumber"
             />
-            <small v-if="getValidationError('floor_number')" class="field-error">
-              {{ getValidationError('floor_number') }}
-            </small>
           </div>
 
-          <div class="picker-field picker-field--space">
-            <span class="field-help-label-row field-help-label-row--block">
-              <label class="field-label" for="space_id">
-                {{ $t('ProjectFloor.space') }}
-              </label>
-              <FieldHelpIcon
-                :label="$t('ProjectFloor.space')"
-                field-name="space"
-                field-id="space_id"
-              />
-            </span>
-
+          <div class="picker-field">
+            <label class="field-label">{{ $t('ProjectFloor.space') }}</label>
             <UpdatedCustomInputSelect
               id="space_id"
               :model-value="selectedSpace"
@@ -404,347 +403,254 @@
             />
           </div>
 
-          <div class="picker-field picker-field--action">
-            <label class="field-label field-label--hidden">
-              {{ $t('ProjectFloor.add_space') }}
+          <button
+            type="button"
+            class="secondary-action-btn"
+            :disabled="!selectedSpace.length"
+            @click="addSpace"
+          >
+            <i class="pi pi-plus"></i>
+            {{ $t('ProjectFloor.add_space') }}
+          </button>
+        </div>
+
+        <div v-if="currentSpaces.length" class="current-spaces">
+          <article
+            v-for="(item, index) in currentSpaces"
+            :key="`${item.space.id}-${index}`"
+            class="space-row"
+          >
+            <strong class="space-name">{{ item.space.title }}</strong>
+
+            <input
+              v-model="item.length"
+              class="mini-input"
+              type="number"
+              min="0"
+              step="0.01"
+              :placeholder="$t('ProjectFloor.length')"
+            />
+            <input
+              v-model="item.width"
+              class="mini-input"
+              type="number"
+              min="0"
+              step="0.01"
+              :placeholder="$t('ProjectFloor.width')"
+            />
+            <input
+              v-model="item.height"
+              class="mini-input"
+              type="number"
+              min="0"
+              step="0.01"
+              :placeholder="$t('ProjectFloor.height')"
+            />
+            <input
+              v-model="item.notes"
+              class="mini-input"
+              type="text"
+              :placeholder="$t('ProjectFloor.notes')"
+            />
+
+            <label class="upload-chip">
+              <input type="file" multiple @change="updateCurrentSpaceAttachments($event, index)" />
+              <i class="pi pi-upload"></i>
+              <span>{{ item.attachments.length || $t('ProjectFloor.choose_files') }}</span>
             </label>
 
             <button
               type="button"
-              class="add-space-btn"
-              :disabled="!selectedFloorNumber || !selectedSpace.length"
-              @click="addSpace"
+              class="icon-btn icon-btn--danger"
+              @click="removeCurrentSpace(index)"
             >
-              <span>+</span>
-              {{ $t('ProjectFloor.add_space') }}
+              <i class="pi pi-trash"></i>
             </button>
-          </div>
+          </article>
         </div>
+
+        <button
+          type="button"
+          class="primary-action-btn"
+          :disabled="!selectedFloorNumber || !currentSpaces.length"
+          @click="addFloor"
+        >
+          <i class="pi pi-plus-circle"></i>
+          {{ $t('ProjectFloor.add_floor') }}
+        </button>
       </section>
 
-      <section class="section-card spaces-section">
+      <section class="section-card">
         <div class="section-head section-head--between">
           <div class="section-head__start">
-            <div class="section-head__icon">📐</div>
-
+            <span class="section-head__icon">📚</span>
             <div>
-              <h4>{{ $t('ProjectFloor.selected_spaces') }}</h4>
+              <h4>{{ $t('ProjectFloor.saved_floors') }}</h4>
               <p>{{ $t('ProjectFloor.selected_spaces_description') }}</p>
             </div>
           </div>
-
-          <span class="spaces-count">
-            {{ spaces.length }}
-          </span>
+          <span class="count-badge">{{ floors.length }}</span>
         </div>
 
-        <div v-if="!spaces.length" class="empty-spaces">
-          <div class="empty-spaces__icon">＋</div>
-          <h5>{{ $t('ProjectFloor.no_spaces_title') }}</h5>
-          <p>{{ $t('ProjectFloor.no_spaces_description') }}</p>
-          <small v-if="getValidationError('spaces')" class="field-error">
-            {{ getValidationError('spaces') }}
-          </small>
+        <div v-if="!floors.length" class="empty-state">
+          {{ $t('ProjectFloor.no_spaces_title') }}
         </div>
 
-        <div v-else class="spaces-table">
-          <div class="spaces-table__head">
-            <span>#</span>
-            <span>{{ $t('ProjectFloor.floor_number') }}</span>
-            <span>{{ $t('ProjectFloor.space') }}</span>
-            <span>{{ $t('ProjectFloor.length') }}</span>
-            <span>{{ $t('ProjectFloor.width') }}</span>
-            <span>{{ $t('ProjectFloor.height') }}</span>
-            <span>{{ $t('ProjectFloor.attachments') }}</span>
-            <span>{{ $t('ProjectFloor.notes') }}</span>
-            <span></span>
-          </div>
+        <div v-else class="floors-list">
+          <article v-for="(floor, floorIndex) in floors" :key="floor.localId" class="floor-card">
+            <header class="floor-card__head">
+              <div>
+                <span>{{ $t('ProjectFloor.floor_number') }}</span>
+                <strong>{{ floor.floorNumber.title }}</strong>
+              </div>
 
-          <article
-            v-for="(item, index) in spaces"
-            :key="`${item.space.id}-${index}`"
-            class="space-row"
-          >
-            <div class="space-row__index">
-              {{ index + 1 }}
-            </div>
+              <div class="floor-card__actions">
+                <span class="count-badge">{{ floor.spaces.length }}</span>
+                <button type="button" class="icon-btn" @click="editFloor(floorIndex)">
+                  <i class="pi pi-pencil"></i>
+                </button>
+                <button
+                  type="button"
+                  class="icon-btn icon-btn--danger"
+                  @click="removeFloor(floorIndex)"
+                >
+                  <i class="pi pi-trash"></i>
+                </button>
+              </div>
+            </header>
 
-            <div class="space-row__cell space-row__floor">
-              <span class="mobile-label">{{ $t('ProjectFloor.floor_number') }}</span>
-              <strong>{{ selectedFloorNumber?.title || '-' }}</strong>
-            </div>
+            <div class="floor-spaces-table">
+              <div class="floor-spaces-table__head">
+                <span>#</span>
+                <span>{{ $t('ProjectFloor.space') }}</span>
+                <span>{{ $t('ProjectFloor.length') }}</span>
+                <span>{{ $t('ProjectFloor.width') }}</span>
+                <span>{{ $t('ProjectFloor.height') }}</span>
+                <span>{{ $t('ProjectFloor.notes') }}</span>
+              </div>
 
-            <div class="space-row__cell space-row__name">
-              <span class="mobile-label">{{ $t('ProjectFloor.space') }}</span>
-              <strong>{{ item.space.title }}</strong>
-              <small v-if="getSpaceValidationError(index, 'space_id')" class="field-error">
-                {{ getSpaceValidationError(index, 'space_id') }}
-              </small>
-            </div>
-
-            <div class="space-row__cell">
-              <span class="mobile-label">{{ $t('ProjectFloor.length') }}</span>
-              <input
-                v-model="item.length"
-                class="mini-input"
-                type="number"
-                min="0"
-                step="0.01"
-                :placeholder="$t('ProjectFloor.length_placeholder')"
-                @input="updateData"
-              />
-              <small v-if="getSpaceValidationError(index, 'length')" class="field-error">
-                {{ getSpaceValidationError(index, 'length') }}
-              </small>
-            </div>
-
-            <div class="space-row__cell">
-              <span class="mobile-label">{{ $t('ProjectFloor.width') }}</span>
-              <input
-                v-model="item.width"
-                class="mini-input"
-                type="number"
-                min="0"
-                step="0.01"
-                :placeholder="$t('ProjectFloor.width_placeholder')"
-                @input="updateData"
-              />
-              <small v-if="getSpaceValidationError(index, 'width')" class="field-error">
-                {{ getSpaceValidationError(index, 'width') }}
-              </small>
-            </div>
-
-            <div class="space-row__cell">
-              <span class="mobile-label">{{ $t('ProjectFloor.height') }}</span>
-              <input
-                v-model="item.height"
-                class="mini-input"
-                type="number"
-                min="0"
-                step="0.01"
-                :placeholder="$t('ProjectFloor.height_placeholder')"
-                @input="updateData"
-              />
-              <small v-if="getSpaceValidationError(index, 'height')" class="field-error">
-                {{ getSpaceValidationError(index, 'height') }}
-              </small>
-            </div>
-
-            <div class="space-row__cell">
-              <span class="mobile-label">{{ $t('ProjectFloor.attachments') }}</span>
-
-              <label class="upload-chip">
-                <input type="file" multiple @change="updateSpaceAttachments($event, index)" />
-
-                <span class="upload-chip__icon">⬆</span>
-
-                <span>
-                  {{
-                    item.attachments.length
-                      ? $t('ProjectFloor.files_count', { count: item.attachments.length })
-                      : $t('ProjectFloor.choose_files')
-                  }}
-                </span>
-              </label>
-              <small v-if="getSpaceValidationError(index, 'attachments')" class="field-error">
-                {{ getSpaceValidationError(index, 'attachments') }}
-              </small>
-            </div>
-
-            <div class="space-row__cell">
-              <span class="mobile-label">{{ $t('ProjectFloor.notes') }}</span>
-              <input
-                v-model="item.notes"
-                class="mini-input mini-input--notes"
-                type="text"
-                :placeholder="$t('ProjectFloor.notes_placeholder')"
-                @input="updateData"
-              />
-              <small v-if="getSpaceValidationError(index, 'notes')" class="field-error">
-                {{ getSpaceValidationError(index, 'notes') }}
-              </small>
-            </div>
-
-            <div class="space-row__actions">
-              <button type="button" class="remove-space-btn" @click="removeSpace(index)">✕</button>
+              <div
+                v-for="(space, spaceIndex) in floor.spaces"
+                :key="`${floor.localId}-${space.space.id}`"
+                class="floor-space-row"
+              >
+                <span>{{ spaceIndex + 1 }}</span>
+                <strong>{{ space.space.title }}</strong>
+                <span>{{ space.length || '-' }}</span>
+                <span>{{ space.width || '-' }}</span>
+                <span>{{ space.height || '-' }}</span>
+                <span>{{ space.notes || '-' }}</span>
+              </div>
             </div>
           </article>
         </div>
       </section>
 
-      <section class="section-card notes-section">
+      <section class="section-card">
         <div class="section-head">
-          <div class="section-head__icon">📝</div>
-
+          <span class="section-head__icon">📝</span>
           <div>
             <h4>{{ $t('ProjectFloor.site_recommendations') }}</h4>
             <p>{{ $t('ProjectFloor.site_recommendations_description') }}</p>
           </div>
         </div>
 
-        <div class="notes-list">
-          <div class="note-field">
-            <div class="note-field__label">
-              <span>01</span>
-              <span class="field-help-label-row">
-                <label for="site_description">
-                  {{ $t('ProjectFloor.site_description') }}
-                </label>
-                <FieldHelpIcon
-                  :label="$t('ProjectFloor.site_description')"
-                  field-name="description"
-                  field-id="site_description"
-                />
-              </span>
-            </div>
+        <div class="notes-grid">
+          <label class="note-field">
+            <span>{{ $t('ProjectFloor.site_description') }}</span>
+            <textarea v-model="siteDescription" class="field-input" @input="updateData"></textarea>
+          </label>
 
+          <label class="note-field">
+            <span>{{ $t('ProjectFloor.technical_general_notes') }}</span>
             <textarea
-              id="site_description"
-              v-model="siteDescription"
-              class="field-input field-textarea"
-              :placeholder="$t('ProjectFloor.site_description_placeholder')"
-              @input="updateData"
-            />
-            <small v-if="getValidationError('site_description')" class="field-error">
-              {{ getValidationError('site_description') }}
-            </small>
-          </div>
-
-          <div class="note-field">
-            <div class="note-field__label">
-              <span>02</span>
-              <span class="field-help-label-row">
-                <label for="technical_general_notes">
-                  {{ $t('ProjectFloor.technical_general_notes') }}
-                </label>
-                <FieldHelpIcon
-                  :label="$t('ProjectFloor.technical_general_notes')"
-                  field-name="notes"
-                  field-id="technical_general_notes"
-                />
-              </span>
-            </div>
-
-            <textarea
-              id="technical_general_notes"
               v-model="technicalGeneralNotes"
-              class="field-input field-textarea"
-              :placeholder="$t('ProjectFloor.technical_general_notes_placeholder')"
+              class="field-input"
               @input="updateData"
-            />
-            <small v-if="getValidationError('technical_general_notes')" class="field-error">
-              {{ getValidationError('technical_general_notes') }}
-            </small>
-          </div>
+            ></textarea>
+          </label>
 
-          <div class="note-field">
-            <div class="note-field__label">
-              <span>03</span>
-              <span class="field-help-label-row">
-                <label for="inspection_recommendations">
-                  {{ $t('ProjectFloor.inspection_recommendations') }}
-                </label>
-                <FieldHelpIcon
-                  :label="$t('ProjectFloor.inspection_recommendations')"
-                  field-name="notes"
-                  field-id="inspection_recommendations"
-                />
-              </span>
-            </div>
-
+          <label class="note-field">
+            <span>{{ $t('ProjectFloor.inspection_recommendations') }}</span>
             <textarea
-              id="inspection_recommendations"
               v-model="inspectionRecommendations"
-              class="field-input field-textarea"
-              :placeholder="$t('ProjectFloor.inspection_recommendations_placeholder')"
+              class="field-input"
               @input="updateData"
-            />
-            <small v-if="getValidationError('inspection_recommendations')" class="field-error">
-              {{ getValidationError('inspection_recommendations') }}
-            </small>
-          </div>
+            ></textarea>
+          </label>
         </div>
       </section>
     </div>
   </div>
 </template>
+
 <style scoped lang="scss">
   .project-floor-form-card {
     display: flex;
     flex-direction: column;
-    gap: 1.25rem;
+    gap: 1rem;
     padding: 1.25rem;
-    border-radius: 28px;
-    background:
-      radial-gradient(circle at top right, rgba(160, 98, 39, 0.08), transparent 34%),
-      linear-gradient(180deg, #fff, #fafafa);
+    border-radius: 24px;
+    background: var(--BgWhite);
+  }
+
+  .form-header,
+  .section-head,
+  .section-head__start,
+  .floor-card__head,
+  .floor-card__actions {
+    display: flex;
+    align-items: center;
   }
 
   .form-header {
-    display: flex;
-    align-items: stretch;
     justify-content: space-between;
     gap: 1rem;
     padding: 1.25rem;
-    border: 1px solid rgba(148, 163, 184, 0.18);
-    border-radius: 26px;
-    background: rgba(255, 255, 255, 0.86);
-    box-shadow: 0 18px 45px rgba(15, 23, 42, 0.06);
-  }
-
-  .form-header__content {
-    display: flex;
-    flex-direction: column;
-    gap: 0.35rem;
+    border: 1px solid var(--border-weak);
+    border-radius: 20px;
+    background: var(--BgWhite);
 
     h3 {
-      margin: 0;
+      margin: 0.35rem 0;
       font-family: 'Bold';
-      color: #111827;
-      font-size: 1.2rem;
     }
 
     p {
-      max-width: 760px;
       margin: 0;
-      color: #64748b;
-      font-size: var(--sm-size);
-      line-height: 1.8;
+      color: var(--gray-5);
     }
   }
 
   .form-header__eyebrow {
-    width: fit-content;
-    padding: 0.28rem 0.65rem;
-    border-radius: 999px;
-    background: var(--PrimaryColor-light);
     color: var(--PrimaryColor);
     font-family: 'Medium';
     font-size: var(--xs-size);
   }
 
-  .form-header__summary {
+  .form-summary {
     display: flex;
-    min-width: 120px;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 0.35rem;
-    padding: 0.8rem 1rem;
-    border-radius: 22px;
-    background: #111827;
-    color: #fff;
+    gap: 0.75rem;
+
+    > div {
+      min-width: 110px;
+      padding: 0.75rem;
+      border-radius: 16px;
+      background: var(--PrimaryColor-light);
+      text-align: center;
+    }
 
     span {
-      color: rgba(255, 255, 255, 0.72);
+      display: block;
+      color: var(--gray-5);
       font-size: var(--xs-size);
-      white-space: nowrap;
     }
 
     strong {
-      font-family: 'Bold';
-      font-size: 1.55rem;
-      line-height: 1;
+      display: block;
+      margin-top: 0.25rem;
+      color: var(--PrimaryColor);
+      font-size: 1.2rem;
     }
   }
 
@@ -752,270 +658,126 @@
     display: flex;
     flex-direction: column;
     gap: 1rem;
+  }
 
-    &.disabled {
-      pointer-events: none;
-      opacity: 0.7;
-    }
+  .form-body.disabled {
+    pointer-events: none;
+    opacity: 0.7;
   }
 
   .section-card {
-    padding: 1.15rem;
-    border: 1px solid rgba(148, 163, 184, 0.22);
-    border-radius: 26px;
-    background: rgba(255, 255, 255, 0.92);
-    box-shadow: 0 14px 35px rgba(15, 23, 42, 0.045);
-  }
-
-  .section-card--hero {
-    background:
-      linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(250, 250, 250, 0.98)),
-      radial-gradient(circle at top left, rgba(160, 98, 39, 0.08), transparent 34%);
+    padding: 1rem;
+    border: 1px solid var(--border-weak);
+    border-radius: 20px;
+    background: var(--BgWhite);
   }
 
   .section-head {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.85rem;
+    gap: 0.75rem;
     margin-bottom: 1rem;
-
-    h4 {
-      margin: 0;
-      font-family: 'Bold';
-      color: #111827;
-      font-size: 1rem;
-    }
-
-    p {
-      margin: 0.25rem 0 0;
-      color: #64748b;
-      font-size: var(--xs-size);
-      line-height: 1.7;
-    }
+    align-items: flex-start;
   }
 
   .section-head--between {
-    align-items: center;
     justify-content: space-between;
+    align-items: center;
   }
 
   .section-head__start {
-    display: flex;
+    gap: 0.75rem;
     align-items: flex-start;
-    gap: 0.85rem;
+  }
+
+  .section-head h4 {
+    margin: 0;
+    font-family: 'Bold';
+  }
+
+  .section-head p {
+    margin: 0.25rem 0 0;
+    color: var(--gray-5);
+    font-size: var(--xs-size);
   }
 
   .section-head__icon {
     display: inline-flex;
+    width: 42px;
+    height: 42px;
     align-items: center;
     justify-content: center;
-    width: 42px;
-    min-width: 42px;
-    height: 42px;
-    border: 1px solid rgba(160, 98, 39, 0.14);
-    border-radius: 16px;
+    border-radius: 14px;
     background: var(--PrimaryColor-light);
-    color: var(--PrimaryColor);
   }
 
   .picker-panel {
     display: grid;
-    grid-template-columns: repeat(3, 3fr);
-    gap: 0.85rem;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 0.75rem;
     align-items: end;
-    padding: 1rem;
-    border: 1px solid rgba(148, 163, 184, 0.16);
-    border-radius: 22px;
-    background: #fbfbfb;
   }
 
   .picker-field {
     display: flex;
-    min-width: 0;
     flex-direction: column;
-    gap: 0.55rem;
-  }
-
-  .picker-field--action {
-    justify-content: flex-end;
+    gap: 0.45rem;
+    min-width: 0;
   }
 
   .field-label {
+    color: var(--gray-6);
     font-family: 'Medium';
-    font-size: var(--sm-size);
-    color: #334155;
   }
 
-  .field-label--hidden {
-    visibility: hidden;
-  }
-
-  .form-section :deep(.input-label) {
-    display: none;
-  }
-
-  .add-space-btn {
+  .secondary-action-btn,
+  .primary-action-btn {
     display: inline-flex;
-    width: 100%;
     min-height: 46px;
     align-items: center;
     justify-content: center;
-    gap: 0.45rem;
-    padding: 0 1.15rem;
+    gap: 0.5rem;
+    padding: 0 1rem;
     border: 0;
-    border-radius: 16px;
-    background: linear-gradient(135deg, var(--PrimaryColor), #7a4318);
-    color: #fff;
+    border-radius: 14px;
     cursor: pointer;
     font-family: 'Medium';
-    transition: all 0.25s ease;
-    white-space: nowrap;
-    box-shadow: 0 12px 22px rgba(122, 67, 24, 0.18);
-
-    span {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.18);
-    }
-
-    &:hover:not(:disabled) {
-      transform: translateY(-1px);
-      box-shadow: 0 16px 28px rgba(122, 67, 24, 0.22);
-    }
-
-    &:disabled {
-      cursor: not-allowed;
-      opacity: 0.5;
-      box-shadow: none;
-    }
   }
 
-  .spaces-count {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 40px;
-    height: 40px;
-    padding: 0 0.8rem;
-    border-radius: 999px;
-    background: #111827;
-    color: #fff;
-    font-family: 'Bold';
-  }
-
-  .empty-spaces {
-    display: flex;
-    min-height: 160px;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 0.45rem;
-    border: 1px dashed rgba(148, 163, 184, 0.5);
-    border-radius: 22px;
-    background: #fbfbfb;
-    text-align: center;
-
-    h5 {
-      margin: 0;
-      color: #111827;
-      font-family: 'Bold';
-    }
-
-    p {
-      max-width: 420px;
-      margin: 0;
-      color: #64748b;
-      font-size: var(--xs-size);
-      line-height: 1.7;
-    }
-  }
-
-  .empty-spaces__icon {
-    display: inline-flex;
-    width: 46px;
-    height: 46px;
-    align-items: center;
-    justify-content: center;
-    border-radius: 16px;
+  .secondary-action-btn {
     background: var(--PrimaryColor-light);
     color: var(--PrimaryColor);
-    font-family: 'Bold';
-    font-size: 1.2rem;
   }
 
-  .spaces-table {
+  .primary-action-btn {
+    width: 100%;
+    margin-top: 1rem;
+    background: var(--PrimaryColor);
+    color: #fff;
+  }
+
+  .secondary-action-btn:disabled,
+  .primary-action-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  .current-spaces {
     display: flex;
     flex-direction: column;
-    gap: 0.7rem;
+    gap: 0.65rem;
+    margin-top: 1rem;
   }
 
-  .spaces-table__head,
   .space-row {
     display: grid;
-    grid-template-columns: 44px 1fr 1.2fr 0.8fr 0.8fr 0.8fr 1.2fr 1.4fr 44px;
-    gap: 0.65rem;
+    grid-template-columns: 1.2fr repeat(4, 0.8fr) 1fr 44px;
+    gap: 0.6rem;
     align-items: center;
-  }
-
-  .spaces-table__head {
-    padding: 0 0.75rem;
-    color: #64748b;
-    font-family: 'Medium';
-    font-size: var(--xs-size);
-  }
-
-  .space-row {
     padding: 0.75rem;
-    border: 1px solid rgba(148, 163, 184, 0.18);
-    border-radius: 20px;
-    background: linear-gradient(135deg, #fff, #fbfbfb);
-    transition: all 0.25s ease;
-
-    &:hover {
-      border-color: rgba(160, 98, 39, 0.28);
-      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.06);
-      transform: translateY(-1px);
-    }
+    border: 1px solid var(--border-weak);
+    border-radius: 16px;
   }
 
-  .space-row__index {
-    display: inline-flex;
-    width: 34px;
-    height: 34px;
-    align-items: center;
-    justify-content: center;
-    border-radius: 13px;
-    background: var(--PrimaryColor-light);
-    color: var(--PrimaryColor);
-    font-family: 'Bold';
-  }
-
-  .space-row__cell {
-    display: flex;
-    min-width: 0;
-    flex-direction: column;
-    gap: 0.3rem;
-
-    strong {
-      color: #111827;
-      font-family: 'Medium';
-      font-size: var(--sm-size);
-    }
-  }
-
-  .space-row__floor strong {
-    width: fit-content;
-    padding: 0.35rem 0.6rem;
-    border-radius: 999px;
-    background: #f8fafc;
-    color: #334155;
-  }
-
-  .space-row__name strong {
+  .space-name {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -1025,24 +787,11 @@
   .field-input {
     width: 100%;
     min-height: 44px;
-    padding: 0.7rem 0.85rem;
-    border: 1px solid rgba(148, 163, 184, 0.26);
-    border-radius: 15px;
-    background: #fff;
+    padding: 0.65rem 0.75rem;
+    border: 1px solid var(--border-weak);
+    border-radius: 12px;
+    background: var(--BgWhite);
     outline: none;
-    transition: all 0.25s ease;
-    font-family: 'Medium';
-    font-size: var(--sm-size);
-    color: #111827;
-
-    &:focus {
-      border-color: var(--PrimaryColor);
-      box-shadow: 0 0 0 3px var(--PrimaryColor-light);
-    }
-  }
-
-  .mini-input--notes {
-    min-width: 150px;
   }
 
   .upload-chip {
@@ -1050,203 +799,167 @@
     min-height: 44px;
     align-items: center;
     justify-content: center;
-    gap: 0.45rem;
-    padding: 0 0.75rem;
-    border: 1px dashed rgba(148, 163, 184, 0.55);
-    border-radius: 15px;
-    background: #fff;
-    color: #475569;
+    gap: 0.4rem;
+    padding: 0 0.65rem;
+    border: 1px dashed var(--border-weak);
+    border-radius: 12px;
     cursor: pointer;
-    font-family: 'Medium';
-    font-size: var(--xs-size);
-    transition: all 0.25s ease;
-
-    input {
-      display: none;
-    }
-
-    &:hover {
-      border-color: var(--PrimaryColor);
-      background: var(--PrimaryColor-light);
-      color: var(--PrimaryColor);
-    }
   }
 
-  .upload-chip__icon {
-    display: inline-flex;
-    width: 22px;
-    height: 22px;
-    align-items: center;
-    justify-content: center;
-    border-radius: 8px;
-    background: #f8fafc;
-  }
-
-  .space-row__actions {
-    display: flex;
-    justify-content: flex-end;
-  }
-
-  .remove-space-btn {
-    display: inline-flex;
-    width: 34px;
-    height: 34px;
-    align-items: center;
-    justify-content: center;
-    border: 0;
-    border-radius: 13px;
-    background: rgba(220, 38, 38, 0.08);
-    color: #dc2626;
-    cursor: pointer;
-    transition: all 0.25s ease;
-
-    &:hover {
-      background: #dc2626;
-      color: #fff;
-    }
-  }
-
-  .notes-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.9rem;
-  }
-
-  .note-field {
-    display: grid;
-    // grid-template-columns: 240px minmax(0, 1fr);
-    gap: 1rem;
-    align-items: start;
-    padding: 0.85rem;
-    border: 1px solid rgba(148, 163, 184, 0.16);
-    border-radius: 20px;
-    background: #fbfbfb;
-  }
-
-  .note-field__label {
-    display: flex;
-    align-items: center;
-    gap: 0.65rem;
-    padding-top: 0.35rem;
-
-    span {
-      display: inline-flex;
-      // width: 34px;
-      height: 34px;
-      align-items: center;
-      justify-content: center;
-      border-radius: 13px;
-      // background: var(--PrimaryColor-light);
-      color: var(--PrimaryColor);
-      font-family: 'Bold';
-      font-size: var(--xs-size);
-    }
-
-    label {
-      color: #334155;
-      font-family: 'Medium';
-      font-size: var(--sm-size);
-      line-height: 1.6;
-    }
-  }
-
-  .field-textarea {
-    min-height: 100px;
-    resize: vertical;
-    line-height: 1.8;
-  }
-
-  .field-error {
-    display: block;
-    color: var(--danger-dark);
-    font-size: var(--xs-size);
-    line-height: 1.5;
-  }
-
-  .mobile-label {
+  .upload-chip input {
     display: none;
   }
 
-  @media (max-width: 1200px) {
-    .spaces-table__head {
-      display: none;
-    }
-
-    .space-row {
-      grid-template-columns: 42px repeat(2, minmax(0, 1fr)) 42px;
-      align-items: stretch;
-    }
-
-    .space-row__cell {
-      padding: 0.25rem 0;
-    }
-
-    .space-row__index {
-      align-self: flex-start;
-    }
-
-    .space-row__actions {
-      align-self: flex-start;
-    }
-
-    .mobile-label {
-      display: block;
-      color: #94a3b8;
-      font-size: 0.72rem;
-      font-family: 'Medium';
-    }
+  .icon-btn {
+    display: inline-flex;
+    width: 36px;
+    height: 36px;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border-weak);
+    border-radius: 10px;
+    background: var(--BgWhite);
+    color: var(--PrimaryColor);
+    cursor: pointer;
   }
 
-  @media (max-width: 992px) {
-    .picker-panel {
-      grid-template-columns: 1fr 1fr;
+  .icon-btn--danger {
+    color: var(--Red);
+  }
+
+  .count-badge {
+    display: inline-flex;
+    min-width: 36px;
+    height: 36px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    background: var(--PrimaryColor-light);
+    color: var(--PrimaryColor);
+    font-family: 'Bold';
+  }
+
+  .empty-state {
+    padding: 2rem;
+    border: 1px dashed var(--border-weak);
+    border-radius: 16px;
+    color: var(--gray-5);
+    text-align: center;
+  }
+
+  .floors-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+
+  .floor-card {
+    overflow: hidden;
+    border: 1px solid var(--border-weak);
+    border-radius: 16px;
+  }
+
+  .floor-card__head {
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.85rem 1rem;
+    background: var(--PrimaryColor-light);
+  }
+
+  .floor-card__head span {
+    display: block;
+    color: var(--gray-5);
+    font-size: var(--xs-size);
+  }
+
+  .floor-card__head strong {
+    display: block;
+    margin-top: 0.2rem;
+  }
+
+  .floor-card__actions {
+    gap: 0.5rem;
+  }
+
+  .floor-spaces-table__head,
+  .floor-space-row {
+    display: grid;
+    grid-template-columns: 44px 1.2fr repeat(3, 0.8fr) 1.4fr;
+    gap: 0.65rem;
+    align-items: center;
+    padding: 0.75rem 1rem;
+  }
+
+  .floor-spaces-table__head {
+    background: var(--bg-main);
+    color: var(--gray-5);
+    font-size: var(--xs-size);
+  }
+
+  .floor-space-row {
+    border-top: 1px solid var(--border-weak);
+  }
+
+  .notes-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+
+  .note-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+
+  .note-field span {
+    color: var(--gray-6);
+    font-family: 'Medium';
+  }
+
+  .note-field textarea {
+    min-height: 120px;
+    resize: vertical;
+  }
+
+  @media (max-width: 1100px) {
+    .space-row {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    .picker-field--action {
-      grid-column: span 2;
+    .notes-grid {
+      grid-template-columns: 1fr;
     }
   }
 
   @media (max-width: 768px) {
-    .project-floor-form-card {
-      padding: 0.75rem;
-      border-radius: 20px;
-    }
-
     .form-header {
+      align-items: stretch;
       flex-direction: column;
     }
 
-    .form-header__summary {
+    .form-summary {
       width: 100%;
-      flex-direction: row;
-      justify-content: space-between;
     }
 
-    .picker-panel,
-    .note-field {
+    .form-summary > div {
+      flex: 1;
+    }
+
+    .picker-panel {
       grid-template-columns: 1fr;
-    }
-
-    .picker-field--action {
-      grid-column: span 1;
-    }
-
-    .field-label--hidden {
-      display: none;
     }
 
     .space-row {
       grid-template-columns: 1fr;
     }
 
-    .space-row__actions {
-      justify-content: flex-start;
+    .floor-spaces-table__head {
+      display: none;
     }
 
-    .section-card {
-      padding: 0.9rem;
-      border-radius: 20px;
+    .floor-space-row {
+      grid-template-columns: 1fr;
     }
   }
 </style>
