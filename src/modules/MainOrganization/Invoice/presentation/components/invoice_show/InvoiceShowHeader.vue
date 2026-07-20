@@ -1,7 +1,7 @@
 <script setup lang="ts">
-  import invoiceHeroIllustration from '@/assets/images/invoice-hero-illustration-v3.png';
-  import invoiceDocumentIcon from '@/assets/images/invoice-document-icon.png';
   import type InvoiceShowModel from '../../../core/models/invoice.show.model';
+  import InvoiceDocumentIcon from './InvoiceDocumentIcon.vue';
+  import InvoiceHeroIllustration from './InvoiceHeroIllustration.vue';
 
   defineProps<{
     invoice: InvoiceShowModel;
@@ -68,8 +68,8 @@
     <div class="invoice-show-header__hero">
       <div class="invoice-show-header__hero-top">
         <div class="invoice-show-header__identity">
-          <span class="invoice-show-header__document-icon invoice-show-asset-icon">
-            <img :src="invoiceDocumentIcon" alt="" aria-hidden="true" />
+          <span class="invoice-show-header__document-icon">
+            <InvoiceDocumentIcon :size="64" />
           </span>
 
           <div class="invoice-show-header__copy">
@@ -99,7 +99,7 @@
         </div>
 
         <figure class="invoice-show-header__illustration">
-          <img :src="invoiceHeroIllustration" alt="" aria-hidden="true" />
+          <InvoiceHeroIllustration :size="250" />
         </figure>
       </div>
 

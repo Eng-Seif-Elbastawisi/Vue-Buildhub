@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import paymentCoinsIcon from '@/assets/images/payment-coins-icon.png';
+  import PaymentCoinsIllustration from './PaymentCoinsIllustration.vue';
 
   defineProps<{
     totalAmount: number;
@@ -18,8 +18,8 @@
         <p>{{ $t('invoice_show.total_amount') }}</p>
         <strong>{{ formatAmount(totalAmount) }} {{ currency }}</strong>
       </div>
-      <span class="invoice-payment-summary__payment-icon invoice-show-asset-icon">
-        <img :src="paymentCoinsIcon" alt="" aria-hidden="true" />
+      <span class="invoice-payment-summary__payment-icon">
+        <PaymentCoinsIllustration :size="84" />
       </span>
     </div>
 
