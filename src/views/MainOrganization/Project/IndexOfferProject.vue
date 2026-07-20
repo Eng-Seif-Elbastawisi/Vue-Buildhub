@@ -5,6 +5,7 @@
   const projectStatuses: ConvertStatus[] = [
     ConvertStatus.SEND_TO_CLIENT,
     ConvertStatus.REJECT_CLIENT,
+    ConvertStatus.WAITING_PRICING,
   ];
 </script>
 

@@ -2,13 +2,16 @@
  * Convert status enumeration
  */
 export const ConvertStatus = {
-  PENDING: 1,
-  CONVERT_TO_PROJECT: 2,
-  SEND_TO_CLIENT: 3,
-  REVISE_VERSION: 4,
-  ACCEPT_CLIENT: 5,
-  REJECT_CLIENT: 6,
+  WAITING_PREVIEW: 1,
+  WAITING_PREVIEW_RESULT: 2,
+  WAITING_PRICING: 3,
+  CONVERT_TO_PROJECT: 10,
+  SEND_TO_CLIENT: 11,
+  REVISE_VERSION: 12,
+  ACCEPT_CLIENT: 13,
+  REJECT_CLIENT: 14,
 } as const;
+
 export type ConvertStatus = (typeof ConvertStatus)[keyof typeof ConvertStatus];
 
 /**
@@ -17,8 +20,12 @@ export type ConvertStatus = (typeof ConvertStatus)[keyof typeof ConvertStatus];
  */
 export function getConvertStatusNameKey(status: ConvertStatus): string {
   switch (status) {
-    case ConvertStatus.PENDING:
-      return 'project.convertStatus.pending';
+    case ConvertStatus.WAITING_PREVIEW:
+      return 'project.convertStatus.waitingPreview';
+    case ConvertStatus.WAITING_PREVIEW_RESULT:
+      return 'project.convertStatus.waitingPreviewResult';
+    case ConvertStatus.WAITING_PRICING:
+      return 'project.convertStatus.waitingPricing';
     case ConvertStatus.CONVERT_TO_PROJECT:
       return 'project.convertStatus.convertToProject';
     case ConvertStatus.SEND_TO_CLIENT:

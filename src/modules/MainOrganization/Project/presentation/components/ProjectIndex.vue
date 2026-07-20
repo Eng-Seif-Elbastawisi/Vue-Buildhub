@@ -22,7 +22,7 @@
   }
 
   const props = withDefaults(defineProps<ProjectIndexProps>(), {
-    statuses: () => [ConvertStatus.PENDING],
+    statuses: () => [ConvertStatus.WAITING_PREVIEW, ConvertStatus.WAITING_PREVIEW_RESULT],
   });
 
   const controller = ProjectController.getInstance();
@@ -58,11 +58,6 @@
     parseServiceType(route.query.service_type),
   );
 
-  /**
-   * إخفاء زري التعديل والحذف في صفحات:
-   * Design
-   * Supervision
-   */
   const hideEditAndDeleteActions = computed(() => {
     return (
       serviceType.value.includes(DepartmentTypeEnum.DESIGN) ||

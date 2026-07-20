@@ -19,11 +19,6 @@
       titleKey: 'Project.steps.project_floors',
       descriptionKey: 'Project.steps.project_floors_description',
     },
-    {
-      id: 4,
-      titleKey: 'Project.steps.project_items',
-      descriptionKey: 'Project.steps.project_items_description',
-    },
   ];
 </script>
 

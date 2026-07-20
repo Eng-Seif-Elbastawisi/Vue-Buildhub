@@ -11,7 +11,6 @@
   import type ProjectItemModel from '../../core/models/project.Item.model';
 
   import ProjectFloorShow from '../../../ProjectFloor/presentation/components/ProjectFloorShow.vue';
-  import ProjectSteps from '@/modules/MainOrganization/Project/presentation/components/ProjectSteps.vue';
   import ProjectPricingAdd from '@/modules/MainOrganization/ProjectPricing/presentation/components/ProjectPricingAdd.vue';
 
   const controller = ProjectItemController.getInstance();
@@ -75,8 +74,6 @@
 
 <template>
   <div class="item-crud-page">
-    <ProjectSteps :current-step="4" />
-
     <ProjectFloorShow :project="projectId" />
 
     <ProjectItemForm
