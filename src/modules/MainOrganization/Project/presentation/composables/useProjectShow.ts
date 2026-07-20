@@ -6,7 +6,15 @@ import { useI18n } from 'vue-i18n';
 import pdfArabicBoldFontUrl from '@/assets/fonts/Noto/NotoNaskhArabic-Bold.ttf?url';
 import pdfArabicRegularFontUrl from '@/assets/fonts/Noto/NotoNaskhArabic-Regular.ttf?url';
 import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
+import fallbackCompanyLogo from '@/assets/images/BuildHubLogo.jpg';
 import fallbackProjectImage from '@/assets/images/ChatGPT Image Jul 1, 2026, 11_19_16 AM.png';
+import {
+  getContainedPdfImageDimensions,
+  loadFirstPdfImage,
+  type PdfImageData,
+} from '@/shared/Pdf/loadPdfImage';
+import { useUserStore } from '@/stores/user';
+import { getSystemIdentityCompany } from '@/modules/shared/SystemIdentity/presentation/utils/systemIdentityCompany';
 import { ProjectItemPriceEnum } from '@/modules/MainOrganization/ProjectItem/core/constant/project.item.Price.enum';
 import { ProjectPricingDiscountEnum } from '@/modules/MainOrganization/ProjectPricing/core/constant/project.pricing.discount.enum';
 import { FloorNumber } from '@/modules/MainOrganization/ProjectFloor/core/constants/floor.number.enum';
@@ -45,13 +53,22 @@ let pdfArabicFontFiles: {
 export const useProjectShow = () => {
   const route = useRoute();
   const { locale, t } = useI18n();
+  const { user } = useUserStore();
   const projectController = ProjectController.getInstance();
   const activeTab = ref('project-data');
   const exportingPdf = ref(false);
   const loading = ref(false);
   const localConvertStatus = ref<ConvertStatus | null>(null);
+  let pdfCompanyLogo: PdfImageData | null = null;
 
   const emptyValue = '—';
+  const company = computed(() => getSystemIdentityCompany(user, t('buildhub')));
+  const companyContactLines = computed(() => [
+    `${t('email')}: ${company.value.email || emptyValue} | ${t('phone')}: ${
+      company.value.phone || emptyValue
+    }`,
+    `${t('address')}: ${company.value.address || emptyValue}`,
+  ]);
 
   const projectId = computed(() => {
     const value = Number(route.params.project_id);
@@ -662,11 +679,7 @@ export const useProjectShow = () => {
     pdf.text(formatPdfText(pdf, text), x, y, options);
   };
 
-  const startPdfSection = (pdf: jsPDF, title: string, subtitle?: string, shouldAddPage = true) => {
-    if (shouldAddPage) {
-      pdf.addPage();
-    }
-
+  const drawPdfHeader = (pdf: jsPDF) => {
     const pageWidth = pdf.internal.pageSize.getWidth();
 
     pdf.setFillColor(...pdfColors.primary);
@@ -674,16 +687,39 @@ export const useProjectShow = () => {
     pdf.setTextColor(...pdfColors.white);
     setPdfFont(pdf, 'bold');
     pdf.setFontSize(11);
-    writePdfText(pdf, 'BuildHub', pdfMargin, 11.5);
+
+    let companyTextX = pdfMargin;
+
+    if (pdfCompanyLogo) {
+      const logoBoxSize = 12;
+      const dimensions = getContainedPdfImageDimensions(
+        pdf,
+        pdfCompanyLogo,
+        logoBoxSize,
+        logoBoxSize,
+      );
+      const logoY = 3 + (logoBoxSize - dimensions.height) / 2;
+
+      pdf.addImage(pdfCompanyLogo, pdfMargin, logoY, dimensions.width, dimensions.height);
+      companyTextX += dimensions.width + 3;
+    }
+
+    writePdfText(pdf, company.value.name, companyTextX, 11.5, { maxWidth: 90 });
     writePdfText(
       pdf,
       `${t('ProjectShow.project_code')}: ${valueOrEmpty(project.value.id)}`,
       pageWidth - pdfMargin,
       11.5,
-      {
-        align: 'right',
-      },
+      { align: 'right' },
     );
+  };
+
+  const startPdfSection = (pdf: jsPDF, title: string, subtitle?: string, shouldAddPage = true) => {
+    if (shouldAddPage) {
+      pdf.addPage();
+    }
+
+    const pageWidth = pdf.internal.pageSize.getWidth();
 
     pdf.setTextColor(...pdfColors.dark);
     pdf.setFontSize(18);
@@ -744,7 +780,7 @@ export const useProjectShow = () => {
       head: [head],
       body,
       theme: 'grid',
-      margin: { left: pdfMargin, right: pdfMargin, bottom: 18 },
+      margin: { left: pdfMargin, right: pdfMargin, bottom: 30 },
       styles: {
         font: pdfFontFamily(),
         fontSize: compact ? 7.5 : 8.5,
@@ -782,7 +818,7 @@ export const useProjectShow = () => {
       startY,
       body,
       theme: 'grid',
-      margin: { left: pdfMargin, right: pdfMargin, bottom: 18 },
+      margin: { left: pdfMargin, right: pdfMargin, bottom: 30 },
       styles: {
         font: pdfFontFamily(),
         fontSize: 8.8,
@@ -838,19 +874,26 @@ export const useProjectShow = () => {
     [t('address'), valueOrEmpty(preview.value?.address)],
   ];
 
-  const addPdfFooters = (pdf: jsPDF) => {
+  const addPdfPageBranding = (pdf: jsPDF) => {
     const pageCount = pdf.getNumberOfPages();
     const pageWidth = pdf.internal.pageSize.getWidth();
     const pageHeight = pdf.internal.pageSize.getHeight();
 
     for (let page = 1; page <= pageCount; page += 1) {
       pdf.setPage(page);
+      drawPdfHeader(pdf);
       pdf.setDrawColor(...pdfColors.border);
-      pdf.line(pdfMargin, pageHeight - 14, pageWidth - pdfMargin, pageHeight - 14);
+      pdf.line(pdfMargin, pageHeight - 27, pageWidth - pdfMargin, pageHeight - 27);
       pdf.setTextColor(...pdfColors.muted);
       setPdfFont(pdf);
       pdf.setFontSize(8);
-      writePdfText(pdf, projectTitle.value, pdfMargin, pageHeight - 8, { maxWidth: 120 });
+      companyContactLines.value.forEach((line, index) => {
+        writePdfText(pdf, line, pageWidth / 2, pageHeight - 21 + index * 5, {
+          align: 'center',
+          maxWidth: pageWidth - pdfMargin * 2,
+        });
+      });
+      writePdfText(pdf, projectTitle.value, pdfMargin, pageHeight - 7, { maxWidth: 120 });
       writePdfText(pdf, `${page} / ${pageCount}`, pageWidth - pdfMargin, pageHeight - 8, {
         align: 'right',
       });
@@ -864,7 +907,11 @@ export const useProjectShow = () => {
 
     try {
       const pdf = new jsPDF('p', 'mm', 'a4');
-      await setupPdfDocument(pdf);
+      const [, companyLogo] = await Promise.all([
+        setupPdfDocument(pdf),
+        loadFirstPdfImage([company.value.logo, fallbackCompanyLogo]),
+      ]);
+      pdfCompanyLogo = companyLogo;
 
       let y = startPdfSection(pdf, t('ProjectShow.project_information'), projectTitle.value, false);
       y = drawPdfSummaryCards(pdf, y);
@@ -987,9 +1034,10 @@ export const useProjectShow = () => {
         drawPdfEmpty(pdf, t('ProjectShow.no_project_pricing'), y);
       }
 
-      addPdfFooters(pdf);
+      addPdfPageBranding(pdf);
       pdf.save(getPdfFileName());
     } finally {
+      pdfCompanyLogo = null;
       exportingPdf.value = false;
     }
   };

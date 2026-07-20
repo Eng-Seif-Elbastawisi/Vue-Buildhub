@@ -7,8 +7,12 @@
   import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
   import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
   import { dialogManager } from '@/base/Presentation/Dialogs/dialog.manager';
+  import fallbackCompanyLogo from '@/assets/images/BuildHubLogo.jpg';
+  import fallbackProjectImage from '@/assets/images/ChatGPT Image Jul 1, 2026, 11_19_16 AM.png';
+  import { loadFirstPdfImage } from '@/shared/Pdf/loadPdfImage';
   import { useUserStore } from '@/stores/user';
   import { useSystemIdentityTheme } from '@/modules/shared/SystemIdentity/presentation/composables/useSystemIdentityTheme';
+  import { getSystemIdentityCompany } from '@/modules/shared/SystemIdentity/presentation/utils/systemIdentityCompany';
   import { InvoicePaymentMethodEnum } from '@/modules/MainOrganization/InvoicePayment/core/constant/invoice.payment.method.enum';
   import type InvoicePaymentModel from '@/modules/MainOrganization/InvoicePayment/core/models/invoice.payment.model';
   import type AddInvoicePaymentParams from '@/modules/MainOrganization/InvoicePayment/core/params/add.invoice.payment.params';
@@ -31,6 +35,13 @@
   import InvoiceShowSkeleton from './invoice_show/InvoiceShowSkeleton.vue';
   import InvoiceStatusOverview from './invoice_show/InvoiceStatusOverview.vue';
   import InvoiceTimelineCard from './invoice_show/InvoiceTimelineCard.vue';
+  import {
+    addPdfPageBranding,
+    addPdfProjectPhoto,
+    PDF_PROJECT_TABLE_START_Y,
+    PDF_TABLE_MARGIN,
+    type PdfPageBranding,
+  } from './invoice_show/invoicePdf';
 
   const route = useRoute();
   const { t } = useI18n();
@@ -153,6 +164,16 @@
   const clientPhone = computed(() => valueOrEmpty(invoice.value?.client?.phone));
   const clientEmail = computed(() => valueOrEmpty(invoice.value?.client?.email));
   const organizationName = computed(() => entityTitle(invoice.value?.organization));
+  const company = computed(() => getSystemIdentityCompany(user, t('buildhub')));
+  const companyContactLines = computed(() => {
+    return [
+      `${t('email')}: ${company.value.email || emptyValue} | ${t('phone')}: ${
+        company.value.phone || emptyValue
+      }`,
+      `${t('address')}: ${company.value.address || emptyValue}`,
+    ];
+  });
+  const projectImageSource = computed(() => invoice.value?.project?.image || '');
   const createdAtLabel = computed(() =>
     formatDateTime(invoice.value?.created_at || invoice.value?.invoice_date),
   );
@@ -283,22 +304,29 @@
     return `${String(number).replace(/[^a-z0-9]+/gi, '-')}.pdf`;
   };
 
-  const addPdfHeader = (pdf: jsPDF, title: string) => {
-    pdf.setFont('helvetica', 'bold');
-    pdf.setFontSize(18);
-    pdf.text(title, 16, 20);
-    pdf.setFont('helvetica', 'normal');
-    pdf.setFontSize(10);
-    pdf.text(`BuildHub - ${formatDateTime(new Date().toISOString())}`, 16, 28);
+  const createPdfBranding = async (title: string): Promise<PdfPageBranding> => {
+    return {
+      title,
+      generatedAt: formatDateTime(new Date().toISOString()),
+      company: {
+        name: company.value.name,
+        logo: await loadFirstPdfImage([company.value.logo, fallbackCompanyLogo]),
+        contactLines: companyContactLines.value,
+      },
+    };
   };
 
-  const downloadInvoicePdf = () => {
+  const downloadInvoicePdf = async () => {
     if (!invoice.value || exportingPdf.value) return;
 
     exportingPdf.value = true;
 
     try {
       const pdf = new jsPDF('p', 'mm', 'a4');
+      const [branding, projectPhoto] = await Promise.all([
+        createPdfBranding(t('invoice_show.pdf_title')),
+        loadFirstPdfImage([projectImageSource.value, fallbackProjectImage]),
+      ]);
       const rows: [string, string][] = [
         [t('invoice.invoice_number'), valueOrEmpty(invoice.value.invoice_number)],
         [t('invoice.invoice_date'), invoiceDateLabel.value],
@@ -316,13 +344,17 @@
         ],
       ];
 
-      addPdfHeader(pdf, t('invoice_show.pdf_title'));
+      if (projectPhoto) {
+        addPdfProjectPhoto(pdf, projectPhoto, `${t('invoice.project')}: ${projectTitle.value}`);
+      }
+
       autoTable(pdf, {
-        startY: 38,
+        startY: projectPhoto ? PDF_PROJECT_TABLE_START_Y : PDF_TABLE_MARGIN.top,
         body: rows,
         theme: 'grid',
         styles: { font: 'helvetica', fontSize: 9 },
         columnStyles: { 0: { fontStyle: 'bold', cellWidth: 55 } },
+        margin: PDF_TABLE_MARGIN,
       });
 
       const itemRows: RowInput[] = invoice.value.items.map((item, index) => [
@@ -351,8 +383,10 @@
           : [[emptyValue, t('invoice_show.no_items'), emptyValue, emptyValue, emptyValue]],
         theme: 'striped',
         styles: { font: 'helvetica', fontSize: 8 },
+        margin: PDF_TABLE_MARGIN,
       });
 
+      addPdfPageBranding(pdf, branding);
       pdf.save(getInvoicePdfFileName());
     } finally {
       exportingPdf.value = false;
@@ -376,12 +410,12 @@
     }
   };
 
-  const downloadPaymentReceipt = (payment: InvoicePaymentModel) => {
+  const downloadPaymentReceipt = async (payment: InvoicePaymentModel) => {
     const pdf = new jsPDF('p', 'mm', 'a4');
+    const branding = await createPdfBranding(t('invoice_show.receipt_title'));
 
-    addPdfHeader(pdf, t('invoice_show.receipt_title'));
     autoTable(pdf, {
-      startY: 38,
+      startY: PDF_TABLE_MARGIN.top,
       body: [
         [t('invoice.invoice_number'), valueOrEmpty(invoice.value?.invoice_number)],
         [t('invoice_show.reference_no'), payment.id ? `#${payment.id}` : emptyValue],
@@ -396,8 +430,10 @@
       theme: 'grid',
       styles: { font: 'helvetica', fontSize: 9 },
       columnStyles: { 0: { fontStyle: 'bold', cellWidth: 60 } },
+      margin: PDF_TABLE_MARGIN,
     });
 
+    addPdfPageBranding(pdf, branding);
     pdf.save(`payment-${payment.id ?? invoiceId.value}.pdf`);
   };
 

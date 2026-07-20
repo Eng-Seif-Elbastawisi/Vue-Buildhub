@@ -110,8 +110,8 @@
 
       <div class="setting">
         <HeaderNotificationIcon class="cursor-pointer" />
-        <HeaderMessgaesIcon class="cursor-pointer" />
-        <HeaderSettingIcon class="cursor-pointer" />
+        <!-- <HeaderMessgaesIcon class="cursor-pointer" /> -->
+        <!-- <HeaderSettingIcon class="cursor-pointer" /> -->
         <button
           class="language-toggle"
           type="button"
