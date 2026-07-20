@@ -235,7 +235,7 @@ describe('ShowInvoice', () => {
     expect(createInvoicePayment).toHaveBeenCalledWith(23, paymentParams);
   });
 
-  it('uses stored company identity and the project photo in the invoice PDF', async () => {
+  it('uses the compact company identity header without a project photo in the invoice PDF', async () => {
     const wrapper = mountSuccessfulInvoice();
 
     await flushPromises();
@@ -249,20 +249,14 @@ describe('ShowInvoice', () => {
     };
     const renderedText = pdf.text.mock.calls.map(([text]) => text);
 
-    expect(pdf.addImage).toHaveBeenCalledWith('data:image/png;base64,company-logo', 16, 8, 18, 18);
-    expect(pdf.addImage).toHaveBeenCalledWith(
-      'data:image/webp;base64,project-photo',
-      84,
-      40,
-      42,
-      42,
-    );
+    expect(pdf.addImage).toHaveBeenCalledWith('data:image/png;base64,company-logo', 16, 5, 12, 12);
+    expect(pdf.addImage).toHaveBeenCalledTimes(1);
     expect(renderedText).toContain('Techlab');
+    expect(renderedText).toContain('Invoice summary');
     expect(renderedText).not.toContain('Invoice organization');
     expect(renderedText).toContain('Email: employee@techlab.com | Phone: -');
     expect(renderedText).toContain('Address: Techlab Headquarters');
-    expect(renderedText).toContain('Project: Tower project');
-    expect(pdfMocks.autoTable.mock.calls[0]?.[1]).toMatchObject({ startY: 94 });
+    expect(pdfMocks.autoTable.mock.calls[0]?.[1]).toMatchObject({ startY: 30 });
     expect(pdf.save).toHaveBeenCalledWith('INV-2026-0001.pdf');
   });
 });

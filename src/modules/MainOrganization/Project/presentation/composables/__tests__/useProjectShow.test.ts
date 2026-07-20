@@ -351,7 +351,13 @@ describe('useProjectShow', () => {
     const pdf = pdfMocks.instances.at(-1);
     const renderedText = pdf?.text.mock.calls.map(([text]) => text);
 
-    expect(pdf?.addImage).toHaveBeenCalledWith('data:image/png;base64,company-logo', 16, 6, 12, 6);
+    expect(pdf?.addImage).toHaveBeenCalledWith('data:image/png;base64,company-logo', 16, 8, 12, 6);
+    expect(pdf?.text).toHaveBeenCalledWith('Project Alpha', 194, 12, {
+      align: 'right',
+      maxWidth: 90,
+    });
+    expect(pdf?.text.mock.calls.filter(([, x, y]) => x === 194 && y === 19)).toEqual([]);
+    expect(pdf?.addPage).toHaveBeenCalledTimes(1);
     expect(renderedText).toContain('Techlab');
     expect(renderedText).toContain('email: employee@techlab.test | phone: —');
     expect(renderedText).toContain('address: Techlab Headquarters');

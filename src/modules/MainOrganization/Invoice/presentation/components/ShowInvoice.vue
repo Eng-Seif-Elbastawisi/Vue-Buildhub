@@ -8,8 +8,12 @@
   import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
   import { dialogManager } from '@/base/Presentation/Dialogs/dialog.manager';
   import fallbackCompanyLogo from '@/assets/images/BuildHubLogo.jpg';
-  import fallbackProjectImage from '@/assets/images/ChatGPT Image Jul 1, 2026, 11_19_16 AM.png';
   import { loadFirstPdfImage } from '@/shared/Pdf/loadPdfImage';
+  import {
+    addPdfPageBranding,
+    PDF_TABLE_MARGIN,
+    type PdfPageBranding,
+  } from '@/shared/Pdf/pdfPageBranding';
   import { useUserStore } from '@/stores/user';
   import { useSystemIdentityTheme } from '@/modules/shared/SystemIdentity/presentation/composables/useSystemIdentityTheme';
   import { getSystemIdentityCompany } from '@/modules/shared/SystemIdentity/presentation/utils/systemIdentityCompany';
@@ -35,13 +39,6 @@
   import InvoiceShowSkeleton from './invoice_show/InvoiceShowSkeleton.vue';
   import InvoiceStatusOverview from './invoice_show/InvoiceStatusOverview.vue';
   import InvoiceTimelineCard from './invoice_show/InvoiceTimelineCard.vue';
-  import {
-    addPdfPageBranding,
-    addPdfProjectPhoto,
-    PDF_PROJECT_TABLE_START_Y,
-    PDF_TABLE_MARGIN,
-    type PdfPageBranding,
-  } from './invoice_show/invoicePdf';
 
   const route = useRoute();
   const { t } = useI18n();
@@ -173,7 +170,6 @@
       `${t('address')}: ${company.value.address || emptyValue}`,
     ];
   });
-  const projectImageSource = computed(() => invoice.value?.project?.image || '');
   const createdAtLabel = computed(() =>
     formatDateTime(invoice.value?.created_at || invoice.value?.invoice_date),
   );
@@ -307,7 +303,6 @@
   const createPdfBranding = async (title: string): Promise<PdfPageBranding> => {
     return {
       title,
-      generatedAt: formatDateTime(new Date().toISOString()),
       company: {
         name: company.value.name,
         logo: await loadFirstPdfImage([company.value.logo, fallbackCompanyLogo]),
@@ -323,10 +318,7 @@
 
     try {
       const pdf = new jsPDF('p', 'mm', 'a4');
-      const [branding, projectPhoto] = await Promise.all([
-        createPdfBranding(t('invoice_show.pdf_title')),
-        loadFirstPdfImage([projectImageSource.value, fallbackProjectImage]),
-      ]);
+      const branding = await createPdfBranding(t('invoice_show.pdf_title'));
       const rows: [string, string][] = [
         [t('invoice.invoice_number'), valueOrEmpty(invoice.value.invoice_number)],
         [t('invoice.invoice_date'), invoiceDateLabel.value],
@@ -344,12 +336,8 @@
         ],
       ];
 
-      if (projectPhoto) {
-        addPdfProjectPhoto(pdf, projectPhoto, `${t('invoice.project')}: ${projectTitle.value}`);
-      }
-
       autoTable(pdf, {
-        startY: projectPhoto ? PDF_PROJECT_TABLE_START_Y : PDF_TABLE_MARGIN.top,
+        startY: PDF_TABLE_MARGIN.top,
         body: rows,
         theme: 'grid',
         styles: { font: 'helvetica', fontSize: 9 },

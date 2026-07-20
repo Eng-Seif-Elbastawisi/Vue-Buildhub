@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import type { jsPDF } from 'jspdf';
-import { addPdfPageBranding, addPdfProjectPhoto } from '../invoicePdf';
+import { addPdfPageBranding } from '../pdfPageBranding';
 
 const createPdfBoundary = () => {
   return {
@@ -22,13 +22,12 @@ const createPdfBoundary = () => {
   };
 };
 
-describe('invoice PDF branding', () => {
-  it('adds a proportionate company logo and contact footer to every page', () => {
+describe('PDF page branding', () => {
+  it('renders a compact company identity and document title header', () => {
     const pdfBoundary = createPdfBoundary();
 
     addPdfPageBranding(pdfBoundary as unknown as jsPDF, {
       title: 'Invoice',
-      generatedAt: '20 Jul 2026',
       company: {
         name: 'Techlab',
         logo: 'data:image/png;base64,logo',
@@ -38,39 +37,16 @@ describe('invoice PDF branding', () => {
 
     expect(pdfBoundary.setPage.mock.calls).toEqual([[1], [2]]);
     expect(pdfBoundary.addImage).toHaveBeenCalledTimes(2);
-    expect(pdfBoundary.addImage).toHaveBeenCalledWith(
-      'data:image/png;base64,logo',
-      16,
-      12.5,
-      18,
-      9,
-    );
-    expect(pdfBoundary.text.mock.calls.map(([text]) => text)).toContain('Techlab');
+    expect(pdfBoundary.addImage).toHaveBeenCalledWith('data:image/png;base64,logo', 16, 8, 12, 6);
+    expect(pdfBoundary.text).toHaveBeenCalledWith('Techlab', 31, 13, { maxWidth: 90 });
+    expect(pdfBoundary.text).toHaveBeenCalledWith('Invoice', 194, 12, {
+      align: 'right',
+      maxWidth: 90,
+    });
+    expect(pdfBoundary.text.mock.calls.filter(([, x, y]) => x === 194 && y === 19)).toEqual([]);
     expect(pdfBoundary.text.mock.calls.map(([text]) => text)).toContain(
       'Email: billing@techlab.test | Phone: +20 100',
     );
     expect(pdfBoundary.text.mock.calls.map(([text]) => text)).toContain('Address: Cairo');
-  });
-
-  it('adds the project photo without stretching its proportions', () => {
-    const pdfBoundary = createPdfBoundary();
-
-    addPdfProjectPhoto(
-      pdfBoundary as unknown as jsPDF,
-      'data:image/webp;base64,project',
-      'Tower project',
-    );
-
-    expect(pdfBoundary.addImage).toHaveBeenCalledWith(
-      'data:image/webp;base64,project',
-      65,
-      41,
-      80,
-      40,
-    );
-    expect(pdfBoundary.text).toHaveBeenCalledWith('Tower project', 105, 88, {
-      align: 'center',
-      maxWidth: 178,
-    });
   });
 });

@@ -4,30 +4,22 @@
   import IconLogout from '@/shared/icons/IconLogout.vue';
   import { useUserStore } from '@/stores/user';
   import SearchIcon from '@/shared/icons/SearchIcon.vue';
-  import HeaderSettingIcon from '@/shared/icons/HeaderIcons/HeaderSettingIcon.vue';
-  import HeaderMessgaesIcon from '@/shared/icons/HeaderIcons/HeaderMessgaesIcon.vue';
   import HeaderNotificationIcon from '@/shared/icons/HeaderIcons/HeaderNotificationIcon.vue';
   import EmployeeImage from '@/assets/images/headerIMages/employee.jpg';
   import { useRouter } from 'vue-router';
-  import Drawer from 'primevue/drawer';
-  import SidebarNavigation from './SidebarNavigation.vue';
-  import HeaderSidebarIcon from '@/shared/icons/HeaderIcons/HeaderSidebarIcon.vue';
   import { useRouteSearch } from '@/stores/routerSearch';
   import { UserType } from '@/modules/auth/core/constants/userType.enum';
+  import { useSystemIdentityTheme } from '@/modules/shared/SystemIdentity/presentation/composables/useSystemIdentityTheme';
 
   const userStore = useUserStore();
   const router = useRouter();
-  const { user } = useUserStore();
   const { locale } = useI18n();
+  const { currentPalette } = useSystemIdentityTheme();
+  const user = computed(() => userStore.user);
 
   type Language = 'ar' | 'en';
 
   const languageStorageKey = 'locale';
-  const languageFlags: Record<Language, string> = {
-    ar: '🇪🇬',
-    en: '🇺🇸',
-  };
-
   const languageLabels: Record<Language, string> = {
     ar: 'Switch language to Arabic',
     en: 'Switch language to English',
@@ -36,7 +28,11 @@
   const currentLanguage = computed<Language>(() => (locale.value === 'ar' ? 'ar' : 'en'));
   const nextLanguage = computed<Language>(() => (currentLanguage.value === 'ar' ? 'en' : 'ar'));
   const flagLabel = computed(() => languageLabels[nextLanguage.value]);
-  const flagIcon = computed(() => languageFlags[nextLanguage.value]);
+  const paletteStyle = computed(() => ({
+    '--palette-primary': currentPalette.value.primary,
+    '--palette-secondary': currentPalette.value.secondary,
+    '--palette-accent': currentPalette.value.accent,
+  }));
 
   const setLanguage = (lang: Language) => {
     locale.value = lang;
@@ -52,8 +48,10 @@
   };
 
   const currentRole = computed(() => {
-    return user?.type === UserType.ADMIN ? 'mainportal' : 'organization';
+    return user.value?.type === UserType.ADMIN ? 'mainportal' : 'organization';
   });
+  const roleLabel = computed(() => (currentRole.value === 'mainportal' ? 'Admin' : 'Organization'));
+  const avatarSource = computed(() => user.value?.image || EmployeeImage);
 
   const logout = () => {
     const loginPath = currentRole.value === 'mainportal' ? '/login-admin' : '/login-organization';
@@ -67,7 +65,6 @@
     isDropMenuOpen.value = !isDropMenuOpen.value;
   };
 
-  const DrawerVisible = ref(false);
   const { query, results, isOpen, activeIndex, navigate, onKeydown } = useRouteSearch();
 
   watch(results, (val) => {
@@ -82,14 +79,19 @@
 </script>
 
 <template>
-  <header class="header">
+  <header class="header" :style="paletteStyle">
+    <span class="navbar-glass-layer" aria-hidden="true"></span>
+
     <nav class="nav">
       <div class="search" @keydown="onKeydown">
-        <SearchIcon />
+        <span class="search__icon" aria-hidden="true">
+          <SearchIcon />
+        </span>
         <input
           v-model="query"
           type="search"
           :placeholder="$t('search_what_you_want')"
+          :aria-label="$t('search_what_you_want')"
           autocomplete="off"
         />
 
@@ -109,32 +111,47 @@
       </div>
 
       <div class="setting">
-        <HeaderNotificationIcon class="cursor-pointer" />
-        <!-- <HeaderMessgaesIcon class="cursor-pointer" /> -->
-        <!-- <HeaderSettingIcon class="cursor-pointer" /> -->
+        <span class="nav-action notification-action">
+          <HeaderNotificationIcon />
+        </span>
+
         <button
-          class="language-toggle"
+          class="nav-action language-toggle"
           type="button"
           :aria-label="flagLabel"
           :title="flagLabel"
           @click="toggleLanguage"
         >
-          <span aria-hidden="true">{{ flagIcon }}</span>
+          <i class="pi pi-globe" aria-hidden="true"></i>
+          <span aria-hidden="true">{{ currentLanguage.toUpperCase() }}</span>
+          <i class="pi pi-chevron-down language-toggle__arrow" aria-hidden="true"></i>
         </button>
 
-        <div class="user cursor-pointer dropdown-trigger">
-          <img :alt="$t('user')" :src="EmployeeImage" @click="toggleDropMenu" />
+        <div class="user dropdown-trigger">
+          <button
+            type="button"
+            class="profile-trigger"
+            :aria-label="$t('user')"
+            :aria-expanded="isDropMenuOpen"
+            @click="toggleDropMenu"
+          >
+            <img :alt="$t('user')" :src="avatarSource" />
+
+            <span class="profile-data">
+              <strong>{{ user?.name }}</strong>
+              <small>{{ $t(roleLabel) }}</small>
+            </span>
+
+            <i class="pi pi-chevron-down profile-trigger__arrow" aria-hidden="true"></i>
+          </button>
 
           <transition name="mega-menu">
             <div v-if="isDropMenuOpen" class="mega-menu">
               <div class="mega-header">
-                <img
-                  :src="EmployeeImage || `https://cyber.comolho.com/static/img/avatar.png`"
-                  :alt="$t('image')"
-                />
+                <img :src="avatarSource" :alt="$t('image')" />
                 <div>
                   <p class="name">{{ user?.name }}</p>
-                  <span class="role">{{ $t('Admin') }}</span>
+                  <span class="role">{{ $t(roleLabel) }}</span>
                 </div>
               </div>
 
@@ -149,68 +166,388 @@
             </div>
           </transition>
         </div>
-
-        <div class="sidebar-drawer">
-          <button class="cursor-pointer" @click="DrawerVisible = true">
-            <HeaderSidebarIcon />
-          </button>
-          <Drawer v-model:visible="DrawerVisible" position="right">
-            <template #header> </template>
-            <SidebarNavigation @click-item="DrawerVisible = false" />
-          </Drawer>
-        </div>
       </div>
     </nav>
   </header>
 </template>
 
 <style scoped lang="scss">
-  .search {
+  .header {
+    // background-image: url('@/assets/images/ChatGPT Image Jul 20, 2026, 03_12_15 PM.png');
+    // background-size: cover;
+    // background-position: center;
+    position: sticky;
+    inset-block-start: 12px;
+    z-index: 1100;
+    isolation: isolate;
+    width: auto;
+    min-height: 76px;
+    margin-block: 12px;
+    margin-inline: 20px;
+    padding: 10px 14px;
+    border: 1px solid color-mix(in sRGB, var(--palette-primary) 16%, transparent);
+    border-radius: 20px;
+    background: var(--BgWhite);
+    box-shadow: 0 14px 34px color-mix(in sRGB, var(--palette-secondary) 9%, transparent);
+  }
+
+  @supports ((backdrop-filter: blur(18px)) or (-webkit-backdrop-filter: blur(18px))) {
+    .header {
+      background: color-mix(in sRGB, var(--BgWhite) 82%, transparent);
+      backdrop-filter: blur(18px) saturate(132%);
+      -webkit-backdrop-filter: blur(18px) saturate(132%);
+    }
+  }
+
+  .navbar-glass-layer {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    border-radius: inherit;
+    pointer-events: none;
+
+    &::before {
+      position: absolute;
+      inset-block: -70%;
+      inset-inline-start: -35%;
+      width: 42%;
+      content: '';
+      background: linear-gradient(
+        112deg,
+        transparent 10%,
+        color-mix(in sRGB, var(--palette-primary) 8%, transparent) 42%,
+        color-mix(in sRGB, var(--palette-accent) 12%, transparent) 52%,
+        transparent 86%
+      );
+      filter: blur(12px);
+      transform: skewX(-16deg);
+      animation: navbar-glass-wave 10s ease-in-out infinite;
+    }
+  }
+
+  .nav,
+  .setting,
+  .profile-trigger,
+  .profile-data {
+    min-width: 0;
+  }
+
+  .nav {
     position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    width: 100%;
+  }
+
+  .setting {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .nav-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 42px;
+    height: 42px;
+    padding: 0;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    color: var(--gray-700);
+    background: transparent;
+    transition:
+      color var(--transition-fast),
+      border-color var(--transition-fast),
+      background var(--transition-fast),
+      transform var(--transition-fast);
+  }
+
+  button.nav-action {
+    cursor: pointer;
+  }
+
+  .nav-action:hover,
+  .nav-action:focus-visible,
+  .profile-trigger:hover,
+  .profile-trigger:focus-visible {
+    border-color: color-mix(in sRGB, var(--palette-primary) 18%, transparent);
+    background: color-mix(in sRGB, var(--palette-primary) 8%, transparent);
+  }
+
+  .nav-action:focus-visible,
+  .profile-trigger:focus-visible {
+    outline: 3px solid color-mix(in sRGB, var(--palette-primary) 24%, transparent);
+    outline-offset: 2px;
+  }
+
+  .nav-action:active,
+  .profile-trigger:active {
+    transform: translateY(1px);
+  }
+
+  .notification-action {
+    cursor: pointer;
+
+    :deep(svg) {
+      width: 42px;
+      height: 42px;
+    }
+  }
+
+  .header .search {
+    position: relative;
+    display: flex;
+    flex: 0 1 470px;
+    align-items: center;
+    gap: 10px;
+    width: min(470px, 48vw);
+    height: 48px;
+    padding-inline: 14px;
+    border: 1px solid color-mix(in sRGB, var(--palette-primary) 13%, var(--border-weak));
+    border-radius: 14px;
+    background-color: transparent;
+    background-image: linear-gradient(
+      color-mix(in sRGB, var(--BgWhite) 76%, var(--palette-primary) 2%),
+      color-mix(in sRGB, var(--BgWhite) 76%, var(--palette-primary) 2%)
+    );
+    transition:
+      width var(--transition-fast),
+      border-color var(--transition-fast),
+      box-shadow var(--transition-fast),
+      background var(--transition-fast);
+
+    &:focus-within {
+      border-color: color-mix(in sRGB, var(--palette-primary) 56%, transparent);
+      background-image: linear-gradient(
+        color-mix(in sRGB, var(--BgWhite) 90%, var(--palette-primary) 3%),
+        color-mix(in sRGB, var(--BgWhite) 90%, var(--palette-primary) 3%)
+      );
+      box-shadow: 0 0 0 3px color-mix(in sRGB, var(--palette-primary) 12%, transparent);
+    }
+
+    &__icon {
+      display: grid;
+      flex: 0 0 20px;
+      place-items: center;
+      color: var(--gray-500);
+
+      :deep(svg) {
+        width: 20px;
+        height: 20px;
+      }
+    }
+
+    input {
+      flex: 1 1 auto;
+      width: 100%;
+      min-width: 0;
+      padding: 0;
+      border: 0;
+      outline: 0;
+      color: var(--gray-900);
+      background: transparent;
+      font: inherit;
+      font-size: 13px;
+
+      &::placeholder {
+        color: var(--search-input-color);
+        opacity: 1;
+      }
+    }
 
     &__results {
       position: absolute;
-      top: calc(100% + 8px);
-      left: 0;
-      right: 0;
-      background: #fff;
-      border: 1px solid #e2e8f0;
-      border-radius: 8px;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+      inset-block-start: calc(100% + 10px);
+      inset-inline: 0;
+      z-index: 10;
       list-style: none;
       margin: 0;
-      padding: 4px;
-      z-index: 99999;
+      padding: 6px;
+      border: 1px solid color-mix(in sRGB, var(--palette-primary) 14%, var(--border-weak));
+      border-radius: 14px;
+      background: var(--BgWhite);
+      box-shadow: 0 14px 32px color-mix(in sRGB, var(--palette-secondary) 12%, transparent);
 
       li {
-        padding: 8px 12px;
-        border-radius: 6px;
+        padding: 10px 12px;
+        border-radius: 9px;
+        color: var(--gray-800);
         cursor: pointer;
-        font-size: 14px;
-        transition: background 0.15s;
+        font-size: 13px;
+        transition:
+          color var(--transition-fast),
+          background var(--transition-fast);
 
         &.is-active,
         &:hover {
-          background: #f1f5f9;
+          color: var(--palette-primary);
+          background: color-mix(in sRGB, var(--palette-primary) 9%, transparent);
         }
       }
     }
   }
 
   .language-toggle {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
+    gap: 7px;
+    min-width: 76px;
+    padding-inline: 10px;
+    color: var(--gray-700);
+    font-size: 12px;
+    font-weight: 700;
+
+    .pi-globe {
+      color: var(--palette-primary);
+      font-size: 17px;
+    }
+
+    &__arrow {
+      color: var(--gray-400);
+      font-size: 9px;
+    }
+  }
+
+  .user {
+    position: relative;
+    margin-inline-start: 6px;
+    padding-inline-start: 14px;
+    border-inline-start: 1px solid
+      color-mix(in sRGB, var(--palette-primary) 13%, var(--border-weak));
+  }
+
+  .profile-trigger {
     display: flex;
     align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    border: 1px solid var(--border-weak);
-    background: var(--BgWhite);
+    gap: 10px;
+    max-width: 230px;
+    min-height: 48px;
+    padding-block: 3px;
+    padding-inline: 4px 8px;
+    border: 1px solid transparent;
+    border-radius: 14px;
+    color: inherit;
+    background: transparent;
     cursor: pointer;
-    font-size: 20px;
-    line-height: 1;
-    padding: 0;
+    transition:
+      border-color var(--transition-fast),
+      background var(--transition-fast),
+      transform var(--transition-fast);
+
+    img {
+      flex: 0 0 44px;
+      width: 44px;
+      height: 44px;
+      border: 2px solid color-mix(in sRGB, var(--palette-primary) 22%, transparent);
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    &__arrow {
+      margin-inline-start: 4px;
+      color: var(--gray-400);
+      font-size: 10px;
+    }
+  }
+
+  .profile-data {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    text-align: start;
+
+    strong,
+    small {
+      display: block;
+      max-width: 128px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    strong {
+      color: var(--gray-900);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    small {
+      color: var(--gray-500);
+      font-size: 10px;
+      font-weight: 600;
+    }
+  }
+
+  .header .setting .user .mega-menu {
+    position: absolute;
+    inset-block-start: calc(100% + 12px);
+    inset-inline-end: 0;
+    z-index: 1000;
+    width: 230px;
+    padding: 12px;
+    border: 1px solid color-mix(in sRGB, var(--palette-primary) 14%, var(--border-weak));
+    border-radius: 16px;
+    background: var(--BgWhite);
+    box-shadow: 0 18px 38px color-mix(in sRGB, var(--palette-secondary) 14%, transparent);
+
+    .mega-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+
+      .name {
+        margin: 0;
+        color: var(--gray-900);
+        font-size: 14px;
+        font-weight: 700;
+      }
+
+      .role {
+        color: var(--gray-500);
+        font-size: 11px;
+      }
+    }
+
+    .divider {
+      height: 1px;
+      margin-block: 10px;
+      background: color-mix(in sRGB, var(--palette-primary) 11%, var(--border-weak));
+    }
+
+    .logout-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      padding: 9px;
+      border: 0;
+      border-radius: 10px;
+      color: var(--gray-700);
+      background: transparent;
+      cursor: pointer;
+      transition:
+        color var(--transition-fast),
+        background var(--transition-fast);
+
+      &:hover,
+      &:focus-visible {
+        color: var(--btn-red);
+        background: color-mix(in sRGB, var(--btn-red) 8%, transparent);
+      }
+    }
   }
 
   .dropdown-enter-active,
@@ -224,5 +561,87 @@
   .dropdown-leave-to {
     opacity: 0;
     transform: translateY(-4px);
+  }
+
+  .mega-menu-enter-active,
+  .mega-menu-leave-active {
+    transition:
+      opacity var(--transition-fast),
+      transform var(--transition-fast);
+  }
+
+  .mega-menu-enter-from,
+  .mega-menu-leave-to {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.98);
+  }
+
+  @keyframes navbar-glass-wave {
+    0%,
+    18% {
+      transform: translate3d(-35%, 0, 0) skewX(-16deg);
+    }
+
+    58%,
+    100% {
+      transform: translate3d(350%, 0, 0) skewX(-16deg);
+    }
+  }
+
+  @media (max-width: 1280px) {
+    .header {
+      margin-inline: 16px;
+      padding-inline: 12px;
+    }
+
+    .nav {
+      gap: 12px;
+    }
+
+    .header .search {
+      flex-basis: 360px;
+      width: min(360px, 42vw);
+    }
+
+    .profile-data small {
+      display: none;
+    }
+
+    .profile-trigger {
+      max-width: 190px;
+    }
+  }
+
+  @media (max-width: 1100px) {
+    .header {
+      margin-inline: 12px;
+    }
+
+    .header .search {
+      flex: 1 1 240px;
+      width: auto;
+    }
+
+    .profile-data,
+    .profile-trigger__arrow {
+      display: none;
+    }
+
+    .profile-trigger {
+      padding: 2px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .navbar-glass-layer::before {
+      animation: none;
+    }
+
+    .nav-action,
+    .profile-trigger,
+    .header .search,
+    .search__results li {
+      transition: none;
+    }
   }
 </style>

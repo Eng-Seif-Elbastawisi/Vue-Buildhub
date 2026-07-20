@@ -61,17 +61,8 @@ describe('Navbar.vue', () => {
       },
       stubs: {
         SearchIcon: true,
-        HeaderSettingIcon: true,
-        HeaderDarkModeIcon: true,
-        HeaderMessgaesIcon: true,
         HeaderNotificationIcon: true,
-        HeaderSidebarIcon: true,
         IconLogout: true,
-        SidebarNavigation: true,
-        Drawer: {
-          template: '<div class="drawer-stub"><slot /><slot name="header" /></div>',
-          props: ['visible', 'position'],
-        },
       },
     },
   };
@@ -96,13 +87,17 @@ describe('Navbar.vue', () => {
     expect(wrapper.find('.dropdown-menu').exists()).toBe(false);
   });
 
-  it('toggles dropdown menu on user div click', async () => {
+  it('toggles the profile menu from the complete profile trigger', async () => {
     const wrapper = mount(Navbar, mountOptions);
-    const userImg = wrapper.find('.user.dropdown-trigger img');
-    await userImg.trigger('click');
-    expect(wrapper.find('.mega-menu').exists()).toBe(true);
+    const profileTrigger = wrapper.find('.profile-trigger');
 
-    await userImg.trigger('click');
+    expect(profileTrigger.attributes('aria-expanded')).toBe('false');
+
+    await profileTrigger.trigger('click');
+    expect(wrapper.find('.mega-menu').exists()).toBe(true);
+    expect(profileTrigger.attributes('aria-expanded')).toBe('true');
+
+    await profileTrigger.trigger('click');
     expect(wrapper.find('.mega-menu').exists()).toBe(false);
   });
 
@@ -110,7 +105,7 @@ describe('Navbar.vue', () => {
     const wrapper = mount(Navbar, mountOptions);
 
     // Open dropdown first
-    await wrapper.find('.user.dropdown-trigger img').trigger('click');
+    await wrapper.find('.profile-trigger').trigger('click');
 
     const logoutBtn = wrapper.find('.logout-btn');
     await logoutBtn.trigger('click');
@@ -133,7 +128,7 @@ describe('Navbar.vue', () => {
     const wrapper = mount(Navbar, mountOptions);
     const languageButton = wrapper.find('.language-toggle');
 
-    expect(languageButton.text()).toBe('🇺🇸');
+    expect(languageButton.text()).toContain('AR');
     expect(languageButton.attributes('aria-label')).toBe('Switch language to English');
     expect(languageButton.attributes('title')).toBe('Switch language to English');
 
@@ -150,5 +145,22 @@ describe('Navbar.vue', () => {
     expect(headerStyles).toContain('inset-inline-end: 50px;');
     expect(headerStyles).not.toContain('right: 50px;');
     expect(importedGlobalStyles).toContain('inset-inline-end: 50px;');
+  });
+
+  it('renders the current user identity without duplicating the existing sidebar controls', () => {
+    const wrapper = mount(Navbar, mountOptions);
+
+    expect(wrapper.find('.profile-data strong').text()).toBe('Test User');
+    expect(wrapper.find('.profile-data small').text()).toBe('Admin');
+    expect(wrapper.find('.nav-menu-button').exists()).toBe(false);
+  });
+
+  it('exposes the current system identity palette to the navbar styles', () => {
+    const wrapper = mount(Navbar, mountOptions);
+    const style = wrapper.find('header.header').attributes('style');
+
+    expect(style).toContain('--palette-primary:');
+    expect(style).toContain('--palette-secondary:');
+    expect(style).toContain('--palette-accent:');
   });
 });
