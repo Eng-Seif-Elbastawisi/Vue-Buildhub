@@ -13,7 +13,7 @@ export default class IndexProjectParams extends IndexParams {
     perPage: number = 10,
     withPage: number = 1,
     dateRemove?: string | null,
-    status: ConvertStatus[] | null = [ConvertStatus.PENDING],
+    status: ConvertStatus[] | null = [ConvertStatus.ACCEPT_CLIENT],
     serviceType?: DepartmentTypeEnum[],
   ) {
     super(word, pageNumber, perPage, withPage);
