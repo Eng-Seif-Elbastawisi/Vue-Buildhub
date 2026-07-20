@@ -173,9 +173,6 @@
 
 <style scoped lang="scss">
   .header {
-    // background-image: url('@/assets/images/ChatGPT Image Jul 20, 2026, 03_12_15 PM.png');
-    // background-size: cover;
-    // background-position: center;
     position: sticky;
     inset-block-start: 12px;
     z-index: 1100;
@@ -187,13 +184,21 @@
     padding: 10px 14px;
     border: 1px solid color-mix(in sRGB, var(--palette-primary) 16%, transparent);
     border-radius: 20px;
-    background: var(--BgWhite);
+    background-color: var(--BgWhite);
+    background-image: linear-gradient(
+      color-mix(in sRGB, var(--BgWhite) 34%, transparent),
+      color-mix(in sRGB, var(--BgWhite) 34%, transparent)
+    );
+    // url('@/assets/images/ChatGPT Image Jul 20, 2026, 03_12_15 PM.png');
+    // background-repeat: no-repeat;
+    // background-position: center 37%;
+    // background-size: cover;
     box-shadow: 0 14px 34px color-mix(in sRGB, var(--palette-secondary) 9%, transparent);
   }
 
   @supports ((backdrop-filter: blur(18px)) or (-webkit-backdrop-filter: blur(18px))) {
     .header {
-      background: color-mix(in sRGB, var(--BgWhite) 82%, transparent);
+      background-color: color-mix(in sRGB, var(--BgWhite) 82%, transparent);
       backdrop-filter: blur(18px) saturate(132%);
       -webkit-backdrop-filter: blur(18px) saturate(132%);
     }
@@ -222,7 +227,7 @@
       );
       filter: blur(12px);
       transform: skewX(-16deg);
-      animation: navbar-glass-wave 10s ease-in-out infinite;
+      animation: navbar-glass-wave 5.5s ease-in-out infinite;
     }
   }
 
@@ -578,11 +583,11 @@
 
   @keyframes navbar-glass-wave {
     0%,
-    18% {
+    4% {
       transform: translate3d(-35%, 0, 0) skewX(-16deg);
     }
 
-    58%,
+    82%,
     100% {
       transform: translate3d(350%, 0, 0) skewX(-16deg);
     }

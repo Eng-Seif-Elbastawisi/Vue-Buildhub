@@ -37,6 +37,7 @@ describe('ProjectSideColumn', () => {
         imageSource: '/project.png',
         projectTitle: 'Test Project',
         stats: [{ icon: 'pi pi-building', value: '1', label: 'Floors' }],
+        hasProjectFloors: false,
         addItemTo: addPreviewRoute,
         preview: {
           preview_date: '2026-07-08',
@@ -69,7 +70,7 @@ describe('ProjectSideColumn', () => {
 
     expect(wrapper.find('img[alt="Test Project"]').exists()).toBe(true);
     expect(wrapper.text()).toContain('Floors');
-    expect(wrapper.text()).toContain('Preview ready');
+    expect(wrapper.text()).toContain('Site address');
     expect(wrapper.find('a[href="https://example.com/site"]').exists()).toBe(true);
     expect(wrapper.find('.preview-edit-action').exists()).toBe(false);
   });
@@ -80,6 +81,7 @@ describe('ProjectSideColumn', () => {
         imageSource: '/project.png',
         projectTitle: 'Test Project',
         stats: [{ icon: 'pi pi-building', value: '1', label: 'Floors' }],
+        hasProjectFloors: false,
         addItemTo: addPreviewRoute,
         preview: null,
         previews: [
@@ -122,8 +124,8 @@ describe('ProjectSideColumn', () => {
     });
 
     expect(wrapper.find('.p-accordion').exists()).toBe(true);
-    expect(wrapper.text()).toContain('Latest preview');
-    expect(wrapper.text()).toContain('Previous preview');
+    expect(wrapper.text()).toContain('Latest address');
+    expect(wrapper.text()).toContain('Previous address');
     expect(wrapper.find('a[href="https://example.com/latest"]').exists()).toBe(true);
     expect(wrapper.find('a[href="https://example.com/previous"]').exists()).toBe(true);
 
@@ -142,12 +144,50 @@ describe('ProjectSideColumn', () => {
     expect(wrapper.text()).toContain('Edit Project Preview');
   });
 
+  it('hides preview edit actions when the project has floors', () => {
+    const wrapper = mount(ProjectSideColumn, {
+      props: {
+        imageSource: '/project.png',
+        projectTitle: 'Test Project',
+        stats: [{ icon: 'pi pi-building', value: '1', label: 'Floors' }],
+        addItemTo: addPreviewRoute,
+        preview: {
+          id: 39,
+          preview_date: '2026-07-30',
+          preview_time: '13:47:00',
+        },
+        hasProjectFloors: true,
+        previewTitle: 'Project Preview',
+        noPreviewLabel: 'No preview',
+        previewDateLabel: 'Preview Date',
+        previewTimeLabel: 'Preview Time',
+        notificationTypeLabel: 'Notification Type',
+        notificationMessageLabel: 'Notification Message',
+        siteLinkLabel: 'Site Link',
+        addressLabel: 'Address',
+        emptyValue: '—',
+        formatDate: (value?: string | null) => String(value ?? '—'),
+        formatTime: (value?: string | null) => String(value ?? '—'),
+        valueOrEmpty: (value?: string | number | null) => String(value ?? '—'),
+      },
+      global: {
+        stubs: {
+          ...accordionStubs,
+          RouterLink: routerLinkStub,
+        },
+      },
+    });
+
+    expect(wrapper.find('.preview-edit-action').exists()).toBe(false);
+  });
+
   it('routes to add preview when no preview exists', () => {
     const wrapper = mount(ProjectSideColumn, {
       props: {
         imageSource: '/project.png',
         projectTitle: 'Test Project',
         stats: [{ icon: 'pi pi-building', value: '1', label: 'Floors' }],
+        hasProjectFloors: false,
         addItemTo: addPreviewRoute,
         preview: null,
         previewTitle: 'Project Preview',

@@ -1253,6 +1253,7 @@ export const useProjectShow = () => {
     stats: stats.value,
     preview: preview.value,
     previews: previews.value,
+    hasProjectFloors: projectFloors.value.length > 0,
     addItemTo: {
       path: '/organization/project_preview/add',
       query: {

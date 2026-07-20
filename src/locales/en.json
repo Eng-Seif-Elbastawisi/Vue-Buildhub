@@ -1046,6 +1046,8 @@
   "ProjectPreview.list_title": "List of project previews",
   "ProjectPreview.list_description": "Here you can see all the project previews in the system",
   "ProjectPreview.visit_title": "Visit {number}",
+  "ProjectPreview.evaluation_warning_title": "Evaluation is not available yet",
+  "ProjectPreview.evaluation_warning_description": "Continuing and writing the evaluation now will update the scheduled preview date ({date}).",
   "project_preview.empty_title": "No project previews yet",
   "project_preview.empty_description": "Add a project preview to start recording site visits",
   "organization_toggle.sidebar_label": "Fetch Control",
