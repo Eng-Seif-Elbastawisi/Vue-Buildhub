@@ -190,8 +190,7 @@ export const useProjectShow = () => {
 
   const statusActions = computed(() => {
     switch (currentConvertStatus.value) {
-      case ConvertStatus.PENDING:
-      case ConvertStatus.CONVERT_TO_PROJECT:
+      case ConvertStatus.READY_TO_SENT:
       case ConvertStatus.REVISE_VERSION:
         return [
           {
