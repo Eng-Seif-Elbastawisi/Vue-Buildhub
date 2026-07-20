@@ -95,8 +95,7 @@
     return (
       !!selectedStatus.value &&
       !!selectedPricingResponsible.value &&
-      !!selectedNotificationType.value &&
-      notificationMessage.value.trim().length > 0
+      !!selectedNotificationType.value
     );
   });
 
