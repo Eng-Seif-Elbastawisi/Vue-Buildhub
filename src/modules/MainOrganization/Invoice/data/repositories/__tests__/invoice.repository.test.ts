@@ -3,6 +3,9 @@ import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/da
 import InvoiceModel from '../../../core/models/invoice.model';
 import InvoiceShowModel from '../../../core/models/invoice.show.model';
 import ExportInvoiceParams from '../../../core/params/export.invoice.params';
+import FetchAutoInvoicesParams from '../../../core/params/fetch.auto.invoices.params';
+import { InvoiceActionStatusEnum } from '../../../core/constant/invoice.action.status.enum';
+import SetInvoiceActionParams from '../../../core/params/set.invoice.action.params';
 import InvoiceRepository from '../invoice.repository';
 
 const invoiceJson = {
@@ -44,5 +47,25 @@ describe('InvoiceRepository', () => {
 
     expect(result).toBeInstanceOf(DataSuccess);
     expect(result.data).toEqual({ invoice_id: 7 });
+  });
+
+  it('fetches auto invoices and sets actions with static data', async () => {
+    const repository = InvoiceRepository.getInstance();
+    const invoices = await repository.fetchAutoInvoices(
+      new FetchAutoInvoicesParams({ project_id: 30 }),
+      { useStaticData: true },
+    );
+    const action = await repository.setInvoiceAction(
+      new SetInvoiceActionParams({
+        project_id: 30,
+        action_status: InvoiceActionStatusEnum.OFFER_ACCEPT,
+        invoice_ids: [23, 24],
+      }),
+      { useStaticData: true },
+    );
+
+    expect(invoices).toBeInstanceOf(DataSuccess);
+    expect(invoices.data).toEqual([InvoiceModel.example]);
+    expect(action).toBeInstanceOf(DataSuccess);
   });
 });

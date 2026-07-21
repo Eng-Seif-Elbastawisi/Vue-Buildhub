@@ -1,5 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
 import ExportInvoiceParams from '../../../core/params/export.invoice.params';
+import FetchAutoInvoicesParams from '../../../core/params/fetch.auto.invoices.params';
+import { InvoiceActionStatusEnum } from '../../../core/constant/invoice.action.status.enum';
+import SetInvoiceActionParams from '../../../core/params/set.invoice.action.params';
 import InvoiceApiService from '../invoice.api-service';
 
 describe('InvoiceApiService', () => {
@@ -38,6 +41,42 @@ describe('InvoiceApiService', () => {
     expect(customPost).toHaveBeenCalledWith(
       expect.stringContaining('mainportal/export_invoice'),
       params,
+      undefined,
+    );
+
+    customPost.mockRestore();
+  });
+
+  it('posts auto-invoice queries and invoice actions to their endpoints', async () => {
+    const service = InvoiceApiService.getInstance();
+    const customPost = vi
+      .spyOn(
+        service as unknown as {
+          customPost: InvoiceApiService['customPost'];
+        },
+        'customPost',
+      )
+      .mockResolvedValue({ statusCode: 200, data: { status: true, data: [] } });
+    const fetchParams = new FetchAutoInvoicesParams({ project_id: 30 });
+    const actionParams = new SetInvoiceActionParams({
+      project_id: 30,
+      action_status: InvoiceActionStatusEnum.OFFER_ACCEPT,
+      invoice_ids: [23, 24],
+    });
+
+    await service.fetchAutoInvoices(fetchParams);
+    await service.setInvoiceAction(actionParams);
+
+    expect(customPost).toHaveBeenNthCalledWith(
+      1,
+      expect.stringContaining('mainportal/fetch_auto_invoices'),
+      fetchParams,
+      undefined,
+    );
+    expect(customPost).toHaveBeenNthCalledWith(
+      2,
+      expect.stringContaining('mainportal/set_invoice_action'),
+      actionParams,
       undefined,
     );
 

@@ -3,6 +3,12 @@ import type { ApiCallOptions, ApiResponse } from '@/base/Data/ApiService/baseApi
 import type Params from '@/base/Core/Params/params';
 import { InvoiceApiEndpoints } from './invoice.api.endpoints';
 
+export type InvoiceActionApiResponse = {
+  status?: boolean;
+  message?: string;
+  data?: unknown;
+};
+
 export default class InvoiceApiService extends BaseApiService {
   private static instance: InvoiceApiService;
 
@@ -31,5 +37,27 @@ export default class InvoiceApiService extends BaseApiService {
     options?: ApiCallOptions,
   ): Promise<ApiResponse<Record<string, unknown>>> {
     return this.customPost<Record<string, unknown>>(this.invoiceEndpoints.export, params, options);
+  }
+
+  async fetchAutoInvoices(
+    params: Params,
+    options?: ApiCallOptions,
+  ): Promise<ApiResponse<InvoiceActionApiResponse>> {
+    return this.customPost<InvoiceActionApiResponse>(
+      this.invoiceEndpoints.fetchAutoInvoices,
+      params,
+      options,
+    );
+  }
+
+  async setInvoiceAction(
+    params: Params,
+    options?: ApiCallOptions,
+  ): Promise<ApiResponse<InvoiceActionApiResponse>> {
+    return this.customPost<InvoiceActionApiResponse>(
+      this.invoiceEndpoints.setInvoiceAction,
+      params,
+      options,
+    );
   }
 }

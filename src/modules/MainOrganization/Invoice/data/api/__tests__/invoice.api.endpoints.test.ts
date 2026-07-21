@@ -11,5 +11,7 @@ describe('InvoiceApiEndpoints', () => {
     expect(endpoints.update).toContain('mainportal/update_invoice');
     expect(endpoints.delete).toContain('mainportal/delete_invoice');
     expect(endpoints.export).toContain('mainportal/export_invoice');
+    expect(endpoints.fetchAutoInvoices).toContain('mainportal/fetch_auto_invoices');
+    expect(endpoints.setInvoiceAction).toContain('mainportal/set_invoice_action');
   });
 });

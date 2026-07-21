@@ -11,6 +11,8 @@ import { useUserStore } from '@/stores/user';
 import type InvoiceModel from '../../core/models/invoice.model';
 import type InvoiceShowModel from '../../core/models/invoice.show.model';
 import ExportInvoiceParams from '../../core/params/export.invoice.params';
+import type FetchAutoInvoicesParams from '../../core/params/fetch.auto.invoices.params';
+import type SetInvoiceActionParams from '../../core/params/set.invoice.action.params';
 import ShowInvoiceParams from '../../core/params/show.invoice.params';
 import InvoiceRepository from '../../data/repositories/invoice.repository';
 
@@ -93,6 +95,14 @@ export default class InvoiceController extends BaseController<InvoiceShowModel, 
     params.validateOrThrow();
 
     return await this.repository.exportInvoice(params, { ...options, useJson: true });
+  }
+
+  async fetchAutoInvoices(params: FetchAutoInvoicesParams, options?: ApiCallOptions) {
+    return await this.repository.fetchAutoInvoices(params, { ...options, useJson: true });
+  }
+
+  async setInvoiceAction(params: SetInvoiceActionParams, options?: ApiCallOptions) {
+    return await this.repository.setInvoiceAction(params, { ...options, useJson: true });
   }
 
   protected toTitleInterface(

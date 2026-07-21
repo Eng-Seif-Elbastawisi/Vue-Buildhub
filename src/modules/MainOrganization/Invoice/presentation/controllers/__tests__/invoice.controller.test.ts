@@ -1,6 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
 import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
 import InvoiceModel from '../../../core/models/invoice.model';
+import FetchAutoInvoicesParams from '../../../core/params/fetch.auto.invoices.params';
+import { InvoiceActionStatusEnum } from '../../../core/constant/invoice.action.status.enum';
+import SetInvoiceActionParams from '../../../core/params/set.invoice.action.params';
 
 vi.mock('@/stores/formsStore', () => ({
   useFormsStore: () => ({ clearFormData: vi.fn() }),
@@ -73,5 +76,25 @@ describe('InvoiceController', () => {
 
     expect(result).toBeInstanceOf(DataSuccess);
     expect(result.data).toEqual({ invoice_id: 7 });
+  });
+
+  it('fetches auto invoices and submits an invoice action', async () => {
+    const controller = InvoiceController.getInstance();
+    const invoices = await controller.fetchAutoInvoices(
+      new FetchAutoInvoicesParams({ project_id: 30 }),
+      { useStaticData: true },
+    );
+    const action = await controller.setInvoiceAction(
+      new SetInvoiceActionParams({
+        project_id: 30,
+        action_status: InvoiceActionStatusEnum.OFFER_ACCEPT,
+        invoice_ids: [23, 24],
+      }),
+      { useStaticData: true },
+    );
+
+    expect(invoices).toBeInstanceOf(DataSuccess);
+    expect(invoices.data).toEqual([InvoiceModel.example]);
+    expect(action).toBeInstanceOf(DataSuccess);
   });
 });

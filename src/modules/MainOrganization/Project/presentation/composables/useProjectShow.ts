@@ -1115,6 +1115,8 @@ export const useProjectShow = () => {
     editProjectLabel: t('ProjectShow.edit_project'),
     historyLabel: t('ProjectShow.history'),
     pricePercentageLabel: t('price_percentage.title'),
+    addInvoiceActionLabel: t('invoice_action.add_action'),
+    autoInvoicesLabel: t('invoice_action.open_auto_invoices'),
     actionsLabel: t('general.actions'),
     exportingPdf: exportingPdf.value,
     convertActionLabel: convertActionLabel.value,

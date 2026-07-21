@@ -66,6 +66,16 @@ export const ProjectRoutes: RouteRecordRaw[] = [
     },
   },
   {
+    path: 'project/show/:project_id/invoice-action/add',
+    name: 'project-invoice-action-add',
+    component: () => import('@/views/MainOrganization/Invoice/SetInvoiceAction.vue'),
+    props: true,
+    meta: {
+      breadcrumb: 'invoice_action.title',
+      parent: 'show-project',
+    },
+  },
+  {
     path: 'project/history/:project_id',
     name: 'project-history',
     component: () => import('@/views/MainOrganization/Project/ProjectHistory.vue'),

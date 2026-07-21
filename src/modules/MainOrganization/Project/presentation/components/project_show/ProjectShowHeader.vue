@@ -1,8 +1,13 @@
 <script setup lang="ts">
-  import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+  import { computed, defineAsyncComponent, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 
   import { ConvertStatus } from '../../../core/constants/convert.status.enum';
   import type { ProjectShowRaw, StatusMeta } from './projectShow.types';
+
+  const AutoInvoicesModal = defineAsyncComponent(
+    () =>
+      import('@/modules/MainOrganization/Invoice/presentation/components/AutoInvoicesModal.vue'),
+  );
 
   type StatusAction = {
     status: ConvertStatus;
@@ -21,6 +26,8 @@
     editProjectLabel: string;
     historyLabel: string;
     pricePercentageLabel: string;
+    addInvoiceActionLabel: string;
+    autoInvoicesLabel: string;
     actionsLabel: string;
     exportingPdf: boolean;
     convertActionLabel?: string;
@@ -44,6 +51,7 @@
   }>();
 
   const isStatusModalOpen = ref(false);
+  const isAutoInvoicesModalOpen = ref(false);
   const isActionsMenuOpen = ref(false);
   const actionsMenuRef = ref<HTMLElement | null>(null);
   const activeStatusTarget = ref<ConvertStatus | null>(null);
@@ -100,6 +108,15 @@
     if (props.changeStatusLoading) return;
 
     isStatusModalOpen.value = false;
+  };
+
+  const openAutoInvoicesModal = () => {
+    isAutoInvoicesModalOpen.value = true;
+    closeActionsMenu();
+  };
+
+  const closeAutoInvoicesModal = () => {
+    isAutoInvoicesModalOpen.value = false;
   };
 
   const submitStatusChange = () => {
@@ -243,6 +260,31 @@
           </RouterLink>
 
           <RouterLink
+            class="project-actions__item project-actions__item--neutral"
+            role="menuitem"
+            :to="{
+              name: 'project-invoice-action-add',
+              params: {
+                project_id: project.id,
+              },
+            }"
+            @click="closeActionsMenu"
+          >
+            <i class="pi pi-check-square"></i>
+            {{ addInvoiceActionLabel }}
+          </RouterLink>
+
+          <button
+            class="project-actions__item project-actions__item--neutral project-actions__auto-invoices"
+            type="button"
+            role="menuitem"
+            @click="openAutoInvoicesModal"
+          >
+            <i class="pi pi-list"></i>
+            {{ autoInvoicesLabel }}
+          </button>
+
+          <RouterLink
             v-if="canEditProject"
             class="project-actions__item project-actions__item--primary project-actions__item--neutral"
             role="menuitem"
@@ -306,5 +348,11 @@
         </footer>
       </form>
     </div>
+
+    <AutoInvoicesModal
+      v-if="isAutoInvoicesModalOpen"
+      :project-id="Number(project.id)"
+      @close="closeAutoInvoicesModal"
+    />
   </header>
 </template>

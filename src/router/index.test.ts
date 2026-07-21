@@ -19,4 +19,11 @@ describe('dashboard route prefixes', () => {
   ])('resolves price percentage settings at %s', (path, routeName) => {
     expect(router.resolve(path).name).toBe(routeName);
   });
+
+  it.each([
+    ['/organization/project/show/30/invoice-action/add', 'project-invoice-action-add'],
+    ['/mainportal/project/show/30/invoice-action/add', 'project-invoice-action-add'],
+  ])('resolves invoice action creation at %s', (path, routeName) => {
+    expect(router.resolve(path).name).toBe(routeName);
+  });
 });

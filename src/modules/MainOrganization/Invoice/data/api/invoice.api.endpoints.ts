@@ -12,4 +12,6 @@ export class InvoiceApiEndpoints extends BaseEndpoints {
   readonly update = this.url('update_invoice');
   readonly delete = this.url('delete_invoice');
   readonly export = this.url('export_invoice');
+  readonly fetchAutoInvoices = this.url('fetch_auto_invoices');
+  readonly setInvoiceAction = this.url('set_invoice_action');
 }

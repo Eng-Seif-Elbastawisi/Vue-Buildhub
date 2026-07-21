@@ -22,6 +22,8 @@ const mountHeader = (props: Record<string, unknown> = {}) =>
       editProjectLabel: 'Edit Project',
       historyLabel: 'History',
       pricePercentageLabel: 'Price Percentage',
+      addInvoiceActionLabel: 'Add Invoice Action',
+      autoInvoicesLabel: 'View Automatic Invoices',
       actionsLabel: 'Actions',
       exportingPdf: false,
       statusActions: [
@@ -40,6 +42,12 @@ const mountHeader = (props: Record<string, unknown> = {}) =>
     },
     global: {
       stubs: {
+        AutoInvoicesModal: {
+          props: ['projectId'],
+          emits: ['close'],
+          template:
+            '<div class="auto-invoices-modal-stub"><button class="close-auto-invoices" @click="$emit(\'close\')">close</button></div>',
+        },
         RouterLink: {
           props: ['to'],
           template: '<a :data-to="JSON.stringify(to)"><slot /></a>',
@@ -178,5 +186,31 @@ describe('ProjectShowHeader', () => {
     await wrapper.find('.project-actions__trigger').trigger('click');
 
     expect(wrapper.text()).not.toContain('Price Percentage');
+  });
+
+  it('links the add invoice action page to the current project', async () => {
+    const wrapper = mountHeader();
+
+    await wrapper.find('.project-actions__trigger').trigger('click');
+
+    const link = wrapper
+      .findAll('.project-actions__item')
+      .find((item) => item.text().includes('Add Invoice Action'));
+
+    expect(link?.attributes('data-to')).toBe(
+      JSON.stringify({ name: 'project-invoice-action-add', params: { project_id: 24 } }),
+    );
+  });
+
+  it('opens the automatic invoices modal from the actions menu', async () => {
+    const wrapper = mountHeader();
+
+    await wrapper.find('.project-actions__trigger').trigger('click');
+    await wrapper.find('.project-actions__auto-invoices').trigger('click');
+
+    expect(wrapper.find('.auto-invoices-modal-stub').exists()).toBe(true);
+
+    await wrapper.find('.close-auto-invoices').trigger('click');
+    expect(wrapper.find('.auto-invoices-modal-stub').exists()).toBe(false);
   });
 });
