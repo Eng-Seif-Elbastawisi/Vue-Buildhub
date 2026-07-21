@@ -660,7 +660,7 @@
             />
           </div>
 
-          <div v-if="isGeneralItem || isFullFloorRelated" class="field-box">
+          <div class="field-box">
             <span class="field-help-label-row">
               <label class="mini-label">{{ $t('project_item.price') }}</label>
 
