@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { onMounted, ref, watch } from 'vue';
+  import { computed, onMounted, ref, watch } from 'vue';
 
   import TitleInterface from '@/base/Data/Models/titleInterface';
   import TranslationParams from '@/base/Core/Params/translationParams';
@@ -35,6 +35,7 @@
   const stageController = StageController.getInstance();
 
   const getFormType = (): DepartmentTypeEnum | undefined => props.type ?? props.department?.type;
+  const requiresStage = computed(() => getFormType() !== DepartmentTypeEnum.DESIGN);
 
   const updateData = () => {
     const translations = new TranslationParams({
@@ -53,7 +54,7 @@
         new EditDepartmentParams({
           id: props.department.id,
           translations,
-          stageId: stageId ?? 0,
+          stageId,
           type: type as DepartmentTypeEnum,
         }),
       );
@@ -65,7 +66,7 @@
       'updateData',
       new AddDepartmentParams({
         translations,
-        stageId: stageId ?? 0,
+        stageId,
         type: type as DepartmentTypeEnum,
       }),
     );
@@ -167,7 +168,7 @@
       />
     </div>
 
-    <div class="field-group" :class="{ disabled: loading }">
+    <div v-if="requiresStage" class="field-group" :class="{ disabled: loading }">
       <UpdatedCustomInputSelect
         id="doc-branch"
         v-model="selectedStage"

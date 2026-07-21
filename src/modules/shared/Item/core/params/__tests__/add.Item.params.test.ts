@@ -33,4 +33,35 @@ describe('AddItemParams', () => {
       service_type: ItemServiceTypeEnum.DESIGN,
     });
   });
+
+  it('allows stage and price to be omitted for non-supervision items', () => {
+    const params = new AddItemParams({
+      type: payload.type,
+      status: payload.status,
+      service_type: ItemServiceTypeEnum.DESIGN,
+      department_id: payload.department_id,
+      measurement_unit_id: payload.measurement_unit_id,
+      notes: payload.notes,
+      translations: payload.translations,
+    });
+
+    expect(params.validate()).toEqual({ isValid: true, errors: [] });
+  });
+
+  it('requires stage and price for supervision items', () => {
+    const params = new AddItemParams({
+      type: payload.type,
+      status: payload.status,
+      service_type: ItemServiceTypeEnum.SUPERVISION,
+      department_id: payload.department_id,
+      measurement_unit_id: payload.measurement_unit_id,
+      notes: payload.notes,
+      translations: payload.translations,
+    });
+
+    expect(params.validate()).toMatchObject({
+      isValid: false,
+      errors: [{ field: 'stage_id' }, { field: 'price' }],
+    });
+  });
 });

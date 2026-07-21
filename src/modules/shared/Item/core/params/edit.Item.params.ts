@@ -2,7 +2,7 @@ import type Params from '@/base/Core/Params/params';
 import { ClassValidation } from '@/base/Presentation/Utils/classValidation';
 import { hasTitleTranslation, requiredSelectRule } from '@/base/Presentation/Utils/input_title';
 import { translate } from '@/locales/i18n';
-import { type ItemServiceTypeEnum } from '../constant/item.service.type.enum';
+import { ItemServiceTypeEnum } from '../constant/item.service.type.enum';
 import { type ItemStatusEnum } from '../constant/item.status.enum';
 import { type ItemTypeEnum } from '../constant/item.type.enum copy';
 
@@ -22,10 +22,15 @@ export default class EditItemParams implements Params {
     // item_id: { required: true },
     type: requiredSelectRule(),
     status: requiredSelectRule(),
-    stage_id: requiredSelectRule(),
+    stage_id: {
+      ...requiredSelectRule(),
+      required: (params) => params.service_type === ItemServiceTypeEnum.SUPERVISION,
+    },
+    price: {
+      required: (params) => params.service_type === ItemServiceTypeEnum.SUPERVISION,
+    },
     department_id: requiredSelectRule(),
     measurement_unit_id: requiredSelectRule(),
-    // price: { required: true },
     // notes: { required: true },
     translations: {
       required: true,

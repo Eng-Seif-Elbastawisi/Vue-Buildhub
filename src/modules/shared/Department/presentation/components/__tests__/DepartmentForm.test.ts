@@ -80,6 +80,21 @@ describe('DepartmentForm', () => {
     });
   });
 
+  it('hides the stage field and emits no stage id for supervision departments', async () => {
+    const wrapper = mountForm({ type: Type.SUPERVISION });
+
+    expect(wrapper.find('.stage-select').exists()).toBe(false);
+    await wrapper.find('.multi-lang-input').trigger('click');
+
+    const events = wrapper.emitted('updateData') ?? [];
+    const params = events.at(-1)?.[0] as AddDepartmentParams;
+    expect(params.toMap()).toMatchObject({
+      stage_id: undefined,
+      type: Type.SUPERVISION,
+    });
+    expect(params.validate().isValid).toBe(true);
+  });
+
   it('uses route type prop when editing an existing department', () => {
     const department = new DepartmentModel({
       id: 5,

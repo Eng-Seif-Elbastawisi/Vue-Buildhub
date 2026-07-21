@@ -4,7 +4,7 @@ import { hasTitleTranslation, requiredSelectRule } from '@/base/Presentation/Uti
 import { translate } from '@/locales/i18n';
 import type { ItemTypeEnum } from '../constant/item.type.enum copy';
 import type { ItemStatusEnum } from '../constant/item.status.enum';
-import type { ItemServiceTypeEnum } from '../constant/item.service.type.enum';
+import { ItemServiceTypeEnum } from '../constant/item.service.type.enum';
 
 export default class AddItemParams implements Params {
   public type?: ItemTypeEnum;
@@ -19,7 +19,13 @@ export default class AddItemParams implements Params {
   public static readonly validation = new ClassValidation().setRules({
     type: requiredSelectRule(),
     status: requiredSelectRule(),
-    stage_id: requiredSelectRule(),
+    stage_id: {
+      ...requiredSelectRule(),
+      required: (params) => params.service_type === ItemServiceTypeEnum.SUPERVISION,
+    },
+    price: {
+      required: (params) => params.service_type === ItemServiceTypeEnum.SUPERVISION,
+    },
     department_id: requiredSelectRule(),
     measurement_unit_id: requiredSelectRule(),
     translations: {

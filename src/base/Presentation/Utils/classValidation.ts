@@ -3,7 +3,7 @@ import { translate } from '@/locales/i18n';
 
 // class_validation.ts
 export interface ValidationRule {
-  required?: boolean;
+  required?: boolean | ((record: Record<string, unknown>) => boolean);
   minLength?: number;
   maxLength?: number;
   min?: number;
@@ -49,13 +49,15 @@ export class ClassValidation {
 
     this.rules.forEach((rule, field) => {
       const value = obj[field];
+      const isRequired =
+        typeof rule.required === 'function' ? rule.required(obj) : Boolean(rule.required);
 
-      if (rule.required && this.isEmpty(value)) {
+      if (isRequired && this.isEmpty(value)) {
         errors.push({ field, message: translate('validation.required', { field }) });
         return;
       }
 
-      if (!rule.required && this.isEmpty(value)) {
+      if (!isRequired && this.isEmpty(value)) {
         return;
       }
 

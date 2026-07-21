@@ -156,7 +156,11 @@
         />
       </div>
 
-      <div class="field-group">
+      <div
+        v-if="route.query.service_type === '2'"
+        class="field-group"
+        :class="{ disabled: loading }"
+      >
         <span class="field-help-label-row field-help-label-row--block">
           <label class="field-label" for="item-price">{{ $t('item.price') }}</label>
           <FieldHelpIcon :label="$t('item.price')" field-name="price" field-id="item-price" />
@@ -199,7 +203,7 @@
         />
       </div>
 
-      <div class="field-group">
+      <div v-if="route.query.service_type === '2'" class="field-group">
         <UpdatedCustomInputSelect
           id="item-stage"
           v-model="selectedStage"
