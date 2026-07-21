@@ -74,17 +74,19 @@
 
           <div class="invoice-show-header__copy">
             <div class="invoice-show-header__title-row">
-              <h1>
+              <h1 class="inv_title">{{ $t('invoice_show.invoice_title') }} {{ invoice.title }}</h1>
+
+              <h1 class="inv_num">
                 {{
                   $t('invoice_show.invoice_number', {
                     number: invoice.invoice_number || invoice.id,
                   })
                 }}
+                <span class="invoice-show-status-pill" :class="statusClass">
+                  <i class="pi pi-check-circle" aria-hidden="true"></i>
+                  {{ statusLabel }}
+                </span>
               </h1>
-              <span class="invoice-show-status-pill" :class="statusClass">
-                <i class="pi pi-check-circle" aria-hidden="true"></i>
-                {{ statusLabel }}
-              </span>
             </div>
 
             <p>
@@ -107,3 +109,17 @@
     </div>
   </header>
 </template>
+
+<style scoped>
+  .inv_title {
+    font-size: 25px;
+    font-weight: bold;
+  }
+
+  .inv_num {
+    display: flex;
+    gap: 10px;
+    font-size: 25px;
+    font-weight: bold;
+  }
+</style>

@@ -488,6 +488,7 @@
   "invoice.delete_message": "لا يمكن التراجع عن حذف هذه الفاتورة.",
   "invoice_show.details": "تفاصيل الفاتورة",
   "invoice_show.invoice_number": "فاتورة رقم {number}",
+  "invoice_show.invoice_title": "فاتورة عنوان {title}",
   "invoice_show.created_on": "تم إنشاء الفاتورة في {date} بواسطة {employee}",
   "invoice_show.download_pdf": "تحميل PDF",
   "invoice_show.downloading": "جاري التحميل",
