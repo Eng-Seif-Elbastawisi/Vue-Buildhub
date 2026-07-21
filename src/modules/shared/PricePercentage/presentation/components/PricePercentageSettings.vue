@@ -35,6 +35,38 @@
   const hasRequiredTotal = computed(() => totalPercentage.value === REQUIRED_PERCENTAGE_TOTAL);
   let nextRowKey = 1;
 
+  const allowedPercentageKeys = new Set([
+    'Backspace',
+    'Delete',
+    'Tab',
+    'Enter',
+    'Escape',
+    'Home',
+    'End',
+    'ArrowLeft',
+    'ArrowRight',
+    'ArrowUp',
+    'ArrowDown',
+    '.',
+  ]);
+
+  const preventInvalidPercentageKey = (event: KeyboardEvent) => {
+    const isDigit = /^\d$/.test(event.key);
+    const isKeyboardShortcut = event.ctrlKey || event.metaKey;
+
+    if (isDigit || isKeyboardShortcut || allowedPercentageKeys.has(event.key)) return;
+
+    event.preventDefault();
+  };
+
+  const preventInvalidPercentagePaste = (event: ClipboardEvent) => {
+    const pastedText = event.clipboardData?.getData('text').trim() ?? '';
+
+    if (!/^(?:\d+(?:\.\d*)?|\.\d+)$/.test(pastedText)) {
+      event.preventDefault();
+    }
+  };
+
   controller.resetItem();
 
   const newRow = (title = '', percentage: number | '' = ''): PercentageDraft => ({
@@ -175,6 +207,8 @@
                 inputmode="decimal"
                 :disabled="loading"
                 :placeholder="$t('price_percentage.percentage_placeholder')"
+                @keydown="preventInvalidPercentageKey"
+                @paste="preventInvalidPercentagePaste"
               />
               <span class="percentage-symbol" aria-hidden="true">%</span>
             </div>

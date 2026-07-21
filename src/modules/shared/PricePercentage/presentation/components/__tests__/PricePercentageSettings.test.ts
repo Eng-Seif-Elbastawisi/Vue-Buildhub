@@ -79,6 +79,44 @@ describe('PricePercentageSettings', () => {
     expect(wrapper.findAll('.percentage-row')).toHaveLength(1);
   });
 
+  it('allows numbers and blocks text in percentage inputs', async () => {
+    const wrapper = mountSettings();
+    await flushPromises();
+    const percentageInput = wrapper.find<HTMLInputElement>('.percentage-input');
+
+    for (const key of ['e', 'E', '+', '-', 'a', 'Z', '%', ' ']) {
+      const keydownEvent = new KeyboardEvent('keydown', { key, cancelable: true });
+
+      percentageInput.element.dispatchEvent(keydownEvent);
+
+      expect(keydownEvent.defaultPrevented).toBe(true);
+    }
+
+    for (const key of ['5', '.', 'Backspace', 'ArrowLeft']) {
+      const keydownEvent = new KeyboardEvent('keydown', { key, cancelable: true });
+
+      percentageInput.element.dispatchEvent(keydownEvent);
+
+      expect(keydownEvent.defaultPrevented).toBe(false);
+    }
+
+    for (const [pastedText, shouldBePrevented] of [
+      ['12.5', false],
+      ['hello', true],
+      ['12e2', true],
+      ['.', true],
+    ] as const) {
+      const pasteEvent = new Event('paste', { bubbles: true, cancelable: true });
+      Object.defineProperty(pasteEvent, 'clipboardData', {
+        value: { getData: () => pastedText },
+      });
+
+      percentageInput.element.dispatchEvent(pasteEvent);
+
+      expect(pasteEvent.defaultPrevented).toBe(shouldBePrevented);
+    }
+  });
+
   it('submits all rows as the percentages array', async () => {
     mockController.itemData.value = new PricePercentageModel([{ title: 'Tax', percentage: 100 }]);
     mockController.updatePercentages.mockResolvedValue(

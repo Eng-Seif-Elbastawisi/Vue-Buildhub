@@ -8,5 +8,5 @@ export class PricePercentageApiEndpoints extends BaseEndpoints {
   }
 
   readonly show = this.url('show_percentages');
-  readonly update = this.url('update_percentages');
+  readonly update = this.url('set_invoice_offer');
 }

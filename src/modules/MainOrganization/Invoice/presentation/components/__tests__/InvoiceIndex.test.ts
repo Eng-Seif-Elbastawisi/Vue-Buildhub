@@ -1,6 +1,7 @@
 import { mount } from '@vue/test-utils';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { InvoiceStatusEnum } from '../../../core/constant/invoice.status.enum';
+import { InvoiceTypeEnum } from '../../../core/constant/invoice.type.enum';
 import InvoiceModel from '../../../core/models/invoice.model';
 import InvoiceIndex from '../InvoiceIndex.vue';
 
@@ -57,9 +58,24 @@ describe('InvoiceIndex', () => {
             data() {
               return {
                 rows: [
-                  InvoiceModel.example,
-                  new InvoiceModel({ id: 2, invoice_number: 'INV-UNPAID', status: 'unpaid' }),
-                  new InvoiceModel({ id: 3, invoice_number: 'INV-PARTIAL', status: 'partial' }),
+                  new InvoiceModel({
+                    id: 1,
+                    project: { id: 10, title: 'Commercial project' },
+                    invoice_number: 'INV-2026-0001',
+                    status: InvoiceStatusEnum.PAID,
+                    invoice_type: InvoiceTypeEnum.SINGLE,
+                  }),
+                  new InvoiceModel({
+                    id: 2,
+                    invoice_number: 'INV-UNPAID',
+                    status: InvoiceStatusEnum.UNPAID,
+                    invoice_type: InvoiceTypeEnum.GROUP,
+                  }),
+                  new InvoiceModel({
+                    id: 3,
+                    invoice_number: 'INV-PARTIAL',
+                    status: InvoiceStatusEnum.PARTIAL,
+                  }),
                 ],
               };
             },
@@ -68,7 +84,7 @@ describe('InvoiceIndex', () => {
           AppTable: {
             props: ['items'],
             template:
-              '<div><div v-for="item in items" :key="item.id"><span>{{ item.invoice_number }}</span><slot name="cell-project" :item="item" /><slot name="cell-invoice_amount" :item="item" /><slot name="cell-status" :item="item" /><slot name="actions" :item="item" /></div></div>',
+              '<div><div v-for="item in items" :key="item.id"><span>{{ item.invoice_number }}</span><slot name="cell-project" :item="item" /><slot name="cell-invoice_amount" :item="item" /><slot name="cell-status" :item="item" /><slot name="cell-invoice_type" :item="item" /><slot name="actions" :item="item" /></div></div>',
           },
         },
       },
@@ -81,10 +97,12 @@ describe('InvoiceIndex', () => {
     expect(wrapper.find('.invoice-status-badge.is-paid').text()).toBe('Paid');
     expect(wrapper.find('.invoice-status-badge.is-unpaid').text()).toBe('Unpaid');
     expect(wrapper.find('.invoice-status-badge.is-partial').text()).toBe('Partial');
+    expect(wrapper.text()).toContain('Single Invoice');
+    expect(wrapper.text()).toContain('Group Invoice');
 
     await wrapper.find('.delete-dialog').trigger('click');
 
-    expect(deleteInvoice.mock.calls[0][0].toMap()).toEqual({ invoice_id: 1 });
+    expect(deleteInvoice.mock.calls[0][0].toMap()).toEqual({ invoice_id: 2 });
   });
 
   it('sends invoice status from route query when filtering paid invoices', () => {

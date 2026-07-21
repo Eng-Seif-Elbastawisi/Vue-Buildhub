@@ -60,8 +60,8 @@ export default class UpdatePricePercentagesParams implements Params {
     }));
   }
 
-  toMap(): { project_id: number; percentages: PricePercentageEntry[] } {
-    return { project_id: this.projectId, percentages: this.percentages };
+  toMap(): { project_id: number; invoices: PricePercentageEntry[] } {
+    return { project_id: this.projectId, invoices: this.percentages };
   }
 
   validate() {

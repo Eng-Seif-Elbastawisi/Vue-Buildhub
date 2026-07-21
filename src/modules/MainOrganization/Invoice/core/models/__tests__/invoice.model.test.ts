@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { InvoiceStatusEnum } from '../../constant/invoice.status.enum';
+import { InvoiceTypeEnum } from '../../constant/invoice.type.enum';
 import InvoiceModel from '../invoice.model';
 
 describe('InvoiceModel', () => {
@@ -20,6 +21,7 @@ describe('InvoiceModel', () => {
       invoice_amount: '15000',
       notes: 'First design invoice',
       status: InvoiceStatusEnum.PAID,
+      invoice_type: String(InvoiceTypeEnum.SINGLE),
     });
 
     expect(model.id).toBe(3);
@@ -29,6 +31,7 @@ describe('InvoiceModel', () => {
     expect(model.invoice_amount).toBe(15000);
     expect(model.notes).toBe('First design invoice');
     expect(model.status).toBe(InvoiceStatusEnum.PAID);
+    expect(model.invoice_type).toBe(InvoiceTypeEnum.SINGLE);
   });
 
   it('throws for invalid json', () => {

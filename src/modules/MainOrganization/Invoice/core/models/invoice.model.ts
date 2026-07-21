@@ -1,3 +1,5 @@
+import type { InvoiceTypeEnum } from '../constant/invoice.type.enum';
+
 export type InvoiceProjectModel = {
   id?: number;
   title?: string;
@@ -14,6 +16,7 @@ export default class InvoiceModel {
   public readonly invoice_amount?: number;
   public readonly notes?: string | null;
   public readonly status?: string | number;
+  public readonly invoice_type?: InvoiceTypeEnum;
 
   constructor(data: {
     id?: number;
@@ -24,6 +27,7 @@ export default class InvoiceModel {
     invoice_amount?: number;
     notes?: string | null;
     status?: string | number;
+    invoice_type?: InvoiceTypeEnum;
   }) {
     this.id = data.id;
     this.project_id = data.project_id;
@@ -33,6 +37,7 @@ export default class InvoiceModel {
     this.invoice_amount = data.invoice_amount;
     this.notes = data.notes;
     this.status = data.status;
+    this.invoice_type = data.invoice_type;
 
     Object.freeze(this);
   }
@@ -100,6 +105,10 @@ export default class InvoiceModel {
       invoice_amount: Number(json.invoice_amount ?? 0),
       notes: json.notes as string | null | undefined,
       status: (json.status ?? json.invoice_status) as string | number | undefined,
+      invoice_type:
+        json.invoice_type === undefined || json.invoice_type === null
+          ? undefined
+          : (Number(json.invoice_type) as InvoiceTypeEnum),
     });
   }
 

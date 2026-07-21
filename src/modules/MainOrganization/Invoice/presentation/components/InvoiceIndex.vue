@@ -19,6 +19,7 @@
     InvoiceStatusLabelKeys,
     normalizeInvoiceStatus,
   } from '../../core/constant/invoice.status.enum';
+  import { InvoiceTypeLabelKeys } from '../../core/constant/invoice.type.enum';
   import InvoiceController from '../controllers/invoice.controller';
 
   const controller = InvoiceController.getInstance();
@@ -36,7 +37,7 @@
     { key: 'invoice_date', label: 'invoice.invoice_date', width: '15%', sortable: true },
     { key: 'invoice_amount', label: 'invoice.invoice_amount', width: '15%', sortable: true },
     { key: 'status', label: 'invoice_show.status', width: '14%' },
-    { key: 'notes', label: 'invoice.notes', width: '18%' },
+    { key: 'invoice_type', label: 'invoice.type', width: '18%' },
   ];
 
   const basePath = computed(() => (user?.type === 1 ? '/admin/invoice' : '/organization/invoice'));
@@ -78,6 +79,14 @@
     const status = normalizeInvoiceStatus(invoice.status);
 
     return status ? InvoiceStatusClassNames[status] : 'is-unknown';
+  };
+
+  const invoiceTypeLabelFor = (invoice: InvoiceModel) => {
+    if (!invoice.invoice_type) return '-';
+
+    const labelKey = InvoiceTypeLabelKeys[invoice.invoice_type];
+
+    return labelKey ? t(labelKey) : '-';
   };
 
   const fetchInvoices = async (page: number = 1, searchWord: string = '') => {
@@ -178,6 +187,10 @@
             <span class="invoice-status-badge" :class="statusClassFor(item)">
               {{ statusLabelFor(item) }}
             </span>
+          </template>
+
+          <template #cell-invoice_type="{ item }">
+            {{ invoiceTypeLabelFor(item) }}
           </template>
 
           <template #actions="{ item }">
