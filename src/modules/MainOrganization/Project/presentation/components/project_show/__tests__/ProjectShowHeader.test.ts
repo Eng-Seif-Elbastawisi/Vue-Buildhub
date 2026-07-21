@@ -7,7 +7,12 @@ import ProjectShowHeader from '../ProjectShowHeader.vue';
 const mountHeader = (props: Record<string, unknown> = {}) =>
   mount(ProjectShowHeader, {
     props: {
-      project: { id: 24, date: '2026-07-08', created_at: '2026-07-08 14:45:30' },
+      project: {
+        id: 24,
+        convert_status: ConvertStatus.READY_TO_SENT,
+        date: '2026-07-08',
+        created_at: '2026-07-08 14:45:30',
+      },
       projectTitle: 'Test Project',
       statusMeta: { label: 'Active', className: 'is-active' },
       projectCodeLabel: 'Project Code',
@@ -16,6 +21,7 @@ const mountHeader = (props: Record<string, unknown> = {}) =>
       generatingPdfLabel: 'Generating PDF...',
       editProjectLabel: 'Edit Project',
       historyLabel: 'History',
+      pricePercentageLabel: 'Price Percentage',
       actionsLabel: 'Actions',
       exportingPdf: false,
       statusActions: [
@@ -36,7 +42,7 @@ const mountHeader = (props: Record<string, unknown> = {}) =>
       stubs: {
         RouterLink: {
           props: ['to'],
-          template: '<a><slot /></a>',
+          template: '<a :data-to="JSON.stringify(to)"><slot /></a>',
         },
       },
     },
@@ -143,5 +149,34 @@ describe('ProjectShowHeader', () => {
     expect(wrapper.text()).not.toContain('Sent to client');
     expect(wrapper.text()).not.toContain('Accepted by client');
     expect(wrapper.text()).not.toContain('Rejected by client');
+  });
+
+  it('links the price percentage action to the current project', async () => {
+    const wrapper = mountHeader();
+
+    await wrapper.find('.project-actions__trigger').trigger('click');
+
+    const link = wrapper
+      .findAll('.project-actions__item')
+      .find((item) => item.text().includes('Price Percentage'));
+
+    expect(link?.attributes('data-to')).toBe(
+      JSON.stringify({ name: 'project-price-percentage', params: { project_id: 24 } }),
+    );
+  });
+
+  it('hides the price percentage action unless the project is ready to send', async () => {
+    const wrapper = mountHeader({
+      project: {
+        id: 24,
+        convert_status: ConvertStatus.WAITING_PRICING,
+        date: '2026-07-08',
+        created_at: '2026-07-08 14:45:30',
+      },
+    });
+
+    await wrapper.find('.project-actions__trigger').trigger('click');
+
+    expect(wrapper.text()).not.toContain('Price Percentage');
   });
 });

@@ -12,4 +12,11 @@ describe('dashboard route prefixes', () => {
   ])('resolves %s to %s', (path, routeName) => {
     expect(router.resolve(path).name).toBe(routeName);
   });
+
+  it.each([
+    ['/organization/project/show/24/price-percentage', 'project-price-percentage'],
+    ['/mainportal/project/show/24/price-percentage', 'project-price-percentage'],
+  ])('resolves price percentage settings at %s', (path, routeName) => {
+    expect(router.resolve(path).name).toBe(routeName);
+  });
 });

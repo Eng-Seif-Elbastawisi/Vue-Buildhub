@@ -20,6 +20,7 @@
     generatingPdfLabel: string;
     editProjectLabel: string;
     historyLabel: string;
+    pricePercentageLabel: string;
     actionsLabel: string;
     exportingPdf: boolean;
     convertActionLabel?: string;
@@ -56,6 +57,12 @@
       ConvertStatus.WAITING_PREVIEW_RESULT,
       ConvertStatus.REVISE_VERSION,
     ].includes(projectStatus as ConvertStatus);
+  });
+
+  const canManagePricePercentage = computed(() => {
+    const projectStatus = Number(props.project.convert_status ?? props.project.status);
+
+    return projectStatus === ConvertStatus.READY_TO_SENT;
   });
 
   const closeActionsMenu = () => {
@@ -217,6 +224,22 @@
           >
             <i class="pi pi-history"></i>
             {{ historyLabel }}
+          </RouterLink>
+
+          <RouterLink
+            v-if="canManagePricePercentage"
+            class="project-actions__item project-actions__item--neutral"
+            role="menuitem"
+            :to="{
+              name: 'project-price-percentage',
+              params: {
+                project_id: project.id,
+              },
+            }"
+            @click="closeActionsMenu"
+          >
+            <i class="pi pi-percentage"></i>
+            {{ pricePercentageLabel }}
           </RouterLink>
 
           <RouterLink
