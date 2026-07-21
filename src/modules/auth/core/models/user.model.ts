@@ -19,6 +19,7 @@ export default class UserModel {
   public readonly languages?: any[];
   public readonly isMaster?: boolean;
   public readonly setting?: SystemIdentitySetting | null;
+  public readonly WebSocketToken : string
 
   constructor(data: {
     id?: number;
@@ -34,6 +35,7 @@ export default class UserModel {
     languages?: any[];
     isMaster?: boolean;
     setting?: SystemIdentitySetting | null;
+    WebSocketToken : string
   }) {
     this.id = data.id;
     this.email = data.email;
@@ -48,6 +50,7 @@ export default class UserModel {
     this.languages = data.languages;
     this.isMaster = data.isMaster;
     this.setting = data.setting;
+    this.WebSocketToken =data.WebSocketToken 
   }
 
   /**
@@ -75,6 +78,7 @@ export default class UserModel {
       languages: json.languages,
       isMaster: json.is_master,
       setting: json.setting,
+      WebSocketToken : json.notification_token
     });
   }
 
