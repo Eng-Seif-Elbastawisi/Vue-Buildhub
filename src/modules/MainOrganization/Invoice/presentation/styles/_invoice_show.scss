@@ -57,7 +57,7 @@
 }
 
 .invoice-show-header__identity {
-  @include flex(row, nowrap, flex-start, center);
+  @include flex(row, nowrap, flex-start, start);
 
   position: relative;
   z-index: 1;
@@ -137,7 +137,7 @@
 }
 
 .invoice-show-header__title-row {
-  @include flex(row, wrap, flex-start, center);
+  @include flex(column, wrap, flex-start, start);
 
   gap: 0.85rem;
 

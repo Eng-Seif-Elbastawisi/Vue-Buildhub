@@ -251,18 +251,6 @@
           />
         </div>
 
-        <div v-if="isGroupInvoice" class="field-group invoice-form__group-title">
-          <MultiLangInput
-            :key="currentLanguage"
-            field-key="title"
-            :label="$t('invoice.group_title')"
-            :languages="[currentLanguage]"
-            :model-value="groupTitle"
-            type="title"
-            @update:model-value="updateGroupTitle"
-          />
-        </div>
-
         <div v-if="isSingleInvoice" class="field-group invoice-form__date">
           <span class="field-help-label-row field-help-label-row--block">
             <label class="field-label" for="invoice_date">{{ $t('invoice.invoice_date') }}</label>
@@ -304,6 +292,17 @@
           />
         </div>
 
+        <div class="field-group invoice-form__group-title">
+          <MultiLangInput
+            :key="currentLanguage"
+            field-key="title"
+            :label="$t('title')"
+            :languages="[currentLanguage]"
+            :model-value="groupTitle"
+            type="title"
+            @update:model-value="updateGroupTitle"
+          />
+        </div>
         <div v-if="isSingleInvoice" class="field-group invoice-form__notes">
           <span class="field-help-label-row field-help-label-row--block">
             <label class="field-label" for="invoice_notes">{{ $t('invoice.notes') }}</label>
