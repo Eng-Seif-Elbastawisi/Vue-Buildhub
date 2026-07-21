@@ -223,10 +223,6 @@
     return pricingMethod.value?.id as ProjectItemPriceEnum | undefined;
   });
 
-  const isGeneralItem = computed(() => {
-    return selectedPricingMethodId.value === ProjectItemPriceEnum.GENERAL_ITEM;
-  });
-
   const isSpaceRelated = computed(() => {
     return selectedPricingMethodId.value === ProjectItemPriceEnum.SPACE_RELATED;
   });
@@ -255,7 +251,6 @@
 
   const resetFieldsByPricingMethod = () => {
     if (isSpaceRelated.value) {
-      price.value = undefined;
       selectedFloorNumber.value = null;
       pendingFloorNumber.value = null;
       return;
@@ -300,7 +295,7 @@
     if (!pricingMethod.value) return null;
     if (!quantity.value) return null;
 
-    if ((isGeneralItem.value || isFullFloorRelated.value) && !price.value) return null;
+    if (!price.value) return null;
     if (isSpaceRelated.value && !selectedSpace.value) return null;
     if (isFullFloorRelated.value && !selectedFloorNumber.value) return null;
 
@@ -312,7 +307,7 @@
       pricing_method_title: pricingMethod.value.title ?? '-',
       quantity: quantity.value,
 
-      price: isSpaceRelated.value ? undefined : price.value,
+      price: price.value,
 
       project_floor_space_id: isSpaceRelated.value ? selectedProjectFloorSpaceId.value : undefined,
 
@@ -324,7 +319,7 @@
           ? (selectedFloorNumber.value?.title ?? '-')
           : '-',
 
-      total: isSpaceRelated.value ? undefined : total.value,
+      total: total.value,
     };
   }
 
@@ -677,7 +672,7 @@
             />
           </div>
 
-          <div v-if="isGeneralItem || isFullFloorRelated" class="field-box">
+          <div class="field-box">
             <span class="field-help-label-row">
               <label class="mini-label">{{ $t('project_item.total_label') }}</label>
 

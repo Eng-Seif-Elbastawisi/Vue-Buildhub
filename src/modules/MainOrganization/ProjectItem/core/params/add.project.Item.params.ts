@@ -41,20 +41,16 @@ export default class AddProjectItemParams implements Params {
       items: this.items.map((item) => {
         const map: Record<string, unknown> = {
           item_id: item.item_id,
+          price: item.price,
           quantity: item.quantity,
           pricing_method: item.pricing_method,
         };
-
-        if (item.pricing_method === ProjectItemPriceEnum.GENERAL_ITEM) {
-          map.price = item.price;
-        }
 
         if (item.pricing_method === ProjectItemPriceEnum.SPACE_RELATED) {
           map.project_floor_space_id = item.project_floor_space_id;
         }
 
         if (item.pricing_method === ProjectItemPriceEnum.FULL_FLOOR_RELATED) {
-          map.price = item.price;
           map.project_floor_id = item.project_floor_id;
         }
 

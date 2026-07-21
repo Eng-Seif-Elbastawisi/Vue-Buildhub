@@ -56,6 +56,16 @@ export const ProjectRoutes: RouteRecordRaw[] = [
     },
   },
   {
+    path: 'project/show/:project_id/price-percentage',
+    name: 'project-price-percentage',
+    component: () => import('@/views/shared/PricePercentage/IndexPricePercentage.vue'),
+    props: true,
+    meta: {
+      breadcrumb: 'price_percentage.title',
+      parent: 'show-project',
+    },
+  },
+  {
     path: 'project/history/:project_id',
     name: 'project-history',
     component: () => import('@/views/MainOrganization/Project/ProjectHistory.vue'),

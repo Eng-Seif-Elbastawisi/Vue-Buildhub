@@ -59,6 +59,7 @@ describe('AddProjectItemParams', () => {
         },
         {
           item_id: 10,
+          price: 75,
           quantity: 1,
           pricing_method: ProjectItemPriceEnum.SPACE_RELATED,
           project_floor_space_id: 5,
