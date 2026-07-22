@@ -90,6 +90,19 @@ describe('sidebarSections', () => {
     );
   });
 
+  it('includes an admin-only packages destination', () => {
+    const packageItem = sidebarSections
+      .flatMap((section) => section.items)
+      .find((item) => item.path === '/package');
+
+    expect(packageItem).toEqual(
+      expect.objectContaining({
+        labelKey: 'sidebar.packages',
+        roles: ['admin'],
+      }),
+    );
+  });
+
   it('links design and supervision projects to the project page with service type filters', () => {
     const items = sidebarSections.flatMap((section) => section.items);
 

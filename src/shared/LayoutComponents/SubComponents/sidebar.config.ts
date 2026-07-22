@@ -155,9 +155,7 @@ export type SidebarProjectCountKey =
   | 'projects.revise_version_count';
 
 export type SidebarCountKey =
-  | SidebarRootCountKey
-  | SidebarProjectCountKey
-  | SidebarLocationCountKey;
+  SidebarRootCountKey | SidebarProjectCountKey | SidebarLocationCountKey;
 
 export interface SidebarItemConfig {
   type?: 'item' | 'group';
@@ -425,6 +423,13 @@ export const sidebarSections: SidebarSectionConfig[] = [
         type: 'group',
         labelKey: 'sidebar.general_setting',
         icon: SidebarGeneralSettingIcon,
+      },
+
+      {
+        path: '/package',
+        labelKey: 'sidebar.packages',
+        icon: SidebarFullPackageIcon,
+        roles: ['admin'],
       },
 
       {

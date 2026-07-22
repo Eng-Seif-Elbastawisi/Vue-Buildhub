@@ -19,4 +19,11 @@ export default defineConfig({
       },
     },
   },
+  server: {
+    watch: {
+      // Avoid Linux inotify exhaustion in large, editor-heavy workspaces.
+      usePolling: true,
+      interval: 500,
+    },
+  },
 });
