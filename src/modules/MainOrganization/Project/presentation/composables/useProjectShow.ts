@@ -52,7 +52,7 @@ export const useProjectShow = () => {
   const { locale, t } = useI18n();
   const { user } = useUserStore();
   const projectController = ProjectController.getInstance();
-  const activeTab = ref('project-data');
+  const activeTab = ref('project-overview');
   const exportingPdf = ref(false);
   const loading = ref(false);
   const localConvertStatus = ref<ConvertStatus | null>(null);
@@ -575,6 +575,7 @@ export const useProjectShow = () => {
   };
 
   const tabs = computed<TabItem[]>(() => [
+    { id: 'project-overview', label: t('ProjectShow.overview'), icon: 'pi pi-home' },
     { id: 'project-data', label: t('Project.steps.project_data'), icon: 'pi pi-calendar' },
     { id: 'project-preview', label: t('Project.steps.project_preview'), icon: 'pi pi-id-card' },
     { id: 'project-floors', label: t('Project.steps.project_floors'), icon: 'pi pi-sitemap' },
@@ -838,7 +839,7 @@ export const useProjectShow = () => {
   };
 
   const getPdfProjectRows = (): [string, string][] => {
-    const projectRows = projectInfo.value.map((info) => {
+    const projectRows: [string, string][] = projectInfo.value.map((info) => {
       const parts = [info.value, info.meta].filter((part) => part && part !== emptyValue);
 
       return [info.label, parts.join('\n') || emptyValue];
@@ -1107,6 +1108,8 @@ export const useProjectShow = () => {
   const headerProps = computed(() => ({
     project: project.value,
     projectTitle: projectTitle.value,
+    projectTypeLabel: getEntityName(project.value.project_type),
+    imageSource: firstImage.value || fallbackProjectImage,
     statusMeta: getConvertStatusMeta(currentConvertStatus.value),
     projectCodeLabel: t('ProjectShow.project_code'),
     createdAtLabel: t('ProjectShow.created_at'),
@@ -1138,6 +1141,11 @@ export const useProjectShow = () => {
     tabs: tabs.value,
     activeTab: activeTab.value,
     ariaLabel: t('ProjectShow.sections_navigation'),
+  }));
+
+  const statsProps = computed(() => ({
+    title: t('ProjectShow.project_statistics'),
+    stats: stats.value,
   }));
 
   const projectInfoSectionProps = computed(() => ({
@@ -1268,9 +1276,6 @@ export const useProjectShow = () => {
       'project-side-column--active-preview': activeTab.value === 'project-preview',
       'project-side-column--active-terms': activeTab.value === 'project-terms',
     },
-    imageSource: firstImage.value || fallbackProjectImage,
-    projectTitle: projectTitle.value,
-    stats: stats.value,
     preview: preview.value,
     previews: previews.value,
     hasProjectFloors: projectFloors.value.length > 0,
@@ -1284,8 +1289,6 @@ export const useProjectShow = () => {
     noPreviewLabel: t('ProjectShow.no_preview'),
     previewDateLabel: t('Project.preview_date'),
     previewTimeLabel: t('Project.preview_time'),
-    notificationTypeLabel: t('ProjectShow.notification_type'),
-    notificationMessageLabel: t('ProjectShow.notification_message'),
     siteLinkLabel: t('ProjectShow.site_link'),
     addressLabel: t('address'),
     termsLabel: t('terms'),
@@ -1311,6 +1314,7 @@ export const useProjectShow = () => {
     goToSection,
     headerProps,
     tabsProps,
+    statsProps,
     projectInfoSectionProps,
     floorsSectionProps,
     spacesSectionProps,

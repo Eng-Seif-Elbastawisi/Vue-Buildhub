@@ -5,13 +5,10 @@
   import AccordionHeader from 'primevue/accordionheader';
   import AccordionContent from 'primevue/accordioncontent';
   import type { RouteLocationRaw } from 'vue-router';
-  import type { ProjectPreview, ProjectStatItem } from './projectShow.types';
+  import type { ProjectPreview } from './projectShow.types';
 
   const props = withDefaults(
     defineProps<{
-      imageSource: string;
-      projectTitle: string;
-      stats: ProjectStatItem[];
       preview: ProjectPreview | null;
       previews?: ProjectPreview[];
       hasProjectFloors: boolean;
@@ -20,8 +17,6 @@
       noPreviewLabel: string;
       previewDateLabel: string;
       previewTimeLabel: string;
-      notificationTypeLabel: string;
-      notificationMessageLabel: string;
       siteLinkLabel: string;
       addressLabel: string;
       emptyValue: string;
@@ -98,17 +93,6 @@
 
 <template>
   <aside class="project-side-column">
-    <article class="image-card">
-      <img :src="imageSource" :alt="projectTitle" />
-      <div class="stats-grid">
-        <div v-for="stat in stats" :key="stat.label" class="stat-item">
-          <i :class="stat.icon"></i>
-          <strong>{{ stat.value }}</strong>
-          <span>{{ stat.label }}</span>
-        </div>
-      </div>
-    </article>
-
     <article id="project-preview" class="project-card preview-card">
       <div class="card-title">
         <i class="pi pi-calendar"></i>
@@ -126,10 +110,6 @@
           {{ noPreviewLabel }}
         </span>
       </RouterLink>
-
-      <!-- <div v-if="!preview" class="empty-panel">
-        {{ noPreviewLabel }}
-      </div> -->
 
       <Accordion v-else v-model:value="activePreview" class="department-accordion">
         <AccordionPanel
@@ -163,16 +143,6 @@
 
           <AccordionContent class="department-panel__content">
             <div class="preview-grid">
-              <!-- <div class="side-info">
-                <i class="pi pi-bell"></i>
-                <span>{{ notificationTypeLabel }}</span>
-                <strong>{{ valueOrEmpty(previewItem.notification_type) }}</strong>
-              </div>
-              <div class="side-info">
-                <i class="pi pi-comment"></i>
-                <span>{{ notificationMessageLabel }}</span>
-                <strong>{{ valueOrEmpty(previewItem.notification_message) }}</strong>
-              </div> -->
               <div class="side-info side-info--wide border-top-0">
                 <i class="pi pi-link"></i>
                 <span>{{ siteLinkLabel }}</span>
@@ -205,6 +175,8 @@
         </AccordionPanel>
       </Accordion>
     </article>
+
+    <slot />
 
     <article id="project-terms" class="project-card terms-card">
       <div class="card-title">

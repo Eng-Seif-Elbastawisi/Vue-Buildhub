@@ -1,5 +1,6 @@
 <script setup lang="ts">
   import Breadcrumb from 'primevue/breadcrumb';
+  import type { MenuItem } from 'primevue/menuitem';
   import { computed } from 'vue';
   import { useI18n } from 'vue-i18n';
   import { useRoute, useRouter } from 'vue-router';
@@ -12,17 +13,27 @@
   const router = useRouter();
   const { t, locale } = useI18n();
 
+  const isProjectShowRoute = computed(() => route.name === 'show-project');
+
   const items = computed(() => {
     void locale.value;
     return buildBreadcrumb(route, router);
   });
 
-  const getLabel = (item?: BreadcrumbItem) =>
-    item?.labelKey ? t(item.labelKey) : (item?.label ?? '');
+  const getLabel = (breadcrumbItem?: BreadcrumbItem | MenuItem) => {
+    if (!breadcrumbItem) return '';
+    if ('labelKey' in breadcrumbItem && typeof breadcrumbItem.labelKey === 'string') {
+      return t(breadcrumbItem.labelKey);
+    }
+
+    return typeof breadcrumbItem.label === 'function'
+      ? breadcrumbItem.label()
+      : (breadcrumbItem.label ?? '');
+  };
 </script>
 
 <template>
-  <div class="feature-header-container">
+  <div v-if="!isProjectShowRoute" class="feature-header-container">
     <img class="header-img" :src="FeatureHeader" :alt="$t('feature_header_image_alt')" />
     <div class="content">
       <p class="title">

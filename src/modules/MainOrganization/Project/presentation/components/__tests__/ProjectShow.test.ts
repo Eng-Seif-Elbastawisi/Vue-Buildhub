@@ -32,6 +32,7 @@ const projectResponse = ProjectShowModel.fromJson({
   },
   service_type: 3,
   status: 1,
+  convert_status: 4,
   title: [{ locale: 'en', title: 'test' }],
   description: [{ locale: 'en', description: 'Project description' }],
   date: '2026-07-08',
@@ -242,6 +243,10 @@ const mountProjectShow = () =>
           props: ['src', 'alt'],
           template: '<img :src="src" :alt="alt" />',
         },
+        ProjectHeroBreadcrumb: {
+          props: ['currentLabel'],
+          template: '<nav>{{ currentLabel }}</nav>',
+        },
         Accordion: {
           template: '<div class="p-accordion"><slot /></div>',
         },
@@ -317,7 +322,7 @@ describe('ProjectShow', () => {
     expect(changeProjectStatus).toHaveBeenCalledTimes(1);
     expect(changeProjectStatus.mock.calls[0][0].toMap()).toEqual({
       project_id: 24,
-      status: 3,
+      status: 11,
       notes: 'Approved by client',
     });
   });

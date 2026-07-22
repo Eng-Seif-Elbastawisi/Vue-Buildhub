@@ -4,8 +4,9 @@ import { nextTick } from 'vue';
 import { ConvertStatus } from '../../../../core/constants/convert.status.enum';
 import ProjectShowHeader from '../ProjectShowHeader.vue';
 
-const mountHeader = (props: Record<string, unknown> = {}) =>
+const mountHeader = (props: Record<string, unknown> = {}, attachTo?: Element) =>
   mount(ProjectShowHeader, {
+    attachTo,
     props: {
       project: {
         id: 24,
@@ -14,6 +15,8 @@ const mountHeader = (props: Record<string, unknown> = {}) =>
         created_at: '2026-07-08 14:45:30',
       },
       projectTitle: 'Test Project',
+      projectTypeLabel: 'Villa',
+      imageSource: '/project.png',
       statusMeta: { label: 'Active', className: 'is-active' },
       projectCodeLabel: 'Project Code',
       createdAtLabel: 'Created at',
@@ -43,6 +46,10 @@ const mountHeader = (props: Record<string, unknown> = {}) =>
     },
     global: {
       stubs: {
+        ProjectHeroBreadcrumb: {
+          props: ['currentLabel'],
+          template: '<nav class="project-hero-breadcrumb-stub">{{ currentLabel }}</nav>',
+        },
         AutoInvoicesModal: {
           props: ['projectId'],
           emits: ['close'],
@@ -62,9 +69,11 @@ describe('ProjectShowHeader', () => {
     const wrapper = mountHeader();
 
     expect(wrapper.text()).toContain('Test Project');
+    expect(wrapper.text()).toContain('Villa');
     expect(wrapper.text()).toContain('Project Code: 24');
     expect(wrapper.text()).toContain('Active');
     expect(wrapper.text()).toContain('Actions');
+    expect(wrapper.find('img[alt="Test Project"]').attributes('src')).toBe('/project.png');
 
     await wrapper.find('.project-actions__trigger').trigger('click');
     await wrapper
@@ -91,6 +100,29 @@ describe('ProjectShowHeader', () => {
       ?.trigger('click');
 
     expect(wrapper.emitted('convertStatusAction')).toHaveLength(1);
+  });
+
+  it('supports keyboard navigation and restores focus when the actions menu closes', async () => {
+    const wrapper = mountHeader({}, document.body);
+    const trigger = wrapper.find<HTMLButtonElement>('.project-actions__trigger');
+
+    trigger.element.focus();
+    await trigger.trigger('keydown', { key: 'ArrowDown' });
+    await nextTick();
+
+    const menuItems = wrapper.findAll<HTMLElement>('[role="menuitem"]');
+
+    expect(wrapper.find('[role="menu"]').exists()).toBe(true);
+    expect(document.activeElement).toBe(menuItems[0].element);
+
+    await menuItems[0].trigger('keydown', { key: 'ArrowDown' });
+    expect(document.activeElement).toBe(menuItems[1].element);
+
+    await menuItems[1].trigger('keydown', { key: 'Escape' });
+    expect(wrapper.find('[role="menu"]').exists()).toBe(false);
+    expect(document.activeElement).toBe(trigger.element);
+
+    wrapper.unmount();
   });
 
   it('hides convert status action when no label is provided', () => {

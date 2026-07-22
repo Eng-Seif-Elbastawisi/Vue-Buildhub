@@ -1,7 +1,16 @@
 <script setup lang="ts">
-  import { computed, defineAsyncComponent, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+  import {
+    computed,
+    defineAsyncComponent,
+    nextTick,
+    onBeforeUnmount,
+    onMounted,
+    ref,
+    watch,
+  } from 'vue';
 
   import { ConvertStatus } from '../../../core/constants/convert.status.enum';
+  import ProjectHeroBreadcrumb from './ProjectHeroBreadcrumb.vue';
   import type { ProjectShowRaw, StatusMeta } from './projectShow.types';
 
   const AutoInvoicesModal = defineAsyncComponent(
@@ -18,6 +27,8 @@
   const props = defineProps<{
     project: ProjectShowRaw;
     projectTitle: string;
+    projectTypeLabel: string;
+    imageSource: string;
     statusMeta: StatusMeta;
     projectCodeLabel: string;
     createdAtLabel: string;
@@ -55,17 +66,19 @@
   const isAutoInvoicesModalOpen = ref(false);
   const isActionsMenuOpen = ref(false);
   const actionsMenuRef = ref<HTMLElement | null>(null);
+  const actionsMenuPanelRef = ref<HTMLElement | null>(null);
+  const actionsTriggerRef = ref<HTMLButtonElement | null>(null);
   const activeStatusTarget = ref<ConvertStatus | null>(null);
   const notes = ref('');
 
   const canEditProject = computed(() => {
     const projectStatus = Number(props.project.status);
 
-    return [
-      ConvertStatus.WAITING_PREVIEW,
-      ConvertStatus.WAITING_PREVIEW_RESULT,
-      ConvertStatus.REVISE_VERSION,
-    ].includes(projectStatus as ConvertStatus);
+    return (
+      projectStatus === ConvertStatus.WAITING_PREVIEW ||
+      projectStatus === ConvertStatus.WAITING_PREVIEW_RESULT ||
+      projectStatus === ConvertStatus.REVISE_VERSION
+    );
   });
 
   const canManagePricePercentage = computed(() => {
@@ -78,11 +91,60 @@
     isActionsMenuOpen.value = false;
   };
 
-  const toggleActionsMenu = () => {
-    isActionsMenuOpen.value = !isActionsMenuOpen.value;
+  const getEnabledMenuItems = () => {
+    return Array.from(
+      actionsMenuPanelRef.value?.querySelectorAll<HTMLElement>(
+        '[role="menuitem"]:not([disabled])',
+      ) ?? [],
+    );
   };
 
-  const handleDocumentClick = (event: MouseEvent) => {
+  const openActionsMenu = async () => {
+    isActionsMenuOpen.value = true;
+    await nextTick();
+    getEnabledMenuItems()[0]?.focus();
+  };
+
+  const toggleActionsMenu = () => {
+    if (isActionsMenuOpen.value) {
+      closeActionsMenu();
+      return;
+    }
+
+    void openActionsMenu();
+  };
+
+  const closeActionsMenuAndRestoreFocus = () => {
+    closeActionsMenu();
+    actionsTriggerRef.value?.focus();
+  };
+
+  const moveMenuFocus = (offset: number) => {
+    const menuItems = getEnabledMenuItems();
+    const currentIndex = menuItems.indexOf(document.activeElement as HTMLElement);
+    const nextIndex = (currentIndex + offset + menuItems.length) % menuItems.length;
+
+    menuItems[nextIndex]?.focus();
+  };
+
+  const navigateActionsMenu = (event: KeyboardEvent) => {
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      closeActionsMenuAndRestoreFocus();
+      return;
+    }
+
+    if (!['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) return;
+
+    event.preventDefault();
+
+    const menuItems = getEnabledMenuItems();
+    if (event.key === 'Home') menuItems[0]?.focus();
+    else if (event.key === 'End') menuItems[menuItems.length - 1]?.focus();
+    else moveMenuFocus(event.key === 'ArrowDown' ? 1 : -1);
+  };
+
+  const closeActionsMenuOnOutsideClick = (event: MouseEvent) => {
     if (!actionsMenuRef.value?.contains(event.target as Node)) {
       closeActionsMenu();
     }
@@ -139,169 +201,191 @@
   );
 
   onMounted(() => {
-    document.addEventListener('click', handleDocumentClick);
+    document.addEventListener('click', closeActionsMenuOnOutsideClick);
   });
 
   onBeforeUnmount(() => {
-    document.removeEventListener('click', handleDocumentClick);
+    document.removeEventListener('click', closeActionsMenuOnOutsideClick);
   });
 </script>
 
 <template>
   <header class="project-hero">
-    <div class="project-hero__body">
-      <div class="project-hero__content">
-        <div class="project-title-row">
-          <h1>{{ projectTitle }}</h1>
+    <img class="project-hero__image" :src="imageSource" :alt="projectTitle" />
+    <div class="project-hero__shade" aria-hidden="true"></div>
 
-          <span class="status-badge" :class="statusMeta.className">
-            {{ statusMeta.label }}
+    <div class="project-hero__inner">
+      <ProjectHeroBreadcrumb :current-label="projectTitle" />
+
+      <div class="project-hero__body">
+        <div class="project-hero__content">
+          <span v-if="projectTypeLabel" class="project-type-badge">
+            {{ projectTypeLabel }}
           </span>
+
+          <div class="project-title-row">
+            <h1>{{ projectTitle }}</h1>
+
+            <span class="status-badge" :class="statusMeta.className">
+              {{ statusMeta.label }}
+            </span>
+          </div>
+
+          <div class="project-meta-row">
+            <span>
+              <i class="pi pi-id-card"></i>
+              {{ projectCodeLabel }}: {{ project.id }}
+            </span>
+
+            <span>
+              <i class="pi pi-calendar"></i>
+              {{ formatDate(project.date) }}
+            </span>
+
+            <span>
+              <i class="pi pi-clock"></i>
+              {{ createdAtLabel }}
+              {{ formatTime(project.created_at) }}
+            </span>
+          </div>
         </div>
 
-        <div class="project-meta-row">
-          <span>
-            <i class="pi pi-id-card"></i>
-            {{ projectCodeLabel }}: {{ project.id }}
-          </span>
-
-          <span>
-            <i class="pi pi-calendar"></i>
-            {{ formatDate(project.date) }}
-          </span>
-
-          <span>
-            <i class="pi pi-clock"></i>
-            {{ createdAtLabel }}
-            {{ formatTime(project.created_at) }}
-          </span>
-        </div>
-      </div>
-
-      <div ref="actionsMenuRef" class="project-actions" @keydown.esc="closeActionsMenu">
-        <button
-          class="project-action-btn project-actions__trigger"
-          type="button"
-          aria-haspopup="menu"
-          :aria-expanded="isActionsMenuOpen"
-          @click.stop="toggleActionsMenu"
-        >
-          <i class="pi pi-ellipsis-v"></i>
-          {{ actionsLabel }}
-        </button>
-
-        <div v-if="isActionsMenuOpen" class="project-actions__menu" role="menu">
+        <div ref="actionsMenuRef" class="project-actions">
           <button
-            class="project-actions__item"
+            ref="actionsTriggerRef"
+            class="project-action-btn project-actions__trigger"
             type="button"
-            role="menuitem"
-            :disabled="exportingPdf"
-            @click="triggerDownloadPdf"
+            aria-haspopup="menu"
+            aria-controls="project-actions-menu"
+            :aria-expanded="isActionsMenuOpen"
+            @click.stop="toggleActionsMenu"
+            @keydown.down.prevent="openActionsMenu"
           >
-            <i class="pi pi-download"></i>
-
-            {{ exportingPdf ? generatingPdfLabel : downloadPdfLabel }}
+            <i class="pi pi-bolt" aria-hidden="true"></i>
+            {{ actionsLabel }}
+            <i class="pi pi-chevron-down project-actions__chevron" aria-hidden="true"></i>
           </button>
 
-          <button
-            v-if="convertActionLabel"
-            class="project-actions__item project-actions__item--primary"
-            type="button"
-            role="menuitem"
-            :disabled="convertActionDisabled"
-            @click="triggerConvertStatusAction"
+          <div
+            v-if="isActionsMenuOpen"
+            id="project-actions-menu"
+            ref="actionsMenuPanelRef"
+            class="project-actions__menu"
+            role="menu"
+            @keydown="navigateActionsMenu"
           >
-            <i class="pi pi-sync"></i>
-            {{ convertActionLabel }}
-          </button>
+            <button
+              class="project-actions__item"
+              type="button"
+              role="menuitem"
+              :disabled="exportingPdf"
+              @click="triggerDownloadPdf"
+            >
+              <i class="pi pi-download"></i>
 
-          <button
-            v-for="statusAction in statusActions"
-            :key="statusAction.status"
-            class="project-actions__item"
-            :class="`project-actions__item--${statusAction.tone}`"
-            type="button"
-            role="menuitem"
-            :disabled="changeStatusLoading"
-            @click="openStatusModal(statusAction.status)"
-          >
-            <i class="pi pi-flag"></i>
-            {{ statusAction.label }}
-          </button>
+              {{ exportingPdf ? generatingPdfLabel : downloadPdfLabel }}
+            </button>
 
-          <RouterLink
-            class="project-actions__item project-actions__item--neutral"
-            role="menuitem"
-            :to="{
-              name: 'project-history',
-              params: {
-                project_id: project.id,
-              },
-            }"
-            @click="closeActionsMenu"
-          >
-            <i class="pi pi-history"></i>
-            {{ historyLabel }}
-          </RouterLink>
+            <button
+              v-if="convertActionLabel"
+              class="project-actions__item project-actions__item--primary"
+              type="button"
+              role="menuitem"
+              :disabled="convertActionDisabled"
+              @click="triggerConvertStatusAction"
+            >
+              <i class="pi pi-sync"></i>
+              {{ convertActionLabel }}
+            </button>
 
-          <RouterLink
-            v-if="canManagePricePercentage && !props.hasAutoInvoices"
-            class="project-actions__item project-actions__item--neutral"
-            role="menuitem"
-            :to="{
-              name: 'project-price-percentage',
-              params: {
-                project_id: project.id,
-              },
-            }"
-            @click="closeActionsMenu"
-          >
-            <i class="pi pi-percentage"></i>
-            {{ pricePercentageLabel }}
-          </RouterLink>
+            <button
+              v-for="statusAction in statusActions"
+              :key="statusAction.status"
+              class="project-actions__item"
+              :class="`project-actions__item--${statusAction.tone}`"
+              type="button"
+              role="menuitem"
+              :disabled="changeStatusLoading"
+              @click="openStatusModal(statusAction.status)"
+            >
+              <i class="pi pi-flag"></i>
+              {{ statusAction.label }}
+            </button>
 
-          <RouterLink
-            v-if="props.hasAutoInvoices"
-            class="project-actions__item project-actions__item--neutral"
-            role="menuitem"
-            :to="{
-              name: 'project-invoice-action-add',
-              params: {
-                project_id: project.id,
-              },
-            }"
-            @click="closeActionsMenu"
-          >
-            <i class="pi pi-check-square"></i>
-            {{ addInvoiceActionLabel }}
-          </RouterLink>
+            <RouterLink
+              class="project-actions__item project-actions__item--neutral"
+              role="menuitem"
+              :to="{
+                name: 'project-history',
+                params: {
+                  project_id: project.id,
+                },
+              }"
+              @click="closeActionsMenu"
+            >
+              <i class="pi pi-history"></i>
+              {{ historyLabel }}
+            </RouterLink>
 
-          <button
-            v-if="props.hasAutoInvoices"
-            class="project-actions__item project-actions__item--neutral project-actions__auto-invoices"
-            type="button"
-            role="menuitem"
-            @click="openAutoInvoicesModal"
-          >
-            <i class="pi pi-list"></i>
-            {{ autoInvoicesLabel }}
-          </button>
+            <RouterLink
+              v-if="canManagePricePercentage && !props.hasAutoInvoices"
+              class="project-actions__item project-actions__item--neutral"
+              role="menuitem"
+              :to="{
+                name: 'project-price-percentage',
+                params: {
+                  project_id: project.id,
+                },
+              }"
+              @click="closeActionsMenu"
+            >
+              <i class="pi pi-percentage"></i>
+              {{ pricePercentageLabel }}
+            </RouterLink>
 
-          <RouterLink
-            v-if="canEditProject"
-            class="project-actions__item project-actions__item--primary project-actions__item--neutral"
-            role="menuitem"
-            :to="{
-              name: 'edit-project',
-              params: {
-                project_id: project.id,
-              },
-            }"
-            @click="closeActionsMenu"
-          >
-            <i class="pi pi-pencil"></i>
-            {{ editProjectLabel }}
-          </RouterLink>
+            <RouterLink
+              v-if="props.hasAutoInvoices"
+              class="project-actions__item project-actions__item--neutral"
+              role="menuitem"
+              :to="{
+                name: 'project-invoice-action-add',
+                params: {
+                  project_id: project.id,
+                },
+              }"
+              @click="closeActionsMenu"
+            >
+              <i class="pi pi-check-square"></i>
+              {{ addInvoiceActionLabel }}
+            </RouterLink>
+
+            <button
+              v-if="props.hasAutoInvoices"
+              class="project-actions__item project-actions__item--neutral project-actions__auto-invoices"
+              type="button"
+              role="menuitem"
+              @click="openAutoInvoicesModal"
+            >
+              <i class="pi pi-list"></i>
+              {{ autoInvoicesLabel }}
+            </button>
+
+            <RouterLink
+              v-if="canEditProject"
+              class="project-actions__item project-actions__item--primary project-actions__item--neutral"
+              role="menuitem"
+              :to="{
+                name: 'edit-project',
+                params: {
+                  project_id: project.id,
+                },
+              }"
+              @click="closeActionsMenu"
+            >
+              <i class="pi pi-pencil"></i>
+              {{ editProjectLabel }}
+            </RouterLink>
+          </div>
         </div>
       </div>
     </div>
@@ -316,6 +400,7 @@
           <button
             class="project-status-modal__close"
             type="button"
+            :aria-label="cancelLabel"
             :disabled="changeStatusLoading"
             @click="closeStatusModal"
           >

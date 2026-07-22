@@ -225,17 +225,14 @@ describe('useProjectShow', () => {
     expect(fetchOne).toHaveBeenCalledTimes(1);
     expect(fetchOne.mock.calls[0][0].toMap()).toEqual({ project_id: 24 });
     expect(projectShow.headerProps.value.projectTitle).toBe('Project Alpha');
+    expect(projectShow.headerProps.value.projectTypeLabel).toBe('Commercial Project');
+    expect(projectShow.headerProps.value.imageSource).toBeTruthy();
     expect(projectShow.headerProps.value.convertActionLabel).toBe(
       'project.convertActions.convertMeasurementToProject',
     );
-    expect(projectShow.headerProps.value.statusActions).toEqual([
-      {
-        status: ConvertStatus.SEND_TO_CLIENT,
-        label: 'project.convertStatus.sendToClient',
-        tone: 'info',
-      },
-    ]);
-    expect(projectShow.tabsProps.value.activeTab).toBe('project-data');
+    expect(projectShow.headerProps.value.statusActions).toEqual([]);
+    expect(projectShow.tabsProps.value.activeTab).toBe('project-overview');
+    expect(projectShow.statsProps.value.stats).toHaveLength(4);
     expect(projectShow.sideColumnProps.value.terms).toBe(
       'First payment after approval\nSecond payment after delivery',
     );
@@ -271,6 +268,20 @@ describe('useProjectShow', () => {
   });
 
   it('exposes status actions based on the current status badge', async () => {
+    itemData.value.convert_status = ConvertStatus.READY_TO_SENT;
+    itemData.value.status = ConvertStatus.READY_TO_SENT;
+
+    const readyToSendProjectShow = mountComposable();
+    await nextTick();
+
+    expect(readyToSendProjectShow.headerProps.value.statusActions).toEqual([
+      {
+        status: ConvertStatus.SEND_TO_CLIENT,
+        label: 'project.convertStatus.sendToClient',
+        tone: 'info',
+      },
+    ]);
+
     itemData.value.convert_status = ConvertStatus.SEND_TO_CLIENT;
     itemData.value.status = ConvertStatus.SEND_TO_CLIENT;
 

@@ -31,12 +31,9 @@ const routerLinkStub = {
 };
 
 describe('ProjectSideColumn', () => {
-  it('renders stats and preview details', () => {
+  it('renders preview details', () => {
     const wrapper = mount(ProjectSideColumn, {
       props: {
-        imageSource: '/project.png',
-        projectTitle: 'Test Project',
-        stats: [{ icon: 'pi pi-building', value: '1', label: 'Floors' }],
         hasProjectFloors: false,
         addItemTo: addPreviewRoute,
         preview: {
@@ -51,8 +48,6 @@ describe('ProjectSideColumn', () => {
         noPreviewLabel: 'No preview',
         previewDateLabel: 'Preview Date',
         previewTimeLabel: 'Preview Time',
-        notificationTypeLabel: 'Notification Type',
-        notificationMessageLabel: 'Notification Message',
         siteLinkLabel: 'Site Link',
         addressLabel: 'Address',
         emptyValue: '—',
@@ -68,8 +63,6 @@ describe('ProjectSideColumn', () => {
       },
     });
 
-    expect(wrapper.find('img[alt="Test Project"]').exists()).toBe(true);
-    expect(wrapper.text()).toContain('Floors');
     expect(wrapper.text()).toContain('Site address');
     expect(wrapper.find('a[href="https://example.com/site"]').exists()).toBe(true);
     expect(wrapper.find('.preview-edit-action').exists()).toBe(false);
@@ -78,9 +71,6 @@ describe('ProjectSideColumn', () => {
   it('renders all preview entries', () => {
     const wrapper = mount(ProjectSideColumn, {
       props: {
-        imageSource: '/project.png',
-        projectTitle: 'Test Project',
-        stats: [{ icon: 'pi pi-building', value: '1', label: 'Floors' }],
         hasProjectFloors: false,
         addItemTo: addPreviewRoute,
         preview: null,
@@ -106,8 +96,6 @@ describe('ProjectSideColumn', () => {
         noPreviewLabel: 'No preview',
         previewDateLabel: 'Preview Date',
         previewTimeLabel: 'Preview Time',
-        notificationTypeLabel: 'Notification Type',
-        notificationMessageLabel: 'Notification Message',
         siteLinkLabel: 'Site Link',
         addressLabel: 'Address',
         emptyValue: '—',
@@ -147,9 +135,6 @@ describe('ProjectSideColumn', () => {
   it('hides preview edit actions when the project has floors', () => {
     const wrapper = mount(ProjectSideColumn, {
       props: {
-        imageSource: '/project.png',
-        projectTitle: 'Test Project',
-        stats: [{ icon: 'pi pi-building', value: '1', label: 'Floors' }],
         addItemTo: addPreviewRoute,
         preview: {
           id: 39,
@@ -161,8 +146,6 @@ describe('ProjectSideColumn', () => {
         noPreviewLabel: 'No preview',
         previewDateLabel: 'Preview Date',
         previewTimeLabel: 'Preview Time',
-        notificationTypeLabel: 'Notification Type',
-        notificationMessageLabel: 'Notification Message',
         siteLinkLabel: 'Site Link',
         addressLabel: 'Address',
         emptyValue: '—',
@@ -184,9 +167,6 @@ describe('ProjectSideColumn', () => {
   it('routes to add preview when no preview exists', () => {
     const wrapper = mount(ProjectSideColumn, {
       props: {
-        imageSource: '/project.png',
-        projectTitle: 'Test Project',
-        stats: [{ icon: 'pi pi-building', value: '1', label: 'Floors' }],
         hasProjectFloors: false,
         addItemTo: addPreviewRoute,
         preview: null,
@@ -194,8 +174,6 @@ describe('ProjectSideColumn', () => {
         noPreviewLabel: 'No preview',
         previewDateLabel: 'Preview Date',
         previewTimeLabel: 'Preview Time',
-        notificationTypeLabel: 'Notification Type',
-        notificationMessageLabel: 'Notification Message',
         siteLinkLabel: 'Site Link',
         addressLabel: 'Address',
         emptyValue: '—',
