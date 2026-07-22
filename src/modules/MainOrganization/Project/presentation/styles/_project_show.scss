@@ -198,6 +198,26 @@
   box-shadow: var(--shadow-lg);
 }
 
+.project-actions-popover {
+  max-width: calc(100vw - 2rem);
+}
+
+.project-actions-popover .p-popover-content {
+  padding: 0;
+}
+
+.project-actions-popover .project-actions__menu {
+  position: static;
+  z-index: auto;
+  inset: auto;
+  min-width: min(300px, calc(100vw - 2rem));
+  max-height: min(70vh, 520px);
+  overflow-y: auto;
+  border: 0;
+  box-shadow: none;
+  scrollbar-width: thin;
+}
+
 .project-actions__item {
   display: flex;
   align-items: center;
@@ -1443,7 +1463,7 @@
     padding: 0.3rem 0.75rem;
     border: 1px solid var(--project-glass-border);
     border-radius: var(--radius-full);
-    background: color-mix(in sRGB, var(--project-accent) 78%, transparent);
+    background: color-mix(in sRGB, var(--PrimaryColor) 78%, transparent);
     color: var(--white);
     font-family: 'Bold';
     font-size: var(--xs-size);
@@ -1501,7 +1521,7 @@
     min-height: 44px;
     border-color: color-mix(in sRGB, var(--white) 28%, transparent);
     border-radius: 14px;
-    background: linear-gradient(135deg, var(--project-accent), var(--project-accent-bright));
+    background: linear-gradient(135deg, var(--PrimaryColor), var(--SecondaryColor));
     color: var(--white);
     box-shadow: 0 12px 28px color-mix(in sRGB, var(--project-accent) 38%, transparent);
     transition:
@@ -1512,11 +1532,12 @@
 
   .project-actions__trigger:hover {
     border-color: var(--white-alpha-40);
-    background: linear-gradient(135deg, var(--project-accent), var(--project-accent-bright));
+    background: linear-gradient(135deg, var(--SecondaryColor), var(--PrimaryColor));
     color: var(--white);
     box-shadow: 0 16px 32px color-mix(in sRGB, var(--project-accent) 45%, transparent);
     filter: saturate(112%);
     transform: translateY(-1px);
+    
   }
 
   .project-actions__chevron {
@@ -1810,6 +1831,7 @@
     -webkit-line-clamp: 2;
   }
 
+  .project-section-disclosure,
   .project-info-disclosure,
   .project-floors-disclosure,
   .project-terms-disclosure {
@@ -1824,6 +1846,7 @@
     box-shadow: none;
   }
 
+  .project-section-disclosure > summary,
   .project-info-disclosure > summary,
   .project-floors-disclosure > summary,
   .project-terms-disclosure > summary {
@@ -1839,6 +1862,7 @@
     list-style: none;
   }
 
+  .project-section-disclosure > summary::-webkit-details-marker,
   .project-info-disclosure > summary::-webkit-details-marker,
   .project-floors-disclosure > summary::-webkit-details-marker,
   .project-terms-disclosure > summary::-webkit-details-marker,
@@ -1853,6 +1877,7 @@
     transition: transform var(--transition-fast);
   }
 
+  .project-section-disclosure[open] > summary .project-disclosure-chevron,
   .project-info-disclosure[open] > summary i,
   .project-floors-disclosure[open] > summary .project-disclosure-chevron,
   .project-terms-disclosure[open] > summary .project-disclosure-chevron {
@@ -1879,6 +1904,39 @@
   .project-terms-disclosure > summary.card-title {
     margin: 0;
     padding: 0.7rem 0.9rem;
+  }
+
+  .project-section-disclosure > summary.card-title {
+    margin: 0;
+    padding: 0;
+    user-select: none;
+  }
+
+  .project-section-disclosure[open] > summary.card-title {
+    margin-block-end: 0.75rem;
+  }
+
+  .project-section-disclosure:not([open]),
+  .preview-card.project-section-disclosure:not([open]) {
+    min-height: 0;
+  }
+
+  .project-section-disclosure > summary.card-title::marker {
+    content: '';
+  }
+
+  .project-section-disclosure > summary.card-title:focus-visible {
+    outline: 3px solid color-mix(in sRGB, var(--PrimaryColor) 42%, transparent);
+    outline-offset: 4px;
+  }
+
+  .project-section-disclosure > summary.card-title .project-disclosure-chevron {
+    background: var(--gray-50);
+    color: var(--project-accent);
+  }
+
+  .project-section-disclosure > summary.card-title:hover .project-disclosure-chevron {
+    background: var(--PrimaryColor-light);
   }
 
   .project-floors-card--embedded {
@@ -2221,11 +2279,16 @@
   }
 
   .project-departments-card {
-    gap: 0.85rem;
+    gap: 0;
   }
 
-  .project-departments-card .project-departments-heading p {
-    margin: 0;
+  .project-section-disclosure > summary.project-departments-heading {
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .project-departments-hint {
+    margin: 0 0 0.75rem;
     color: var(--gray-500);
     font-size: 0.65rem;
   }
@@ -2588,6 +2651,7 @@
   .project-show-page .project-stat-card,
   .project-show-page .project-actions__trigger,
   .project-show-page .project-tab,
+  .project-show-page .project-disclosure-chevron,
   .project-show-page .project-table tbody tr {
     transition: none;
   }

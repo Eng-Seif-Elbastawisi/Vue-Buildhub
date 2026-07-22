@@ -28,11 +28,12 @@
 </script>
 
 <template>
-  <article class="project-card project-spaces-card">
-    <div class="card-title">
+  <details class="project-card project-spaces-card project-section-disclosure">
+    <summary class="card-title">
       <i class="pi pi-file"></i>
       <h2>{{ title }}</h2>
-    </div>
+      <i class="pi pi-chevron-down project-disclosure-chevron" aria-hidden="true"></i>
+    </summary>
 
     <div v-if="!spaces.length" class="empty-panel">
       {{ emptyLabel }}
@@ -100,5 +101,5 @@
     </div>
 
     <strong class="total-line"> {{ totalAreaAllSpacesLabel }}: {{ formatArea(totalArea) }} </strong>
-  </article>
+  </details>
 </template>

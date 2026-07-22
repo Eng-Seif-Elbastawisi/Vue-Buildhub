@@ -13,11 +13,12 @@
 </script>
 
 <template>
-  <article id="project-data" class="project-card project-info-card">
-    <div class="card-title">
+  <details id="project-data" class="project-card project-info-card project-section-disclosure" open>
+    <summary class="card-title">
       <i class="pi pi-building"></i>
       <h2>{{ title }}</h2>
-    </div>
+      <i class="pi pi-chevron-down project-disclosure-chevron" aria-hidden="true"></i>
+    </summary>
 
     <div class="project-info-summary-grid">
       <div v-for="projectInfo in summaryItems" :key="projectInfo.label" class="project-info-field">
@@ -67,5 +68,5 @@
         </div>
       </div>
     </details>
-  </article>
+  </details>
 </template>

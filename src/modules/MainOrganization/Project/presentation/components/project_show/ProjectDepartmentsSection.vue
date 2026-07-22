@@ -62,21 +62,21 @@
 </script>
 
 <template>
-  <article id="project-items" class="project-card project-departments-card">
-    <div class="project-departments-heading">
-      <div>
-        <div class="card-title">
-          <i class="pi pi-box"></i>
-          <h2>{{ title }}</h2>
-          <span v-if="departments.length" class="department-summary-pill">
-            {{ departments.length }} {{ departmentCountLabel }} · {{ totalItemsCount }}
-            {{ itemsLabel }}
-          </span>
-        </div>
+  <details
+    id="project-items"
+    class="project-card project-departments-card project-section-disclosure"
+  >
+    <summary class="card-title project-departments-heading">
+      <i class="pi pi-box"></i>
+      <h2>{{ title }}</h2>
+      <span v-if="departments.length" class="department-summary-pill">
+        {{ departments.length }} {{ departmentCountLabel }} · {{ totalItemsCount }}
+        {{ itemsLabel }}
+      </span>
+      <i class="pi pi-chevron-down project-disclosure-chevron" aria-hidden="true"></i>
+    </summary>
 
-        <p>{{ hintLabel }}</p>
-      </div>
-    </div>
+    <p class="project-departments-hint">{{ hintLabel }}</p>
 
     <div v-if="!departments.length" class="empty-panel">
       {{ emptyLabel }}
@@ -168,5 +168,5 @@
       <i class="pi pi-info-circle"></i>
       <span>{{ singleOpenHintLabel }}</span>
     </div>
-  </article>
+  </details>
 </template>

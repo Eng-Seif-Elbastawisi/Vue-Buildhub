@@ -100,11 +100,12 @@
 
 <template>
   <aside class="project-side-column">
-    <article id="project-preview" class="project-card preview-card">
-      <div class="card-title">
+    <details id="project-preview" class="project-card preview-card project-section-disclosure">
+      <summary class="card-title">
         <i class="pi pi-calendar"></i>
         <h2>{{ previewTitle }}</h2>
-      </div>
+        <i class="pi pi-chevron-down project-disclosure-chevron" aria-hidden="true"></i>
+      </summary>
 
       <RouterLink
         v-if="!displayPreviews.length"
@@ -199,7 +200,7 @@
           <i class="pi pi-sliders-h" aria-hidden="true"></i>
         </RouterLink>
       </div>
-    </article>
+    </details>
 
     <slot />
 

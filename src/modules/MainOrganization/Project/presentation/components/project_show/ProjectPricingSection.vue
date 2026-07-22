@@ -10,11 +10,15 @@
 </script>
 
 <template>
-  <article id="project-pricing" class="project-card project-pricing-card">
-    <div class="card-title">
+  <details
+    id="project-pricing"
+    class="project-card project-pricing-card project-section-disclosure"
+  >
+    <summary class="card-title">
       <i class="pi pi-wallet"></i>
       <h2>{{ title }}</h2>
-    </div>
+      <i class="pi pi-chevron-down project-disclosure-chevron" aria-hidden="true"></i>
+    </summary>
 
     <div v-if="!pricing" class="empty-panel">
       {{ emptyLabel }}
@@ -29,5 +33,5 @@
         </div>
       </div>
     </div>
-  </article>
+  </details>
 </template>

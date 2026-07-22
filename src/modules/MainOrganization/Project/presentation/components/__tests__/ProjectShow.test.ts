@@ -306,6 +306,15 @@ describe('ProjectShow', () => {
     expect(wrapper.find('.project-dashboard-grid').exists()).toBe(true);
     expect(wrapper.find('.project-dashboard-main').exists()).toBe(true);
     expect(wrapper.find('.project-dashboard-side').exists()).toBe(true);
+    const visibleCardDisclosures = wrapper.findAll('.project-section-disclosure');
+
+    expect(visibleCardDisclosures).toHaveLength(5);
+    expect(wrapper.find('#project-data').attributes('open')).toBe('');
+    expect(wrapper.find('#project-preview').attributes('open')).toBeUndefined();
+    expect(wrapper.find('#project-items').attributes('open')).toBeUndefined();
+    expect(wrapper.find('.project-spaces-card').attributes('open')).toBeUndefined();
+    expect(wrapper.find('#project-pricing').attributes('open')).toBeUndefined();
+    expect(wrapper.findAll('.project-section-disclosure > summary')).toHaveLength(5);
     expect(wrapper.findAll('.project-stats .project-stat-card')).toHaveLength(4);
     expect(wrapper.findAll('.project-info-summary-grid .project-info-field')).toHaveLength(8);
     expect(wrapper.find('.project-floors-disclosure').attributes('open')).toBeUndefined();
