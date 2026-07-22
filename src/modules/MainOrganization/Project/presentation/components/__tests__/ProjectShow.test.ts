@@ -130,6 +130,8 @@ vi.mock('vue-i18n', () => ({
         'Project.list_title': 'Projects',
         'ProjectShow.project_details': 'Project Details',
         'ProjectShow.project_information': 'Project Information',
+        'ProjectShow.project_information_summary': 'Project Information Summary',
+        'ProjectShow.view_all_information': 'View all project information',
         'ProjectShow.project_floors_summary': 'Project Floors Summary',
         'ProjectShow.floor_spaces_details': 'Floor Spaces Details',
         'ProjectShow.additional_information': 'Additional Information',
@@ -295,6 +297,20 @@ describe('ProjectShow', () => {
     expect(wrapper.text()).toContain('First payment after approval');
     expect(wrapper.text()).toContain('Second payment after delivery');
     expect(wrapper.find('img[src*="p1i2wAlkoI_1783600450.png"]').exists()).toBe(true);
+  });
+
+  it('uses the compact target dashboard hierarchy while keeping dense data accessible', async () => {
+    const wrapper = mountProjectShow();
+    await nextTick();
+
+    expect(wrapper.find('.project-dashboard-grid').exists()).toBe(true);
+    expect(wrapper.find('.project-dashboard-main').exists()).toBe(true);
+    expect(wrapper.find('.project-dashboard-side').exists()).toBe(true);
+    expect(wrapper.findAll('.project-stats .project-stat-card')).toHaveLength(4);
+    expect(wrapper.findAll('.project-info-summary-grid .project-info-field')).toHaveLength(8);
+    expect(wrapper.find('.project-floors-disclosure').attributes('open')).toBeUndefined();
+    expect(wrapper.find('.project-terms-disclosure').attributes('open')).toBeUndefined();
+    expect(wrapper.find('.project-preview-illustration').exists()).toBe(true);
   });
 
   it('sends selected project status and notes from the header modal', async () => {

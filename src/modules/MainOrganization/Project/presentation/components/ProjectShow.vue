@@ -104,18 +104,26 @@
           <section class="project-content-surface">
             <ProjectStatsSection v-bind="statsProps" />
 
-            <main class="project-dashboard">
-              <section class="project-main-column">
+            <main class="project-dashboard-grid">
+              <div class="project-dashboard-main">
                 <ProjectInfoSection v-bind="projectInfoSectionProps" />
 
-                <ProjectFloorsSection v-bind="floorsSectionProps" />
+                <details class="project-floors-disclosure">
+                  <summary class="card-title">
+                    <i class="pi pi-clipboard"></i>
+                    <h2>{{ floorsSectionProps.title }}</h2>
+                    <i class="pi pi-chevron-down project-disclosure-chevron" aria-hidden="true"></i>
+                  </summary>
+
+                  <ProjectFloorsSection v-bind="floorsSectionProps" embedded />
+                </details>
 
                 <ProjectSpacesSection v-bind="spacesSectionProps" />
 
                 <ProjectPricingSection v-bind="pricingSectionProps" />
-              </section>
+              </div>
 
-              <ProjectSideColumn v-bind="sideColumnProps">
+              <ProjectSideColumn class="project-dashboard-side" v-bind="sideColumnProps">
                 <ProjectDepartmentsSection
                   v-if="projectDepartments.length"
                   v-bind="departmentsSectionProps"

@@ -1230,6 +1230,8 @@
   "ProjectShow.project_details": "Project Details",
   "ProjectShow.project_floors_summary": "Project Floors Summary",
   "ProjectShow.project_information": "Project Information",
+  "ProjectShow.project_information_summary": "Project Information Summary",
+  "ProjectShow.view_all_information": "View all project information",
   "ProjectShow.project_manager": "Project Manager",
   "ProjectShow.project_statistics": "Project overview statistics",
   "ProjectShow.selected_version": "Selected Version",

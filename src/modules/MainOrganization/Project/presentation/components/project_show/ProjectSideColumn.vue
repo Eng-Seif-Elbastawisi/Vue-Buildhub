@@ -1,11 +1,8 @@
 <script setup lang="ts">
   import { computed, ref } from 'vue';
-  import Accordion from 'primevue/accordion';
-  import AccordionPanel from 'primevue/accordionpanel';
-  import AccordionHeader from 'primevue/accordionheader';
-  import AccordionContent from 'primevue/accordioncontent';
   import type { RouteLocationRaw } from 'vue-router';
   import type { ProjectPreview } from './projectShow.types';
+  import projectPreviewHouseBackground from '@/assets/images/project-preview-house-background.svg';
 
   const props = withDefaults(
     defineProps<{
@@ -40,6 +37,16 @@
     return [];
   });
   const activePreview = ref('0');
+
+  const activePreviewItem = computed(() => {
+    return displayPreviews.value[Number(activePreview.value)] ?? displayPreviews.value[0] ?? null;
+  });
+
+  const safeSiteLink = computed(() => {
+    const siteLink = activePreviewItem.value?.site_link?.trim();
+
+    return siteLink && /^https?:\/\/\S+$/i.test(siteLink) ? siteLink : null;
+  });
 
   const toPositiveInteger = (value: unknown): number | undefined => {
     const normalizedValue = Array.isArray(value) ? value[0] : value;
@@ -105,105 +112,113 @@
         :to="addItemTo"
       >
         <i class="pi pi-plus-circle"></i>
-
-        <span>
-          {{ noPreviewLabel }}
-        </span>
+        <span>{{ noPreviewLabel }}</span>
       </RouterLink>
 
-      <Accordion v-else v-model:value="activePreview" class="department-accordion">
-        <AccordionPanel
-          v-for="(previewItem, index) in displayPreviews"
-          :key="previewItem.id ?? index"
-          :value="index.toString()"
-          class="department-panel"
+      <div v-else-if="activePreviewItem" class="project-preview-compact">
+        <img
+          class="project-preview-illustration"
+          :src="projectPreviewHouseBackground"
+          alt=""
+          aria-hidden="true"
+        />
+
+        <select
+          v-if="displayPreviews.length > 1"
+          v-model="activePreview"
+          class="project-preview-selector"
+          :aria-label="previewTitle"
         >
-          <AccordionHeader class="department-panel__header">
-            <div class="department-header-content">
-              <span class="department-icon" aria-hidden="true">
-                <i class="pi pi-calendar"></i>
-              </span>
+          <option
+            v-for="(previewOption, previewIndex) in displayPreviews"
+            :key="previewOption.id ?? previewIndex"
+            :value="previewIndex.toString()"
+          >
+            {{ formatDate(previewOption.preview_date) }}
+          </option>
+        </select>
 
-              <div class="department-title-group">
-                <span>{{ previewDateLabel }}</span>
-                <strong>{{ formatDate(previewItem.preview_date) }}</strong>
-                <small>
-                  <i class="pi pi-clock"></i>
-                  {{ previewTimeLabel }} {{ formatTime(previewItem.preview_time) }}
-                </small>
-              </div>
+        <div class="project-preview-date">
+          <span class="project-preview-date__icon" aria-hidden="true">
+            <i class="pi pi-calendar"></i>
+          </span>
+          <div>
+            <small>{{ previewDateLabel }}</small>
+            <strong>{{ formatDate(activePreviewItem.preview_date) }}</strong>
+            <span>
+              <i class="pi pi-clock" aria-hidden="true"></i>
+              {{ previewTimeLabel }} {{ formatTime(activePreviewItem.preview_time) }}
+            </span>
+          </div>
+        </div>
 
-              <div class="department-header-meta">
-                <span class="department-count-pill">
-                  {{ valueOrEmpty(previewItem.notification_type) }}
-                </span>
-              </div>
+        <div class="project-preview-fields">
+          <div class="project-preview-field">
+            <i class="pi pi-link" aria-hidden="true"></i>
+            <div>
+              <small>{{ siteLinkLabel }}</small>
+              <a
+                v-if="safeSiteLink"
+                class="project-safe-value project-safe-value--clamped"
+                :href="safeSiteLink"
+                :title="safeSiteLink"
+                target="_blank"
+                rel="noopener"
+              >
+                {{ safeSiteLink }}
+              </a>
+              <strong v-else class="project-safe-value project-safe-value--clamped">
+                {{ valueOrEmpty(activePreviewItem.site_link) }}
+              </strong>
             </div>
-          </AccordionHeader>
+          </div>
 
-          <AccordionContent class="department-panel__content">
-            <div class="preview-grid">
-              <div class="side-info side-info--wide border-top-0">
-                <i class="pi pi-link"></i>
-                <span>{{ siteLinkLabel }}</span>
-                <a
-                  v-if="previewItem.site_link"
-                  :href="previewItem.site_link"
-                  target="_blank"
-                  rel="noopener"
-                >
-                  {{ previewItem.site_link }}
-                </a>
-                <strong v-else>{{ emptyValue }}</strong>
+          <details class="project-preview-field project-preview-address">
+            <summary>
+              <i class="pi pi-map-marker" aria-hidden="true"></i>
+              <div>
+                <small>{{ addressLabel }}</small>
+                <strong class="project-safe-value project-safe-value--clamped">
+                  {{ valueOrEmpty(activePreviewItem.address) }}
+                </strong>
               </div>
-              <div class="side-info side-info--wide">
-                <i class="pi pi-map-marker"></i>
-                <span>{{ addressLabel }}</span>
-                <strong>{{ valueOrEmpty(previewItem.address) }}</strong>
-              </div>
-            </div>
+            </summary>
+            <p class="project-safe-value project-preview-address__full">
+              {{ valueOrEmpty(activePreviewItem.address) }}
+            </p>
+          </details>
+        </div>
 
-            <RouterLink
-              v-if="hasValidPreviewId(previewItem) && !hasProjectFloors"
-              class="project-action-btn project-action-btn--primary preview-edit-action"
-              :to="getEditPreviewRoute(previewItem)"
-            >
-              <i class="pi pi-pencil"></i>
-              {{ $t('Edit') }} {{ $t('Project.steps.project_preview') }}
-            </RouterLink>
-          </AccordionContent>
-        </AccordionPanel>
-      </Accordion>
+        <RouterLink
+          v-if="hasValidPreviewId(activePreviewItem) && !hasProjectFloors"
+          class="project-preview-edit-action"
+          :aria-label="`${$t('Edit')} ${$t('Project.steps.project_preview')}`"
+          :title="`${$t('Edit')} ${$t('Project.steps.project_preview')}`"
+          :to="getEditPreviewRoute(activePreviewItem)"
+        >
+          <i class="pi pi-sliders-h" aria-hidden="true"></i>
+        </RouterLink>
+      </div>
     </article>
 
     <slot />
 
-    <article id="project-terms" class="project-card terms-card">
-      <div class="card-title">
+    <details id="project-terms" class="project-terms-disclosure">
+      <summary class="card-title">
         <i class="pi pi-file-edit"></i>
         <h2>{{ termsLabel }}</h2>
-      </div>
+        <i class="pi pi-chevron-down project-disclosure-chevron" aria-hidden="true"></i>
+      </summary>
 
       <div v-if="termLines.length" class="terms-list">
-        <p v-for="(line, index) in termLines" :key="`${index}-${line}`">
-          {{ line }}
+        <p v-for="(termLine, termIndex) in termLines" :key="`${termIndex}-${termLine}`">
+          {{ termLine }}
         </p>
       </div>
 
       <div v-else class="empty-panel">
         {{ emptyValue }}
       </div>
-    </article>
+    </details>
   </aside>
 </template>
-
-<style scoped>
-  .preview-edit-action {
-    width: 100%;
-    margin-top: 1rem;
-  }
-
-  .side-info--wide.border-top-0 {
-    border-top: 0;
-  }
-</style>

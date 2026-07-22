@@ -28,7 +28,7 @@
 </script>
 
 <template>
-  <article class="project-card">
+  <article class="project-card project-spaces-card">
     <div class="card-title">
       <i class="pi pi-file"></i>
       <h2>{{ title }}</h2>
@@ -38,7 +38,7 @@
       {{ emptyLabel }}
     </div>
 
-    <div v-else class="table-wrap">
+    <div v-else class="table-wrap project-spaces-table-wrapper">
       <table class="project-table project-table--spaces">
         <thead>
           <tr>
@@ -60,7 +60,11 @@
             <td>{{ formatNumber(space.width) }}</td>
             <td>{{ formatNumber(space.height) }}</td>
             <td>{{ formatNumber(calculateArea(space)) }}</td>
-            <td>{{ valueOrEmpty(space.notes) }}</td>
+            <td>
+              <span class="project-table-clamp" :title="valueOrEmpty(space.notes)">
+                {{ valueOrEmpty(space.notes) }}
+              </span>
+            </td>
             <td>
               <div v-if="space.attachments?.length" class="space-attachments">
                 <template

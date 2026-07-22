@@ -9,21 +9,6 @@ const addPreviewRoute = {
   },
 };
 
-const accordionStubs = {
-  Accordion: {
-    template: '<div class="p-accordion"><slot /></div>',
-  },
-  AccordionPanel: {
-    template: '<section class="p-accordionpanel"><slot /></section>',
-  },
-  AccordionHeader: {
-    template: '<button class="p-accordionheader"><slot /></button>',
-  },
-  AccordionContent: {
-    template: '<div class="p-accordioncontent"><slot /></div>',
-  },
-};
-
 const routerLinkStub = {
   name: 'RouterLink',
   props: ['to'],
@@ -57,7 +42,6 @@ describe('ProjectSideColumn', () => {
       },
       global: {
         stubs: {
-          ...accordionStubs,
           RouterLink: routerLinkStub,
         },
       },
@@ -65,10 +49,11 @@ describe('ProjectSideColumn', () => {
 
     expect(wrapper.text()).toContain('Site address');
     expect(wrapper.find('a[href="https://example.com/site"]').exists()).toBe(true);
-    expect(wrapper.find('.preview-edit-action').exists()).toBe(false);
+    expect(wrapper.find('.project-preview-illustration').exists()).toBe(true);
+    expect(wrapper.find('.project-preview-edit-action').exists()).toBe(false);
   });
 
-  it('renders all preview entries', () => {
+  it('keeps all preview entries accessible through the compact selector', async () => {
     const wrapper = mount(ProjectSideColumn, {
       props: {
         hasProjectFloors: false,
@@ -105,31 +90,24 @@ describe('ProjectSideColumn', () => {
       },
       global: {
         stubs: {
-          ...accordionStubs,
           RouterLink: routerLinkStub,
         },
       },
     });
 
-    expect(wrapper.find('.p-accordion').exists()).toBe(true);
+    expect(wrapper.findAll('.project-preview-selector option')).toHaveLength(2);
     expect(wrapper.text()).toContain('Latest address');
-    expect(wrapper.text()).toContain('Previous address');
     expect(wrapper.find('a[href="https://example.com/latest"]').exists()).toBe(true);
-    expect(wrapper.find('a[href="https://example.com/previous"]').exists()).toBe(true);
 
-    const editLinks = wrapper.findAllComponents({ name: 'RouterLink' });
-    expect(editLinks).toHaveLength(2);
-    expect(editLinks[0]?.props('to')).toEqual({
-      name: 'edit-project_preview',
-      params: { project_preview_id: 39 },
-      query: { project_id: 24 },
-    });
-    expect(editLinks[1]?.props('to')).toEqual({
+    await wrapper.find('select').setValue('1');
+
+    expect(wrapper.text()).toContain('Previous address');
+    expect(wrapper.find('a[href="https://example.com/previous"]').exists()).toBe(true);
+    expect(wrapper.findComponent({ name: 'RouterLink' }).props('to')).toEqual({
       name: 'edit-project_preview',
       params: { project_preview_id: 38 },
       query: { project_id: 24 },
     });
-    expect(wrapper.text()).toContain('Edit Project Preview');
   });
 
   it('hides preview edit actions when the project has floors', () => {
@@ -155,13 +133,48 @@ describe('ProjectSideColumn', () => {
       },
       global: {
         stubs: {
-          ...accordionStubs,
           RouterLink: routerLinkStub,
         },
       },
     });
 
-    expect(wrapper.find('.preview-edit-action').exists()).toBe(false);
+    expect(wrapper.find('.project-preview-edit-action').exists()).toBe(false);
+  });
+
+  it('renders source-like addresses as escaped text and rejects unsafe site links', () => {
+    const sourceLikeAddress = '<script>window.location="https://unsafe.example"</script>';
+    const wrapper = mount(ProjectSideColumn, {
+      props: {
+        hasProjectFloors: false,
+        addItemTo: addPreviewRoute,
+        preview: {
+          preview_date: '2026-07-08',
+          preview_time: '17:44:00',
+          site_link: 'javascript:alert(1)',
+          address: sourceLikeAddress,
+        },
+        previewTitle: 'Project Preview',
+        noPreviewLabel: 'No preview',
+        previewDateLabel: 'Preview Date',
+        previewTimeLabel: 'Preview Time',
+        siteLinkLabel: 'Site Link',
+        addressLabel: 'Address',
+        emptyValue: '—',
+        formatDate: (value?: string | null) => String(value ?? '—'),
+        formatTime: (value?: string | null) => String(value ?? '—'),
+        valueOrEmpty: (value?: string | number | null) => String(value ?? '—'),
+      },
+      global: {
+        stubs: {
+          RouterLink: routerLinkStub,
+        },
+      },
+    });
+
+    expect(wrapper.find('script').exists()).toBe(false);
+    expect(wrapper.text()).toContain(sourceLikeAddress);
+    expect(wrapper.find('a[href^="javascript:"]').exists()).toBe(false);
+    expect(wrapper.find('.project-preview-address').attributes('open')).toBeUndefined();
   });
 
   it('routes to add preview when no preview exists', () => {
@@ -183,7 +196,6 @@ describe('ProjectSideColumn', () => {
       },
       global: {
         stubs: {
-          ...accordionStubs,
           RouterLink: routerLinkStub,
         },
       },

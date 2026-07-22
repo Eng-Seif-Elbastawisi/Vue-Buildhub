@@ -25,7 +25,7 @@
         <i :class="info.icon" aria-hidden="true"></i>
         <div class="project-info-contant">
           <span>{{ info.label }}</span>
-          <strong>{{ info.value }}</strong>
+          <strong class="project-safe-value" :title="info.value">{{ info.value }}</strong>
         </div>
       </div>
     </div>

@@ -571,7 +571,11 @@ export const useProjectShow = () => {
 
   const goToSection = (tabId: string) => {
     activeTab.value = tabId;
-    document.getElementById(tabId)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    const section = document.getElementById(tabId);
+    const disclosure = section?.closest('details');
+
+    if (disclosure instanceof HTMLDetailsElement) disclosure.open = true;
+    section?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   const tabs = computed<TabItem[]>(() => [
@@ -1150,8 +1154,9 @@ export const useProjectShow = () => {
 
   const projectInfoSectionProps = computed(() => ({
     class: sectionActiveClass('project-data'),
-    title: t('ProjectShow.project_information'),
+    title: t('ProjectShow.project_information_summary'),
     items: projectInfo.value,
+    additionalDetailsLabel: t('ProjectShow.view_all_information'),
   }));
 
   const floorsSectionProps = computed(() => ({

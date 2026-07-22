@@ -7,6 +7,7 @@ describe('ProjectInfoSection', () => {
     const wrapper = mount(ProjectInfoSection, {
       props: {
         title: 'Project Information',
+        additionalDetailsLabel: 'View all project information',
         items: [
           {
             icon: 'pi pi-user',
@@ -28,5 +29,27 @@ describe('ProjectInfoSection', () => {
     expect(wrapper.text()).toContain('Marny Barnett');
     expect(wrapper.text()).toContain('+1 (855) 934-1348');
     expect(wrapper.find('.status-badge--inline').text()).toBe('Active');
+  });
+
+  it('keeps secondary and long backend values inside a collapsed disclosure', () => {
+    const wrapper = mount(ProjectInfoSection, {
+      props: {
+        title: 'Project Information Summary',
+        additionalDetailsLabel: 'View all project information',
+        items: Array.from({ length: 9 }, (_, itemIndex) => ({
+          icon: 'pi pi-info-circle',
+          label: `Field ${itemIndex + 1}`,
+          value: itemIndex === 8 ? '<script>unsafe()</script>' : `Value ${itemIndex + 1}`,
+        })),
+      },
+    });
+
+    expect(wrapper.findAll('.project-info-summary-grid .project-info-field')).toHaveLength(8);
+    expect(wrapper.find('.project-info-disclosure').attributes('open')).toBeUndefined();
+    expect(wrapper.text()).toContain('<script>unsafe()</script>');
+    expect(wrapper.find('script').exists()).toBe(false);
+    expect(wrapper.find('.project-safe-value').html()).toContain(
+      '&lt;script&gt;unsafe()&lt;/script&gt;',
+    );
   });
 });

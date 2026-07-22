@@ -123,7 +123,7 @@
             {{ emptyLabel }}
           </div>
 
-          <div v-else class="table-wrap department-table-wrap">
+          <div v-else class="table-wrap department-table-wrap project-department-table-scroll">
             <table class="project-table project-table--departments">
               <thead>
                 <tr>

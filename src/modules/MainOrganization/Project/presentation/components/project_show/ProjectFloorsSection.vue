@@ -3,35 +3,43 @@
 
   import type { FloorSpace, ProjectFloor, StatusMeta } from './projectShow.types';
 
-  const props = defineProps<{
-    title: string;
-    floors: ProjectFloor[];
-    floorSpaces: FloorSpace[];
-    totalArea: number;
-    averageHeight: number;
-    emptyLabel: string;
-    addFloorLabel?: string;
-    addFloorTo?: RouteLocationRaw;
-    floorLabel: string;
-    typeLabel: string;
-    spacesLabel: string;
-    totalAreaMeterLabel: string;
-    totalHeightMeterLabel: string;
-    statusLabel: string;
-    completedLabel: string;
-    inProgressLabel: string;
-    totalFloorsLabel: string;
-    totalSpacesLabel: string;
-    totalAreaLabel: string;
-    averageHeightLabel: string;
-    getFloorNumberLabel: (floorNumber?: number | null) => string;
-    getFloorType: (floorNumber?: number | null) => string;
-    getStatusMeta: (status?: number | null) => StatusMeta;
-    calculateFloorArea: (floor: ProjectFloor) => number;
-    getFloorHeight: (floor: ProjectFloor) => number;
-    formatNumber: (value?: number | string | null, fractionDigits?: number) => string;
-    formatArea: (value?: number | string | null) => string;
-  }>();
+  const props = withDefaults(
+    defineProps<{
+      title: string;
+      embedded?: boolean;
+      floors: ProjectFloor[];
+      floorSpaces: FloorSpace[];
+      totalArea: number;
+      averageHeight: number;
+      emptyLabel: string;
+      addFloorLabel?: string;
+      addFloorTo?: RouteLocationRaw;
+      floorLabel: string;
+      typeLabel: string;
+      spacesLabel: string;
+      totalAreaMeterLabel: string;
+      totalHeightMeterLabel: string;
+      statusLabel: string;
+      completedLabel: string;
+      inProgressLabel: string;
+      totalFloorsLabel: string;
+      totalSpacesLabel: string;
+      totalAreaLabel: string;
+      averageHeightLabel: string;
+      getFloorNumberLabel: (floorNumber?: number | null) => string;
+      getFloorType: (floorNumber?: number | null) => string;
+      getStatusMeta: (status?: number | null) => StatusMeta;
+      calculateFloorArea: (floor: ProjectFloor) => number;
+      getFloorHeight: (floor: ProjectFloor) => number;
+      formatNumber: (value?: number | string | null, fractionDigits?: number) => string;
+      formatArea: (value?: number | string | null) => string;
+    }>(),
+    {
+      addFloorLabel: undefined,
+      addFloorTo: undefined,
+      embedded: false,
+    },
+  );
 
   const toPositiveInteger = (value: unknown): number | undefined => {
     const normalizedValue = Array.isArray(value) ? value[0] : value;
@@ -75,8 +83,12 @@
 </script>
 
 <template>
-  <article id="project-floors" class="project-card">
-    <div class="card-title">
+  <article
+    id="project-floors"
+    class="project-card project-floors-card"
+    :class="{ 'project-floors-card--embedded': embedded }"
+  >
+    <div v-if="!embedded" class="card-title">
       <i class="pi pi-clipboard"></i>
       <h2>{{ title }}</h2>
     </div>

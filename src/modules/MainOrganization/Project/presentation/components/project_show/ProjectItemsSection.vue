@@ -19,7 +19,7 @@
 </script>
 
 <template>
-  <article id="project-items" class="project-card">
+  <article id="project-items" class="project-card project-items-card">
     <div class="card-title">
       <i class="pi pi-box"></i>
       <h2>{{ title }}</h2>
@@ -29,7 +29,7 @@
       <i class="pi pi-plus-circle"></i> {{ emptyLabel }}
     </RouterLink>
 
-    <div v-else class="table-wrap">
+    <div v-else class="table-wrap project-items-table-scroll">
       <table class="project-table">
         <thead>
           <tr>

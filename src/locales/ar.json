@@ -1230,6 +1230,8 @@
   "ProjectShow.project_details": "تفاصيل المشروع",
   "ProjectShow.project_floors_summary": "ملخص أدوار المشروع",
   "ProjectShow.project_information": "معلومات المشروع",
+  "ProjectShow.project_information_summary": "ملخص معلومات المشروع",
+  "ProjectShow.view_all_information": "عرض جميع معلومات المشروع",
   "ProjectShow.project_manager": "مدير المشروع",
   "ProjectShow.project_statistics": "إحصائيات نظرة عامة على المشروع",
   "ProjectShow.selected_version": "الإصدار المحدد",
