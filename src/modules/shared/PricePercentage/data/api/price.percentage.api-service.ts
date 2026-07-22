@@ -16,7 +16,6 @@ export default class PricePercentageApiService extends BaseApiService {
 
   protected get endpoints(): Partial<ApiEndpoints> {
     return {
-      show: this.pricePercentageEndpoints.show,
       update: this.pricePercentageEndpoints.update,
     };
   }

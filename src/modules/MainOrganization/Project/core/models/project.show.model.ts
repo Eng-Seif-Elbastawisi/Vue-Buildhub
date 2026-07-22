@@ -66,6 +66,7 @@ export default class ProjectShowModel {
 
   public readonly convert_status?: ConvertStatus;
   public readonly status?: ConvertStatus;
+  public readonly has_auto_invoices?: boolean;
 
   public readonly terms?: string;
 
@@ -103,6 +104,7 @@ export default class ProjectShowModel {
 
     convert_status?: ConvertStatus;
     status?: ConvertStatus;
+    has_auto_invoices?: boolean;
 
     terms?: string;
   }) {
@@ -139,6 +141,7 @@ export default class ProjectShowModel {
 
     this.convert_status = data.convert_status;
     this.status = data.status;
+    this.has_auto_invoices = data.has_auto_invoices;
 
     this.terms = data.terms;
 
@@ -345,6 +348,7 @@ export default class ProjectShowModel {
 
       convert_status: convertStatus,
       status: convertStatus,
+      has_auto_invoices: json.has_auto_invoices as boolean | undefined,
 
       terms: ProjectShowModel.mapTerms(json.terms),
     });

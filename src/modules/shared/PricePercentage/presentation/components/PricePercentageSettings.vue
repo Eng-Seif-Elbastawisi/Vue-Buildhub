@@ -1,9 +1,8 @@
 <script setup lang="ts">
-  import { computed, onMounted, ref, watch } from 'vue';
+  import { computed, ref } from 'vue';
   import { useRoute } from 'vue-router';
   import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
   import AppButton from '@/shared/HelpersComponents/AppButton.vue';
-  import ShowPricePercentagesParams from '../../core/params/show.price.percentages.params';
   import UpdatePricePercentagesParams, {
     calculatePercentageTotal,
     MAX_PERCENTAGE,
@@ -24,7 +23,13 @@
     ? route.params.project_id[0]
     : route.params.project_id;
   const projectId = Number(rawProjectId);
-  const rows = ref<PercentageDraft[]>([]);
+  let nextRowKey = 1;
+  const newRow = (title = '', percentage: number | '' = ''): PercentageDraft => ({
+    key: nextRowKey++,
+    title,
+    percentage,
+  });
+  const rows = ref<PercentageDraft[]>([newRow()]);
   const loading = ref(false);
   const statusKey = ref('');
   const totalPercentage = computed(() =>
@@ -33,8 +38,6 @@
     ),
   );
   const hasRequiredTotal = computed(() => totalPercentage.value === REQUIRED_PERCENTAGE_TOTAL);
-  let nextRowKey = 1;
-
   const allowedPercentageKeys = new Set([
     'Backspace',
     'Delete',
@@ -68,12 +71,6 @@
   };
 
   controller.resetItem();
-
-  const newRow = (title = '', percentage: number | '' = ''): PercentageDraft => ({
-    key: nextRowKey++,
-    title,
-    percentage,
-  });
 
   const addRow = () => {
     rows.value.push(newRow());
@@ -113,31 +110,6 @@
       loading.value = false;
     }
   };
-
-  watch(
-    () => controller.itemData.value,
-    (settings) => {
-      if (!settings) return;
-
-      rows.value = settings.percentages.map((entry) => newRow(entry.title, entry.percentage));
-    },
-    { immediate: true },
-  );
-
-  onMounted(async () => {
-    const params = new ShowPricePercentagesParams({ projectId });
-
-    if (!params.validate().isValid) {
-      params.validateOrThrow();
-      return;
-    }
-
-    await controller.showPercentages(params);
-
-    if (rows.value.length === 0) {
-      addRow();
-    }
-  });
 </script>
 
 <template>

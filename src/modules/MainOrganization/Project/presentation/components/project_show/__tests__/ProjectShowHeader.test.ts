@@ -36,6 +36,7 @@ const mountHeader = (props: Record<string, unknown> = {}) =>
       saveStatusLabel: 'Save Status',
       changingStatusLabel: 'Saving status...',
       changeStatusLoading: false,
+      hasAutoInvoices: true,
       formatDate: () => '08 Jul 2026',
       formatTime: () => '02:45 PM',
       ...props,
@@ -159,8 +160,8 @@ describe('ProjectShowHeader', () => {
     expect(wrapper.text()).not.toContain('Rejected by client');
   });
 
-  it('links the price percentage action to the current project', async () => {
-    const wrapper = mountHeader();
+  it('links the invoice offer settings before automatic invoices exist', async () => {
+    const wrapper = mountHeader({ hasAutoInvoices: false });
 
     await wrapper.find('.project-actions__trigger').trigger('click');
 
@@ -175,6 +176,7 @@ describe('ProjectShowHeader', () => {
 
   it('hides the price percentage action unless the project is ready to send', async () => {
     const wrapper = mountHeader({
+      hasAutoInvoices: false,
       project: {
         id: 24,
         convert_status: ConvertStatus.WAITING_PRICING,
@@ -212,5 +214,13 @@ describe('ProjectShowHeader', () => {
 
     await wrapper.find('.close-auto-invoices').trigger('click');
     expect(wrapper.find('.auto-invoices-modal-stub').exists()).toBe(false);
+  });
+
+  it('hides the automatic invoices action when the project has no automatic invoices', async () => {
+    const wrapper = mountHeader({ hasAutoInvoices: false });
+
+    await wrapper.find('.project-actions__trigger').trigger('click');
+
+    expect(wrapper.find('.project-actions__auto-invoices').exists()).toBe(false);
   });
 });

@@ -7,6 +7,5 @@ export class PricePercentageApiEndpoints extends BaseEndpoints {
     return useUserStore().user?.type === UserType.ADMIN ? 'mainportal/' : 'organization/';
   }
 
-  readonly show = this.url('show_percentages');
   readonly update = this.url('set_invoice_offer');
 }

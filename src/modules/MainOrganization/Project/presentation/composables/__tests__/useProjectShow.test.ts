@@ -89,6 +89,7 @@ const itemData = {
     employee: { id: 1, name: 'Techlab Employee' },
     service_type: 3,
     date: '2026-07-08',
+    has_auto_invoices: true,
     notes: 'Project notes',
     terms: 'First payment after approval\nSecond payment after delivery',
     site_description: 'Site description',
@@ -260,6 +261,13 @@ describe('useProjectShow', () => {
       'project-side-column--active-preview': false,
       'project-side-column--active-terms': true,
     });
+  });
+
+  it('exposes automatic invoice availability from the project response', async () => {
+    const projectShow = mountComposable();
+    await nextTick();
+
+    expect(projectShow.headerProps.value.hasAutoInvoices).toBe(true);
   });
 
   it('exposes status actions based on the current status badge', async () => {

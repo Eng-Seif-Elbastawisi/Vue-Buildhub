@@ -1053,7 +1053,7 @@ export const useProjectShow = () => {
       if (!(result instanceof DataSuccess)) return;
 
       switch (oldStatus) {
-        case ConvertStatus.PENDING:
+        case ConvertStatus.CONVERT_TO_PROJECT:
           localConvertStatus.value = ConvertStatus.CONVERT_TO_PROJECT;
           break;
 
@@ -1129,6 +1129,7 @@ export const useProjectShow = () => {
     saveStatusLabel: t('ProjectShow.save_status'),
     changingStatusLabel: t('ProjectShow.changing_status'),
     changeStatusLoading: loading.value,
+    hasAutoInvoices: project.value.has_auto_invoices ?? false,
     formatDate,
     formatTime,
   }));

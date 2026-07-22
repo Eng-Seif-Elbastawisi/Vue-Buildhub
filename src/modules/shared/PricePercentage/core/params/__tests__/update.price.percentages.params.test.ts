@@ -13,7 +13,7 @@ describe('UpdatePricePercentagesParams', () => {
 
     expect(params.toMap()).toEqual({
       project_id: 24,
-      percentages: [
+      invoices: [
         { title: 'Tax', percentage: 33.33 },
         { title: 'Service', percentage: 66.67 },
       ],

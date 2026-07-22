@@ -97,6 +97,7 @@ export type ProjectShowRaw = {
   location?: NamedEntity | null;
   service_type?: number | null;
   status?: ConvertStatus | number | null;
+  has_auto_invoices?: boolean;
   title?: string | LocaleEntry[] | null;
   description?: LocaleEntry[] | null;
   date?: string | null;

@@ -3,7 +3,6 @@ import BaseController, {
   type ControllerConfig,
 } from '@/base/Presentation/Controller/baseController';
 import type PricePercentageModel from '../../core/models/price.percentage.model';
-import type ShowPricePercentagesParams from '../../core/params/show.price.percentages.params';
 import type UpdatePricePercentagesParams from '../../core/params/update.price.percentages.params';
 import PricePercentageRepository from '../../data/repositories/price.percentage.repository';
 
@@ -39,10 +38,6 @@ export default class PricePercentageController extends BaseController<
     }
 
     return PricePercentageController.instance;
-  }
-
-  async showPercentages(params: ShowPricePercentagesParams, options?: ApiCallOptions) {
-    return await super.fetchOne(params, { ...options, useJson: true });
   }
 
   async updatePercentages(params: UpdatePricePercentagesParams, options?: ApiCallOptions) {

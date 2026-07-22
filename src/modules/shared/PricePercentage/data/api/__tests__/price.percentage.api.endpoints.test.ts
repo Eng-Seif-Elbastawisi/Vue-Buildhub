@@ -7,10 +7,9 @@ describe('PricePercentageApiEndpoints', () => {
     setActivePinia(createPinia());
   });
 
-  it('defines the show and update percentage endpoints', () => {
+  it('defines the set invoice offer endpoint', () => {
     const endpoints = new PricePercentageApiEndpoints();
 
-    expect(endpoints.show).toContain('organization/show_percentages');
-    expect(endpoints.update).toContain('organization/update_percentages');
+    expect(endpoints.update).toContain('organization/set_invoice_offer');
   });
 });

@@ -40,6 +40,7 @@
     saveStatusLabel: string;
     changingStatusLabel: string;
     changeStatusLoading?: boolean;
+    hasAutoInvoices?: boolean;
     formatDate: (value?: string | null) => string;
     formatTime: (value?: string | null) => string;
   }>();
@@ -244,7 +245,7 @@
           </RouterLink>
 
           <RouterLink
-            v-if="canManagePricePercentage"
+            v-if="canManagePricePercentage && !props.hasAutoInvoices"
             class="project-actions__item project-actions__item--neutral"
             role="menuitem"
             :to="{
@@ -260,6 +261,7 @@
           </RouterLink>
 
           <RouterLink
+            v-if="props.hasAutoInvoices"
             class="project-actions__item project-actions__item--neutral"
             role="menuitem"
             :to="{
@@ -275,6 +277,7 @@
           </RouterLink>
 
           <button
+            v-if="props.hasAutoInvoices"
             class="project-actions__item project-actions__item--neutral project-actions__auto-invoices"
             type="button"
             role="menuitem"

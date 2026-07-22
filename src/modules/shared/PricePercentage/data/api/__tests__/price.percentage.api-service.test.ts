@@ -7,12 +7,13 @@ describe('PricePercentageApiService', () => {
     setActivePinia(createPinia());
   });
 
-  it('maps show and update actions to the percentage endpoints', () => {
+  it('maps updates to the set invoice offer endpoint', () => {
     const service = PricePercentageApiService.getInstance() as unknown as {
       endpoints: Record<string, string>;
     };
 
-    expect(service.endpoints.show).toContain('show_percentages');
-    expect(service.endpoints.update).toContain('update_percentages');
+    expect(service.endpoints).toEqual({
+      update: expect.stringContaining('set_invoice_offer'),
+    });
   });
 });

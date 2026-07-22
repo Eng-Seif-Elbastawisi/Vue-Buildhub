@@ -7,9 +7,7 @@ import PricePercentageSettings from '../PricePercentageSettings.vue';
 
 const mockController = vi.hoisted(() => ({
   resetItem: vi.fn(),
-  showPercentages: vi.fn(),
   updatePercentages: vi.fn(),
-  itemData: { value: undefined as unknown },
   errorMessage: { value: '' },
 }));
 
@@ -41,41 +39,25 @@ const mountSettings = () =>
 describe('PricePercentageSettings', () => {
   beforeEach(() => {
     mockController.resetItem.mockReset();
-    mockController.showPercentages.mockReset();
     mockController.updatePercentages.mockReset();
-    mockController.itemData.value = new PricePercentageModel([
-      { title: 'Tax', percentage: 15 },
-      { title: 'Service', percentage: 85 },
-    ]);
     mockController.errorMessage.value = '';
   });
 
-  it('loads existing rows and lets users add and remove entries', async () => {
+  it('starts with one row and lets users add and remove entries', async () => {
     const wrapper = mountSettings();
     await flushPromises();
 
-    expect(mockController.showPercentages).toHaveBeenCalledOnce();
-    expect(mockController.showPercentages.mock.calls[0][0].toMap()).toEqual({ project_id: 24 });
-    expect(wrapper.findAll('.percentage-row')).toHaveLength(2);
-    expect(wrapper.find('.total-summary').text()).toContain('100 / 100%');
+    expect(wrapper.findAll('.percentage-row')).toHaveLength(1);
+    expect(wrapper.find('.total-summary').text()).toContain('0 / 100%');
 
     const percentageInput = wrapper.find('.percentage-input');
     expect(percentageInput.attributes('min')).toBe('1');
     expect(percentageInput.attributes('max')).toBe('100');
 
     await wrapper.find('.add-row-button').trigger('click');
-    expect(wrapper.findAll('.percentage-row')).toHaveLength(3);
-
-    await wrapper.findAll('.remove-row-button')[2].trigger('click');
     expect(wrapper.findAll('.percentage-row')).toHaveLength(2);
-  });
 
-  it('starts with one editable row when no percentages exist', async () => {
-    mockController.itemData.value = new PricePercentageModel([]);
-
-    const wrapper = mountSettings();
-    await flushPromises();
-
+    await wrapper.findAll('.remove-row-button')[1].trigger('click');
     expect(wrapper.findAll('.percentage-row')).toHaveLength(1);
   });
 
@@ -117,8 +99,7 @@ describe('PricePercentageSettings', () => {
     }
   });
 
-  it('submits all rows as the percentages array', async () => {
-    mockController.itemData.value = new PricePercentageModel([{ title: 'Tax', percentage: 100 }]);
+  it('submits all rows as invoice offers', async () => {
     mockController.updatePercentages.mockResolvedValue(
       new DataSuccess({ data: PricePercentageModel.example }),
     );
@@ -134,16 +115,16 @@ describe('PricePercentageSettings', () => {
       .calls[0][0] as UpdatePricePercentagesParams;
     expect(params.toMap()).toEqual({
       project_id: 24,
-      percentages: [{ title: 'Updated tax', percentage: 100 }],
+      invoices: [{ title: 'Updated tax', percentage: 100 }],
     });
     expect(wrapper.text()).toContain('price_percentage.updated');
   });
 
   it('does not submit when the total is not 100', async () => {
-    mockController.itemData.value = new PricePercentageModel([{ title: 'Tax', percentage: 100 }]);
     const wrapper = mountSettings();
     await flushPromises();
 
+    await wrapper.find('.title-input').setValue('Tax');
     await wrapper.find('.percentage-input').setValue('99');
     await wrapper.find('.save-button').trigger('click');
     await flushPromises();

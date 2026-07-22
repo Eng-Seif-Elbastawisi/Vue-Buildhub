@@ -21,6 +21,7 @@ describe('ProjectShowModel', () => {
       preview_time: '10:30:00',
       site_link: 'https://maps.google.com/?q=30.0444,31.2357',
       address: 'Nasr City, Cairo, Egypt',
+      has_auto_invoices: true,
     };
     const model = ProjectShowModel.fromJson(json);
     expect(model.id).toBe(10);
@@ -31,5 +32,6 @@ describe('ProjectShowModel', () => {
     expect(model.preview_time).toBe('10:30:00');
     expect(model.site_link).toBe('https://maps.google.com/?q=30.0444,31.2357');
     expect(model.address).toBe('Nasr City, Cairo, Egypt');
+    expect(model.has_auto_invoices).toBe(true);
   });
 });
