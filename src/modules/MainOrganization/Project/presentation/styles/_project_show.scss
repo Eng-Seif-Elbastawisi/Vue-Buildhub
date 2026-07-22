@@ -1580,7 +1580,7 @@
     border: 1px solid var(--project-glass-border);
     min-height: 50px;
     border-radius: 14px;
-    // background: var(--project-glass);
+    background: var(--project-glass);
     box-shadow: 0 14px 35px var(--project-hero-shadow);
     backdrop-filter: blur(18px) saturate(130%);
     -webkit-backdrop-filter: blur(18px) saturate(130%);
@@ -1616,7 +1616,7 @@
   .project-tab.active {
     border-color: var(--white-alpha-30);
     background: var(--white);
-    color: var(--project-accent);
+    color: var(--PrimaryColor);
     box-shadow: var(--shadow-md);
   }
 
@@ -1766,7 +1766,7 @@
 
   .project-info-summary-grid {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     overflow: hidden;
     border: 1px solid var(--border-weak);
     border-radius: 12px;
@@ -1785,11 +1785,11 @@
     border-block-end: 1px solid var(--border-weak);
   }
 
-  .project-info-field:nth-child(4n) {
+  .project-info-field:nth-child(3n) {
     border-inline-end: 0;
   }
 
-  .project-info-field:nth-last-child(-n + 4) {
+  .project-info-field:nth-last-child(-n + 3) {
     border-block-end: 0;
   }
 

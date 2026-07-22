@@ -76,6 +76,7 @@
     }
   };
 
+  
   const submitInvoiceAction = async () => {
     const params = new SetInvoiceActionParams({
       project_id: projectId,
@@ -100,6 +101,7 @@
         statusKey.value = 'invoice_action.saved';
         return;
       }
+      // router.push({ name: 'Packages' });
 
       errorMessage.value =
         response.error?.displayMessage || response.error?.title || t('invoice_action.save_failed');

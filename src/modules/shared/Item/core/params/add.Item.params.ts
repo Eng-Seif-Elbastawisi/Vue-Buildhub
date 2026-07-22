@@ -17,7 +17,7 @@ export default class AddItemParams implements Params {
   public notes?: string;
   public translations?: { title: Record<string, string> };
   public static readonly validation = new ClassValidation().setRules({
-    type: requiredSelectRule(),
+    // type: requiredSelectRule(),
     status: requiredSelectRule(),
     stage_id: {
       ...requiredSelectRule(),
@@ -26,8 +26,14 @@ export default class AddItemParams implements Params {
     price: {
       required: (params) => params.service_type === ItemServiceTypeEnum.SUPERVISION,
     },
+    type: {
+      required: (params) => params.service_type === ItemServiceTypeEnum.SUPERVISION,
+    },
+     measurement_unit_id: {
+      required: (params) => params.service_type === ItemServiceTypeEnum.SUPERVISION,
+    },
     department_id: requiredSelectRule(),
-    measurement_unit_id: requiredSelectRule(),
+    // measurement_unit_id: requiredSelectRule(),
     translations: {
       required: true,
       custom: (value) => hasTitleTranslation(value) || translate('validation.title_required'),
