@@ -8,8 +8,8 @@ describe('ProjectStatsSection', () => {
       props: {
         title: 'Project statistics',
         stats: [
-          { icon: 'pi pi-building', value: '3', label: 'Floors' },
-          { icon: 'pi pi-th-large', value: '12', label: 'Spaces' },
+          { icon: 'pi pi-building', value: '3', label: 'Floors', caption: 'Total Floors' },
+          { icon: 'pi pi-th-large', value: '12', label: 'Spaces', caption: 'Total Spaces' },
         ],
       },
     });
@@ -18,5 +18,7 @@ describe('ProjectStatsSection', () => {
     expect(wrapper.findAll('.project-stat-card')).toHaveLength(2);
     expect(wrapper.text()).toContain('3');
     expect(wrapper.text()).toContain('12');
+    expect(wrapper.text()).toContain('Total Floors');
+    expect(wrapper.text()).toContain('Total Spaces');
   });
 });

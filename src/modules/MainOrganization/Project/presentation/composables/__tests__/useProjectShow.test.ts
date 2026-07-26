@@ -227,6 +227,7 @@ describe('useProjectShow', () => {
     expect(projectShow.headerProps.value.projectTitle).toBe('Project Alpha');
     expect(projectShow.headerProps.value.projectTypeLabel).toBe('Commercial Project');
     expect(projectShow.headerProps.value.imageSource).toBeTruthy();
+    expect(projectShow.headerProps.value.fallbackImageSource).toBeTruthy();
     expect(projectShow.headerProps.value.convertActionLabel).toBe(
       'project.convertActions.convertMeasurementToProject',
     );

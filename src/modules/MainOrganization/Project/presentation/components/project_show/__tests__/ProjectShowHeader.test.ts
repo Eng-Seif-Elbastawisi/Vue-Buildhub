@@ -21,6 +21,7 @@ const mountHeader = (
       projectTitle: 'Test Project',
       projectTypeLabel: 'Villa',
       imageSource: '/project.png',
+      fallbackImageSource: '/fallback-villa.png',
       statusMeta: { label: 'Active', className: 'is-active' },
       projectCodeLabel: 'Project Code',
       createdAtLabel: 'Created at',
@@ -87,6 +88,20 @@ describe('ProjectShowHeader', () => {
       ?.trigger('click');
 
     expect(wrapper.emitted('downloadPdf')).toHaveLength(1);
+  });
+
+  it('uses the villa fallback once when the backend hero image fails', async () => {
+    const wrapper = mountHeader();
+    const image = wrapper.find<HTMLImageElement>('.project-hero__background');
+
+    await image.trigger('error');
+
+    expect(image.attributes('src')).toBe('/fallback-villa.png');
+    expect(image.attributes('data-fallback-applied')).toBe('true');
+
+    await image.trigger('error');
+
+    expect(image.attributes('src')).toBe('/fallback-villa.png');
   });
 
   it('renders convert status action and emits it', async () => {

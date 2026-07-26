@@ -394,7 +394,7 @@ export const useProjectShow = () => {
     return attachments.value.find((attachment) => {
       const file = attachment.file ?? '';
 
-      return /\.(png|jpe?g|webp|gif)$/i.test(file);
+      return /\.(png|jpe?g|webp|gif)(?:[?#].*)?$/i.test(file);
     })?.file;
   });
 
@@ -406,24 +406,24 @@ export const useProjectShow = () => {
 
   const projectInfo = computed(() => [
     {
-      icon: 'pi pi-user',
+      icon: 'pi pi-address-book',
       label: t('ProjectShow.client'),
       value: getEntityName(project.value.client),
       meta: valueOrEmpty(project.value.client?.phone),
     },
     {
-      icon: 'pi pi-building',
+      icon: 'pi pi-building-columns',
       label: t('ProjectShow.organization'),
       value: getEntityName(project.value.organization),
       meta: valueOrEmpty(project.value.organization?.address),
     },
     {
-      icon: 'pi pi-map-marker',
+      icon: 'pi pi-map',
       label: t('location'),
       value: getLocationBreadcrumb(project.value.location),
     },
     {
-      icon: 'pi pi-sliders-h',
+      icon: 'pi pi-palette',
       label: t('project_type_id'),
       value: getEntityName(project.value.project_type),
     },
@@ -433,32 +433,32 @@ export const useProjectShow = () => {
       value: getEntityName(project.value.employee),
     },
     {
-      icon: 'pi pi-calendar',
+      icon: 'pi pi-calendar-clock',
       label: t('ProjectShow.project_date'),
       value: formatDate(project.value.date),
     },
     {
-      icon: 'pi pi-share-alt',
+      icon: 'pi pi-sparkles',
       label: t('Project.service_type'),
       value: getServiceTypeLabel(project.value.service_type),
     },
     {
-      icon: 'pi pi-users',
+      icon: 'pi pi-verified',
       label: t('Project.engineer'),
       value: getEntityName(preview.value?.engineer),
     },
     {
-      icon: 'pi pi-sitemap',
+      icon: 'pi pi-book',
       label: t('Project.site_description'),
       value: valueOrEmpty(project.value.site_description),
     },
     {
-      icon: 'pi pi-user',
+      icon: 'pi pi-wallet',
       label: t('ProjectShow.pricing_responsible'),
       value: getEntityName(preview.value?.pricing_responsible),
     },
     {
-      icon: 'pi pi-info-circle',
+      icon: 'pi pi-file-edit',
       label: t('Project.notes'),
       value: valueOrEmpty(project.value.notes),
     },
@@ -472,24 +472,28 @@ export const useProjectShow = () => {
 
   const stats = computed(() => [
     {
-      icon: 'pi pi-building',
+      icon: 'pi pi-building-columns',
       value: projectFloors.value.length.toString(),
       label: t('ProjectShow.floors'),
+      caption: t('ProjectShow.total_floors'),
     },
     {
-      icon: 'pi pi-th-large',
+      icon: 'pi pi-objects-column',
       value: floorSpaces.value.length.toString(),
       label: t('Project.spaces'),
+      caption: t('ProjectShow.total_spaces'),
     },
     {
-      icon: 'pi pi-box',
+      icon: 'pi pi-shopping-bag',
       value: (projectDepartmentItems.value.length || projectItems.value.length).toString(),
       label: t('ProjectShow.items'),
+      caption: t('ProjectShow.total_items'),
     },
     {
-      icon: 'pi pi-chart-line',
+      icon: 'pi pi-expand',
       value: formatArea(totalArea.value),
       label: t('ProjectShow.total_area'),
+      caption: t('ProjectShow.total_area'),
     },
   ]);
 
@@ -579,13 +583,17 @@ export const useProjectShow = () => {
   };
 
   const tabs = computed<TabItem[]>(() => [
-    { id: 'project-overview', label: t('ProjectShow.overview'), icon: 'pi pi-home' },
-    { id: 'project-data', label: t('Project.steps.project_data'), icon: 'pi pi-calendar' },
-    { id: 'project-preview', label: t('Project.steps.project_preview'), icon: 'pi pi-id-card' },
-    { id: 'project-floors', label: t('Project.steps.project_floors'), icon: 'pi pi-sitemap' },
-    { id: 'project-items', label: t('project_department'), icon: 'pi pi-sliders-h' },
-    { id: 'project-pricing', label: t('project_pricing.index.title'), icon: 'pi pi-wallet' },
-    { id: 'project-terms', label: t('terms'), icon: 'pi pi-file-edit' },
+    { id: 'project-overview', label: t('ProjectShow.overview'), icon: 'pi pi-gauge' },
+    { id: 'project-data', label: t('Project.steps.project_data'), icon: 'pi pi-database' },
+    { id: 'project-preview', label: t('Project.steps.project_preview'), icon: 'pi pi-eye' },
+    {
+      id: 'project-floors',
+      label: t('Project.steps.project_floors'),
+      icon: 'pi pi-building-columns',
+    },
+    { id: 'project-items', label: t('project_department'), icon: 'pi pi-objects-column' },
+    { id: 'project-pricing', label: t('project_pricing.index.title'), icon: 'pi pi-receipt' },
+    { id: 'project-terms', label: t('terms'), icon: 'pi pi-list-check' },
   ]);
 
   const getPdfFileName = () => {
@@ -1114,6 +1122,7 @@ export const useProjectShow = () => {
     projectTitle: projectTitle.value,
     projectTypeLabel: getEntityName(project.value.project_type),
     imageSource: firstImage.value || fallbackProjectImage,
+    fallbackImageSource: fallbackProjectImage,
     statusMeta: getConvertStatusMeta(currentConvertStatus.value),
     projectCodeLabel: t('ProjectShow.project_code'),
     createdAtLabel: t('ProjectShow.created_at'),

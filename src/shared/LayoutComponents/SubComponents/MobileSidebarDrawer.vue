@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { computed, onBeforeUnmount, ref, watch } from 'vue';
+  import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import { storeToRefs } from 'pinia';
   import Accordion from 'primevue/accordion';
@@ -11,6 +11,7 @@
   import AuthArrowIcon from '@/shared/icons/SidebarIcons/AuthArrowIcon.vue';
   import IconLogout from '@/shared/icons/IconLogout.vue';
   import { useUserStore } from '@/stores/user';
+  import { DATA_MUTATION_SUCCEEDED_EVENT } from '@/base/Presentation/Controller/dataMutationEvent';
   import SidebarCountsApiService from './sidebar.counts.api-service';
   import { UserType } from '@/modules/auth/core/constants/userType.enum';
   import {
@@ -185,6 +186,7 @@
 
       if (isOpen) {
         expandedSections.value = getDefaultExpandedSections();
+        void loadSidebarCounts();
         window.addEventListener('keydown', onKeydown);
       } else {
         window.removeEventListener('keydown', onKeydown);
@@ -194,16 +196,25 @@
   );
 
   watch(
-    [currentRole, () => user.value?.id],
+    [currentRole, () => user.value?.id, () => route.fullPath],
     () => {
       void loadSidebarCounts();
     },
     { immediate: true },
   );
 
+  const refreshCountsAfterMutation = () => {
+    void loadSidebarCounts();
+  };
+
+  onMounted(() => {
+    window.addEventListener(DATA_MUTATION_SUCCEEDED_EVENT, refreshCountsAfterMutation);
+  });
+
   onBeforeUnmount(() => {
     document.body.classList.remove('mobile-sidebar-open');
     window.removeEventListener('keydown', onKeydown);
+    window.removeEventListener(DATA_MUTATION_SUCCEEDED_EVENT, refreshCountsAfterMutation);
   });
 </script>
 

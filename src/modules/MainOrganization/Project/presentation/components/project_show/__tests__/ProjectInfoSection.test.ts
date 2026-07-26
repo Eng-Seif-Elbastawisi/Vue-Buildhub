@@ -36,20 +36,23 @@ describe('ProjectInfoSection', () => {
       props: {
         title: 'Project Information Summary',
         additionalDetailsLabel: 'View all project information',
-        items: Array.from({ length: 9 }, (_, itemIndex) => ({
+        items: Array.from({ length: 11 }, (_, itemIndex) => ({
           icon: 'pi pi-info-circle',
           label: `Field ${itemIndex + 1}`,
-          value: itemIndex === 8 ? '<script>unsafe()</script>' : `Value ${itemIndex + 1}`,
+          value: itemIndex === 10 ? '<script>unsafe()</script>' : `Value ${itemIndex + 1}`,
         })),
       },
     });
 
     expect(wrapper.findAll('.project-info-summary-grid .project-info-field')).toHaveLength(8);
+    expect(wrapper.findAll('.project-info-additional-grid .project-info-field')).toHaveLength(3);
     expect(wrapper.find('.project-info-disclosure').attributes('open')).toBeUndefined();
     expect(wrapper.text()).toContain('<script>unsafe()</script>');
     expect(wrapper.find('script').exists()).toBe(false);
-    expect(wrapper.find('.project-safe-value').html()).toContain(
-      '&lt;script&gt;unsafe()&lt;/script&gt;',
-    );
+    expect(
+      wrapper
+        .findAll('.project-safe-value')
+        .some((projectValue) => projectValue.html().includes('&lt;script&gt;unsafe()&lt;/script&gt;')),
+    ).toBe(true);
   });
 });

@@ -30,7 +30,7 @@
 <template>
   <details class="project-card project-spaces-card project-section-disclosure">
     <summary class="card-title">
-      <i class="pi pi-file"></i>
+      <i class="pi pi-objects-column"></i>
       <h2>{{ title }}</h2>
       <i class="pi pi-chevron-down project-disclosure-chevron" aria-hidden="true"></i>
     </summary>
