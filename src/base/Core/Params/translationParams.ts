@@ -4,6 +4,18 @@ import { ClassValidation } from '@/base/Presentation/Utils/classValidation';
 export type SupportedLang = 'en' | 'ar' | 'fr' | 'es' | 'zh';
 export type LocalizedText = Partial<Record<SupportedLang, string>>;
 
+const withBilingualTitleFallback = (title?: LocalizedText): LocalizedText | undefined => {
+  if (!title) return undefined;
+
+  const englishTitle = title.en?.trim();
+  const arabicTitle = title.ar?.trim();
+
+  if (englishTitle && !arabicTitle) return { ...title, ar: title.en };
+  if (arabicTitle && !englishTitle) return { ...title, en: title.ar };
+
+  return title;
+};
+
 export default class TranslationParams implements Params {
   public title?: LocalizedText;
   public description?: LocalizedText;
@@ -13,7 +25,7 @@ export default class TranslationParams implements Params {
   });
 
   constructor(data: { title?: LocalizedText; description?: LocalizedText }) {
-    this.title = data.title;
+    this.title = withBilingualTitleFallback(data.title);
     this.description = data.description;
   }
 
