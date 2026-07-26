@@ -238,4 +238,7 @@
 
 <style lang="scss">
   @use '../styles/project_show';
+  .project-history-summary{
+    margin-bottom: 1rem;
+  }
 </style>
