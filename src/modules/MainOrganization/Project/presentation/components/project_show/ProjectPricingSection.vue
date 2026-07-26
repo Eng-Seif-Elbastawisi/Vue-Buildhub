@@ -15,7 +15,7 @@
     class="project-card project-pricing-card project-section-disclosure"
   >
     <summary class="card-title">
-      <i class="pi pi-wallet"></i>
+      <i class="pi pi-receipt"></i>
       <h2>{{ title }}</h2>
       <i class="pi pi-chevron-down project-disclosure-chevron" aria-hidden="true"></i>
     </summary>

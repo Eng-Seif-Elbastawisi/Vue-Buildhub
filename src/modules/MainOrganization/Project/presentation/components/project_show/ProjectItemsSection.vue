@@ -21,7 +21,7 @@
 <template>
   <details id="project-items" class="project-card project-items-card project-section-disclosure">
     <summary class="card-title">
-      <i class="pi pi-box"></i>
+      <i class="pi pi-shopping-bag"></i>
       <h2>{{ title }}</h2>
       <i class="pi pi-chevron-down project-disclosure-chevron" aria-hidden="true"></i>
     </summary>

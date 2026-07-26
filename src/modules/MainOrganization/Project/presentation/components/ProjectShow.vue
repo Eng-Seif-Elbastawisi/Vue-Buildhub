@@ -110,7 +110,7 @@
 
                 <details class="project-floors-disclosure" open>
                   <summary class="card-title">
-                    <i class="pi pi-clipboard"></i>
+                    <i class="pi pi-building-columns"></i>
                     <h2>{{ floorsSectionProps.title }}</h2>
                     <i class="pi pi-chevron-down project-disclosure-chevron" aria-hidden="true"></i>
                   </summary>

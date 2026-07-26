@@ -15,7 +15,7 @@
 <template>
   <details id="project-data" class="project-card project-info-card project-section-disclosure" open>
     <summary class="card-title">
-      <i class="pi pi-building"></i>
+      <i class="pi pi-database"></i>
       <h2>{{ title }}</h2>
       <i class="pi pi-chevron-down project-disclosure-chevron" aria-hidden="true"></i>
     </summary>

@@ -89,7 +89,7 @@
     :class="{ 'project-floors-card--embedded': embedded }"
   >
     <div v-if="!embedded" class="card-title">
-      <i class="pi pi-clipboard"></i>
+      <i class="pi pi-building-columns"></i>
       <h2>{{ title }}</h2>
     </div>
 
@@ -148,7 +148,7 @@
                   class="project-action-btn project-action-btn--primary floor-edit-action"
                   :to="getEditFloorRoute(floor)"
                 >
-                  <i class="pi pi-pencil"></i>
+                  <i class="pi pi-pen-to-square"></i>
                   <span>{{ $t('ProjectFloor.edit_action') }}</span>
                 </RouterLink>
               </td>
@@ -159,7 +159,7 @@
 
       <aside class="summary-panel">
         <div class="summary-cube">
-          <i class="pi pi-building"></i>
+          <i class="pi pi-objects-column"></i>
         </div>
         <div>
           <span>{{ totalFloorsLabel }}</span>

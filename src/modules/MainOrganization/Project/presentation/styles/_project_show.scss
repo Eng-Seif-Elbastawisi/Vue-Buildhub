@@ -1541,7 +1541,6 @@
     box-shadow: 0 16px 32px color-mix(in sRGB, var(--project-accent) 45%, transparent);
     filter: saturate(112%);
     transform: translateY(-1px);
-    
   }
 
   .project-actions__chevron {
@@ -1558,6 +1557,19 @@
 
   .project-actions__item {
     border-radius: 10px;
+  }
+
+  .project-actions__item > i {
+    display: grid;
+    width: 30px;
+    height: 30px;
+    flex: 0 0 auto;
+    place-items: center;
+    border: 1px solid color-mix(in sRGB, var(--PrimaryColor) 18%, transparent);
+    border-radius: 9px;
+    background: linear-gradient(145deg, var(--PrimaryColor-light), var(--BgWhite));
+    color: var(--PrimaryColor-dark);
+    box-shadow: var(--shadow-sm);
   }
 
   .project-actions__item:focus-visible,
@@ -1609,6 +1621,24 @@
       transform var(--transition-fast);
   }
 
+  .project-tab > i {
+    display: grid;
+    width: 27px;
+    height: 27px;
+    flex: 0 0 auto;
+    place-items: center;
+    border: 1px solid color-mix(in sRGB, var(--PrimaryColor) 14%, transparent);
+    border-radius: 8px;
+    background: color-mix(in sRGB, var(--PrimaryColor-light) 70%, var(--BgWhite));
+    color: var(--PrimaryColor-dark);
+    font-size: 0.82rem;
+    transition:
+      color var(--transition-fast),
+      background var(--transition-fast),
+      box-shadow var(--transition-fast),
+      transform var(--transition-fast);
+  }
+
   .project-tab::after {
     inset-block-end: -0.45rem;
     inset-inline: 0.5rem;
@@ -1623,11 +1653,23 @@
     color: var(--PrimaryColor-dark);
   }
 
+  .project-tab:hover > i {
+    box-shadow: var(--shadow-sm);
+    transform: translateY(-1px);
+  }
+
   .project-tab.active {
     border-color: transparent;
     background: var(--white);
     color: var(--PrimaryColor);
     box-shadow: var(--shadow-md);
+  }
+
+  .project-tab.active > i {
+    border-color: color-mix(in sRGB, var(--PrimaryColor) 45%, transparent);
+    // background: linear-gradient(145deg, var(--PrimaryColor), var(--PrimaryColor-dark));
+    color: var(--PrimaryColor);
+    box-shadow: 0 6px 14px color-mix(in sRGB, var(--PrimaryColor) 24%, transparent);
   }
 
   .project-tab.active::after {
@@ -1679,29 +1721,55 @@
     transform: translateY(-2px);
   }
 
+  .project-stat-card:hover .project-stat-card__icon {
+    box-shadow: 0 12px 26px color-mix(in sRGB, currentColor 18%, transparent);
+    transform: translateY(-2px) scale(1.04);
+  }
+
   .project-stat-card__icon {
     display: grid;
     width: 54px;
     height: 54px;
     place-items: center;
+    border: 1px solid color-mix(in sRGB, currentColor 18%, transparent);
     border-radius: 12px;
-    background: var(--PrimaryColor-light);
+    background: linear-gradient(
+      145deg,
+      var(--PrimaryColor-light),
+      color-mix(in sRGB, var(--PrimaryColor) 16%, var(--BgWhite))
+    );
     color: var(--PrimaryColor-dark);
     font-size: 1.25rem;
+    box-shadow: 0 8px 20px color-mix(in sRGB, currentColor 12%, transparent);
+    transition:
+      transform var(--transition-fast),
+      box-shadow var(--transition-fast);
   }
 
   .project-stat-card--tone-2 .project-stat-card__icon {
-    background: var(--success-light);
+    background: linear-gradient(
+      145deg,
+      var(--success-light),
+      color-mix(in sRGB, var(--success) 14%, var(--BgWhite))
+    );
     color: var(--success-dark);
   }
 
   .project-stat-card--tone-3 .project-stat-card__icon {
-    background: var(--info-light);
+    background: linear-gradient(
+      145deg,
+      var(--info-light),
+      color-mix(in sRGB, var(--info) 14%, var(--BgWhite))
+    );
     color: var(--info-dark);
   }
 
   .project-stat-card--tone-4 .project-stat-card__icon {
-    background: var(--warning-light);
+    background: linear-gradient(
+      145deg,
+      var(--warning-light),
+      color-mix(in sRGB, var(--warning) 14%, var(--BgWhite))
+    );
     color: var(--warning-dark);
   }
 
@@ -1779,6 +1847,28 @@
     color: var(--PrimaryColor-dark);
   }
 
+  .card-title > i:first-child {
+    width: 34px;
+    height: 34px;
+    border: 1px solid color-mix(in sRGB, var(--PrimaryColor) 18%, transparent);
+    border-radius: 11px;
+    background: linear-gradient(
+      145deg,
+      var(--PrimaryColor-light),
+      color-mix(in sRGB, var(--PrimaryColor) 14%, var(--BgWhite))
+    );
+    font-size: 0.9rem;
+    box-shadow: 0 7px 18px color-mix(in sRGB, var(--PrimaryColor) 14%, transparent);
+    transition:
+      transform var(--transition-fast),
+      box-shadow var(--transition-fast);
+  }
+
+  .card-title:hover > i:first-child {
+    box-shadow: 0 10px 22px color-mix(in sRGB, var(--PrimaryColor) 20%, transparent);
+    transform: translateY(-1px) scale(1.04);
+  }
+
   .card-title h2 {
     font-size: 0.95rem;
   }
@@ -1818,11 +1908,20 @@
     width: 28px;
     height: 28px;
     place-items: center;
+    border: 1px solid color-mix(in sRGB, var(--project-accent) 16%, transparent);
     border-radius: 8px;
-    background: var(--BgWhite);
+    background: linear-gradient(145deg, var(--BgWhite), var(--PrimaryColor-light));
     color: var(--project-accent);
     font-size: 0.78rem;
-    box-shadow: var(--shadow-sm);
+    box-shadow: 0 6px 14px color-mix(in sRGB, var(--project-accent) 12%, transparent);
+    transition:
+      transform var(--transition-fast),
+      box-shadow var(--transition-fast);
+  }
+
+  .project-info-field:hover > i {
+    box-shadow: 0 9px 18px color-mix(in sRGB, var(--project-accent) 18%, transparent);
+    transform: translateY(-1px) scale(1.05);
   }
 
   .project-info-field__content {
@@ -2793,8 +2892,12 @@
 
 @media (prefers-reduced-motion: reduce) {
   .project-show-page .project-stat-card,
+  .project-show-page .project-stat-card__icon,
   .project-show-page .project-actions__trigger,
   .project-show-page .project-tab,
+  .project-show-page .project-tab > i,
+  .project-show-page .card-title > i:first-child,
+  .project-show-page .project-info-field > i,
   .project-show-page .project-disclosure-chevron,
   .project-show-page .project-table tbody tr {
     transition: none;

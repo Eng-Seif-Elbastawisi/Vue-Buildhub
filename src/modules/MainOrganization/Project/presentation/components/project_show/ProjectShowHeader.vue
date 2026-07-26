@@ -246,12 +246,12 @@
 
           <div class="project-meta-row">
             <span>
-              <i class="pi pi-id-card"></i>
+              <i class="pi pi-qrcode"></i>
               {{ projectCodeLabel }}: {{ project.id }}
             </span>
 
             <span>
-              <i class="pi pi-calendar"></i>
+              <i class="pi pi-calendar-clock"></i>
               {{ formatDate(project.date) }}
             </span>
 
@@ -274,7 +274,7 @@
             @click.stop="toggleActionsMenu"
             @keydown.down.prevent="openActionsMenu"
           >
-            <i class="pi pi-bolt" aria-hidden="true"></i>
+            <i class="pi pi-sparkles" aria-hidden="true"></i>
             {{ actionsLabel }}
             <i class="pi pi-chevron-down project-actions__chevron" aria-hidden="true"></i>
           </button>
@@ -299,7 +299,7 @@
                 :disabled="exportingPdf"
                 @click="triggerDownloadPdf"
               >
-                <i class="pi pi-download"></i>
+                <i class="pi pi-file-pdf"></i>
 
                 {{ exportingPdf ? generatingPdfLabel : downloadPdfLabel }}
               </button>
@@ -312,7 +312,7 @@
                 :disabled="convertActionDisabled"
                 @click="triggerConvertStatusAction"
               >
-                <i class="pi pi-sync"></i>
+                <i class="pi pi-replay"></i>
                 {{ convertActionLabel }}
               </button>
 
@@ -326,7 +326,7 @@
                 :disabled="changeStatusLoading"
                 @click="openStatusModal(statusAction.status)"
               >
-                <i class="pi pi-flag"></i>
+                <i class="pi pi-flag-fill"></i>
                 {{ statusAction.label }}
               </button>
 
@@ -373,7 +373,7 @@
                 }"
                 @click="closeActionsMenu"
               >
-                <i class="pi pi-check-square"></i>
+                <i class="pi pi-verified"></i>
                 {{ addInvoiceActionLabel }}
               </RouterLink>
 
@@ -384,7 +384,7 @@
                 role="menuitem"
                 @click="openAutoInvoicesModal"
               >
-                <i class="pi pi-list"></i>
+                <i class="pi pi-list-check"></i>
                 {{ autoInvoicesLabel }}
               </button>
 
@@ -400,7 +400,7 @@
                 }"
                 @click="closeActionsMenu"
               >
-                <i class="pi pi-pencil"></i>
+                <i class="pi pi-pen-to-square"></i>
                 {{ editProjectLabel }}
               </RouterLink>
             </div>

@@ -67,7 +67,7 @@
     class="project-card project-departments-card project-section-disclosure"
   >
     <summary class="card-title project-departments-heading">
-      <i class="pi pi-box"></i>
+      <i class="pi pi-sitemap"></i>
       <h2>{{ title }}</h2>
       <span v-if="departments.length" class="department-summary-pill">
         {{ departments.length }} {{ departmentCountLabel }} · {{ totalItemsCount }}
@@ -92,7 +92,7 @@
         <AccordionHeader class="department-panel__header">
           <div class="department-header-content">
             <span class="department-icon" aria-hidden="true">
-              <i class="pi pi-building"></i>
+              <i class="pi pi-building-columns"></i>
             </span>
 
             <div class="department-title-group">

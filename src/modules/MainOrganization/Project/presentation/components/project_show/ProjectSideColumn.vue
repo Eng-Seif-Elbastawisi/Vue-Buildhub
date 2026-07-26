@@ -102,7 +102,7 @@
   <aside class="project-side-column">
     <details id="project-preview" class="project-card preview-card project-section-disclosure" open>
       <summary class="card-title">
-        <i class="pi pi-calendar"></i>
+        <i class="pi pi-eye"></i>
         <h2>{{ previewTitle }}</h2>
         <i class="pi pi-chevron-down project-disclosure-chevron" aria-hidden="true"></i>
       </summary>
@@ -141,7 +141,7 @@
 
         <div class="project-preview-date">
           <span class="project-preview-date__icon" aria-hidden="true">
-            <i class="pi pi-calendar"></i>
+            <i class="pi pi-calendar-clock"></i>
           </span>
           <div>
             <small>{{ previewDateLabel }}</small>
@@ -197,7 +197,7 @@
           :title="`${$t('Edit')} ${$t('Project.steps.project_preview')}`"
           :to="getEditPreviewRoute(activePreviewItem)"
         >
-          <i class="pi pi-sliders-h" aria-hidden="true"></i>
+          <i class="pi pi-pen-to-square" aria-hidden="true"></i>
         </RouterLink>
       </div>
     </details>
@@ -206,7 +206,7 @@
 
     <details id="project-terms" class="project-terms-disclosure">
       <summary class="card-title">
-        <i class="pi pi-file-edit"></i>
+        <i class="pi pi-list-check"></i>
         <h2>{{ termsLabel }}</h2>
         <i class="pi pi-chevron-down project-disclosure-chevron" aria-hidden="true"></i>
       </summary>
