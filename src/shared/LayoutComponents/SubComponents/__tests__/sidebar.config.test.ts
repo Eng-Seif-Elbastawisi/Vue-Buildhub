@@ -103,7 +103,7 @@ describe('sidebarSections', () => {
     );
   });
 
-  it('links design and supervision projects to the project page with service type filters', () => {
+  it('links project workspaces and task assignment destinations', () => {
     const items = sidebarSections.flatMap((section) => section.items);
 
     expect(items.find((item) => item.path === '/project')).toEqual(
@@ -120,22 +120,24 @@ describe('sidebarSections', () => {
     );
 
     expect(
-      items.find((item) => item.path === `/project?service_type=${DepartmentTypeEnum.DESIGN}`),
+      items.find(
+        (item) =>
+          item.path ===
+          `/converted-projects?service_type=${DepartmentTypeEnum.DESIGN},${DepartmentTypeEnum.BOTH}`,
+      ),
     ).toEqual(
       expect.objectContaining({
         labelKey: 'sidebar.design_projects',
         roles: ['organization'],
       }),
     );
-    expect(
-      items.find((item) => item.path === `/project?service_type=${DepartmentTypeEnum.SUPERVISION}`),
-    ).toEqual(
+    expect(items.some((item) => item.path === '/project-pricing')).toBe(false);
+    expect(items.find((item) => item.path === '/task-assignment')).toEqual(
       expect.objectContaining({
-        labelKey: 'sidebar.supervision_projects',
+        labelKey: 'sidebar.task_assignment',
         roles: ['organization'],
       }),
     );
-    expect(items.some((item) => item.path === '/project-pricing')).toBe(false);
   });
 
   it('links paid and unpaid invoices to the invoice page with status filters', () => {
