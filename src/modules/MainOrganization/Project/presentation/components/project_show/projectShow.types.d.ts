@@ -144,6 +144,7 @@ export type ProjectStatItem = {
   icon: string;
   value: string;
   label: string;
+  caption: string;
 };
 
 export type ProjectItemRow = {

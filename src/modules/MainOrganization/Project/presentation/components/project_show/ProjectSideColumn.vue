@@ -100,7 +100,7 @@
 
 <template>
   <aside class="project-side-column">
-    <details id="project-preview" class="project-card preview-card project-section-disclosure">
+    <details id="project-preview" class="project-card preview-card project-section-disclosure" open>
       <summary class="card-title">
         <i class="pi pi-calendar"></i>
         <h2>{{ previewTitle }}</h2>
@@ -184,9 +184,9 @@
                 </strong>
               </div>
             </summary>
-            <p class="project-safe-value project-preview-address__full">
+            <!-- <p class="project-safe-value project-preview-address__full">
               {{ valueOrEmpty(activePreviewItem.address) }}
-            </p>
+            </p> -->
           </details>
         </div>
 

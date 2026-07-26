@@ -22,6 +22,7 @@
       <div>
         <span>{{ stat.label }}</span>
         <strong>{{ stat.value }}</strong>
+        <small>{{ stat.caption }}</small>
       </div>
     </article>
   </section>

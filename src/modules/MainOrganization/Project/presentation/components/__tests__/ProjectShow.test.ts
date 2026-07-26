@@ -299,7 +299,7 @@ describe('ProjectShow', () => {
     expect(wrapper.find('img[src*="p1i2wAlkoI_1783600450.png"]').exists()).toBe(true);
   });
 
-  it('uses the compact target dashboard hierarchy while keeping dense data accessible', async () => {
+  it('opens the target dashboard summary sections while keeping dense data accessible', async () => {
     const wrapper = mountProjectShow();
     await nextTick();
 
@@ -310,14 +310,14 @@ describe('ProjectShow', () => {
 
     expect(visibleCardDisclosures).toHaveLength(5);
     expect(wrapper.find('#project-data').attributes('open')).toBe('');
-    expect(wrapper.find('#project-preview').attributes('open')).toBeUndefined();
+    expect(wrapper.find('#project-preview').attributes('open')).toBe('');
     expect(wrapper.find('#project-items').attributes('open')).toBeUndefined();
     expect(wrapper.find('.project-spaces-card').attributes('open')).toBeUndefined();
     expect(wrapper.find('#project-pricing').attributes('open')).toBeUndefined();
     expect(wrapper.findAll('.project-section-disclosure > summary')).toHaveLength(5);
     expect(wrapper.findAll('.project-stats .project-stat-card')).toHaveLength(4);
     expect(wrapper.findAll('.project-info-summary-grid .project-info-field')).toHaveLength(8);
-    expect(wrapper.find('.project-floors-disclosure').attributes('open')).toBeUndefined();
+    expect(wrapper.find('.project-floors-disclosure').attributes('open')).toBe('');
     expect(wrapper.find('.project-terms-disclosure').attributes('open')).toBeUndefined();
     expect(wrapper.find('.project-preview-illustration').exists()).toBe(true);
   });

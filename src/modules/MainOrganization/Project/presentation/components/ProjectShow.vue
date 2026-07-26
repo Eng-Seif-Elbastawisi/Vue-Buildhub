@@ -108,7 +108,7 @@
               <div class="project-dashboard-main">
                 <ProjectInfoSection v-bind="projectInfoSectionProps" />
 
-                <details class="project-floors-disclosure">
+                <details class="project-floors-disclosure" open>
                   <summary class="card-title">
                     <i class="pi pi-clipboard"></i>
                     <h2>{{ floorsSectionProps.title }}</h2>

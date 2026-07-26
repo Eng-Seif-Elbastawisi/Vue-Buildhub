@@ -394,7 +394,7 @@ export const useProjectShow = () => {
     return attachments.value.find((attachment) => {
       const file = attachment.file ?? '';
 
-      return /\.(png|jpe?g|webp|gif)$/i.test(file);
+      return /\.(png|jpe?g|webp|gif)(?:[?#].*)?$/i.test(file);
     })?.file;
   });
 
@@ -475,21 +475,25 @@ export const useProjectShow = () => {
       icon: 'pi pi-building',
       value: projectFloors.value.length.toString(),
       label: t('ProjectShow.floors'),
+      caption: t('ProjectShow.total_floors'),
     },
     {
       icon: 'pi pi-th-large',
       value: floorSpaces.value.length.toString(),
       label: t('Project.spaces'),
+      caption: t('ProjectShow.total_spaces'),
     },
     {
       icon: 'pi pi-box',
       value: (projectDepartmentItems.value.length || projectItems.value.length).toString(),
       label: t('ProjectShow.items'),
+      caption: t('ProjectShow.total_items'),
     },
     {
       icon: 'pi pi-chart-line',
       value: formatArea(totalArea.value),
       label: t('ProjectShow.total_area'),
+      caption: t('ProjectShow.total_area'),
     },
   ]);
 
@@ -1114,6 +1118,7 @@ export const useProjectShow = () => {
     projectTitle: projectTitle.value,
     projectTypeLabel: getEntityName(project.value.project_type),
     imageSource: firstImage.value || fallbackProjectImage,
+    fallbackImageSource: fallbackProjectImage,
     statusMeta: getConvertStatusMeta(currentConvertStatus.value),
     projectCodeLabel: t('ProjectShow.project_code'),
     createdAtLabel: t('ProjectShow.created_at'),

@@ -141,7 +141,7 @@ describe('ProjectSideColumn', () => {
     expect(wrapper.find('.project-preview-edit-action').exists()).toBe(false);
   });
 
-  it('renders source-like addresses as escaped text and rejects unsafe site links', () => {
+  it('expands source-like addresses as escaped text and rejects unsafe site links', async () => {
     const sourceLikeAddress = '<script>window.location="https://unsafe.example"</script>';
     const wrapper = mount(ProjectSideColumn, {
       props: {
@@ -175,6 +175,11 @@ describe('ProjectSideColumn', () => {
     expect(wrapper.text()).toContain(sourceLikeAddress);
     expect(wrapper.find('a[href^="javascript:"]').exists()).toBe(false);
     expect(wrapper.find('.project-preview-address').attributes('open')).toBeUndefined();
+
+    await wrapper.find('.project-preview-address > summary').trigger('click');
+
+    expect(wrapper.find('.project-preview-address').attributes('open')).toBe('');
+    expect(wrapper.find('.project-preview-address__full').text()).toBe(sourceLikeAddress);
   });
 
   it('routes to add preview when no preview exists', () => {

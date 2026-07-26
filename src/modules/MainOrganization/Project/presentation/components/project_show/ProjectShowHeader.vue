@@ -26,6 +26,7 @@
     projectTitle: string;
     projectTypeLabel: string;
     imageSource: string;
+    fallbackImageSource: string;
     statusMeta: StatusMeta;
     projectCodeLabel: string;
     createdAtLabel: string;
@@ -194,6 +195,15 @@
     });
   };
 
+  const useFallbackHeroImage = (event: Event) => {
+    const image = event.currentTarget as HTMLImageElement;
+
+    if (image.dataset.fallbackApplied === 'true') return;
+
+    image.dataset.fallbackApplied = 'true';
+    image.src = props.fallbackImageSource;
+  };
+
   watch(
     () => props.changeStatusLoading,
     (isLoading, wasLoading) => {
@@ -206,8 +216,16 @@
 
 <template>
   <header class="project-hero">
-    <img class="project-hero__image" :src="imageSource" :alt="projectTitle" />
-    <div class="project-hero__shade" aria-hidden="true"></div>
+    <img
+      :key="imageSource"
+      class="project-hero__background"
+      :src="imageSource"
+      :alt="projectTitle"
+      decoding="async"
+      fetchpriority="high"
+      @error="useFallbackHeroImage"
+    />
+    <div class="project-hero__overlay" aria-hidden="true"></div>
 
     <div class="project-hero__inner">
       <ProjectHeroBreadcrumb :current-label="projectTitle" />
