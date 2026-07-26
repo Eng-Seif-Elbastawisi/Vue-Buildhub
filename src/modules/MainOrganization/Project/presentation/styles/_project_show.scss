@@ -1852,6 +1852,20 @@
     -webkit-line-clamp: 2;
   }
 
+  #project-data .project-info-field__content > span,
+  #project-data .project-info-field__content > small,
+  #project-data .project-info-field__content > strong {
+    max-width: 100%;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  #project-data .project-info-field__content > strong {
+    display: block;
+    overflow: visible;
+    -webkit-line-clamp: unset;
+  }
+
   .project-section-disclosure,
   .project-info-disclosure,
   .project-floors-disclosure,
@@ -2461,6 +2475,32 @@
     border-inline-start: 3px solid var(--PrimaryColor);
   }
 
+  @media (min-width: 1281px) {
+    .project-info-summary-grid,
+    .project-info-additional-grid {
+      gap: 0;
+      background: var(--gray-50);
+    }
+
+    .project-info-field {
+      border-inline-end: 1px solid var(--border-strong);
+      border-block-end: 1px solid var(--border-strong);
+    }
+
+    .project-info-summary-grid .project-info-field:nth-child(3n),
+    .project-info-summary-grid .project-info-field:last-child,
+    .project-info-additional-grid .project-info-field:nth-child(2n),
+    .project-info-additional-grid .project-info-field:last-child {
+      border-inline-end: 0;
+    }
+
+    .project-info-summary-grid .project-info-field:nth-last-child(-n + 2),
+    .project-info-additional-grid .project-info-field:last-child,
+    .project-info-additional-grid .project-info-field:nth-last-child(2):nth-child(odd) {
+      border-block-end: 0;
+    }
+  }
+
   @media (max-width: 1280px) {
     .project-dashboard-grid {
       grid-template-columns: minmax(0, 1.35fr) minmax(330px, 1fr);
@@ -2468,6 +2508,16 @@
 
     .project-tab {
       padding-inline: 0.75rem;
+    }
+
+    #project-data .project-info-summary-grid,
+    #project-data .project-info-additional-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    #project-data .project-info-summary-grid .project-info-field,
+    #project-data .project-info-additional-grid .project-info-field {
+      grid-column: auto;
     }
   }
 
@@ -2593,15 +2643,13 @@
       grid-template-columns: 1fr;
     }
 
-    .project-info-summary-grid,
-    .project-info-additional-grid,
     .project-pricing-grid {
       grid-template-columns: repeat(1, minmax(0, 1fr));
     }
 
-    .project-info-summary-grid .project-info-field:last-child,
-    .project-info-additional-grid .project-info-field:last-child {
-      grid-column: auto;
+    #project-data .project-info-summary-grid,
+    #project-data .project-info-additional-grid {
+      grid-template-columns: minmax(0, 1fr);
     }
 
     .info-item,
