@@ -10,6 +10,7 @@ const mockController = vi.hoisted(() => ({
   fetchAutoInvoices: vi.fn(),
   setInvoiceAction: vi.fn(),
 }));
+const mockRouter = vi.hoisted(() => ({ push: vi.fn() }));
 
 vi.mock('../../controllers/invoice.controller', () => ({
   default: { getInstance: () => mockController },
@@ -17,6 +18,7 @@ vi.mock('../../controllers/invoice.controller', () => ({
 
 vi.mock('vue-router', () => ({
   useRoute: () => ({ params: { project_id: '30' } }),
+  useRouter: () => mockRouter,
 }));
 
 const SelectStub = {
@@ -46,6 +48,7 @@ describe('InvoiceActionForm', () => {
   beforeEach(() => {
     mockController.fetchAutoInvoices.mockReset();
     mockController.setInvoiceAction.mockReset();
+    mockRouter.push.mockReset();
     mockController.fetchAutoInvoices.mockResolvedValue(
       new DataSuccess({
         data: [
@@ -57,7 +60,7 @@ describe('InvoiceActionForm', () => {
     mockController.setInvoiceAction.mockResolvedValue(new DataSuccess<void>({}));
   });
 
-  it('loads project invoices and submits the selected invoice action', async () => {
+  it('submits the selected invoice action and returns to the project show page', async () => {
     const wrapper = mount(InvoiceActionForm, {
       global: {
         mocks: { $t: (key: string) => key },
@@ -84,5 +87,9 @@ describe('InvoiceActionForm', () => {
       invoice_ids: [23, 24],
     });
     expect(wrapper.text()).toContain('invoice_action.saved');
+    expect(mockRouter.push).toHaveBeenCalledWith({
+      name: 'show-project',
+      params: { project_id: 30 },
+    });
   });
 });

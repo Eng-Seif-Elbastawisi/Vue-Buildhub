@@ -391,52 +391,59 @@
       </div>
     </div>
 
-    <div v-if="isStatusModalOpen" class="project-status-modal" role="dialog" aria-modal="true">
-      <div class="project-status-modal__backdrop" @click="closeStatusModal"></div>
+    <Teleport to="body">
+      <div
+        v-if="isStatusModalOpen"
+        class="project-status-modal"
+        role="dialog"
+        aria-modal="true"
+      >
+        <div class="project-status-modal__backdrop" @click="closeStatusModal"></div>
 
-      <form class="project-status-modal__panel" @submit.prevent="submitStatusChange">
-        <header class="project-status-modal__header">
-          <h2>{{ changeStatusModalTitle }}</h2>
+        <form class="project-status-modal__panel" @submit.prevent="submitStatusChange">
+          <header class="project-status-modal__header">
+            <h2>{{ changeStatusModalTitle }}</h2>
 
-          <button
-            class="project-status-modal__close"
-            type="button"
-            :aria-label="cancelLabel"
-            :disabled="changeStatusLoading"
-            @click="closeStatusModal"
-          >
-            <i class="pi pi-times"></i>
-          </button>
-        </header>
+            <button
+              class="project-status-modal__close"
+              type="button"
+              :aria-label="cancelLabel"
+              :disabled="changeStatusLoading"
+              @click="closeStatusModal"
+            >
+              <i class="pi pi-times"></i>
+            </button>
+          </header>
 
-        <div class="project-status-modal__grid">
-          <label class="project-status-field project-status-field--full">
-            <span>{{ notesLabel }}</span>
+          <div class="project-status-modal__grid">
+            <label class="project-status-field project-status-field--full">
+              <span>{{ notesLabel }}</span>
 
-            <textarea v-model="notes" :placeholder="notesPlaceholder" rows="4"></textarea>
-          </label>
-        </div>
+              <textarea v-model="notes" :placeholder="notesPlaceholder" rows="4"></textarea>
+            </label>
+          </div>
 
-        <footer class="project-status-modal__actions">
-          <button
-            class="project-action-btn"
-            type="button"
-            :disabled="changeStatusLoading"
-            @click="closeStatusModal"
-          >
-            {{ cancelLabel }}
-          </button>
+          <footer class="project-status-modal__actions">
+            <button
+              class="project-action-btn"
+              type="button"
+              :disabled="changeStatusLoading"
+              @click="closeStatusModal"
+            >
+              {{ cancelLabel }}
+            </button>
 
-          <button
-            class="project-action-btn project-action-btn--primary"
-            type="submit"
-            :disabled="changeStatusLoading"
-          >
-            {{ changeStatusLoading ? changingStatusLabel : saveStatusLabel }}
-          </button>
-        </footer>
-      </form>
-    </div>
+            <button
+              class="project-action-btn project-action-btn--primary"
+              type="submit"
+              :disabled="changeStatusLoading"
+            >
+              {{ changeStatusLoading ? changingStatusLabel : saveStatusLabel }}
+            </button>
+          </footer>
+        </form>
+      </div>
+    </Teleport>
 
     <AutoInvoicesModal
       v-if="isAutoInvoicesModalOpen"

@@ -51,60 +51,62 @@
 </script>
 
 <template>
-  <div class="auto-invoices-modal" role="dialog" aria-modal="true">
-    <button
-      class="auto-invoices-modal__backdrop"
-      type="button"
-      :aria-label="$t('close')"
-      @click="emit('close')"
-    ></button>
+  <Teleport to="body">
+    <div class="auto-invoices-modal" role="dialog" aria-modal="true">
+      <button
+        class="auto-invoices-modal__backdrop"
+        type="button"
+        :aria-label="$t('close')"
+        @click="emit('close')"
+      ></button>
 
-    <section class="auto-invoices-modal__panel">
-      <header class="auto-invoices-modal__header">
-        <div>
-          <h2>{{ $t('invoice_action.auto_invoices_title') }}</h2>
-          <p>{{ $t('invoice_action.auto_invoices_description') }}</p>
-        </div>
-
-        <button
-          class="auto-invoices-modal__close"
-          type="button"
-          :title="$t('close')"
-          :aria-label="$t('close')"
-          @click="emit('close')"
-        >
-          <i class="pi pi-times"></i>
-        </button>
-      </header>
-
-      <p v-if="loading" class="auto-invoices-modal__state">
-        {{ $t('invoice_action.loading_invoices') }}
-      </p>
-      <p v-else-if="errorMessage" class="auto-invoices-modal__error" role="alert">
-        {{ errorMessage }}
-      </p>
-      <p v-else-if="invoices.length === 0" class="auto-invoices-modal__state">
-        {{ $t('invoice_action.no_auto_invoices') }}
-      </p>
-
-      <div v-else class="auto-invoices-list">
-        <article v-for="invoice in invoices" :key="invoice.id" class="auto-invoice-row">
+      <section class="auto-invoices-modal__panel">
+        <header class="auto-invoices-modal__header">
           <div>
-            <strong>{{ invoice.invoice_number ?? `#${invoice.id}` }}</strong>
-            <span>{{ invoice.invoice_date ?? '-' }}</span>
+            <h2>{{ $t('invoice_action.auto_invoices_title') }}</h2>
+            <p>{{ $t('invoice_action.auto_invoices_description') }}</p>
           </div>
-          <span>{{ formatAmount(invoice.invoice_amount) }}</span>
-        </article>
-      </div>
-    </section>
-  </div>
+
+          <button
+            class="auto-invoices-modal__close"
+            type="button"
+            :title="$t('close')"
+            :aria-label="$t('close')"
+            @click="emit('close')"
+          >
+            <i class="pi pi-times"></i>
+          </button>
+        </header>
+
+        <p v-if="loading" class="auto-invoices-modal__state">
+          {{ $t('invoice_action.loading_invoices') }}
+        </p>
+        <p v-else-if="errorMessage" class="auto-invoices-modal__error" role="alert">
+          {{ errorMessage }}
+        </p>
+        <p v-else-if="invoices.length === 0" class="auto-invoices-modal__state">
+          {{ $t('invoice_action.no_auto_invoices') }}
+        </p>
+
+        <div v-else class="auto-invoices-list">
+          <article v-for="invoice in invoices" :key="invoice.id" class="auto-invoice-row">
+            <div>
+              <strong>{{ invoice.invoice_number ?? `#${invoice.id}` }}</strong>
+              <span>{{ invoice.invoice_date ?? '-' }}</span>
+            </div>
+            <span>{{ formatAmount(invoice.invoice_amount) }}</span>
+          </article>
+        </div>
+      </section>
+    </div>
+  </Teleport>
 </template>
 
 <style scoped lang="scss">
   .auto-invoices-modal {
     position: fixed;
     inset: 0;
-    z-index: 1100;
+    z-index: 1600;
     display: flex;
     align-items: center;
     justify-content: center;

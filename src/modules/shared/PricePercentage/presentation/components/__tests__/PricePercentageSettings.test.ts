@@ -10,6 +10,7 @@ const mockController = vi.hoisted(() => ({
   updatePercentages: vi.fn(),
   errorMessage: { value: '' },
 }));
+const mockRouter = vi.hoisted(() => ({ push: vi.fn() }));
 
 vi.mock('../../controllers/price.percentage.controller', () => ({
   default: {
@@ -19,6 +20,7 @@ vi.mock('../../controllers/price.percentage.controller', () => ({
 
 vi.mock('vue-router', () => ({
   useRoute: () => ({ params: { project_id: '24' } }),
+  useRouter: () => mockRouter,
 }));
 
 const AppButtonStub = {
@@ -41,6 +43,7 @@ describe('PricePercentageSettings', () => {
     mockController.resetItem.mockReset();
     mockController.updatePercentages.mockReset();
     mockController.errorMessage.value = '';
+    mockRouter.push.mockReset();
   });
 
   it('starts with one row and lets users add and remove entries', async () => {
@@ -99,7 +102,7 @@ describe('PricePercentageSettings', () => {
     }
   });
 
-  it('submits all rows as invoice offers', async () => {
+  it('submits all rows and returns to the project show page after success', async () => {
     mockController.updatePercentages.mockResolvedValue(
       new DataSuccess({ data: PricePercentageModel.example }),
     );
@@ -118,6 +121,10 @@ describe('PricePercentageSettings', () => {
       invoices: [{ title: 'Updated tax', percentage: 100 }],
     });
     expect(wrapper.text()).toContain('price_percentage.updated');
+    expect(mockRouter.push).toHaveBeenCalledWith({
+      name: 'show-project',
+      params: { project_id: 24 },
+    });
   });
 
   it('does not submit when the total is not 100', async () => {
@@ -131,5 +138,6 @@ describe('PricePercentageSettings', () => {
 
     expect(wrapper.find('.total-summary').text()).toContain('99 / 100%');
     expect(mockController.updatePercentages).not.toHaveBeenCalled();
+    expect(mockRouter.push).not.toHaveBeenCalled();
   });
 });

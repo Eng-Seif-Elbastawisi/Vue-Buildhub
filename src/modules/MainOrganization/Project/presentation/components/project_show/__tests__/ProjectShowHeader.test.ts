@@ -1,10 +1,14 @@
-import { mount } from '@vue/test-utils';
+import { DOMWrapper, mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
 import { nextTick } from 'vue';
 import { ConvertStatus } from '../../../../core/constants/convert.status.enum';
 import ProjectShowHeader from '../ProjectShowHeader.vue';
 
-const mountHeader = (props: Record<string, unknown> = {}, attachTo?: Element) =>
+const mountHeader = (
+  props: Record<string, unknown> = {},
+  attachTo?: Element,
+  globalStubs: Record<string, boolean> = {},
+) =>
   mount(ProjectShowHeader, {
     attachTo,
     props: {
@@ -60,6 +64,7 @@ const mountHeader = (props: Record<string, unknown> = {}, attachTo?: Element) =>
           props: ['to'],
           template: '<a :data-to="JSON.stringify(to)"><slot /></a>',
         },
+        ...globalStubs,
       },
     },
   });
@@ -152,6 +157,24 @@ describe('ProjectShowHeader', () => {
     expect(wrapper.emitted('changeProjectStatus')).toEqual([
       [{ status: ConvertStatus.SEND_TO_CLIENT, notes: 'Client approved' }],
     ]);
+  });
+
+  it('teleports the status modal outside the isolated project hero', async () => {
+    const wrapper = mountHeader({}, document.body, { teleport: false });
+    const documentWrapper = new DOMWrapper(document.body);
+
+    await wrapper.find('.project-actions__trigger').trigger('click');
+    await nextTick();
+    await documentWrapper
+      .findAll('.project-actions__item')
+      .find((item) => item.text().includes('Sent to client'))
+      ?.trigger('click');
+    await nextTick();
+
+    expect(document.body.querySelector('.project-status-modal')).not.toBeNull();
+    expect(wrapper.element.querySelector('.project-status-modal')).toBeNull();
+
+    wrapper.unmount();
   });
 
   it('renders accept and reject actions for sent-to-client projects', async () => {

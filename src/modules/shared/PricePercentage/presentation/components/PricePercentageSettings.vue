@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { computed, ref } from 'vue';
-  import { useRoute } from 'vue-router';
+  import { useRoute, useRouter } from 'vue-router';
   import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
   import AppButton from '@/shared/HelpersComponents/AppButton.vue';
   import UpdatePricePercentagesParams, {
@@ -19,6 +19,7 @@
 
   const controller = PricePercentageController.getInstance();
   const route = useRoute();
+  const router = useRouter();
   const rawProjectId = Array.isArray(route.params.project_id)
     ? route.params.project_id[0]
     : route.params.project_id;
@@ -105,6 +106,7 @@
 
       if (response instanceof DataSuccess) {
         statusKey.value = 'price_percentage.updated';
+        await router.push({ name: 'show-project', params: { project_id: projectId } });
       }
     } finally {
       loading.value = false;

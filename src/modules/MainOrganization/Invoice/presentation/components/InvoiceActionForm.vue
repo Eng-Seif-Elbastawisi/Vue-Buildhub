@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { computed, onMounted, ref } from 'vue';
-  import { useRoute } from 'vue-router';
+  import { useRoute, useRouter } from 'vue-router';
   import { useI18n } from 'vue-i18n';
   import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
   import TitleInterface from '@/base/Data/Models/titleInterface';
@@ -17,6 +17,7 @@
   import InvoiceController from '../controllers/invoice.controller';
 
   const route = useRoute();
+  const router = useRouter();
   const { t } = useI18n();
   const controller = InvoiceController.getInstance();
   const rawProjectId = Array.isArray(route.params.project_id)
@@ -76,7 +77,6 @@
     }
   };
 
-  
   const submitInvoiceAction = async () => {
     const params = new SetInvoiceActionParams({
       project_id: projectId,
@@ -99,9 +99,9 @@
       if (response instanceof DataSuccess) {
         selectedInvoices.value = [];
         statusKey.value = 'invoice_action.saved';
+        await router.push({ name: 'show-project', params: { project_id: projectId } });
         return;
       }
-      // router.push({ name: 'Packages' });
 
       errorMessage.value =
         response.error?.displayMessage || response.error?.title || t('invoice_action.save_failed');
