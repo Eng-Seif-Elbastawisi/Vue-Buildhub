@@ -19,6 +19,7 @@ import { dialogManager } from '@/base/Presentation/Dialogs/dialog.manager';
 import { env } from '@/base/Core/Config';
 import type PaginationModel from '@/base/Core/Models/paginationModel';
 import TitleInterface from '@/base/Data/Models/titleInterface';
+import { notifyDataMutationSucceeded } from '@/base/Presentation/Controller/dataMutationEvent';
 
 /**
  * Controller configuration options
@@ -372,6 +373,9 @@ export default abstract class BaseController<T, TList = T[]> {
       this.setItemState(result);
 
       this.handleItemResponse(result, 'Created successfully');
+      if (result instanceof DataSuccess) {
+        notifyDataMutationSucceeded();
+      }
       return result;
     } catch (error: any) {
       const failed = new DataFailed<T>({ error });
@@ -409,6 +413,9 @@ export default abstract class BaseController<T, TList = T[]> {
       );
       this.setItemState(result);
       this.handleItemResponse(result, 'Updated successfully');
+      if (result instanceof DataSuccess) {
+        notifyDataMutationSucceeded();
+      }
       return result;
     } catch (error: any) {
       const failed = new DataFailed<T>({ error });
@@ -447,6 +454,7 @@ export default abstract class BaseController<T, TList = T[]> {
           this.showSuccessDialog('delete_success');
           this.setItemState(result);
         }
+        notifyDataMutationSucceeded();
       }
 
       return result;

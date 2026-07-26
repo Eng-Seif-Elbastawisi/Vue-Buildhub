@@ -1,17 +1,35 @@
-import { describe, it, expect, vi } from 'vitest';
-import { mount } from '@vue/test-utils';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { flushPromises, mount, type VueWrapper } from '@vue/test-utils';
+import { reactive } from 'vue';
 import SidebarNavigation from '../SidebarNavigation.vue';
 import { createPinia, setActivePinia } from 'pinia';
+import UserModel from '@/modules/auth/core/models/user.model';
+import { useUserStore } from '@/stores/user';
+import { DATA_MUTATION_SUCCEEDED_EVENT } from '@/base/Presentation/Controller/dataMutationEvent';
+
+const routerMocks = vi.hoisted(() => ({
+  push: vi.fn(),
+  useRoute: vi.fn(),
+}));
+
+const sidebarCountsMocks = vi.hoisted(() => ({
+  fetchSidebarCounts: vi.fn(),
+}));
 
 // Mock vue-router
 vi.mock('vue-router', () => ({
-  useRoute: () => ({
-    path: '/organization/stages',
-    params: {},
-  }),
+  useRoute: routerMocks.useRoute,
   useRouter: () => ({
-    push: vi.fn(),
+    push: routerMocks.push,
   }),
+}));
+
+vi.mock('../sidebar.counts.api-service', () => ({
+  default: {
+    getInstance: () => ({
+      fetchSidebarCounts: sidebarCountsMocks.fetchSidebarCounts,
+    }),
+  },
 }));
 
 // Mock assets
@@ -20,32 +38,61 @@ vi.mock('@/assets/images/TechlabLogo.png', () => ({
 }));
 
 describe('SidebarNavigation.vue', () => {
-  const pinia = createPinia();
-  setActivePinia(pinia);
-  const mountOptions = {
-    global: {
-      plugins: [pinia],
-      stubs: {
-        'router-link': {
-          template: '<a v-bind="$attrs"><slot /></a>',
+  let wrapper: VueWrapper | null = null;
+  let pinia: ReturnType<typeof createPinia>;
+
+  const mountSidebar = () => {
+    wrapper = mount(SidebarNavigation, {
+      global: {
+        plugins: [pinia],
+        stubs: {
+          'router-link': {
+            template: '<a v-bind="$attrs"><slot /></a>',
+          },
+          SettingIcon: true,
+          DocumentIcon: true,
         },
-        SettingIcon: true,
-        DocumentIcon: true,
+        mocks: {
+          $t: (msg: string) => msg,
+        },
       },
-      mocks: {
-        $t: (msg: string) => msg,
-      },
-    },
+    });
+
+    return wrapper;
   };
 
+  beforeEach(() => {
+    pinia = createPinia();
+    setActivePinia(pinia);
+    routerMocks.useRoute.mockReturnValue(
+      reactive({
+        path: '/organization/stages',
+        fullPath: '/organization/stages',
+        params: {},
+        query: {},
+      }),
+    );
+    sidebarCountsMocks.fetchSidebarCounts.mockReset();
+    sidebarCountsMocks.fetchSidebarCounts.mockResolvedValue({
+      data: {
+        data: {},
+      },
+    });
+  });
+
+  afterEach(() => {
+    wrapper?.unmount();
+    wrapper = null;
+  });
+
   it('renders the logo', () => {
-    const wrapper = mount(SidebarNavigation, mountOptions);
+    const wrapper = mountSidebar();
     const logo = wrapper.find('img.logo');
     expect(logo.exists()).toBe(true);
   });
 
   it('renders menu groups and items', () => {
-    const wrapper = mount(SidebarNavigation, mountOptions);
+    const wrapper = mountSidebar();
 
     expect(wrapper.text()).toContain('sidebar.sys_config');
     expect(wrapper.text()).toContain('sidebar.construction_config');
@@ -54,7 +101,7 @@ describe('SidebarNavigation.vue', () => {
   });
 
   it('applies active class based on current route', () => {
-    const wrapper = mount(SidebarNavigation, mountOptions);
+    const wrapper = mountSidebar();
 
     const activeLink = wrapper.find('a.active');
     expect(activeLink.exists()).toBe(true);
@@ -62,11 +109,49 @@ describe('SidebarNavigation.vue', () => {
   });
 
   it('emits clickItem event when a menu item is clicked', async () => {
-    const wrapper = mount(SidebarNavigation, mountOptions);
+    const wrapper = mountSidebar();
 
     const menuItem = wrapper.find('a.menu-item');
     await menuItem.trigger('click');
 
     expect(wrapper.emitted('clickItem')).toBeTruthy();
+  });
+
+  it('reloads badge counts after a successful same-page form mutation', async () => {
+    // Regression: inline department saves do not navigate to another route.
+    const userStore = useUserStore();
+    userStore.user = new UserModel({
+      id: 1,
+      name: 'Test User',
+      email: 'test@example.com',
+      WebSocketToken: '',
+    });
+    sidebarCountsMocks.fetchSidebarCounts
+      .mockResolvedValueOnce({
+        data: {
+          data: {
+            departments: { design_count: 1 },
+          },
+        },
+      })
+      .mockResolvedValueOnce({
+        data: {
+          data: {
+            departments: { design_count: 2 },
+          },
+        },
+      });
+
+    const wrapper = mountSidebar();
+    await flushPromises();
+
+    expect(sidebarCountsMocks.fetchSidebarCounts).toHaveBeenCalledTimes(1);
+    expect(wrapper.findAll('.badge').some((badge) => badge.text() === '1')).toBe(true);
+
+    window.dispatchEvent(new Event(DATA_MUTATION_SUCCEEDED_EVENT));
+    await flushPromises();
+
+    expect(sidebarCountsMocks.fetchSidebarCounts).toHaveBeenCalledTimes(2);
+    expect(wrapper.findAll('.badge').some((badge) => badge.text() === '2')).toBe(true);
   });
 });

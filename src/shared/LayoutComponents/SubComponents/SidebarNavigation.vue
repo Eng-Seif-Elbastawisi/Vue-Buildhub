@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { computed, ref, watch } from 'vue';
+  import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import { useI18n } from 'vue-i18n';
   import { storeToRefs } from 'pinia';
@@ -9,6 +9,7 @@
   import IconLogout from '@/shared/icons/IconLogout.vue';
 
   import { useUserStore } from '@/stores/user';
+  import { DATA_MUTATION_SUCCEEDED_EVENT } from '@/base/Presentation/Controller/dataMutationEvent';
   import SidebarCountsApiService from './sidebar.counts.api-service';
   import { UserType } from '@/modules/auth/core/constants/userType.enum';
   import {
@@ -206,12 +207,24 @@
   );
 
   watch(
-    [currentRole, () => user.value?.id],
+    [currentRole, () => user.value?.id, () => route.fullPath],
     () => {
       void loadSidebarCounts();
     },
     { immediate: true },
   );
+
+  const refreshCountsAfterMutation = () => {
+    void loadSidebarCounts();
+  };
+
+  onMounted(() => {
+    window.addEventListener(DATA_MUTATION_SUCCEEDED_EVENT, refreshCountsAfterMutation);
+  });
+
+  onBeforeUnmount(() => {
+    window.removeEventListener(DATA_MUTATION_SUCCEEDED_EVENT, refreshCountsAfterMutation);
+  });
 
   const selectSection = (section: SidebarSection) => {
     if (selectedSectionKey.value === section.key && isPanelOpen.value) {
