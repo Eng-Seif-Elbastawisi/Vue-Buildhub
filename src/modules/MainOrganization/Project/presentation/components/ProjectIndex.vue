@@ -494,13 +494,17 @@
   }
 
   .status-4 {
-    color: var(--success-dark);
-    background-color: var(--warning);
+    color: var(--bg-main);
+    background-color: #F0A800C7 ;
   }
 
   .status-5 {
     color: var(--low-color);
     background-color: var(--PrimaryColor-light);
+  }
+  .status-14 {
+    color: var(--gray-50);
+    background-color: var(--danger);
   }
 
   .empty-state {
