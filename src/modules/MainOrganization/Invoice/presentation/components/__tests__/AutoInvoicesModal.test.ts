@@ -1,4 +1,4 @@
-import { flushPromises, mount } from '@vue/test-utils';
+import { DOMWrapper, flushPromises, mount } from '@vue/test-utils';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
 import InvoiceModel from '../../../core/models/invoice.model';
@@ -27,18 +27,26 @@ describe('AutoInvoicesModal', () => {
     );
   });
 
-  it('loads and displays auto invoices for the project', async () => {
+  it('teleports above navigation and displays auto invoices for the project', async () => {
     const wrapper = mount(AutoInvoicesModal, {
+      attachTo: document.body,
       props: { projectId: 30 },
-      global: { mocks: { $t: (key: string) => key } },
+      global: {
+        mocks: { $t: (key: string) => key },
+        stubs: { teleport: false },
+      },
     });
+    const documentWrapper = new DOMWrapper(document.body);
     await flushPromises();
 
     expect(fetchAutoInvoices.mock.calls[0][0].toMap()).toEqual({ project_id: 30 });
-    expect(wrapper.text()).toContain('INV-23');
-    expect(wrapper.text()).toContain('2,500');
+    expect(document.body.querySelector('.auto-invoices-modal')?.parentElement).toBe(document.body);
+    expect(documentWrapper.text()).toContain('INV-23');
+    expect(documentWrapper.text()).toContain('2,500');
 
-    await wrapper.find('.auto-invoices-modal__close').trigger('click');
+    await documentWrapper.find('.auto-invoices-modal__close').trigger('click');
     expect(wrapper.emitted('close')).toHaveLength(1);
+
+    wrapper.unmount();
   });
 });
