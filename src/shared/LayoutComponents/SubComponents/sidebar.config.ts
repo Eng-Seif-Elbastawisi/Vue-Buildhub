@@ -46,6 +46,7 @@ import {
   SidebarTermIcon,
   SidebarUnpaidInvoiceIcon,
   SidebarUpcomingPaymentIcon,
+  SidebarEmployeeIcon,
 } from '@/shared/icons/SidebarIcons/sidebarPrimeIcons';
 import { DepartmentTypeEnum } from '@/modules/shared/Department/core/constants/Type.enum';
 import { ItemServiceTypeEnum } from '@/modules/shared/Item/core/constant/item.service.type.enum';
@@ -277,6 +278,14 @@ export const sidebarSections: SidebarSectionConfig[] = [
         icon: SidebarClientIcon,
         countKey: 'clients_count',
         roles: ['organization'],
+      },
+      {
+        path: '/employee',
+        labelKey: 'employee',
+        icon: SidebarEmployeeIcon,
+        roles: ['organization'],
+        countKey: 'employees_count',
+
       },
     ],
   },
