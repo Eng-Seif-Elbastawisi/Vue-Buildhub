@@ -6,8 +6,8 @@ export const EmployeeType = {
   ENGINEER: 2,
   SELLER: 3,
   PRICING_RESPONSIBLE: 4,
+  REVIEWER: 5,
 } as const;
-
 
 export type EmployeeType = (typeof EmployeeType)[keyof typeof EmployeeType];
 
@@ -25,6 +25,8 @@ export function getStatusNameKey(type: EmployeeType): string {
       return 'project.status.seller';
     case EmployeeType.PRICING_RESPONSIBLE:
       return 'project.status.pricing_responsible';
+    case EmployeeType.REVIEWER:
+      return 'project.status.reviewer';
     default:
       return 'unknown';
   }

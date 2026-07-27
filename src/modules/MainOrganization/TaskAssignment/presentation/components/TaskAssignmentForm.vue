@@ -1,105 +1,228 @@
 <script setup lang="ts">
+  import { computed, reactive } from 'vue';
+
   import type TitleInterface from '@/base/Data/Models/titleInterface';
   import HandleFilesUpload, { type UploadedFile } from '@/shared/FormInputs/HandleFilesUpload.vue';
   import AppButton from '@/shared/HelpersComponents/AppButton.vue';
   import UpdatedCustomInputSelect from '@/shared/FormInputs/UpdatedCustomInputSelect.vue';
-  import type { TaskAssignmentAttachment } from '../../core/params/assign.project.department.item.task.params';
+
+  import EmployeeController from '@/modules/MainOrganization/employee/presentation/controllers/employee.controller';
+  import IndexEmployeeParams from '@/modules/MainOrganization/employee/core/params/index.employee.params';
+  import { EmployeeType } from '@/modules/MainOrganization/employee/core/constants/type.enum';
+
+  import type { TaskDurationType } from '../../core/constants/taskDurationType.enum';
+  import type {
+    TaskAssignmentAttachment,
+    TaskAssignmentForm,
+  } from '../../core/params/assign.project.department.item.task.params';
+
+  type SelectValue = TitleInterface<number> | TitleInterface<number>[] | null;
+
+  type UploadedAttachment = UploadedFile & {
+    file?: string;
+    base64?: string;
+    content?: string;
+    alt?: string;
+    link?: string | null;
+    name?: string;
+    type?: string;
+    size?: string | number;
+    signature?: string;
+  };
+
+  interface FormState {
+    projectDepartmentItem: TitleInterface<number> | null;
+    employees: TitleInterface<number>[];
+    employeeReviewer: TitleInterface<number> | null;
+    durationType: TitleInterface<number> | null;
+    duration: number | null;
+    notes: string;
+    hasAttached: boolean;
+    attachments: TaskAssignmentAttachment[];
+  }
 
   const props = defineProps<{
-    selectedProjectDepartmentItem: TitleInterface<number> | null;
-    selectedEmployees: TitleInterface<number>[];
-    selectedEmployeeReviewer: TitleInterface<number> | null;
-    selectedDurationType: TitleInterface<number> | null;
     projectDepartmentItemOptions: TitleInterface<number>[];
-    employeeOptions: TitleInterface<number>[];
     durationTypeOptions: TitleInterface<number>[];
+
     projectDepartmentItemsLoading: boolean;
     employeesLoading: boolean;
     assignmentSubmitting: boolean;
-    attachmentsProcessing: boolean;
-    attachmentsUploadKey: number;
+
     assignmentValidationErrors: Record<string, string>;
     assignmentGeneralError: string;
-    notes: string;
-    duration: number | null;
-    attachments: TaskAssignmentAttachment[];
   }>();
 
   const emit = defineEmits<{
-    (
-      event: 'update-project-department-item',
-      value: TitleInterface<number> | TitleInterface<number>[] | null,
-    ): void;
-    (
-      event: 'update-employees',
-      value: TitleInterface<number> | TitleInterface<number>[] | null,
-    ): void;
-    (
-      event: 'update-employee-reviewer',
-      value: TitleInterface<number> | TitleInterface<number>[] | null,
-    ): void;
-    (
-      event: 'update-duration-type',
-      value: TitleInterface<number> | TitleInterface<number>[] | null,
-    ): void;
-    (event: 'update-duration', value: number | null): void;
-    (event: 'update-notes', value: string): void;
-    (event: 'add-attachments', files: UploadedFile[]): void;
-    (event: 'remove-attachment', index: number): void;
-    (event: 'update-attachment-alt', index: number, alt: string): void;
-    (event: 'update-attachment-link', index: number, link: string): void;
-    (event: 'submit'): void;
+    submit: [form: TaskAssignmentForm];
   }>();
 
-  const normalizeErrorField = (field: string): string => field.replace(/\[(\d+)\]/g, '.$1');
+  const employeeController = EmployeeController.getInstance();
 
-  const getValidationError = (field: string): string => {
-    const normalizedTarget = normalizeErrorField(field);
+  const employeeParams = new IndexEmployeeParams('', 1, 100, 0, EmployeeType.EMPLOYEE);
 
-    return (
-      Object.entries(props.assignmentValidationErrors).find(
-        ([errorField]) => normalizeErrorField(errorField) === normalizedTarget,
-      )?.[1] ?? ''
-    );
+  const employeeReviewerParams = new IndexEmployeeParams('', 1, 100, 0, EmployeeType.REVIEWER);
+
+  const form = reactive<FormState>({
+    projectDepartmentItem: null,
+    employees: [],
+    employeeReviewer: null,
+    durationType: null,
+    duration: null,
+    notes: '',
+    hasAttached: false,
+    attachments: [],
+  });
+
+  const getSingleOption = (value: SelectValue): TitleInterface<number> | null => {
+    return Array.isArray(value) ? (value[0] ?? null) : value;
   };
 
-  const getAttachmentError = (index: number, field: 'file' | 'alt' | 'link'): string => {
-    return getValidationError(`attachments.${index}.${field}`);
+  const getMultipleOptions = (value: SelectValue): TitleInterface<number>[] => {
+    if (Array.isArray(value)) {
+      return value;
+    }
+
+    return value ? [value] : [];
+  };
+
+  const setProjectDepartmentItem = (value: SelectValue): void => {
+    form.projectDepartmentItem = getSingleOption(value);
+  };
+
+  const setEmployees = (value: SelectValue): void => {
+    form.employees = getMultipleOptions(value);
+  };
+
+  const setEmployeeReviewer = (value: SelectValue): void => {
+    form.employeeReviewer = getSingleOption(value);
+  };
+
+  const setDurationType = (value: SelectValue): void => {
+    form.durationType = getSingleOption(value);
+  };
+
+  const toStringValue = (value: unknown): string => {
+    return typeof value === 'string' ? value.trim() : '';
+  };
+
+  const toOptionalString = (value: unknown): string | undefined => {
+    if (value === null || value === undefined || value === '') {
+      return undefined;
+    }
+
+    return String(value);
+  };
+
+  const createAttachment = (uploadedFile: UploadedFile): TaskAssignmentAttachment | null => {
+    const uploadedAttachment = uploadedFile as UploadedAttachment;
+
+    const file = toStringValue(
+      uploadedAttachment.file ?? uploadedAttachment.base64 ?? uploadedAttachment.content,
+    );
+
+    if (!file) {
+      return null;
+    }
+
+    return {
+      file,
+      alt: toStringValue(uploadedAttachment.alt),
+      link: toStringValue(uploadedAttachment.link) || null,
+      name: toOptionalString(uploadedAttachment.name),
+      type: toOptionalString(uploadedAttachment.type),
+      size: toOptionalString(uploadedAttachment.size),
+      signature: toOptionalString(uploadedAttachment.signature),
+    };
+  };
+
+  const addAttachments = (files: UploadedFile[]): void => {
+    const attachments = files
+      .map(createAttachment)
+      .filter((attachment): attachment is TaskAssignmentAttachment => attachment !== null);
+
+    form.attachments.push(...attachments);
+  };
+
+  const removeAttachment = (index: number): void => {
+    form.attachments.splice(index, 1);
   };
 
   const isImageAttachment = (attachment: TaskAssignmentAttachment): boolean => {
-    return attachment.type?.startsWith('image/') || attachment.file.startsWith('data:image/');
+    return (
+      attachment.type?.startsWith('image/') === true || attachment.file.startsWith('data:image/')
+    );
   };
 
   const getAttachmentName = (attachment: TaskAssignmentAttachment, index: number): string => {
-    if (attachment.name) return attachment.name;
+    if (attachment.name) {
+      return attachment.name;
+    }
 
-    const mime = attachment.file.match(/^data:([^;]+);/)?.[1];
-    const extension = mime?.split('/').pop();
+    const mimeType = attachment.file.match(/^data:([^;]+);/)?.[1];
+
+    const extension = mimeType?.split('/').pop();
 
     return extension ? `attachment-${index + 1}.${extension}` : `attachment-${index + 1}`;
+  };
+
+  const isSubmitDisabled = computed(() => {
+    return (
+      props.assignmentSubmitting ||
+      props.projectDepartmentItemsLoading ||
+      props.employeesLoading ||
+      !props.projectDepartmentItemOptions.length
+    );
+  });
+
+  const createPayload = (): TaskAssignmentForm => {
+    return {
+      project_department_item_id: form.projectDepartmentItem?.value ?? null,
+
+      employee_ids: form.employees.map((employee) => employee.value),
+
+      employee_review_id: form.employeeReviewer?.value ?? null,
+
+      duration_type: (form.durationType?.value as TaskDurationType) ?? null,
+
+      duration: form.duration,
+      notes: form.notes.trim(),
+      has_attached: form.hasAttached,
+
+      attachments: form.attachments.map(({ file, alt, link }) => ({
+        file,
+        alt: alt.trim(),
+        link: link?.trim() || null,
+      })),
+    };
+  };
+
+  const handleSubmit = (): void => {
+    emit('submit', createPayload());
   };
 </script>
 
 <template>
-  <form class="task-assignment-form" @submit.prevent="emit('submit')">
+  <form class="task-assignment-form" @submit.prevent="handleSubmit">
     <div class="task-assignment-form__grid">
+      <!-- Project department item -->
       <div class="task-assignment-form__field">
         <UpdatedCustomInputSelect
           id="project_department_item_id"
-          :model-value="selectedProjectDepartmentItem"
+          :model-value="form.projectDepartmentItem"
           label="task_assignment.project_department_item"
           :placeholder="$t('task_assignment.project_department_item_placeholder')"
           :static-options="projectDepartmentItemOptions"
           :reload="false"
           :disabled="projectDepartmentItemsLoading"
           required
-          @update:model-value="emit('update-project-department-item', $event)"
+          @update:model-value="setProjectDepartmentItem"
         />
 
         <small v-if="!projectDepartmentItemOptions.length" class="task-assignment-form__hint">
           {{ $t('task_assignment.no_project_department_items') }}
         </small>
+
         <small
           v-if="assignmentValidationErrors.project_department_item_id"
           class="task-assignment-form__error"
@@ -108,38 +231,39 @@
         </small>
       </div>
 
+      <!-- Employees -->
       <div class="task-assignment-form__field">
         <UpdatedCustomInputSelect
           id="employee_ids"
-          :model-value="selectedEmployees"
+          :model-value="form.employees"
           label="task_assignment.employees"
           :placeholder="$t('task_assignment.employees_placeholder')"
-          :static-options="employeeOptions"
           :type="2"
           :reload="false"
           :disabled="employeesLoading"
+          :controller="employeeController"
+          :params="employeeParams"
           required
-          @update:model-value="emit('update-employees', $event)"
+          @update:model-value="setEmployees"
         />
 
-        <small v-if="!employeeOptions.length" class="task-assignment-form__hint">
-          {{ $t('task_assignment.no_employees') }}
-        </small>
         <small v-if="assignmentValidationErrors.employee_ids" class="task-assignment-form__error">
           {{ assignmentValidationErrors.employee_ids }}
         </small>
       </div>
 
+      <!-- Employee reviewer -->
       <div class="task-assignment-form__field">
         <UpdatedCustomInputSelect
           id="employee_review_id"
-          :model-value="selectedEmployeeReviewer"
+          :model-value="form.employeeReviewer"
           label="task_assignment.form.employee_review.label"
           :placeholder="$t('task_assignment.form.employee_review.placeholder')"
-          :static-options="employeeOptions"
           :reload="false"
           :disabled="employeesLoading"
-          @update:model-value="emit('update-employee-reviewer', $event)"
+          :controller="employeeController"
+          :params="employeeReviewerParams"
+          @update:model-value="setEmployeeReviewer"
         />
 
         <small
@@ -150,16 +274,17 @@
         </small>
       </div>
 
+      <!-- Duration type -->
       <div class="task-assignment-form__field">
         <UpdatedCustomInputSelect
           id="duration_type"
-          :model-value="selectedDurationType"
+          :model-value="form.durationType"
           label="task_assignment.form.duration_type.label"
           :placeholder="$t('task_assignment.form.duration_type.placeholder')"
           :static-options="durationTypeOptions"
           :reload="false"
           required
-          @update:model-value="emit('update-duration-type', $event)"
+          @update:model-value="setDurationType"
         />
 
         <small v-if="assignmentValidationErrors.duration_type" class="task-assignment-form__error">
@@ -167,34 +292,45 @@
         </small>
       </div>
 
+      <!-- Duration -->
       <div class="task-assignment-form__field">
         <label class="task-assignment-form__label" for="duration">
-          <span class="text-red-500">*</span> {{ $t('task_assignment.form.duration.label') }}
+          <span class="text-red-500">*</span>
+
+          {{ $t('task_assignment.form.duration.label') }}
         </label>
+
         <input
           id="duration"
+          v-model.number="form.duration"
           class="task-assignment-form__input w-full"
           type="number"
-          :value="duration"
           min="1"
           step="1"
           :placeholder="$t('task_assignment.form.duration.placeholder')"
-          style="
-            border-radius: 50px;
-            border: 1px solid #d9dbe9;
-            padding: 0.5rem 1rem;
-            outline: none;
-            background: transparent;
-          "
-          @input="
-            emit('update-duration', Number(($event.target as HTMLInputElement).value) || null)
-          "
         />
+
         <small v-if="assignmentValidationErrors.duration" class="task-assignment-form__error">
           {{ assignmentValidationErrors.duration }}
         </small>
       </div>
 
+      <!-- Has attached -->
+      <div class="task-assignment-form__field">
+        <label class="task-assignment-form__checkbox" for="has_attached">
+          <input id="has_attached" v-model="form.hasAttached" type="checkbox" />
+
+          <span>
+            {{ $t('task_assignment.form.has_attached.label') }}
+          </span>
+        </label>
+
+        <small v-if="assignmentValidationErrors.has_attached" class="task-assignment-form__error">
+          {{ assignmentValidationErrors.has_attached }}
+        </small>
+      </div>
+
+      <!-- Notes -->
       <div class="task-assignment-form__field task-assignment-form__field--full">
         <label class="task-assignment-form__label" for="task_assignment_notes">
           {{ $t('task_assignment.notes') }}
@@ -202,52 +338,51 @@
 
         <textarea
           id="task_assignment_notes"
+          v-model="form.notes"
           class="task-assignment-form__textarea"
-          :value="notes"
           :placeholder="$t('task_assignment.notes_placeholder')"
-          @input="emit('update-notes', ($event.target as HTMLTextAreaElement).value)"
-        ></textarea>
+        />
 
         <small v-if="assignmentValidationErrors.notes" class="task-assignment-form__error">
           {{ assignmentValidationErrors.notes }}
         </small>
       </div>
 
+      <!-- Attachments -->
       <div class="task-assignment-form__field task-assignment-form__field--full">
         <section class="task-assignment-attachments">
           <div class="task-assignment-attachments__header">
             <div>
-              <h2>{{ $t('task_assignment.form.attachments.label') }}</h2>
-              <p>{{ $t('task_assignment.form.attachments.description') }}</p>
-            </div>
+              <h2>
+                {{ $t('task_assignment.form.attachments.label') }}
+              </h2>
 
-            <span v-if="attachmentsProcessing" class="task-assignment-attachments__processing">
-              <i class="pi pi-spin pi-spinner" aria-hidden="true"></i>
-              {{ $t('loading') }}
-            </span>
+              <p>
+                {{ $t('task_assignment.form.attachments.description') }}
+              </p>
+            </div>
           </div>
 
           <HandleFilesUpload
-            :key="attachmentsUploadKey"
             label="task_assignment.form.attachments.add"
             :multiple="true"
             :hidepreview="true"
             :show-help="false"
-            @change="emit('add-attachments', $event)"
+            @change="addAttachments"
           />
 
           <small v-if="assignmentValidationErrors.attachments" class="task-assignment-form__error">
             {{ assignmentValidationErrors.attachments }}
           </small>
 
-          <div v-if="!attachments.length" class="task-assignment-attachments__empty">
+          <div v-if="!form.attachments.length" class="task-assignment-attachments__empty">
             {{ $t('task_assignment.form.attachments.empty') }}
           </div>
 
           <div v-else class="task-assignment-attachments__list">
             <article
-              v-for="(attachment, index) in attachments"
-              :key="attachment.signature ?? attachment.file"
+              v-for="(attachment, index) in form.attachments"
+              :key="attachment.signature ?? `${attachment.file}-${index}`"
               class="task-assignment-attachment"
             >
               <div class="task-assignment-attachment__preview">
@@ -256,56 +391,52 @@
                   :src="attachment.file"
                   :alt="attachment.alt || getAttachmentName(attachment, index)"
                 />
+
                 <span v-else class="task-assignment-attachment__file-icon">
-                  <i class="pi pi-file" aria-hidden="true"></i>
+                  <i class="pi pi-file" aria-hidden="true" />
                 </span>
 
                 <span class="task-assignment-attachment__meta">
-                  <strong>{{ getAttachmentName(attachment, index) }}</strong>
-                  <small>{{
-                    attachment.size ||
-                    attachment.type ||
-                    $t('task_assignment.form.attachments.file')
-                  }}</small>
+                  <strong>
+                    {{ getAttachmentName(attachment, index) }}
+                  </strong>
+
+                  <small>
+                    {{
+                      attachment.size ||
+                      attachment.type ||
+                      $t('task_assignment.form.attachments.file')
+                    }}
+                  </small>
                 </span>
               </div>
 
               <div class="task-assignment-attachment__fields">
-                <label :for="`task_assignment_attachment_alt_${index}`">
+                <label :for="`attachment_alt_${index}`">
                   {{ $t('task_assignment.form.attachments.alt') }}
                 </label>
+
                 <input
-                  :id="`task_assignment_attachment_alt_${index}`"
+                  :id="`attachment_alt_${index}`"
+                  v-model="attachment.alt"
                   class="task-assignment-form__input"
                   type="text"
-                  :value="attachment.alt"
                   :placeholder="$t('task_assignment.form.attachments.alt_placeholder')"
-                  @input="
-                    emit('update-attachment-alt', index, ($event.target as HTMLInputElement).value)
-                  "
                 />
-                <small v-if="getAttachmentError(index, 'alt')" class="task-assignment-form__error">
-                  {{ getAttachmentError(index, 'alt') }}
-                </small>
               </div>
 
               <div class="task-assignment-attachment__fields">
-                <label :for="`task_assignment_attachment_link_${index}`">
+                <label :for="`attachment_link_${index}`">
                   {{ $t('task_assignment.form.attachments.link') }}
                 </label>
+
                 <input
-                  :id="`task_assignment_attachment_link_${index}`"
+                  :id="`attachment_link_${index}`"
+                  v-model="attachment.link"
                   class="task-assignment-form__input"
                   type="url"
-                  :value="attachment.link ?? ''"
                   :placeholder="$t('task_assignment.form.attachments.link_placeholder')"
-                  @input="
-                    emit('update-attachment-link', index, ($event.target as HTMLInputElement).value)
-                  "
                 />
-                <small v-if="getAttachmentError(index, 'link')" class="task-assignment-form__error">
-                  {{ getAttachmentError(index, 'link') }}
-                </small>
               </div>
 
               <button
@@ -313,14 +444,10 @@
                 class="task-assignment-attachment__remove"
                 :aria-label="$t('task_assignment.form.attachments.remove')"
                 :title="$t('task_assignment.form.attachments.remove')"
-                @click="emit('remove-attachment', index)"
+                @click="removeAttachment(index)"
               >
-                <i class="pi pi-trash" aria-hidden="true"></i>
+                <i class="pi pi-trash" aria-hidden="true" />
               </button>
-
-              <small v-if="getAttachmentError(index, 'file')" class="task-assignment-form__error">
-                {{ getAttachmentError(index, 'file') }}
-              </small>
             </article>
           </div>
         </section>
@@ -334,21 +461,15 @@
     <footer class="task-assignment-form__actions">
       <AppButton
         type="submit"
-        :loading="assignmentSubmitting"
-        :disabled="
-          !projectDepartmentItemOptions.length ||
-          !employeeOptions.length ||
-          projectDepartmentItemsLoading ||
-          employeesLoading ||
-          attachmentsProcessing ||
-          assignmentSubmitting
-        "
         icon="left"
+        :loading="assignmentSubmitting"
+        :disabled="isSubmitDisabled"
         :title="$t('task_assignment.submit')"
       >
         <template #icon>
-          <i class="pi pi-send" aria-hidden="true"></i>
+          <i class="pi pi-send" aria-hidden="true" />
         </template>
+
         {{ $t('task_assignment.submit') }}
       </AppButton>
     </footer>
