@@ -1,0 +1,542 @@
+.task-assignments-index,
+.task-assignment-create {
+  width: 100%;
+}
+
+.task-assignment-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  width: 100%;
+  padding: 1.25rem;
+  border: 1px solid var(--border-weak);
+  border-radius: var(--radius-sm);
+  background: var(--bg-main);
+  box-shadow: var(--shadow-sm);
+}
+
+.task-assignment-page-header,
+.task-assignment-create-header,
+.task-assignment-page-header__content,
+.task-assignment-create-header__content,
+.task-assignment-page-header__actions,
+.task-assignment-page-header__icon,
+.task-assignment-page-header__refresh,
+.task-assignment-page-header__add,
+.task-assignment-create-header__back {
+  display: flex;
+  align-items: center;
+}
+
+.task-assignment-page-header,
+.task-assignment-create-header {
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.task-assignment-page-header__content,
+.task-assignment-create-header__content {
+  min-width: 0;
+  gap: 0.85rem;
+}
+
+.task-assignment-page-header__icon,
+.task-assignment-page-header__refresh,
+.task-assignment-page-header__add,
+.task-assignment-create-header__back {
+  justify-content: center;
+  border: 1px solid var(--border-weak);
+  border-radius: var(--radius-sm);
+  font-family: 'Bold';
+  text-decoration: none;
+}
+
+.task-assignment-page-header__icon,
+.task-assignment-page-header__refresh {
+  flex: 0 0 40px;
+  width: 40px;
+  min-height: 40px;
+  background: var(--PrimaryColor-light);
+  color: var(--PrimaryColor);
+}
+
+.task-assignment-page-header__refresh,
+.task-assignment-page-header__add,
+.task-assignment-create-header__back {
+  cursor: pointer;
+}
+
+.task-assignment-page-header__refresh:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.task-assignment-page-header__copy,
+.task-assignment-create-header__copy {
+  min-width: 0;
+}
+
+.task-assignment-page-header__copy h1,
+.task-assignment-create-header__copy h1 {
+  margin: 0;
+  color: var(--gray-900);
+  font-family: 'Bold';
+  font-size: var(--xl-size-base);
+}
+
+.task-assignment-page-header__copy p,
+.task-assignment-create-header__copy p,
+.task-assignment-form__hint,
+.employee-tasks-list__head p,
+.task-status-action__readonly {
+  margin: 0.25rem 0 0;
+  color: var(--gray-600);
+  font-family: 'Medium';
+  font-size: var(--xs-size);
+}
+
+.task-assignment-page-header__actions {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.6rem;
+}
+
+.task-assignment-page-header__count {
+  display: inline-flex;
+  flex-shrink: 0;
+  min-height: 32px;
+  align-items: center;
+  padding: 0.25rem 0.85rem;
+  border-radius: var(--radius-full);
+  background: var(--gray-100);
+  color: var(--gray-700);
+  font-family: 'Bold';
+  font-size: var(--xs-size);
+}
+
+.task-assignment-page-header__refresh,
+.task-assignment-page-header__add,
+.task-assignment-create-header__back {
+  gap: 0.45rem;
+  min-height: 40px;
+  padding: 0.45rem 0.85rem;
+  font-size: var(--xs-size);
+}
+
+.task-assignment-page-header__add {
+  background: var(--PrimaryColor);
+  color: var(--white);
+}
+
+.task-assignment-create-header__back {
+  background: var(--gray-50);
+  color: var(--gray-800);
+}
+
+[dir='rtl'] .task-assignment-create-header__back .pi-arrow-left {
+  transform: rotate(180deg);
+}
+
+.task-assignment-form,
+.employee-tasks-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-weak);
+}
+
+.task-assignment-form__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.task-assignment-form__field {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.task-assignment-form__field--full {
+  grid-column: 1 / -1;
+}
+
+.task-assignment-form__label {
+  color: var(--gray-900);
+  font-family: 'Bold';
+  font-size: var(--sm-size);
+}
+
+.task-assignment-form__input,
+.task-assignment-form__textarea,
+.task-status-action__select {
+  width: 100%;
+  border: 1px solid var(--border-weak);
+  border-radius: var(--radius-sm);
+  background: var(--white);
+  color: var(--gray-900);
+  font-family: 'Regular';
+  font-size: var(--sm-size);
+}
+
+.task-assignment-form__input {
+  min-height: 42px;
+  padding: 0.7rem 0.85rem;
+}
+
+.task-assignment-form__textarea {
+  min-height: 112px;
+  padding: 0.85rem 1rem;
+  resize: vertical;
+}
+
+.task-status-action__select {
+  min-width: 150px;
+  min-height: 38px;
+  padding: 0.45rem 0.65rem;
+}
+
+.task-assignment-form__error,
+.task-assignment-error {
+  color: var(--danger-dark);
+  font-family: 'Medium';
+  font-size: var(--xs-size);
+}
+
+.task-assignment-form__actions,
+.employee-tasks-list__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.employee-tasks-list__head h3 {
+  margin: 0;
+  color: var(--gray-900);
+  font-family: 'Bold';
+  font-size: var(--md-size);
+}
+
+.task-assignment-attachments {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.task-assignment-attachments__header,
+.task-assignment-attachment,
+.task-assignment-attachment__preview,
+.task-assignment-attachment__meta,
+.task-assignment-attachment__fields {
+  display: flex;
+}
+
+.task-assignment-attachments__header {
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.task-assignment-attachments__header h2 {
+  margin: 0;
+  color: var(--gray-900);
+  font-family: 'Bold';
+  font-size: var(--md-size);
+}
+
+.task-assignment-attachments__header p,
+.task-assignment-attachment__meta small {
+  margin: 0.25rem 0 0;
+  color: var(--gray-600);
+  font-family: 'Medium';
+  font-size: var(--xs-size);
+}
+
+.task-assignment-attachments__processing {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--PrimaryColor);
+  font-family: 'Bold';
+  font-size: var(--xs-size);
+}
+
+.task-assignment-attachments__empty {
+  padding: 0.85rem;
+  border: 1px dashed var(--border-weak);
+  border-radius: var(--radius-sm);
+  background: var(--gray-50);
+  color: var(--gray-600);
+  font-family: 'Medium';
+  font-size: var(--xs-size);
+}
+
+.task-assignment-attachments__list {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.task-assignment-attachment {
+  display: grid;
+  grid-template-columns: minmax(220px, 1.2fr) minmax(180px, 1fr) minmax(180px, 1fr) auto;
+  gap: 0.85rem;
+  align-items: start;
+  padding: 0.85rem;
+  border: 1px solid var(--border-weak);
+  border-radius: var(--radius-sm);
+  background: var(--gray-50);
+}
+
+.task-assignment-attachment__preview {
+  min-width: 0;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.task-assignment-attachment__preview img,
+.task-assignment-attachment__file-icon {
+  width: 56px;
+  height: 56px;
+  flex: 0 0 56px;
+  border: 1px solid var(--border-weak);
+  border-radius: var(--radius-sm);
+  background: var(--white);
+}
+
+.task-assignment-attachment__preview img {
+  object-fit: cover;
+}
+
+.task-assignment-attachment__file-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--PrimaryColor);
+}
+
+.task-assignment-attachment__meta,
+.task-assignment-attachment__fields {
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.task-assignment-attachment__meta strong,
+.task-assignment-attachment__fields label {
+  color: var(--gray-900);
+  font-family: 'Bold';
+  font-size: var(--xs-size);
+}
+
+.task-assignment-attachment__meta strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.task-assignment-attachment__remove {
+  display: inline-flex;
+  width: 40px;
+  min-height: 40px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--danger-light);
+  border-radius: var(--radius-sm);
+  background: var(--danger-light);
+  color: var(--danger-dark);
+  cursor: pointer;
+}
+
+.task-assignment-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.task-assignment-table {
+  width: 100%;
+  min-width: 1160px;
+  border-collapse: collapse;
+  overflow: hidden;
+  border: 1px solid var(--border-weak);
+  border-radius: var(--radius-sm);
+}
+
+.task-assignment-table th,
+.task-assignment-table td {
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--border-weak);
+  color: var(--gray-800);
+  font-family: 'Medium';
+  font-size: var(--sm-size);
+  text-align: start;
+  vertical-align: top;
+}
+
+.task-assignment-table th {
+  background: var(--gray-50);
+  color: var(--gray-600);
+  font-family: 'Bold';
+}
+
+.task-assignment-table tbody tr:hover {
+  background: var(--gray-50);
+}
+
+.employee-tasks-list__employees {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  min-width: 160px;
+}
+
+.employee-tasks-list__employee {
+  display: inline-flex;
+  min-height: 26px;
+  align-items: center;
+  padding: 0.2rem 0.65rem;
+  border-radius: var(--radius-full);
+  background: var(--PrimaryColor-light);
+  color: var(--PrimaryColor);
+  font-family: 'Bold';
+  font-size: var(--xs-size);
+}
+
+.task-assignment-status-badge {
+  display: inline-flex;
+  min-height: 28px;
+  align-items: center;
+  padding: 0.2rem 0.65rem;
+  border: 1px solid var(--border-weak);
+  border-radius: var(--radius-full);
+  background: var(--gray-100);
+  color: var(--gray-700);
+  font-family: 'Bold';
+  font-size: var(--xs-size);
+}
+
+.task-assignment-status-badge.is-progress {
+  border-color: var(--info);
+  background: var(--info-light);
+  color: var(--info-dark);
+}
+
+.task-assignment-status-badge.is-muted {
+  color: var(--gray-500);
+}
+
+.task-status-action {
+  display: flex;
+  min-width: 180px;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.task-status-action__readonly {
+  display: inline-flex;
+  min-height: 28px;
+  align-items: center;
+}
+
+.task-assignment-state {
+  display: flex;
+  min-height: 96px;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  border: 1px dashed var(--border-weak);
+  border-radius: var(--radius-sm);
+  background: var(--gray-50);
+  color: var(--gray-600);
+  font-family: 'Medium';
+}
+
+.task-assignment-state p {
+  margin: 0;
+}
+
+.task-assignment-state--error {
+  border-color: var(--danger-light);
+  background: var(--danger-light);
+  color: var(--danger-dark);
+}
+
+.task-assignment-action-btn {
+  display: inline-flex;
+  min-height: 36px;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.4rem 0.75rem;
+  border: 1px solid var(--border-weak);
+  border-radius: var(--radius-sm);
+  background: var(--white);
+  color: var(--gray-800);
+  font-family: 'Bold';
+  font-size: var(--xs-size);
+}
+
+.employee-tasks-list__skeleton {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.employee-tasks-list__skeleton span {
+  height: 42px;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(90deg, var(--gray-100), var(--gray-200), var(--gray-100));
+  background-size: 200% 100%;
+  animation: task-assignment-skeleton-shimmer 1.4s ease-in-out infinite;
+}
+
+@media (max-width: 760px) {
+  .task-assignment-page-header,
+  .task-assignment-create-header,
+  .task-assignment-form__actions,
+  .employee-tasks-list__head {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .task-assignment-page-header__actions,
+  .task-assignment-page-header__add,
+  .task-assignment-create-header__back {
+    width: 100%;
+  }
+
+  .task-assignment-page-header__refresh {
+    flex: 1 1 auto;
+  }
+
+  .task-assignment-form__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .task-assignment-attachments__header,
+  .task-assignment-attachment {
+    align-items: stretch;
+    grid-template-columns: 1fr;
+  }
+
+  .task-assignment-attachment__remove {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .task-assignment-table tbody tr {
+    transition: none;
+  }
+
+  .employee-tasks-list__skeleton span {
+    animation: none;
+  }
+}
+
+@keyframes task-assignment-skeleton-shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}

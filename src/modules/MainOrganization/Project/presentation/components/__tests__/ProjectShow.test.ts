@@ -110,6 +110,10 @@ const projectResponse = ProjectShowModel.fromJson({
 });
 
 vi.mock('vue-router', () => ({
+  createRouter: vi.fn(() => ({
+    beforeEach: vi.fn(),
+  })),
+  createWebHistory: vi.fn(() => ({})),
   useRoute: () => ({ params: { project_id: '24' } }),
   RouterLink: {
     props: ['to'],

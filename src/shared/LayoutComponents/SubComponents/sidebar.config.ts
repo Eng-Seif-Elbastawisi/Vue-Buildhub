@@ -154,8 +154,18 @@ export type SidebarProjectCountKey =
   | 'projects.send_to_client_count'
   | 'projects.revise_version_count';
 
+export type SidebarItemCountKey =
+  'items.design_count' | 'items.supervision_count' | 'items.both_count';
+
+export type SidebarDepartmentCountKey =
+  'departments.design_count' | 'departments.supervision_count' | 'departments.both_count';
+
 export type SidebarCountKey =
-  SidebarRootCountKey | SidebarProjectCountKey | SidebarLocationCountKey;
+  | SidebarRootCountKey
+  | SidebarProjectCountKey
+  | SidebarLocationCountKey
+  | SidebarItemCountKey
+  | SidebarDepartmentCountKey;
 
 export interface SidebarItemConfig {
   type?: 'item' | 'group';
@@ -309,6 +319,12 @@ export const sidebarSections: SidebarSectionConfig[] = [
         path: `/converted-projects?service_type=${DepartmentTypeEnum.DESIGN},${DepartmentTypeEnum.BOTH}`,
         labelKey: 'sidebar.design_projects',
         icon: SidebarProjectIcon,
+        roles: ['organization'],
+      },
+      {
+        path: '/task-assignment',
+        labelKey: 'sidebar.task_assignment',
+        icon: SidebarProductivityIcon,
         roles: ['organization'],
       },
       {

@@ -1,0 +1,104 @@
+import type Params from '@/base/Core/Params/params';
+import type { DataState } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
+import {
+  DataFailed,
+  DataInitial,
+  DataLoading,
+} from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
+import type { ErrorModel } from '@/base/Core/NetworkStructure/Resources/errors/errorModel';
+import BaseController, {
+  type ControllerConfig,
+} from '@/base/Presentation/Controller/baseController';
+import { ref, type Ref } from 'vue';
+import type TaskAssignmentEmployeeTaskModel from '../../core/models/task.assignment.employee-task.model';
+import TaskAssignmentRepository from '../../data/repositories/task.assignment.repository';
+
+type TaskAssignmentActionParams = Params | Record<string, unknown>;
+
+export default class TaskAssignmentController extends BaseController<
+  TaskAssignmentEmployeeTaskModel,
+  TaskAssignmentEmployeeTaskModel[]
+> {
+  private static instance: TaskAssignmentController;
+  public employeeTasksState: Ref<DataState<TaskAssignmentEmployeeTaskModel[]>> = ref(
+    new DataInitial<TaskAssignmentEmployeeTaskModel[]>(null),
+  ) as Ref<DataState<TaskAssignmentEmployeeTaskModel[]>>;
+
+  protected get repository() {
+    return TaskAssignmentRepository.getInstance();
+  }
+
+  protected get config(): ControllerConfig {
+    return {
+      showLoadingDialog: false,
+      showSuccessDialog: false,
+      showErrorDialog: false,
+      showErrorTosat: true,
+      showSuccessTosat: true,
+      autoRetry: false,
+      maxAutoRetries: 1,
+    };
+  }
+
+  private constructor() {
+    super();
+  }
+
+  static getInstance(): TaskAssignmentController {
+    if (!TaskAssignmentController.instance) {
+      TaskAssignmentController.instance = new TaskAssignmentController();
+    }
+
+    return TaskAssignmentController.instance;
+  }
+
+  private handleTaskAssignmentActionResponse(result: DataState<void>): DataState<void> {
+    if (result.hasError) {
+      this.handleErrorResponse(result);
+    }
+
+    return result;
+  }
+
+  async assignProjectDepartmentItemTask(
+    params?: TaskAssignmentActionParams,
+  ): Promise<DataState<void>> {
+    const result = await this.repository.assignProjectDepartmentItemTask(params);
+
+    return this.handleTaskAssignmentActionResponse(result);
+  }
+
+  async fetchEmployeeTasks(
+    params?: TaskAssignmentActionParams,
+  ): Promise<DataState<TaskAssignmentEmployeeTaskModel[]>> {
+    this.employeeTasksState.value = new DataLoading<TaskAssignmentEmployeeTaskModel[]>();
+
+    try {
+      const result = await this.repository.fetchEmployeeTasks(params);
+      this.employeeTasksState.value = result;
+
+      if (result.hasError) {
+        this.handleErrorResponse(result);
+      }
+
+      return result;
+    } catch (error) {
+      const failed = new DataFailed<TaskAssignmentEmployeeTaskModel[]>({
+        error: error as ErrorModel,
+      });
+      this.employeeTasksState.value = failed;
+      this.handleErrorResponse(failed);
+
+      return failed;
+    }
+  }
+
+  async changeEmployeeTaskStatus(
+    action: string,
+    params?: TaskAssignmentActionParams,
+  ): Promise<DataState<void>> {
+    const result = await this.repository.changeEmployeeTaskStatus(action, params);
+
+    return this.handleTaskAssignmentActionResponse(result);
+  }
+}
