@@ -63,7 +63,6 @@ describe('ProjectRepository', () => {
       },
       statusCode: 200,
     });
-
     const success = await repository.convertMeasurementToProject({ project_id: 1 });
     const failed = await repository.storeVersion({ project_id: 1 });
     const changed = await repository.changeProjectStatus({

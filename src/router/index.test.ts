@@ -6,9 +6,13 @@ describe('dashboard route prefixes', () => {
     ['/organization/project/add', 'add-project'],
     ['/organization/project_preview/add', 'add-project_preview'],
     ['/organization/project_floor/add', 'add-project_floor'],
+    ['/organization/task-assignment', 'mainorganization-task-assignment-index'],
+    ['/organization/task-assignment/create', 'mainorganization-task-assignment-create'],
     ['/mainportal/project/add', 'add-project'],
     ['/mainportal/project_preview/add', 'add-project_preview'],
     ['/mainportal/project_floor/add', 'add-project_floor'],
+    ['/mainportal/task-assignment', 'mainorganization-task-assignment-index'],
+    ['/mainportal/task-assignment/create', 'mainorganization-task-assignment-create'],
   ])('resolves %s to %s', (path, routeName) => {
     expect(router.resolve(path).name).toBe(routeName);
   });
