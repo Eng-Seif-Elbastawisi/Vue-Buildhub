@@ -26,7 +26,7 @@ export default class TaskAssignmentApiService extends BaseApiService {
     return await this.customPost(this.taskAssignmentEndpoints.fetchApprovedTasks, params);
   }
 
-  async fetchApprovedTasks(params?: Params) {
+  async fetchApprovedTasks(params: Params) {
     return await this.customPost(this.taskAssignmentEndpoints.fetchApprovedTasks, params);
   }
 

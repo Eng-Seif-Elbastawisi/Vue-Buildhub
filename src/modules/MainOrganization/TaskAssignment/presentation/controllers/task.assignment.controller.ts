@@ -12,6 +12,8 @@ import BaseController, {
 import { ref, type Ref } from 'vue';
 import type TaskAssignmentEmployeeTaskModel from '../../core/models/task.assignment.employee-task.model';
 import TaskAssignmentRepository from '../../data/repositories/task.assignment.repository';
+import type TaskAssignmentApprovedTaskModel from '../../core/models/task.assignment.approved-task.model';
+import type FetchApprovedTasksParams from '../../core/params/fetch.approved.tasks.params';
 
 type TaskAssignmentActionParams = Params | Record<string, unknown>;
 
@@ -109,4 +111,16 @@ export default class TaskAssignmentController extends BaseController<
 
     return this.handleTaskAssignmentActionResponse(result);
   }
+
+  async fetchApprovedTasks(
+    params: FetchApprovedTasksParams,
+  ): Promise<DataState<TaskAssignmentApprovedTaskModel[]>> {
+    const result = await this.repository.fetchApprovedTasks(params);
+
+
+    console.log("result", result);
+
+    return this.handleTaskAssignmentActionResponse(result);
+  }
+
 }

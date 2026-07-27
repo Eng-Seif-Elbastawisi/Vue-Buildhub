@@ -10,6 +10,7 @@
   import TaskAssignmentController from '../controllers/task.assignment.controller';
   import FetchApprovedTasksParams from '../../core/params/fetch.approved.tasks.params';
   import TaskAssignmentApprovedTaskModel from '../../core/models/task.assignment.approved-task.model';
+  import type { DataState } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
 
   interface ApprovedTaskTableRow {
     id: number;
@@ -30,7 +31,7 @@
 
   const perPage = ref(10);
 
-  const state = computed(() => controller.listState.value);
+  const state = ref<DataState<TaskAssignmentApprovedTaskModel[]>>();
 
   const currentPage = computed(() => {
     const page = Number(route.query.page);
@@ -114,13 +115,15 @@
   };
 
   const fetchApprovedTasks = async (page: number = currentPage.value): Promise<void> => {
-    await controller.fetchApprovedTasks(
-      new FetchApprovedTasksParams({
-        page,
-        perPage: perPage.value,
-        isAssign: 0,
-      }),
+    const response = await controller.fetchApprovedTasks(
+      new FetchApprovedTasksParams('', page, perPage.value, 1, 0),
     );
+
+    if (response.error) {
+      return;
+    }
+
+    state.value = response;
   };
   const onPageChange = async (page: number): Promise<void> => {
     await router.push({
