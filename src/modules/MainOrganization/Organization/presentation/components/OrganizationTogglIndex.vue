@@ -9,8 +9,8 @@
   import ToggleOrganizationParams from '../../core/params/toggle.organization.params';
   import OrganizationController from '../controllers/organization.toggl.controller';
 
-  const ACTIVE_STATUS = 1;
-  const INACTIVE_STATUS = 2;
+  const ACTIVE_STATUS = 2;
+  const INACTIVE_STATUS = 1;
   const STORAGE_KEY = 'organizationFetchToggleStatus';
 
   const controller = OrganizationController.getInstance();
