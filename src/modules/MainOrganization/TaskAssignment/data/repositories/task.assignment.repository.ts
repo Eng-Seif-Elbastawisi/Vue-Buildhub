@@ -180,4 +180,12 @@ export default class TaskAssignmentRepository extends BaseRepository<
       this.apiService.changeEmployeeTaskStatus(action, params),
     );
   }
+
+  async setTaskEmployeeStatus(
+    params?: TaskAssignmentActionParams,
+  ): Promise<DataState<void>> {
+    return await this.executeTaskAssignmentAction(() =>
+      this.apiService.setTaskEmployeeStatus(params),
+    );
+  }
 }

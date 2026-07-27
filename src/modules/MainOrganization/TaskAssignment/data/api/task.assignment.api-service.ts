@@ -37,4 +37,11 @@ export default class TaskAssignmentApiService extends BaseApiService {
       params as Params,
     );
   }
+
+  async setTaskEmployeeStatus(params?: TaskAssignmentActionParams) {
+    return await this.customPost(
+      this.taskAssignmentEndpoints.setTaskEmployeeStatus,
+      params as Params,
+    );
+  }
 }

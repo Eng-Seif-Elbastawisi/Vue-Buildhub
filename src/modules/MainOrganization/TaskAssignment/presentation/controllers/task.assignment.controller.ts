@@ -101,4 +101,12 @@ export default class TaskAssignmentController extends BaseController<
 
     return this.handleTaskAssignmentActionResponse(result);
   }
+
+  async setTaskEmployeeStatus(
+    params?: TaskAssignmentActionParams,
+  ): Promise<DataState<void>> {
+    const result = await this.repository.setTaskEmployeeStatus(params);
+
+    return this.handleTaskAssignmentActionResponse(result);
+  }
 }
