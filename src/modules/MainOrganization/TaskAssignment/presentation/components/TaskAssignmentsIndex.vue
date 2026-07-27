@@ -1,12 +1,12 @@
 <script setup lang="ts">
-  import UpdatedCustomInputSelect from '@/shared/FormInputs/UpdatedCustomInputSelect.vue';
+  // import UpdatedCustomInputSelect from '@/shared/FormInputs/UpdatedCustomInputSelect.vue';
   import EmployeeTasksList from './EmployeeTasksList.vue';
   import { useEmployeeTasks } from '../composables/useEmployeeTasks';
 
   const {
-    selectedEmployeeFilter,
-    employeeOptions,
-    employeesLoading,
+    // selectedEmployeeFilter,
+    // employeeOptions,
+    // employeesLoading,
     tasksState,
     tasksLoading,
     tasksCount,
@@ -21,7 +21,7 @@
     getStatusDisplay,
     getStatusClass,
     onPerPageChange,
-    onEmployeeFilterChange,
+    // onEmployeeFilterChange,
   } = useEmployeeTasks();
 </script>
 
@@ -55,17 +55,17 @@
             <span>{{ $t('task_assignment.refresh_tasks') }}</span>
           </button> -->
 
-          <RouterLink
+          <!-- <RouterLink
             class="task-assignment-page-header__add"
             :to="{ name: 'mainorganization-task-assignment-create' }"
           >
             <i class="pi pi-plus" aria-hidden="true"></i>
             <span>{{ $t('task_assignment.add_task') }}</span>
-          </RouterLink>
+          </RouterLink> -->
         </div>
       </header>
 
-      <div class="task-assignment-filters" style="margin-bottom: 1.5rem; padding: 0 1.5rem">
+      <!-- <div class="task-assignment-filters" style="margin-bottom: 1.5rem; padding: 0 1.5rem">
         <UpdatedCustomInputSelect
           id="employee_filter"
           :model-value="selectedEmployeeFilter"
@@ -77,7 +77,7 @@
           show-clear
           @update:model-value="onEmployeeFilterChange"
         />
-      </div>
+      </div> -->
 
       <EmployeeTasksList
         :tasks-state="tasksState"

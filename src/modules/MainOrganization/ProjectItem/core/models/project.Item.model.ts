@@ -3,9 +3,11 @@ import { ProjectItemPriceEnum } from '../constant/project.item.Price.enum';
 
 export default class ProjectItemModel {
   public readonly id?: number;
+  public readonly uuid?: string;
   public readonly price: number;
   public readonly quantity: number;
   public readonly final_price: number;
+
 
   public readonly item: TitleInterface<number>;
   public readonly pricing_method: ProjectItemPriceEnum;
@@ -23,6 +25,7 @@ export default class ProjectItemModel {
 
   constructor(data: {
     id?: number;
+    uuid?: string;
     price: number;
     quantity: number;
     final_price: number;
@@ -60,6 +63,7 @@ export default class ProjectItemModel {
 
     return new ProjectItemModel({
       id: json.id,
+      uuid: json.uuid,
 
       price: Number(json.price ?? 0),
       quantity: Number(json.quantity ?? 0),

@@ -126,7 +126,7 @@
                     @change-status="
                       (selectedTask, selectedStatus) =>
                         emit('change-status', selectedTask, selectedStatus)
-                    "
+                    " 
                   />
                 </td>
               </tr>

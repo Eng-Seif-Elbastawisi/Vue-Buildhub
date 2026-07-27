@@ -156,7 +156,7 @@ const navigateToNotification = (notificationType: number, typeId?: number) => {
           :class="{ 'new-item': notification.status === 'PENDING' }"
         >
           <div class="notification-content-wrapper">
-            <button @click="handleNotificationClick(notification)" class="notification-text">
+            <button class="notification-text" @click="handleNotificationClick(notification)">
               <strong>{{ wordSlice(getNotificationPayload(notification).title, 25) }}</strong>
               <p>
                 {{ getNotificationPayload(notification).message }}

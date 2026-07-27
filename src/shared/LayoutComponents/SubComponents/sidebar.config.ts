@@ -626,4 +626,18 @@ export const sidebarSections: SidebarSectionConfig[] = [
       },
     ],
   },
+
+  {
+    key: 'organization',
+    labelKey: 'organization',
+    icon: SidebarSystemIcon,
+    items: [
+      {
+        path: '/organization',
+        labelKey: 'organization',
+        icon: SidebarSysColorsIcon,
+        roles: [ 'admin'],
+      },
+    ],
+  },
 ];

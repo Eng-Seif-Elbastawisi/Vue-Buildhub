@@ -9,7 +9,24 @@ export default class OrganizationShowModel {
   public readonly employee_password?: string;
   public readonly address?: string;
   public readonly name?: string;
-  public readonly default_employee: OrganizationEmployeeModel;
+  public readonly default_employee?: OrganizationEmployeeModel;
+  // public readonly employee?: OrganizationEmployeeModel;
+  // public readonly project?: OrganizationShowModel;
+  // public readonly item?: ItemShowModel;
+  // public readonly pricing_method?: number;
+  // public readonly project_floor?: ProjectFloorProject;
+  // public readonly project_floor_space?: ProjectFloorProject;
+  // public readonly quantity?: number;
+  // public readonly final_price?: number;
+  // public readonly attachments?: ProjectAttachmentModel[];
+  // public readonly assigned_employees?: OrganizationEmployeeModel[];
+  //   public readonly histories?: number;
+
+
+
+
+  
+  
 
   constructor(data: {
     id?: number;
@@ -20,7 +37,7 @@ export default class OrganizationShowModel {
     employee_password?: string;
     address?: string;
     name?: string;
-    default_employee: OrganizationEmployeeModel;
+    default_employee?: OrganizationEmployeeModel;
   }) {
     this.id = data.id;
     this.phone = data.phone;
@@ -57,7 +74,7 @@ export default class OrganizationShowModel {
       employee_phone: json.employee_phone,
       employee_password: json.employee_password,
       address: json.address,
-      default_employee: OrganizationEmployeeModel.fromJson(json.default_employee),
+      default_employee:json.default_employee ?  OrganizationEmployeeModel.fromJson(json.default_employee) : undefined,
       name: json.name,
     });
   }

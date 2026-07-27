@@ -7,6 +7,10 @@ const mountForm = (props: Record<string, unknown> = {}) =>
     props: {
       selectedProjectDepartmentItem: null,
       selectedEmployees: [],
+      selectedEmployeeReviewer: null,
+      selectedDurationType: null,
+      durationTypeOptions: [{ id: 'day', title: 'Day' }],
+      duration: null,
       projectDepartmentItemOptions: [{ id: 39, title: 'Layout plan' }],
       employeeOptions: [{ id: 16, title: 'Mohamed Saad' }],
       projectDepartmentItemsLoading: false,
@@ -99,10 +103,8 @@ describe('TaskAssignmentForm', () => {
       },
     });
 
-    const inputs = wrapper.findAll('.task-assignment-form__input');
-
-    await inputs[0].setValue('Updated alt');
-    await inputs[1].setValue('https://example.com/brief');
+    await wrapper.find('#task_assignment_attachment_alt_0').setValue('Updated alt');
+    await wrapper.find('#task_assignment_attachment_link_0').setValue('https://example.com/brief');
     await wrapper.find('.task-assignment-attachment__remove').trigger('click');
 
     expect(wrapper.text()).toContain('brief.jpg');

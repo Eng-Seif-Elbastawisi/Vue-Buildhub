@@ -1,6 +1,7 @@
 import TranslationParams from '@/base/Core/Params/translationParams';
 import { ServiceType } from '@/modules/MainOrganization/Project/core/constants/serviceType.enum';
 import { ConvertStatus } from '../constants/convert.status.enum';
+import ProjectAttachmentModel from './project.show.attachment';
 
 export type ProjectSelectItem = {
   id: number;
@@ -8,15 +9,6 @@ export type ProjectSelectItem = {
   parent?: ProjectSelectItem | null;
 };
 
-export type ProjectAttachmentModel = {
-  id?: number;
-  file: string;
-  file_size?: string;
-  alt?: string | null;
-  type?: number;
-  link?: string | null;
-  created_at?: string;
-};
 
 export type ProjectPreviewModel = {
   id: number;
@@ -333,8 +325,8 @@ export default class ProjectShowModel {
       date: json.date as string | undefined,
       notes: json.notes as string | null | undefined,
 
-      attachments: Array.isArray(json.attachments)
-        ? (json.attachments as ProjectAttachmentModel[])
+      attachments: json.attachments && json.attachments.length > 0
+        ? json.attachments?.map((item) => ProjectAttachmentModel.fromJson(item))
         : [],
 
       project_previews: projectPreviews,
@@ -414,7 +406,7 @@ export default class ProjectShowModel {
       },
     ],
 
-    convert_status: ConvertStatus.PENDING,
-    status: ConvertStatus.PENDING,
+    convert_status: ConvertStatus.WAITING_PREVIEW,
+    status: ConvertStatus.WAITING_PREVIEW,
   });
 }

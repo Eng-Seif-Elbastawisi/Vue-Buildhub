@@ -28,6 +28,8 @@ export default class OrganizationEmployeeModel {
   }
 
   static fromJson(json: any): OrganizationEmployeeModel {
+
+    console.log(json);
     if (!json) {
       throw new Error('Cannot create OrganizationEmployeeModel from null or undefined');
     }

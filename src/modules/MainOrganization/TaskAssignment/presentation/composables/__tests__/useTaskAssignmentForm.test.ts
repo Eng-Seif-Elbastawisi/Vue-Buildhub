@@ -139,6 +139,9 @@ describe('useTaskAssignmentForm', () => {
         }),
       },
     ]);
+    vm.updateSelectedEmployeeReviewer({ id: 20, title: 'Sara Ali' });
+    vm.updateDurationType({ id: 1, title: 'Day' });
+    vm.updateDuration(5);
     vm.updateAttachmentAlt(0, 'Execution brief');
     vm.updateAttachmentLink(0, '');
 
@@ -147,6 +150,9 @@ describe('useTaskAssignmentForm', () => {
     expect(mocks.assignProjectDepartmentItemTask.mock.calls[0][0].toMap()).toEqual({
       project_department_item_id: 39,
       employee_ids: [16, 20],
+      employee_review_id: 20,
+      duration_type: 1,
+      duration: 5,
       notes: 'Review design before delivery',
       has_attached: true,
       attachments: [
