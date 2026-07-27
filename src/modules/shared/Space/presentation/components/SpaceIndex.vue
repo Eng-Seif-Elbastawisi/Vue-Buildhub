@@ -66,9 +66,9 @@
 </script>
 
 <template>
-  <div class="Space-page">
+  <div class="Space-page"> 
     <header class="page-header">
-      <div>
+      <div class="header-text">
         <h4>{{ $t('Space.list_title') }}</h4>
         <p>{{ $t('Space.list_description') }}</p>
       </div>
@@ -210,7 +210,11 @@
 </template>
 
 <style scoped lang="scss">
-  .Space-page {
+
+.header-text{
+  margin-bottom: 1rem;
+}
+   .Space-page {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
@@ -229,14 +233,7 @@
     gap: 10px;
   }
 
-  .page-header,
-  .row-actions {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: start;
-    gap: 1rem;
-  }
+ 
 
   .page-header p,
   .empty-state p {
