@@ -37,7 +37,7 @@
     loading.value = true;
     try {
       await controller.update(params.value, undefined, formKey);
-      router.push(userStore.user?.type === 1 ? '/mainportal/item' : '/organization/item');
+      // router.push(userStore.user?.type === 1 ? '/mainportal/item' : '/organization/item');
     } finally {
       loading.value = false;
     }

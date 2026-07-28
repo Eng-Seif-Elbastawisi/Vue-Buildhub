@@ -3,124 +3,47 @@ import { computed, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import Dialog from 'primevue/dialog';
 import Image from 'primevue/image';
-
 import ProjectItemController from '@/modules/MainOrganization/ProjectItem/presentation/controllers/project.Item.controller';
 import TaskAssignmentController from '../controllers/task.assignment.controller';
-
 import SetTaskEmployeeStatusParams from '../../core/params/set.task.employee.status.params';
 import ShowTaskItemParams from '../../core/params/show.task.Item.params';
-
 import { TaskEmployeeStatusEnum } from '../../core/constants/task.employee.status.enum';
-
-import {
-  InsideStatusType,
-  getTypeNameKey,
-} from '../../core/constants/inside.status.enum';
-
+import {  InsideStatusType,  getTypeNameKey,} from '../../core/constants/inside.status.enum';
 import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
 import { dialogManager } from '@/base/Presentation/Dialogs/dialog.manager';
-
 import type ProjectItemShowModel from '@/modules/MainOrganization/ProjectItem/core/models/project.Item.show.model';
-
-import { ProjectItemPriceEnum } from '@/modules/MainOrganization/ProjectItem/core/constant/project.item.Price.enum';
 import HandleFilesUpload from '@/shared/FormInputs/HandleFilesUpload.vue';
+import Accordion from 'primevue/accordion';
+import AccordionTab from 'primevue/accordiontab';
 
 
-/**
- * Props
- */
 const props = defineProps<{
-  /**
-   * project_department_item.id
-   *
-   * Example: 44
-   */
   id: string;
-
-  /**
-   * project_department_item.uuid
-   *
-   * Example:
-   * 46e10f7b-8dda-4df5-b036-143e2f51e98e
-   */
   uuid: string;
 }>();
 
-
-/**
- * I18n
- */
 const { t } = useI18n();
 
+const projectItemController = ProjectItemController.getInstance();
 
-/**
- * Controllers
- */
-const projectItemController =
-  ProjectItemController.getInstance();
+const taskAssignmentController = TaskAssignmentController.getInstance();
 
-const taskAssignmentController =
-  TaskAssignmentController.getInstance();
-
-
-/**
- * Project department item ID
- */
 const projectDepartmentItemId = computed(() => {
   return String(props.id ?? '');
 });
 
-
-/**
- * Project department item UUID
- */
 const projectDepartmentItemUuid = computed(() => {
   return String(props.uuid ?? '');
 });
 
-
-/**
- * Item data
- */
 const itemData = computed(() => {
   return projectItemController.itemData.value as ProjectItemShowModel | null;
 });
 
-
-/**
- * ============================================
- * Inside Status
- * ============================================
- *
- * IMPORTANT:
- *
- * inside_status comes from backend.
- *
- * Frontend DOES NOT change this value manually.
- *
- * ASSIGN  = 1
- * WORKING = 2
- * HOLD    = 3
- * REVIEW  = 4
- */
 const insideStatus = computed(() => {
   return itemData.value?.inside_status;
 });
 
-
-/**
- * ============================================
- * Action Buttons Visibility
- * ============================================
- */
-
-/**
- * Start button
- *
- * Show when:
- * ASSIGN
- * HOLD
- */
 const isStartVisible = computed(() => {
   return (
     insideStatus.value === InsideStatusType.ASSIGN ||
@@ -129,12 +52,6 @@ const isStartVisible = computed(() => {
 });
 
 
-/**
- * Hold button
- *
- * Show only when:
- * WORKING
- */
 const isHoldVisible = computed(() => {
   return (
     insideStatus.value === InsideStatusType.WORKING
@@ -142,52 +59,12 @@ const isHoldVisible = computed(() => {
 });
 
 
-/**
- * Finish button
- *
- * Show only when:
- * WORKING
- */
 const isFinishVisible = computed(() => {
   return (
     insideStatus.value === InsideStatusType.WORKING
   );
 });
 
-
-/**
- * ============================================
- * Pricing Method
- * ============================================
- */
-const pricingMethodLabel = computed(() => {
-  switch (itemData.value?.pricing_method) {
-    case ProjectItemPriceEnum.GENERAL_ITEM:
-      return t(
-        'project_item.pricing_methods.GENERAL_ITEM',
-      );
-
-    case ProjectItemPriceEnum.SPACE_RELATED:
-      return t(
-        'project_item.pricing_methods.SPACE_RELATED',
-      );
-
-    case ProjectItemPriceEnum.FULL_FLOOR_RELATED:
-      return t(
-        'project_item.pricing_methods.FULL_FLOOR_RELATED',
-      );
-
-    default:
-      return '-';
-  }
-});
-
-
-/**
- * ============================================
- * Loading / Error
- * ============================================
- */
 const itemLoading = computed(() => {
   return projectItemController.isItemLoading();
 });
@@ -197,12 +74,6 @@ const itemError = computed(() => {
   return projectItemController.errorMessage.value;
 });
 
-
-/**
- * ============================================
- * Action State
- * ============================================
- */
 const actionLoading = ref(false);
 
 const activeDialogAction = ref<
@@ -216,11 +87,6 @@ const updateAttachments = (files: File[]): void => {
   attachmentFiles.value = files;
 };
 
-/**
- * ============================================
- * UUID Validation
- * ============================================
- */
 const isValidUuid = computed(() => {
   const uuidRegex =
     /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -231,11 +97,6 @@ const isValidUuid = computed(() => {
 });
 
 
-/**
- * ============================================
- * Modal
- * ============================================
- */
 const openModal = (
   action: 'START' | 'HOLD' | 'FINISH',
 ): void => {
@@ -255,37 +116,6 @@ const closeModal = (): void => {
   attachmentFiles.value = [];
 };
 
-
-/**
- * ============================================
- * Attachment
- * ============================================
- */
-// const handleFileChange = (
-//   event: Event,
-// ): void => {
-//   const target =
-//     event.target as HTMLInputElement;
-
-//   attachmentFile.value =
-//     target.files?.[0] ?? null;
-// };
-
-
-/**
- * ============================================
- * Get Status Sent To Endpoint
- * ============================================
- *
- * IMPORTANT:
- *
- * This uses TaskEmployeeStatusEnum.
- *
- * This is NOT inside_status.
- *
- * TaskEmployeeStatusEnum is only sent
- * to the endpoint.
- */
 const getTargetStatus =
   (): TaskEmployeeStatusEnum => {
     switch (activeDialogAction.value) {
@@ -302,11 +132,7 @@ const getTargetStatus =
   };
 
 
-/**
- * ============================================
- * Confirm Status Change
- * ============================================
- */
+
 const confirmStatusChange =
   async (): Promise<void> => {
     if (!activeDialogAction.value) {
@@ -323,20 +149,9 @@ const confirmStatusChange =
 
     actionLoading.value = true;
 
-
-    /**
-     * This is the status sent to endpoint.
-     *
-     * START_EMPLOYEE
-     * HOLD_EMPLOYEE
-     * FINISH_EMPLOYEE
-     */
     const targetStatus = getTargetStatus();
 
 
-    /**
-     * Attachment
-     */
     const attachments =
       attachmentFiles.value.length > 0
         ? attachmentFiles.value.map((file) => ({
@@ -345,32 +160,15 @@ const confirmStatusChange =
         : undefined;
 
 
-    /**
-     * Endpoint params
-     */
     const params =
       new SetTaskEmployeeStatusParams({
-        /**
-         * project_department_item.id
-         *
-         * Example:
-         * 44
-         */
         project_department_item_id:
           Number(
             projectDepartmentItemId.value,
           ),
-
-        /**
-         * TaskEmployeeStatusEnum
-         *
-         * NOT InsideStatusType
-         */
         status: targetStatus,
-
         notes:
           actionNotes.value || undefined,
-
         attachments,
       });
 
@@ -381,9 +179,6 @@ const confirmStatusChange =
           .setTaskEmployeeStatus(params);
 
 
-      /**
-       * Success
-       */
       if (result instanceof DataSuccess) {
         dialogManager.toastSuccess(
           result.message ||
@@ -392,25 +187,8 @@ const confirmStatusChange =
             ),
         );
 
-
-        /**
-         * Close modal first
-         */
         closeModal();
 
-
-        /**
-         * IMPORTANT:
-         *
-         * Don't change inside_status manually.
-         *
-         * Fetch the task again.
-         *
-         * Backend returns the real inside_status.
-         *
-         * Buttons will automatically update
-         * depending on inside_status.
-         */
         await fetchTaskDetails();
 
         return;
@@ -442,16 +220,8 @@ const confirmStatusChange =
   };
 
 
-/**
- * ============================================
- * Fetch Task Details
- * ============================================
- */
 const fetchTaskDetails =
   async (): Promise<void> => {
-    /**
-     * UUID missing
-     */
     if (!projectDepartmentItemUuid.value) {
       dialogManager.toastError(
         'Task UUID is missing.',
@@ -460,10 +230,6 @@ const fetchTaskDetails =
       return;
     }
 
-
-    /**
-     * Invalid UUID
-     */
     if (!isValidUuid.value) {
       dialogManager.toastError(
         'Task UUID is invalid.',
@@ -472,17 +238,6 @@ const fetchTaskDetails =
       return;
     }
 
-
-    /**
-     * Fetch task.
-     *
-     * Backend returns:
-     *
-     * inside_status
-     *
-     * and that status controls
-     * Start / Hold / Finish buttons.
-     */
     await projectItemController.fetchOne(
       new ShowTaskItemParams({
         uuid:
@@ -494,21 +249,10 @@ const fetchTaskDetails =
   };
 
 
-/**
- * ============================================
- * Mounted
- * ============================================
- */
 onMounted(() => {
   void fetchTaskDetails();
 });
 
-
-/**
- * ============================================
- * Watch Props
- * ============================================
- */
 watch(
   () => [
     props.id,
@@ -534,16 +278,6 @@ watch(
           <p>{{ $t('task_assignment.description') }}</p>
         </div>
       </div>
-
-      <!-- <div class="task-assignment-page-header__actions">
-        <router-link
-          class="task-assignment-page-header__refresh"
-          :to="{ name: 'mainorganization-task-assignment-index' }"
-        >
-          <i class="pi pi-arrow-left" aria-hidden="true"></i>
-          <span>{{ $t('task_assignment.back_to_tasks') }}</span>
-        </router-link>
-      </div> -->
     </header>
 
     <div v-if="itemLoading" class="task-assignment-card task-assignment-card--loading">
@@ -572,30 +306,18 @@ watch(
               }}
             </span>
           </div>
-
-          <!-- Price -->
-          <div class="detail-item">
-            <span class="detail-label">{{ $t('project_item.price') }}</span>
-            <span class="detail-value">{{ itemData?.price ?? '-' }}</span>
-          </div>
-
-          <!-- Final price -->
-          <div class="detail-item">
-            <span class="detail-label">{{ $t('project_item.total_price_label') }}</span>
-            <span class="detail-value">{{ itemData?.final_price ?? '-' }}</span>
-          </div>
+          
 
           <!-- Quantity -->
           <div class="detail-item">
-            <span class="detail-label">{{ $t('project_item.quantity') }}</span>
-            <span class="detail-value">{{ itemData?.quantity ?? '-' }}</span>
+            <span class="detail-label">{{ $t('employee.name') }}</span>
+            <span class="detail-value">{{ itemData?.employee?.name ?? '-' }}</span>
+          </div>
+           <div class="detail-item">
+            <span class="detail-label">{{ $t('department') }}</span>
+            <span class="detail-value">{{ itemData?.department ?? '-' }}</span>
           </div>
 
-          <!-- Pricing method -->
-          <div class="detail-item">
-            <span class="detail-label">{{ $t('project_item.pricing_method') }}</span>
-            <span class="detail-value">{{ pricingMethodLabel }}</span>
-          </div>
 
           <!-- Has attachment flag -->
           <div class="detail-item">
@@ -622,38 +344,39 @@ watch(
               </span>
             </span>
           </div>
-
-          <!-- Task status -->
-          <!-- <div class="detail-item">
-            <span class="detail-label">{{ $t('status') }}</span>
-            <span class="detail-value">
-              <span v-if="isFinished" class="status-badge status-badge--finished">
-                {{ $t('task_assignment.actions.finish') }}
-              </span>
-              <span v-else-if="currentStatus === TaskEmployeeStatusEnum.START_EMPLOYEE" class="status-badge status-badge--started">
-                {{ $t('task_assignment.actions.start') }}
-              </span>
-              <span v-else-if="currentStatus === TaskEmployeeStatusEnum.HOLD_EMPLOYEE" class="status-badge status-badge--held">
-                {{ $t('task_assignment.actions.hold') }}
-              </span>
-              <span v-else class="status-badge status-badge--pending">
-                -
-              </span>
+        </div>
+      </div>
+            <!-- project -->
+      <div class="task-details-section" >
+        <h3>{{ $t('project') }}</h3>
+        <div class="task-details-grid" >
+           <div class="detail-item">
+            <span class="detail-label">{{ $t('client.title') }}</span>
+            <span class="detail-value"> {{ itemData?.project?.client?.title ?? '-' }}</span>
+          </div>
+           <div class="detail-item">
+            <span class="detail-label">{{ $t('project_name') }}</span>
+            <span class="detail-value"> 
+              {{  itemData?.project?.title?.find( (item) => item.locale === 'en' )?.title ?? '-' }}
             </span>
-          </div> -->
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">{{ $t('description') }} </span>
+            <span class="detail-value">
+              {{  itemData?.project?.description?.find( (item) => item.locale === 'en' )?.description ?? '-' }}
+            </span>
+          </div>
+
         </div>
       </div>
 
       <!-- history -->
+
       <div class="task-details-section" >
-        <h3>{{ $t('histories') }}</h3>
-        <div class="task-details-grid" v-for="history in itemData?.histories" :key="history.id">
-          <!-- <div class="detail-item">
-            <span class="detail-label">{{ $t('id') }}</span>
-            <span class="detail-value">
-              {{ history.id }}
-            </span>
-          </div> -->
+        <!-- <h3>{{ $t('histories') }}</h3> -->
+               <Accordion :activeIndex="0" style="border: none;">
+    <AccordionTab :header="$t('histories')" class="histories-header">
+             <div class="task-details-grid" v-for="history in itemData?.histories" :key="history.id">
            <div class="detail-item">
             <span class="detail-label">{{ $t('status') }}</span>
             <span class="detail-value">
@@ -666,49 +389,28 @@ watch(
               {{ employee.employee?.name }}
             </span>
           </div>
+         
+           <div v-if="history.created_at" class="detail-item">
+            <span class="detail-label">{{ $t('date') }}</span>
+            <span class="detail-value">
+              {{ history.created_at }}
+            </span>
+          </div>
+            <div v-if="history.notes" class="detail-item">
+            <span class="detail-label">{{ $t('notes') }}</span>
+            <span class="detail-value">
+              {{ history.notes }}
+            </span>
+          </div>
+
         </div>
+    </AccordionTab>
+</Accordion>
+   
       </div>
        <!-- department -->
-      <div class="task-details-section" >
-        <h3>{{ $t('department') }}</h3>
-        <div class="task-details-grid" >
-          <div class="detail-item">
-            <span class="detail-value">
-              {{ itemData?.department ?? '-' }}
-            </span>
-          </div>
-        </div>
-      </div>
-      <!-- project -->
-      <div class="task-details-section" >
-        <h3>{{ $t('project') }}</h3>
-        <div class="task-details-grid" >
-          <div class="detail-item">
-            <span class="detail-value">
-              <span class="detail-label">{{ $t('client.title') }}</span> 
-              {{ itemData?.project?.client?.title ?? '-' }}
-            </span>
-          </div> 
-          <div class="detail-item">
-            <span class="detail-value">
-              <span class="detail-label">{{ $t('project.title') }} </span>
-              {{  itemData?.project?.title?.find( (item) => item.locale === 'en' )?.title ?? '-' }}
-            </span>
-          </div>
-          <div class="detail-item">
-            <span class="detail-value">
-              <span class="detail-label">{{ $t('project.description') }} </span>
-              {{  itemData?.project?.description?.find( (item) => item.locale === 'en' )?.description ?? '-' }}
-            </span>
-          </div>
-            <div class="detail-item">
-            <span class="detail-value">
-              <span class="detail-label">{{ $t('project.created_at') }} </span>         
-              {{  itemData?.project?.created_at ?? '-' }}
-             </span>
-          </div>
-        </div>
-      </div>
+ 
+
 
       <!-- ── Floor & space ──────────────────────────────────── -->
       <!-- <div class="task-details-section">
@@ -729,45 +431,6 @@ watch(
         </div>
       </div> -->
 
-      <!-- ── Organisation & employees ──────────────────────── -->
-      <div class="task-details-section">
-        <h3>{{ $t('general.information') }}</h3>
-
-        <div class="task-details-grid">
-          <!-- Organisation -->
-          <div v-if="itemData?.organization" class="detail-item">
-            <span class="detail-label">{{ $t('organization.title') }}</span>
-            <span class="detail-value">{{ itemData.organization.name || '-' }}</span>
-          </div>
-
-          <!-- Project -->
-          <div v-if="itemData?.project" class="detail-item">
-            <span class="detail-label">{{ $t('project.title') }}</span>
-            <span class="detail-value">{{ itemData.project.name || '-' }}</span>
-          </div>
-
-          <!-- Default employee -->
-          <div v-if="itemData?.default_employee" class="detail-item">
-            <span class="detail-label">{{ $t('employee.default') }}</span>
-            <span class="detail-value">{{ itemData.default_employee.name || '-' }}</span>
-          </div>
-        </div>
-
-        <!-- Assigned employees -->
-        <div v-if="itemData?.assigned_employees?.length" class="task-details-sub-section">
-          <h4>{{ $t('task_assignment.assigned_employees') }}</h4>
-          <ul class="employee-list">
-            <li
-              v-for="emp in itemData.assigned_employees"
-              :key="emp.id"
-              class="employee-list__item"
-            >
-              <i class="pi pi-user" aria-hidden="true" />
-              <span>{{ emp.name || emp.employee_name || '-' }}</span>
-            </li>
-          </ul>
-        </div>
-      </div>
 
       <!-- ── Attachments ─────────────────────────────────────── -->
       <div v-if="itemData?.attachments?.length" class="task-details-section">
@@ -862,7 +525,7 @@ watch(
         </p>
 
         <!-- Notes input for Hold and Finish -->
-        <div v-if="activeDialogAction === 'HOLD' || activeDialogAction === 'FINISH'" class="form-group">
+        <div v-if="activeDialogAction === 'HOLD' || activeDialogAction === 'FINISH'" class="form-group form-group-full">
           <label for="task_action_notes">{{ $t('task_assignment.modals.notes_label') }}</label>
           <textarea
             id="task_action_notes"
@@ -915,7 +578,33 @@ watch(
 
 <style lang="scss">
 @use '../styles/task_assignment';
-
+.p-dialog{
+  background-color: white;
+  color: black;
+}
+.form-group{
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 1rem 0;
+  textarea{
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 10px;
+    outline: none;
+    background-color: white;
+    &:focus{
+      border-color: #1976D2;
+    }
+  }
+}
+.p-accordionpanel:not(.p-disabled).p-accordionpanel-active>.p-accordionheader, .p-accordionpanel:not(.p-accordionpanel-active,.p-disabled)>.p-accordionheader{
+  font-size: 20px !important;
+}
+.p-accordionpanel:not(.p-disabled).p-accordionpanel-active>.p-accordionheader, .p-accordionpanel:not(.p-accordionpanel-active,.p-disabled)>.p-accordionheader:hover{
+  font-size: 20px !important;
+}
 .task-assignment-show-page {
   display: flex;
   flex-direction: column;
@@ -1077,30 +766,6 @@ watch(
     }
   }
 
-  .modal-buttons-footer {
-    display: flex;
-    justify-content: flex-end;
-    gap: 0.75rem;
-
-    .btn {
-      padding: 0.5rem 1.25rem;
-      border-radius: 6px;
-      font-weight: 500;
-      cursor: pointer;
-      border: 1px solid transparent;
-
-      &--secondary {
-        background-color: var(--gray-light, #f3f4f6);
-        color: var(--text-color, #374151);
-        border-color: var(--border-color, #d1d5db);
-      }
-
-      &--primary {
-        background-color: var(--primary-color, #2563eb);
-        color: var(--vt-c-white);
-      }
-    }
-  }
 
   .task-details-sub-section {
     margin-top: 1.25rem;
@@ -1161,4 +826,31 @@ watch(
     }
   }
 }
+
+  .modal-buttons-footer {
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+    width: 100%;
+
+    .btn {
+      padding: 0.5rem 1.25rem;
+      border-radius: 6px;
+      font-weight: 500;
+      width: 100%;
+      cursor: pointer;
+      border: 1px solid transparent;
+
+      &--secondary {
+        background-color: var(--gray-light, #f3f4f6);
+        color: var(--text-color, #374151);
+        border-color: var(--border-color, #d1d5db);
+      }
+
+      &--primary {
+        background-color: var(--primary-color, #2563eb);
+        color: var(--vt-c-white);
+      }
+    }
+  }
 </style>

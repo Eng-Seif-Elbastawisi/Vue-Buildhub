@@ -7,6 +7,7 @@ export default class ProjectHistoryModel {
   public readonly employee?: OrganizationEmployeeModel;
   public readonly history_employees?: ProjectHistoryModel[];
   public readonly created_at?: string;
+  public readonly notes?: string;
 
   constructor(data: {
     id?: number;
@@ -14,12 +15,14 @@ export default class ProjectHistoryModel {
     employee?: OrganizationEmployeeModel;
     history_employees?: ProjectHistoryModel[];
     created_at?: string;
+    notes?: string;
   }) {
     this.id = data.id;
     this.status = data.status;
     this.employee = data.employee;
     this.history_employees = data.history_employees;
     this.created_at = data.created_at;
+    this.notes = data.notes;
     Object.freeze(this);
   }
 
@@ -32,6 +35,7 @@ export default class ProjectHistoryModel {
       employee: OrganizationEmployeeModel.fromJson(json.employee as Record<string, unknown> | undefined),
       history_employees: (json.history_employees as Record<string, unknown>[] ?? []).map((employee) => ProjectHistoryModel.fromJson(employee)),
       created_at: json.created_at as string | undefined,
+      notes: json.notes as string | undefined,
     });
   }
 
@@ -41,5 +45,6 @@ export default class ProjectHistoryModel {
     employee: OrganizationEmployeeModel.example,
     history_employees: [],
     created_at: '2026-07-28 12:37:26',
+    notes: 'notes',
   });
 }
