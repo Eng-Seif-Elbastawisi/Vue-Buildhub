@@ -577,7 +577,7 @@ watch(
 </template>
 
 <style lang="scss">
-@use '../styles/task_assignment';
+@use '../styles/task_assignment'; 
 .p-dialog{
   background-color: white;
   color: black;
