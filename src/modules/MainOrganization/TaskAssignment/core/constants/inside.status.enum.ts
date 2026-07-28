@@ -15,14 +15,14 @@ export type Type = InsideStatusType;
 export function getTypeNameKey(type?: InsideStatusType): string {
     switch (type) {
         case InsideStatusType.ASSIGN:
-            return 'task_assignment.inside.assigned';
+            return 'assigned';
         case InsideStatusType.WORKING:
-            return 'task_assignment.inside.working';
+            return 'working';
         case InsideStatusType.HOLD:
-            return 'task_assignment.inside.hold';
+            return 'hold';
         case InsideStatusType.REVIEW:
-            return 'task_assignment.inside.review';
+            return 'review';
         default:
-            return 'task_assignment.inside.assigned';
+            return 'assigned';
     }
 }
