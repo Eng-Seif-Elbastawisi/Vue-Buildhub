@@ -454,12 +454,12 @@ watch(
       <div class="task-details-section" >
         <h3>{{ $t('histories') }}</h3>
         <div class="task-details-grid" v-for="history in itemData?.histories" :key="history.id">
-          <div class="detail-item">
+          <!-- <div class="detail-item">
             <span class="detail-label">{{ $t('id') }}</span>
             <span class="detail-value">
               {{ history.id }}
             </span>
-          </div>
+          </div> -->
            <div class="detail-item">
             <span class="detail-label">{{ $t('status') }}</span>
             <span class="detail-value">
