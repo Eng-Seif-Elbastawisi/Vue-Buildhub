@@ -330,22 +330,16 @@ export const sidebarSections: SidebarSectionConfig[] = [
         roles: ['organization'],
       },
       {
+        labelKey: 'sidebar.plan',
+        path: '/task-assignment/approved',
+        icon: SidebarPlanIcon,
+        roles: ['organization'],
+      },
+      {
         path: '/task-assignment',
         labelKey: 'sidebar.task_assignment',
         icon: SidebarProductivityIcon,
         roles: ['organization'],
-      },
-      {
-        path: '/task-assignment/approved',
-        labelKey: 'sidebar.task_assignment_approved',
-        icon: SidebarProductivityIcon,
-        roles: ['organization'],
-      },
-      {
-        labelKey: 'sidebar.plan',
-        icon: SidebarPlanIcon,
-        roles: ['organization'],
-        disabled: true,
       },
 
       {
@@ -641,7 +635,7 @@ export const sidebarSections: SidebarSectionConfig[] = [
         path: '/organization',
         labelKey: 'organization',
         icon: SidebarSysColorsIcon,
-        roles: [ 'admin'],
+        roles: ['admin'],
       },
     ],
   },

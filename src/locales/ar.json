@@ -1944,5 +1944,20 @@
   "task_assignment.inside.working": "تحت التنفيذ",
   "task_assignment.inside.hold": "متوقف",
   "task_assignment.inside.review": "قيد المراجعة",
-  "task_assignment.inside.in_progress": "قيد التنفيذ"
+  "task_assignment.inside.in_progress": "قيد التنفيذ",
+  "task_assignment.form.has_attached.label": "لديه مرفق",
+  "task_assignment.form.has_attached.description": "لديه مرفق وصف",
+  "task_assignment.form.duration": "مدة",
+  "task_assignment.form.duration_type": "نوع المدة",
+  "task_assignment.form.employee": "الموظف",
+  "task_assignment.form.employee_reviewer": "المراجع",
+  "task_assignment.form.notes": "ملاحظات",
+  "task_assignment.form.attachments": "المرفقات",
+  "task_assignment.form.add_attachment": "إضافة مرفق",
+  "item.assigned": "مُكَلَّف",
+  "item.working": "تحت التنفيذ",
+  "item.hold": "متوقف",
+  "item.review": "قيد المراجعة",
+  "item.in_progress": "قيد التنفيذ",
+  "item": "بند"
 }

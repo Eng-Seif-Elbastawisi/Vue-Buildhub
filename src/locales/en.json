@@ -1945,5 +1945,8 @@
   "task_assignment.inside.working": "Working",
   "task_assignment.inside.hold": "Hold",
   "task_assignment.inside.review": "Review",
-  "task_assignment.inside.in_progress": "In progress"
+  "task_assignment.inside.in_progress": "In progress",
+  "task_assignment.form.has_attached.label": "Has Attached",
+  "task_assignment.form.has_attached.description": "Has Attached description",
+  "item": "Item"
 }

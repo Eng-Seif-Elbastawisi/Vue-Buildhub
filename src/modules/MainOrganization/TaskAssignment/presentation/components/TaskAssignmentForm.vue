@@ -388,7 +388,7 @@
         <input
           id="duration"
           v-model.number="form.duration"
-          class="task-assignment-form__input w-full"
+          class="field-input"
           type="number"
           min="1"
           step="1"
