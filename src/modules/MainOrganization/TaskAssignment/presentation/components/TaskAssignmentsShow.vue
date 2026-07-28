@@ -12,9 +12,11 @@ import {  InsideStatusType,  getTypeNameKey,} from '../../core/constants/inside.
 import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
 import { dialogManager } from '@/base/Presentation/Dialogs/dialog.manager';
 import type ProjectItemShowModel from '@/modules/MainOrganization/ProjectItem/core/models/project.Item.show.model';
-import HandleFilesUpload from '@/shared/FormInputs/HandleFilesUpload.vue';
+import HandleFilesUpload, { type UploadedFile } from '@/shared/FormInputs/HandleFilesUpload.vue';
 import Accordion from 'primevue/accordion';
 import AccordionTab from 'primevue/accordiontab';
+import ProjectAttachmentParams from '../../core/params/project.attachment.params';
+// import { filesToBase64, type FileBase64 } from '@/base/Presentation/Utils/file_to_base_64';
 
 
 const props = defineProps<{
@@ -82,8 +84,9 @@ const activeDialogAction = ref<
 
 const actionNotes = ref('');
 
-const attachmentFiles = ref<File[]>([]);
-const updateAttachments = (files: File[]): void => {
+const attachmentFiles = ref<UploadedFile[]>([]);
+const updateAttachments = async (files: File[]): Promise<void> => {
+  // console.log('Selected files:', files);
   attachmentFiles.value = files;
 };
 
@@ -153,11 +156,15 @@ const confirmStatusChange =
 
 
     const attachments =
-      attachmentFiles.value.length > 0
-        ? attachmentFiles.value.map((file) => ({
-            file,
-          }))
-        : undefined;
+      attachmentFiles.value.map(
+        (file) =>
+          new ProjectAttachmentParams({
+            file: file.base64,
+            alt: file.name,
+          })
+      );
+
+      console.log('Attachments:', attachments);
 
 
     const params =
@@ -543,7 +550,6 @@ watch(
         <HandleFilesUpload
           id="attachments"
           :label="$t('attachments')"
-          :file="attachmentFiles"
           :multiple="true"
           @change="updateAttachments"
         />
