@@ -152,12 +152,12 @@
   gap: 1rem;
 }
 
-// .task-assignment-form__field {
-//   display: flex;
-//   min-width: 0;
-//   flex-direction: column;
-//   gap: 0.45rem;
-// }
+.task-assignment-form__field {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.45rem;
+}
 
 .task-assignment-form__field--full {
   grid-column: 1 / -1;
@@ -181,10 +181,10 @@
   font-size: var(--sm-size);
 }
 
-// .task-assignment-form__input {
-//   min-height: 42px;
-//   padding: 0.7rem 0.85rem;
-// }
+.task-assignment-form__input {
+  min-height: 42px;
+  padding: 0.7rem 0.85rem;
+}
 
 .task-assignment-form__textarea {
   min-height: 112px;
