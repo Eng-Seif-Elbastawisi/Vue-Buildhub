@@ -2,18 +2,33 @@
 import { computed, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import Dialog from 'primevue/dialog';
+import Image from 'primevue/image';
+
 import ProjectItemController from '@/modules/MainOrganization/ProjectItem/presentation/controllers/project.Item.controller';
 import TaskAssignmentController from '../controllers/task.assignment.controller';
+
 import SetTaskEmployeeStatusParams from '../../core/params/set.task.employee.status.params';
+import ShowTaskItemParams from '../../core/params/show.task.Item.params';
+
 import { TaskEmployeeStatusEnum } from '../../core/constants/task.employee.status.enum';
+
+import {
+  InsideStatusType,
+  getTypeNameKey,
+} from '../../core/constants/inside.status.enum';
+
 import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
 import { dialogManager } from '@/base/Presentation/Dialogs/dialog.manager';
-import ShowTaskItemParams from '../../core/params/show.task.Item.params';
-import type ProjectItemShowModel from '@/modules/MainOrganization/ProjectItem/core/models/project.Item.show.model';
-import { ProjectItemPriceEnum } from '@/modules/MainOrganization/ProjectItem/core/constant/project.item.Price.enum';
-import Image from 'primevue/image';
-import { getTypeNameKey } from '../../core/constants/inside.status.enum';
 
+import type ProjectItemShowModel from '@/modules/MainOrganization/ProjectItem/core/models/project.Item.show.model';
+
+import { ProjectItemPriceEnum } from '@/modules/MainOrganization/ProjectItem/core/constant/project.item.Price.enum';
+import HandleFilesUpload from '@/shared/FormInputs/HandleFilesUpload.vue';
+
+
+/**
+ * Props
+ */
 const props = defineProps<{
   /**
    * project_department_item.id
@@ -31,52 +46,163 @@ const props = defineProps<{
   uuid: string;
 }>();
 
+
+/**
+ * I18n
+ */
 const { t } = useI18n();
 
+
+/**
+ * Controllers
+ */
 const projectItemController =
   ProjectItemController.getInstance();
 
 const taskAssignmentController =
   TaskAssignmentController.getInstance();
 
+
+/**
+ * Project department item ID
+ */
 const projectDepartmentItemId = computed(() => {
   return String(props.id ?? '');
 });
 
+
+/**
+ * Project department item UUID
+ */
 const projectDepartmentItemUuid = computed(() => {
   return String(props.uuid ?? '');
 });
 
-const itemData = computed(
-  () => projectItemController.itemData.value as ProjectItemShowModel | null,
-);
-console.log('itemData.value:', itemData.value);
 
+/**
+ * Item data
+ */
+const itemData = computed(() => {
+  return projectItemController.itemData.value as ProjectItemShowModel | null;
+});
+
+
+/**
+ * ============================================
+ * Inside Status
+ * ============================================
+ *
+ * IMPORTANT:
+ *
+ * inside_status comes from backend.
+ *
+ * Frontend DOES NOT change this value manually.
+ *
+ * ASSIGN  = 1
+ * WORKING = 2
+ * HOLD    = 3
+ * REVIEW  = 4
+ */
+const insideStatus = computed(() => {
+  return itemData.value?.inside_status;
+});
+
+
+/**
+ * ============================================
+ * Action Buttons Visibility
+ * ============================================
+ */
+
+/**
+ * Start button
+ *
+ * Show when:
+ * ASSIGN
+ * HOLD
+ */
+const isStartVisible = computed(() => {
+  return (
+    insideStatus.value === InsideStatusType.ASSIGN ||
+    insideStatus.value === InsideStatusType.HOLD
+  );
+});
+
+
+/**
+ * Hold button
+ *
+ * Show only when:
+ * WORKING
+ */
+const isHoldVisible = computed(() => {
+  return (
+    insideStatus.value === InsideStatusType.WORKING
+  );
+});
+
+
+/**
+ * Finish button
+ *
+ * Show only when:
+ * WORKING
+ */
+const isFinishVisible = computed(() => {
+  return (
+    insideStatus.value === InsideStatusType.WORKING
+  );
+});
+
+
+/**
+ * ============================================
+ * Pricing Method
+ * ============================================
+ */
 const pricingMethodLabel = computed(() => {
   switch (itemData.value?.pricing_method) {
     case ProjectItemPriceEnum.GENERAL_ITEM:
-      return t('project_item.pricing_methods.GENERAL_ITEM');
+      return t(
+        'project_item.pricing_methods.GENERAL_ITEM',
+      );
+
     case ProjectItemPriceEnum.SPACE_RELATED:
-      return t('project_item.pricing_methods.SPACE_RELATED');
+      return t(
+        'project_item.pricing_methods.SPACE_RELATED',
+      );
+
     case ProjectItemPriceEnum.FULL_FLOOR_RELATED:
-      return t('project_item.pricing_methods.FULL_FLOOR_RELATED');
+      return t(
+        'project_item.pricing_methods.FULL_FLOOR_RELATED',
+      );
+
     default:
       return '-';
   }
 });
 
+
+/**
+ * ============================================
+ * Loading / Error
+ * ============================================
+ */
 const itemLoading = computed(() => {
   return projectItemController.isItemLoading();
 });
+
 
 const itemError = computed(() => {
   return projectItemController.errorMessage.value;
 });
 
-const currentStatus = ref<
-  TaskEmployeeStatusEnum | number | null
->(null);
 
+/**
+ * ============================================
+ * Action State
+ * ============================================
+ */
 const actionLoading = ref(false);
 
 const activeDialogAction = ref<
@@ -85,10 +211,16 @@ const activeDialogAction = ref<
 
 const actionNotes = ref('');
 
-const attachmentFile = ref<File | null>(
-  null,
-);
+const attachmentFiles = ref<File[]>([]);
+const updateAttachments = (files: File[]): void => {
+  attachmentFiles.value = files;
+};
 
+/**
+ * ============================================
+ * UUID Validation
+ * ============================================
+ */
 const isValidUuid = computed(() => {
   const uuidRegex =
     /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -98,74 +230,62 @@ const isValidUuid = computed(() => {
   );
 });
 
-const isStartVisible = computed(() => {
-  if (
-    currentStatus.value ===
-    TaskEmployeeStatusEnum.FINISH_EMPLOYEE
-  ) {
-    return false;
-  }
 
-  return (
-    currentStatus.value !==
-    TaskEmployeeStatusEnum.START_EMPLOYEE
-  );
-});
-
-const isHoldVisible = computed(() => {
-  return (
-    currentStatus.value ===
-    TaskEmployeeStatusEnum.START_EMPLOYEE
-  );
-});
-
-const isFinishVisible = computed(() => {
-  if (
-    currentStatus.value ===
-    TaskEmployeeStatusEnum.FINISH_EMPLOYEE
-  ) {
-    return false;
-  }
-
-  return (
-    currentStatus.value ===
-      TaskEmployeeStatusEnum.START_EMPLOYEE ||
-    currentStatus.value ===
-      TaskEmployeeStatusEnum.HOLD_EMPLOYEE
-  );
-});
-
-const isFinished = computed(() => {
-  return (
-    currentStatus.value ===
-    TaskEmployeeStatusEnum.FINISH_EMPLOYEE
-  );
-});
-
+/**
+ * ============================================
+ * Modal
+ * ============================================
+ */
 const openModal = (
   action: 'START' | 'HOLD' | 'FINISH',
 ): void => {
   activeDialogAction.value = action;
+
   actionNotes.value = '';
-  attachmentFile.value = null;
+
+  attachmentFiles.value = [];
 };
+
 
 const closeModal = (): void => {
   activeDialogAction.value = null;
+
   actionNotes.value = '';
-  attachmentFile.value = null;
+
+  attachmentFiles.value = [];
 };
 
-const handleFileChange = (
-  event: Event,
-): void => {
-  const target =
-    event.target as HTMLInputElement;
 
-  attachmentFile.value =
-    target.files?.[0] ?? null;
-};
+/**
+ * ============================================
+ * Attachment
+ * ============================================
+ */
+// const handleFileChange = (
+//   event: Event,
+// ): void => {
+//   const target =
+//     event.target as HTMLInputElement;
 
+//   attachmentFile.value =
+//     target.files?.[0] ?? null;
+// };
+
+
+/**
+ * ============================================
+ * Get Status Sent To Endpoint
+ * ============================================
+ *
+ * IMPORTANT:
+ *
+ * This uses TaskEmployeeStatusEnum.
+ *
+ * This is NOT inside_status.
+ *
+ * TaskEmployeeStatusEnum is only sent
+ * to the endpoint.
+ */
 const getTargetStatus =
   (): TaskEmployeeStatusEnum => {
     switch (activeDialogAction.value) {
@@ -181,6 +301,12 @@ const getTargetStatus =
     }
   };
 
+
+/**
+ * ============================================
+ * Confirm Status Change
+ * ============================================
+ */
 const confirmStatusChange =
   async (): Promise<void> => {
     if (!activeDialogAction.value) {
@@ -197,23 +323,49 @@ const confirmStatusChange =
 
     actionLoading.value = true;
 
+
+    /**
+     * This is the status sent to endpoint.
+     *
+     * START_EMPLOYEE
+     * HOLD_EMPLOYEE
+     * FINISH_EMPLOYEE
+     */
     const targetStatus = getTargetStatus();
 
-    const attachments = attachmentFile.value
-      ? [
-          {
-            file: attachmentFile.value,
-          },
-        ]
-      : undefined;
 
-    const params = new SetTaskEmployeeStatusParams({
+    /**
+     * Attachment
+     */
+    const attachments =
+      attachmentFiles.value.length > 0
+        ? attachmentFiles.value.map((file) => ({
+            file,
+          }))
+        : undefined;
+
+
+    /**
+     * Endpoint params
+     */
+    const params =
+      new SetTaskEmployeeStatusParams({
         /**
-         * هنا نستخدم 44 وليس UUID.
+         * project_department_item.id
+         *
+         * Example:
+         * 44
          */
         project_department_item_id:
-          Number(projectDepartmentItemId.value),
+          Number(
+            projectDepartmentItemId.value,
+          ),
 
+        /**
+         * TaskEmployeeStatusEnum
+         *
+         * NOT InsideStatusType
+         */
         status: targetStatus,
 
         notes:
@@ -222,13 +374,17 @@ const confirmStatusChange =
         attachments,
       });
 
+
     try {
       const result =
-        await taskAssignmentController.setTaskEmployeeStatus(params);
+        await taskAssignmentController
+          .setTaskEmployeeStatus(params);
 
+
+      /**
+       * Success
+       */
       if (result instanceof DataSuccess) {
-        currentStatus.value = targetStatus;
-
         dialogManager.toastSuccess(
           result.message ||
             t(
@@ -236,11 +392,34 @@ const confirmStatusChange =
             ),
         );
 
+
+        /**
+         * Close modal first
+         */
         closeModal();
+
+
+        /**
+         * IMPORTANT:
+         *
+         * Don't change inside_status manually.
+         *
+         * Fetch the task again.
+         *
+         * Backend returns the real inside_status.
+         *
+         * Buttons will automatically update
+         * depending on inside_status.
+         */
+        await fetchTaskDetails();
 
         return;
       }
 
+
+      /**
+       * API error
+       */
       dialogManager.toastError(
         result.error?.displayMessage ||
           result.error?.title ||
@@ -262,8 +441,17 @@ const confirmStatusChange =
     }
   };
 
+
+/**
+ * ============================================
+ * Fetch Task Details
+ * ============================================
+ */
 const fetchTaskDetails =
   async (): Promise<void> => {
+    /**
+     * UUID missing
+     */
     if (!projectDepartmentItemUuid.value) {
       dialogManager.toastError(
         'Task UUID is missing.',
@@ -272,6 +460,10 @@ const fetchTaskDetails =
       return;
     }
 
+
+    /**
+     * Invalid UUID
+     */
     if (!isValidUuid.value) {
       dialogManager.toastError(
         'Task UUID is invalid.',
@@ -280,47 +472,49 @@ const fetchTaskDetails =
       return;
     }
 
+
     /**
-     * هنا يجب إرسال UUID الحقيقي:
+     * Fetch task.
      *
-     * 46e10f7b-8dda-4df5-b036-143e2f51e98e
+     * Backend returns:
      *
-     * وليس 44.
+     * inside_status
+     *
+     * and that status controls
+     * Start / Hold / Finish buttons.
      */
     await projectItemController.fetchOne(
       new ShowTaskItemParams({
-        uuid: projectDepartmentItemUuid.value,
+        uuid:
+          projectDepartmentItemUuid.value,
+
         allLocales: true,
       }),
     );
-
-    /**
-     * عدل اسم الخاصية حسب الـ model الذي يرجعه itemData.
-     */
-    const responseStatus =
-      itemData.value?.inside_status ??
-      itemData.value?.status ??
-      null;
-
-    if (
-      responseStatus !== null &&
-      responseStatus !== undefined
-    ) {
-      currentStatus.value = Number(
-        responseStatus,
-      );
-    }
   };
 
+
+/**
+ * ============================================
+ * Mounted
+ * ============================================
+ */
 onMounted(() => {
   void fetchTaskDetails();
 });
 
+
+/**
+ * ============================================
+ * Watch Props
+ * ============================================
+ */
 watch(
   () => [
     props.id,
     props.uuid,
   ],
+
   () => {
     void fetchTaskDetails();
   },
@@ -682,12 +876,15 @@ watch(
         <!-- Attachment upload for Finish -->
         <div v-if="activeDialogAction === 'FINISH'" class="form-group">
           <label for="task_action_attachment">{{ $t('task_assignment.modals.attachments_label') }}</label>
-          <input
-            id="task_action_attachment"
-            type="file"
-            class="form-control-file"
-            @change="handleFileChange"
-          />
+                <div class="field-group col-span-2">
+        <HandleFilesUpload
+          id="attachments"
+          :label="$t('attachments')"
+          :file="attachmentFiles"
+          :multiple="true"
+          @change="updateAttachments"
+        />
+      </div>
         </div>
       </div>
 

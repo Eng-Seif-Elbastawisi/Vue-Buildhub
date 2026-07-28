@@ -341,6 +341,24 @@ export default class NetworkService {
           value.forEach((item, index) => {
             if (item instanceof File) {
               formData.append(`${key}[${index}]`, item);
+            } else if (item !== null && typeof item === 'object') {
+              /**
+               * Flatten object arrays into key[i][prop] notation.
+               *
+               * Example:
+               * attachments: [{ file: File, alt: 'photo' }]
+               *  → attachments[0][file] = File
+               *  → attachments[0][alt]  = 'photo'
+               */
+              Object.entries(item as Record<string, unknown>).forEach(([prop, propValue]) => {
+                if (propValue !== null && propValue !== undefined) {
+                  if (propValue instanceof File) {
+                    formData.append(`${key}[${index}][${prop}]`, propValue);
+                  } else {
+                    formData.append(`${key}[${index}][${prop}]`, String(propValue));
+                  }
+                }
+              });
             } else {
               formData.append(`${key}[${index}]`, String(item));
             }

@@ -7,6 +7,7 @@ import { ProjectFloorShowModel } from '@/modules/MainOrganization/ProjectFloor';
 import ProjectAttachmentModel from '@/modules/MainOrganization/Project/core/models/project.show.attachment';
 import type ProjectHistoryModel from './project.history.model';
 import ProjectSimpleModel from './project.simple.model';
+import type { InsideStatusType } from '@/modules/MainOrganization/TaskAssignment/core/constants/inside.status.enum';
 
 export default class ProjectItemShowModel { 
   public readonly id?: number;
@@ -30,6 +31,7 @@ export default class ProjectItemShowModel {
   public readonly assigned_employees?: OrganizationEmployeeModel[];
   public readonly histories?:  ProjectHistoryModel[];
   public readonly department?: string;
+  public readonly inside_status?: InsideStatusType;
 
   constructor(data: {
     id?: number;
@@ -53,6 +55,7 @@ export default class ProjectItemShowModel {
     assigned_employees?: OrganizationEmployeeModel[];
     histories?: ProjectHistoryModel[];
     department?: string;
+    inside_status?: InsideStatusType;
   }) {
     this.id = data.id;
     this.price = data.price;
@@ -75,6 +78,7 @@ export default class ProjectItemShowModel {
     this.assigned_employees = data.assigned_employees;
     this.histories = data.histories;
     this.department = data.department;
+    this.inside_status = data.inside_status;
 
     Object.freeze(this);
   }
@@ -102,6 +106,7 @@ export default class ProjectItemShowModel {
   assigned_employees: (  json.assigned_employees as Record<string, unknown>[] | undefined )?.map((item) => OrganizationEmployeeModel.fromJson(item)),
   histories: json.histories as ProjectHistoryModel[] | undefined,
   department: json.department as string | undefined,
+  inside_status: json.inside_status as InsideStatusType | undefined,
 });
   }
 

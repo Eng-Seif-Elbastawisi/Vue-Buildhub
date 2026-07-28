@@ -1,5 +1,5 @@
 import type Params from '@/base/Core/Params/params';
-import BaseApiService, { type ApiEndpoints } from '@/base/Data/ApiService/baseApiService';
+import BaseApiService, { CrudType, type ApiEndpoints } from '@/base/Data/ApiService/baseApiService';
 import { TaskAssignmentApiEndpoints } from './task.assignment.api.endpoints';
 
 type TaskAssignmentActionParams = Params | Record<string, unknown>;
@@ -39,9 +39,10 @@ export default class TaskAssignmentApiService extends BaseApiService {
   }
 
   async setTaskEmployeeStatus(params?: TaskAssignmentActionParams) {
-    return await this.customPost(
-      this.taskAssignmentEndpoints.setTaskEmployeeStatus,
-      params as Params,
-    );
+    return await this.custom({
+      url: this.taskAssignmentEndpoints.setTaskEmployeeStatus,
+      method: CrudType.FormData,
+      params: params as Params,
+    });
   }
 }
