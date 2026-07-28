@@ -54,7 +54,7 @@ export default class TaskAssignmentController extends BaseController<
     return TaskAssignmentController.instance;
   }
 
-  private handleTaskAssignmentActionResponse(result: DataState<void>): DataState<void> {
+  private handleTaskAssignmentActionResponse<T>(result: DataState<T>): DataState<T> {
     if (result.hasError) {
       this.handleErrorResponse(result);
     }
@@ -62,12 +62,16 @@ export default class TaskAssignmentController extends BaseController<
     return result;
   }
 
-  async assignProjectDepartmentItemTask(
-    params?: TaskAssignmentActionParams,
-  ): Promise<DataState<void>> {
+  async assignTask(params?: TaskAssignmentActionParams): Promise<DataState<void>> {
     const result = await this.repository.assignProjectDepartmentItemTask(params);
 
     return this.handleTaskAssignmentActionResponse(result);
+  }
+
+  async assignProjectDepartmentItemTask(
+    params?: TaskAssignmentActionParams,
+  ): Promise<DataState<void>> {
+    return this.assignTask(params);
   }
 
   async fetchEmployeeTasks(
@@ -104,9 +108,7 @@ export default class TaskAssignmentController extends BaseController<
     return this.handleTaskAssignmentActionResponse(result);
   }
 
-  async setTaskEmployeeStatus(
-    params?: TaskAssignmentActionParams,
-  ): Promise<DataState<void>> {
+  async setTaskEmployeeStatus(params?: TaskAssignmentActionParams): Promise<DataState<void>> {
     const result = await this.repository.setTaskEmployeeStatus(params);
 
     return this.handleTaskAssignmentActionResponse(result);
@@ -117,10 +119,6 @@ export default class TaskAssignmentController extends BaseController<
   ): Promise<DataState<TaskAssignmentApprovedTaskModel[]>> {
     const result = await this.repository.fetchApprovedTasks(params);
 
-
-    console.log("result", result);
-
     return this.handleTaskAssignmentActionResponse(result);
   }
-
 }

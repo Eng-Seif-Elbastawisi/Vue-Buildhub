@@ -1,82 +1,55 @@
-export type TaskAssignmentApprovedTaskNamedItem = {
+export interface ApprovedTaskNamedItem {
   id: number;
-  title: string;
-};
+  title: string | null;
+}
 
-export type TaskAssignmentApprovedTaskReviewer = {
-  id?: number;
-  title: string;
-};
-
-export type TaskAssignmentApprovedTaskAttachment = {
-  file: string;
-  alt: string;
-  link: string | null;
-};
-
-const emptyValue = '';
-
-const toRecord = (value: unknown): Record<string, unknown> | null => {
-  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+const toRecord = (rawRecord: unknown): Record<string, unknown> | null => {
+  if (!rawRecord || typeof rawRecord !== 'object' || Array.isArray(rawRecord)) {
     return null;
   }
 
-  return value as Record<string, unknown>;
+  return rawRecord as Record<string, unknown>;
 };
 
-const toNumber = (value: unknown): number | undefined => {
-  if (value === null || value === undefined || value === '') {
-    return undefined;
-  }
-
-  const numericValue = Number(value);
-
-  return Number.isFinite(numericValue) ? numericValue : undefined;
-};
-
-const toNullableNumber = (value: unknown): number | null => {
-  return toNumber(value) ?? null;
-};
-
-const toNullableString = (value: unknown): string | null => {
-  if (value === null || value === undefined || value === '') {
+const toNumber = (rawNumber: unknown): number | null => {
+  if (rawNumber === null || rawNumber === undefined || rawNumber === '') {
     return null;
   }
 
-  return String(value);
+  const numberValue = Number(rawNumber);
+
+  return Number.isFinite(numberValue) ? numberValue : null;
 };
 
-const getPlainTitle = (value: unknown): string => {
-  if (typeof value === 'string' || typeof value === 'number') {
-    return String(value);
+const toTitle = (rawTitle: unknown): string | null => {
+  if (typeof rawTitle === 'string' || typeof rawTitle === 'number') {
+    const title = String(rawTitle).trim();
+
+    return title || null;
   }
 
-  if (Array.isArray(value)) {
+  if (Array.isArray(rawTitle)) {
     const localizedTitle =
-      value.find((item) => toRecord(item)?.locale === 'en') ??
-      value.find((item) => toRecord(item)?.locale === 'ar') ??
-      value[0];
+      rawTitle.find((item) => toRecord(item)?.locale === 'en') ??
+      rawTitle.find((item) => toRecord(item)?.locale === 'ar') ??
+      rawTitle[0];
 
-    return getPlainTitle(localizedTitle);
+    return toTitle(localizedTitle);
   }
 
-  const record = toRecord(value);
+  const record = toRecord(rawTitle);
 
   if (!record) {
-    return emptyValue;
+    return null;
   }
 
   return (
-    getPlainTitle(record.title) ||
-    getPlainTitle(record.name) ||
-    getPlainTitle(record.label) ||
-    getPlainTitle(record.text) ||
-    emptyValue
+    toTitle(record.title) ?? toTitle(record.name) ?? toTitle(record.label) ?? toTitle(record.text)
   );
 };
 
-const mapNamedItem = (value: unknown): TaskAssignmentApprovedTaskNamedItem | null => {
-  const record = toRecord(value);
+const mapNamedItem = (rawItem: unknown): ApprovedTaskNamedItem | null => {
+  const record = toRecord(rawItem);
 
   if (!record) {
     return null;
@@ -84,162 +57,86 @@ const mapNamedItem = (value: unknown): TaskAssignmentApprovedTaskNamedItem | nul
 
   const id = toNumber(record.id);
 
-  if (id === undefined) {
+  if (id === null) {
     return null;
   }
 
   return {
     id,
-    title:
-      getPlainTitle(record.title) ||
-      getPlainTitle(record.name) ||
-      getPlainTitle(record.label) ||
-      `#${id}`,
+    title: toTitle(record.title ?? record.name ?? record.label) ?? `#${id}`,
   };
 };
 
-const mapReviewer = (value: unknown): TaskAssignmentApprovedTaskReviewer | null => {
-  if (value === null || value === undefined) {
-    return null;
-  }
-
-  if (typeof value === 'string' || typeof value === 'number') {
-    const id = toNumber(value);
-
-    return {
-      id,
-      title: id !== undefined ? `#${id}` : String(value),
-    };
-  }
-
-  const record = toRecord(value);
-
-  if (!record) {
-    return null;
-  }
-
-  const id = toNumber(record.id ?? record.employee_id ?? record.reviewer_id);
-
-  const title =
-    getPlainTitle(record.title) ||
-    getPlainTitle(record.name) ||
-    getPlainTitle(record.full_name) ||
-    getPlainTitle(record.employee_name) ||
-    (id !== undefined ? `#${id}` : emptyValue);
-
-  if (!title) {
-    return null;
-  }
-
-  return {
-    id,
-    title,
-  };
+const toBoolean = (rawFlag: unknown): boolean => {
+  return rawFlag === true || rawFlag === 1 || rawFlag === '1' || rawFlag === 'true';
 };
 
-const mapAttachments = (value: unknown): TaskAssignmentApprovedTaskAttachment[] => {
-  if (!Array.isArray(value)) {
-    return [];
+const toInsideStatus = (rawStatus: unknown): number | string | null => {
+  const numericStatus = toNumber(rawStatus);
+
+  if (numericStatus !== null) {
+    return numericStatus;
   }
 
-  return value
-    .map((item): TaskAssignmentApprovedTaskAttachment | null => {
-      const record = toRecord(item);
-
-      if (!record) {
-        return null;
-      }
-
-      const file = typeof record.file === 'string' ? record.file : '';
-
-      if (!file) {
-        return null;
-      }
-
-      const alt = typeof record.alt === 'string' ? record.alt : '';
-
-      const link = typeof record.link === 'string' && record.link.trim() ? record.link : null;
-
-      return {
-        file,
-        alt,
-        link,
-      };
-    })
-    .filter(
-      (attachment): attachment is TaskAssignmentApprovedTaskAttachment => attachment !== null,
-    );
+  return typeof rawStatus === 'string' && rawStatus.trim() ? rawStatus : null;
 };
 
 export default class TaskAssignmentApprovedTaskModel {
-  public readonly raw: Record<string, unknown>;
-
   public readonly id: number;
-
   public readonly uuid: string;
 
-  public readonly project: TaskAssignmentApprovedTaskNamedItem | null;
+  public readonly project: ApprovedTaskNamedItem | null;
+  public readonly department: ApprovedTaskNamedItem | null;
+  public readonly item: ApprovedTaskNamedItem | null;
 
-  public readonly department: TaskAssignmentApprovedTaskNamedItem | null;
+  public readonly pricingMethod: number;
 
-  public readonly item: TaskAssignmentApprovedTaskNamedItem | null;
+  public readonly projectFloor: unknown | null;
+  public readonly projectFloorSpace: unknown | null;
 
-  public readonly pricingMethod: number | null;
-
-  public readonly projectFloor: string | number | null;
-
-  public readonly projectFloorSpace: number | null;
-
-  public readonly quantity: number | null;
-
-  public readonly price: number | null;
-
-  public readonly finalPrice: number | null;
+  public readonly quantity: number;
+  public readonly price: number;
+  public readonly finalPrice: number;
 
   public readonly duration: number | null;
-
   public readonly durationType: number | null;
+  public readonly insideStatus: number | string | null;
 
-  public readonly insideStatus: string | number | null;
+  public readonly isAssign: boolean;
 
-  public readonly reviewer: TaskAssignmentApprovedTaskReviewer | null;
+  public readonly reviewer: unknown | null;
 
   public readonly hasAttached: boolean;
-
-  public readonly attachments: TaskAssignmentApprovedTaskAttachment[];
+  public readonly attachments: unknown[];
 
   constructor(data: {
-    raw: Record<string, unknown>;
     id: number;
     uuid: string;
 
-    project: TaskAssignmentApprovedTaskNamedItem | null;
+    project: ApprovedTaskNamedItem | null;
+    department: ApprovedTaskNamedItem | null;
+    item: ApprovedTaskNamedItem | null;
 
-    department: TaskAssignmentApprovedTaskNamedItem | null;
+    pricingMethod: number;
 
-    item: TaskAssignmentApprovedTaskNamedItem | null;
+    projectFloor: unknown | null;
+    projectFloorSpace: unknown | null;
 
-    pricingMethod: number | null;
+    quantity: number;
+    price: number;
+    finalPrice: number;
 
-    projectFloor: string | number | null;
-
-    projectFloorSpace: number | null;
-
-    quantity: number | null;
-    price: number | null;
-    finalPrice: number | null;
     duration: number | null;
     durationType: number | null;
+    insideStatus: number | string | null;
 
-    insideStatus: string | number | null;
+    isAssign: boolean;
 
-    reviewer: TaskAssignmentApprovedTaskReviewer | null;
+    reviewer: unknown | null;
 
     hasAttached: boolean;
-
-    attachments: TaskAssignmentApprovedTaskAttachment[];
+    attachments: unknown[];
   }) {
-    this.raw = data.raw;
     this.id = data.id;
     this.uuid = data.uuid;
 
@@ -250,7 +147,6 @@ export default class TaskAssignmentApprovedTaskModel {
     this.pricingMethod = data.pricingMethod;
 
     this.projectFloor = data.projectFloor;
-
     this.projectFloorSpace = data.projectFloorSpace;
 
     this.quantity = data.quantity;
@@ -258,198 +154,67 @@ export default class TaskAssignmentApprovedTaskModel {
     this.finalPrice = data.finalPrice;
 
     this.duration = data.duration;
-
     this.durationType = data.durationType;
-
     this.insideStatus = data.insideStatus;
+
+    this.isAssign = data.isAssign;
 
     this.reviewer = data.reviewer;
 
     this.hasAttached = data.hasAttached;
-
     this.attachments = data.attachments;
 
     Object.freeze(this);
   }
 
-  public get title(): string {
-    return this.item?.title || `#${this.id}`;
-  }
-
-  public get projectId(): number | undefined {
-    return this.project?.id;
-  }
-
   public get projectName(): string {
-    return this.project?.title || emptyValue;
-  }
-
-  public get departmentId(): number | undefined {
-    return this.department?.id;
+    return this.project?.title ?? '-';
   }
 
   public get departmentName(): string {
-    return this.department?.title || emptyValue;
+    return this.department?.title ?? '-';
   }
 
-  public get departmentItemId(): number | undefined {
-    return this.item?.id;
+  public get itemName(): string {
+    return this.item?.title ?? '-';
   }
 
   public get departmentItemName(): string {
-    return this.item?.title || emptyValue;
-  }
-
-  public get reviewerId(): number | undefined {
-    return this.reviewer?.id;
-  }
-
-  public get reviewerName(): string {
-    return this.reviewer?.title || emptyValue;
-  }
-
-  public get attachmentsCount(): number {
-    return this.attachments.length;
-  }
-
-  public get hasAttachments(): boolean {
-    return this.hasAttached && this.attachments.length > 0;
-  }
-
-  public get durationDisplay(): string {
-    if (this.duration === null) {
-      return emptyValue;
-    }
-
-    return String(this.duration);
-  }
-
-  public get statusLabel(): string {
-    if (this.insideStatus === null || this.insideStatus === undefined) {
-      return emptyValue;
-    }
-
-    return String(this.insideStatus);
+    return this.itemName;
   }
 
   static fromJson(json: Record<string, unknown>): TaskAssignmentApprovedTaskModel {
-    if (!json) {
-      throw new Error('Cannot create TaskAssignmentApprovedTaskModel from null or undefined');
-    }
-
-    const id = toNumber(json.id);
-
-    if (id === undefined) {
-      throw new Error('Approved task ID is missing or invalid');
-    }
-
-    const project = mapNamedItem(json.project);
-
-    const department = mapNamedItem(json.department);
-
-    const item = mapNamedItem(json.item ?? json.department_item ?? json.project_department_item);
-
-    const attachments = mapAttachments(json.attachments);
-
-    const hasAttached = Boolean(json.has_attached) || attachments.length > 0;
+    const attachments = Array.isArray(json.attachments) ? json.attachments : [];
 
     return new TaskAssignmentApprovedTaskModel({
-      raw: json,
-
-      id,
-
+      id: toNumber(json.id) ?? 0,
       uuid: typeof json.uuid === 'string' ? json.uuid : '',
 
-      project,
+      project: mapNamedItem(json.project),
 
-      department,
+      department: mapNamedItem(json.department),
 
-      item,
+      item: mapNamedItem(json.item ?? json.department_item ?? json.project_department_item),
 
-      pricingMethod: toNullableNumber(json.pricing_method),
+      pricingMethod: toNumber(json.pricing_method) ?? 0,
 
-      projectFloor: toNullableNumber(json.project_floor) ?? toNullableString(json.project_floor),
+      projectFloor: json.project_floor ?? null,
+      projectFloorSpace: json.project_floor_space ?? null,
 
-      projectFloorSpace: toNullableNumber(json.project_floor_space),
+      quantity: toNumber(json.quantity) ?? 0,
+      price: toNumber(json.price) ?? 0,
+      finalPrice: toNumber(json.final_price) ?? 0,
 
-      quantity: toNullableNumber(json.quantity),
+      duration: toNumber(json.duration),
+      durationType: toNumber(json.duration_type),
+      insideStatus: toInsideStatus(json.inside_status),
 
-      price: toNullableNumber(json.price),
+      isAssign: toBoolean(json.is_assign),
 
-      finalPrice: toNullableNumber(json.final_price),
+      reviewer: json.reviewer ?? null,
 
-      duration: toNullableNumber(json.duration),
-
-      durationType: toNullableNumber(json.duration_type),
-
-      insideStatus: toNullableNumber(json.inside_status) ?? toNullableString(json.inside_status),
-
-      reviewer: mapReviewer(json.reviewer),
-
-      hasAttached,
-
+      hasAttached: toBoolean(json.has_attached) || attachments.length > 0,
       attachments,
     });
   }
-
-  static example = new TaskAssignmentApprovedTaskModel({
-    raw: {
-      id: 45,
-      uuid: 'ff6acc0a-777d-4016-b47b-9b6ba2d1520f',
-
-      project: {
-        id: 71,
-        title: 'xxxxxx',
-      },
-
-      department: {
-        id: 26,
-        title: '3D MAX',
-      },
-
-      item: {
-        id: 12,
-        title: 'حمحم',
-      },
-
-      pricing_method: 1,
-      quantity: 1,
-      price: 500000,
-      final_price: 500000,
-      has_attached: false,
-      attachments: [],
-    },
-
-    id: 45,
-
-    uuid: 'ff6acc0a-777d-4016-b47b-9b6ba2d1520f',
-
-    project: {
-      id: 71,
-      title: 'xxxxxx',
-    },
-
-    department: {
-      id: 26,
-      title: '3D MAX',
-    },
-
-    item: {
-      id: 12,
-      title: 'حمحم',
-    },
-
-    pricingMethod: 1,
-    projectFloor: null,
-    projectFloorSpace: null,
-    quantity: 1,
-    price: 500000,
-    finalPrice: 500000,
-    duration: null,
-    durationType: null,
-    insideStatus: null,
-    reviewer: null,
-    hasAttached: false,
-    attachments: [],
-  });
 }

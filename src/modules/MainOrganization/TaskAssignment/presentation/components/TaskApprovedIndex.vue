@@ -1,6 +1,9 @@
 <script setup lang="ts">
   import { computed, onMounted, ref } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
+  import Dialog from 'primevue/dialog';
+
+  import type { DataState } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
 
   import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
   import AppTable, { type TableHeader } from '@/shared/HelpersComponents/AppTable.vue';
@@ -10,19 +13,9 @@
   import TaskAssignmentController from '../controllers/task.assignment.controller';
   import FetchApprovedTasksParams from '../../core/params/fetch.approved.tasks.params';
   import TaskAssignmentApprovedTaskModel from '../../core/models/task.assignment.approved-task.model';
-  import type { DataState } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
+  import type AssignProjectDepartmentItemTaskParams from '../../core/params/assign.project.department.item.task.params';
 
-  interface ApprovedTaskTableRow {
-    id: number;
-    title: string;
-    projectName: string;
-    departmentName: string;
-    departmentItemName: string;
-    reviewerName: string;
-    duration: string;
-    statusLabel: string;
-    attachmentsCount: number;
-  }
+  import TaskAssignmentForm from './TaskAssignmentForm.vue';
 
   const controller = TaskAssignmentController.getInstance();
 
@@ -32,6 +25,10 @@
   const perPage = ref(10);
 
   const state = ref<DataState<TaskAssignmentApprovedTaskModel[]>>();
+  const assignmentDialogVisible = ref(false);
+  const selectedTask = ref<TaskAssignmentApprovedTaskModel | null>(null);
+  const assignmentParams = ref<AssignProjectDepartmentItemTaskParams | null>(null);
+  const assignmentLoading = ref(false);
 
   const currentPage = computed(() => {
     const page = Number(route.query.page);
@@ -41,77 +38,73 @@
 
   const headers: TableHeader[] = [
     {
-      key: 'title',
-      label: 'task_assignment.table.title',
-      width: '16%',
-      sortable: true,
-    },
-    {
       key: 'projectName',
       label: 'task_assignment.table.project',
-      width: '16%',
       sortable: true,
     },
     {
       key: 'departmentName',
       label: 'task_assignment.table.department',
-      width: '14%',
       sortable: true,
     },
     {
-      key: 'departmentItemName',
+      key: 'itemName',
       label: 'task_assignment.table.department_item',
-      width: '16%',
       sortable: true,
     },
     {
-      key: 'reviewerName',
-      label: 'task_assignment.table.reviewer',
-      width: '14%',
+      key: 'quantity',
+      label: 'task_assignment.table.quantity',
+      sortable: true,
     },
     {
-      key: 'duration',
-      label: 'task_assignment.table.duration',
-      width: '8%',
+      key: 'price',
+      label: 'task_assignment.table.price',
+      sortable: true,
     },
     {
-      key: 'statusLabel',
-      label: 'task_assignment.table.status',
-      width: '8%',
+      key: 'finalPrice',
+      label: 'task_assignment.table.final_price',
+      sortable: true,
     },
     {
-      key: 'attachmentsCount',
-      label: 'task_assignment.table.attachments',
-      width: '8%',
+      key: 'isAssign',
+      label: 'task_assignment.table.assignment',
     },
   ];
 
-  const normalizeTask = (
-    task: TaskAssignmentApprovedTaskModel | Record<string, unknown>,
-  ): TaskAssignmentApprovedTaskModel => {
-    if (task instanceof TaskAssignmentApprovedTaskModel) {
-      return task;
+  const getTableItems = (
+    data: Array<TaskAssignmentApprovedTaskModel | Record<string, unknown>> | null,
+  ): TaskAssignmentApprovedTaskModel[] => {
+    if (!Array.isArray(data)) {
+      return [];
     }
 
-    return TaskAssignmentApprovedTaskModel.fromJson(task);
+    return data.map((task) =>
+      task instanceof TaskAssignmentApprovedTaskModel
+        ? task
+        : TaskAssignmentApprovedTaskModel.fromJson(task),
+    );
   };
 
-  const mapTaskToTableRow = (task: TaskAssignmentApprovedTaskModel): ApprovedTaskTableRow => ({
-    id: task.id,
-    title: task.title || '-',
-    projectName: task.projectName || '-',
-    departmentName: task.departmentName || '-',
-    departmentItemName: task.departmentItemName || '-',
-    reviewerName: task.reviewerName || '-',
-    duration: task.durationDisplay || '-',
-    statusLabel: task.statusLabel || '-',
-    attachmentsCount: task.attachmentsCount,
-  });
+  const formatNumber = (numericValue: number): string => {
+    return numericValue.toLocaleString();
+  };
 
-  const getTableItems = (
-    data: Array<TaskAssignmentApprovedTaskModel | Record<string, unknown>>,
-  ): ApprovedTaskTableRow[] => {
-    return data.map(normalizeTask).map(mapTaskToTableRow);
+  const openAssignmentDialog = (task: TaskAssignmentApprovedTaskModel): void => {
+    selectedTask.value = task;
+    assignmentParams.value = null;
+    assignmentDialogVisible.value = true;
+  };
+
+  const closeAssignmentDialog = (): void => {
+    assignmentDialogVisible.value = false;
+    selectedTask.value = null;
+    assignmentParams.value = null;
+  };
+
+  const canAssignTask = (task: TaskAssignmentApprovedTaskModel): boolean => {
+    return !task.isAssign;
   };
 
   const fetchApprovedTasks = async (page: number = currentPage.value): Promise<void> => {
@@ -125,6 +118,36 @@
 
     state.value = response;
   };
+
+  const assignTask = async (): Promise<void> => {
+    if (!assignmentParams.value) {
+      return;
+    }
+
+    const validation = assignmentParams.value.validate();
+
+    if (!validation.isValid) {
+      assignmentParams.value.validateOrThrow();
+      return;
+    }
+
+    assignmentLoading.value = true;
+
+    try {
+      const response = await controller.assignTask(assignmentParams.value);
+
+      if (response.hasError) {
+        return;
+      }
+
+      closeAssignmentDialog();
+
+      await fetchApprovedTasks(currentPage.value);
+    } finally {
+      assignmentLoading.value = false;
+    }
+  };
+
   const onPageChange = async (page: number): Promise<void> => {
     await router.push({
       query: {
@@ -166,32 +189,50 @@
           {{ $t('task_assignment.approved_tasks.description') }}
         </p>
       </div>
-
-      <RouterLink
-        class="btn btn-primary"
-        :to="{
-          name: 'mainorganization-task-assignment-create',
-        }"
-      >
-        {{ $t('task_assignment.create') }}
-      </RouterLink>
     </header>
 
     <DataStatusBuilder :controller="state" :on-retry="fetchApprovedTasks">
       <template #success="{ data }">
         <AppTable :headers="headers" :items="getTableItems(data)" show-index hoverable striped>
-          <template #statusLabel="{ item }">
-            <span class="task-status">
-              {{ item.statusLabel }}
+          <template #cell-price="{ item }">
+            {{ formatNumber(item.price) }}
+          </template>
+
+          <template #cell-finalPrice="{ item }">
+            {{ formatNumber(item.finalPrice) }}
+          </template>
+
+          <template #cell-isAssign="{ item }">
+            <span
+              class="assignment-status"
+              :class="{
+                assigned: item.isAssign,
+              }"
+            >
+              {{
+                $t(
+                  item.isAssign
+                    ? 'task_assignment.table.assigned'
+                    : 'task_assignment.table.not_assigned',
+                )
+              }}
             </span>
           </template>
 
-          <template #attachmentsCount="{ item }">
-            <span class="attachments-count">
-              <i class="pi pi-paperclip" aria-hidden="true" />
+          <template #actions="{ item }">
+            <button
+              v-if="canAssignTask(item)"
+              type="button"
+              class="task-assignment-action-btn"
+              :disabled="assignmentLoading"
+              @click="openAssignmentDialog(item)"
+            >
+              <i class="pi pi-user-plus" aria-hidden="true" />
 
-              {{ item.attachmentsCount }}
-            </span>
+              <span>
+                {{ $t('task_assignment.action.assign') }}
+              </span>
+            </button>
           </template>
         </AppTable>
 
@@ -211,15 +252,6 @@
           <p>
             {{ $t('task_assignment.approved_tasks.empty_description') }}
           </p>
-
-          <RouterLink
-            class="btn btn-primary"
-            :to="{
-              name: 'mainorganization-task-assignment-create',
-            }"
-          >
-            {{ $t('task_assignment.create') }}
-          </RouterLink>
         </div>
       </template>
 
@@ -227,12 +259,97 @@
         <TableSkelaton
           :rows="5"
           :columns="headers.length"
-          :has-actions="false"
+          :has-actions="true"
           :show-index="true"
           :selectable="false"
         />
       </template>
     </DataStatusBuilder>
+
+    <Dialog
+      v-model:visible="assignmentDialogVisible"
+      modal
+      :draggable="false"
+      :style="{ width: '850px', maxWidth: '95vw' }"
+      class="task-assignment-dialog"
+      @hide="closeAssignmentDialog"
+    >
+      <template #header>
+        <div class="assignment-dialog__header">
+          <h4>
+            {{ $t('task_assignment.assignment_dialog.title') }}
+          </h4>
+
+          <p>
+            {{ $t('task_assignment.assignment_dialog.description') }}
+          </p>
+        </div>
+      </template>
+
+      <div v-if="selectedTask" class="assignment-dialog__body">
+        <dl class="assignment-dialog__summary">
+          <div class="assignment-dialog__summary-item">
+            <dt>
+              {{ $t('task_assignment.project') }}
+            </dt>
+
+            <dd>
+              {{ selectedTask.projectName }}
+            </dd>
+          </div>
+
+          <div class="assignment-dialog__summary-item">
+            <dt>
+              {{ $t('task_assignment.department') }}
+            </dt>
+
+            <dd>
+              {{ selectedTask.departmentName }}
+            </dd>
+          </div>
+
+          <div class="assignment-dialog__summary-item">
+            <dt>
+              {{ $t('task_assignment.department_item') }}
+            </dt>
+
+            <dd>
+              {{ selectedTask.itemName }}
+            </dd>
+          </div>
+        </dl>
+
+        <TaskAssignmentForm
+          :key="selectedTask.id"
+          :project-department-item-id="selectedTask.id"
+          :loading="assignmentLoading"
+          @update-data="assignmentParams = $event"
+        />
+      </div>
+
+      <template #footer>
+        <div class="assignment-dialog__actions">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            :disabled="assignmentLoading"
+            @click="closeAssignmentDialog"
+          >
+            {{ $t('cancel') }}
+          </button>
+
+          <button
+            type="button"
+            class="btn btn-primary"
+            :class="{ 'btn--loading': assignmentLoading }"
+            :disabled="assignmentLoading || !assignmentParams"
+            @click="assignTask"
+          >
+            {{ $t('task_assignment.submit') }}
+          </button>
+        </div>
+      </template>
+    </Dialog>
   </div>
 </template>
 
@@ -260,14 +377,85 @@
     text-align: center;
   }
 
-  .task-status,
-  .attachments-count {
+  .assignment-status {
     display: inline-flex;
     align-items: center;
-    gap: 0.375rem;
+    padding: 0.25rem 0.625rem;
+    border-radius: 0.375rem;
+    background: var(--gray-100);
+    color: var(--gray-700);
+    font-family: 'Medium';
   }
 
-  .attachments-count {
-    justify-content: center;
+  .assignment-status.assigned {
+    background: var(--PrimaryColor-light);
+    color: var(--PrimaryColor);
+  }
+
+  .assignment-dialog__header,
+  .assignment-dialog__body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .assignment-dialog__header h4,
+  .assignment-dialog__header p,
+  .assignment-dialog__summary {
+    margin: 0;
+  }
+
+  .assignment-dialog__header h4 {
+    color: var(--gray-900);
+    font-family: 'Bold';
+  }
+
+  .assignment-dialog__header p,
+  .assignment-dialog__summary-item dt {
+    color: var(--gray-600);
+    font-family: 'Medium';
+    font-size: var(--xs-size);
+  }
+
+  .assignment-dialog__summary {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.75rem;
+    padding: 0.85rem;
+    border: 1px solid var(--border-weak);
+    border-radius: var(--radius-sm);
+    background: var(--gray-50);
+  }
+
+  .assignment-dialog__summary-item {
+    min-width: 0;
+  }
+
+  .assignment-dialog__summary-item dd {
+    overflow: hidden;
+    margin: 0.25rem 0 0;
+    color: var(--gray-900);
+    font-family: 'Bold';
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .assignment-dialog__actions {
+    display: flex;
+    width: 100%;
+    justify-content: flex-end;
+    gap: 0.75rem;
+  }
+
+  @media (max-width: 760px) {
+    .page-header,
+    .assignment-dialog__actions {
+      align-items: stretch;
+      flex-direction: column;
+    }
+
+    .assignment-dialog__summary {
+      grid-template-columns: 1fr;
+    }
   }
 </style>

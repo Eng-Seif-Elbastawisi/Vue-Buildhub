@@ -1,6 +1,10 @@
 import type Params from '@/base/Core/Params/params';
 import type { TaskDurationType } from './../constants/taskDurationType.enum';
-import { ClassValidation, ValidationError } from '@/base/Presentation/Utils/classValidation';
+import {
+  ClassValidation,
+  type FieldError,
+  ValidationError,
+} from '@/base/Presentation/Utils/classValidation';
 import { requiredSelectRule } from '@/base/Presentation/Utils/input_title';
 import { translate } from '@/locales/i18n';
 
@@ -28,10 +32,35 @@ export interface TaskAssignmentForm {
   employee_review_id?: number | string | null;
 }
 
-const normalizeId = (value: unknown): number | null => {
-  const id = Number(value);
+const normalizeId = (rawId: unknown): number | null => {
+  const id = Number(rawId);
 
   return Number.isInteger(id) && id > 0 ? id : null;
+};
+
+const normalizeAttachment = (attachment: TaskAssignmentAttachment): TaskAssignmentAttachment => ({
+  ...attachment,
+  file: attachment.file.trim(),
+  alt: attachment.alt.trim(),
+  link: attachment.link?.trim() || null,
+});
+
+const isDataUrl = (fileDataUrl: string): boolean => {
+  return /^data:[^;]+;base64,/i.test(fileDataUrl);
+};
+
+const isValidOptionalUrl = (linkUrl: string | null): boolean => {
+  if (!linkUrl) {
+    return true;
+  }
+
+  try {
+    new URL(linkUrl);
+
+    return true;
+  } catch {
+    return false;
+  }
 };
 
 export default class AssignProjectDepartmentItemTaskParams implements Params {
@@ -49,8 +78,8 @@ export default class AssignProjectDepartmentItemTaskParams implements Params {
 
     employee_ids: {
       required: true,
-      custom: (value) =>
-        (Array.isArray(value) && value.length > 0) ||
+      custom: (selectedEmployees) =>
+        (Array.isArray(selectedEmployees) && selectedEmployees.length > 0) ||
         translate('task_assignment.validation.employee_required'),
     },
 
@@ -73,10 +102,10 @@ export default class AssignProjectDepartmentItemTaskParams implements Params {
 
     this.notes = form.notes?.trim() ?? '';
 
-    // قيمة مستقلة قادمة من الـ checkbox
+    // Kept independent from attachments; the checkbox owns this flag.
     this.has_attached = Boolean(form.has_attached);
 
-    this.attachments = form.attachments ?? [];
+    this.attachments = (form.attachments ?? []).map(normalizeAttachment);
 
     this.duration_type = form.duration_type ?? null;
 
@@ -104,8 +133,37 @@ export default class AssignProjectDepartmentItemTaskParams implements Params {
     };
   }
 
+  private getAttachmentErrors(): FieldError[] {
+    return this.attachments.flatMap((attachment, index): FieldError[] => {
+      const errors: FieldError[] = [];
+
+      if (!isDataUrl(attachment.file)) {
+        errors.push({
+          field: `attachments.${index}.file`,
+          message: translate('task_assignment.validation.attachment_file_required'),
+        });
+      }
+
+      if (!isValidOptionalUrl(attachment.link)) {
+        errors.push({
+          field: `attachments.${index}.link`,
+          message: translate('task_assignment.validation.invalid_attachment_link'),
+        });
+      }
+
+      return errors;
+    });
+  }
+
   validate() {
-    return AssignProjectDepartmentItemTaskParams.validation.validate(this);
+    const validation = AssignProjectDepartmentItemTaskParams.validation.validate(this);
+
+    const errors = [...validation.errors, ...this.getAttachmentErrors()];
+
+    return {
+      isValid: errors.length === 0,
+      errors,
+    };
   }
 
   validateOrThrow(): void {
