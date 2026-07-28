@@ -568,12 +568,13 @@ watch(
             @click="confirmStatusChange"
           >
             <span v-if="actionLoading" class="loader"></span>
-            <span v-else>{{ $t('task_assignment.modals.yes') }}</span>
+            <span v-else>{{ $t('task_assignment.modals.yes') }}</span>             
           </button>
         </div>
       </template>
     </Dialog>
   </section>
+
 </template>
 
 <style lang="scss">
