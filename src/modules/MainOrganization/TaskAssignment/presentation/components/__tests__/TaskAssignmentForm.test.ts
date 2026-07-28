@@ -1,27 +1,27 @@
-import { mount } from '@vue/test-utils';
-import { describe, expect, it } from 'vitest';
+import { mount, type VueWrapper } from '@vue/test-utils';
+import { nextTick } from 'vue';
+import { describe, expect, it, vi } from 'vitest';
+import type * as VueI18nModule from 'vue-i18n';
+
+import AssignProjectDepartmentItemTaskParams from '../../../core/params/assign.project.department.item.task.params';
 import TaskAssignmentForm from '../TaskAssignmentForm.vue';
+
+vi.mock('vue-i18n', async (importOriginal) => {
+  const actual = await importOriginal<typeof VueI18nModule>();
+
+  return {
+    ...actual,
+    useI18n: () => ({
+      t: (key: string) => key,
+    }),
+  };
+});
 
 const mountForm = (props: Record<string, unknown> = {}) =>
   mount(TaskAssignmentForm, {
     props: {
-      selectedProjectDepartmentItem: null,
-      selectedEmployees: [],
-      selectedEmployeeReviewer: null,
-      selectedDurationType: null,
-      durationTypeOptions: [{ id: 'day', title: 'Day' }],
-      duration: null,
-      projectDepartmentItemOptions: [{ id: 39, title: 'Layout plan' }],
-      employeeOptions: [{ id: 16, title: 'Mohamed Saad' }],
-      projectDepartmentItemsLoading: false,
-      employeesLoading: false,
-      assignmentSubmitting: false,
-      attachmentsProcessing: false,
-      attachmentsUploadKey: 0,
-      assignmentValidationErrors: {},
-      assignmentGeneralError: '',
-      notes: '',
-      attachments: [],
+      projectDepartmentItemId: 39,
+      loading: false,
       ...props,
     },
     global: {
@@ -35,87 +35,90 @@ const mountForm = (props: Record<string, unknown> = {}) =>
           emits: ['update:modelValue'],
           template: '<div class="select-stub" :data-id="id"></div>',
         },
-        AppButton: {
-          name: 'AppButton',
-          props: ['type', 'loading', 'disabled'],
-          template:
-            '<button :type="type || \'button\'" :disabled="disabled || loading"><slot /></button>',
-        },
         HandleFilesUpload: {
           name: 'HandleFilesUpload',
           emits: ['change'],
           template:
-            "<button class=\"upload-stub\" type=\"button\" @click=\"$emit('change', [{ id: '1', name: 'brief.jpg', type: 'image/jpeg', size: '12 KB', url: 'blob:brief', base64: 'data:image/jpeg;base64,abc123' }])\"></button>",
+            "<button class=\"upload-stub\" type=\"button\" @click=\"$emit('change', [{ name: 'brief.jpg', type: 'image/jpeg', size: '12 KB', base64: 'data:image/jpeg;base64,abc123', alt: 'Brief image', link: 'https://example.com/brief' }])\"></button>",
         },
       },
     },
   });
 
+const latestParams = (wrapper: VueWrapper): AssignProjectDepartmentItemTaskParams => {
+  return wrapper.emitted('updateData')?.at(-1)?.[0] as AssignProjectDepartmentItemTaskParams;
+};
+
 describe('TaskAssignmentForm', () => {
-  it('emits selected values, notes, attachments, and submit events', async () => {
+  it('emits params with the selected row id and TitleInterface ids', async () => {
     const wrapper = mountForm();
     const selects = wrapper.findAllComponents({ name: 'UpdatedCustomInputSelect' });
 
-    selects[0].vm.$emit('update:modelValue', { id: 39, title: 'Layout plan' });
-    selects[1].vm.$emit('update:modelValue', [{ id: 16, title: 'Mohamed Saad' }]);
-    await wrapper.find('textarea').setValue('Review design before delivery');
+    expect(selects.map((select) => select.props('id'))).toEqual([
+      'employee_ids',
+      'employee_review_id',
+      'duration_type',
+    ]);
+    expect(wrapper.find('[data-id="project_department_item_id"]').exists()).toBe(false);
+
+    selects[0]?.vm.$emit('update:modelValue', [{ id: 16, title: 'Mohamed Saad' }]);
+    selects[1]?.vm.$emit('update:modelValue', { id: 20, title: 'Mona Reviewer' });
+    selects[2]?.vm.$emit('update:modelValue', { id: 1, title: 'Day' });
+
+    await wrapper.find('#duration').setValue(5);
+    await wrapper.find('#has_attached').setValue(true);
+    await wrapper.find('#task_assignment_notes').setValue('  Review design before delivery  ');
     await wrapper.find('.upload-stub').trigger('click');
-    await wrapper.find('form').trigger('submit.prevent');
+    await nextTick();
 
-    expect(wrapper.emitted('update-project-department-item')?.[0][0]).toEqual({
-      id: 39,
-      title: 'Layout plan',
-    });
-    expect(wrapper.emitted('update-employees')?.[0][0]).toEqual([
-      { id: 16, title: 'Mohamed Saad' },
-    ]);
-    expect(wrapper.emitted('update-notes')?.[0][0]).toBe('Review design before delivery');
-    expect(wrapper.emitted('add-attachments')?.[0][0]).toEqual([
-      {
-        id: '1',
-        name: 'brief.jpg',
-        type: 'image/jpeg',
-        size: '12 KB',
-        url: 'blob:brief',
-        base64: 'data:image/jpeg;base64,abc123',
-      },
-    ]);
-    expect(wrapper.emitted('submit')).toHaveLength(1);
-  });
+    const params = latestParams(wrapper);
 
-  it('renders attachment metadata fields and nested validation errors', async () => {
-    const wrapper = mountForm({
+    expect(params).toBeInstanceOf(AssignProjectDepartmentItemTaskParams);
+    expect(params.toMap()).toEqual({
+      project_department_item_id: 39,
+      employee_ids: [16],
+      employee_review_id: 20,
+      duration_type: 1,
+      duration: 5,
+      notes: 'Review design before delivery',
+      has_attached: true,
       attachments: [
         {
           file: 'data:image/jpeg;base64,abc123',
-          alt: 'Execution brief',
-          link: null,
-          name: 'brief.jpg',
-          type: 'image/jpeg',
-          size: '12 KB',
-          signature: 'brief.jpg|12000|image/jpeg|1',
+          alt: 'Brief image',
+          link: 'https://example.com/brief',
         },
       ],
-      assignmentValidationErrors: {
-        'attachments.0.file': 'File is required',
-        'attachments.0.alt': 'Alt is required',
-        'attachments.0.link': 'Invalid URL',
-      },
     });
+  });
 
-    await wrapper.find('#task_assignment_attachment_alt_0').setValue('Updated alt');
-    await wrapper.find('#task_assignment_attachment_link_0').setValue('https://example.com/brief');
-    await wrapper.find('.task-assignment-attachment__remove').trigger('click');
+  it('re-emits params when the parent changes the selected row id', async () => {
+    const wrapper = mountForm();
+
+    expect(latestParams(wrapper).project_department_item_id).toBe(39);
+
+    await wrapper.setProps({
+      projectDepartmentItemId: 42,
+    });
+    await nextTick();
+
+    expect(latestParams(wrapper).project_department_item_id).toBe(42);
+  });
+
+  it('renders uploaded attachment metadata and removes attachments locally', async () => {
+    const wrapper = mountForm();
+
+    await wrapper.find('.upload-stub').trigger('click');
+    await nextTick();
 
     expect(wrapper.text()).toContain('brief.jpg');
-    expect(wrapper.text()).toContain('File is required');
-    expect(wrapper.text()).toContain('Alt is required');
-    expect(wrapper.text()).toContain('Invalid URL');
-    expect(wrapper.emitted('update-attachment-alt')?.[0]).toEqual([0, 'Updated alt']);
-    expect(wrapper.emitted('update-attachment-link')?.[0]).toEqual([
-      0,
-      'https://example.com/brief',
-    ]);
-    expect(wrapper.emitted('remove-attachment')?.[0]).toEqual([0]);
+
+    await wrapper.find('#attachment_alt_0').setValue('Updated alt');
+    await wrapper.find('#attachment_link_0').setValue('https://example.com/updated-brief');
+    await wrapper.find('.task-assignment-attachment__remove').trigger('click');
+    await nextTick();
+
+    expect(wrapper.find('.task-assignment-attachment').exists()).toBe(false);
+    expect(latestParams(wrapper).attachments).toEqual([]);
   });
 });

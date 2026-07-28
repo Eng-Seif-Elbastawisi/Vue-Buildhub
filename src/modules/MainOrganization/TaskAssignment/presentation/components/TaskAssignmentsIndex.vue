@@ -54,14 +54,6 @@
             <i class="pi pi-refresh" :class="{ 'pi-spin': tasksLoading }" aria-hidden="true"></i>
             <span>{{ $t('task_assignment.refresh_tasks') }}</span>
           </button> -->
-
-          <!-- <RouterLink
-            class="task-assignment-page-header__add"
-            :to="{ name: 'mainorganization-task-assignment-create' }"
-          >
-            <i class="pi pi-plus" aria-hidden="true"></i>
-            <span>{{ $t('task_assignment.add_task') }}</span>
-          </RouterLink> -->
         </div>
       </header>
 

@@ -31,7 +31,7 @@ describe('AssignProjectDepartmentItemTaskParams', () => {
       duration_type: 1,
       duration: 5,
       notes: 'Review design before delivery.',
-      has_attached: true,
+      has_attached: false,
       attachments: [
         {
           file: 'data:image/jpeg;base64,abc123',

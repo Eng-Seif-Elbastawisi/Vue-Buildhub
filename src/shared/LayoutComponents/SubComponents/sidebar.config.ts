@@ -285,7 +285,6 @@ export const sidebarSections: SidebarSectionConfig[] = [
         icon: SidebarEmployeeIcon,
         roles: ['organization'],
         countKey: 'employees_count',
-
       },
     ],
   },
@@ -333,6 +332,12 @@ export const sidebarSections: SidebarSectionConfig[] = [
       {
         path: '/task-assignment',
         labelKey: 'sidebar.task_assignment',
+        icon: SidebarProductivityIcon,
+        roles: ['organization'],
+      },
+      {
+        path: '/task-assignment/approved',
+        labelKey: 'sidebar.task_assignment_approved',
         icon: SidebarProductivityIcon,
         roles: ['organization'],
       },
