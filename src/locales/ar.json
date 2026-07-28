@@ -1921,5 +1921,10 @@
   "search_project_types": "ابحث في أنواع المشاريع",
   "search_clients": "ابحث في العملاء",
   "search_employees": "ابحث في الموظفين",
-  "search_specializations": "ابحث في التخصصات"
+  "search_specializations": "ابحث في التخصصات",
+  "task_assignment.inside.assigned": "مُكَلَّف",
+  "task_assignment.inside.working": "تحت التنفيذ",
+  "task_assignment.inside.hold": "متوقف",
+  "task_assignment.inside.review": "قيد المراجعة",
+  "task_assignment.inside.in_progress": "قيد التنفيذ"
 }

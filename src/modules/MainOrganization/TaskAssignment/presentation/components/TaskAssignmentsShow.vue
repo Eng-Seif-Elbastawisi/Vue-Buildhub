@@ -12,6 +12,7 @@ import ShowTaskItemParams from '../../core/params/show.task.Item.params';
 import type ProjectItemShowModel from '@/modules/MainOrganization/ProjectItem/core/models/project.Item.show.model';
 import { ProjectItemPriceEnum } from '@/modules/MainOrganization/ProjectItem/core/constant/project.item.Price.enum';
 import Image from 'primevue/image';
+import { getTypeNameKey } from '../../core/constants/inside.status.enum';
 
 const props = defineProps<{
   /**
@@ -429,7 +430,7 @@ watch(
           </div>
 
           <!-- Task status -->
-          <div class="detail-item">
+          <!-- <div class="detail-item">
             <span class="detail-label">{{ $t('status') }}</span>
             <span class="detail-value">
               <span v-if="isFinished" class="status-badge status-badge--finished">
@@ -445,12 +446,78 @@ watch(
                 -
               </span>
             </span>
+          </div> -->
+        </div>
+      </div>
+
+      <!-- history -->
+      <div class="task-details-section" >
+        <h3>{{ $t('histories') }}</h3>
+        <div class="task-details-grid" v-for="history in itemData?.histories" :key="history.id">
+          <div class="detail-item">
+            <span class="detail-label">{{ $t('id') }}</span>
+            <span class="detail-value">
+              {{ history.id }}
+            </span>
+          </div>
+           <div class="detail-item">
+            <span class="detail-label">{{ $t('status') }}</span>
+            <span class="detail-value">
+              {{$t(getTypeNameKey(history.status ?? 1)) }}
+            </span>
+          </div>
+          <div class="detail-item" v-for="employee in history?.history_employees" :key="employee.id">
+            <span class="detail-label">{{ $t('emp.name') }}</span>
+            <span class="detail-value">
+              {{ employee.employee?.name }}
+            </span>
+          </div>
+        </div>
+      </div>
+       <!-- department -->
+      <div class="task-details-section" >
+        <h3>{{ $t('department') }}</h3>
+        <div class="task-details-grid" >
+          <div class="detail-item">
+            <span class="detail-value">
+              {{ itemData?.department ?? '-' }}
+            </span>
+          </div>
+        </div>
+      </div>
+      <!-- project -->
+      <div class="task-details-section" >
+        <h3>{{ $t('project') }}</h3>
+        <div class="task-details-grid" >
+          <div class="detail-item">
+            <span class="detail-value">
+              <span class="detail-label">{{ $t('client.title') }}</span> 
+              {{ itemData?.project?.client?.title ?? '-' }}
+            </span>
+          </div> 
+          <div class="detail-item">
+            <span class="detail-value">
+              <span class="detail-label">{{ $t('project.title') }} </span>
+              {{  itemData?.project?.title?.find( (item) => item.locale === 'en' )?.title ?? '-' }}
+            </span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-value">
+              <span class="detail-label">{{ $t('project.description') }} </span>
+              {{  itemData?.project?.description?.find( (item) => item.locale === 'en' )?.description ?? '-' }}
+            </span>
+          </div>
+            <div class="detail-item">
+            <span class="detail-value">
+              <span class="detail-label">{{ $t('project.created_at') }} </span>         
+              {{  itemData?.project?.created_at ?? '-' }}
+             </span>
           </div>
         </div>
       </div>
 
       <!-- ── Floor & space ──────────────────────────────────── -->
-      <div class="task-details-section">
+      <!-- <div class="task-details-section">
         <h3>{{ $t('project_item.project_floor') }}</h3>
 
         <div class="task-details-grid">
@@ -466,7 +533,7 @@ watch(
             <span class="detail-value">{{ itemData.project_floor_space.title || '-' }}</span>
           </div>
         </div>
-      </div>
+      </div> -->
 
       <!-- ── Organisation & employees ──────────────────────── -->
       <div class="task-details-section">

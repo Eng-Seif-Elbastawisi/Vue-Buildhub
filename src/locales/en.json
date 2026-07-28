@@ -1922,5 +1922,10 @@
   "search_project_types": "Search project types",
   "search_clients": "Search clients",
   "search_employees": "Search employees",
-  "search_specializations": "Search specializations"
+  "search_specializations": "Search specializations",
+  "task_assignment.inside.assigned": "Assigned",
+  "task_assignment.inside.working": "Working",
+  "task_assignment.inside.hold": "Hold",
+  "task_assignment.inside.review": "Review",
+  "task_assignment.inside.in_progress": "In progress"
 }

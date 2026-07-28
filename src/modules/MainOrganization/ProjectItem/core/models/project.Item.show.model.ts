@@ -5,6 +5,8 @@ import OrganizationEmployeeModel from '@/modules/shared/Organization/core/models
 import ItemShowModel from '@/modules/shared/Item/core/models/Item.show.model';
 import { ProjectFloorShowModel } from '@/modules/MainOrganization/ProjectFloor';
 import ProjectAttachmentModel from '@/modules/MainOrganization/Project/core/models/project.show.attachment';
+import type ProjectHistoryModel from './project.history.model';
+import ProjectSimpleModel from './project.simple.model';
 
 export default class ProjectItemShowModel { 
   public readonly id?: number;
@@ -19,14 +21,15 @@ export default class ProjectItemShowModel {
   public readonly organization?: OrganizationShowModel;
   public readonly employee?: OrganizationEmployeeModel;
   public readonly default_employee?: OrganizationEmployeeModel;
-  public readonly project?: OrganizationShowModel;
+  public readonly project?: ProjectSimpleModel;
   public readonly item?: ItemShowModel;
   public readonly project_floor?: ProjectFloorShowModel;
-    public readonly project_floor_space?: ProjectFloorShowModel | null;
+  public readonly project_floor_space?: ProjectFloorShowModel | null;
   public readonly final_price?: number;
   public readonly attachments?: ProjectAttachmentModel[];
   public readonly assigned_employees?: OrganizationEmployeeModel[];
-  public readonly histories?: Record<string, unknown>[];
+  public readonly histories?:  ProjectHistoryModel[];
+  public readonly department?: string;
 
   constructor(data: {
     id?: number;
@@ -41,14 +44,15 @@ export default class ProjectItemShowModel {
     organization?: OrganizationShowModel;
     employee?: OrganizationEmployeeModel;
     default_employee?: OrganizationEmployeeModel;
-    project?: OrganizationShowModel;
+    project?: ProjectSimpleModel;
     item?: ItemShowModel;
     project_floor?: ProjectFloorShowModel;
     project_floor_space?: ProjectFloorShowModel | null;
     final_price?: number;
     attachments?: ProjectAttachmentModel[];
     assigned_employees?: OrganizationEmployeeModel[];
-    histories?: Record<string, unknown>[];
+    histories?: ProjectHistoryModel[];
+    department?: string;
   }) {
     this.id = data.id;
     this.price = data.price;
@@ -70,6 +74,7 @@ export default class ProjectItemShowModel {
     this.attachments = data.attachments;
     this.assigned_employees = data.assigned_employees;
     this.histories = data.histories;
+    this.department = data.department;
 
     Object.freeze(this);
   }
@@ -77,31 +82,27 @@ export default class ProjectItemShowModel {
   static fromJson(json: Record<string, unknown>): ProjectItemShowModel {
     if (!json) throw new Error('Invalid ProjectItemShowModel data');
 
-    return new ProjectItemShowModel({
-      id: json.id as number | undefined,
-      price: json.price as number | undefined,
-      quantity: json.quantity as number | undefined,
-      item_id: new TitleInterface({
-        id: json.item_id as number,
-        title: json.item_id_title as string,
-      }),
-      pricing_method: json.pricing_method as ProjectItemPriceEnum | undefined,
-      project_floor_id: json.project_floor_id as number | undefined,
-      uuid: json.uuid as string | undefined,
-      has_attached: json.has_attached as boolean | undefined,
-      is_assign_employee: json.is_assign_employee as boolean | undefined,
-      // organization: OrganizationShowModel.fromJson(json.organization as Record<string, unknown> | undefined),
-      employee: OrganizationEmployeeModel.fromJson(json.employee as Record<string, unknown> | undefined),
-      //default_employee: OrganizationEmployeeModel.fromJson(json.assigned_employees as Record<string, unknown> | undefined),
-      project: OrganizationShowModel.fromJson(json.project as Record<string, unknown> | undefined),
-      item: ItemShowModel.fromJson(json.item as Record<string, unknown> | undefined),
-      project_floor: ProjectFloorShowModel.fromJson(json.project_floor as Record<string, unknown> | undefined),
-      // project_floor_space: ProjectFloorShowModel.fromJson(json.project_floor_space as Record<string, unknown> | undefined),
-      final_price: json.final_price as number | undefined,
-       attachments: (json.attachments as Record<string, unknown>[] | undefined)?.map((item) => ProjectAttachmentModel.fromJson(item)),
-      assigned_employees: json.assigned_employees?.map((item) => OrganizationEmployeeModel.fromJson(item)),
-      histories: json.histories as Record<string, unknown>[] | undefined,
-    });
+   return new ProjectItemShowModel({
+  id: json.id as number | undefined,
+  price: json.price as number | undefined,
+  quantity: json.quantity as number | undefined,
+  item_id: new TitleInterface({id: json.item_id as number,title: json.item_id_title as string,}),
+  pricing_method: json.pricing_method as ProjectItemPriceEnum | undefined,
+  project_floor_id: json.project_floor_id as number | undefined,
+  uuid: json.uuid as string | undefined,
+  has_attached: json.has_attached as boolean | undefined,
+  is_assign_employee: json.is_assign_employee as boolean | undefined,
+
+  employee: json.employee   ? OrganizationEmployeeModel.fromJson( json.employee as Record<string, unknown> ) : undefined,
+  project: json.project ? ProjectSimpleModel.fromJson( json.project as Record<string, unknown> ) : undefined,
+  item: json.item ? ItemShowModel.fromJson( json.item as Record<string, unknown> ) : undefined,
+  project_floor: json.project_floor ? ProjectFloorShowModel.fromJson( json.project_floor as Record<string, unknown> ) : undefined,
+  final_price: json.final_price as number | undefined,
+  attachments: (json.attachments as Record<string, unknown>[] | undefined)?.map((item) => ProjectAttachmentModel.fromJson(item)),
+  assigned_employees: (  json.assigned_employees as Record<string, unknown>[] | undefined )?.map((item) => OrganizationEmployeeModel.fromJson(item)),
+  histories: json.histories as ProjectHistoryModel[] | undefined,
+  department: json.department as string | undefined,
+});
   }
 
   static example: ProjectItemShowModel = new ProjectItemShowModel({
