@@ -12,7 +12,7 @@ export type Type = InsideStatusType;
  * Get i18n key for department type display name
  * Use this with $t() in components to get localized display names
  */
-export function getTypeNameKey(type: InsideStatusType): string {
+export function getTypeNameKey(type?: InsideStatusType): string {
     switch (type) {
         case InsideStatusType.ASSIGN:
             return 'task_assignment.inside.assigned';
