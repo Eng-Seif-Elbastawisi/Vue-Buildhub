@@ -1,8 +1,12 @@
 import { flushPromises, mount } from '@vue/test-utils';
 import { describe, expect, it, beforeEach, vi } from 'vitest';
+import { ref, type Ref } from 'vue';
 import type * as VueRouterModule from 'vue-router';
 
-import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
+import {
+  DataSuccess,
+  type DataState,
+} from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
 
 import AssignProjectDepartmentItemTaskParams from '../../../core/params/assign.project.department.item.task.params';
 import type FetchApprovedTasksParams from '../../../core/params/fetch.approved.tasks.params';
@@ -18,6 +22,7 @@ const mocks = vi.hoisted(() => ({
   },
   fetchApprovedTasks: vi.fn(),
   assignTask: vi.fn(),
+  approvedTasksState: null as unknown as Ref<DataState<TaskAssignmentApprovedTaskModel[]>>,
 }));
 
 vi.mock('vue-router', async (importOriginal) => {
@@ -37,6 +42,7 @@ vi.mock('../../controllers/task.assignment.controller', () => ({
     getInstance: () => ({
       fetchApprovedTasks: mocks.fetchApprovedTasks,
       assignTask: mocks.assignTask,
+      approvedTasksState: mocks.approvedTasksState,
       pagination: {
         value: null,
       },
@@ -152,11 +158,15 @@ const mountIndex = async () => {
 describe('TaskApprovedIndex', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mocks.fetchApprovedTasks.mockResolvedValue(
-      new DataSuccess<TaskAssignmentApprovedTaskModel[]>({
+    mocks.approvedTasksState = ref();
+    mocks.fetchApprovedTasks.mockImplementation(async () => {
+      const approvedTasks = new DataSuccess<TaskAssignmentApprovedTaskModel[]>({
         data: [unassignedTask, assignedTask],
-      }),
-    );
+      });
+      mocks.approvedTasksState.value = approvedTasks;
+
+      return approvedTasks;
+    });
     mocks.assignTask.mockResolvedValue(new DataSuccess<void>({ message: 'Task assigned' }));
   });
 

@@ -3,8 +3,6 @@
   import { useRoute, useRouter } from 'vue-router';
   import Dialog from 'primevue/dialog';
 
-  import type { DataState } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
-
   import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
   import AppTable, { type TableHeader } from '@/shared/HelpersComponents/AppTable.vue';
   import Pagination from '@/shared/HelpersComponents/Pagination.vue';
@@ -24,7 +22,7 @@
 
   const perPage = ref(10);
 
-  const state = ref<DataState<TaskAssignmentApprovedTaskModel[]>>();
+  const state = computed(() => controller.approvedTasksState.value);
   const assignmentDialogVisible = ref(false);
   const selectedTask = ref<TaskAssignmentApprovedTaskModel | null>(null);
   const assignmentParams = ref<AssignProjectDepartmentItemTaskParams | null>(null);
@@ -108,15 +106,9 @@
   };
 
   const fetchApprovedTasks = async (page: number = currentPage.value): Promise<void> => {
-    const response = await controller.fetchApprovedTasks(
+    await controller.fetchApprovedTasks(
       new FetchApprovedTasksParams('', page, perPage.value, 1, 0),
     );
-
-    if (response.error) {
-      return;
-    }
-
-    state.value = response;
   };
 
   const assignTask = async (): Promise<void> => {

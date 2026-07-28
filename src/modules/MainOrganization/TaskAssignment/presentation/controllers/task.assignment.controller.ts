@@ -25,6 +25,9 @@ export default class TaskAssignmentController extends BaseController<
   public employeeTasksState: Ref<DataState<TaskAssignmentEmployeeTaskModel[]>> = ref(
     new DataInitial<TaskAssignmentEmployeeTaskModel[]>(null),
   ) as Ref<DataState<TaskAssignmentEmployeeTaskModel[]>>;
+  public approvedTasksState: Ref<DataState<TaskAssignmentApprovedTaskModel[]>> = ref(
+    new DataInitial<TaskAssignmentApprovedTaskModel[]>(null),
+  ) as Ref<DataState<TaskAssignmentApprovedTaskModel[]>>;
 
   protected get repository() {
     return TaskAssignmentRepository.getInstance();
@@ -117,8 +120,25 @@ export default class TaskAssignmentController extends BaseController<
   async fetchApprovedTasks(
     params: FetchApprovedTasksParams,
   ): Promise<DataState<TaskAssignmentApprovedTaskModel[]>> {
-    const result = await this.repository.fetchApprovedTasks(params);
+    this.approvedTasksState.value = new DataLoading<TaskAssignmentApprovedTaskModel[]>();
 
-    return this.handleTaskAssignmentActionResponse(result);
+    try {
+      const approvedTasks = await this.repository.fetchApprovedTasks(params);
+      this.approvedTasksState.value = approvedTasks;
+
+      if (approvedTasks.hasError) {
+        this.handleErrorResponse(approvedTasks);
+      }
+
+      return approvedTasks;
+    } catch (error) {
+      const failed = new DataFailed<TaskAssignmentApprovedTaskModel[]>({
+        error: error as ErrorModel,
+      });
+      this.approvedTasksState.value = failed;
+      this.handleErrorResponse(failed);
+
+      return failed;
+    }
   }
 }
