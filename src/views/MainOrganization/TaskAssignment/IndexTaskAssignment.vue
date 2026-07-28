@@ -4,4 +4,4 @@
 
 <template>
   <TaskAssignmentsIndex />
-</template>
+</template> 

@@ -30,9 +30,9 @@
   const { user } = useUserStore();
 
   const headers: TableHeader[] = [
-    { key: 'title', label: 'title', width: '35%', sortable: true },
-    { key: 'notes', label: 'notes', width: '30%' },
-    { key: 'price', label: 'price', width: '30%' },
+    { key: 'title', label: 'title', width: '50%', sortable: true },
+    { key: 'notes', label: 'notes', width: '50%' },
+    // { key: 'price', label: 'price', width: '30%' },
     // { key: 'type', label: 'type', width: '30%' },
   ];
 

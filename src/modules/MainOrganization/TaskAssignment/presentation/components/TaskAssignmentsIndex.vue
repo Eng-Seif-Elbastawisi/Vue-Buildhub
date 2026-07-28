@@ -2,27 +2,26 @@
   // import UpdatedCustomInputSelect from '@/shared/FormInputs/UpdatedCustomInputSelect.vue';
   import EmployeeTasksList from './EmployeeTasksList.vue';
   import { useEmployeeTasks } from '../composables/useEmployeeTasks';
-
+import {
+  getTypeNameKey,
+} from '../../core/constants/inside.status.enum';
   const {
-    // selectedEmployeeFilter,
-    // employeeOptions,
-    // employeesLoading,
-    tasksState,
-    tasksLoading,
-    tasksCount,
-    tasksPagination,
-    statusUpdateErrors,
-    valueOrEmpty,
-    formatDate,
-    taskRows,
-    fetchEmployeeTasks,
-    changeTaskStatus,
-    isTaskUpdating,
-    getStatusDisplay,
-    getStatusClass,
-    onPerPageChange,
-    // onEmployeeFilterChange,
-  } = useEmployeeTasks();
+  selectedStatus,
+  tasksState,
+  tasksLoading,
+  tasksCount,
+  tasksPagination,
+  statusUpdateErrors,
+  valueOrEmpty,
+  formatDate,
+  taskRows,
+  fetchEmployeeTasks,
+  changeTaskStatus,
+  isTaskUpdating,
+  getStatusDisplay,
+  getStatusClass,
+  onPerPageChange,
+} = useEmployeeTasks();
 </script>
 
 <template>
@@ -44,6 +43,10 @@
           <span class="task-assignment-page-header__count">
             {{ tasksCount }} {{ $t('task_assignment.tasks_count') }}
           </span>
+          <span class="task-assignment-page-header__count">
+            {{ getTypeNameKey(selectedStatus) }} 
+          </span>
+
 
           <!-- <button
             class="task-assignment-page-header__refresh"
