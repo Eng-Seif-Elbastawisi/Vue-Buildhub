@@ -581,7 +581,7 @@ watch(
 .p-dialog{
   background-color: white;
   color: black;
-}
+}     
 .form-group{
   width: 100%;
   display: flex;
