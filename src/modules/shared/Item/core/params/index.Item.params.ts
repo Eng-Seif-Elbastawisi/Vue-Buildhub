@@ -1,11 +1,10 @@
 import IndexParams from '@/base/Core/Params/indexParams';
 import type { ItemServiceTypeEnum } from '../constant/item.service.type.enum';
-import type { DepartmentTypeEnum } from '@/modules/shared/Department/core/constants/Type.enum';
 
 export default class IndexItemParams extends IndexParams {
   dateRemove: string | null | undefined;
   serviceType: ItemServiceTypeEnum | null | undefined;
-  departmentId: DepartmentTypeEnum | null | undefined;
+  departmentId: number | null | undefined;
 
   constructor(
     word: string = '',
@@ -14,7 +13,7 @@ export default class IndexItemParams extends IndexParams {
     withPage: number = 1,
     dateRemove?: string | null,
     serviceType?: ItemServiceTypeEnum | null,
-    departmentId?: DepartmentTypeEnum | null,
+    departmentId?: number | null,
   ) {
     super(word, pageNumber, perPage, withPage);
     this.dateRemove = dateRemove;
@@ -27,11 +26,11 @@ export default class IndexItemParams extends IndexParams {
     if (this.dateRemove) {
       data['date_remove'] = this.dateRemove;
     }
-    if (this.serviceType) {
+    if (this.serviceType !== undefined && this.serviceType !== null) {
       data['service_type'] = this.serviceType;
     }
-    if (this.departmentId) {
-      data['type'] = this.departmentId;
+    if (this.departmentId !== undefined && this.departmentId !== null) {
+      data['department_id'] = this.departmentId;
     }
 
     return data;

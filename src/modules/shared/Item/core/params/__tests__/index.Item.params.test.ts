@@ -24,4 +24,16 @@ describe('IndexItemParams', () => {
       service_type: ItemServiceTypeEnum.DESIGN,
     });
   });
+
+  it('maps service type and department filters', () => {
+    expect(
+      new IndexItemParams('', 1, 100, 0, undefined, ItemServiceTypeEnum.DESIGN, 42).toMap(),
+    ).toEqual({
+      with_pagination: 0,
+      page: 1,
+      per_page: 100,
+      service_type: ItemServiceTypeEnum.DESIGN,
+      department_id: 42,
+    });
+  });
 });
