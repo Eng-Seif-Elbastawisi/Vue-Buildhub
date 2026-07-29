@@ -50,6 +50,7 @@ import {
 } from '@/shared/icons/SidebarIcons/sidebarPrimeIcons';
 import { DepartmentTypeEnum } from '@/modules/shared/Department/core/constants/Type.enum';
 import { ItemServiceTypeEnum } from '@/modules/shared/Item/core/constant/item.service.type.enum';
+import { InsideStatusType } from '@/modules/MainOrganization/TaskAssignment/core/constants/inside.status.enum';
 
 export type SidebarRole = 'admin' | 'organization';
 
@@ -285,7 +286,6 @@ export const sidebarSections: SidebarSectionConfig[] = [
         icon: SidebarEmployeeIcon,
         roles: ['organization'],
         countKey: 'employees_count',
-
       },
     ],
   },
@@ -331,30 +331,39 @@ export const sidebarSections: SidebarSectionConfig[] = [
         roles: ['organization'],
       },
       {
-        path: '/task-assignment',
-        labelKey: 'sidebar.task_assignment',
+        labelKey: 'sidebar.plan',
+        path: '/task-assignment/approved',
+        icon: SidebarPlanIcon,
+        roles: ['organization'],
+      },
+      {
+        path: `/task-assignment?status=${InsideStatusType.ASSIGN}`,
+        labelKey: 'task',
         icon: SidebarProductivityIcon,
         roles: ['organization'],
       },
-      {
-        labelKey: 'sidebar.plan',
-        icon: SidebarPlanIcon,
-        roles: ['organization'],
-        disabled: true,
-      },
 
       {
+        path: `/task-assignment?status=${InsideStatusType.WORKING}`,
         labelKey: 'sidebar.in_progress',
         icon: SidebarInProgressIcon,
         roles: ['organization'],
-        disabled: true,
+        // disabled: true,
       },
 
       {
-        labelKey: 'sidebar.full_packages',
+        path: `/task-assignment?status=${InsideStatusType.HOLD}`,
+        labelKey: 'holding',
         icon: SidebarFullPackageIcon,
         roles: ['organization'],
-        disabled: true,
+        // disabled: true,
+      },
+        {
+        path: `/task-assignment?status=${InsideStatusType.REVIEW}`,
+        labelKey: 'review',
+        icon: SidebarFullPackageIcon,
+        roles: ['organization'],
+        // disabled: true,
       },
     ],
   },
@@ -636,7 +645,7 @@ export const sidebarSections: SidebarSectionConfig[] = [
         path: '/organization',
         labelKey: 'organization',
         icon: SidebarSysColorsIcon,
-        roles: [ 'admin'],
+        roles: ['admin'],
       },
     ],
   },

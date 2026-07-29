@@ -1,24 +1,28 @@
 import type Params from '@/base/Core/Params/params';
 import type { TaskEmployeeStatusEnum } from '../constants/task.employee.status.enum';
-export interface TaskStatusAttachmentItem {
-  file: string;
-  alt: string;
-  link: string | null;
-}
-
+import type ProjectAttachmentParams from './project.attachment.params';
+import { ClassValidation } from '@/base/Presentation/Utils/classValidation';
 export default class SetTaskEmployeeStatusParams implements Params {
-  public readonly project_department_item_id: number;
+  public readonly project_department_item_id: number | string;
   public readonly status: TaskEmployeeStatusEnum;
   public readonly employee_id?: number;
   public readonly notes?: string;
-  public readonly attachments?: TaskStatusAttachmentItem[];
+  public readonly attachments?: ProjectAttachmentParams[];
+
+  public static readonly validation = new ClassValidation().setRules({
+    project_department_item_id: { required: true },
+    status: { required: true },
+    employee_id: { required: false },
+    notes: { required: false },
+    attachments: { required: false },
+  });
 
   constructor(data: {
-    project_department_item_id: number;
+    project_department_item_id: number | string;
     status: TaskEmployeeStatusEnum;
     employee_id?: number;
     notes?: string;
-    attachments?: TaskStatusAttachmentItem[];
+    attachments?: ProjectAttachmentParams[];
   }) {
     this.project_department_item_id =
       data.project_department_item_id;
@@ -35,7 +39,14 @@ export default class SetTaskEmployeeStatusParams implements Params {
       status: this.status,
       employee_id: this.employee_id,
       notes: this.notes,
-      attachments: this.attachments,
+      attachments: this.attachments?.map((att) => att.toMap()),
     };
+  }
+  validate() {
+    return SetTaskEmployeeStatusParams.validation.validate(this);
+  }
+
+  validateOrThrow() {
+    return SetTaskEmployeeStatusParams.validation.validateOrThrow(this);
   }
 }

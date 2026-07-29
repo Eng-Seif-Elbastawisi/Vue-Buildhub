@@ -27,21 +27,14 @@ vi.mock('../../composables/useEmployeeTasks', () => ({
   }),
 }));
 
-const RouterLinkStub = {
-  name: 'RouterLink',
-  props: ['to'],
-  template: '<a class="router-link-stub"><slot /></a>',
-};
-
 describe('TaskAssignmentsIndex', () => {
-  it('renders only the task assignments list page with refresh and add actions', async () => {
+  it('renders only the task assignments list page without the legacy create action', async () => {
     const wrapper = mount(TaskAssignmentsIndex, {
       global: {
         mocks: {
           $t: (key: string) => key,
         },
         stubs: {
-          RouterLink: RouterLinkStub,
           EmployeeTasksList: {
             emits: ['refresh'],
             template: '<section class="tasks-stub" @click="$emit(\'refresh\')" />',
@@ -56,11 +49,9 @@ describe('TaskAssignmentsIndex', () => {
     expect(wrapper.text()).toContain('task_assignment.title');
     expect(wrapper.text()).toContain('3 task_assignment.tasks_count');
 
-    expect(wrapper.findComponent({ name: 'RouterLink' }).props('to')).toEqual({
-      name: 'mainorganization-task-assignment-create',
-    });
+    expect(wrapper.find('.task-assignment-page-header__add').exists()).toBe(false);
 
-    await wrapper.find('.task-assignment-page-header__refresh').trigger('click');
+    await wrapper.find('.tasks-stub').trigger('click');
     expect(mocks.fetchEmployeeTasks).toHaveBeenCalledTimes(1);
   });
 });

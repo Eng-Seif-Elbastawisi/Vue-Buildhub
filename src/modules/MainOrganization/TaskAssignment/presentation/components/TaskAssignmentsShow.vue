@@ -1,32 +1,52 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue';
+import {
+  computed,
+  onMounted,
+  ref,
+  watch,
+} from 'vue';
 import { useI18n } from 'vue-i18n';
+
+import Accordion from 'primevue/accordion';
+import AccordionTab from 'primevue/accordiontab';
 import Dialog from 'primevue/dialog';
-import ProjectItemController from '@/modules/MainOrganization/ProjectItem/presentation/controllers/project.Item.controller';
-import TaskAssignmentController from '../controllers/task.assignment.controller';
-import SetTaskEmployeeStatusParams from '../../core/params/set.task.employee.status.params';
-import { TaskEmployeeStatusEnum } from '../../core/constants/task.employee.status.enum';
-import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
-import { dialogManager } from '@/base/Presentation/Dialogs/dialog.manager';
-import ShowTaskItemParams from '../../core/params/show.task.Item.params';
-import type ProjectItemShowModel from '@/modules/MainOrganization/ProjectItem/core/models/project.Item.show.model';
-import { ProjectItemPriceEnum } from '@/modules/MainOrganization/ProjectItem/core/constant/project.item.Price.enum';
 import Image from 'primevue/image';
 
-const props = defineProps<{
-  /**
-   * project_department_item.id
-   *
-   * Example: 44
-   */
-  id: string;
+import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
+import { dialogManager } from '@/base/Presentation/Dialogs/dialog.manager';
 
-  /**
-   * project_department_item.uuid
-   *
-   * Example:
-   * 46e10f7b-8dda-4df5-b036-143e2f51e98e
-   */
+import ProjectItemController from '@/modules/MainOrganization/ProjectItem/presentation/controllers/project.Item.controller';
+import type ProjectItemShowModel from '@/modules/MainOrganization/ProjectItem/core/models/project.Item.show.model';
+
+import HandleFilesUpload, {
+  type UploadedFile,
+} from '@/shared/FormInputs/HandleFilesUpload.vue';
+
+import {
+  InsideStatusType,
+  getTypeNameKey,
+} from '../../core/constants/inside.status.enum';
+import { TaskEmployeeStatusEnum } from '../../core/constants/task.employee.status.enum';
+
+import ProjectAttachmentParams from '../../core/params/project.attachment.params';
+import SetTaskEmployeeStatusParams from '../../core/params/set.task.employee.status.params';
+import ShowTaskItemParams from '../../core/params/show.task.Item.params';
+
+import TaskAssignmentController from '../controllers/task.assignment.controller';
+
+type DialogAction = 'START' | 'HOLD' | 'FINISH';
+
+interface StatusMeta {
+  className: string;
+  icon: string;
+}
+
+interface UploadedFileWithBase64 extends UploadedFile {
+  base64: string;
+}
+
+const props = defineProps<{
+  id: string;
   uuid: string;
 }>();
 
@@ -38,54 +58,160 @@ const projectItemController =
 const taskAssignmentController =
   TaskAssignmentController.getInstance();
 
-const projectDepartmentItemId = computed(() => {
-  return String(props.id ?? '');
-});
+const actionLoading = ref(false);
+const actionNotes = ref('');
+const activeDialogAction = ref<DialogAction | null>(
+  null,
+);
+const attachmentFiles = ref<UploadedFile[]>([]);
 
-const projectDepartmentItemUuid = computed(() => {
-  return String(props.uuid ?? '');
-});
+const projectDepartmentItemId = computed(() =>
+  String(props.id ?? ''),
+);
+
+const projectDepartmentItemUuid = computed(() =>
+  String(props.uuid ?? ''),
+);
 
 const itemData = computed(
-  () => projectItemController.itemData.value as ProjectItemShowModel | null,
+  () =>
+    projectItemController.itemData
+      .value as ProjectItemShowModel | null,
 );
-console.log('itemData.value:', itemData.value);
 
-const pricingMethodLabel = computed(() => {
-  switch (itemData.value?.pricing_method) {
-    case ProjectItemPriceEnum.GENERAL_ITEM:
-      return t('project_item.pricing_methods.GENERAL_ITEM');
-    case ProjectItemPriceEnum.SPACE_RELATED:
-      return t('project_item.pricing_methods.SPACE_RELATED');
-    case ProjectItemPriceEnum.FULL_FLOOR_RELATED:
-      return t('project_item.pricing_methods.FULL_FLOOR_RELATED');
+const itemLoading = computed(() =>
+  projectItemController.isItemLoading(),
+);
+
+const itemError = computed(
+  () => projectItemController.errorMessage.value,
+);
+
+const insideStatus = computed(
+  () => itemData.value?.inside_status,
+);
+
+const insideStatusLabel = computed(() => {
+  if (
+    insideStatus.value === null ||
+    insideStatus.value === undefined
+  ) {
+    return '-';
+  }
+
+  return t(getTypeNameKey(insideStatus.value));
+});
+
+const insideStatusMeta = computed<StatusMeta>(() => {
+  switch (insideStatus.value) {
+    case InsideStatusType.ASSIGN:
+      return {
+        className:
+          'task-status-chip--assigned',
+        icon: 'pi pi-user-plus',
+      };
+
+    case InsideStatusType.WORKING:
+      return {
+        className:
+          'task-status-chip--working',
+        icon: 'pi pi-cog',
+      };
+
+    case InsideStatusType.HOLD:
+      return {
+        className:
+          'task-status-chip--held',
+        icon: 'pi pi-pause',
+      };
+
+    case InsideStatusType.REVIEW:
+      return {
+        className:
+          'task-status-chip--review',
+        icon: 'pi pi-eye',
+      };
+
     default:
-      return '-';
+      return {
+        className:
+          'task-status-chip--default',
+        icon: 'pi pi-info-circle',
+      };
   }
 });
 
-const itemLoading = computed(() => {
-  return projectItemController.isItemLoading();
+const dialogVisible = computed({
+  get: () => activeDialogAction.value !== null,
+
+  set: (visible: boolean) => {
+    if (!visible) {
+      closeModal();
+    }
+  },
 });
 
-const itemError = computed(() => {
-  return projectItemController.errorMessage.value;
+const dialogTitle = computed(() => {
+  switch (activeDialogAction.value) {
+    case 'START':
+      return t(
+        'task_assignment.modals.start_title',
+      );
+
+    case 'HOLD':
+      return t(
+        'task_assignment.modals.hold_title',
+      );
+
+    case 'FINISH':
+      return t(
+        'task_assignment.modals.finish_title',
+      );
+
+    default:
+      return '';
+  }
 });
 
-const currentStatus = ref<
-  TaskEmployeeStatusEnum | number | null
->(null);
+const dialogConfirmationMessage = computed(() => {
+  switch (activeDialogAction.value) {
+    case 'START':
+      return t(
+        'task_assignment.modals.start_confirm',
+      );
 
-const actionLoading = ref(false);
+    case 'HOLD':
+      return t(
+        'task_assignment.modals.hold_confirm',
+      );
 
-const activeDialogAction = ref<
-  'START' | 'HOLD' | 'FINISH' | null
->(null);
+    case 'FINISH':
+      return t(
+        'task_assignment.modals.finish_confirm',
+      );
 
-const actionNotes = ref('');
+    default:
+      return '';
+  }
+});
 
-const attachmentFile = ref<File | null>(
-  null,
+const isStartVisible = computed(
+  () =>
+    insideStatus.value ===
+      InsideStatusType.ASSIGN ||
+    insideStatus.value === InsideStatusType.HOLD,
+);
+
+const isHoldVisible = computed(
+  () =>
+    insideStatus.value ===
+    InsideStatusType.WORKING,
+);
+
+const isFinishVisible = computed(
+  () =>
+    insideStatus.value ===
+    InsideStatusType.WORKING,
 );
 
 const isValidUuid = computed(() => {
@@ -97,73 +223,54 @@ const isValidUuid = computed(() => {
   );
 });
 
-const isStartVisible = computed(() => {
-  if (
-    currentStatus.value ===
-    TaskEmployeeStatusEnum.FINISH_EMPLOYEE
-  ) {
-    return false;
-  }
-
-  return (
-    currentStatus.value !==
-    TaskEmployeeStatusEnum.START_EMPLOYEE
-  );
-});
-
-const isHoldVisible = computed(() => {
-  return (
-    currentStatus.value ===
-    TaskEmployeeStatusEnum.START_EMPLOYEE
-  );
-});
-
-const isFinishVisible = computed(() => {
-  if (
-    currentStatus.value ===
-    TaskEmployeeStatusEnum.FINISH_EMPLOYEE
-  ) {
-    return false;
-  }
-
-  return (
-    currentStatus.value ===
-      TaskEmployeeStatusEnum.START_EMPLOYEE ||
-    currentStatus.value ===
-      TaskEmployeeStatusEnum.HOLD_EMPLOYEE
-  );
-});
-
-const isFinished = computed(() => {
-  return (
-    currentStatus.value ===
-    TaskEmployeeStatusEnum.FINISH_EMPLOYEE
-  );
-});
-
 const openModal = (
-  action: 'START' | 'HOLD' | 'FINISH',
+  action: DialogAction,
 ): void => {
   activeDialogAction.value = action;
   actionNotes.value = '';
-  attachmentFile.value = null;
+  attachmentFiles.value = [];
 };
 
 const closeModal = (): void => {
   activeDialogAction.value = null;
   actionNotes.value = '';
-  attachmentFile.value = null;
+  attachmentFiles.value = [];
 };
 
-const handleFileChange = (
-  event: Event,
+const updateAttachments = (
+  files: UploadedFile[],
 ): void => {
-  const target =
-    event.target as HTMLInputElement;
-
-  attachmentFile.value =
-    target.files?.[0] ?? null;
+  attachmentFiles.value = files;
 };
+
+const hasBase64 = (
+  file: UploadedFile,
+): file is UploadedFileWithBase64 => {
+  const base64 = (
+    file as UploadedFileWithBase64
+  ).base64;
+
+  return (
+    typeof base64 === 'string' &&
+    base64.trim().length > 0
+  );
+};
+
+const createAttachmentParams =
+  (): ProjectAttachmentParams[] => {
+    return attachmentFiles.value
+      .filter(hasBase64)
+      .map(
+        (file) =>
+          new ProjectAttachmentParams({
+            file: file.base64,
+            alt:
+              typeof file.name === 'string'
+                ? file.name
+                : '',
+          }),
+      );
+  };
 
 const getTargetStatus =
   (): TaskEmployeeStatusEnum => {
@@ -180,15 +287,52 @@ const getTargetStatus =
     }
   };
 
+const getResultErrorMessage = (
+  result: unknown,
+): string => {
+  if (
+    !result ||
+    typeof result !== 'object'
+  ) {
+    return t(
+      'task_assignment.unexpected_error',
+    );
+  }
+
+  const error = (
+    result as {
+      error?: {
+        displayMessage?: string;
+        title?: string;
+      } | null;
+    }
+  ).error;
+
+  return (
+    error?.displayMessage ||
+    error?.title ||
+    t('task_assignment.unexpected_error')
+  );
+};
+
 const confirmStatusChange =
   async (): Promise<void> => {
     if (!activeDialogAction.value) {
       return;
     }
 
-    if (!projectDepartmentItemId.value) {
+    const itemId = Number(
+      projectDepartmentItemId.value,
+    );
+
+    if (
+      !Number.isInteger(itemId) ||
+      itemId <= 0
+    ) {
       dialogManager.toastError(
-        t('task_assignment.unexpected_error'),
+        t(
+          'task_assignment.unexpected_error',
+        ),
       );
 
       return;
@@ -196,38 +340,30 @@ const confirmStatusChange =
 
     actionLoading.value = true;
 
-    const targetStatus = getTargetStatus();
-
-    const attachments = attachmentFile.value
-      ? [
-          {
-            file: attachmentFile.value,
-          },
-        ]
-      : undefined;
-
-    const params = new SetTaskEmployeeStatusParams({
-        /**
-         * هنا نستخدم 44 وليس UUID.
-         */
-        project_department_item_id:
-          Number(projectDepartmentItemId.value),
-
-        status: targetStatus,
-
-        notes:
-          actionNotes.value || undefined,
-
-        attachments,
-      });
-
     try {
+      const params =
+        new SetTaskEmployeeStatusParams({
+          project_department_item_id:
+            itemId,
+
+          status: getTargetStatus(),
+
+          notes:
+            actionNotes.value.trim() ||
+            undefined,
+
+          attachments:
+            activeDialogAction.value ===
+            'FINISH'
+              ? createAttachmentParams()
+              : [],
+        });
+
       const result =
-        await taskAssignmentController.setTaskEmployeeStatus(params);
+        await taskAssignmentController
+          .setTaskEmployeeStatus(params);
 
       if (result instanceof DataSuccess) {
-        currentStatus.value = targetStatus;
-
         dialogManager.toastSuccess(
           result.message ||
             t(
@@ -237,15 +373,13 @@ const confirmStatusChange =
 
         closeModal();
 
+        await fetchTaskDetails();
+
         return;
       }
 
       dialogManager.toastError(
-        result.error?.displayMessage ||
-          result.error?.title ||
-          t(
-            'task_assignment.unexpected_error',
-          ),
+        getResultErrorMessage(result),
       );
     } catch (error) {
       console.error(
@@ -254,7 +388,9 @@ const confirmStatusChange =
       );
 
       dialogManager.toastError(
-        t('task_assignment.unexpected_error'),
+        t(
+          'task_assignment.unexpected_error',
+        ),
       );
     } finally {
       actionLoading.value = false;
@@ -279,36 +415,14 @@ const fetchTaskDetails =
       return;
     }
 
-    /**
-     * هنا يجب إرسال UUID الحقيقي:
-     *
-     * 46e10f7b-8dda-4df5-b036-143e2f51e98e
-     *
-     * وليس 44.
-     */
     await projectItemController.fetchOne(
       new ShowTaskItemParams({
-        uuid: projectDepartmentItemUuid.value,
+        uuid:
+          projectDepartmentItemUuid.value,
+
         allLocales: true,
       }),
     );
-
-    /**
-     * عدل اسم الخاصية حسب الـ model الذي يرجعه itemData.
-     */
-    const responseStatus =
-      itemData.value?.inside_status ??
-      itemData.value?.status ??
-      null;
-
-    if (
-      responseStatus !== null &&
-      responseStatus !== undefined
-    ) {
-      currentStatus.value = Number(
-        responseStatus,
-      );
-    }
   };
 
 onMounted(() => {
@@ -316,10 +430,7 @@ onMounted(() => {
 });
 
 watch(
-  () => [
-    props.id,
-    props.uuid,
-  ],
+  () => [props.id, props.uuid],
   () => {
     void fetchTaskDetails();
   },
@@ -329,297 +440,564 @@ watch(
 <template>
   <section class="task-assignment-show-page">
     <header class="task-assignment-page-header">
-      <div class="task-assignment-page-header__content">
-        <span class="task-assignment-page-header__icon" aria-hidden="true">
-          <i class="pi pi-check-square"></i>
+      <div
+        class="task-assignment-page-header__content"
+      >
+        <span
+          class="task-assignment-page-header__icon"
+          aria-hidden="true"
+        >
+          <i class="pi pi-check-square" />
         </span>
 
-        <div class="task-assignment-page-header__copy">
-          <h1>{{ $t('task_assignment.title') }} #{{ projectDepartmentItemId }}</h1>
-          <p>{{ $t('task_assignment.description') }}</p>
+        <div
+          class="task-assignment-page-header__copy"
+        >
+          <h1>
+            {{ $t('task_assignment.title') }}
+            #{{ projectDepartmentItemId }}
+          </h1>
+
+          <p>
+            {{
+              $t(
+                'task_assignment.description',
+              )
+            }}
+          </p>
         </div>
       </div>
 
-      <!-- <div class="task-assignment-page-header__actions">
-        <router-link
-          class="task-assignment-page-header__refresh"
-          :to="{ name: 'mainorganization-task-assignment-index' }"
+      <div
+        v-if="itemData"
+        class="task-status-summary"
+      >
+        <span class="task-status-summary__label">
+          {{ $t('status') }}
+        </span>
+
+        <span
+          class="task-status-chip"
+          :class="
+            insideStatusMeta.className
+          "
         >
-          <i class="pi pi-arrow-left" aria-hidden="true"></i>
-          <span>{{ $t('task_assignment.back_to_tasks') }}</span>
-        </router-link>
-      </div> -->
+          <span
+            class="task-status-chip__icon"
+            aria-hidden="true"
+          >
+            <i
+              :class="insideStatusMeta.icon"
+            />
+          </span>
+
+          <span
+            class="task-status-chip__text"
+          >
+            {{ insideStatusLabel }}
+          </span>
+
+          <span
+            class="task-status-chip__indicator"
+            aria-hidden="true"
+          />
+        </span>
+      </div>
     </header>
 
-    <div v-if="itemLoading" class="task-assignment-card task-assignment-card--loading">
+    <div
+      v-if="itemLoading"
+      class="
+        task-assignment-card
+        task-assignment-card--loading
+      "
+    >
       <p>{{ $t('loading_data') }}</p>
     </div>
 
-    <div v-else-if="itemError" class="task-assignment-card task-assignment-card--error">
+    <div
+      v-else-if="itemError"
+      class="
+        task-assignment-card
+        task-assignment-card--error
+      "
+    >
       <p>{{ itemError }}</p>
     </div>
 
-    <article v-else class="task-assignment-card">
-
-      <!-- ── Basic information ─────────────────────────────── -->
+    <article
+      v-else
+      class="task-assignment-card"
+    >
+      <!-- Basic information -->
       <div class="task-details-section">
-        <h3>{{ $t('project_item.basic_information') }}</h3>
+        <h3>
+          {{
+            $t(
+              'project_item.basic_information',
+            )
+          }}
+        </h3>
 
         <div class="task-details-grid">
-          <!-- Item name (from item_id.title OR item.translations) -->
           <div class="detail-item">
-            <span class="detail-label">{{ $t('project_item.item') }}</span>
+            <span class="detail-label">
+              {{ $t('project_item.item') }}
+            </span>
+
             <span class="detail-value">
               {{
-                itemData?.item?.translations?.title?.en
-                  || itemData?.item_id?.title
-                  || '-'
+                itemData?.item?.translations
+                  ?.title?.en ||
+                itemData?.item_id?.title ||
+                '-'
               }}
             </span>
           </div>
 
-          <!-- Price -->
           <div class="detail-item">
-            <span class="detail-label">{{ $t('project_item.price') }}</span>
-            <span class="detail-value">{{ itemData?.price ?? '-' }}</span>
+            <span class="detail-label">
+              {{ $t('employee.name') }}
+            </span>
+
+            <span class="detail-value">
+              {{
+                itemData?.employee?.name ??
+                '-'
+              }}
+            </span>
           </div>
 
-          <!-- Final price -->
           <div class="detail-item">
-            <span class="detail-label">{{ $t('project_item.total_price_label') }}</span>
-            <span class="detail-value">{{ itemData?.final_price ?? '-' }}</span>
+            <span class="detail-label">
+              {{ $t('department') }}
+            </span>
+
+            <span class="detail-value">
+              {{ itemData?.department ?? '-' }}
+            </span>
           </div>
 
-          <!-- Quantity -->
           <div class="detail-item">
-            <span class="detail-label">{{ $t('project_item.quantity') }}</span>
-            <span class="detail-value">{{ itemData?.quantity ?? '-' }}</span>
-          </div>
+            <span class="detail-label">
+              {{ $t('status') }}
+            </span>
 
-          <!-- Pricing method -->
-          <div class="detail-item">
-            <span class="detail-label">{{ $t('project_item.pricing_method') }}</span>
-            <span class="detail-value">{{ pricingMethodLabel }}</span>
-          </div>
-
-          <!-- Has attachment flag -->
-          <div class="detail-item">
-            <span class="detail-label">{{ $t('attachments') }}</span>
             <span class="detail-value">
               <span
                 class="status-badge"
-                :class="itemData?.has_attached ? 'status-badge--started' : 'status-badge--pending'"
+                :class="
+                  insideStatusMeta.className
+                "
               >
-                {{ itemData?.has_attached ? $t('yes') : $t('no') }}
+                <i
+                  :class="
+                    insideStatusMeta.icon
+                  "
+                  aria-hidden="true"
+                />
+
+                {{ insideStatusLabel }}
               </span>
             </span>
           </div>
 
-          <!-- Is assign employee -->
           <div class="detail-item">
-            <span class="detail-label">{{ $t('task_assignment.title') }}</span>
+            <span class="detail-label">
+              {{ $t('attachments') }}
+            </span>
+
             <span class="detail-value">
               <span
                 class="status-badge"
-                :class="itemData?.is_assign_employee ? 'status-badge--started' : 'status-badge--pending'"
+                :class="
+                  itemData?.has_attached
+                    ? 'status-badge--success'
+                    : 'status-badge--muted'
+                "
               >
-                {{ itemData?.is_assign_employee ? $t('yes') : $t('no') }}
+                <i
+                  :class="
+                    itemData?.has_attached
+                      ? 'pi pi-check-circle'
+                      : 'pi pi-times-circle'
+                  "
+                  aria-hidden="true"
+                />
+
+                {{
+                  itemData?.has_attached
+                    ? $t('yes')
+                    : $t('no')
+                }}
               </span>
             </span>
           </div>
 
-          <!-- Task status -->
           <div class="detail-item">
-            <span class="detail-label">{{ $t('status') }}</span>
+            <span class="detail-label">
+              {{
+                $t(
+                  'task_assignment.title',
+                )
+              }}
+            </span>
+
             <span class="detail-value">
-              <span v-if="isFinished" class="status-badge status-badge--finished">
-                {{ $t('task_assignment.actions.finish') }}
-              </span>
-              <span v-else-if="currentStatus === TaskEmployeeStatusEnum.START_EMPLOYEE" class="status-badge status-badge--started">
-                {{ $t('task_assignment.actions.start') }}
-              </span>
-              <span v-else-if="currentStatus === TaskEmployeeStatusEnum.HOLD_EMPLOYEE" class="status-badge status-badge--held">
-                {{ $t('task_assignment.actions.hold') }}
-              </span>
-              <span v-else class="status-badge status-badge--pending">
-                -
+              <span
+                class="status-badge"
+                :class="
+                  itemData?.is_assign_employee
+                    ? 'status-badge--success'
+                    : 'status-badge--muted'
+                "
+              >
+                <i
+                  :class="
+                    itemData?.is_assign_employee
+                      ? 'pi pi-check-circle'
+                      : 'pi pi-times-circle'
+                  "
+                  aria-hidden="true"
+                />
+
+                {{
+                  itemData?.is_assign_employee
+                    ? $t('yes')
+                    : $t('no')
+                }}
               </span>
             </span>
           </div>
         </div>
       </div>
 
-      <!-- ── Floor & space ──────────────────────────────────── -->
+      <!-- Project -->
       <div class="task-details-section">
-        <h3>{{ $t('project_item.project_floor') }}</h3>
+        <h3>{{ $t('project') }}</h3>
 
         <div class="task-details-grid">
           <div class="detail-item">
-            <span class="detail-label">{{ $t('project_item.project_floor') }}</span>
+            <span class="detail-label">
+              {{ $t('client.title') }}
+            </span>
+
             <span class="detail-value">
-              {{ itemData?.project_floor?.title || itemData?.project_floor_id || '-' }}
+              {{
+                itemData?.project?.client
+                  ?.title ?? '-'
+              }}
             </span>
           </div>
 
-          <div v-if="itemData?.project_floor_space" class="detail-item">
-            <span class="detail-label">{{ $t('project_item.related_label') }}</span>
-            <span class="detail-value">{{ itemData.project_floor_space.title || '-' }}</span>
+          <div class="detail-item">
+            <span class="detail-label">
+              {{ $t('project_name') }}
+            </span>
+
+            <span class="detail-value">
+              {{
+                itemData?.project?.title?.find(
+                  (item) =>
+                    item.locale === 'en',
+                )?.title ?? '-'
+              }}
+            </span>
+          </div>
+
+          <div class="detail-item">
+            <span class="detail-label">
+              {{ $t('description') }}
+            </span>
+
+            <span class="detail-value">
+              {{
+                itemData?.project?.description?.find(
+                  (item) =>
+                    item.locale === 'en',
+                )?.description ?? '-'
+              }}
+            </span>
           </div>
         </div>
       </div>
 
-      <!-- ── Organisation & employees ──────────────────────── -->
+      <!-- History -->
       <div class="task-details-section">
-        <h3>{{ $t('general.information') }}</h3>
-
-        <div class="task-details-grid">
-          <!-- Organisation -->
-          <div v-if="itemData?.organization" class="detail-item">
-            <span class="detail-label">{{ $t('organization.title') }}</span>
-            <span class="detail-value">{{ itemData.organization.name || '-' }}</span>
-          </div>
-
-          <!-- Project -->
-          <div v-if="itemData?.project" class="detail-item">
-            <span class="detail-label">{{ $t('project.title') }}</span>
-            <span class="detail-value">{{ itemData.project.name || '-' }}</span>
-          </div>
-
-          <!-- Default employee -->
-          <div v-if="itemData?.default_employee" class="detail-item">
-            <span class="detail-label">{{ $t('employee.default') }}</span>
-            <span class="detail-value">{{ itemData.default_employee.name || '-' }}</span>
-          </div>
-        </div>
-
-        <!-- Assigned employees -->
-        <div v-if="itemData?.assigned_employees?.length" class="task-details-sub-section">
-          <h4>{{ $t('task_assignment.assigned_employees') }}</h4>
-          <ul class="employee-list">
-            <li
-              v-for="emp in itemData.assigned_employees"
-              :key="emp.id"
-              class="employee-list__item"
+        <Accordion
+          :active-index="0"
+          class="task-history-accordion"
+        >
+          <AccordionTab
+            :header="$t('histories')"
+          >
+            <div
+              v-if="
+                !itemData?.histories?.length
+              "
+              class="task-history-empty"
             >
-              <i class="pi pi-user" aria-hidden="true" />
-              <span>{{ emp.name || emp.employee_name || '-' }}</span>
-            </li>
-          </ul>
-        </div>
+              {{ $t('no_data') }}
+            </div>
+
+            <div
+              v-for="history in itemData?.histories"
+              :key="history.id"
+              class="task-history-item"
+            >
+              <div class="task-details-grid">
+                <div class="detail-item">
+                  <span class="detail-label">
+                    {{ $t('status') }}
+                  </span>
+
+                  <span class="detail-value">
+                    <span
+                      class="
+                        status-badge
+                        status-badge--history
+                      "
+                    >
+                      {{
+                        $t(
+                          getTypeNameKey(
+                            history.status ?? 1,
+                          ),
+                        )
+                      }}
+                    </span>
+                  </span>
+                </div>
+
+                <div
+                  v-for="employee in history.history_employees"
+                  :key="employee.id"
+                  class="detail-item"
+                >
+                  <span class="detail-label">
+                    {{ $t('emp.name') }}
+                  </span>
+
+                  <span class="detail-value">
+                    {{
+                      employee.employee?.name ??
+                      '-'
+                    }}
+                  </span>
+                </div>
+
+                <div
+                  v-if="history.created_at"
+                  class="detail-item"
+                >
+                  <span class="detail-label">
+                    {{ $t('date') }}
+                  </span>
+
+                  <span class="detail-value">
+                    {{ history.created_at }}
+                  </span>
+                </div>
+
+                <div
+                  v-if="history.notes"
+                  class="detail-item"
+                >
+                  <span class="detail-label">
+                    {{ $t('notes') }}
+                  </span>
+
+                  <span class="detail-value">
+                    {{ history.notes }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </AccordionTab>
+        </Accordion>
       </div>
 
-      <!-- ── Attachments ─────────────────────────────────────── -->
-      <div v-if="itemData?.attachments?.length" class="task-details-section">
+      <!-- Attachments -->
+      <div
+        v-if="itemData?.attachments?.length"
+        class="task-details-section"
+      >
         <h3>{{ $t('attachments') }}</h3>
 
         <ul class="attachments-list">
           <li
-            v-for="att in itemData.attachments"
-            :key="att.id"
+            v-for="attachment in itemData.attachments"
+            :key="attachment.id"
             class="attachments-list__item"
           >
-            <!-- <a
-              :href="att.file"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="attachment-link"
-            >
-              <i class="pi pi-paperclip" aria-hidden="true" />
-              <span>{{ att.alt || att.file }}</span>
-            </a> -->
-            <Image :src="att.file" alt="Image" width="250" preview />
+            <Image
+              :src="attachment.file"
+              :alt="attachment.alt || 'Attachment'"
+              width="250"
+              preview
+            />
           </li>
         </ul>
       </div>
 
+      <!-- Actions -->
       <div class="task-status-actions-bar">
-        <h3>{{ $t('general.actions') }}</h3>
+        <h3>
+          {{ $t('general.actions') }}
+        </h3>
 
         <div class="action-buttons-group">
-          <!-- Start Button -->
           <button
             v-if="isStartVisible"
             type="button"
-            class="task-action-btn task-action-btn--start"
+            class="
+              task-action-btn
+              task-action-btn--start
+            "
             :disabled="actionLoading"
             @click="openModal('START')"
           >
-            <i class="pi pi-play" aria-hidden="true"></i>
-            <span>{{ $t('task_assignment.actions.start') }}</span>
+            <i
+              class="pi pi-play"
+              aria-hidden="true"
+            />
+
+            <span>
+              {{
+                $t(
+                  'task_assignment.actions.start',
+                )
+              }}
+            </span>
           </button>
 
-          <!-- Hold Button -->
           <button
             v-if="isHoldVisible"
             type="button"
-            class="task-action-btn task-action-btn--hold"
+            class="
+              task-action-btn
+              task-action-btn--hold
+            "
             :disabled="actionLoading"
             @click="openModal('HOLD')"
           >
-            <i class="pi pi-pause" aria-hidden="true"></i>
-            <span>{{ $t('task_assignment.actions.hold') }}</span>
+            <i
+              class="pi pi-pause"
+              aria-hidden="true"
+            />
+
+            <span>
+              {{
+                $t(
+                  'task_assignment.actions.hold',
+                )
+              }}
+            </span>
           </button>
 
-          <!-- Finish Button -->
           <button
             v-if="isFinishVisible"
             type="button"
-            class="task-action-btn task-action-btn--finish"
+            class="
+              task-action-btn
+              task-action-btn--finish
+            "
             :disabled="actionLoading"
             @click="openModal('FINISH')"
           >
-            <i class="pi pi-check" aria-hidden="true"></i>
-            <span>{{ $t('task_assignment.actions.finish') }}</span>
+            <i
+              class="pi pi-check"
+              aria-hidden="true"
+            />
+
+            <span>
+              {{
+                $t(
+                  'task_assignment.actions.finish',
+                )
+              }}
+            </span>
           </button>
         </div>
       </div>
     </article>
 
-    <!-- Status Action Modal -->
     <Dialog
-      v-model:visible="activeDialogAction"
+      v-model:visible="dialogVisible"
       modal
-      :header="
-        activeDialogAction === 'START'
-          ? $t('task_assignment.modals.start_title')
-          : activeDialogAction === 'HOLD'
-            ? $t('task_assignment.modals.hold_title')
-            : $t('task_assignment.modals.finish_title')
-      "
-      :style="{ width: '32rem', maxWidth: '90vw' }"
+      :header="dialogTitle"
+      :style="{
+        width: '32rem',
+        maxWidth: '90vw',
+      }"
+      class="task-status-dialog"
       @hide="closeModal"
     >
       <div class="status-modal-content">
+        <div class="status-modal-icon">
+          <i
+            :class="
+              activeDialogAction === 'START'
+                ? 'pi pi-play'
+                : activeDialogAction === 'HOLD'
+                  ? 'pi pi-pause'
+                  : 'pi pi-check'
+            "
+            aria-hidden="true"
+          />
+        </div>
+
         <p class="confirm-message">
-          {{
-            activeDialogAction === 'START'
-              ? $t('task_assignment.modals.start_confirm')
-              : activeDialogAction === 'HOLD'
-                ? $t('task_assignment.modals.hold_confirm')
-                : $t('task_assignment.modals.finish_confirm')
-          }}
+          {{ dialogConfirmationMessage }}
         </p>
 
-        <!-- Notes input for Hold and Finish -->
-        <div v-if="activeDialogAction === 'HOLD' || activeDialogAction === 'FINISH'" class="form-group">
-          <label for="task_action_notes">{{ $t('task_assignment.modals.notes_label') }}</label>
+        <div
+          v-if="
+            activeDialogAction === 'HOLD' ||
+            activeDialogAction === 'FINISH'
+          "
+          class="form-group"
+        >
+          <label for="task_action_notes">
+            {{
+              $t(
+                'task_assignment.modals.notes_label',
+              )
+            }}
+          </label>
+
           <textarea
             id="task_action_notes"
             v-model="actionNotes"
             class="form-control"
             rows="3"
-            :placeholder="$t('task_assignment.modals.notes_placeholder')"
-          ></textarea>
+            :placeholder="
+              $t(
+                'task_assignment.modals.notes_placeholder',
+              )
+            "
+          />
         </div>
 
-        <!-- Attachment upload for Finish -->
-        <div v-if="activeDialogAction === 'FINISH'" class="form-group">
-          <label for="task_action_attachment">{{ $t('task_assignment.modals.attachments_label') }}</label>
-          <input
-            id="task_action_attachment"
-            type="file"
-            class="form-control-file"
-            @change="handleFileChange"
+        <div
+          v-if="
+            activeDialogAction === 'FINISH'
+          "
+          class="form-group"
+        >
+          <label>
+            {{
+              $t(
+                'task_assignment.modals.attachments_label',
+              )
+            }}
+          </label>
+
+          <HandleFilesUpload
+            id="attachments"
+            :label="$t('attachments')"
+            :multiple="true"
+            @change="updateAttachments"
           />
         </div>
       </div>
@@ -632,16 +1010,31 @@ watch(
             :disabled="actionLoading"
             @click="closeModal"
           >
-            {{ $t('task_assignment.modals.no') }}
+            {{
+              $t(
+                'task_assignment.modals.no',
+              )
+            }}
           </button>
+
           <button
             type="button"
             class="btn btn-primary"
             :disabled="actionLoading"
             @click="confirmStatusChange"
           >
-            <span v-if="actionLoading" class="loader"></span>
-            <span v-else>{{ $t('task_assignment.modals.yes') }}</span>
+            <span
+              v-if="actionLoading"
+              class="button-loader"
+            />
+
+            <span v-else>
+              {{
+                $t(
+                  'task_assignment.modals.yes',
+                )
+              }}
+            </span>
           </button>
         </div>
       </template>
@@ -657,244 +1050,574 @@ watch(
   flex-direction: column;
   gap: 1.5rem;
 
+  .task-assignment-page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    padding: 1.25rem 1.5rem;
+  }
+
+  .task-status-summary {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.45rem;
+
+    &__label {
+      color: #6b7280;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+  }
+
+  .task-status-chip {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+    min-height: 2.75rem;
+    padding: 0.5rem 1rem 0.5rem 0.65rem;
+    overflow: hidden;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    white-space: nowrap;
+    box-shadow: 0 8px 24px rgb(15 23 42 / 8%);
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease;
+
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 30px rgb(15 23 42 / 12%);
+    }
+
+    &__icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.8rem;
+      height: 1.8rem;
+      border-radius: 50%;
+      background: rgb(255 255 255 / 70%);
+      box-shadow: 0 2px 8px rgb(15 23 42 / 8%);
+    }
+
+    &__text {
+      position: relative;
+      z-index: 1;
+    }
+
+    &__indicator {
+      width: 0.5rem;
+      height: 0.5rem;
+      margin-inline-start: 0.15rem;
+      border: 2px solid rgb(255 255 255 / 90%);
+      border-radius: 50%;
+      background: currentColor;
+      box-shadow: 0 0 0 3px rgb(255 255 255 / 30%);
+    }
+
+    &--assigned {
+      color: #1d4ed8;
+      border-color: #bfdbfe;
+      background:
+        linear-gradient(
+          135deg,
+          #eff6ff,
+          #dbeafe
+        );
+    }
+
+    &--working {
+      color: #047857;
+      border-color: #a7f3d0;
+      background:
+        linear-gradient(
+          135deg,
+          #ecfdf5,
+          #d1fae5
+        );
+
+      .task-status-chip__icon i {
+        animation: status-rotate 3s linear infinite;
+      }
+    }
+
+    &--held {
+      color: #b45309;
+      border-color: #fde68a;
+      background:
+        linear-gradient(
+          135deg,
+          #fffbeb,
+          #fef3c7
+        );
+    }
+
+    &--review {
+      color: #7c3aed;
+      border-color: #ddd6fe;
+      background:
+        linear-gradient(
+          135deg,
+          #f5f3ff,
+          #ede9fe
+        );
+    }
+
+    &--default {
+      color: #475569;
+      border-color: #e2e8f0;
+      background:
+        linear-gradient(
+          135deg,
+          #f8fafc,
+          #f1f5f9
+        );
+    }
+  }
+
   .task-details-section {
     padding: 1.5rem;
-    border-bottom: 1px solid var(--border-color, #e5e7eb);
+    border-bottom: 1px solid
+      var(--border-color, #e5e7eb);
 
     h3 {
-      margin-bottom: 1rem;
+      margin: 0 0 1rem;
+      color: #111827;
       font-size: 1.1rem;
-      font-weight: 600;
+      font-weight: 700;
     }
   }
 
   .task-details-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 1.25rem;
+    grid-template-columns:
+      repeat(
+        auto-fill,
+        minmax(210px, 1fr)
+      );
+    gap: 1rem;
 
     .detail-item {
       display: flex;
       flex-direction: column;
-      gap: 0.25rem;
+      gap: 0.5rem;
+      min-height: 5rem;
+      padding: 1rem;
+      border: 1px solid #eef0f4;
+      border-radius: 0.875rem;
+      background: #fff;
+      transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.2s ease;
+
+      &:hover {
+        transform: translateY(-2px);
+        border-color: #dbe3ef;
+        box-shadow: 0 8px 24px
+          rgb(15 23 42 / 6%);
+      }
 
       .detail-label {
-        font-size: 0.85rem;
-        color: var(--text-secondary, #6b7280);
+        color: #6b7280;
+        font-size: 0.8rem;
+        font-weight: 600;
       }
 
       .detail-value {
-        font-weight: 500;
-
-        .status-badge {
-          display: inline-block;
-          padding: 0.25rem 0.6rem;
-          border-radius: 4px;
-          font-size: 0.85rem;
-          font-weight: 600;
-
-          &--started {
-            background-color: var(--primary-light, #e0f2fe);
-            color: var(--primary-dark, #0369a1);
-          }
-
-          &--held {
-            background-color: var(--warning-light, #fef3c7);
-            color: var(--warning-dark, #b45309);
-          }
-
-          &--finished {
-            background-color: var(--success-light, #d1fae5);
-            color: var(--success-dark, #047857);
-          }
-
-          &--pending {
-            background-color: var(--gray-light, #f3f4f6);
-            color: var(--gray-dark, #4b5563);
-          }
-        }
+        color: #1f2937;
+        font-size: 0.95rem;
+        font-weight: 600;
+        line-height: 1.6;
+        word-break: break-word;
       }
     }
+  }
+
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    width: fit-content;
+    padding: 0.35rem 0.75rem;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 700;
+
+    &.task-status-chip--assigned {
+      color: #1d4ed8;
+      border-color: #bfdbfe;
+      background: #eff6ff;
+    }
+
+    &.task-status-chip--working {
+      color: #047857;
+      border-color: #a7f3d0;
+      background: #ecfdf5;
+    }
+
+    &.task-status-chip--held {
+      color: #b45309;
+      border-color: #fde68a;
+      background: #fffbeb;
+    }
+
+    &.task-status-chip--review {
+      color: #7c3aed;
+      border-color: #ddd6fe;
+      background: #f5f3ff;
+    }
+
+    &.task-status-chip--default {
+      color: #475569;
+      border-color: #e2e8f0;
+      background: #f8fafc;
+    }
+
+    &--success {
+      color: #047857;
+      border-color: #a7f3d0;
+      background: #ecfdf5;
+    }
+
+    &--muted {
+      color: #64748b;
+      border-color: #e2e8f0;
+      background: #f8fafc;
+    }
+
+    &--history {
+      color: #4338ca;
+      border-color: #c7d2fe;
+      background: #eef2ff;
+    }
+  }
+
+  .task-history-accordion {
+    border: none;
+  }
+
+  .task-history-item {
+    padding: 1rem 0;
+
+    &:not(:last-child) {
+      border-bottom: 1px dashed #dce1e8;
+    }
+  }
+
+  .task-history-empty {
+    padding: 2rem;
+    color: #64748b;
+    text-align: center;
   }
 
   .task-status-actions-bar {
     padding: 1.5rem;
 
     h3 {
-      margin-bottom: 1rem;
+      margin: 0 0 1rem;
       font-size: 1.1rem;
-      font-weight: 600;
+      font-weight: 700;
     }
   }
 
   .action-buttons-group {
     display: flex;
-    gap: 1rem;
     align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
   }
 
   .task-action-btn {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 0.5rem;
-    padding: 0.6rem 1.25rem;
-    border-radius: 6px;
-    font-weight: 600;
-    font-size: 0.95rem;
-    cursor: pointer;
+    min-width: 9rem;
+    padding: 0.75rem 1.25rem;
     border: none;
-    transition: all 0.2s ease;
+    border-radius: 0.75rem;
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 6px 18px
+      rgb(15 23 42 / 10%);
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease,
+      opacity 0.2s ease;
 
-    &--start {
-      background-color: var(--primary-color, #2563eb);
-      color: var(--vt-c-white);
-
-      &:hover:not(:disabled) {
-        opacity: 0.9;
-      }
-    }
-
-    &--hold {
-      background-color: var(--warning-color, #d97706);
-      color: var(--vt-c-white);
-
-      &:hover:not(:disabled) {
-        opacity: 0.9;
-      }
-    }
-
-    &--finish {
-      background-color: var(--success-color, #16a34a);
-      color: var(--vt-c-white);
-
-      &:hover:not(:disabled) {
-        opacity: 0.9;
-      }
+    &:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 24px
+        rgb(15 23 42 / 16%);
     }
 
     &:disabled {
-      opacity: 0.5;
       cursor: not-allowed;
-    }
-  }
-
-  .status-modal-content {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    padding-top: 0.5rem;
-
-    .confirm-message {
-      font-size: 1rem;
-      color: var(--text-color, #1f2937);
+      opacity: 0.55;
     }
 
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-
-      label {
-        font-weight: 500;
-        font-size: 0.9rem;
-      }
-
-      .form-control {
-        padding: 0.6rem;
-        border: 1px solid var(--border-color, #d1d5db);
-        border-radius: 6px;
-        font-family: inherit;
-        resize: vertical;
-      }
-
-      .form-control-file {
-        padding: 0.4rem 0;
-      }
+    &--start {
+      background:
+        linear-gradient(
+          135deg,
+          #2563eb,
+          #1d4ed8
+        );
     }
-  }
 
-  .modal-buttons-footer {
-    display: flex;
-    justify-content: flex-end;
-    gap: 0.75rem;
-
-    .btn {
-      padding: 0.5rem 1.25rem;
-      border-radius: 6px;
-      font-weight: 500;
-      cursor: pointer;
-      border: 1px solid transparent;
-
-      &--secondary {
-        background-color: var(--gray-light, #f3f4f6);
-        color: var(--text-color, #374151);
-        border-color: var(--border-color, #d1d5db);
-      }
-
-      &--primary {
-        background-color: var(--primary-color, #2563eb);
-        color: var(--vt-c-white);
-      }
+    &--hold {
+      background:
+        linear-gradient(
+          135deg,
+          #f59e0b,
+          #d97706
+        );
     }
-  }
 
-  .task-details-sub-section {
-    margin-top: 1.25rem;
-    padding-top: 1rem;
-    border-top: 1px dashed var(--border-color, #e5e7eb);
-
-    h4 {
-      margin-bottom: 0.75rem;
-      font-size: 0.95rem;
-      font-weight: 600;
-      color: var(--text-secondary, #6b7280);
-    }
-  }
-
-  .employee-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    list-style: none;
-    padding: 0;
-    margin: 0;
-
-    &__item {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      padding: 0.3rem 0.75rem;
-      border-radius: 999px;
-      background-color: var(--primary-light, #e0f2fe);
-      color: var(--primary-dark, #0369a1);
-      font-size: 0.85rem;
-      font-weight: 500;
+    &--finish {
+      background:
+        linear-gradient(
+          135deg,
+          #16a34a,
+          #047857
+        );
     }
   }
 
   .attachments-list {
+    display: grid;
+    grid-template-columns:
+      repeat(
+        auto-fill,
+        minmax(220px, 1fr)
+      );
+    gap: 1rem;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+
+    &__item {
+      overflow: hidden;
+      padding: 0.5rem;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.875rem;
+      background: #fff;
+
+      img {
+        display: block;
+        width: 100%;
+        height: 11rem;
+        border-radius: 0.625rem;
+        object-fit: cover;
+      }
+    }
+  }
+}
+
+.p-dialog.task-status-dialog,
+.task-status-dialog.p-dialog {
+  overflow: hidden;
+  border: none;
+  border-radius: 1rem;
+  background: #fff;
+  color: #111827;
+  box-shadow: 0 24px 70px
+    rgb(15 23 42 / 22%);
+
+  .p-dialog-header {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid #eef0f4;
+  }
+
+  .p-dialog-content {
+    padding: 1.5rem;
+  }
+
+  .p-dialog-footer {
+    padding: 1rem 1.5rem 1.5rem;
+    border-top: 1px solid #eef0f4;
+  }
+}
+
+.status-modal-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  .status-modal-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3.5rem;
+    height: 3.5rem;
+    margin: 0 auto;
+    border-radius: 50%;
+    color: #2563eb;
+    background: #eff6ff;
+    font-size: 1.35rem;
+  }
+
+  .confirm-message {
+    margin: 0;
+    color: #374151;
+    font-size: 1rem;
+    line-height: 1.7;
+    text-align: center;
+  }
+
+  .form-group {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    list-style: none;
-    padding: 0;
-    margin: 0;
+    width: 100%;
+    margin-top: 0.5rem;
 
-    &__item {
-      .attachment-link {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.4rem;
-        color: var(--primary-color, #2563eb);
-        text-decoration: none;
-        font-size: 0.9rem;
-        word-break: break-all;
+    label {
+      color: #374151;
+      font-size: 0.875rem;
+      font-weight: 700;
+    }
 
-        &:hover {
-          text-decoration: underline;
-        }
+    .form-control {
+      width: 100%;
+      min-height: 6.5rem;
+      padding: 0.75rem 1rem;
+      border: 1px solid #d1d5db;
+      border-radius: 0.75rem;
+      outline: none;
+      background: #fff;
+      color: #111827;
+      font-family: inherit;
+      resize: vertical;
+      transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+
+      &:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px
+          rgb(37 99 235 / 12%);
       }
     }
+  }
+}
+
+.modal-buttons-footer {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+  width: 100%;
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.75rem;
+    width: 100%;
+    padding: 0.65rem 1.25rem;
+    border: 1px solid transparent;
+    border-radius: 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition:
+      transform 0.2s ease,
+      opacity 0.2s ease;
+
+    &:hover:not(:disabled) {
+      transform: translateY(-1px);
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+  }
+
+  .btn-secondary {
+    color: #374151;
+    border-color: #d1d5db;
+    background: #f9fafb;
+  }
+
+  .btn-primary {
+    color: #fff;
+    border-color: #2563eb;
+    background:
+      linear-gradient(
+        135deg,
+        #2563eb,
+        #1d4ed8
+      );
+  }
+}
+
+.button-loader {
+  width: 1.1rem;
+  height: 1.1rem;
+  border: 2px solid
+    rgb(255 255 255 / 40%);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: status-rotate 0.7s linear infinite;
+}
+
+.p-accordionpanel {
+  .p-accordionheader {
+    font-size: 1.1rem !important;
+    font-weight: 700;
+  }
+}
+
+@keyframes status-rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 767px) {
+  .task-assignment-show-page {
+    .task-assignment-page-header {
+      align-items: flex-start;
+    }
+
+    .task-status-summary {
+      width: 100%;
+      align-items: flex-start;
+    }
+
+    .task-details-section,
+    .task-status-actions-bar {
+      padding: 1rem;
+    }
+
+    .task-details-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .action-buttons-group {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .task-action-btn {
+      width: 100%;
+    }
+  }
+
+  .modal-buttons-footer {
+    flex-direction: column-reverse;
   }
 }
 </style>

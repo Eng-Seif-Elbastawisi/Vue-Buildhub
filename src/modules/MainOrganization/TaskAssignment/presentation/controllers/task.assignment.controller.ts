@@ -12,6 +12,8 @@ import BaseController, {
 import { ref, type Ref } from 'vue';
 import type TaskAssignmentEmployeeTaskModel from '../../core/models/task.assignment.employee-task.model';
 import TaskAssignmentRepository from '../../data/repositories/task.assignment.repository';
+import type TaskAssignmentApprovedTaskModel from '../../core/models/task.assignment.approved-task.model';
+import type FetchApprovedTasksParams from '../../core/params/fetch.approved.tasks.params';
 
 type TaskAssignmentActionParams = Params | Record<string, unknown>;
 
@@ -23,6 +25,9 @@ export default class TaskAssignmentController extends BaseController<
   public employeeTasksState: Ref<DataState<TaskAssignmentEmployeeTaskModel[]>> = ref(
     new DataInitial<TaskAssignmentEmployeeTaskModel[]>(null),
   ) as Ref<DataState<TaskAssignmentEmployeeTaskModel[]>>;
+  public approvedTasksState: Ref<DataState<TaskAssignmentApprovedTaskModel[]>> = ref(
+    new DataInitial<TaskAssignmentApprovedTaskModel[]>(null),
+  ) as Ref<DataState<TaskAssignmentApprovedTaskModel[]>>;
 
   protected get repository() {
     return TaskAssignmentRepository.getInstance();
@@ -52,7 +57,7 @@ export default class TaskAssignmentController extends BaseController<
     return TaskAssignmentController.instance;
   }
 
-  private handleTaskAssignmentActionResponse(result: DataState<void>): DataState<void> {
+  private handleTaskAssignmentActionResponse<T>(result: DataState<T>): DataState<T> {
     if (result.hasError) {
       this.handleErrorResponse(result);
     }
@@ -60,12 +65,16 @@ export default class TaskAssignmentController extends BaseController<
     return result;
   }
 
-  async assignProjectDepartmentItemTask(
-    params?: TaskAssignmentActionParams,
-  ): Promise<DataState<void>> {
+  async assignTask(params?: TaskAssignmentActionParams): Promise<DataState<void>> {
     const result = await this.repository.assignProjectDepartmentItemTask(params);
 
     return this.handleTaskAssignmentActionResponse(result);
+  }
+
+  async assignProjectDepartmentItemTask(
+    params?: TaskAssignmentActionParams,
+  ): Promise<DataState<void>> {
+    return this.assignTask(params);
   }
 
   async fetchEmployeeTasks(
@@ -102,11 +111,34 @@ export default class TaskAssignmentController extends BaseController<
     return this.handleTaskAssignmentActionResponse(result);
   }
 
-  async setTaskEmployeeStatus(
-    params?: TaskAssignmentActionParams,
-  ): Promise<DataState<void>> {
+  async setTaskEmployeeStatus(params?: TaskAssignmentActionParams): Promise<DataState<void>> {
     const result = await this.repository.setTaskEmployeeStatus(params);
 
     return this.handleTaskAssignmentActionResponse(result);
+  }
+
+  async fetchApprovedTasks(
+    params: FetchApprovedTasksParams,
+  ): Promise<DataState<TaskAssignmentApprovedTaskModel[]>> {
+    this.approvedTasksState.value = new DataLoading<TaskAssignmentApprovedTaskModel[]>();
+
+    try {
+      const approvedTasks = await this.repository.fetchApprovedTasks(params);
+      this.approvedTasksState.value = approvedTasks;
+
+      if (approvedTasks.hasError) {
+        this.handleErrorResponse(approvedTasks);
+      }
+
+      return approvedTasks;
+    } catch (error) {
+      const failed = new DataFailed<TaskAssignmentApprovedTaskModel[]>({
+        error: error as ErrorModel,
+      });
+      this.approvedTasksState.value = failed;
+      this.handleErrorResponse(failed);
+
+      return failed;
+    }
   }
 }

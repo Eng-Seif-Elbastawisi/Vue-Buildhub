@@ -84,9 +84,9 @@
                 <th>{{ $t('task_assignment.department_item') }}</th>
                 <th>{{ $t('task_assignment.assigned_employees') }}</th>
                 <th>{{ $t('task_assignment.notes') }}</th>
-                <th>{{ $t('status') }}</th>
+                <!-- <th>{{ $t('status') }}</th> -->
                 <th>{{ $t('task_assignment.created_at') }}</th>
-                <th>{{ $t('task_assignment.due_date') }}</th>
+                <!-- <th>{{ $t('task_assignment.due_date') }}</th> -->
                 <th>{{ $t('general.actions') }}</th>
               </tr>
             </thead>
@@ -116,8 +116,8 @@
                     {{ getStatusDisplay(task) }}
                   </span>
                 </td>
-                <td>{{ formatDate(task.createdAt) }}</td>
-                <td>{{ formatDate(task.dueDate) }}</td>
+                <!-- <td>{{ formatDate(task.createdAt) }}</td> -->
+                <!-- <td>{{ formatDate(task.dueDate) }}</td> -->
                 <td>
                   <TaskStatusAction
                     :task="task"

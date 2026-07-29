@@ -69,4 +69,14 @@ export const TaskAssignmentRoutes: RouteRecordRaw[] = [
         'mainorganization-task-assignment-index',
     },
   },
+  {
+    path: 'task-assignment/approved',
+    name: 'mainorganization-task-assignment-approved',
+    component: () => import('@/views/MainOrganization/TaskAssignment/ApprovedTasksIndex.vue'),
+    meta: {
+      breadcrumb: 'task_assignment.approved_title',
+      parent: 'mainorganization-task-assignment-index',
+    },
+  },
 ];
+

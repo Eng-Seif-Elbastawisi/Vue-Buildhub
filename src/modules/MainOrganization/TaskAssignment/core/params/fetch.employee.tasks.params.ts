@@ -1,4 +1,5 @@
 import IndexParams from '@/base/Core/Params/indexParams';
+import type { InsideStatusType } from '../constants/inside.status.enum';
 
 const normalizePositiveId = (value: unknown): number | undefined => {
   const numberValue = Number(value);
@@ -9,6 +10,7 @@ const normalizePositiveId = (value: unknown): number | undefined => {
 export default class FetchEmployeeTasksParams extends IndexParams {
   public readonly projectId?: number;
   public readonly employeeId?: number;
+  public readonly status?: InsideStatusType;
 
   constructor(data: {
     projectId?: number;
@@ -16,10 +18,12 @@ export default class FetchEmployeeTasksParams extends IndexParams {
     pageNumber?: number;
     perPage?: number;
     withPage?: number;
+    status?: InsideStatusType;
   }) {
     super('', data.pageNumber ?? 1, data.perPage ?? 10, data.withPage ?? 1);
     this.projectId = normalizePositiveId(data.projectId);
     this.employeeId = normalizePositiveId(data.employeeId);
+    this.status = data.status; 
   }
 
   toMap(): Record<string, string | number | number[] | null> {
@@ -27,6 +31,8 @@ export default class FetchEmployeeTasksParams extends IndexParams {
       ...super.toMap(),
       ...(this.projectId ? { project_id: this.projectId } : {}),
       ...(this.employeeId ? { employee_id: this.employeeId } : {}),
-    };
+      ...(this.status !== undefined
+        ? { inside_status: this.status }
+        : {}),    };
   }
 }

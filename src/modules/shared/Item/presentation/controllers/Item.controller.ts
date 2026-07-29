@@ -48,29 +48,30 @@ protected get userStore() {
   }
 
   async create(params: Params, options?: ApiCallOptions, formKey?: string) {
-    const FormStore = useFormsStore();
-
-    const result = await super.create(params, { ...options, useJson: true });
-
-    if (result instanceof DataSuccess) {
-      // router.push({ name: 'Item' });
-      router.push(this.userStore.user?.type === 1 ? '/mainportal/item' : '/organization/item');
-      if (formKey) FormStore.clearFormData(formKey);
-    }
-
-    return result;
+  const FormStore = useFormsStore();
+  const result = await super.create(params, { ...options, useJson: true });
+  if (result instanceof DataSuccess) {
+    const serviceType = router.currentRoute.value.query.service_type;
+    await router.push({
+      path: this.userStore.user?.type === 1 ? '/mainportal/item': '/organization/item',
+      query: serviceType ? { service_type: serviceType, } : undefined,
+    });
+    if (formKey) { FormStore.clearFormData(formKey); }
   }
+  return result;
+}
 
   async update(params: Params, options?: ApiCallOptions, formKey?: string) {
     const FormStore = useFormsStore();
-
     const result = await super.update(params, { ...options, useJson: true });
-
     if (result instanceof DataSuccess) {
-      router.push(this.userStore.user?.type === 1 ? '/mainportal/item' : '/organization/item');
+      const serviceType = router.currentRoute.value.query.service_type;
+      router.push({
+        path: this.userStore.user?.type === 1 ? '/mainportal/item': '/organization/item',
+        query: serviceType ? { service_type: serviceType, } : undefined,
+      });
       if (formKey) FormStore.clearFormData(formKey);
     }
-
     return result;
   }
 
