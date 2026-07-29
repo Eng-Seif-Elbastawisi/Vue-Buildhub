@@ -9,8 +9,10 @@
   import { useFormsStore } from '@/stores/formsStore';
 
   import IndexItemParams from '@/modules/shared/Item/core/params/index.Item.params';
+  import { ItemServiceTypeEnum } from '@/modules/shared/Item/core/constant/item.service.type.enum';
   import GeneralItemController from '@/modules/shared/Item/presentation/controllers/Item.controller';
 
+  import { DepartmentTypeEnum } from '@/modules/shared/Department/core/constants/Type.enum';
   import IndexDepartmentParams from '@/modules/shared/Department/core/params/index.department.params';
   import DepartmentController from '@/modules/shared/Department/presentation/controllers/department.controller';
 
@@ -49,10 +51,9 @@
   const { t } = useI18n();
 
   const generalItemController = GeneralItemController.getInstance();
-  const generalItemParams = new IndexItemParams('', 1, 100, 0, undefined, undefined, 1);
 
   const departmentController = DepartmentController.getInstance();
-  const departmentParams = new IndexDepartmentParams('', 1, 100, 0, 1);
+  const departmentParams = new IndexDepartmentParams('', 1, 100, 0, DepartmentTypeEnum.DESIGN);
 
   const projectFloorController = ProjectFloorController.getInstance();
   const projectFloorParams = new IndexProjectFloorParams('', 1, 100, 0, null, props.project);
@@ -135,6 +136,14 @@
   const numericId = (value?: string | number) => {
     return value == null ? undefined : Number(value);
   };
+
+  const generalItemParams = computed(() => {
+    const departmentId = numericId(selectedDepartment.value?.id);
+
+    if (departmentId === undefined) return undefined;
+
+    return new IndexItemParams('', 1, 100, 0, undefined, ItemServiceTypeEnum.DESIGN, departmentId);
+  });
 
   const optionFromId = (id?: number | string): TitleInterface<number> | null => {
     return id !== undefined && id !== null
@@ -360,6 +369,12 @@
     updateData();
   }
 
+  const updateDepartment = (department: TitleInterface<string | number> | null) => {
+    selectedDepartment.value = department;
+    selectedItem.value = null;
+    updateData();
+  };
+
   function removeItem(localId: number) {
     localItems.value = localItems.value.filter((item) => item.local_id !== localId);
     updateData();
@@ -521,7 +536,7 @@
               :placeholder="$t('department.placeholder')"
               :reload="true"
               required
-              @update:model-value="updateData"
+              @update:model-value="updateDepartment"
             />
           </div>
 

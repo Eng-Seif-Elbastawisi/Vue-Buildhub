@@ -1,6 +1,7 @@
 import { mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { ItemServiceTypeEnum } from '@/modules/shared/Item/core/constant/item.service.type.enum';
 import { ProjectItemPriceEnum } from '../../../core/constant/project.item.Price.enum';
 import ProjectItemShowModel from '../../../core/models/project.Item.show.model';
 import AddProjectItemParams from '../../../core/params/add.project.Item.params';
@@ -42,7 +43,7 @@ vi.mock(
 
 const createSelectStub = (pricingMethod: ProjectItemPriceEnum) => {
   return {
-    props: ['id'],
+    props: ['id', 'params'],
     emits: ['update:modelValue'],
     template:
       '<button :class="id" @click="$emit(\'update:modelValue\', optionFor(id))">select</button>',
@@ -103,6 +104,31 @@ describe('ProjectItemForm', () => {
           pricing_method: ProjectItemPriceEnum.GENERAL_ITEM,
         },
       ],
+    });
+  });
+
+  it('filters items by design service and the selected department', async () => {
+    const wrapper = mount(ProjectItemForm, {
+      global: {
+        mocks: { $t: (key: string) => key },
+        stubs: { UpdatedCustomInputSelect: SelectStub },
+      },
+    });
+
+    const itemSelect = wrapper
+      .findAllComponents(SelectStub)
+      .find((select) => select.props('id') === 'project-item-item');
+
+    expect(itemSelect?.props('params')).toBeUndefined();
+
+    await wrapper.find('.department_id').trigger('click');
+
+    expect(itemSelect?.props('params').toMap()).toEqual({
+      with_pagination: 0,
+      page: 1,
+      per_page: 100,
+      service_type: ItemServiceTypeEnum.DESIGN,
+      department_id: 7,
     });
   });
 
