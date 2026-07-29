@@ -1,7 +1,7 @@
+```vue
 <script setup lang="ts">
-  import { computed, ref, watch } from 'vue';
+  import { computed, onBeforeUnmount, ref, watch } from 'vue';
   import { useI18n } from 'vue-i18n';
-  import Dialog from 'primevue/dialog';
 
   import {
     PackageSubscriptionStatus,
@@ -9,6 +9,7 @@
   } from '../../core/constants/package.subscription.status.enum';
 
   import type PackageSubscriptionModel from '../../core/models/package.subscription.model';
+
   import ChangePackageSubscriptionStatusParams from '../../core/params/change.package.subscription.status.params';
 
   const props = withDefaults(
@@ -34,14 +35,6 @@
 
   const validationErrors = ref<Record<string, string>>({});
 
-  const dialogVisible = computed<boolean>({
-    get: () => props.modelValue,
-
-    set: (value: boolean) => {
-      emit('update:modelValue', value);
-    },
-  });
-
   const isAcceptAction = computed<boolean>(() => {
     return Number(props.status) === Number(PackageSubscriptionStatus.CONFIRMED);
   });
@@ -63,7 +56,7 @@
   });
 
   const canSubmit = computed<boolean>(() => {
-    return props.subscription !== null && props.status !== null && !props.loading;
+    return !!props.subscription && props.status !== null && !props.loading;
   });
 
   const closeDialog = (): void => {
@@ -71,7 +64,11 @@
       return;
     }
 
-    dialogVisible.value = false;
+    emit('update:modelValue', false);
+  };
+
+  const handleBackdropClick = (): void => {
+    closeDialog();
   };
 
   const submitStatus = (): void => {
@@ -104,282 +101,472 @@
     emit('submit', params);
   };
 
+  /**
+   * منع Scroll الصفحة أثناء فتح الـ Modal.
+   */
   watch(
-    [() => props.modelValue, () => props.subscription, () => props.status],
-    ([visible, subscription, status]) => {
-      if (!visible || !subscription || status === null) {
+    () => props.modelValue,
+    (visible) => {
+      if (typeof document === 'undefined') {
         return;
       }
 
-      notes.value = '';
-      validationErrors.value = {};
+      if (visible) {
+        document.body.classList.add('package-subscription-modal-open');
+
+        notes.value = '';
+
+        validationErrors.value = {};
+
+        return;
+      }
+
+      document.body.classList.remove('package-subscription-modal-open');
     },
     {
       immediate: true,
     },
   );
+
+  onBeforeUnmount(() => {
+    if (typeof document !== 'undefined') {
+      document.body.classList.remove('package-subscription-modal-open');
+    }
+  });
 </script>
 
 <template>
-  <Dialog
-    v-model:visible="dialogVisible"
-    append-to="body"
-    modal
-    block-scroll
-    :base-z-index="10000"
-    :closable="!loading"
-    :draggable="false"
-    :dismissable-mask="false"
-    :header="dialogTitle"
-    :style="{
-      width: '32rem',
-      maxWidth: 'calc(100vw - 2rem)',
-    }"
-    :pt="{
-      mask: {
-        class: 'package-subscription-decision-dialog-mask',
-      },
-      root: {
-        class: 'package-subscription-decision-dialog-root',
-      },
-      header: {
-        class: 'package-subscription-decision-dialog-header',
-      },
-      content: {
-        class: 'package-subscription-decision-dialog-content',
-      },
-    }"
-  >
-    <div class="status-dialog">
+  <Teleport to="body">
+    <Transition name="subscription-modal">
       <div
-        class="decision-summary"
-        :class="{
-          'decision-summary--accept': isAcceptAction,
-          'decision-summary--reject': !isAcceptAction,
-        }"
+        v-if="modelValue"
+        class="package-subscription-modal"
+        role="dialog"
+        aria-modal="true"
+        :aria-label="dialogTitle"
+        @keydown.esc="closeDialog"
       >
-        <span class="decision-summary__icon">
-          <i v-if="isAcceptAction" class="pi pi-check" aria-hidden="true" />
-
-          <i v-else class="pi pi-times" aria-hidden="true" />
-        </span>
-
-        <div class="decision-summary__content">
-          <strong>
-            {{ dialogTitle }}
-          </strong>
-
-          <p>
-            {{ dialogDescription }}
-          </p>
-        </div>
-      </div>
-
-      <div class="field-group">
-        <label class="field-label" for="package-subscription-notes">
-          {{ $t('package.notes') }}
-        </label>
-
-        <textarea
-          id="package-subscription-notes"
-          v-model="notes"
-          class="field-textarea"
-          rows="5"
-          :disabled="loading"
-          :placeholder="$t('package.notes_placeholder')"
+        <!-- Backdrop -->
+        <button
+          class="package-subscription-modal__backdrop"
+          type="button"
+          tabindex="-1"
+          aria-label="Close"
+          @click="handleBackdropClick"
         />
 
-        <small v-if="validationErrors.notes" class="field-error">
-          {{ validationErrors.notes }}
-        </small>
+        <!-- Dialog -->
+        <section class="package-subscription-modal__panel" @click.stop>
+          <!-- Header -->
+          <header class="package-subscription-modal__header">
+            <div class="package-subscription-modal__header-content">
+              <span
+                class="package-subscription-modal__header-icon"
+                :class="{
+                  'package-subscription-modal__header-icon--accept': isAcceptAction,
+
+                  'package-subscription-modal__header-icon--reject': !isAcceptAction,
+                }"
+              >
+                <i v-if="isAcceptAction" class="pi pi-check" aria-hidden="true" />
+
+                <i v-else class="pi pi-times" aria-hidden="true" />
+              </span>
+
+              <div>
+                <h2>
+                  {{ dialogTitle }}
+                </h2>
+
+                <p>
+                  {{ dialogDescription }}
+                </p>
+              </div>
+            </div>
+
+            <button
+              class="package-subscription-modal__close"
+              type="button"
+              :disabled="loading"
+              @click="closeDialog"
+            >
+              <i class="pi pi-times" aria-hidden="true" />
+            </button>
+          </header>
+
+          <!-- Body -->
+          <div class="package-subscription-modal__body">
+            <!-- Subscription info -->
+            <div v-if="subscription" class="subscription-info">
+              <span class="subscription-info__icon">
+                <i class="pi pi-box" aria-hidden="true" />
+              </span>
+
+              <div>
+                <span class="subscription-info__label">
+                  {{ $t('package.subscription_id') }}
+                </span>
+
+                <strong> #{{ subscription.id }} </strong>
+              </div>
+            </div>
+
+            <!-- Notes -->
+            <div class="field-group">
+              <label class="field-label" for="package-subscription-notes">
+                {{ $t('package.notes') }}
+              </label>
+
+              <textarea
+                id="package-subscription-notes"
+                v-model="notes"
+                class="field-textarea"
+                rows="5"
+                :disabled="loading"
+                :placeholder="$t('package.notes_placeholder')"
+              />
+
+              <small v-if="validationErrors.notes" class="field-error">
+                {{ validationErrors.notes }}
+              </small>
+            </div>
+          </div>
+
+          <!-- Footer -->
+          <footer class="package-subscription-modal__footer">
+            <button class="modal-cancel-btn" type="button" :disabled="loading" @click="closeDialog">
+              {{ $t('cancel') }}
+            </button>
+
+            <button
+              class="modal-submit-btn"
+              :class="{
+                'modal-submit-btn--accept': isAcceptAction,
+
+                'modal-submit-btn--reject': !isAcceptAction,
+              }"
+              type="button"
+              :disabled="!canSubmit"
+              @click="submitStatus"
+            >
+              <i v-if="loading" class="pi pi-spin pi-spinner" />
+
+              <i v-else-if="isAcceptAction" class="pi pi-check" />
+
+              <i v-else class="pi pi-times" />
+
+              <span>
+                {{ loading ? $t('loading') : confirmButtonLabel }}
+              </span>
+            </button>
+          </footer>
+        </section>
       </div>
-
-      <div class="dialog-actions">
-        <button class="btn btn-secondary" type="button" :disabled="loading" @click="closeDialog">
-          {{ $t('cancel') }}
-        </button>
-
-        <button
-          class="decision-submit-btn"
-          :class="{
-            'decision-submit-btn--accept': isAcceptAction,
-            'decision-submit-btn--reject': !isAcceptAction,
-          }"
-          type="button"
-          :disabled="!canSubmit"
-          @click="submitStatus"
-        >
-          <i v-if="loading" class="pi pi-spin pi-spinner" aria-hidden="true" />
-
-          <i v-else-if="isAcceptAction" class="pi pi-check" aria-hidden="true" />
-
-          <i v-else class="pi pi-times" aria-hidden="true" />
-
-          <span>
-            {{ loading ? $t('loading') : confirmButtonLabel }}
-          </span>
-        </button>
-      </div>
-    </div>
-  </Dialog>
+    </Transition>
+  </Teleport>
 </template>
 
 <style scoped lang="scss">
-  .status-dialog,
-  .field-group {
+  .package-subscription-modal {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 999999 !important;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 100vw;
+    height: 100vh;
+    padding: 1rem;
+    isolation: isolate;
+  }
+
+  .package-subscription-modal__backdrop {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    background: rgba(15, 23, 42, 0.55);
+    backdrop-filter: blur(3px);
+    cursor: default;
+  }
+
+  .package-subscription-modal__panel {
+    position: relative;
+    z-index: 1;
     display: flex;
     flex-direction: column;
+    width: min(32rem, 100%);
+    max-height: calc(100vh - 2rem);
+    overflow: hidden;
+    border: 1px solid var(--border-weak);
+    border-radius: var(--radius-lg, 16px);
+    background: var(--BgWhite, #fff);
+    color: var(--gray-900, #0f172a);
+    box-shadow: 0 30px 90px rgba(15, 23, 42, 0.3);
   }
 
-  .status-dialog {
-    gap: 1rem;
-  }
-
-  .field-group {
-    gap: 0.5rem;
-  }
-
-  .decision-summary {
+  .package-subscription-modal__header {
     display: flex;
     align-items: flex-start;
-    gap: 0.75rem;
-    padding: 1rem;
-    border: 1px solid transparent;
-    border-radius: 0.75rem;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.25rem;
+    border-bottom: 1px solid var(--border-weak);
+  }
+
+  .package-subscription-modal__header-content {
+    display: flex;
+    align-items: flex-start;
+    min-width: 0;
+    gap: 0.85rem;
+
+    h2 {
+      margin: 0;
+      color: var(--gray-900);
+      font-family: 'Bold';
+      font-size: 1.05rem;
+    }
+
+    p {
+      margin: 0.35rem 0 0;
+      color: var(--gray-500);
+      font-size: var(--xs-size);
+    }
+  }
+
+  .package-subscription-modal__header-icon {
+    display: inline-flex;
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    color: #fff;
 
     &--accept {
-      border-color: var(--success, #16a34a);
-      background: var(--success-light, #dcfce7);
-    }
-
-    &--reject {
-      border-color: var(--danger, #dc2626);
-      background: var(--danger-light, #fee2e2);
-    }
-
-    &__icon {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      flex: 0 0 2.25rem;
-      width: 2.25rem;
-      height: 2.25rem;
-      border-radius: 50%;
-      color: var(--white, #fff);
-      background: var(--gray-700, #374151);
-    }
-
-    &--accept &__icon {
       background: var(--success, #16a34a);
     }
 
-    &--reject &__icon {
+    &--reject {
       background: var(--danger, #dc2626);
     }
+  }
 
-    &__content {
-      min-width: 0;
+  .package-subscription-modal__close {
+    display: inline-flex;
+    width: 36px;
+    height: 36px;
+    flex: 0 0 36px;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border-weak);
+    border-radius: 50%;
+    background: var(--BgWhite);
+    color: var(--gray-500);
+    cursor: pointer;
+    transition: 0.2s ease;
+
+    &:hover:not(:disabled) {
+      border-color: var(--danger);
+      background: var(--danger-light);
+      color: var(--danger);
     }
 
-    strong,
-    p {
-      margin: 0;
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
     }
+  }
 
-    p {
-      margin-top: 0.25rem;
-      color: var(--gray-600, #4b5563);
-      font-size: 0.85rem;
+  .package-subscription-modal__body {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1.25rem;
+    overflow-y: auto;
+  }
+
+  .subscription-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.85rem 1rem;
+    border: 1px solid var(--border-weak);
+    border-radius: var(--radius-md);
+    background: var(--gray-50);
+
+    strong {
+      display: block;
+      color: var(--gray-900);
+      font-family: 'Bold';
     }
+  }
+
+  .subscription-info__icon {
+    display: inline-flex;
+    width: 38px;
+    height: 38px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: var(--PrimaryColor-light);
+    color: var(--PrimaryColor);
+  }
+
+  .subscription-info__label {
+    display: block;
+    margin-bottom: 0.1rem;
+    color: var(--gray-500);
+    font-size: var(--xs-size);
+  }
+
+  .field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
   }
 
   .field-label {
     color: var(--gray-700);
-    font-size: 0.85rem;
-    font-weight: 700;
+    font-family: 'Medium';
+    font-size: var(--sm-size);
+    font-weight: 600;
   }
 
   .field-textarea {
     width: 100%;
-    min-height: 8rem;
-    padding: 0.75rem 1rem;
-    border: 1px solid var(--border-weak, #d1d5db);
-    border-radius: var(--radius-sm, 0.5rem);
-    color: var(--gray-800, #1f2937);
-    background: var(--bg-main, #fff);
+    min-height: 130px;
+    padding: 0.85rem 1rem;
+    border: 1px solid var(--border-weak);
+    border-radius: var(--radius-md);
+    background: var(--BgWhite);
+    color: var(--gray-900);
+    font-family: var(--font-family);
     outline: none;
     resize: vertical;
+    transition: 0.2s ease;
 
     &:focus {
-      border-color: var(--PrimaryColor, #2563eb);
-      box-shadow: 0 0 0 3px rgb(37 99 235 / 10%);
+      border-color: var(--PrimaryColor);
+      box-shadow: 0 0 0 3px var(--PrimaryColor-light);
     }
 
     &:disabled {
       cursor: not-allowed;
-      opacity: 0.7;
+      opacity: 0.65;
     }
   }
 
   .field-error {
-    color: var(--danger, #dc2626);
-    font-size: 0.8rem;
+    color: var(--danger);
+    font-size: var(--xs-size);
     font-weight: 600;
   }
 
-  .dialog-actions {
+  .package-subscription-modal__footer {
     display: flex;
     align-items: center;
     justify-content: flex-end;
     gap: 0.75rem;
-    padding-top: 0.5rem;
+    padding: 1rem 1.25rem;
+    border-top: 1px solid var(--border-weak);
+    background: var(--gray-50);
   }
 
-  .decision-submit-btn {
+  .modal-cancel-btn,
+  .modal-submit-btn {
     display: inline-flex;
+    min-height: 44px;
     align-items: center;
     justify-content: center;
     gap: 0.45rem;
-    min-height: 2.75rem;
-    padding: 0.65rem 1rem;
-    border: 1px solid transparent;
-    border-radius: var(--radius-sm, 0.5rem);
-    color: var(--white, #fff);
+    padding: 0.65rem 1.1rem;
+    border-radius: 50px;
     cursor: pointer;
-    font-weight: 700;
+    font-family: 'Medium';
+    font-weight: 600;
+    transition: 0.2s ease;
+  }
+
+  .modal-cancel-btn {
+    border: 1px solid var(--border-weak);
+    background: var(--BgWhite);
+    color: var(--gray-700);
+
+    &:hover:not(:disabled) {
+      border-color: var(--gray-400);
+      background: var(--gray-100);
+    }
+  }
+
+  .modal-submit-btn {
+    border: 1px solid transparent;
+    color: #fff;
 
     &--accept {
-      background: var(--success, #16a34a);
+      background: var(--success);
     }
 
     &--reject {
-      background: var(--danger, #dc2626);
+      background: var(--danger);
+    }
+
+    &:hover:not(:disabled) {
+      transform: translateY(-1px);
     }
 
     &:disabled {
       cursor: not-allowed;
-      opacity: 0.6;
+      opacity: 0.55;
     }
   }
 
-  /*
- * PrimeVue ينقل الـ Dialog إلى body.
- * هذه الـ classes تخص هذا الـ Dialog فقط.
- */
+  .subscription-modal-enter-active,
+  .subscription-modal-leave-active {
+    transition: opacity 0.2s ease;
+  }
 
+  .subscription-modal-enter-active .package-subscription-modal__panel,
+  .subscription-modal-leave-active .package-subscription-modal__panel {
+    transition:
+      transform 0.2s ease,
+      opacity 0.2s ease;
+  }
+
+  .subscription-modal-enter-from,
+  .subscription-modal-leave-to {
+    opacity: 0;
+  }
+
+  .subscription-modal-enter-from .package-subscription-modal__panel {
+    opacity: 0;
+    transform: translateY(10px) scale(0.97);
+  }
+
+  :global(body.package-subscription-modal-open) {
+    overflow: hidden !important;
+  }
 
   @media (max-width: 576px) {
-    .dialog-actions {
-      align-items: stretch;
-      flex-direction: column-reverse;
-
-      button {
-        width: 100%;
-      }
+    .package-subscription-modal {
+      padding: 0.75rem;
     }
 
-    :global(.package-subscription-decision-dialog-root) {
-      width: calc(100vw - 2rem) !important;
+    .package-subscription-modal__panel {
+      width: 100%;
+    }
+
+    .package-subscription-modal__footer {
+      align-items: stretch;
+      flex-direction: column-reverse;
+    }
+
+    .modal-cancel-btn,
+    .modal-submit-btn {
+      width: 100%;
     }
   }
 </style>
+```
