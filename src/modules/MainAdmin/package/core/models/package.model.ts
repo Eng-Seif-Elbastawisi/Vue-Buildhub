@@ -1,42 +1,5 @@
-export interface PackageModelData {
-  id?: number;
-  duration: number;
-  hasmobild: boolean;
-  hasportal: boolean;
-  projectnumbers: number;
-  employeenumbers: number;
-  price: string;
-}
-
-const isRecord = (rawValue: unknown): rawValue is Record<string, unknown> => {
-  return rawValue !== null && typeof rawValue === 'object';
-};
-
-const parseNumber = (rawValue: unknown, fieldName: string): number => {
-  const parsedValue = Number(rawValue);
-
-  if (!Number.isFinite(parsedValue)) {
-    throw new Error(`Invalid package ${fieldName}`);
-  }
-
-  return parsedValue;
-};
-
-const parseBoolean = (rawValue: unknown, fieldName: string): boolean => {
-  if (rawValue === true || rawValue === 1 || rawValue === '1' || rawValue === 'true') return true;
-  if (rawValue === false || rawValue === 0 || rawValue === '0' || rawValue === 'false')
-    return false;
-
-  throw new Error(`Invalid package ${fieldName}`);
-};
-
-const parsePrice = (rawPrice: unknown): string => {
-  if (typeof rawPrice !== 'string' && typeof rawPrice !== 'number') {
-    throw new Error('Invalid package price');
-  }
-
-  return String(rawPrice);
-};
+import { FeaturesKEY } from '../constants/features.enum';
+import PackageFeatureModel from '../models/package.features.model';
 
 export default class PackageModel {
   public readonly id?: number;
@@ -45,45 +8,90 @@ export default class PackageModel {
   public readonly hasportal: boolean;
   public readonly projectnumbers: number;
   public readonly employeenumbers: number;
+  public readonly title: string;
   public readonly price: string;
+  public readonly features: PackageFeatureModel[];
 
-  constructor(packageData: PackageModelData) {
-    this.id = packageData.id;
-    this.duration = packageData.duration;
-    this.hasmobild = packageData.hasmobild;
-    this.hasportal = packageData.hasportal;
-    this.projectnumbers = packageData.projectnumbers;
-    this.employeenumbers = packageData.employeenumbers;
-    this.price = packageData.price;
+  constructor(data: {
+    id?: number;
+    duration: number;
+    hasmobild: boolean;
+    hasportal: boolean;
+    projectnumbers: number;
+    employeenumbers: number;
+    title: string;
+    price: string;
+    features: PackageFeatureModel[];
+  }) {
+    this.id = data.id;
+    this.duration = data.duration;
+    this.hasmobild = data.hasmobild;
+    this.hasportal = data.hasportal;
+    this.projectnumbers = data.projectnumbers;
+    this.employeenumbers = data.employeenumbers;
+    this.title = data.title;
+    this.price = data.price;
+    this.features = data.features;
 
+    Object.freeze(this.features);
     Object.freeze(this);
   }
 
-  static fromJson(rawPackage: unknown): PackageModel {
-    if (!isRecord(rawPackage)) {
-      throw new Error('Cannot create PackageModel from invalid data');
-    }
-
-    const rawId = rawPackage.id ?? rawPackage.package_id;
-
+  static fromJson(data: Record<string, unknown>): PackageModel {
     return new PackageModel({
-      id: rawId === undefined ? undefined : parseNumber(rawId, 'id'),
-      duration: parseNumber(rawPackage.duration, 'duration'),
-      hasmobild: parseBoolean(rawPackage.hasmobild, 'hasmobild'),
-      hasportal: parseBoolean(rawPackage.hasportal, 'hasportal'),
-      projectnumbers: parseNumber(rawPackage.projectnumbers, 'projectnumbers'),
-      employeenumbers: parseNumber(rawPackage.employeenumbers, 'employeenumbers'),
-      price: parsePrice(rawPackage.price),
+      id: data.id as number,
+      duration: data.duration as number,
+      hasmobild: data.hasmobild as boolean,
+      hasportal: data.hasportal as boolean,
+      projectnumbers: data.projectnumbers as number,
+      employeenumbers: data.employeenumbers as number,
+      title: data.title as string,
+      price: data.price as string,
+
+      features: Array.isArray(data.features)
+        ? data.features.map((feature) => PackageFeatureModel.fromJson(feature))
+        : [],
     });
   }
 
   static readonly example = new PackageModel({
     id: 1,
-    duration: 12,
+    duration: 1,
     hasmobild: true,
     hasportal: true,
-    projectnumbers: 10,
-    employeenumbers: 25,
-    price: '999.00',
+    projectnumbers: 1,
+    employeenumbers: 1,
+    title: 'title',
+    price: '1',
+
+    features: [
+      new PackageFeatureModel({
+        id: 1,
+        key: FeaturesKEY.NUMBER_OF_EMPLOYEES,
+        keyName: 'NUMBER_OF_EMPLOYEES',
+        value: 1,
+      }),
+
+      new PackageFeatureModel({
+        id: 2,
+        key: FeaturesKEY.HAS_MOBILE,
+        keyName: 'HAS_MOBILE',
+        value: true,
+      }),
+
+      new PackageFeatureModel({
+        id: 3,
+        key: FeaturesKEY.HAS_PORTAL,
+        keyName: 'HAS_PORTAL',
+        value: true,
+      }),
+
+      new PackageFeatureModel({
+        id: 4,
+        key: FeaturesKEY.NUMBER_OF_PROJECTS,
+        keyName: 'NUMBER_OF_PROJECTS',
+        value: 1,
+      }),
+    ],
   });
 }

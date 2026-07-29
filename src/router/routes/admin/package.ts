@@ -22,6 +22,16 @@ export const packageCrudRoutes: RouteRecordRaw[] = [
     },
   },
   {
+    path: 'package/subscriptions',
+    name: 'Package Subscriptions',
+    component: () => import('@/views/MainAdmin/Package/PackageSubscriptions.vue'),
+    meta: {
+      breadcrumb: 'Package Subscriptions',
+      parent: 'Packages',
+      allowedUserTypes: [UserType.ADMIN],
+    },
+  },
+  {
     path: 'package/edit/:id',
     name: 'Edit Package',
     component: () => import('@/views/MainAdmin/Package/EditPackage.vue'),
