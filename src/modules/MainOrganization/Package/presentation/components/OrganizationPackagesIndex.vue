@@ -49,29 +49,22 @@
     return subscriptionsState.value instanceof DataSuccess;
   });
 
-  const latestOrganizationSubscription =
-    computed<OrganizationPackageSubscriptionModel | null>(() => {
+  const latestOrganizationSubscription = computed<OrganizationPackageSubscriptionModel | null>(
+    () => {
       if (subscriptions.value.length === 0) {
         return null;
       }
 
-      return subscriptions.value.reduce(
-        (
-          latestSubscription,
-          currentSubscription,
-        ) => {
-          return Number(currentSubscription.id) >
-            Number(latestSubscription.id)
-            ? currentSubscription
-            : latestSubscription;
-        },
-      );
-    });
+      return subscriptions.value.reduce((latestSubscription, currentSubscription) => {
+        return Number(currentSubscription.id) > Number(latestSubscription.id)
+          ? currentSubscription
+          : latestSubscription;
+      });
+    },
+  );
 
   const globalSubscriptionBlocked = computed(() => {
-    return blocksNewSubscription(
-      latestOrganizationSubscription.value,
-    );
+    return blocksNewSubscription(latestOrganizationSubscription.value);
   });
 
   /**
@@ -81,14 +74,8 @@
    * the dialog will not open while another subscription is pending
    * or confirmed.
    */
-  const handleOpenSubscriptionDialog = (
-    packageOffer: OrganizationPackageModel,
-  ): void => {
-    if (
-      subscribing.value ||
-      !subscriptionAccessReady.value ||
-      globalSubscriptionBlocked.value
-    ) {
+  const handleOpenSubscriptionDialog = (packageOffer: OrganizationPackageModel): void => {
+    if (subscribing.value || !subscriptionAccessReady.value || globalSubscriptionBlocked.value) {
       return;
     }
 
@@ -116,41 +103,24 @@
       </p>
     </header>
 
-    <section
-      class="organization-packages-page__section"
-      aria-labelledby="available-packages-title"
-    >
-      <h2
-        id="available-packages-title"
-        class="sr-only"
-      >
+    <section class="organization-packages-page__section" aria-labelledby="available-packages-title">
+      <h2 id="available-packages-title" class="sr-only">
         {{ $t('organization_packages.available_packages') }}
       </h2>
 
-      <DataStatusBuilder
-        :controller="packagesState"
-        :on-retry="fetchPackages"
-      >
+      <DataStatusBuilder :controller="packagesState" :on-retry="fetchPackages">
         <template #success>
           <OrganizationPackagesGrid
             v-if="packages.length > 0"
             :packages="packages"
             :subscriptions="subscriptions"
             :subscribing="subscribing"
-            :subscription-access-ready="
-              subscriptionAccessReady
-            "
+            :subscription-access-ready="subscriptionAccessReady"
             @subscribe="handleOpenSubscriptionDialog"
           />
 
-          <div
-            v-else
-            class="organization-packages-empty"
-          >
-            <i
-              class="pi pi-box"
-              aria-hidden="true"
-            />
+          <div v-else class="organization-packages-empty">
+            <i class="pi pi-box" aria-hidden="true" />
 
             <h3>
               {{ $t('organization_packages.no_packages_found') }}
@@ -160,10 +130,7 @@
 
         <template #empty>
           <div class="organization-packages-empty">
-            <i
-              class="pi pi-box"
-              aria-hidden="true"
-            />
+            <i class="pi pi-box" aria-hidden="true" />
 
             <h3>
               {{ $t('organization_packages.no_packages_found') }}
@@ -172,63 +139,29 @@
         </template>
 
         <template #failed="{ error }">
-          <div
-            class="organization-packages-error"
-            role="alert"
-          >
-            <i
-              class="pi pi-exclamation-circle"
-              aria-hidden="true"
-            />
+          <div class="organization-packages-error" role="alert">
+            <i class="pi pi-exclamation-circle" aria-hidden="true" />
 
             <p>
-              {{
-                error?.displayMessage ||
-                $t(
-                  'organization_packages.fetch_packages_failed',
-                )
-              }}
+              {{ error?.displayMessage || $t('organization_packages.fetch_packages_failed') }}
             </p>
 
-            <button
-              type="button"
-              class="btn btn-secondary"
-              @click="fetchPackages"
-            >
+            <button type="button" class="btn btn-secondary" @click="fetchPackages">
               {{ $t('try_again') }}
             </button>
           </div>
         </template>
 
         <template #loader>
-          <div
-            class="organization-packages-skeleton"
-            aria-hidden="true"
-          >
-            <article
-              v-for="skeletonIndex in 3"
-              :key="skeletonIndex"
-            >
-              <Skeleton
-                width="70%"
-                height="1.5rem"
-              />
+          <div class="organization-packages-skeleton" aria-hidden="true">
+            <article v-for="skeletonIndex in 3" :key="skeletonIndex">
+              <Skeleton width="70%" height="1.5rem" />
 
-              <Skeleton
-                width="35%"
-                height="0.85rem"
-              />
+              <Skeleton width="35%" height="0.85rem" />
 
-              <Skeleton
-                width="55%"
-                height="2.5rem"
-              />
+              <Skeleton width="55%" height="2.5rem" />
 
-              <Skeleton
-                v-for="featureIndex in 4"
-                :key="featureIndex"
-                height="1rem"
-              />
+              <Skeleton v-for="featureIndex in 4" :key="featureIndex" height="1rem" />
 
               <Skeleton height="2.75rem" />
             </article>
@@ -238,128 +171,67 @@
     </section>
 
     <section
-      class="
-        organization-packages-page__section
-        organization-packages-page__history
-      "
+      class="organization-packages-page__section organization-packages-page__history"
       aria-labelledby="package-subscriptions-title"
     >
       <div class="organization-packages-page__section-header">
         <div>
           <h2 id="package-subscriptions-title">
-            {{
-              $t(
-                'organization_packages.my_package_subscriptions',
-              )
-            }}
+            {{ $t('organization_packages.my_package_subscriptions') }}
           </h2>
 
           <p>
-            {{
-              $t(
-                'organization_packages.subscriptions_description',
-              )
-            }}
+            {{ $t('organization_packages.subscriptions_description') }}
           </p>
         </div>
 
         <button
           type="button"
           class="btn btn-secondary"
-          :aria-label="
-            $t(
-              'organization_packages.refresh_subscriptions',
-            )
-          "
+          :aria-label="$t('organization_packages.refresh_subscriptions')"
           @click="fetchPackageSubscriptions"
         >
-          <i
-            class="pi pi-refresh"
-            aria-hidden="true"
-          />
+          <i class="pi pi-refresh" aria-hidden="true" />
 
           {{ $t('organization_packages.refresh') }}
         </button>
       </div>
 
-      <DataStatusBuilder
-        :controller="subscriptionsState"
-        :on-retry="fetchPackageSubscriptions"
-      >
+      <DataStatusBuilder :controller="subscriptionsState" :on-retry="fetchPackageSubscriptions">
         <template #success>
           <OrganizationPackageSubscriptionsTable
             v-if="subscriptions.length > 0"
             :subscriptions="subscriptions"
           />
 
-          <div
-            v-else
-            class="
-              organization-packages-empty
-              organization-packages-empty--compact
-            "
-          >
-            <i
-              class="pi pi-inbox"
-              aria-hidden="true"
-            />
+          <div v-else class="organization-packages-empty organization-packages-empty--compact">
+            <i class="pi pi-inbox" aria-hidden="true" />
 
             <h3>
-              {{
-                $t(
-                  'organization_packages.no_subscriptions_found',
-                )
-              }}
+              {{ $t('organization_packages.no_subscriptions_found') }}
             </h3>
           </div>
         </template>
 
         <template #empty>
-          <div
-            class="
-              organization-packages-empty
-              organization-packages-empty--compact
-            "
-          >
-            <i
-              class="pi pi-inbox"
-              aria-hidden="true"
-            />
+          <div class="organization-packages-empty organization-packages-empty--compact">
+            <i class="pi pi-inbox" aria-hidden="true" />
 
             <h3>
-              {{
-                $t(
-                  'organization_packages.no_subscriptions_found',
-                )
-              }}
+              {{ $t('organization_packages.no_subscriptions_found') }}
             </h3>
           </div>
         </template>
 
         <template #failed="{ error }">
-          <div
-            class="organization-packages-error"
-            role="alert"
-          >
-            <i
-              class="pi pi-exclamation-circle"
-              aria-hidden="true"
-            />
+          <div class="organization-packages-error" role="alert">
+            <i class="pi pi-exclamation-circle" aria-hidden="true" />
 
             <p>
-              {{
-                error?.displayMessage ||
-                $t(
-                  'organization_packages.fetch_subscriptions_failed',
-                )
-              }}
+              {{ error?.displayMessage || $t('organization_packages.fetch_subscriptions_failed') }}
             </p>
 
-            <button
-              type="button"
-              class="btn btn-secondary"
-              @click="fetchPackageSubscriptions"
-            >
+            <button type="button" class="btn btn-secondary" @click="fetchPackageSubscriptions">
               {{ $t('try_again') }}
             </button>
           </div>
@@ -440,10 +312,7 @@
 
   .organization-packages-skeleton {
     display: grid;
-    grid-template-columns: repeat(
-      3,
-      minmax(0, 1fr)
-    );
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 1.25rem;
   }
 
@@ -549,10 +418,7 @@
 
   @media (min-width: 641px) and (max-width: 1024px) {
     .organization-packages-skeleton {
-      grid-template-columns: repeat(
-        2,
-        minmax(0, 1fr)
-      );
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
 </style>

@@ -2031,5 +2031,6 @@
   "task_assignment.inside.in_progress": "In progress",
   "task_assignment.form.has_attached.label": "Has Attached",
   "task_assignment.form.has_attached.description": "Has Attached description",
+  "organization_packages.another_subscription_exists": "There is another subscription",
   "item": "Item"
 }
