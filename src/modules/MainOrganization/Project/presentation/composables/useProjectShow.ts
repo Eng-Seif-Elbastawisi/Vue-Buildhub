@@ -1205,6 +1205,7 @@ export const useProjectShow = () => {
     getFloorHeight,
     formatNumber,
     formatArea,
+    status: currentConvertStatus.value,
   }));
 
   const spacesSectionProps = computed(() => ({
@@ -1260,6 +1261,7 @@ export const useProjectShow = () => {
     getEntityName,
     getPricingMethodLabel,
     projectId: project.value.id,
+    status: currentConvertStatus.value,
   }));
 
   const itemsSectionProps = computed(() => ({
