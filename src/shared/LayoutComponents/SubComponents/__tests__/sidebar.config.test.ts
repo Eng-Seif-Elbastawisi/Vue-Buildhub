@@ -110,6 +110,19 @@ describe('sidebarSections', () => {
     );
   });
 
+  it('includes the organization package subscription destination', () => {
+    const packageItem = sidebarSections
+      .flatMap((section) => section.items)
+      .find((item) => item.path === '/packages');
+
+    expect(packageItem).toEqual(
+      expect.objectContaining({
+        labelKey: 'sidebar.packages',
+        roles: ['organization'],
+      }),
+    );
+  });
+
   it('links project workspaces and task assignment destinations', () => {
     const items = sidebarSections.flatMap((section) => section.items);
 

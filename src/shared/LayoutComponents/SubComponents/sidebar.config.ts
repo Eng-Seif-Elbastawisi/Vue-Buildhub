@@ -474,6 +474,13 @@ export const sidebarSections: SidebarSectionConfig[] = [
       },
 
       {
+        path: '/packages',
+        labelKey: 'sidebar.packages',
+        icon: SidebarFullPackageIcon,
+        roles: ['organization'],
+      },
+
+      {
         path: '/client-source',
         labelKey: 'sidebar.client_source',
         icon: SidebarClientSourceIcon,

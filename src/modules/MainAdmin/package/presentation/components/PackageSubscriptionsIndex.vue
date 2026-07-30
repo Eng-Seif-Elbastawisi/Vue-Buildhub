@@ -1,13 +1,9 @@
-```vue
 <script setup lang="ts">
   import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 
   import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
-
   import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
-
   import AppTable, { type TableHeader } from '@/shared/HelpersComponents/AppTable.vue';
-
   import TableSkelaton from '@/shared/HelpersComponents/TableSkelaton.vue';
 
   import {
@@ -16,11 +12,8 @@
   } from '../../core/constants/package.subscription.status.enum';
 
   import PackageSubscriptionModel from '../../core/models/package.subscription.model';
-
   import ChangePackageSubscriptionStatusParams from '../../core/params/change.package.subscription.status.params';
-
   import FetchPackageSubscriptionsParams from '../../core/params/fetch.package.subscriptions.params';
-
   import PackageSubscriptionController from '../controllers/package.subscription.controller';
 
   const controller = PackageSubscriptionController.getInstance();
@@ -32,12 +25,13 @@
   const selectedActionStatus = ref<PackageSubscriptionStatusValue | null>(null);
 
   const statusDialogVisible = ref(false);
-
   const statusUpdating = ref(false);
 
   const notes = ref('');
 
   const validationErrors = ref<Record<string, string>>({});
+
+  const handledSubscriptionIds = ref<Set<number>>(new Set());
 
   const headers: TableHeader[] = [
     {
@@ -98,15 +92,15 @@
     },
   ];
 
-  const isAcceptAction = computed(() => {
+  const isAcceptAction = computed<boolean>(() => {
     return Number(selectedActionStatus.value) === Number(PackageSubscriptionStatus.CONFIRMED);
   });
 
-  const dialogTitle = computed(() => {
+  const dialogTitle = computed<string>(() => {
     return isAcceptAction.value ? 'Accept Subscription' : 'Reject Subscription';
   });
 
-  const dialogDescription = computed(() => {
+  const dialogDescription = computed<string>(() => {
     return isAcceptAction.value
       ? 'Are you sure you want to accept this subscription?'
       : 'Are you sure you want to reject this subscription?';
@@ -142,28 +136,40 @@
     );
   };
 
+  const isSubscriptionHandled = (subscription: PackageSubscriptionModel): boolean => {
+    const status = Number(subscription.status);
+
+    return (
+      handledSubscriptionIds.value.has(subscription.id) ||
+      status === Number(PackageSubscriptionStatus.CONFIRMED) ||
+      status === Number(PackageSubscriptionStatus.REJECTED)
+    );
+  };
+
   const fetchSubscriptions = async (): Promise<void> => {
     await controller.fetchPackageSubscriptions(new FetchPackageSubscriptionsParams());
   };
 
-  /**
-   * فتح الـ Modal مباشرة من نفس الصفحة.
-   */
   const openStatusDialog = (
     subscription: PackageSubscriptionModel,
     status: PackageSubscriptionStatusValue,
   ): void => {
     selectedSubscription.value = subscription;
-
     selectedActionStatus.value = status;
 
     notes.value = '';
-
     validationErrors.value = {};
 
     statusDialogVisible.value = true;
-
     document.body.style.overflow = 'hidden';
+  };
+
+  const resetStatusDialog = (): void => {
+    selectedSubscription.value = null;
+    selectedActionStatus.value = null;
+
+    notes.value = '';
+    validationErrors.value = {};
   };
 
   const closeStatusDialog = (): void => {
@@ -173,15 +179,13 @@
 
     statusDialogVisible.value = false;
 
-    selectedSubscription.value = null;
-
-    selectedActionStatus.value = null;
-
-    notes.value = '';
-
-    validationErrors.value = {};
+    resetStatusDialog();
 
     document.body.style.overflow = '';
+  };
+
+  const markSubscriptionAsHandled = (subscriptionId: number): void => {
+    handledSubscriptionIds.value = new Set([...handledSubscriptionIds.value, subscriptionId]);
   };
 
   const submitStatusChange = async (): Promise<void> => {
@@ -193,8 +197,10 @@
       return;
     }
 
+    const subscriptionId = selectedSubscription.value.id;
+
     const params = new ChangePackageSubscriptionStatusParams({
-      package_subscription_id: selectedSubscription.value.id,
+      package_subscription_id: subscriptionId,
 
       status: selectedActionStatus.value,
 
@@ -214,22 +220,36 @@
     }
 
     validationErrors.value = {};
-
     statusUpdating.value = true;
+
+    let updatedSuccessfully = false;
 
     try {
       const result = await controller.changePackageSubscriptionStatus(params);
 
-      if (!(result instanceof DataSuccess)) {
-        return;
+      updatedSuccessfully = result instanceof DataSuccess;
+
+      if (updatedSuccessfully) {
+        /*
+         * نخفي الأزرار فورًا قبل إعادة جلب البيانات.
+         */
+        markSubscriptionAsHandled(subscriptionId);
       }
-
-      closeStatusDialog();
-
-      await fetchSubscriptions();
     } finally {
       statusUpdating.value = false;
     }
+
+    if (!updatedSuccessfully) {
+      return;
+    }
+
+    /*
+     * الإغلاق يتم بعد جعل loading = false،
+     * لأن closeStatusDialog يمنع الإغلاق أثناء التحميل.
+     */
+    closeStatusDialog();
+
+    await fetchSubscriptions();
   };
 
   onMounted(async () => {
@@ -282,16 +302,17 @@
           </template>
 
           <template #cell-actions="{ item }">
-            <div class="decision-actions">
+            <div v-if="!isSubscriptionHandled(item)" class="decision-actions">
               <!-- Accept -->
               <button
                 class="decision-btn decision-btn--accept"
                 type="button"
                 :disabled="statusUpdating"
                 :title="$t('package.accept')"
+                :aria-label="$t('package.accept')"
                 @click.prevent.stop="openStatusDialog(item, PackageSubscriptionStatus.CONFIRMED)"
               >
-                <i class="pi pi-check" />
+                <i class="pi pi-check" aria-hidden="true" />
               </button>
 
               <!-- Reject -->
@@ -300,11 +321,18 @@
                 type="button"
                 :disabled="statusUpdating"
                 :title="$t('package.reject')"
+                :aria-label="$t('package.reject')"
                 @click.prevent.stop="openStatusDialog(item, PackageSubscriptionStatus.REJECTED)"
               >
-                <i class="pi pi-times" />
+                <i class="pi pi-times" aria-hidden="true" />
               </button>
             </div>
+
+            <span v-else class="decision-completed">
+              <i class="pi pi-check-circle" aria-hidden="true" />
+
+              {{ $t('package.status_updated') }}
+            </span>
           </template>
         </AppTable>
       </template>
@@ -338,19 +366,11 @@
       </template>
     </DataStatusBuilder>
 
-    <!-- =====================================
-         Modal
-         موجود داخل نفس الصفحة مباشرة
-         ===================================== -->
-
     <Teleport to="body">
       <div v-if="statusDialogVisible" class="subscription-decision-modal">
-        <!-- backdrop -->
         <div class="subscription-decision-modal__backdrop" @click="closeStatusDialog" />
 
-        <!-- panel -->
         <section class="subscription-decision-modal__panel" @click.stop>
-          <!-- Header -->
           <header class="subscription-decision-modal__header">
             <div class="modal-title-group">
               <span
@@ -381,15 +401,14 @@
               :disabled="statusUpdating"
               @click="closeStatusDialog"
             >
-              <i class="pi pi-times" />
+              <i class="pi pi-times" aria-hidden="true" />
             </button>
           </header>
 
-          <!-- Body -->
           <div class="subscription-decision-modal__body">
             <div v-if="selectedSubscription" class="subscription-card">
               <span class="subscription-card__icon">
-                <i class="pi pi-box" />
+                <i class="pi pi-box" aria-hidden="true" />
               </span>
 
               <div>
@@ -418,7 +437,6 @@
             </div>
           </div>
 
-          <!-- Footer -->
           <footer class="subscription-decision-modal__footer">
             <button
               class="modal-cancel-btn"
@@ -440,9 +458,13 @@
               :disabled="statusUpdating"
               @click="submitStatusChange"
             >
-              <i v-if="statusUpdating" class="pi pi-spin pi-spinner" />
+              <i v-if="statusUpdating" class="pi pi-spin pi-spinner" aria-hidden="true" />
 
-              <i v-else :class="isAcceptAction ? 'pi pi-check' : 'pi pi-times'" />
+              <i
+                v-else
+                :class="isAcceptAction ? 'pi pi-check' : 'pi pi-times'"
+                aria-hidden="true"
+              />
 
               <span>
                 {{
@@ -488,8 +510,6 @@
     }
   }
 
-  /* actions */
-
   .decision-actions {
     position: relative;
     z-index: 5;
@@ -512,17 +532,24 @@
     border-radius: 50%;
     cursor: pointer;
     pointer-events: auto !important;
+    transition:
+      transform 0.2s ease,
+      opacity 0.2s ease;
+
+    &:hover:not(:disabled) {
+      transform: translateY(-2px);
+    }
 
     &--accept {
-      border-color: var(--success);
-      background: var(--success-light);
-      color: var(--success-dark);
+      border-color: var(--success, #16a34a);
+      color: var(--success-dark, #166534);
+      background: var(--success-light, #dcfce7);
     }
 
     &--reject {
-      border-color: var(--danger);
-      background: var(--danger-light);
-      color: var(--danger-dark);
+      border-color: var(--danger, #dc2626);
+      color: var(--danger-dark, #991b1b);
+      background: var(--danger-light, #fee2e2);
     }
 
     &:disabled {
@@ -531,19 +558,31 @@
     }
   }
 
-  /* =============================
-   Modal
-============================= */
+  .decision-completed {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    min-height: 2.4rem;
+    padding: 0.4rem 0.75rem;
+    border: 1px solid var(--success, #16a34a);
+    border-radius: 50px;
+    color: var(--success-dark, #166534);
+    background: var(--success-light, #dcfce7);
+    font-size: 0.8rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
 
   .subscription-decision-modal {
     position: fixed !important;
     inset: 0 !important;
     z-index: 2147483647 !important;
     display: flex !important;
-    width: 100vw !important;
-    height: 100vh !important;
     align-items: center !important;
     justify-content: center !important;
+    width: 100vw !important;
+    height: 100vh !important;
     padding: 1rem;
     pointer-events: auto !important;
   }
@@ -551,7 +590,7 @@
   .subscription-decision-modal__backdrop {
     position: absolute;
     inset: 0;
-    background: rgba(15, 23, 42, 0.6);
+    background: rgb(15 23 42 / 60%);
     backdrop-filter: blur(3px);
   }
 
@@ -564,7 +603,7 @@
     border: 1px solid var(--border-weak);
     border-radius: 20px;
     background: var(--BgWhite, #fff);
-    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 25px 80px rgb(0 0 0 / 30%);
   }
 
   .subscription-decision-modal__header {
@@ -597,33 +636,33 @@
 
   .modal-status-icon {
     display: inline-flex;
-    width: 42px;
-    height: 42px;
-    flex: 0 0 42px;
     align-items: center;
     justify-content: center;
+    flex: 0 0 42px;
+    width: 42px;
+    height: 42px;
     border-radius: 50%;
     color: #fff;
 
     &--accept {
-      background: var(--success);
+      background: var(--success, #16a34a);
     }
 
     &--reject {
-      background: var(--danger);
+      background: var(--danger, #dc2626);
     }
   }
 
   .modal-close-btn {
     display: inline-flex;
-    width: 36px;
-    height: 36px;
     align-items: center;
     justify-content: center;
+    width: 36px;
+    height: 36px;
     border: 1px solid var(--border-weak);
     border-radius: 50%;
-    background: var(--BgWhite);
     color: var(--gray-500);
+    background: var(--BgWhite, #fff);
     cursor: pointer;
   }
 
@@ -656,13 +695,13 @@
 
   .subscription-card__icon {
     display: inline-flex;
-    width: 40px;
-    height: 40px;
     align-items: center;
     justify-content: center;
+    width: 40px;
+    height: 40px;
     border-radius: 12px;
-    background: var(--PrimaryColor-light);
     color: var(--PrimaryColor);
+    background: var(--PrimaryColor-light);
   }
 
   .field-group {
@@ -681,8 +720,8 @@
       padding: 0.8rem 1rem;
       border: 1px solid var(--border-weak);
       border-radius: 12px;
-      background: var(--BgWhite);
       color: var(--gray-900);
+      background: var(--BgWhite, #fff);
       outline: none;
       resize: vertical;
 
@@ -694,7 +733,7 @@
   }
 
   .field-error {
-    color: var(--danger);
+    color: var(--danger, #dc2626);
     font-size: 0.8rem;
   }
 
@@ -711,10 +750,10 @@
   .modal-cancel-btn,
   .modal-confirm-btn {
     display: inline-flex;
-    min-height: 44px;
     align-items: center;
     justify-content: center;
     gap: 0.4rem;
+    min-height: 44px;
     padding: 0.65rem 1.1rem;
     border-radius: 50px;
     cursor: pointer;
@@ -723,8 +762,8 @@
 
   .modal-cancel-btn {
     border: 1px solid var(--border-weak);
-    background: var(--BgWhite);
     color: var(--gray-700);
+    background: var(--BgWhite, #fff);
   }
 
   .modal-confirm-btn {
@@ -732,11 +771,11 @@
     color: #fff;
 
     &--accept {
-      background: var(--success);
+      background: var(--success, #16a34a);
     }
 
     &--reject {
-      background: var(--danger);
+      background: var(--danger, #dc2626);
     }
 
     &:disabled {
@@ -782,4 +821,3 @@
     }
   }
 </style>
-```
