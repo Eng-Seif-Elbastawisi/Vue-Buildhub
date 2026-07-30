@@ -1314,6 +1314,7 @@ export const useProjectShow = () => {
     formatTime,
     valueOrEmpty,
     with_preview: project.value?.with_preview,
+    status: currentConvertStatus.value,
   }));
 
   onMounted(() => {

@@ -181,7 +181,7 @@ export default class AddProjectParams implements Params {
 
       client_phone: this.client_phone,
 
-      client_source: this.client_source,
+      client_source_id: this.client_source,
 
       project_type_id: this.project_type_id,
 

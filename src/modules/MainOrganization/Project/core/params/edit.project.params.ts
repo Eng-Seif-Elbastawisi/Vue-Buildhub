@@ -93,7 +93,7 @@ export default class EditProjectParams implements Params {
 
     client_phone?: string;
 
-    client_source?: number;
+    client_source_id?: number;
 
     project_type_id?: number;
 
