@@ -8,6 +8,7 @@ import ProjectAttachmentModel from '@/modules/MainOrganization/Project/core/mode
 import type ProjectHistoryModel from './project.history.model';
 import ProjectSimpleModel from './project.simple.model';
 import type { InsideStatusType } from '@/modules/MainOrganization/TaskAssignment/core/constants/inside.status.enum';
+import type { TaskDurationType } from '@/modules/MainOrganization/TaskAssignment/core/constants/taskDurationType.enum';
 
 export default class ProjectItemShowModel { 
   public readonly id?: number;
@@ -32,6 +33,8 @@ export default class ProjectItemShowModel {
   public readonly histories?:  ProjectHistoryModel[];
   public readonly department?: string;
   public readonly inside_status?: InsideStatusType;
+  public readonly duration?: number;
+  public readonly duration_type?: TaskDurationType;
 
   constructor(data: {
     id?: number;
@@ -56,6 +59,8 @@ export default class ProjectItemShowModel {
     histories?: ProjectHistoryModel[];
     department?: string;
     inside_status?: InsideStatusType;
+    duration?: number;
+    duration_type?: TaskDurationType;
   }) {
     this.id = data.id;
     this.price = data.price;
@@ -79,6 +84,8 @@ export default class ProjectItemShowModel {
     this.histories = data.histories;
     this.department = data.department;
     this.inside_status = data.inside_status;
+    this.duration = data.duration;
+    this.duration_type = data.duration_type;
 
     Object.freeze(this);
   }
@@ -107,6 +114,8 @@ export default class ProjectItemShowModel {
   histories: json.histories as ProjectHistoryModel[] | undefined,
   department: json.department as string | undefined,
   inside_status: json.inside_status as InsideStatusType | undefined,
+  duration: json.duration as number | undefined,
+  duration_type: json.duration_type as TaskDurationType | undefined,
 });
   }
 
