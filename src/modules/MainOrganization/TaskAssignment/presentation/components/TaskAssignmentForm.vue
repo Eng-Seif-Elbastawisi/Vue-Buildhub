@@ -16,9 +16,7 @@
 
   import { getTypeNameKey, TaskDurationType } from '../../core/constants/taskDurationType.enum';
 
-  import AssignProjectDepartmentItemTaskParams, {
-    type TaskAssignmentAttachment,
-  } from '../../core/params/assign.project.department.item.task.params';
+  import AssignProjectDepartmentItemTaskParams, { type TaskAssignmentAttachment } from '../../core/params/assign.project.department.item.task.params';
 
 
   type SelectValue = TitleInterface<number> | TitleInterface<number>[] | null | undefined;
