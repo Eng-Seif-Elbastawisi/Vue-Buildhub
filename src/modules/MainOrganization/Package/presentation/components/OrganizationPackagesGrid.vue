@@ -23,33 +23,26 @@
    * The business rule depends on the latest organization
    * subscription, not the latest subscription for each package.
    */
-  const latestOrganizationSubscription =
-    computed<OrganizationPackageSubscriptionModel | null>(() => {
+  const latestOrganizationSubscription = computed<OrganizationPackageSubscriptionModel | null>(
+    () => {
       if (props.subscriptions.length === 0) {
         return null;
       }
 
-      return props.subscriptions.reduce(
-        (
-          latestSubscription,
-          currentSubscription,
-        ) => {
-          return Number(currentSubscription.id) >
-            Number(latestSubscription.id)
-            ? currentSubscription
-            : latestSubscription;
-        },
-      );
-    });
+      return props.subscriptions.reduce((latestSubscription, currentSubscription) => {
+        return Number(currentSubscription.id) > Number(latestSubscription.id)
+          ? currentSubscription
+          : latestSubscription;
+      });
+    },
+  );
 
   /**
    * Pending or confirmed blocks subscribing to every package.
    * Rejected does not block a new subscription.
    */
   const globalSubscriptionBlocked = computed(() => {
-    return blocksNewSubscription(
-      latestOrganizationSubscription.value,
-    );
+    return blocksNewSubscription(latestOrganizationSubscription.value);
   });
 
   /**
@@ -62,31 +55,21 @@
   const currentSubscriptionForPackage = (
     packageId: number,
   ): OrganizationPackageSubscriptionModel | null => {
-    const latestSubscription =
-      latestOrganizationSubscription.value;
+    const latestSubscription = latestOrganizationSubscription.value;
 
     if (!latestSubscription) {
       return null;
     }
 
-    if (
-      Number(latestSubscription.package.id) !==
-      Number(packageId)
-    ) {
+    if (Number(latestSubscription.package.id) !== Number(packageId)) {
       return null;
     }
 
     return latestSubscription;
   };
 
-  const handleSubscribe = (
-    packageOffer: OrganizationPackageModel,
-  ): void => {
-    if (
-      props.subscribing ||
-      !props.subscriptionAccessReady ||
-      globalSubscriptionBlocked.value
-    ) {
+  const handleSubscribe = (packageOffer: OrganizationPackageModel): void => {
+    if (props.subscribing || !props.subscriptionAccessReady || globalSubscriptionBlocked.value) {
       return;
     }
 
@@ -100,16 +83,10 @@
       v-for="packageOffer in packages"
       :key="packageOffer.id"
       :package-offer="packageOffer"
-      :subscription="
-        currentSubscriptionForPackage(packageOffer.id)
-      "
+      :subscription="currentSubscriptionForPackage(packageOffer.id)"
       :subscribing="subscribing"
-      :global-subscription-blocked="
-        globalSubscriptionBlocked
-      "
-      :subscription-access-ready="
-        subscriptionAccessReady
-      "
+      :global-subscription-blocked="globalSubscriptionBlocked"
+      :subscription-access-ready="subscriptionAccessReady"
       @subscribe="handleSubscribe"
     />
   </div>
@@ -118,19 +95,13 @@
 <style scoped lang="scss">
   .organization-packages-grid {
     display: grid;
-    grid-template-columns: repeat(
-      3,
-      minmax(0, 1fr)
-    );
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 1.25rem;
   }
 
   @media (max-width: 1024px) {
     .organization-packages-grid {
-      grid-template-columns: repeat(
-        2,
-        minmax(0, 1fr)
-      );
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
 
