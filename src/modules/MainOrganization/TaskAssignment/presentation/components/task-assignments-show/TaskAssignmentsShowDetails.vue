@@ -56,17 +56,11 @@ const durationTypeName = (durationType: TaskDurationType): string => {
         <span class="detail-value">{{ model?.department ?? '-' }}</span>
       </div>
 
-      <div class="detail-item task-assignment-show__metric task-assignment-show__metric--duration">
-        <span class="task-assignment-show__metric-icon task-assignment-show__metric-icon--duration" aria-hidden="true" />
-        <span class="detail-label">{{ $t('duration') }}</span>
-        <span class="detail-value">{{ model?.duration ?? '-' }}</span>
-      </div>
-
       <div class="detail-item task-assignment-show__metric task-assignment-show__metric--duration-type">
         <span class="task-assignment-show__metric-icon task-assignment-show__metric-icon--duration-type" aria-hidden="true" />
-        <span class="detail-label">{{ $t('duration_type') }}</span>
+        <span class="detail-label">{{ $t('duration') }}</span>
         <span class="detail-value">
-          {{ durationTypeName(model?.duration_type ?? TaskDurationType.DAY) }}
+            <span class="detail-value">{{ model?.duration ?? '-' }}</span> {{ durationTypeName(model?.duration_type ?? TaskDurationType.DAY) }}
         </span>
       </div>
 
