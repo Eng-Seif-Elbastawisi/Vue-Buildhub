@@ -2042,5 +2042,6 @@
   "item.hold": "متوقف",
   "item.review": "قيد المراجعة",
   "item.in_progress": "قيد التنفيذ",
-  "item": "بند"
+  "item": "بند",
+  "organization_packages.another_subscription_exists": "هناك اشتراك آخر"
 }
