@@ -1948,5 +1948,7 @@
   "task_assignment.inside.in_progress": "In progress",
   "task_assignment.form.has_attached.label": "Has Attached",
   "task_assignment.form.has_attached.description": "Has Attached description",
-  "item": "Item"
+  "item": "Item",
+  "client_type": "Client type",
+  "add.department": "Add department"
 }

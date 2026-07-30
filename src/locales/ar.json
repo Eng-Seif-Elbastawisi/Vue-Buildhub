@@ -1959,5 +1959,7 @@
   "item.hold": "متوقف",
   "item.review": "قيد المراجعة",
   "item.in_progress": "قيد التنفيذ",
-  "item": "بند"
+  "item": "بند",
+  "client_type": "نوع العميل",
+  "add.department": "إضافة قسم"
 }
