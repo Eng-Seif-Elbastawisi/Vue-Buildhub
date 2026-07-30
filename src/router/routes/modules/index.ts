@@ -13,6 +13,7 @@ import { ProjectFloorRoutes } from './project_floor';
 import { InvoiceRoutes } from './invoice';
 import { InvoicePaymentRoutes } from './invoice_payment';
 import { TaskAssignmentRoutes } from './task_assignment';
+import { OrganizationPackageRoutes } from './organization_package';
 
 export const dashboardRoutes: RouteRecordRaw[] = [
   // ...countryRoutes,
@@ -29,4 +30,5 @@ export const dashboardRoutes: RouteRecordRaw[] = [
   ...ProjectFloorRoutes,
   ...InvoiceRoutes,
   ...InvoicePaymentRoutes,
+  ...OrganizationPackageRoutes,
 ];

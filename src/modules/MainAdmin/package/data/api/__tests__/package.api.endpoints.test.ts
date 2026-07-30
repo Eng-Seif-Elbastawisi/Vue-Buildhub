@@ -10,5 +10,9 @@ describe('PackageEndpoints', () => {
     expect(endpoints.store).toContain('mainportal/store_package');
     expect(endpoints.update).toContain('mainportal/update_package');
     expect(endpoints.delete).toContain('mainportal/delete_package');
+    expect(endpoints.fetchPackageSubscriptions).toContain('mainportal/fetch_package_subscriptions');
+    expect(endpoints.changePackageSubscriptionStatus).toContain(
+      'mainportal/change_package_subscription_status',
+    );
   });
 });

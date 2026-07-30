@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { InvoiceStatusEnum } from '@/modules/MainOrganization/Invoice/core/constant/invoice.status.enum';
+import { InsideStatusType } from '@/modules/MainOrganization/TaskAssignment/core/constants/inside.status.enum';
 import { DepartmentTypeEnum } from '@/modules/shared/Department/core/constants/Type.enum';
 import { ItemServiceTypeEnum } from '@/modules/shared/Item/core/constant/item.service.type.enum';
 import { sidebarSections } from '../sidebar.config';
@@ -33,6 +34,7 @@ describe('sidebarSections', () => {
       'sidebar.reports',
       'sidebar.sys_config',
       'sidebar.sys_identity',
+      'organization',
     ]);
   });
 
@@ -67,9 +69,8 @@ describe('sidebarSections', () => {
       expect.arrayContaining([
         'sidebar.hold',
         'sidebar.canceled',
-        'sidebar.plan',
-        'sidebar.in_progress',
-        'sidebar.full_packages',
+        'sidebar.requests',
+        'sidebar.offers',
         'sidebar.collection',
         'sidebar.upcoming_payment',
         'sidebar.productivity',
@@ -91,14 +92,33 @@ describe('sidebarSections', () => {
   });
 
   it('includes an admin-only packages destination', () => {
-    const packageItem = sidebarSections
-      .flatMap((section) => section.items)
-      .find((item) => item.path === '/package');
+    const items = sidebarSections.flatMap((section) => section.items);
+    const packageItem = items.find((item) => item.path === '/package');
+    const packageSubscriptionsItem = items.find((item) => item.path === '/package/subscriptions');
 
     expect(packageItem).toEqual(
       expect.objectContaining({
         labelKey: 'sidebar.packages',
         roles: ['admin'],
+      }),
+    );
+    expect(packageSubscriptionsItem).toEqual(
+      expect.objectContaining({
+        labelKey: 'package.subscriptions',
+        roles: ['admin'],
+      }),
+    );
+  });
+
+  it('includes the organization package subscription destination', () => {
+    const packageItem = sidebarSections
+      .flatMap((section) => section.items)
+      .find((item) => item.path === '/packages');
+
+    expect(packageItem).toEqual(
+      expect.objectContaining({
+        labelKey: 'sidebar.packages',
+        roles: ['organization'],
       }),
     );
   });
@@ -132,9 +152,11 @@ describe('sidebarSections', () => {
       }),
     );
     expect(items.some((item) => item.path === '/project-pricing')).toBe(false);
-    expect(items.find((item) => item.path === '/task-assignment')).toEqual(
+    expect(
+      items.find((item) => item.path === `/task-assignment?status=${InsideStatusType.ASSIGN}`),
+    ).toEqual(
       expect.objectContaining({
-        labelKey: 'sidebar.task_assignment',
+        labelKey: 'task',
         roles: ['organization'],
       }),
     );

@@ -358,7 +358,7 @@ export const sidebarSections: SidebarSectionConfig[] = [
         roles: ['organization'],
         // disabled: true,
       },
-        {
+      {
         path: `/task-assignment?status=${InsideStatusType.REVIEW}`,
         labelKey: 'review',
         icon: SidebarFullPackageIcon,
@@ -464,6 +464,20 @@ export const sidebarSections: SidebarSectionConfig[] = [
         labelKey: 'sidebar.packages',
         icon: SidebarFullPackageIcon,
         roles: ['admin'],
+      },
+
+      {
+        path: '/package/subscriptions',
+        labelKey: 'package.subscriptions',
+        icon: SidebarFullPackageIcon,
+        roles: ['admin'],
+      },
+
+      {
+        path: '/packages',
+        labelKey: 'sidebar.packages',
+        icon: SidebarFullPackageIcon,
+        roles: ['organization'],
       },
 
       {
