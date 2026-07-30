@@ -645,7 +645,7 @@ export const sidebarSections: SidebarSectionConfig[] = [
         path: '/organization-toggle',
         labelKey: 'sidebar.sys_data',
         icon: SidebarSysDataIcon,
-        roles: ['organization', 'admin'],
+        roles: ['organization'],
       },
     ],
   },
@@ -653,12 +653,12 @@ export const sidebarSections: SidebarSectionConfig[] = [
   {
     key: 'organization',
     labelKey: 'organization',
-    icon: SidebarSystemIcon,
+    icon: SidebarSysDataIcon,
     items: [
       {
         path: '/organization',
         labelKey: 'organization',
-        icon: SidebarSysColorsIcon,
+        icon: SidebarEmployeeIcon,
         roles: ['admin'],
       },
     ],
