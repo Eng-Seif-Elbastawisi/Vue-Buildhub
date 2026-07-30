@@ -2064,5 +2064,6 @@
   "ProjectHistory.status.revised": "تم المراجعة",
   "ProjectHistory.status.accepted_client": "تم القبول من العميل",
   "ProjectHistory.status.rejected_client": "تم الرفض من العميل",
-  "ProjectHistory.status.cancelled": "تم الإلغاء"
+  "ProjectHistory.status.cancelled": "تم الإلغاء",
+  "ProjectShow.items_disabled": "تم تعطيل البنود"
 }
