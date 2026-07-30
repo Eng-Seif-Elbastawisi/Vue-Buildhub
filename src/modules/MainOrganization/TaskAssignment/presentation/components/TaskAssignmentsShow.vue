@@ -921,3 +921,9 @@ watch(
   }
 }
 </style> -->
+
+<style lang="scss">
+@use '../styles/task_assignments_show_cards' as task-assignments-show;
+
+@include task-assignments-show.styles;
+</style>

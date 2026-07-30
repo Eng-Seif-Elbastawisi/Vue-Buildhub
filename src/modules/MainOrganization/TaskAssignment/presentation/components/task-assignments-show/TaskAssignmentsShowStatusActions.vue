@@ -46,7 +46,7 @@ const updateDialogVisibility = (visible: boolean): void => {
 </script>
 
 <template>
-  <div class="task-status-actions-bar">
+  <div class="task-status-actions-bar task-assignment-show__actions">
     <h3>{{ $t('general.actions') }}</h3>
 
     <div class="action-buttons-group">
