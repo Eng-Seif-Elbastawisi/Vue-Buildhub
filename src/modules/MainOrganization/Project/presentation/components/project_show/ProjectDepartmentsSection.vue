@@ -1,17 +1,24 @@
+```vue
 <script setup lang="ts">
   import { computed, ref } from 'vue';
+  import type { RouteLocationRaw } from 'vue-router';
+
   import Accordion from 'primevue/accordion';
   import AccordionPanel from 'primevue/accordionpanel';
   import AccordionHeader from 'primevue/accordionheader';
   import AccordionContent from 'primevue/accordioncontent';
+
   import type {
+    NamedEntity,
     ProjectDepartmentItemRow,
     ProjectDepartmentRow,
-    NamedEntity,
   } from './projectShow.types';
 
   const props = defineProps<{
     title: string;
+
+    projectId?: number;
+
     departments: ProjectDepartmentRow[];
     emptyLabel: string;
     idLabel: string;
@@ -32,20 +39,55 @@
     currencyLabel: string;
     hintLabel: string;
     singleOpenHintLabel: string;
+
     valueOrEmpty: (value?: string | number | null) => string;
+
     formatNumber: (value?: number | string | null, fractionDigits?: number) => string;
+
     formatDate: (value?: string | null) => string;
+
     getEntityName: (entity?: NamedEntity | null) => string;
+
     getPricingMethodLabel: (method?: number | null) => string;
   }>();
 
   const activeDepartment = ref('0');
 
+  const toPositiveInteger = (value: unknown): number | undefined => {
+    const normalizedValue = Array.isArray(value) ? value[0] : value;
+
+    const numericValue = Number(normalizedValue);
+
+    return Number.isInteger(numericValue) && numericValue > 0 ? numericValue : undefined;
+  };
+
+  /**
+   * Route used by the add department/item button.
+   *
+   * Final result:
+   * /organization/project-item/add?project_id=30
+   */
+  const addDepartmentRoute = computed<RouteLocationRaw>(() => {
+    const projectId = toPositiveInteger(props.projectId);
+
+    return {
+      path: '/organization/project-item/add',
+
+      ...(projectId
+        ? {
+            query: {
+              project_id: projectId,
+            },
+          }
+        : {}),
+    };
+  });
+
   const getDepartmentItems = (department: ProjectDepartmentRow): ProjectDepartmentItemRow[] => {
     return department.items ?? [];
   };
 
-  const getDepartmentTotal = (department: ProjectDepartmentRow) => {
+  const getDepartmentTotal = (department: ProjectDepartmentRow): number => {
     return getDepartmentItems(department).reduce((total, item) => {
       const price = Number(item.final_price);
 
@@ -54,10 +96,9 @@
   };
 
   const totalItemsCount = computed(() => {
-    return props.departments.reduce(
-      (total, department) => total + getDepartmentItems(department).length,
-      0,
-    );
+    return props.departments.reduce((total, department) => {
+      return total + getDepartmentItems(department).length;
+    }, 0);
   });
 </script>
 
@@ -67,20 +108,40 @@
     class="project-card project-departments-card project-section-disclosure"
   >
     <summary class="card-title project-departments-heading">
-      <i class="pi pi-sitemap"></i>
-      <h2>{{ title }}</h2>
+      <i class="pi pi-sitemap" aria-hidden="true" />
+
+      <h2>
+        {{ title }}
+      </h2>
+
       <span v-if="departments.length" class="department-summary-pill">
-        {{ departments.length }} {{ departmentCountLabel }} · {{ totalItemsCount }}
+        {{ departments.length }}
+        {{ departmentCountLabel }}
+
+        ·
+
+        {{ totalItemsCount }}
         {{ itemsLabel }}
       </span>
-      <!-- <router-link :to="{ name: 'project-departments'}"><span>view_all</span></router-link> dd -->
-      <router-link class="btn btn-primary" :to="{ path: '/organization/project-item/add' }">
-        {{ $t('add.department') }}
-      </router-link>
-      <i class="pi pi-chevron-down project-disclosure-chevron" aria-hidden="true"></i>
+
+      <RouterLink
+        class="btn btn-primary department-add-action"
+        :to="addDepartmentRoute"
+        @click.stop
+      >
+        <i class="pi pi-plus" aria-hidden="true" />
+
+        <span>
+          {{ $t('add.department') }}
+        </span>
+      </RouterLink>
+
+      <i class="pi pi-chevron-down project-disclosure-chevron" aria-hidden="true" />
     </summary>
 
-    <p class="project-departments-hint">{{ hintLabel }}</p>
+    <p class="project-departments-hint">
+      {{ hintLabel }}
+    </p>
 
     <div v-if="!departments.length" class="empty-panel">
       {{ emptyLabel }}
@@ -96,26 +157,43 @@
         <AccordionHeader class="department-panel__header">
           <div class="department-header-content">
             <span class="department-icon" aria-hidden="true">
-              <i class="pi pi-building-columns"></i>
+              <i class="pi pi-building-columns" />
             </span>
 
             <div class="department-title-group">
-              <span>{{ departmentLabel }}</span>
-              <strong>{{ getEntityName(department.department) }}</strong>
+              <span>
+                {{ departmentLabel }}
+              </span>
+
+              <strong>
+                {{ getEntityName(department.department) }}
+              </strong>
+
               <small>
-                <i class="pi pi-calendar"></i>
-                {{ createdAtLabel }} {{ formatDate(department.created_at) }}
+                <i class="pi pi-calendar" aria-hidden="true" />
+
+                {{ createdAtLabel }}
+
+                {{ formatDate(department.created_at) }}
               </small>
             </div>
 
             <div class="department-header-meta">
               <span class="department-count-pill">
-                {{ getDepartmentItems(department).length }} {{ itemCountLabel }}
+                {{ getDepartmentItems(department).length }}
+
+                {{ itemCountLabel }}
               </span>
+
               <span class="department-total">
-                <small>{{ totalLabel }}</small>
+                <small>
+                  {{ totalLabel }}
+                </small>
+
                 <strong>
-                  {{ formatNumber(getDepartmentTotal(department)) }} {{ currencyLabel }}
+                  {{ formatNumber(getDepartmentTotal(department)) }}
+
+                  {{ currencyLabel }}
                 </strong>
               </span>
             </div>
@@ -131,35 +209,82 @@
             <table class="project-table project-table--departments">
               <thead>
                 <tr>
-                  <th>{{ idLabel }}</th>
-                  <th>{{ itemLabel }}</th>
-                  <th>{{ quantityLabel }}</th>
-                  <th>{{ unitPriceLabel || priceLabel }}</th>
-                  <th>{{ finalPriceLabel }}</th>
-                  <th>{{ pricingMethodLabel }}</th>
-                  <th>{{ floorLabel }}</th>
-                  <th>{{ spaceLabel }}</th>
+                  <th>
+                    {{ idLabel }}
+                  </th>
+
+                  <th>
+                    {{ itemLabel }}
+                  </th>
+
+                  <th>
+                    {{ quantityLabel }}
+                  </th>
+
+                  <th>
+                    {{ unitPriceLabel || priceLabel }}
+                  </th>
+
+                  <th>
+                    {{ finalPriceLabel }}
+                  </th>
+
+                  <th>
+                    {{ pricingMethodLabel }}
+                  </th>
+
+                  <th>
+                    {{ floorLabel }}
+                  </th>
+
+                  <th>
+                    {{ spaceLabel }}
+                  </th>
                 </tr>
               </thead>
+
               <tbody>
                 <tr
                   v-for="(item, itemIndex) in getDepartmentItems(department)"
-                  :key="item.uuid ?? item.id"
+                  :key="item.uuid ?? item.id ?? itemIndex"
                 >
-                  <td>{{ itemIndex + 1 }}</td>
-                  <td>{{ getEntityName(item.item) }}</td>
-                  <td>{{ valueOrEmpty(item.quantity) }}</td>
-                  <td>{{ formatNumber(item.price) }} {{ currencyLabel }}</td>
-                  <td class="department-price-cell">
-                    {{ formatNumber(item.final_price) }} {{ currencyLabel }}
+                  <td>
+                    {{ itemIndex + 1 }}
                   </td>
+
+                  <td>
+                    {{ getEntityName(item.item) }}
+                  </td>
+
+                  <td>
+                    {{ valueOrEmpty(item.quantity) }}
+                  </td>
+
+                  <td>
+                    {{ formatNumber(item.price) }}
+
+                    {{ currencyLabel }}
+                  </td>
+
+                  <td class="department-price-cell">
+                    {{ formatNumber(item.final_price) }}
+
+                    {{ currencyLabel }}
+                  </td>
+
                   <td>
                     <span class="department-method-pill">
                       {{ getPricingMethodLabel(item.pricing_method) }}
                     </span>
                   </td>
-                  <td>{{ valueOrEmpty(item.project_floor_id) }}</td>
-                  <td>{{ valueOrEmpty(item.project_floor_space_id) }}</td>
+
+                  <td>
+                    {{ valueOrEmpty(item.project_floor_id) }}
+                  </td>
+
+                  <td>
+                    {{ valueOrEmpty(item.project_floor_space_id) }}
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -169,8 +294,37 @@
     </Accordion>
 
     <div v-if="departments.length" class="department-review-note">
-      <i class="pi pi-info-circle"></i>
-      <span>{{ singleOpenHintLabel }}</span>
+      <i class="pi pi-info-circle" aria-hidden="true" />
+
+      <span>
+        {{ singleOpenHintLabel }}
+      </span>
     </div>
   </details>
 </template>
+
+<style scoped lang="scss">
+  .department-add-action {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    margin-inline-start: auto;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  @media (max-width: 768px) {
+    .project-departments-heading {
+      flex-wrap: wrap;
+    }
+
+    .department-add-action {
+      width: 100%;
+      margin-inline-start: 0;
+      order: 4;
+    }
+  }
+</style>
+```
