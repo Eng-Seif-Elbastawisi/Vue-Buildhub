@@ -530,7 +530,7 @@
           <UpdatedCustomInputSelect
             id="client_exist"
             :model-value="selectedClientExist"
-            :label="$t('Project.client_exist')"
+            :label="$t('client_type')"
             :static-options="clientExistOptions"
             :placeholder="$t('Project.client_exist_placeholder')"
             @update:model-value="updateClientExist"

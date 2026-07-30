@@ -20,9 +20,7 @@
     type TaskAssignmentAttachment,
   } from '../../core/params/assign.project.department.item.task.params';
 
-  /**
-   * Select value returned from UpdatedCustomInputSelect.
-   */
+
   type SelectValue = TitleInterface<number> | TitleInterface<number>[] | null | undefined;
 
   /**

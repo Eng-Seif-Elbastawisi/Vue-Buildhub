@@ -73,6 +73,10 @@
         {{ departments.length }} {{ departmentCountLabel }} · {{ totalItemsCount }}
         {{ itemsLabel }}
       </span>
+      <!-- <router-link :to="{ name: 'project-departments'}"><span>view_all</span></router-link> dd -->
+      <router-link class="btn btn-primary" :to="{ path: '/organization/project-item/add' }">
+        {{ $t('add.department') }}
+      </router-link>
       <i class="pi pi-chevron-down project-disclosure-chevron" aria-hidden="true"></i>
     </summary>
 
