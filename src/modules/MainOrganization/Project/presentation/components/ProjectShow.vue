@@ -108,15 +108,7 @@
               <div class="project-dashboard-main">
                 <ProjectInfoSection v-bind="projectInfoSectionProps" />
 
-                <details class="project-floors-disclosure" open>
-                  <summary class="card-title">
-                    <i class="pi pi-building-columns"></i>
-                    <h2>{{ floorsSectionProps.title }}</h2>
-                    <i class="pi pi-chevron-down project-disclosure-chevron" aria-hidden="true"></i>
-                  </summary>
-
-                  <ProjectFloorsSection v-bind="floorsSectionProps" embedded />
-                </details>
+                <ProjectFloorsSection v-bind="floorsSectionProps" />
 
                 <ProjectSpacesSection v-bind="spacesSectionProps" />
 

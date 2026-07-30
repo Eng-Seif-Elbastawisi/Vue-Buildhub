@@ -8,6 +8,11 @@
   import AccordionHeader from 'primevue/accordionheader';
   import AccordionContent from 'primevue/accordioncontent';
 
+  import {
+    ConvertStatus,
+    type ConvertStatus as ConvertStatusType,
+  } from '../../../core/constants/convert.status.enum';
+
   import type {
     NamedEntity,
     ProjectDepartmentItemRow,
@@ -16,8 +21,13 @@
 
   const props = defineProps<{
     title: string;
-
     projectId?: number;
+
+    /**
+     * Current project status.
+     * The Add Department action appears only for ACCEPT_CLIENT.
+     */
+    status?: ConvertStatusType;
 
     departments: ProjectDepartmentRow[];
     emptyLabel: string;
@@ -61,22 +71,29 @@
     return Number.isInteger(numericValue) && numericValue > 0 ? numericValue : undefined;
   };
 
-  /**
-   * Route used by the add department/item button.
-   *
-   * Final result:
-   * /organization/project-item/add?project_id=30
-   */
-  const addDepartmentRoute = computed<RouteLocationRaw>(() => {
-    const projectId = toPositiveInteger(props.projectId);
+  const validProjectId = computed<number | undefined>(() => {
+    return toPositiveInteger(props.projectId);
+  });
 
+  /**
+   * Add Department is available only when:
+   * - Project status is ACCEPT_CLIENT = 13.
+   * - Project ID is valid.
+   */
+  const canAddDepartment = computed<boolean>(() => {
+    return (
+      Number(props.status) === ConvertStatus.ACCEPT_CLIENT && validProjectId.value !== undefined
+    );
+  });
+
+  const addDepartmentRoute = computed<RouteLocationRaw>(() => {
     return {
       path: '/organization/project-item/add',
 
-      ...(projectId
+      ...(validProjectId.value
         ? {
             query: {
-              project_id: projectId,
+              project_id: validProjectId.value,
             },
           }
         : {}),
@@ -95,7 +112,7 @@
     }, 0);
   };
 
-  const totalItemsCount = computed(() => {
+  const totalItemsCount = computed<number>(() => {
     return props.departments.reduce((total, department) => {
       return total + getDepartmentItems(department).length;
     }, 0);
@@ -125,7 +142,8 @@
       </span>
 
       <RouterLink
-        class="btn btn-primary department-add-action"
+        v-if="canAddDepartment"
+        class="btn btn-primary department-add-action project-action-btn project-action-btn--primary"
         :to="addDepartmentRoute"
         @click.stop
       >
@@ -306,11 +324,14 @@
 <style scoped lang="scss">
   .department-add-action {
     display: inline-flex;
-    flex-shrink: 0;
+    width: fit-content;
+    min-height: 2.35rem;
+    flex: 0 0 auto;
     align-items: center;
     justify-content: center;
     gap: 0.4rem;
-    margin-inline-start: auto;
+    margin-inline-start: 0.25rem;
+    padding-inline: 0.85rem;
     text-decoration: none;
     white-space: nowrap;
   }
@@ -323,7 +344,7 @@
     .department-add-action {
       width: 100%;
       margin-inline-start: 0;
-      order: 4;
+      justify-content: center;
     }
   }
 </style>
