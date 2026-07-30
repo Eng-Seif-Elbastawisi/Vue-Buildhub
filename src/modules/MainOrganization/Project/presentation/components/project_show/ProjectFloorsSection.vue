@@ -3,6 +3,7 @@
   import type { RouteLocationRaw } from 'vue-router';
 
   import type { FloorSpace, ProjectFloor, StatusMeta } from './projectShow.types';
+
   import ProjectFloorEditDialog from './ProjectFloorEditDialog.vue';
 
   const props = withDefaults(
@@ -52,8 +53,11 @@
   }>();
 
   const selectedFloor = ref<ProjectFloor | null>(null);
+
   const selectedProjectId = ref<number | undefined>(undefined);
+
   const selectedProjectPreviewId = ref<number | undefined>(undefined);
+
   const editFloorDialogVisible = ref(false);
   const updatingFloor = ref(false);
   const localFloors = ref<ProjectFloor[]>([]);
@@ -63,19 +67,27 @@
     (floors) => {
       localFloors.value = [...floors];
     },
-    { immediate: true },
+    {
+      immediate: true,
+    },
   );
 
   const toPositiveInteger = (value: unknown): number | undefined => {
     const normalizedValue = Array.isArray(value) ? value[0] : value;
+
     const numberValue = Number(normalizedValue);
 
     return Number.isInteger(numberValue) && numberValue > 0 ? numberValue : undefined;
   };
 
   const getAddFloorQuery = (): Record<string, unknown> => {
-    if (!props.addFloorTo || typeof props.addFloorTo === 'string') return {};
-    if (!('query' in props.addFloorTo) || !props.addFloorTo.query) return {};
+    if (!props.addFloorTo || typeof props.addFloorTo === 'string') {
+      return {};
+    }
+
+    if (!('query' in props.addFloorTo) || !props.addFloorTo.query) {
+      return {};
+    }
 
     return props.addFloorTo.query;
   };
@@ -107,8 +119,11 @@
 
   const openEditFloorDialog = (floor: ProjectFloor): void => {
     selectedFloor.value = floor;
+
     selectedProjectId.value = getProjectId(floor);
+
     selectedProjectPreviewId.value = getProjectPreviewId(floor);
+
     editFloorDialogVisible.value = true;
   };
 
@@ -119,6 +134,7 @@
 
     editFloorDialogVisible.value = false;
     selectedFloor.value = null;
+
     selectedProjectId.value = undefined;
     selectedProjectPreviewId.value = undefined;
   };
@@ -170,11 +186,30 @@
   <article
     id="project-floors"
     class="project-card project-floors-card"
-    :class="{ 'project-floors-card--embedded': embedded }"
+    :class="{
+      'project-floors-card--embedded': embedded,
+    }"
   >
-    <div v-if="!embedded" class="card-title">
-      <i class="pi pi-building-columns"></i>
-      <h2>{{ title }}</h2>
+    <div v-if="!embedded || (localFloors.length > 0 && addFloorTo)" class="project-floors-toolbar">
+      <div v-if="!embedded" class="card-title">
+        <i class="pi pi-building-columns" />
+
+        <h2>
+          {{ title }}
+        </h2>
+      </div>
+
+      <RouterLink
+        v-if="localFloors.length > 0 && addFloorTo"
+        class="project-action-btn project-action-btn--primary project-floor-add-action"
+        :to="addFloorTo"
+      >
+        <i class="pi pi-plus" aria-hidden="true" />
+
+        <span>
+          {{ addFloorLabel || $t('ProjectFloor.add_action') }}
+        </span>
+      </RouterLink>
     </div>
 
     <RouterLink
@@ -182,7 +217,7 @@
       class="empty-panel empty-panel--link"
       :to="addFloorTo"
     >
-      <i class="pi pi-plus-circle"></i>
+      <i class="pi pi-plus-circle" />
 
       <span>
         {{ emptyLabel }}
@@ -202,22 +237,58 @@
         <table class="project-table">
           <thead>
             <tr>
-              <th>{{ floorLabel }}</th>
-              <th>{{ typeLabel }}</th>
-              <th>{{ spacesLabel }}</th>
-              <th>{{ totalAreaMeterLabel }}</th>
-              <th>{{ totalHeightMeterLabel }}</th>
-              <th>{{ statusLabel }}</th>
-              <th>{{ $t('general.actions') }}</th>
+              <th>
+                {{ floorLabel }}
+              </th>
+
+              <th>
+                {{ typeLabel }}
+              </th>
+
+              <th>
+                {{ spacesLabel }}
+              </th>
+
+              <th>
+                {{ totalAreaMeterLabel }}
+              </th>
+
+              <th>
+                {{ totalHeightMeterLabel }}
+              </th>
+
+              <th>
+                {{ statusLabel }}
+              </th>
+
+              <th>
+                {{ $t('general.actions') }}
+              </th>
             </tr>
           </thead>
+
           <tbody>
             <tr v-for="floor in localFloors" :key="floor.id">
-              <td>{{ getFloorNumberLabel(floor.floor_number) }}</td>
-              <td>{{ getFloorType(floor.floor_number) }}</td>
-              <td>{{ floor.spaces?.length ?? 0 }}</td>
-              <td>{{ formatNumber(calculateFloorArea(floor)) }}</td>
-              <td>{{ formatNumber(getFloorHeight(floor)) }}</td>
+              <td>
+                {{ getFloorNumberLabel(floor.floor_number) }}
+              </td>
+
+              <td>
+                {{ getFloorType(floor.floor_number) }}
+              </td>
+
+              <td>
+                {{ floor.spaces?.length ?? 0 }}
+              </td>
+
+              <td>
+                {{ formatNumber(calculateFloorArea(floor)) }}
+              </td>
+
+              <td>
+                {{ formatNumber(getFloorHeight(floor)) }}
+              </td>
+
               <td>
                 <span
                   class="status-badge status-badge--inline"
@@ -226,6 +297,7 @@
                   {{ Number(floor.status) === 1 ? completedLabel : inProgressLabel }}
                 </span>
               </td>
+
               <td class="floor-actions-cell">
                 <button
                   v-if="hasValidFloorId(floor)"
@@ -235,7 +307,10 @@
                   @click="openEditFloorDialog(floor)"
                 >
                   <i class="pi pi-pen-to-square" aria-hidden="true" />
-                  <span>{{ $t('ProjectFloor.edit_action') }}</span>
+
+                  <span>
+                    {{ $t('ProjectFloor.edit_action') }}
+                  </span>
                 </button>
               </td>
             </tr>
@@ -245,23 +320,48 @@
 
       <aside class="summary-panel">
         <div class="summary-cube">
-          <i class="pi pi-objects-column"></i>
+          <i class="pi pi-objects-column" />
         </div>
+
         <div>
-          <span>{{ totalFloorsLabel }}</span>
-          <strong>{{ localFloors.length }}</strong>
+          <span>
+            {{ totalFloorsLabel }}
+          </span>
+
+          <strong>
+            {{ localFloors.length }}
+          </strong>
         </div>
+
         <div>
-          <span>{{ totalSpacesLabel }}</span>
-          <strong>{{ localFloorSpaces.length }}</strong>
+          <span>
+            {{ totalSpacesLabel }}
+          </span>
+
+          <strong>
+            {{ localFloorSpaces.length }}
+          </strong>
         </div>
+
         <div>
-          <span>{{ totalAreaLabel }}</span>
-          <strong>{{ formatArea(localTotalArea) }}</strong>
+          <span>
+            {{ totalAreaLabel }}
+          </span>
+
+          <strong>
+            {{ formatArea(localTotalArea) }}
+          </strong>
         </div>
+
         <div>
-          <span>{{ averageHeightLabel }}</span>
-          <strong>{{ formatNumber(localAverageHeight) }} m</strong>
+          <span>
+            {{ averageHeightLabel }}
+          </span>
+
+          <strong>
+            {{ formatNumber(localAverageHeight) }}
+            m
+          </strong>
         </div>
       </aside>
     </div>
@@ -277,3 +377,36 @@
     @updated="handleFloorUpdated"
   />
 </template>
+
+<style scoped lang="scss">
+  .project-floors-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-block-end: 1rem;
+  }
+
+  .project-floors-toolbar .card-title {
+    min-width: 0;
+    margin: 0;
+  }
+
+  .project-floor-add-action {
+    flex-shrink: 0;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  @media (max-width: 640px) {
+    .project-floors-toolbar {
+      align-items: stretch;
+      flex-direction: column;
+    }
+
+    .project-floor-add-action {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+</style>

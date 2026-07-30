@@ -1259,6 +1259,7 @@ export const useProjectShow = () => {
     formatDate,
     getEntityName,
     getPricingMethodLabel,
+    projectId: project.value.id,
   }));
 
   const itemsSectionProps = computed(() => ({
