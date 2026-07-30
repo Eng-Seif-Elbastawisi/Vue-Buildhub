@@ -26,6 +26,7 @@ export type Attachment = {
 
 export type FloorSpace = {
   id?: number;
+  space_id?: number | null;
   space?: NamedEntity | null;
   length?: string | number | null;
   width?: string | number | null;
@@ -119,6 +120,7 @@ export type ProjectShowRaw = {
   project_pricing?: ProjectPricingRow | null;
   attachments?: Attachment[];
   created_at?: string | null;
+  with_preview?: boolean;
 };
 
 export type TabItem = {

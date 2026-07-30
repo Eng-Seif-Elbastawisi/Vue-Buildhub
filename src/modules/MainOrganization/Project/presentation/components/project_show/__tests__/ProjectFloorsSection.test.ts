@@ -1,6 +1,14 @@
 import { mount, RouterLinkStub } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
+import type { ProjectFloor } from '../projectShow.types';
 import ProjectFloorsSection from '../ProjectFloorsSection.vue';
+
+const ProjectFloorEditDialogStub = {
+  name: 'ProjectFloorEditDialog',
+  props: ['modelValue', 'floor', 'projectId', 'projectPreviewId'],
+  emits: ['update:modelValue', 'updated', 'updating'],
+  template: '<div v-if="modelValue" class="floor-edit-dialog-stub" />',
+};
 
 const defaultProps = {
   title: 'Project Floors Summary',
@@ -38,7 +46,11 @@ const defaultProps = {
   getFloorNumberLabel: () => 'Second floor',
   getFloorType: () => 'Typical Floor',
   getStatusMeta: () => ({ label: 'Active', className: 'is-active' }),
-  calculateFloorArea: () => 5742,
+  calculateFloorArea: (floor: ProjectFloor) => {
+    const firstSpace = floor.spaces?.[0];
+
+    return Number(firstSpace?.length) * Number(firstSpace?.width);
+  },
   getFloorHeight: () => 35,
   formatNumber: (value?: number | string | null) =>
     Number(value).toLocaleString('en-US', { minimumFractionDigits: 2 }),
@@ -50,7 +62,10 @@ describe('ProjectFloorsSection', () => {
     const wrapper = mount(ProjectFloorsSection, {
       props: defaultProps,
       global: {
-        stubs: { RouterLink: RouterLinkStub },
+        stubs: {
+          RouterLink: RouterLinkStub,
+          ProjectFloorEditDialog: ProjectFloorEditDialogStub,
+        },
       },
     });
 
@@ -60,22 +75,58 @@ describe('ProjectFloorsSection', () => {
     expect(wrapper.text()).toContain('5,742 m²');
   });
 
-  it('renders an edit action for a valid floor id with the current route convention', () => {
+  it('opens the single-floor edit dialog without rendering an edit route link', async () => {
     const wrapper = mount(ProjectFloorsSection, {
       props: defaultProps,
       global: {
-        stubs: { RouterLink: RouterLinkStub },
+        stubs: {
+          RouterLink: RouterLinkStub,
+          ProjectFloorEditDialog: ProjectFloorEditDialogStub,
+        },
       },
     });
 
-    const editLink = wrapper.findComponent(RouterLinkStub);
+    const editButton = wrapper.get<HTMLButtonElement>('.floor-edit-action');
 
-    expect(editLink.text()).toContain('Edit Project Floor');
-    expect(editLink.props('to')).toEqual({
-      name: 'edit-project_floor',
-      params: { project_floor_id: 14 },
-      query: { project_id: 24, project_preview_id: 15 },
+    expect(editButton.element.tagName).toBe('BUTTON');
+    expect(editButton.text()).toContain('Edit Project Floor');
+
+    await editButton.trigger('click');
+
+    const dialog = wrapper.findComponent(ProjectFloorEditDialogStub);
+
+    expect(dialog.props()).toEqual(
+      expect.objectContaining({
+        modelValue: true,
+        floor: expect.objectContaining({ id: 14 }),
+        projectId: 24,
+        projectPreviewId: 15,
+      }),
+    );
+    expect(wrapper.find('.floor-edit-dialog-stub').exists()).toBe(true);
+  });
+
+  it('replaces only the updated floor locally without reloading or navigating', async () => {
+    const wrapper = mount(ProjectFloorsSection, {
+      props: defaultProps,
+      global: {
+        stubs: {
+          RouterLink: RouterLinkStub,
+          ProjectFloorEditDialog: ProjectFloorEditDialogStub,
+        },
+      },
     });
+
+    await wrapper.get('.floor-edit-action').trigger('click');
+
+    wrapper.findComponent(ProjectFloorEditDialogStub).vm.$emit('updated', {
+      ...defaultProps.floors[0],
+      spaces: [{ id: 25, length: 9, width: 4.5, height: 3.2, notes: 'Updated' }],
+    });
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.text()).toContain('40.50');
+    expect(wrapper.emitted('updated')?.[0]?.[0]).toEqual(expect.objectContaining({ id: 14 }));
   });
 
   it('does not render the edit action when the floor id is missing or invalid', () => {
@@ -85,7 +136,10 @@ describe('ProjectFloorsSection', () => {
         floors: [{ ...defaultProps.floors[0], id: 0 }],
       },
       global: {
-        stubs: { RouterLink: RouterLinkStub },
+        stubs: {
+          RouterLink: RouterLinkStub,
+          ProjectFloorEditDialog: ProjectFloorEditDialogStub,
+        },
       },
     });
 
@@ -99,7 +153,10 @@ describe('ProjectFloorsSection', () => {
         floors: [],
       },
       global: {
-        stubs: { RouterLink: RouterLinkStub },
+        stubs: {
+          RouterLink: RouterLinkStub,
+          ProjectFloorEditDialog: ProjectFloorEditDialogStub,
+        },
       },
     });
 

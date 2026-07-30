@@ -22,11 +22,13 @@
       formatDate: (value?: string | null) => string;
       formatTime: (value?: string | null) => string;
       valueOrEmpty: (value?: string | number | null) => string;
+      with_preview?: boolean;
     }>(),
     {
       previews: () => [],
       terms: '',
       termsLabel: '',
+      with_preview: false,
     },
   );
 
@@ -100,7 +102,12 @@
 
 <template>
   <aside class="project-side-column">
-    <details id="project-preview" class="project-card preview-card project-section-disclosure" open>
+    <details
+      v-if="with_preview"
+      id="project-preview"
+      class="project-card preview-card project-section-disclosure"
+      open
+    >
       <summary class="card-title">
         <i class="pi pi-eye"></i>
         <h2>{{ previewTitle }}</h2>

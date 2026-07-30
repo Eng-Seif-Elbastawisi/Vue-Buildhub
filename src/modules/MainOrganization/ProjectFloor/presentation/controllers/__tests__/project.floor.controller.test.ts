@@ -1,10 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
-import BaseController from '@/base/Presentation/Controller/baseController';
 import { FloorNumber } from '../../../core/constants/floor.number.enum';
-import ProjectFloorShowModel from '../../../core/models/project.floor.show.model';
 import EditProjectFloorParams from '../../../core/params/edit.project.floor.params';
+import ProjectFloorApiService from '../../../data/api/project.floor.api-service';
 import ProjectFloorController from '../project.floor.controller';
 
 const mocks = vi.hoisted(() => ({
@@ -32,19 +31,24 @@ describe('ProjectFloorController', () => {
   });
 
   it('returns to the project show page after a successful floor update', async () => {
-    const responseModel = new ProjectFloorShowModel({ id: 33, project_id: 24 });
-    const updateSpy = vi
-      .spyOn(BaseController.prototype, 'update')
-      .mockResolvedValue(new DataSuccess({ data: responseModel }));
+    vi.spyOn(ProjectFloorApiService.getInstance(), 'update').mockResolvedValue({
+      statusCode: 200,
+      data: { status: true, data: { id: 33, project_id: 24 } },
+    });
     const params = new EditProjectFloorParams({
       id: 33,
       project_id: 24,
       project_preview_id: 15,
-      floor_number: FloorNumber.GROUND_FLOOR,
       site_description: 'Current site description',
       technical_general_notes: 'Current technical notes',
       inspection_recommendations: 'Current recommendations',
-      spaces: [{ space_id: 8, length: 12.5, width: 8.25, height: 3.2 }],
+      floors: [
+        {
+          project_floor_id: 33,
+          floor_number: FloorNumber.GROUND_FLOOR,
+          spaces: [{ space_id: 8, length: 12.5, width: 8.25, height: 3.2 }],
+        },
+      ],
     });
 
     await ProjectFloorController.getInstance().update(params, undefined, 'edit-floor-form');
@@ -54,7 +58,23 @@ describe('ProjectFloorController', () => {
       name: 'show-project',
       params: { project_id: 24 },
     });
+  });
 
-    updateSpy.mockRestore();
+  it('updates a floor in place without navigating when requested by the dialog', async () => {
+    vi.spyOn(ProjectFloorApiService.getInstance(), 'update').mockResolvedValue({
+      statusCode: 200,
+      data: { status: true, data: { id: 33, project_id: 24 } },
+    });
+    const params = new EditProjectFloorParams({
+      project_floor_id: 33,
+      project_id: 24,
+      project_preview_id: 15,
+      spaces: [{ space_id: 8, length: 12.5, width: 8.25, height: 3.2, notes: null }],
+    });
+
+    const result = await ProjectFloorController.getInstance().updateWithoutNavigation(params);
+
+    expect(result).toBeInstanceOf(DataSuccess);
+    expect(mocks.push).not.toHaveBeenCalled();
   });
 });

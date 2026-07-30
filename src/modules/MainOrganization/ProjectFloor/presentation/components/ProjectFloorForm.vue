@@ -381,9 +381,10 @@
 
         <div class="picker-panel">
           <div class="picker-field">
-            <label class="field-label">{{ $t('ProjectFloor.floor_number') }}</label>
+            <!-- <label class="field-label">{{ $t('ProjectFloor.floor_number') }}</label> -->
             <UpdatedCustomInputSelect
               id="floor_number"
+              :label="$t('ProjectFloor.floor_number')"
               :model-value="selectedFloorNumber"
               :static-options="floorNumberOptions"
               :placeholder="$t('ProjectFloor.floor_number_placeholder')"
@@ -392,9 +393,10 @@
           </div>
 
           <div class="picker-field">
-            <label class="field-label">{{ $t('ProjectFloor.space') }}</label>
+            <!-- <label class="field-label">{{ $t('ProjectFloor.space') }}</label> -->
             <UpdatedCustomInputSelect
               id="space_id"
+              :label="$t('ProjectFloor.space')"
               :model-value="selectedSpace"
               :static-options="spaceOptions"
               :placeholder="$t('ProjectFloor.space_placeholder')"
@@ -867,7 +869,7 @@
   }
 
   .floor-card__head span {
-    display: block;
+    // display: block;
     color: var(--gray-5);
     font-size: var(--xs-size);
   }
