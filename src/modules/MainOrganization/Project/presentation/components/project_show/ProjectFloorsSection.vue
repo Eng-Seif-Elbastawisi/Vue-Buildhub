@@ -2,6 +2,11 @@
   import { computed, ref, watch } from 'vue';
   import type { RouteLocationRaw } from 'vue-router';
 
+  import {
+    ConvertStatus,
+    type ConvertStatus as ConvertStatusType,
+  } from '../../../core/constants/convert.status.enum';
+
   import type { FloorSpace, ProjectFloor, StatusMeta } from './projectShow.types';
 
   import ProjectFloorEditDialog from './ProjectFloorEditDialog.vue';
@@ -19,6 +24,13 @@
       addFloorTo?: RouteLocationRaw;
       projectId?: number;
       projectPreviewId?: number;
+
+      /**
+       * Current project convert status.
+       * The Add Floor action is available only for ACCEPT_CLIENT.
+       */
+      status?: ConvertStatusType;
+
       floorLabel: string;
       typeLabel: string;
       spacesLabel: string;
@@ -31,12 +43,19 @@
       totalSpacesLabel: string;
       totalAreaLabel: string;
       averageHeightLabel: string;
+
       getFloorNumberLabel: (floorNumber?: number | null) => string;
+
       getFloorType: (floorNumber?: number | null) => string;
+
       getStatusMeta: (status?: number | null) => StatusMeta;
+
       calculateFloorArea: (floor: ProjectFloor) => number;
+
       getFloorHeight: (floor: ProjectFloor) => number;
+
       formatNumber: (value?: number | string | null, fractionDigits?: number) => string;
+
       formatArea: (value?: number | string | null) => string;
     }>(),
     {
@@ -44,6 +63,7 @@
       addFloorTo: undefined,
       projectId: undefined,
       projectPreviewId: undefined,
+      status: undefined,
       embedded: false,
     },
   );
@@ -61,6 +81,15 @@
   const editFloorDialogVisible = ref(false);
   const updatingFloor = ref(false);
   const localFloors = ref<ProjectFloor[]>([]);
+
+  /**
+   * Add Floor is allowed only when:
+   * - addFloorTo exists.
+   * - project status is ACCEPT_CLIENT = 13.
+   */
+  const canAddFloor = computed<boolean>(() => {
+    return Boolean(props.addFloorTo) && Number(props.status) === ConvertStatus.ACCEPT_CLIENT;
+  });
 
   watch(
     () => props.floors,
@@ -134,7 +163,6 @@
 
     editFloorDialogVisible.value = false;
     selectedFloor.value = null;
-
     selectedProjectId.value = undefined;
     selectedProjectPreviewId.value = undefined;
   };
@@ -164,19 +192,20 @@
     return localFloors.value.flatMap((floor) => floor.spaces ?? []);
   });
 
-  const localTotalArea = computed(() => {
-    return localFloors.value.reduce((total, floor) => total + props.calculateFloorArea(floor), 0);
+  const localTotalArea = computed<number>(() => {
+    return localFloors.value.reduce((total, floor) => {
+      return total + props.calculateFloorArea(floor);
+    }, 0);
   });
 
-  const localAverageHeight = computed(() => {
+  const localAverageHeight = computed<number>(() => {
     if (!localFloors.value.length) {
       return 0;
     }
 
-    const totalHeight = localFloors.value.reduce(
-      (total, floor) => total + props.getFloorHeight(floor),
-      0,
-    );
+    const totalHeight = localFloors.value.reduce((total, floor) => {
+      return total + props.getFloorHeight(floor);
+    }, 0);
 
     return totalHeight / localFloors.value.length;
   });
@@ -190,34 +219,35 @@
       'project-floors-card--embedded': embedded,
     }"
   >
-    <div v-if="!embedded || (localFloors.length > 0 && addFloorTo)" class="project-floors-toolbar">
-      <div v-if="!embedded" class="card-title">
-        <i class="pi pi-building-columns" />
+    <div class="project-floors-toolbar">
+      <div class="card-title project-floors-title">
+        <i class="pi pi-building-columns" aria-hidden="true" />
 
         <h2>
           {{ title }}
         </h2>
+
+        <RouterLink
+          v-if="canAddFloor && addFloorTo"
+          class="project-action-btn project-action-btn--primary project-floor-add-action"
+          :to="addFloorTo"
+        >
+          <i class="pi pi-plus" aria-hidden="true" />
+
+          <span>
+            {{ addFloorLabel || $t('ProjectFloor.add_action') }}
+          </span>
+        </RouterLink>
       </div>
-
-      <RouterLink
-        v-if="localFloors.length > 0 && addFloorTo"
-        class="project-action-btn project-action-btn--primary project-floor-add-action"
-        :to="addFloorTo"
-      >
-        <i class="pi pi-plus" aria-hidden="true" />
-
-        <span>
-          {{ addFloorLabel || $t('ProjectFloor.add_action') }}
-        </span>
-      </RouterLink>
     </div>
 
+    <!-- Empty state with Add action -->
     <RouterLink
-      v-if="!localFloors.length && addFloorTo"
+      v-if="!localFloors.length && canAddFloor && addFloorTo"
       class="empty-panel empty-panel--link"
       :to="addFloorTo"
     >
-      <i class="pi pi-plus-circle" />
+      <i class="pi pi-plus-circle" aria-hidden="true" />
 
       <span>
         {{ emptyLabel }}
@@ -228,6 +258,7 @@
       </small>
     </RouterLink>
 
+    <!-- Empty state without Add permission -->
     <div v-else-if="!localFloors.length" class="empty-panel">
       {{ emptyLabel }}
     </div>
@@ -320,7 +351,7 @@
 
       <aside class="summary-panel">
         <div class="summary-cube">
-          <i class="pi pi-objects-column" />
+          <i class="pi pi-objects-column" aria-hidden="true" />
         </div>
 
         <div>
@@ -381,31 +412,49 @@
 <style scoped lang="scss">
   .project-floors-toolbar {
     display: flex;
+    width: 100%;
     align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
     margin-block-end: 1rem;
   }
 
-  .project-floors-toolbar .card-title {
+  .project-floors-title {
+    display: flex;
+    width: 100%;
+    min-width: 0;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.75rem;
+    margin: 0;
+  }
+
+  .project-floors-title h2 {
     min-width: 0;
     margin: 0;
   }
 
   .project-floor-add-action {
-    flex-shrink: 0;
+    display: inline-flex;
+    width: fit-content;
+    min-height: 2.35rem;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    margin-inline-start: 0.25rem;
+    padding-inline: 0.85rem;
     text-decoration: none;
     white-space: nowrap;
   }
 
   @media (max-width: 640px) {
-    .project-floors-toolbar {
-      align-items: stretch;
-      flex-direction: column;
+    .project-floors-title {
+      align-items: flex-start;
+      flex-wrap: wrap;
     }
 
     .project-floor-add-action {
       width: 100%;
+      margin-inline-start: 0;
       justify-content: center;
     }
   }
