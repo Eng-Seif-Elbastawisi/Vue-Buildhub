@@ -251,6 +251,7 @@
     }
   };
 
+
   onMounted(fetchProjectFloor);
 </script>
 
@@ -281,6 +282,8 @@
         @update-data="updateData"
       />
 
+      <div class="btns">
+        
       <button
         class="btn btn-primary"
         :class="{
@@ -292,6 +295,20 @@
       >
         {{ $t('ProjectFloor.update') }}
       </button>
+      
+      <router-link :to="`/organization/project/show/${projectId}`">
+       <button
+        class="btn btn-danger"
+        :class="{
+          'btn--loading': saving,
+        }"
+        type="button"
+        :disabled="saving"
+      >
+        {{ $t('cancel') }}
+      </button>
+      </router-link>
+      </div>
 
       <div v-if="controller.errorMessage.value" class="error">
         {{ controller.errorMessage.value }}
@@ -305,6 +322,11 @@
 </template>
 
 <style scoped>
+.btns{
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
   .ProjectFloor-crud-page {
     display: flex;
     flex-direction: column;

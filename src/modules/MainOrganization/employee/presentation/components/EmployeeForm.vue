@@ -34,6 +34,7 @@
     { id: EmployeeType.ENGINEER, title: t(' employee.engineer') },
     { id: EmployeeType.SELLER, title: t(' employee.seller') },
     { id: EmployeeType.PRICING_RESPONSIBLE, title: t('employee.pricing_responsible') },
+    { id: EmployeeType.REVIEWER, title: t('employee.blaner') },
   ]);
   const selectedEmployeeType = ref<TitleInterface<EmployeeType> | null>(null);
   const updateData = () => {
@@ -91,8 +92,8 @@
     <div class="document-form-header">
       <DocumentIcon />
       <div class="document-form-header-text">
-        <h4>{{ $t('admin.form_title') }}</h4>
-        <p>{{ $t('admin.form_description') }}</p>
+        <h4>{{ $t('employee.form_title') }}</h4>
+        <p>{{ $t('employee.form_description') }}</p>
       </div>
     </div>
 

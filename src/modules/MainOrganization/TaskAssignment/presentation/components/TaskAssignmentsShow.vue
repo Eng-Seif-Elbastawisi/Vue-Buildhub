@@ -22,10 +22,7 @@ import HandleFilesUpload, {
   type UploadedFile,
 } from '@/shared/FormInputs/HandleFilesUpload.vue';
 
-import {
-  InsideStatusType,
-  getTypeNameKey,
-} from '../../core/constants/inside.status.enum';
+import { InsideStatusType, getTypeNameKey,} from '../../core/constants/inside.status.enum';
 import { TaskEmployeeStatusEnum } from '../../core/constants/task.employee.status.enum';
 
 import ProjectAttachmentParams from '../../core/params/project.attachment.params';
@@ -33,6 +30,7 @@ import SetTaskEmployeeStatusParams from '../../core/params/set.task.employee.sta
 import ShowTaskItemParams from '../../core/params/show.task.Item.params';
 
 import TaskAssignmentController from '../controllers/task.assignment.controller';
+import { TaskDurationType } from '../../core/constants/taskDurationType.enum';
 
 type DialogAction = 'START' | 'HOLD' | 'FINISH';
 
@@ -101,6 +99,21 @@ const insideStatusLabel = computed(() => {
 
   return t(getTypeNameKey(insideStatus.value));
 });
+
+const  getDurationTypeClassName=(type:TaskDurationType)=>{
+    switch (type) {
+        case TaskDurationType.DAY:
+            return 'day';
+        case TaskDurationType.MONTH:
+            return 'month';
+        case TaskDurationType.WEEK:
+            return 'week';
+        case TaskDurationType.YEAR:
+            return 'year';
+        default:
+            return 'day';
+    }
+}
 
 const insideStatusMeta = computed<StatusMeta>(() => {
   switch (insideStatus.value) {
@@ -580,6 +593,26 @@ watch(
 
           <div class="detail-item">
             <span class="detail-label">
+              {{ $t('duration') }}
+            </span>
+
+            <span class="detail-value">
+              {{ itemData?.duration ?? '-' }}
+            </span>
+          </div>
+
+          <div class="detail-item">
+            <span class="detail-label">
+              {{ $t('duration_type') }}
+            </span>
+
+            <span class="detail-value">
+              {{  getDurationTypeClassName(itemData?.duration_type ?? TaskDurationType.DAY) }}
+            </span>
+          </div>
+
+          <!-- <div class="detail-item">
+            <span class="detail-label">
               {{ $t('status') }}
             </span>
 
@@ -600,7 +633,7 @@ watch(
                 {{ insideStatusLabel }}
               </span>
             </span>
-          </div>
+          </div> -->
 
           <div class="detail-item">
             <span class="detail-label">
