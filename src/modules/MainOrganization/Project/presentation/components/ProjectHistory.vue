@@ -62,10 +62,28 @@
 
   const getStatusMeta = (status?: number | null) => {
     switch (Number(status)) {
-      case ConvertStatus.PENDING:
+      case ConvertStatus.WAITING_PREVIEW:
         return {
-          label: t('ProjectHistory.status.pending'),
+          label: t('ProjectHistory.status.waiting_preview'),
           className: 'is-pending',
+        };
+
+      case ConvertStatus.WAITING_PREVIEW_RESULT:
+        return {
+          label: t('ProjectHistory.status.waiting_preview_result'),
+          className: 'is-pending',
+        };
+
+      case ConvertStatus.WAITING_PRICING:
+        return {
+          label: t('ProjectHistory.status.waiting_pricing'),
+          className: 'is-pending',
+        };
+
+      case ConvertStatus.READY_TO_SENT:
+        return {
+          label: t('ProjectHistory.status.ready_to_send'),
+          className: 'is-ready',
         };
 
       case ConvertStatus.CONVERT_TO_PROJECT:
@@ -89,13 +107,13 @@
       case ConvertStatus.ACCEPT_CLIENT:
         return {
           label: t('ProjectHistory.status.accepted_client'),
-          className: 'is-converted',
+          className: 'is-accepted',
         };
 
       case ConvertStatus.REJECT_CLIENT:
         return {
           label: t('ProjectHistory.status.rejected_client'),
-          className: 'is-muted',
+          className: 'is-rejected',
         };
 
       default:
@@ -238,7 +256,7 @@
 
 <style lang="scss">
   @use '../styles/project_show';
-  .project-history-summary{
+  .project-history-summary {
     margin-bottom: 1rem;
   }
 </style>

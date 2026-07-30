@@ -78,8 +78,12 @@ export default class ProjectFloorController extends BaseController<
     return result;
   }
 
+  async updateWithoutNavigation(params: Params, options?: ApiCallOptions) {
+    return await super.update(params, { ...options, useJson: true });
+  }
+
   async update(params: Params, options?: ApiCallOptions, formKey?: string) {
-    const result = await super.update(params, { ...options, useJson: true });
+    const result = await this.updateWithoutNavigation(params, options);
     if (result instanceof DataSuccess) {
       const projectId = this.getProjectId(params, result.data);
       const projectFloorId = this.getProjectFloorId(params, result.data);

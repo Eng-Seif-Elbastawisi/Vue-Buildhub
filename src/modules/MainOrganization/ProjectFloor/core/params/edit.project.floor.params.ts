@@ -10,14 +10,7 @@ import {
   type ProjectFloorSpaceParams,
 } from './add.project.floor.params';
 
-/**
- * شكل كل دور داخل floors في طلب التعديل.
- */
 export interface EditProjectFloorItemParams {
-  /**
-   * يكون موجودًا للدور المحفوظ المراد تعديله.
-   * ويمكن أن يكون undefined عند إضافة دور جديد.
-   */
   project_floor_id?: number;
 
   floor_number: FloorNumber;
@@ -27,19 +20,35 @@ export interface EditProjectFloorItemParams {
   spaces: ProjectFloorSpaceParams[];
 }
 
-/**
- * حذف undefined فقط مع الإبقاء على:
- * null
- * 0
- * النص الفارغ
- */
+export interface EditSingleProjectFloorSpaceParams {
+  space_id: number;
+  length: number;
+  width: number;
+  height: number;
+  notes: string | null;
+}
+
+export interface EditSingleProjectFloorParamsData {
+  project_floor_id: number;
+  project_id: number;
+  project_preview_id: number;
+  spaces: EditSingleProjectFloorSpaceParams[];
+}
+
+export interface EditProjectFloorsParamsData {
+  id: number;
+  project_id: number;
+  project_preview_id?: number;
+  site_description?: string;
+  technical_general_notes?: string;
+  inspection_recommendations?: string;
+  floors?: EditProjectFloorItemParams[];
+}
+
 const removeUndefinedValues = (data: Record<string, unknown>): Record<string, unknown> => {
   return Object.fromEntries(Object.entries(data).filter(([, value]) => value !== undefined));
 };
 
-/**
- * تجهيز floors بالشكل المطلوب للـ API.
- */
 export const mapEditProjectFloorsToPayload = (
   floors?: EditProjectFloorItemParams[],
 ): Record<string, unknown>[] | undefined => {
@@ -65,17 +74,58 @@ export const mapEditProjectFloorsToPayload = (
   });
 };
 
+const isPositiveInteger = (value: unknown): boolean => {
+  const numberValue = Number(value);
+
+  return Number.isInteger(numberValue) && numberValue > 0;
+};
+
+const isPositiveNumber = (value: unknown): boolean => {
+  const numberValue = Number(value);
+
+  return Number.isFinite(numberValue) && numberValue > 0;
+};
+
+const areValidSingleFloorSpaces = (value: unknown): boolean => {
+  if (!Array.isArray(value) || value.length === 0) {
+    return false;
+  }
+
+  return value.every((space) => {
+    if (!space || typeof space !== 'object') {
+      return false;
+    }
+
+    const spaceData = space as EditSingleProjectFloorSpaceParams;
+
+    return (
+      isPositiveInteger(spaceData.space_id) &&
+      isPositiveNumber(spaceData.length) &&
+      isPositiveNumber(spaceData.width) &&
+      isPositiveNumber(spaceData.height)
+    );
+  });
+};
+
+export const mapSingleProjectFloorSpacesToPayload = (
+  spaces: EditSingleProjectFloorSpaceParams[],
+): EditSingleProjectFloorSpaceParams[] => {
+  return spaces.map((space) => ({
+    space_id: Number(space.space_id),
+    length: Number(space.length),
+    width: Number(space.width),
+    height: Number(space.height),
+    notes: typeof space.notes === 'string' ? space.notes.trim() || null : null,
+  }));
+};
+
 export default class EditProjectFloorParams implements Params {
-  /**
-   * ID الخاص بالدور الرئيسي المفتوح للتعديل.
-   */
   public id: number;
+
+  public project_floor_id: number;
 
   public project_id: number;
 
-  /**
-   * اختياري لأن المشروع قد يكون بدون Preview.
-   */
   public project_preview_id?: number;
 
   public site_description: string;
@@ -88,6 +138,10 @@ export default class EditProjectFloorParams implements Params {
    * جميع الأدوار المرسلة في طلب التعديل.
    */
   public floors: EditProjectFloorItemParams[];
+
+  public spaces: EditSingleProjectFloorSpaceParams[];
+
+  private readonly singleFloorUpdate: boolean;
 
   public static readonly validation = new ClassValidation().setRules({
     id: {
@@ -173,37 +227,68 @@ export default class EditProjectFloorParams implements Params {
     // },
   });
 
-  constructor(data: {
-    id: number;
-    project_id: number;
-    project_preview_id?: number;
-    site_description?: string;
-    technical_general_notes?: string;
-    inspection_recommendations?: string;
-    floors?: EditProjectFloorItemParams[];
-  }) {
-    this.id = Number(data.id);
+  public static readonly singleFloorValidation = new ClassValidation().setRules({
+    project_floor_id: {
+      required: true,
+      custom: isPositiveInteger,
+    },
+    project_id: {
+      required: true,
+      custom: isPositiveInteger,
+    },
+    project_preview_id: {
+      required: true,
+      custom: isPositiveInteger,
+    },
+    spaces: {
+      required: true,
+      custom: areValidSingleFloorSpaces,
+    },
+  });
+
+  constructor(data: EditProjectFloorsParamsData | EditSingleProjectFloorParamsData) {
+    const singleFloorUpdate = 'project_floor_id' in data;
+
+    this.singleFloorUpdate = singleFloorUpdate;
+    this.id = Number(singleFloorUpdate ? data.project_floor_id : data.id);
+    this.project_floor_id = this.id;
 
     this.project_id = Number(data.project_id);
 
-    this.project_preview_id =
-      data.project_preview_id !== undefined &&
-      data.project_preview_id !== null &&
-      Number.isInteger(Number(data.project_preview_id)) &&
-      Number(data.project_preview_id) > 0
-        ? Number(data.project_preview_id)
-        : undefined;
+    if (singleFloorUpdate) {
+      this.project_preview_id = Number(data.project_preview_id);
+    } else {
+      this.project_preview_id =
+        data.project_preview_id !== undefined &&
+        data.project_preview_id !== null &&
+        Number.isInteger(Number(data.project_preview_id)) &&
+        Number(data.project_preview_id) > 0
+          ? Number(data.project_preview_id)
+          : undefined;
+    }
 
-    this.site_description = data.site_description ?? '';
+    this.site_description = 'site_description' in data ? (data.site_description ?? '') : '';
 
-    this.technical_general_notes = data.technical_general_notes ?? '';
+    this.technical_general_notes =
+      'technical_general_notes' in data ? (data.technical_general_notes ?? '') : '';
 
-    this.inspection_recommendations = data.inspection_recommendations ?? '';
+    this.inspection_recommendations =
+      'inspection_recommendations' in data ? (data.inspection_recommendations ?? '') : '';
 
-    this.floors = data.floors ?? [];
+    this.floors = 'floors' in data ? (data.floors ?? []) : [];
+    this.spaces = singleFloorUpdate ? mapSingleProjectFloorSpacesToPayload(data.spaces) : [];
   }
 
   toMap(): Record<string, unknown> {
+    if (this.singleFloorUpdate) {
+      return {
+        project_floor_id: this.project_floor_id,
+        project_id: this.project_id,
+        project_preview_id: this.project_preview_id,
+        spaces: mapSingleProjectFloorSpacesToPayload(this.spaces),
+      };
+    }
+
     const payload: Record<string, unknown> = {
       project_floor_id: this.id,
 
@@ -224,10 +309,14 @@ export default class EditProjectFloorParams implements Params {
   }
 
   validate() {
-    return EditProjectFloorParams.validation.validate(this);
+    return this.singleFloorUpdate
+      ? EditProjectFloorParams.singleFloorValidation.validate(this)
+      : EditProjectFloorParams.validation.validate(this);
   }
 
   validateOrThrow() {
-    return EditProjectFloorParams.validation.validateOrThrow(this);
+    return this.singleFloorUpdate
+      ? EditProjectFloorParams.singleFloorValidation.validateOrThrow(this)
+      : EditProjectFloorParams.validation.validateOrThrow(this);
   }
 }

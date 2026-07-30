@@ -1,7 +1,9 @@
 <script setup lang="ts">
+  import { computed, ref, watch } from 'vue';
   import type { RouteLocationRaw } from 'vue-router';
 
   import type { FloorSpace, ProjectFloor, StatusMeta } from './projectShow.types';
+  import ProjectFloorEditDialog from './ProjectFloorEditDialog.vue';
 
   const props = withDefaults(
     defineProps<{
@@ -14,6 +16,8 @@
       emptyLabel: string;
       addFloorLabel?: string;
       addFloorTo?: RouteLocationRaw;
+      projectId?: number;
+      projectPreviewId?: number;
       floorLabel: string;
       typeLabel: string;
       spacesLabel: string;
@@ -37,8 +41,29 @@
     {
       addFloorLabel: undefined,
       addFloorTo: undefined,
+      projectId: undefined,
+      projectPreviewId: undefined,
       embedded: false,
     },
+  );
+
+  const emit = defineEmits<{
+    updated: [floor: ProjectFloor];
+  }>();
+
+  const selectedFloor = ref<ProjectFloor | null>(null);
+  const selectedProjectId = ref<number | undefined>(undefined);
+  const selectedProjectPreviewId = ref<number | undefined>(undefined);
+  const editFloorDialogVisible = ref(false);
+  const updatingFloor = ref(false);
+  const localFloors = ref<ProjectFloor[]>([]);
+
+  watch(
+    () => props.floors,
+    (floors) => {
+      localFloors.value = [...floors];
+    },
+    { immediate: true },
   );
 
   const toPositiveInteger = (value: unknown): number | undefined => {
@@ -59,27 +84,86 @@
     return toPositiveInteger(floor.id) !== undefined;
   };
 
-  const getEditFloorRoute = (floor: ProjectFloor): RouteLocationRaw => {
+  const getProjectId = (floor: ProjectFloor): number | undefined => {
     const addFloorQuery = getAddFloorQuery();
-    const projectId =
-      toPositiveInteger(floor.project_id) ?? toPositiveInteger(addFloorQuery.project_id);
-    const projectPreviewId =
+
+    return (
+      toPositiveInteger(floor.project_id) ??
+      toPositiveInteger(props.projectId) ??
+      toPositiveInteger(addFloorQuery.project_id)
+    );
+  };
+
+  const getProjectPreviewId = (floor: ProjectFloor): number | undefined => {
+    const addFloorQuery = getAddFloorQuery();
+
+    return (
       toPositiveInteger(floor.project_preview?.id) ??
       toPositiveInteger(floor.project_preview_id) ??
-      toPositiveInteger(addFloorQuery.project_preview_id);
-    const query: Record<string, number> = {};
-
-    if (projectId) query.project_id = projectId;
-    if (projectPreviewId) query.project_preview_id = projectPreviewId;
-
-    return {
-      name: 'edit-project_floor',
-      params: {
-        project_floor_id: toPositiveInteger(floor.id),
-      },
-      query,
-    };
+      toPositiveInteger(props.projectPreviewId) ??
+      toPositiveInteger(addFloorQuery.project_preview_id)
+    );
   };
+
+  const openEditFloorDialog = (floor: ProjectFloor): void => {
+    selectedFloor.value = floor;
+    selectedProjectId.value = getProjectId(floor);
+    selectedProjectPreviewId.value = getProjectPreviewId(floor);
+    editFloorDialogVisible.value = true;
+  };
+
+  const closeEditFloorDialog = (): void => {
+    if (updatingFloor.value) {
+      return;
+    }
+
+    editFloorDialogVisible.value = false;
+    selectedFloor.value = null;
+    selectedProjectId.value = undefined;
+    selectedProjectPreviewId.value = undefined;
+  };
+
+  const handleDialogVisibility = (visible: boolean): void => {
+    if (visible) {
+      editFloorDialogVisible.value = true;
+      return;
+    }
+
+    closeEditFloorDialog();
+  };
+
+  const handleFloorUpdated = (updatedFloor: ProjectFloor): void => {
+    const floorIndex = localFloors.value.findIndex(
+      (floor) => Number(floor.id) === Number(updatedFloor.id),
+    );
+
+    if (floorIndex >= 0) {
+      localFloors.value.splice(floorIndex, 1, updatedFloor);
+    }
+
+    emit('updated', updatedFloor);
+  };
+
+  const localFloorSpaces = computed<FloorSpace[]>(() => {
+    return localFloors.value.flatMap((floor) => floor.spaces ?? []);
+  });
+
+  const localTotalArea = computed(() => {
+    return localFloors.value.reduce((total, floor) => total + props.calculateFloorArea(floor), 0);
+  });
+
+  const localAverageHeight = computed(() => {
+    if (!localFloors.value.length) {
+      return 0;
+    }
+
+    const totalHeight = localFloors.value.reduce(
+      (total, floor) => total + props.getFloorHeight(floor),
+      0,
+    );
+
+    return totalHeight / localFloors.value.length;
+  });
 </script>
 
 <template>
@@ -94,7 +178,7 @@
     </div>
 
     <RouterLink
-      v-if="!floors.length && addFloorTo"
+      v-if="!localFloors.length && addFloorTo"
       class="empty-panel empty-panel--link"
       :to="addFloorTo"
     >
@@ -109,7 +193,7 @@
       </small>
     </RouterLink>
 
-    <div v-else-if="!floors.length" class="empty-panel">
+    <div v-else-if="!localFloors.length" class="empty-panel">
       {{ emptyLabel }}
     </div>
 
@@ -128,7 +212,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="floor in floors" :key="floor.id">
+            <tr v-for="floor in localFloors" :key="floor.id">
               <td>{{ getFloorNumberLabel(floor.floor_number) }}</td>
               <td>{{ getFloorType(floor.floor_number) }}</td>
               <td>{{ floor.spaces?.length ?? 0 }}</td>
@@ -143,14 +227,16 @@
                 </span>
               </td>
               <td class="floor-actions-cell">
-                <RouterLink
+                <button
                   v-if="hasValidFloorId(floor)"
+                  type="button"
                   class="project-action-btn project-action-btn--primary floor-edit-action"
-                  :to="getEditFloorRoute(floor)"
+                  :disabled="updatingFloor"
+                  @click="openEditFloorDialog(floor)"
                 >
-                  <i class="pi pi-pen-to-square"></i>
+                  <i class="pi pi-pen-to-square" aria-hidden="true" />
                   <span>{{ $t('ProjectFloor.edit_action') }}</span>
-                </RouterLink>
+                </button>
               </td>
             </tr>
           </tbody>
@@ -163,21 +249,31 @@
         </div>
         <div>
           <span>{{ totalFloorsLabel }}</span>
-          <strong>{{ floors.length }}</strong>
+          <strong>{{ localFloors.length }}</strong>
         </div>
         <div>
           <span>{{ totalSpacesLabel }}</span>
-          <strong>{{ floorSpaces.length }}</strong>
+          <strong>{{ localFloorSpaces.length }}</strong>
         </div>
         <div>
           <span>{{ totalAreaLabel }}</span>
-          <strong>{{ formatArea(totalArea) }}</strong>
+          <strong>{{ formatArea(localTotalArea) }}</strong>
         </div>
         <div>
           <span>{{ averageHeightLabel }}</span>
-          <strong>{{ formatNumber(averageHeight) }} m</strong>
+          <strong>{{ formatNumber(localAverageHeight) }} m</strong>
         </div>
       </aside>
     </div>
   </article>
+
+  <ProjectFloorEditDialog
+    :model-value="editFloorDialogVisible"
+    :floor="selectedFloor"
+    :project-id="selectedProjectId"
+    :project-preview-id="selectedProjectPreviewId"
+    @update:model-value="handleDialogVisibility"
+    @updating="updatingFloor = $event"
+    @updated="handleFloorUpdated"
+  />
 </template>
