@@ -1,186 +1,103 @@
 <script setup lang="ts">
-import {
-  computed,
-  onMounted,
-  ref,
-  watch,
-} from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-
-import Accordion from 'primevue/accordion';
-import AccordionTab from 'primevue/accordiontab';
-import Dialog from 'primevue/dialog';
-import Image from 'primevue/image';
-
 import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
 import { dialogManager } from '@/base/Presentation/Dialogs/dialog.manager';
-
 import ProjectItemController from '@/modules/MainOrganization/ProjectItem/presentation/controllers/project.Item.controller';
 import type ProjectItemShowModel from '@/modules/MainOrganization/ProjectItem/core/models/project.Item.show.model';
-
-import HandleFilesUpload, {
-  type UploadedFile,
-} from '@/shared/FormInputs/HandleFilesUpload.vue';
-
-import { InsideStatusType, getTypeNameKey,} from '../../core/constants/inside.status.enum';
+import type { UploadedFile } from '@/shared/FormInputs/HandleFilesUpload.vue';
+import { InsideStatusType, getTypeNameKey } from '../../core/constants/inside.status.enum';
 import { TaskEmployeeStatusEnum } from '../../core/constants/task.employee.status.enum';
-
 import ProjectAttachmentParams from '../../core/params/project.attachment.params';
 import SetTaskEmployeeStatusParams from '../../core/params/set.task.employee.status.params';
 import ShowTaskItemParams from '../../core/params/show.task.Item.params';
-
 import TaskAssignmentController from '../controllers/task.assignment.controller';
-import { TaskDurationType } from '../../core/constants/taskDurationType.enum';
-
-type DialogAction = 'START' | 'HOLD' | 'FINISH';
-
-interface StatusMeta {
-  className: string;
-  icon: string;
-}
+import TaskAssignmentsShowAttachments from './task-assignments-show/TaskAssignmentsShowAttachments.vue';
+import TaskAssignmentsShowDetails from './task-assignments-show/TaskAssignmentsShowDetails.vue';
+import TaskAssignmentsShowHeader from './task-assignments-show/TaskAssignmentsShowHeader.vue';
+import TaskAssignmentsShowHistory from './task-assignments-show/TaskAssignmentsShowHistory.vue';
+import TaskAssignmentsShowStatusActions from './task-assignments-show/TaskAssignmentsShowStatusActions.vue';
+import type { DialogAction, StatusMeta, TaskAssignmentStatusActionModel } from './task-assignments-show/taskAssignmentsShow.types';
 
 interface UploadedFileWithBase64 extends UploadedFile {
   base64: string;
 }
 
-const props = defineProps<{
-  id: string;
-  uuid: string;
-}>();
+const { id, uuid } = defineProps({
+  id: {
+    type: String,
+    required: true,
+  },
+  uuid: {
+    type: String,
+    required: true,
+  },
+});
 
 const { t } = useI18n();
 
-const projectItemController =
-  ProjectItemController.getInstance();
-
-const taskAssignmentController =
-  TaskAssignmentController.getInstance();
+const projectItemController =  ProjectItemController.getInstance();
+const taskAssignmentController =  TaskAssignmentController.getInstance();
 
 const actionLoading = ref(false);
 const actionNotes = ref('');
-const activeDialogAction = ref<DialogAction | null>(
-  null,
-);
+const activeDialogAction = ref<DialogAction | null>(null);
 const attachmentFiles = ref<UploadedFile[]>([]);
+const projectDepartmentItemId = computed(() =>  String(id ?? ''),);
+const projectDepartmentItemUuid = computed(() => String(uuid ?? ''),);
+const itemData = computed(() => projectItemController.itemData.value as ProjectItemShowModel | null,);
 
-const projectDepartmentItemId = computed(() =>
-  String(props.id ?? ''),
-);
-
-const projectDepartmentItemUuid = computed(() =>
-  String(props.uuid ?? ''),
-);
-
-const itemData = computed(
-  () =>
-    projectItemController.itemData
-      .value as ProjectItemShowModel | null,
-);
-
-const itemLoading = computed(() =>
-  projectItemController.isItemLoading(),
-);
-
-const itemError = computed(
-  () => projectItemController.errorMessage.value,
-);
-
-const insideStatus = computed(
-  () => itemData.value?.inside_status,
-);
+const itemLoading = computed(() => projectItemController.isItemLoading(),);
+const itemError = computed(() => projectItemController.errorMessage.value,);
+const insideStatus = computed(() => itemData.value?.inside_status);
 
 const insideStatusLabel = computed(() => {
-  if (
-    insideStatus.value === null ||
-    insideStatus.value === undefined
-  ) {
-    return '-';
-  }
-
+  if (insideStatus.value === null || insideStatus.value === undefined) { return '-'; }
   return t(getTypeNameKey(insideStatus.value));
 });
-
-const  getDurationTypeClassName=(type:TaskDurationType)=>{
-    switch (type) {
-        case TaskDurationType.DAY:
-            return 'day';
-        case TaskDurationType.MONTH:
-            return 'month';
-        case TaskDurationType.WEEK:
-            return 'week';
-        case TaskDurationType.YEAR:
-            return 'year';
-        default:
-            return 'day';
-    }
-}
 
 const insideStatusMeta = computed<StatusMeta>(() => {
   switch (insideStatus.value) {
     case InsideStatusType.ASSIGN:
       return {
-        className:
-          'task-status-chip--assigned',
+        className: 'task-status-chip--assigned',
         icon: 'pi pi-user-plus',
       };
 
     case InsideStatusType.WORKING:
       return {
-        className:
-          'task-status-chip--working',
+        className: 'task-status-chip--working',
         icon: 'pi pi-cog',
       };
 
     case InsideStatusType.HOLD:
       return {
-        className:
-          'task-status-chip--held',
+        className: 'task-status-chip--held',
         icon: 'pi pi-pause',
       };
 
     case InsideStatusType.REVIEW:
       return {
-        className:
-          'task-status-chip--review',
+        className: 'task-status-chip--review',
         icon: 'pi pi-eye',
       };
 
     default:
       return {
-        className:
-          'task-status-chip--default',
+        className: 'task-status-chip--default',
         icon: 'pi pi-info-circle',
       };
   }
 });
 
-const dialogVisible = computed({
-  get: () => activeDialogAction.value !== null,
-
-  set: (visible: boolean) => {
-    if (!visible) {
-      closeModal();
-    }
-  },
-});
-
 const dialogTitle = computed(() => {
   switch (activeDialogAction.value) {
     case 'START':
-      return t(
-        'task_assignment.modals.start_title',
-      );
-
+      return t('task_assignment.modals.start_title');
     case 'HOLD':
-      return t(
-        'task_assignment.modals.hold_title',
-      );
-
+      return t('task_assignment.modals.hold_title');
     case 'FINISH':
-      return t(
-        'task_assignment.modals.finish_title',
-      );
-
+      return t('task_assignment.modals.finish_title');
     default:
       return '';
   }
@@ -189,43 +106,33 @@ const dialogTitle = computed(() => {
 const dialogConfirmationMessage = computed(() => {
   switch (activeDialogAction.value) {
     case 'START':
-      return t(
-        'task_assignment.modals.start_confirm',
-      );
-
+      return t('task_assignment.modals.start_confirm');
     case 'HOLD':
-      return t(
-        'task_assignment.modals.hold_confirm',
-      );
-
+      return t('task_assignment.modals.hold_confirm');
     case 'FINISH':
-      return t(
-        'task_assignment.modals.finish_confirm',
-      );
-
+      return t('task_assignment.modals.finish_confirm');
     default:
       return '';
   }
 });
 
-const isStartVisible = computed(
-  () =>
-    insideStatus.value ===
-      InsideStatusType.ASSIGN ||
-    insideStatus.value === InsideStatusType.HOLD,
-);
+const isStartVisible = computed(()=> insideStatus.value ===  InsideStatusType.ASSIGN || insideStatus.value === InsideStatusType.HOLD,);
 
-const isHoldVisible = computed(
-  () =>
-    insideStatus.value ===
-    InsideStatusType.WORKING,
-);
+const isHoldVisible = computed(() => insideStatus.value ===  InsideStatusType.WORKING,);
 
-const isFinishVisible = computed(
-  () =>
-    insideStatus.value ===
-    InsideStatusType.WORKING,
-);
+const isFinishVisible = computed(() => insideStatus.value === InsideStatusType.WORKING);
+
+const statusActionModel = computed<TaskAssignmentStatusActionModel>(() => ({
+  activeAction: activeDialogAction.value,
+  confirmationMessage: dialogConfirmationMessage.value,
+  loading: actionLoading.value,
+  notes: actionNotes.value,
+  showFinish: isFinishVisible.value,
+  showHold: isHoldVisible.value,
+  showStart: isStartVisible.value,
+  title: dialogTitle.value,
+  visible: activeDialogAction.value !== null,
+}));
 
 const isValidUuid = computed(() => {
   const uuidRegex =
@@ -256,44 +163,30 @@ const updateAttachments = (
   attachmentFiles.value = files;
 };
 
-const hasBase64 = (
-  file: UploadedFile,
-): file is UploadedFileWithBase64 => {
-  const base64 = (
-    file as UploadedFileWithBase64
-  ).base64;
-
-  return (
-    typeof base64 === 'string' &&
-    base64.trim().length > 0
-  );
+const updateActionNotes = (notes: string): void => {
+  actionNotes.value = notes;
 };
 
-const createAttachmentParams =
-  (): ProjectAttachmentParams[] => {
-    return attachmentFiles.value
-      .filter(hasBase64)
-      .map(
-        (file) =>
+const hasBase64 = (file: UploadedFile): file is UploadedFileWithBase64 => {
+  const base64 = (file as UploadedFileWithBase64).base64;
+  return typeof base64 === 'string' && base64.trim().length > 0;
+};
+
+const createAttachmentParams =(): ProjectAttachmentParams[] => {
+    return attachmentFiles.value.filter(hasBase64).map((file) =>
           new ProjectAttachmentParams({
             file: file.base64,
-            alt:
-              typeof file.name === 'string'
-                ? file.name
-                : '',
+            alt: typeof file.name === 'string' ? file.name : '',
           }),
       );
   };
 
-const getTargetStatus =
-  (): TaskEmployeeStatusEnum => {
+const getTargetStatus = (): TaskEmployeeStatusEnum => {
     switch (activeDialogAction.value) {
       case 'HOLD':
         return TaskEmployeeStatusEnum.HOLD_EMPLOYEE;
-
       case 'FINISH':
         return TaskEmployeeStatusEnum.FINISH_EMPLOYEE;
-
       case 'START':
       default:
         return TaskEmployeeStatusEnum.START_EMPLOYEE;
@@ -330,93 +223,46 @@ const getResultErrorMessage = (
 
 const confirmStatusChange =
   async (): Promise<void> => {
-    if (!activeDialogAction.value) {
-      return;
-    }
-
-    const itemId = Number(
-      projectDepartmentItemId.value,
-    );
-
-    if (
-      !Number.isInteger(itemId) ||
-      itemId <= 0
-    ) {
-      dialogManager.toastError(
-        t(
-          'task_assignment.unexpected_error',
-        ),
-      );
-
+    if (!activeDialogAction.value) return;
+    const itemId = Number(projectDepartmentItemId.value);
+    if (!Number.isInteger(itemId) ||itemId <= 0) {
+      dialogManager.toastError(t('task_assignment.unexpected_error'));
       return;
     }
 
     actionLoading.value = true;
 
     try {
-      const params =
-        new SetTaskEmployeeStatusParams({
-          project_department_item_id:
-            itemId,
-
+         const params = new SetTaskEmployeeStatusParams({
+          project_department_item_id:itemId,
           status: getTargetStatus(),
-
-          notes:
-            actionNotes.value.trim() ||
-            undefined,
-
-          attachments:
-            activeDialogAction.value ===
-            'FINISH'
+          notes: actionNotes.value.trim() || undefined,
+          attachments: activeDialogAction.value === 'FINISH'
               ? createAttachmentParams()
               : [],
         });
 
-      const result =
-        await taskAssignmentController
-          .setTaskEmployeeStatus(params);
-
+      const result = await taskAssignmentController.setTaskEmployeeStatus(params);
       if (result instanceof DataSuccess) {
-        dialogManager.toastSuccess(
-          result.message ||
-            t(
-              'task_assignment.status_updated',
-            ),
-        );
-
+        dialogManager.toastSuccess(result.message || t('task_assignment.status_updated'));
         closeModal();
-
         await fetchTaskDetails();
-
         return;
       }
-
-      dialogManager.toastError(
-        getResultErrorMessage(result),
-      );
+      dialogManager.toastError(getResultErrorMessage(result));
     } catch (error) {
-      console.error(
-        'Failed to update task status:',
-        error,
-      );
-
-      dialogManager.toastError(
-        t(
-          'task_assignment.unexpected_error',
-        ),
-      );
+      console.error('Failed to update task status:',error);
+      dialogManager.toastError(t('task_assignment.unexpected_error'));
     } finally {
       actionLoading.value = false;
     }
   };
 
-const fetchTaskDetails =
-  async (): Promise<void> => {
+const fetchTaskDetails =async (): Promise<void> => {
     if (!projectDepartmentItemUuid.value) {
       dialogManager.toastError(
         'Task UUID is missing.',
       );
-
       return;
     }
 
@@ -424,15 +270,12 @@ const fetchTaskDetails =
       dialogManager.toastError(
         'Task UUID is invalid.',
       );
-
       return;
     }
 
     await projectItemController.fetchOne(
       new ShowTaskItemParams({
-        uuid:
-          projectDepartmentItemUuid.value,
-
+        uuid: projectDepartmentItemUuid.value,
         allLocales: true,
       }),
     );
@@ -443,7 +286,7 @@ onMounted(() => {
 });
 
 watch(
-  () => [props.id, props.uuid],
+  () => [id, uuid],
   () => {
     void fetchTaskDetails();
   },
@@ -452,71 +295,12 @@ watch(
 
 <template>
   <section class="task-assignment-show-page">
-    <header class="task-assignment-page-header">
-      <div
-        class="task-assignment-page-header__content"
-      >
-        <span
-          class="task-assignment-page-header__icon"
-          aria-hidden="true"
-        >
-          <i class="pi pi-check-square" />
-        </span>
-
-        <div
-          class="task-assignment-page-header__copy"
-        >
-          <h1>
-            {{ $t('task_assignment.title') }}
-            #{{ projectDepartmentItemId }}
-          </h1>
-
-          <p>
-            {{
-              $t(
-                'task_assignment.description',
-              )
-            }}
-          </p>
-        </div>
-      </div>
-
-      <div
-        v-if="itemData"
-        class="task-status-summary"
-      >
-        <span class="task-status-summary__label">
-          {{ $t('status') }}
-        </span>
-
-        <span
-          class="task-status-chip"
-          :class="
-            insideStatusMeta.className
-          "
-        >
-          <span
-            class="task-status-chip__icon"
-            aria-hidden="true"
-          >
-            <i
-              :class="insideStatusMeta.icon"
-            />
-          </span>
-
-          <span
-            class="task-status-chip__text"
-          >
-            {{ insideStatusLabel }}
-          </span>
-
-          <span
-            class="task-status-chip__indicator"
-            aria-hidden="true"
-          />
-        </span>
-      </div>
-    </header>
+    <TaskAssignmentsShowHeader
+      :model="itemData"
+      :item-id="projectDepartmentItemId"
+      :status-label="insideStatusLabel"
+      :status-meta="insideStatusMeta"
+    />
 
     <div
       v-if="itemLoading"
@@ -542,540 +326,23 @@ watch(
       v-else
       class="task-assignment-card"
     >
-      <!-- Basic information -->
-      <div class="task-details-section">
-        <h3>
-          {{
-            $t(
-              'project_item.basic_information',
-            )
-          }}
-        </h3>
+      <TaskAssignmentsShowDetails :model="itemData" />
 
-        <div class="task-details-grid">
-          <div class="detail-item">
-            <span class="detail-label">
-              {{ $t('project_item.item') }}
-            </span>
-
-            <span class="detail-value">
-              {{
-                itemData?.item?.translations
-                  ?.title?.en ||
-                itemData?.item_id?.title ||
-                '-'
-              }}
-            </span>
-          </div>
-
-          <div class="detail-item">
-            <span class="detail-label">
-              {{ $t('employee.name') }}
-            </span>
-
-            <span class="detail-value">
-              {{
-                itemData?.employee?.name ??
-                '-'
-              }}
-            </span>
-          </div>
-
-          <div class="detail-item">
-            <span class="detail-label">
-              {{ $t('department') }}
-            </span>
-
-            <span class="detail-value">
-              {{ itemData?.department ?? '-' }}
-            </span>
-          </div>
-
-          <div class="detail-item">
-            <span class="detail-label">
-              {{ $t('duration') }}
-            </span>
-
-            <span class="detail-value">
-              {{ itemData?.duration ?? '-' }}
-            </span>
-          </div>
-
-          <div class="detail-item">
-            <span class="detail-label">
-              {{ $t('duration_type') }}
-            </span>
-
-            <span class="detail-value">
-              {{  getDurationTypeClassName(itemData?.duration_type ?? TaskDurationType.DAY) }}
-            </span>
-          </div>
-
-          <!-- <div class="detail-item">
-            <span class="detail-label">
-              {{ $t('status') }}
-            </span>
-
-            <span class="detail-value">
-              <span
-                class="status-badge"
-                :class="
-                  insideStatusMeta.className
-                "
-              >
-                <i
-                  :class="
-                    insideStatusMeta.icon
-                  "
-                  aria-hidden="true"
-                />
-
-                {{ insideStatusLabel }}
-              </span>
-            </span>
-          </div> -->
-
-          <div class="detail-item">
-            <span class="detail-label">
-              {{ $t('attachments') }}
-            </span>
-
-            <span class="detail-value">
-              <span
-                class="status-badge"
-                :class="
-                  itemData?.has_attached
-                    ? 'status-badge--success'
-                    : 'status-badge--muted'
-                "
-              >
-                <i
-                  :class="
-                    itemData?.has_attached
-                      ? 'pi pi-check-circle'
-                      : 'pi pi-times-circle'
-                  "
-                  aria-hidden="true"
-                />
-
-                {{
-                  itemData?.has_attached
-                    ? $t('yes')
-                    : $t('no')
-                }}
-              </span>
-            </span>
-          </div>
-
-          <div class="detail-item">
-            <span class="detail-label">
-              {{
-                $t(
-                  'task_assignment.title',
-                )
-              }}
-            </span>
-
-            <span class="detail-value">
-              <span
-                class="status-badge"
-                :class="
-                  itemData?.is_assign_employee
-                    ? 'status-badge--success'
-                    : 'status-badge--muted'
-                "
-              >
-                <i
-                  :class="
-                    itemData?.is_assign_employee
-                      ? 'pi pi-check-circle'
-                      : 'pi pi-times-circle'
-                  "
-                  aria-hidden="true"
-                />
-
-                {{
-                  itemData?.is_assign_employee
-                    ? $t('yes')
-                    : $t('no')
-                }}
-              </span>
-            </span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Project -->
-      <div class="task-details-section">
-        <h3>{{ $t('project') }}</h3>
-
-        <div class="task-details-grid">
-          <div class="detail-item">
-            <span class="detail-label">
-              {{ $t('client.title') }}
-            </span>
-
-            <span class="detail-value">
-              {{
-                itemData?.project?.client
-                  ?.title ?? '-'
-              }}
-            </span>
-          </div>
-
-          <div class="detail-item">
-            <span class="detail-label">
-              {{ $t('project_name') }}
-            </span>
-
-            <span class="detail-value">
-              {{
-                itemData?.project?.title?.find(
-                  (item) =>
-                    item.locale === 'en',
-                )?.title ?? '-'
-              }}
-            </span>
-          </div>
-
-          <div class="detail-item">
-            <span class="detail-label">
-              {{ $t('description') }}
-            </span>
-
-            <span class="detail-value">
-              {{
-                itemData?.project?.description?.find(
-                  (item) =>
-                    item.locale === 'en',
-                )?.description ?? '-'
-              }}
-            </span>
-          </div>
-        </div>
-      </div>
-
-      <!-- History -->
-      <div class="task-details-section">
-        <Accordion
-          :active-index="0"
-          class="task-history-accordion"
-        >
-          <AccordionTab
-            :header="$t('histories')"
-          >
-            <div
-              v-if="
-                !itemData?.histories?.length
-              "
-              class="task-history-empty"
-            >
-              {{ $t('no_data') }}
-            </div>
-
-            <div
-              v-for="history in itemData?.histories"
-              :key="history.id"
-              class="task-history-item"
-            >
-              <div class="task-details-grid">
-                <div class="detail-item">
-                  <span class="detail-label">
-                    {{ $t('status') }}
-                  </span>
-
-                  <span class="detail-value">
-                    <span
-                      class="
-                        status-badge
-                        status-badge--history
-                      "
-                    >
-                      {{
-                        $t(
-                          getTypeNameKey(
-                            history.status ?? 1,
-                          ),
-                        )
-                      }}
-                    </span>
-                  </span>
-                </div>
-
-                <div
-                  v-for="employee in history.history_employees"
-                  :key="employee.id"
-                  class="detail-item"
-                >
-                  <span class="detail-label">
-                    {{ $t('emp.name') }}
-                  </span>
-
-                  <span class="detail-value">
-                    {{
-                      employee.employee?.name ??
-                      '-'
-                    }}
-                  </span>
-                </div>
-
-                <div
-                  v-if="history.created_at"
-                  class="detail-item"
-                >
-                  <span class="detail-label">
-                    {{ $t('date') }}
-                  </span>
-
-                  <span class="detail-value">
-                    {{ history.created_at }}
-                  </span>
-                </div>
-
-                <div
-                  v-if="history.notes"
-                  class="detail-item"
-                >
-                  <span class="detail-label">
-                    {{ $t('notes') }}
-                  </span>
-
-                  <span class="detail-value">
-                    {{ history.notes }}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </AccordionTab>
-        </Accordion>
-      </div>
-
-      <!-- Attachments -->
-      <div
-        v-if="itemData?.attachments?.length"
-        class="task-details-section"
-      >
-        <h3>{{ $t('attachments') }}</h3>
-
-        <ul class="attachments-list">
-          <li
-            v-for="attachment in itemData.attachments"
-            :key="attachment.id"
-            class="attachments-list__item"
-          >
-            <Image
-              :src="attachment.file"
-              :alt="attachment.alt || 'Attachment'"
-              width="250"
-              preview
-            />
-          </li>
-        </ul>
-      </div>
-
-      <!-- Actions -->
-      <div class="task-status-actions-bar">
-        <h3>
-          {{ $t('general.actions') }}
-        </h3>
-
-        <div class="action-buttons-group">
-          <button
-            v-if="isStartVisible"
-            type="button"
-            class="
-              task-action-btn
-              task-action-btn--start
-            "
-            :disabled="actionLoading"
-            @click="openModal('START')"
-          >
-            <i
-              class="pi pi-play"
-              aria-hidden="true"
-            />
-
-            <span>
-              {{
-                $t(
-                  'task_assignment.actions.start',
-                )
-              }}
-            </span>
-          </button>
-
-          <button
-            v-if="isHoldVisible"
-            type="button"
-            class="
-              task-action-btn
-              task-action-btn--hold
-            "
-            :disabled="actionLoading"
-            @click="openModal('HOLD')"
-          >
-            <i
-              class="pi pi-pause"
-              aria-hidden="true"
-            />
-
-            <span>
-              {{
-                $t(
-                  'task_assignment.actions.hold',
-                )
-              }}
-            </span>
-          </button>
-
-          <button
-            v-if="isFinishVisible"
-            type="button"
-            class="
-              task-action-btn
-              task-action-btn--finish
-            "
-            :disabled="actionLoading"
-            @click="openModal('FINISH')"
-          >
-            <i
-              class="pi pi-check"
-              aria-hidden="true"
-            />
-
-            <span>
-              {{
-                $t(
-                  'task_assignment.actions.finish',
-                )
-              }}
-            </span>
-          </button>
-        </div>
-      </div>
+      <TaskAssignmentsShowHistory :model="itemData" />
+      <TaskAssignmentsShowAttachments :model="itemData" />
+      <TaskAssignmentsShowStatusActions
+        :model="statusActionModel"
+        @open="openModal"
+        @close="closeModal"
+        @confirm="confirmStatusChange"
+        @update:notes="updateActionNotes"
+        @update:attachments="updateAttachments"
+      />
     </article>
-
-    <Dialog
-      v-model:visible="dialogVisible"
-      modal
-      :header="dialogTitle"
-      :style="{
-        width: '32rem',
-        maxWidth: '90vw',
-      }"
-      class="task-status-dialog"
-      @hide="closeModal"
-    >
-      <div class="status-modal-content">
-        <div class="status-modal-icon">
-          <i
-            :class="
-              activeDialogAction === 'START'
-                ? 'pi pi-play'
-                : activeDialogAction === 'HOLD'
-                  ? 'pi pi-pause'
-                  : 'pi pi-check'
-            "
-            aria-hidden="true"
-          />
-        </div>
-
-        <p class="confirm-message">
-          {{ dialogConfirmationMessage }}
-        </p>
-
-        <div
-          v-if="
-            activeDialogAction === 'HOLD' ||
-            activeDialogAction === 'FINISH'
-          "
-          class="form-group"
-        >
-          <label for="task_action_notes">
-            {{
-              $t(
-                'task_assignment.modals.notes_label',
-              )
-            }}
-          </label>
-
-          <textarea
-            id="task_action_notes"
-            v-model="actionNotes"
-            class="form-control"
-            rows="3"
-            :placeholder="
-              $t(
-                'task_assignment.modals.notes_placeholder',
-              )
-            "
-          />
-        </div>
-
-        <div
-          v-if="
-            activeDialogAction === 'FINISH'
-          "
-          class="form-group"
-        >
-          <label>
-            {{
-              $t(
-                'task_assignment.modals.attachments_label',
-              )
-            }}
-          </label>
-
-          <HandleFilesUpload
-            id="attachments"
-            :label="$t('attachments')"
-            :multiple="true"
-            @change="updateAttachments"
-          />
-        </div>
-      </div>
-
-      <template #footer>
-        <div class="modal-buttons-footer">
-          <button
-            type="button"
-            class="btn btn-secondary"
-            :disabled="actionLoading"
-            @click="closeModal"
-          >
-            {{
-              $t(
-                'task_assignment.modals.no',
-              )
-            }}
-          </button>
-
-          <button
-            type="button"
-            class="btn btn-primary"
-            :disabled="actionLoading"
-            @click="confirmStatusChange"
-          >
-            <span
-              v-if="actionLoading"
-              class="button-loader"
-            />
-
-            <span v-else>
-              {{
-                $t(
-                  'task_assignment.modals.yes',
-                )
-              }}
-            </span>
-          </button>
-        </div>
-      </template>
-    </Dialog>
   </section>
 </template>
 
-<style lang="scss">
+<!-- <style lang="scss">
 @use '../styles/task_assignment';
 
 .task-assignment-show-page {
@@ -1653,4 +920,10 @@ watch(
     flex-direction: column-reverse;
   }
 }
+</style> -->
+
+<style lang="scss">
+@use '../styles/task_assignments_show_cards' as task-assignments-show;
+
+@include task-assignments-show.styles;
 </style>

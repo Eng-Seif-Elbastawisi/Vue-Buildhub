@@ -60,6 +60,8 @@
 @use '../modules/MainOrganization/employee/presentation/styles/employee_imports';
 @use '../modules/MainOrganization/Organization/presentation/styles/organization_toggle_imports';
 @use '../modules/MainOrganization/Invoice/presentation/styles/invoice_imports';
+@use '../modules/MainOrganization/TaskAssignment/presentation/styles/task_assignment_show';
+@use '../modules/MainOrganization/TaskAssignment/presentation/styles/_task_assignments_show_cards'; 
 
 /* ── Pages ─────────────────────────────────────────────────────── */
 @use '../modules/auth/presentation/styles/login';
