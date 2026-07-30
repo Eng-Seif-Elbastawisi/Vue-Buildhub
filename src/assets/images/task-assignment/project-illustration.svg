@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 320" role="img" aria-labelledby="title">
+  <title id="title">Project buildings and planning blueprint</title>
+  <defs>
+    <linearGradient id="base" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#eef4ff"/><stop offset="1" stop-color="#e9e5ff"/></linearGradient>
+    <linearGradient id="tower" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#c8d8ff"/><stop offset="1" stop-color="#8578ed"/></linearGradient>
+    <linearGradient id="towerLight" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f8faff"/><stop offset="1" stop-color="#c9d4ff"/></linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="180%"><feDropShadow dx="0" dy="14" stdDeviation="12" flood-color="#5c65a8" flood-opacity=".18"/></filter>
+  </defs>
+  <g filter="url(#shadow)">
+    <path d="m58 238 164-89 181 91-165 67Z" fill="url(#base)"/>
+    <path d="m58 238 180 69v9L58 247Z" fill="#bec9ee"/>
+    <path d="m238 307 165-67v9l-165 67Z" fill="#9da9dd"/>
+  </g>
+  <g stroke="#fff" stroke-width="3" stroke-linejoin="round">
+    <path d="m105 211 43-23 43 21-43 22Z" fill="url(#towerLight)"/><path d="m105 211 43 20v49l-43-18Z" fill="#aab9ee"/><path d="m148 231 43-22v48l-43 23Z" fill="url(#tower)"/>
+    <path d="m171 177 51-27 52 25-52 27Z" fill="url(#towerLight)"/><path d="m171 177 51 25v88l-51-22Z" fill="#b5c4f1"/><path d="m222 202 52-27v86l-52 29Z" fill="url(#tower)"/>
+    <path d="m254 198 46-24 49 24-47 24Z" fill="url(#towerLight)"/><path d="m254 198 48 24v63l-48-22Z" fill="#a8b8eb"/><path d="m302 222 47-24v62l-47 25Z" fill="#7770d8"/>
+    <path d="m284 128 34-18 35 17-35 19Z" fill="url(#towerLight)"/><path d="m284 128 34 18v66l-34-16Z" fill="#b8c7f3"/><path d="m318 146 35-19v67l-35 18Z" fill="url(#tower)"/>
+  </g>
+  <g fill="#f8fbff" opacity=".9"><path d="M118 222h10v12h-10zM135 230h9v12h-9zM185 194h10v13h-10zM203 202h10v13h-10zM185 222h10v13h-10zM237 211h11v14h-11zM237 236h11v14h-11zM270 214h10v13h-10zM286 222h10v13h-10zM318 232h10v13h-10zM298 141h8v10h-8zM330 150h9v11h-9zM330 169h9v11h-9z"/></g>
+  <g fill="none" stroke="#7b78dc" stroke-linecap="round"><path d="M73 282c65 28 130 35 201 21" stroke-width="3"/><path d="M85 295c45 17 89 23 134 20" opacity=".45"/><circle cx="379" cy="78" r="28" stroke-width="5"/><path d="m397 98 22 22M372 78h14M379 71v14" stroke-width="5"/></g>
+</svg>
