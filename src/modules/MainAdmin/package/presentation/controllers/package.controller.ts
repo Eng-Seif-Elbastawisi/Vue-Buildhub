@@ -1,14 +1,13 @@
 import type Params from '@/base/Core/Params/params';
-import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
 import type { ApiCallOptions } from '@/base/Data/ApiService/baseApiService';
 import BaseController from '@/base/Presentation/Controller/baseController';
 import type { ControllerConfig } from '@/base/Presentation/Controller/baseController';
 import router from '@/router';
-import { useFormsStore } from '@/stores/formsStore';
 import type PackageModel from '../../core/models/package.model';
 import PackageRepository from '../../data/repositories/package.repository';
-
-export default class PackageController extends BaseController<PackageModel, PackageModel[]> {
+import type ShowPackageModel from '../../core/models/package.show.model';
+import type ShowPackageParams from '../../core/params/show.package.params';
+export default class PackageController extends BaseController<ShowPackageModel, PackageModel[]> {
   private static instance: PackageController;
 
   protected get repository(): PackageRepository {
@@ -37,25 +36,34 @@ export default class PackageController extends BaseController<PackageModel, Pack
     return PackageController.instance;
   }
 
-  async create(params: Params, options?: ApiCallOptions, formKey?: string) {
-    const creationState = await super.create(params, options);
-
-    if (creationState instanceof DataSuccess) {
-      await router.push({ name: 'Packages' });
-      if (formKey) useFormsStore().clearFormData(formKey);
-    }
-
+  async create(params: Params, options?: ApiCallOptions) {
+    const creationState = await super.create(params, {
+      useJson: true,
+      ...options,
+    });
+    // if (creationState instanceof DataSuccess) {
+    await router.push({ name: 'Packages' });
+    // }
     return creationState;
   }
 
-  async update(params: Params, options?: ApiCallOptions, formKey?: string) {
-    const updateState = await super.update(params, options);
-
-    if (updateState instanceof DataSuccess) {
-      await router.push({ name: 'Packages' });
-      if (formKey) useFormsStore().clearFormData(formKey);
-    }
+  async update(params: Params, options?: ApiCallOptions) {
+    const updateState = await super.update(params, {
+      useJson: true,
+      ...options,
+    });
+    await router.push({ name: 'Packages' });
 
     return updateState;
+  }
+
+  async fetchOne(params: Params, options?: ApiCallOptions) {
+    return await super.fetchOne(params, {
+      ...options,
+      useJson: true,
+      headers: {
+        'Accept-Language': (params as ShowPackageParams).allLocales ? '*' : 'en',
+      },
+    });
   }
 }

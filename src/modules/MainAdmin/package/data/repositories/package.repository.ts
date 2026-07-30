@@ -1,9 +1,23 @@
 import BaseRepository, { type RepositoryConfig } from '@/base/Domain/Repositories/baseRepository';
+
 import PackageModel from '../../core/models/package.model';
+import ShowPackageModel from '../../core/models/package.show.model';
 import PackageApiService from '../api/package.api-service';
 
-export default class PackageRepository extends BaseRepository<PackageModel, PackageModel[]> {
+export default class PackageRepository extends BaseRepository<ShowPackageModel, PackageModel[]> {
   private static instance: PackageRepository;
+
+  private constructor() {
+    super();
+  }
+
+  public static getInstance(): PackageRepository {
+    if (!PackageRepository.instance) {
+      PackageRepository.instance = new PackageRepository();
+    }
+
+    return PackageRepository.instance;
+  }
 
   protected get apiService(): PackageApiService {
     return PackageApiService.getInstance();
@@ -17,29 +31,28 @@ export default class PackageRepository extends BaseRepository<PackageModel, Pack
     };
   }
 
-  protected get mockItem(): PackageModel {
-    return PackageModel.example;
+  protected get mockItem(): ShowPackageModel {
+    return ShowPackageModel.example;
   }
 
   protected get mockList(): PackageModel[] {
     return [PackageModel.example];
   }
 
-  static getInstance(): PackageRepository {
-    if (!PackageRepository.instance) {
-      PackageRepository.instance = new PackageRepository();
-    }
-
-    return PackageRepository.instance;
-  }
-
-  protected parseItem(rawPackage: unknown): PackageModel {
-    return PackageModel.fromJson(rawPackage);
+  protected parseItem(rawPackage: Record<string, unknown>): ShowPackageModel {
+    return ShowPackageModel.fromJson(rawPackage);
   }
 
   protected parseList(rawPackages: unknown): PackageModel[] {
-    if (!Array.isArray(rawPackages)) return [];
+    if (!Array.isArray(rawPackages)) {
+      return [];
+    }
 
-    return rawPackages.map((rawPackage) => this.parseItem(rawPackage));
+    return rawPackages
+      .filter(
+        (rawPackage): rawPackage is Record<string, unknown> =>
+          rawPackage !== null && typeof rawPackage === 'object' && !Array.isArray(rawPackage),
+      )
+      .map((rawPackage) => PackageModel.fromJson(rawPackage));
   }
 }

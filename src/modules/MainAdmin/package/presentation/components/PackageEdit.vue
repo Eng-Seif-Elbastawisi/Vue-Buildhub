@@ -1,35 +1,50 @@
 <script setup lang="ts">
   import { onMounted, ref } from 'vue';
   import { useRoute } from 'vue-router';
+
   import type AddPackageParams from '../../core/params/add.package.params';
   import EditPackageParams from '../../core/params/edit.package.params';
   import ShowPackageParams from '../../core/params/show.package.params';
   import PackageController from '../controllers/package.controller';
+
   import PackageForm from './PackageForm.vue';
 
   const controller = PackageController.getInstance();
   const route = useRoute();
+
   const formKey = route.fullPath;
   const packageId = Number(route.params.id);
+
   const params = ref<EditPackageParams | null>(null);
   const loading = ref(false);
 
-  const updatePackageParams = (packageParams: AddPackageParams) => {
+  const updatePackageParams = (packageParams: AddPackageParams): void => {
     params.value = new EditPackageParams({
       id: packageId,
+
       duration: packageParams.duration,
+      duration_type: packageParams.duration_type,
+
+      price: packageParams.price,
+
+      discount_type: packageParams.discount_type,
+      discount_value: packageParams.discount_value,
+
       hasmobild: packageParams.hasmobild,
       hasportal: packageParams.hasportal,
+
       projectnumbers: packageParams.projectnumbers,
       employeenumbers: packageParams.employeenumbers,
-      price: packageParams.price,
+
+      translations: packageParams.translations,
     });
   };
 
-  const savePackage = async () => {
-    if (!params.value) return;
+  const savePackage = async (): Promise<void> => {
+    if (!params.value || loading.value) return;
 
     loading.value = true;
+
     try {
       await controller.update(params.value, undefined, formKey);
     } finally {
@@ -37,8 +52,12 @@
     }
   };
 
-  onMounted(async () => {
-    await controller.fetchOne(new ShowPackageParams(packageId));
+  onMounted(async (): Promise<void> => {
+    if (!Number.isInteger(packageId) || packageId <= 0) {
+      return;
+    }
+
+    await controller.fetchOne(new ShowPackageParams(packageId, true));
   });
 </script>
 
@@ -54,13 +73,16 @@
     <div class="actions" :class="{ disabled: loading }">
       <button
         :class="{ 'btn--loading': loading }"
-        :disabled="loading"
+        :disabled="loading || !params"
         class="btn btn-primary w-full"
         type="button"
         @click="savePackage"
       >
         <span v-if="loading" class="loader"></span>
-        <span v-else>{{ $t('package.update') }}</span>
+
+        <span v-else>
+          {{ $t('package.update') }}
+        </span>
       </button>
     </div>
 

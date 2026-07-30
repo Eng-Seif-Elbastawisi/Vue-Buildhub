@@ -1,9 +1,14 @@
 export { default as PackageModel } from './core/models/package.model';
+export { default as PackageSubscriptionModel } from './core/models/package.subscription.model';
 export { default as AddPackageParams } from './core/params/add.package.params';
 export { default as EditPackageParams } from './core/params/edit.package.params';
 export { default as DeletePackageParams } from './core/params/delete.package.params';
 export { default as ShowPackageParams } from './core/params/show.package.params';
 export { default as IndexPackageParams } from './core/params/index.package.params';
+export { default as FetchPackageSubscriptionsParams } from './core/params/fetch.package.subscriptions.params';
+export { default as ChangePackageSubscriptionStatusParams } from './core/params/change.package.subscription.status.params';
 export { default as PackageRepository } from './data/repositories/package.repository';
+export { default as PackageSubscriptionRepository } from './data/repositories/package.subscription.repository';
 export { default as PackageController } from './presentation/controllers/package.controller';
+export { default as PackageSubscriptionController } from './presentation/controllers/package.subscription.controller';
 export { default as PackageApiService } from './data/api/package.api-service';
