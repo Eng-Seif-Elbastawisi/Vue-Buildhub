@@ -251,7 +251,6 @@
     }
   };
 
-
   onMounted(fetchProjectFloor);
 </script>
 
@@ -283,31 +282,30 @@
       />
 
       <div class="btns">
-        
-      <button
-        class="btn btn-primary"
-        :class="{
-          'btn--loading': saving,
-        }"
-        type="button"
-        :disabled="saving || !params"
-        @click="saveProjectFloor"
-      >
-        {{ $t('ProjectFloor.update') }}
-      </button>
-      
-      <router-link :to="`/organization/project/show/${projectId}`">
-       <button
-        class="btn btn-danger"
-        :class="{
-          'btn--loading': saving,
-        }"
-        type="button"
-        :disabled="saving"
-      >
-        {{ $t('cancel') }}
-      </button>
-      </router-link>
+        <button
+          class="btn btn-primary"
+          :class="{
+            'btn--loading': saving,
+          }"
+          type="button"
+          :disabled="saving || !params"
+          @click="saveProjectFloor"
+        >
+          {{ $t('ProjectFloor.update') }}
+        </button>
+
+        <router-link :to="`/organization/project/show/${projectId}`">
+          <button
+            class="btn btn-danger"
+            :class="{
+              'btn--loading': saving,
+            }"
+            type="button"
+            :disabled="saving"
+          >
+            {{ $t('cancel') }}
+          </button>
+        </router-link>
       </div>
 
       <div v-if="controller.errorMessage.value" class="error">
@@ -322,11 +320,11 @@
 </template>
 
 <style scoped>
-.btns{
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-}
+  .btns {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+  }
   .ProjectFloor-crud-page {
     display: flex;
     flex-direction: column;

@@ -9,7 +9,6 @@ export type ProjectSelectItem = {
   parent?: ProjectSelectItem | null;
 };
 
-
 export type ProjectPreviewModel = {
   id: number;
   status?: number;
@@ -61,6 +60,7 @@ export default class ProjectShowModel {
   public readonly has_auto_invoices?: boolean;
 
   public readonly terms?: string;
+  public readonly with_preview?: boolean;
 
   constructor(data: {
     raw?: Record<string, unknown>;
@@ -99,6 +99,7 @@ export default class ProjectShowModel {
     has_auto_invoices?: boolean;
 
     terms?: string;
+    with_preview?: boolean;
   }) {
     this.raw = data.raw;
     this.id = data.id;
@@ -136,6 +137,7 @@ export default class ProjectShowModel {
     this.has_auto_invoices = data.has_auto_invoices;
 
     this.terms = data.terms;
+    this.with_preview = data.with_preview;
 
     Object.freeze(this);
   }
@@ -325,9 +327,10 @@ export default class ProjectShowModel {
       date: json.date as string | undefined,
       notes: json.notes as string | null | undefined,
 
-      attachments: json.attachments && json.attachments.length > 0
-        ? json.attachments?.map((item) => ProjectAttachmentModel.fromJson(item))
-        : [],
+      attachments:
+        json.attachments && json.attachments.length > 0
+          ? json.attachments?.map((item) => ProjectAttachmentModel.fromJson(item))
+          : [],
 
       project_previews: projectPreviews,
       engineer,
@@ -343,6 +346,7 @@ export default class ProjectShowModel {
       has_auto_invoices: json.has_auto_invoices as boolean | undefined,
 
       terms: ProjectShowModel.mapTerms(json.terms),
+      with_preview: json.with_preview as boolean | undefined,
     });
   }
 
@@ -408,5 +412,7 @@ export default class ProjectShowModel {
 
     convert_status: ConvertStatus.WAITING_PREVIEW,
     status: ConvertStatus.WAITING_PREVIEW,
+
+    with_preview: true,
   });
 }

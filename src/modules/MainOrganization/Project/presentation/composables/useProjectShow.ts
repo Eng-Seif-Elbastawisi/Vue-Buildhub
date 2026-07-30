@@ -1173,6 +1173,8 @@ export const useProjectShow = () => {
     title: t('ProjectShow.project_floors_summary'),
     floors: projectFloors.value,
     floorSpaces: floorSpaces.value,
+    projectId: project.value.id,
+    projectPreviewId: preview.value?.id,
     totalArea: totalArea.value,
     averageHeight: averageHeight.value,
     emptyLabel: t('ProjectShow.no_floors'),
@@ -1311,6 +1313,7 @@ export const useProjectShow = () => {
     formatDate,
     formatTime,
     valueOrEmpty,
+    with_preview: project.value?.with_preview,
   }));
 
   onMounted(() => {
