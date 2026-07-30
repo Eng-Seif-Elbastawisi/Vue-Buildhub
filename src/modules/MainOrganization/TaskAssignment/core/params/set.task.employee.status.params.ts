@@ -34,13 +34,29 @@ export default class SetTaskEmployeeStatusParams implements Params {
   }
 
   toMap(): Record<string, unknown> {
-    return {
-      project_department_item_id: this.project_department_item_id,
-      status: this.status,
-      employee_id: this.employee_id,
-      notes: this.notes,
-      attachments: this.attachments?.map((att) => att.toMap()),
-    };
+    // return {
+    //   project_department_item_id: this.project_department_item_id,
+    //   status: this.status,
+    //   employee_id: this.employee_id,
+    //   notes: this.notes,
+    //   attachments: this.attachments?.length > 0 ? this.attachments.map((att) => att.toMap()) : undefined
+    // };
+
+    const data: Record<string, unknown> = {};
+
+    data.project_department_item_id = this.project_department_item_id;
+    data.status = this.status;
+    if (this.employee_id) {
+      data.employee_id = this.employee_id;
+    }
+    if (this.notes) {
+      data.notes = this.notes;
+    }
+    if (this.attachments && this.attachments.length > 0) {
+      data.attachments = this.attachments.map((att) => att.toMap());
+    }
+
+    return data;
   }
   validate() {
     return SetTaskEmployeeStatusParams.validation.validate(this);
