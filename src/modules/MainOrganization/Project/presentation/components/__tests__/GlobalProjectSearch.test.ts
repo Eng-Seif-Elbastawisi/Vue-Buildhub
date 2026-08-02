@@ -160,6 +160,7 @@ describe('GlobalProjectSearch', () => {
     });
     expect(wrapper.text()).toContain('Harbor Tower');
     expect(wrapper.text()).toContain('Acme Client');
+    expect(wrapper.get('.status-badge').classes()).toContain('status-13');
   });
 
   it('ignores an older response and aborts it when the keyword changes', async () => {

@@ -265,10 +265,6 @@
     }).format(creationDate);
   };
 
-  const projectStatus = (project: ProjectModel): string => {
-    return project.status === undefined ? '-' : t(getConvertStatusNameKey(project.status));
-  };
-
   watch(query, () => {
     invalidatePendingSearch();
     resetSearchState();
@@ -433,7 +429,10 @@
           <div class="project-search-card__body">
             <div class="project-search-card__title-row">
               <h3>{{ displayText(project.title) }}</h3>
-              <span class="project-search-card__status">{{ projectStatus(project) }}</span>
+              <span v-if="project.status" class="status-badge" :class="`status-${project.status}`">
+                {{ $t(getConvertStatusNameKey(project.status)) }}
+              </span>
+              <span v-else>-</span>
             </div>
 
             <dl class="project-search-card__metadata">
@@ -485,6 +484,10 @@
 </template>
 
 <style scoped lang="scss">
+  @use '../styles/project_status_badge' as project-status-badge;
+
+  @include project-status-badge.project-status-badges;
+
   .visually-hidden {
     position: absolute;
     width: 1px;
@@ -925,20 +928,6 @@
         text-overflow: ellipsis;
         white-space: nowrap;
       }
-    }
-
-    &__status {
-      flex: 0 0 auto;
-      max-width: 12rem;
-      padding: 0.25rem 0.5rem;
-      overflow: hidden;
-      border-radius: var(--radius-full);
-      color: var(--PrimaryColor);
-      background: color-mix(in sRGB, var(--BgWhite) 88%, var(--PrimaryColor) 12%);
-      font-size: 0.6875rem;
-      font-weight: 700;
-      text-overflow: ellipsis;
-      white-space: nowrap;
     }
 
     &__metadata {

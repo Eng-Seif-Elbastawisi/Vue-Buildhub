@@ -88,7 +88,12 @@
    * - project status is ACCEPT_CLIENT = 13.
    */
   const canAddFloor = computed<boolean>(() => {
-    return Boolean(props.addFloorTo) && Number(props.status) === ConvertStatus.ACCEPT_CLIENT;
+    const currentStatus = Number(props.status);
+
+    return (
+      currentStatus !== ConvertStatus.SEND_TO_CLIENT &&
+      currentStatus !== ConvertStatus.ACCEPT_CLIENT
+    );
   });
 
   watch(
@@ -415,6 +420,7 @@
     width: 100%;
     align-items: center;
     margin-block-end: 1rem;
+    justify-content: space-between;
   }
 
   .project-floors-title {
@@ -440,7 +446,7 @@
     align-items: center;
     justify-content: center;
     gap: 0.4rem;
-    margin-inline-start: 0.25rem;
+    margin-inline-start: auto;
     padding-inline: 0.85rem;
     text-decoration: none;
     white-space: nowrap;
