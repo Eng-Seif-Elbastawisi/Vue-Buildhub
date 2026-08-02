@@ -20,6 +20,7 @@ import type ProjectShowModel from '../../core/models/project.show.model';
 import ProjectRepository from '../../data/repositories/project.repository';
 import { useUserStore } from '@/stores/user';
 import type ShowProjectParams from '../../core/params/show.project.params';
+import type IndexProjectParams from '../../core/params/index.project.params';
 import { dialogManager } from '@/base/Presentation/Dialogs/dialog.manager';
 import { translate } from '@/locales/i18n';
 
@@ -128,6 +129,13 @@ export default class ProjectController extends BaseController<ProjectShowModel, 
 
   async fetchList(params: Params, options?: ApiCallOptions): Promise<DataState<ProjectModel[]>> {
     return await super.fetchList(params, { ...options, useJson: true });
+  }
+
+  async searchProjects(
+    params: IndexProjectParams,
+    options?: ApiCallOptions,
+  ): Promise<DataState<ProjectModel[]>> {
+    return await this.repository.index(params, { ...options, useJson: true }, false);
   }
 
   async fetchOne(params: Params, options?: ApiCallOptions) {
