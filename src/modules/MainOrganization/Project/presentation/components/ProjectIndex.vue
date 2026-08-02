@@ -445,6 +445,10 @@
 </template>
 
 <style scoped lang="scss">
+  @use '../styles/project_status_badge' as project-status-badge;
+
+  @include project-status-badge.project-status-badges;
+
   .page-header > div {
     width: 100%;
   }
@@ -510,47 +514,6 @@
       background: var(--danger-light);
       box-shadow: 0 3px 10px rgba(220, 38, 38, 0.15);
     }
-  }
-
-  .status-badge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.4rem 0.75rem;
-    border-radius: 999px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    white-space: nowrap;
-  }
-
-  .status-1 {
-    color: var(--warning-dark);
-    background-color: var(--warning-light);
-  }
-
-  .status-2 {
-    color: var(--blue-primary);
-    background-color: var(--info-light);
-  }
-
-  .status-3 {
-    color: var(--success-dark);
-    background-color: var(--success-light);
-  }
-
-  .status-4 {
-    color: var(--bg-main);
-    background-color: #f0a800c7;
-  }
-
-  .status-5 {
-    color: var(--low-color);
-    background-color: var(--PrimaryColor-light);
-  }
-
-  .status-14 {
-    color: var(--gray-50);
-    background-color: var(--danger);
   }
 
   .empty-state {
