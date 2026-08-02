@@ -81,8 +81,11 @@
    * - Project ID is valid.
    */
   const canAddDepartment = computed<boolean>(() => {
+    const currentStatus = Number(props.status);
+
     return (
-      Number(props.status) === ConvertStatus.ACCEPT_CLIENT && validProjectId.value !== undefined
+      currentStatus !== ConvertStatus.SEND_TO_CLIENT &&
+      currentStatus !== ConvertStatus.ACCEPT_CLIENT
     );
   });
 
