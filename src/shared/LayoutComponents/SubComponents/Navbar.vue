@@ -1,19 +1,13 @@
 <script lang="ts" setup>
-  import { computed, onMounted, ref, watch } from 'vue';
+  import { computed, onMounted, ref } from 'vue';
   import { useI18n } from 'vue-i18n';
   import IconLogout from '@/shared/icons/IconLogout.vue';
   import { useUserStore } from '@/stores/user';
-  import SearchIcon from '@/shared/icons/SearchIcon.vue';
-  import HeaderNotificationIcon from '@/shared/icons/HeaderIcons/HeaderNotificationIcon.vue';
   import EmployeeImage from '@/assets/images/headerIMages/employee.jpg';
   import { useRouter } from 'vue-router';
-  import { useRouteSearch } from '@/stores/routerSearch';
   import { UserType } from '@/modules/auth/core/constants/userType.enum';
   import { useSystemIdentityTheme } from '@/modules/shared/SystemIdentity/presentation/composables/useSystemIdentityTheme';
-import wordSlice from '@/base/Presentation/Utils/word_slice';
-import { useIntegratedNotifications } from '@/composable/useIntegratedNotifications';
-import { useToast } from 'primevue/usetoast'
-import Notifications from './Notifications.vue';
+  import GlobalProjectSearch from '@/modules/MainOrganization/Project/presentation/components/GlobalProjectSearch.vue';
 
   const userStore = useUserStore();
   const router = useRouter();
@@ -69,44 +63,10 @@ import Notifications from './Notifications.vue';
     isDropMenuOpen.value = !isDropMenuOpen.value;
   };
 
-  const { query, results, isOpen, activeIndex, navigate, onKeydown } = useRouteSearch();
-
-  watch(results, (val) => {
-    isOpen.value = val.length > 0;
-    activeIndex.value = -1;
-  });
-
   onMounted(() => {
     const savedLocale = localStorage.getItem(languageStorageKey);
     setLanguage(savedLocale === 'en' || savedLocale === 'ar' ? savedLocale : 'ar');
   });
-  const NOTIFICATION_SOUND_BASE64 =
-  'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIF2W56+mmUBELTKXh8bllHAU2jdXvyn0tBSh+zPLaizsKGGS46Om1XBoFM4nU8c1+LgYngM3y3I4+ChlluOvpplARC0ul4fG5ZRwFNo3V78p9LQUofszy2os7ChhluevrpVERC0yn4fG3ZBwFOI7U8ct+LQUoftDy24k7ChZluujoplARDEul4e+3ZRwGOY/V8Mp/LgYpf9Dy3Ik7CxZluejpplARDEym4fG3ZBwFOI/V8cp+LQYoftDy24o7ChZmuejpplARDEym4fG3YxwFOI/V8Ml/LgYof9Dy3Io7ChZmuujqplARDEym4fG3YxwFOI/V8Ml/LgYof9Dy3Io7ChZmuejpplARDEym4fG3YxwFOI/V8Ml/LgYof9Dy3Io7ChZmuejpplARDEym4fG3YxwFOI/V8Ml/LgYof9Dy3Io7ChZmuejpplARDEym4fG3YxwFOI/V8Ml/LgYof9Dy3Io7ChZmuejpplARDEym4fG3YxwFOI/V8Ml/LgYof9Dy3Io7ChZmuejpplARDEym4fG3YxwFOI/V8Ml/LgYof9Dy3Io7ChZmuejpplARDEym4fG3YxwFOI/V8Ml/LgYof9Dy3Io7ChZmuejpplARDEym4fG3YxwFOI/V8Ml/LgYof9Dy3Io7ChZmuejpplARDEym4fG3YxwFOI/V8Ml/LgYof9Dy3Io7ChZmuejpplARDEym4fG3YxwFOI/V8Ml/LgYof9Dy3Io7ChZmuejpplARDEym4fG3YxwFOI/V8Ml/LgYof9Dy3Io7ChZmuejpplARDEym4fG3YxwFOI/V8Ml/LgYof9Dy3Io7ChZmuejpplARDEym4fG3YxwFOI/V8Ml/LgYof9Dy3Io7ChZmuejpplARDEym4fG3YxwFOI/V8Ml/'
-const toast = useToast()
-// Integrate new notification system
-// const { notifications, unreadCount, acknowledgeNotification, wsConnected } =
-//   useIntegratedNotifications({
-//     autoConnect: true,
-//     token: userStore.user?.WebSocketToken,
-//     // token: 'st_yzJJdPw8s4Dm_OSNQNVoUvt0PK8KYZzca2r1JTd9_MA',
-//     userId: userStore.user?.id,
-//     fetchNotifications: true,
-//     userToken: userStore.user?.apiToken,
-
-//     onNotification: (notification) => {
-//       // make ring sound
-//       const audio = new Audio(NOTIFICATION_SOUND_BASE64)
-//       audio.play()
-
-//       // Show global toast
-//       toast.add({
-//         severity: 'info',
-//         summary: notification.title,
-//         detail: wordSlice(JSON.parse(notification?.body!)?.message, 35) || notification.body,
-//         life: 5000,
-//       })
-//     },
-//   })
 </script>
 
 <template>
@@ -114,39 +74,9 @@ const toast = useToast()
     <span class="navbar-glass-layer" aria-hidden="true"></span>
 
     <nav class="nav">
-      <div class="search" @keydown="onKeydown">
-        <span class="search__icon" aria-hidden="true">
-          <SearchIcon />
-        </span>
-        <input
-          v-model="query"
-          type="search"
-          :placeholder="$t('search_what_you_want')"
-          :aria-label="$t('search_what_you_want')"
-          autocomplete="off"
-        />
-
-        <Transition name="dropdown">
-          <ul v-if="isOpen" class="search__results">
-            <li
-              v-for="(route, index) in results"
-              :key="route.name"
-              :class="{ 'is-active': index === activeIndex }"
-              @mouseenter="activeIndex = index"
-              @mousedown.prevent="navigate(route)"
-            >
-              {{ route.title }}
-            </li>
-          </ul>
-        </Transition>
-      </div>
+      <GlobalProjectSearch class="navbar-project-search" />
 
       <div class="setting">
-        <span class="nav-action notification-action">
-          <!-- <HeaderNotificationIcon /> -->
-           <!-- <Notifications />  -->
-        </span>
-
         <button
           class="nav-action language-toggle"
           type="button"
@@ -328,106 +258,9 @@ const toast = useToast()
     transform: translateY(1px);
   }
 
-  .notification-action {
-    cursor: pointer;
-
-    :deep(svg) {
-      width: 42px;
-      height: 42px;
-    }
-  }
-
-  .header .search {
-    position: relative;
-    display: flex;
+  .navbar-project-search {
     flex: 0 1 470px;
-    align-items: center;
-    gap: 10px;
     width: min(470px, 48vw);
-    height: 48px;
-    padding-inline: 14px;
-    border: 1px solid color-mix(in sRGB, var(--palette-primary) 13%, var(--border-weak));
-    border-radius: 14px;
-    background-color: transparent;
-    background-image: linear-gradient(
-      color-mix(in sRGB, var(--BgWhite) 76%, var(--palette-primary) 2%),
-      color-mix(in sRGB, var(--BgWhite) 76%, var(--palette-primary) 2%)
-    );
-    transition:
-      width var(--transition-fast),
-      border-color var(--transition-fast),
-      box-shadow var(--transition-fast),
-      background var(--transition-fast);
-
-    &:focus-within {
-      border-color: color-mix(in sRGB, var(--palette-primary) 56%, transparent);
-      background-image: linear-gradient(
-        color-mix(in sRGB, var(--BgWhite) 90%, var(--palette-primary) 3%),
-        color-mix(in sRGB, var(--BgWhite) 90%, var(--palette-primary) 3%)
-      );
-      box-shadow: 0 0 0 3px color-mix(in sRGB, var(--palette-primary) 12%, transparent);
-    }
-
-    &__icon {
-      display: grid;
-      flex: 0 0 20px;
-      place-items: center;
-      color: var(--gray-500);
-
-      :deep(svg) {
-        width: 20px;
-        height: 20px;
-      }
-    }
-
-    input {
-      flex: 1 1 auto;
-      width: 100%;
-      min-width: 0;
-      padding: 0;
-      border: 0;
-      outline: 0;
-      color: var(--gray-900);
-      background: transparent;
-      font: inherit;
-      font-size: 13px;
-
-      &::placeholder {
-        color: var(--search-input-color);
-        opacity: 1;
-      }
-    }
-
-    &__results {
-      position: absolute;
-      inset-block-start: calc(100% + 10px);
-      inset-inline: 0;
-      z-index: 10;
-      list-style: none;
-      margin: 0;
-      padding: 6px;
-      border: 1px solid color-mix(in sRGB, var(--palette-primary) 14%, var(--border-weak));
-      border-radius: 14px;
-      background: var(--BgWhite);
-      box-shadow: 0 14px 32px color-mix(in sRGB, var(--palette-secondary) 12%, transparent);
-
-      li {
-        padding: 10px 12px;
-        border-radius: 9px;
-        color: var(--gray-800);
-        cursor: pointer;
-        font-size: 13px;
-        transition:
-          color var(--transition-fast),
-          background var(--transition-fast);
-
-        &.is-active,
-        &:hover {
-          color: var(--palette-primary);
-          background: color-mix(in sRGB, var(--palette-primary) 9%, transparent);
-        }
-      }
-    }
   }
 
   .language-toggle {
@@ -587,19 +420,6 @@ const toast = useToast()
     }
   }
 
-  .dropdown-enter-active,
-  .dropdown-leave-active {
-    transition:
-      opacity 0.15s,
-      transform 0.15s;
-  }
-
-  .dropdown-enter-from,
-  .dropdown-leave-to {
-    opacity: 0;
-    transform: translateY(-4px);
-  }
-
   .mega-menu-enter-active,
   .mega-menu-leave-active {
     transition:
@@ -635,7 +455,7 @@ const toast = useToast()
       gap: 12px;
     }
 
-    .header .search {
+    .navbar-project-search {
       flex-basis: 360px;
       width: min(360px, 42vw);
     }
@@ -654,7 +474,7 @@ const toast = useToast()
       margin-inline: 12px;
     }
 
-    .header .search {
+    .navbar-project-search {
       flex: 1 1 240px;
       width: auto;
     }
@@ -676,8 +496,7 @@ const toast = useToast()
 
     .nav-action,
     .profile-trigger,
-    .header .search,
-    .search__results li {
+    .navbar-project-search {
       transition: none;
     }
   }
