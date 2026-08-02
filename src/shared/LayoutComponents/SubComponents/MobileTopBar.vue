@@ -5,6 +5,7 @@
   import EmployeeImage from '@/assets/images/headerIMages/employee.jpg';
   import HeaderSidebarIcon from '@/shared/icons/HeaderIcons/HeaderSidebarIcon.vue';
   import { useUserStore } from '@/stores/user';
+  import GlobalProjectSearch from '@/modules/MainOrganization/Project/presentation/components/GlobalProjectSearch.vue';
 
   defineEmits<{
     (e: 'openSidebar'): void;
@@ -25,6 +26,7 @@
     </div>
 
     <div class="mobile-actions">
+      <GlobalProjectSearch compact />
       <img class="mobile-avatar" :src="user?.image || EmployeeImage" :alt="$t('user')" />
       <button
         type="button"

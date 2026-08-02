@@ -13,11 +13,16 @@ const importedGlobalStyles = readFileSync(
   'utf8',
 );
 
-vi.mock('vue-i18n', () => ({
-  useI18n: () => ({
-    locale: mockLocale,
-  }),
-}));
+vi.mock('vue-i18n', async (importOriginal) => {
+  const actual = (await importOriginal()) as Record<string, unknown>;
+
+  return {
+    ...actual,
+    useI18n: () => ({
+      locale: mockLocale,
+    }),
+  };
+});
 
 // ── Stores ────────────────────────────────────────────────────────────────────
 vi.mock('@/stores/user', () => ({
@@ -44,6 +49,16 @@ vi.mock('@/assets/images/headerIMages/employee.jpg', () => ({
   default: 'mock-employee.jpg',
 }));
 
+vi.mock(
+  '@/modules/MainOrganization/Project/presentation/components/GlobalProjectSearch.vue',
+  () => ({
+    default: {
+      name: 'GlobalProjectSearch',
+      template: '<div class="global-project-search-stub" />',
+    },
+  }),
+);
+
 describe('Navbar.vue', () => {
   beforeEach(() => {
     mockLocale.value = 'ar';
@@ -60,8 +75,6 @@ describe('Navbar.vue', () => {
         $t: (msg: string) => msg,
       },
       stubs: {
-        SearchIcon: true,
-        HeaderNotificationIcon: true,
         IconLogout: true,
       },
     },
@@ -75,6 +88,11 @@ describe('Navbar.vue', () => {
   it('renders the nav element', () => {
     const wrapper = mount(Navbar, mountOptions);
     expect(wrapper.find('nav.nav').exists()).toBe(true);
+  });
+
+  it('renders the global project search', () => {
+    const wrapper = mount(Navbar, mountOptions);
+    expect(wrapper.find('.global-project-search-stub').exists()).toBe(true);
   });
 
   it('renders the user avatar image', () => {

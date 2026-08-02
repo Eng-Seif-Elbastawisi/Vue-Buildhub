@@ -16,6 +16,7 @@
   import ProjectController from '../controllers/project.controller';
 
   import { ConvertStatus, getConvertStatusNameKey } from '../../core/constants/convert.status.enum';
+  import { debounce } from '@/base/Presentation/Utils/debouced';
 
   interface ProjectIndexProps {
     statuses?: ConvertStatus[] | null;
@@ -35,6 +36,7 @@
   const { user } = useUserStore();
 
   const perPage = ref(10);
+  const word = ref('');
 
   const parseServiceType = (routeServiceType: unknown): DepartmentTypeEnum[] => {
     const values = Array.isArray(routeServiceType)
@@ -129,10 +131,10 @@
     return baseHeaders;
   });
 
-  const fetchProjects = async (page: number = 1) => {
+  const fetchProjects = async (page: number = 1, searchWord: string = '') => {
     await controller.fetchList(
       new IndexProjectParams(
-        '',
+        searchWord,
         route.query.page ? Number(route.query.page) : page,
         perPage.value,
         1,
@@ -142,7 +144,16 @@
       ),
     );
   };
-
+  const Search = debounce(() => {
+    router.push({
+      query: {
+        ...route.query,
+        page: Number(route.query.page ?? 1),
+        word: word.value || undefined,
+      },
+    });
+    fetchProjects(1, word.value);
+  });
   const onPageChange = async (page: number) => {
     await router.push({
       query: {
@@ -218,14 +229,38 @@
             {{ $t('Project.list_description') }}
           </p>
         </template>
+        <div class="toolbar">
+          <div class="search-field">
+            <span class="search-icon">
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+              >
+                <circle cx="11" cy="11" r="8" />
+                <path d="m21 21-4.35-4.35" />
+              </svg>
+            </span>
+            <input
+              v-model="word"
+              :placeholder="$t('search_clients')"
+              class="search-input"
+              type="text"
+              @input="Search"
+            />
+          </div>
+          <router-link
+            class="btn btn-primary"
+            :to="user?.isMaster ? '/admin/Project/add' : '/organization/Project/add'"
+          >
+            {{ $t('Project.add') }}
+          </router-link>
+        </div>
       </div>
-
-      <router-link
-        class="btn btn-primary"
-        :to="user?.isMaster ? '/admin/Project/add' : '/organization/Project/add'"
-      >
-        {{ $t('Project.add') }}
-      </router-link>
     </header>
 
     <DataStatusBuilder
@@ -410,10 +445,20 @@
 </template>
 
 <style scoped lang="scss">
+  .page-header > div {
+    width: 100%;
+  }
+
   .Project-page {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
+  }
+
+  .toolbar {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
   }
 
   .page-header,
@@ -495,13 +540,14 @@
 
   .status-4 {
     color: var(--bg-main);
-    background-color: #F0A800C7 ;
+    background-color: #f0a800c7;
   }
 
   .status-5 {
     color: var(--low-color);
     background-color: var(--PrimaryColor-light);
   }
+
   .status-14 {
     color: var(--gray-50);
     background-color: var(--danger);

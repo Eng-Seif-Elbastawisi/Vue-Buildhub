@@ -9,9 +9,18 @@ describe('MobileTopBar', () => {
   });
 
   it('renders the brand and emits openSidebar from menu button', async () => {
-    const wrapper = mount(MobileTopBar);
+    const wrapper = mount(MobileTopBar, {
+      global: {
+        stubs: {
+          GlobalProjectSearch: {
+            template: '<div class="mobile-project-search-stub" />',
+          },
+        },
+      },
+    });
 
     expect(wrapper.text()).toContain('BuildHub');
+    expect(wrapper.find('.mobile-project-search-stub').exists()).toBe(true);
 
     await wrapper.find('.mobile-menu-btn').trigger('click');
 
