@@ -4,6 +4,8 @@ import {
   DataSuccess,
 } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
 import FetchApprovedTasksParams from '../../../core/params/fetch.approved.tasks.params';
+import { InsideStatusDecision } from '../../../core/constants/inside.status.decision.enum';
+import ChangeInsideStatusParams from '../../../core/params/change.inside.status.params';
 import TaskAssignmentApprovedTaskModel from '../../../core/models/task.assignment.approved-task.model';
 import TaskAssignmentEmployeeTaskModel from '../../../core/models/task.assignment.employee-task.model';
 import TaskAssignmentRepository from '../../../data/repositories/task.assignment.repository';
@@ -34,6 +36,9 @@ describe('TaskAssignmentController', () => {
     vi.spyOn(repository, 'changeEmployeeTaskStatus').mockResolvedValue(
       new DataSuccess<void>({ message: 'Task status changed' }),
     );
+    vi.spyOn(repository, 'changeInsideStatus').mockResolvedValue(
+      new DataSuccess<void>({ message: 'Inside status changed' }),
+    );
 
     const tasks = await controller.fetchEmployeeTasks({ page: 1 });
     const assigned = await controller.assignProjectDepartmentItemTask({
@@ -45,12 +50,19 @@ describe('TaskAssignmentController', () => {
       task_id: 7,
       status: 'done',
     });
+    const insideStatus = await controller.changeInsideStatus(
+      new ChangeInsideStatusParams({
+        projectDepartmentItemId: 39,
+        status: InsideStatusDecision.ACCEPT,
+      }),
+    );
 
     expect(tasks).toBeInstanceOf(DataSuccess);
     expect(controller.employeeTasksState.value).toBeInstanceOf(DataSuccess);
     expect(controller.employeeTasksState.value.data?.[0].title).toBe('Design review');
     expect(assigned).toBeInstanceOf(DataSuccess);
     expect(status).toBeInstanceOf(DataSuccess);
+    expect(insideStatus).toBeInstanceOf(DataSuccess);
   });
 
   it('publishes approved-task loading and response state', async () => {

@@ -1,6 +1,6 @@
-import { mount } from '@vue/test-utils';
-import { nextTick } from 'vue';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { mount, type VueWrapper } from '@vue/test-utils';
+import { nextTick, ref } from 'vue';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useProjectShow } from '../useProjectShow';
 import { ConvertStatus } from '../../../core/constants/convert.status.enum';
 
@@ -76,6 +76,8 @@ const pdfMocks = vi.hoisted(() => {
 });
 
 const fetchOne = vi.fn();
+const mockProjectId = ref('24');
+const mountedWrappers: VueWrapper[] = [];
 const itemData = {
   value: {
     id: 24,
@@ -141,7 +143,13 @@ const itemData = {
 };
 
 vi.mock('vue-router', () => ({
-  useRoute: () => ({ params: { project_id: '24' } }),
+  useRoute: () => ({
+    params: {
+      get project_id() {
+        return mockProjectId.value;
+      },
+    },
+  }),
 }));
 
 vi.mock('vue-i18n', () => ({
@@ -196,13 +204,14 @@ vi.mock('../../controllers/project.controller', () => ({
 const mountComposable = () => {
   const exposed = {} as ReturnType<typeof useProjectShow>;
 
-  mount({
+  const wrapper = mount({
     setup() {
       Object.assign(exposed, useProjectShow());
 
       return () => null;
     },
   });
+  mountedWrappers.push(wrapper);
 
   return exposed;
 };
@@ -210,12 +219,17 @@ const mountComposable = () => {
 describe('useProjectShow', () => {
   beforeEach(() => {
     fetchOne.mockClear();
+    mockProjectId.value = '24';
     mockLocale.value = 'en';
     pdfMocks.instances.length = 0;
     pdfMocks.jsPDF.mockClear();
     pdfMocks.autoTable.mockClear();
     itemData.value.status = ConvertStatus.PENDING;
     itemData.value.convert_status = ConvertStatus.PENDING;
+  });
+
+  afterEach(() => {
+    mountedWrappers.splice(0).forEach((wrapper) => wrapper.unmount());
   });
 
   it('fetches the project and exposes grouped props for the show page sections', async () => {
@@ -259,6 +273,17 @@ describe('useProjectShow', () => {
       'project-side-column--active-preview': false,
       'project-side-column--active-terms': true,
     });
+  });
+
+  it('fetches the next project when the reused route receives a new project id', async () => {
+    mountComposable();
+    await nextTick();
+
+    mockProjectId.value = '51';
+    await nextTick();
+
+    expect(fetchOne).toHaveBeenCalledTimes(2);
+    expect(fetchOne.mock.calls[1][0].toMap()).toEqual({ project_id: 51 });
   });
 
   it('exposes automatic invoice availability from the project response', async () => {

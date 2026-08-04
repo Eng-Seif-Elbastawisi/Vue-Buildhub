@@ -2,26 +2,26 @@
   // import UpdatedCustomInputSelect from '@/shared/FormInputs/UpdatedCustomInputSelect.vue';
   import EmployeeTasksList from './EmployeeTasksList.vue';
   import { useEmployeeTasks } from '../composables/useEmployeeTasks';
-import {
-  getTypeNameKey,
-} from '../../core/constants/inside.status.enum';
+  import { getTypeNameKey } from '../../core/constants/inside.status.enum';
   const {
-  selectedStatus,
-  tasksState,
-  tasksLoading,
-  tasksCount,
-  tasksPagination,
-  statusUpdateErrors,
-  valueOrEmpty,
-  formatDate,
-  taskRows,
-  fetchEmployeeTasks,
-  changeTaskStatus,
-  isTaskUpdating,
-  getStatusDisplay,
-  getStatusClass,
-  onPerPageChange,
-} = useEmployeeTasks();
+    selectedStatus,
+    tasksState,
+    tasksLoading,
+    tasksCount,
+    tasksPagination,
+    statusUpdateErrors,
+    valueOrEmpty,
+    formatDate,
+    taskRows,
+    fetchEmployeeTasks,
+    changeTaskStatus,
+    changeInsideStatus,
+    isTaskUpdating,
+    isInsideStatusUpdating,
+    getStatusDisplay,
+    getStatusClass,
+    onPerPageChange,
+  } = useEmployeeTasks();
 </script>
 
 <template>
@@ -44,9 +44,8 @@ import {
             {{ tasksCount }} {{ $t('task_assignment.tasks_count') }}
           </span>
           <span class="task-assignment-page-header__count">
-            {{ getTypeNameKey(selectedStatus) }} 
+            {{ getTypeNameKey(selectedStatus) }}
           </span>
-
 
           <!-- <button
             class="task-assignment-page-header__refresh"
@@ -83,12 +82,14 @@ import {
         :format-date="formatDate"
         :value-or-empty="valueOrEmpty"
         :is-task-updating="isTaskUpdating"
+        :is-inside-status-updating="isInsideStatusUpdating"
         :get-status-display="getStatusDisplay"
         :get-status-class="getStatusClass"
         @refresh="fetchEmployeeTasks()"
         @change-page="fetchEmployeeTasks"
         @per-page-change="onPerPageChange"
         @change-status="changeTaskStatus"
+        @change-inside-status="changeInsideStatus"
       />
     </article>
   </section>

@@ -222,11 +222,11 @@
 
         <template v-else>
           <h4>
-            {{ $t('Project.list_title') }}
+            {{ $t('request.list_title') }}
           </h4>
 
           <p>
-            {{ $t('Project.list_description') }}
+            {{ $t('request.list_description') }}
           </p>
         </template>
         <div class="toolbar">
@@ -247,7 +247,7 @@
             </span>
             <input
               v-model="word"
-              :placeholder="$t('search_clients')"
+              :placeholder="$t('search_request')"
               class="search-input"
               type="text"
               @input="Search"
@@ -257,7 +257,7 @@
             class="btn btn-primary"
             :to="user?.isMaster ? '/admin/Project/add' : '/organization/Project/add'"
           >
-            {{ $t('Project.add') }}
+            {{ $t('request.add') }}
           </router-link>
         </div>
       </div>
@@ -448,6 +448,10 @@
   @use '../styles/project_status_badge' as project-status-badge;
 
   @include project-status-badge.project-status-badges;
+
+  .toolbar {
+    margin-top: 1rem;
+  }
 
   .page-header > div {
     width: 100%;

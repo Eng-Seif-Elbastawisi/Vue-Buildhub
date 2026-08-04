@@ -14,6 +14,7 @@ import type TaskAssignmentEmployeeTaskModel from '../../core/models/task.assignm
 import TaskAssignmentRepository from '../../data/repositories/task.assignment.repository';
 import type TaskAssignmentApprovedTaskModel from '../../core/models/task.assignment.approved-task.model';
 import type FetchApprovedTasksParams from '../../core/params/fetch.approved.tasks.params';
+import type ChangeInsideStatusParams from '../../core/params/change.inside.status.params';
 
 type TaskAssignmentActionParams = Params | Record<string, unknown>;
 
@@ -113,6 +114,12 @@ export default class TaskAssignmentController extends BaseController<
 
   async setTaskEmployeeStatus(params?: TaskAssignmentActionParams): Promise<DataState<void>> {
     const result = await this.repository.setTaskEmployeeStatus(params);
+
+    return this.handleTaskAssignmentActionResponse(result);
+  }
+
+  async changeInsideStatus(params: ChangeInsideStatusParams): Promise<DataState<void>> {
+    const result = await this.repository.changeInsideStatus(params);
 
     return this.handleTaskAssignmentActionResponse(result);
   }

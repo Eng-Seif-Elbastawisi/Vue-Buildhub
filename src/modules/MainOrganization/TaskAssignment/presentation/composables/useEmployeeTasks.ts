@@ -1,10 +1,4 @@
-import {
-  computed,
-  onMounted,
-  reactive,
-  ref,
-  watch,
-} from 'vue';
+import { computed, onMounted, reactive, ref, watch } from 'vue';
 
 import { useI18n } from 'vue-i18n';
 import { useRoute } from 'vue-router';
@@ -17,6 +11,7 @@ import {
 import { dialogManager } from '@/base/Presentation/Dialogs/dialog.manager';
 
 import FetchEmployeeTasksParams from '../../core/params/fetch.employee.tasks.params';
+import ChangeInsideStatusParams from '../../core/params/change.inside.status.params';
 
 import type TaskAssignmentEmployeeTaskModel from '../../core/models/task.assignment.employee-task.model';
 
@@ -28,10 +23,8 @@ import IndexEmployeeParams from '@/modules/MainOrganization/employee/core/params
 
 import TitleInterface from '@/base/Data/Models/titleInterface';
 
-import {
-  InsideStatusType,
-} from '../../core/constants/inside.status.enum';
-
+import { InsideStatusType } from '../../core/constants/inside.status.enum';
+import type { InsideStatusDecisionValue } from '../../core/constants/inside.status.decision.enum';
 
 type ResultWithError = {
   error?: {
@@ -40,31 +33,18 @@ type ResultWithError = {
   } | null;
 };
 
-
 const emptyValue = '-';
 
-
-const toRecord = (
-  value: unknown,
-): Record<string, unknown> | null =>
-  value &&
-  typeof value === 'object' &&
-  !Array.isArray(value)
+const toRecord = (value: unknown): Record<string, unknown> | null =>
+  value && typeof value === 'object' && !Array.isArray(value)
     ? (value as Record<string, unknown>)
     : null;
 
-
-const toPositiveInteger = (
-  value: unknown,
-): number | null => {
+const toPositiveInteger = (value: unknown): number | null => {
   const numberValue = Number(value);
 
-  return Number.isInteger(numberValue) &&
-    numberValue > 0
-    ? numberValue
-    : null;
+  return Number.isInteger(numberValue) && numberValue > 0 ? numberValue : null;
 };
-
 
 export const useEmployeeTasks = () => {
   /**
@@ -74,23 +54,19 @@ export const useEmployeeTasks = () => {
 
   const { t } = useI18n();
 
-  const taskAssignmentController =
-    TaskAssignmentController.getInstance();
+  const taskAssignmentController = TaskAssignmentController.getInstance();
 
-  const employeeController =
-    EmployeeController.getInstance();
-
+  const employeeController = EmployeeController.getInstance();
 
   const currentTasksPage = ref(1);
 
   const tasksPerPage = ref(10);
 
-  const updatingTasks =
-    ref<Record<number, boolean>>({});
+  const updatingTasks = ref<Record<number, boolean>>({});
 
-  const statusUpdateErrors =
-    ref<Record<number, string>>({});
+  const updatingInsideStatusItems = ref<Record<number, boolean>>({});
 
+  const statusUpdateErrors = ref<Record<number, string>>({});
 
   /**
    * =========================================
@@ -102,33 +78,26 @@ export const useEmployeeTasks = () => {
    * ?status=4
    * =========================================
    */
-  const selectedStatus =
-    computed<InsideStatusType | undefined>(() => {
-      const status = Number(
-        route.query.status,
-      );
+  const selectedStatus = computed<InsideStatusType | undefined>(() => {
+    const status = Number(route.query.status);
 
-      if (
-        status === InsideStatusType.ASSIGN ||
-        status === InsideStatusType.WORKING ||
-        status === InsideStatusType.HOLD ||
-        status === InsideStatusType.REVIEW
-      ) {
-        return status;
-      }
+    if (
+      status === InsideStatusType.ASSIGN ||
+      status === InsideStatusType.WORKING ||
+      status === InsideStatusType.HOLD ||
+      status === InsideStatusType.REVIEW
+    ) {
+      return status;
+    }
 
-      return undefined;
-    });
-
+    return undefined;
+  });
 
   const tasksFilters = reactive({
     employee_id: null as number | null,
   });
 
-
-  const selectedEmployeeFilter =
-    ref<TitleInterface<number> | null>(null);
-
+  const selectedEmployeeFilter = ref<TitleInterface<number> | null>(null);
 
   /**
    * =========================================
@@ -136,76 +105,51 @@ export const useEmployeeTasks = () => {
    * =========================================
    */
   const tasksState = computed(() => {
-    return taskAssignmentController
-      .employeeTasksState.value;
+    return taskAssignmentController.employeeTasksState.value;
   });
-
 
   const tasksLoading = computed(() => {
-    return (
-      tasksState.value instanceof DataLoading
-    );
+    return tasksState.value instanceof DataLoading;
   });
-
 
   const employeesLoading = computed(() => {
-    return (
-      employeeController.listState.value
-      instanceof DataLoading
-    );
+    return employeeController.listState.value instanceof DataLoading;
   });
-
 
   /**
    * =========================================
    * Employee options
    * =========================================
    */
-  const employeeOptions =
-    computed<TitleInterface<number>[]>(() => {
-      const state =
-        employeeController.listState.value as {
-          data?: unknown;
-        };
+  const employeeOptions = computed<TitleInterface<number>[]>(() => {
+    const state = employeeController.listState.value as {
+      data?: unknown;
+    };
 
-      const data = state.data;
+    const data = state.data;
 
-      if (!Array.isArray(data)) {
-        return [];
-      }
+    if (!Array.isArray(data)) {
+      return [];
+    }
 
-      return data
-        .map((employee) => {
-          const employeeRecord =
-            toRecord(employee);
+    return data
+      .map((employee) => {
+        const employeeRecord = toRecord(employee);
 
-          const id =
-            toPositiveInteger(
-              employeeRecord?.id,
-            );
+        const id = toPositiveInteger(employeeRecord?.id);
 
-          if (!id) {
-            return null;
-          }
+        if (!id) {
+          return null;
+        }
 
-          return new TitleInterface<number>({
-            id,
+        return new TitleInterface<number>({
+          id,
 
-            title: String(
-              employeeRecord?.name ??
-              employeeRecord?.title ??
-              `#${id}`,
-            ),
-          });
-        })
-        .filter(
-          (
-            item,
-          ): item is TitleInterface<number> =>
-            item !== null,
-        );
-    });
-
+          title: String(employeeRecord?.name ?? employeeRecord?.title ?? `#${id}`),
+        });
+      })
+      .filter((item): item is TitleInterface<number> => item !== null);
+  });
 
   /**
    * =========================================
@@ -213,71 +157,51 @@ export const useEmployeeTasks = () => {
    * =========================================
    */
   const tasksPagination = computed(() => {
-    const pagination =
-      tasksState.value.pagination;
+    const pagination = tasksState.value.pagination;
 
     if (!pagination) {
       return null;
     }
 
     return {
-      current:
-        pagination.currentPage,
+      current: pagination.currentPage,
 
-      last:
-        pagination.lastPage,
+      last: pagination.lastPage,
 
-      next:
-        pagination.to,
+      next: pagination.to,
 
-      total:
-        pagination.total,
+      total: pagination.total,
 
-      count:
-        pagination.perPage,
+      count: pagination.perPage,
     };
   });
-
 
   const tasksCount = computed(() => {
     if (tasksPagination.value) {
       return tasksPagination.value.total;
     }
 
-    if (
-      tasksState.value instanceof DataSuccess &&
-      Array.isArray(tasksState.value.data)
-    ) {
+    if (tasksState.value instanceof DataSuccess && Array.isArray(tasksState.value.data)) {
       return tasksState.value.data.length;
     }
 
     return 0;
   });
 
-
   /**
    * =========================================
    * Helpers
    * =========================================
    */
-  const valueOrEmpty = (
-    value?: string | number | null,
-  ): string => {
-    if (
-      value === null ||
-      value === undefined ||
-      value === ''
-    ) {
+  const valueOrEmpty = (value?: string | number | null): string => {
+    if (value === null || value === undefined || value === '') {
       return emptyValue;
     }
 
     return String(value);
   };
 
-
-  const formatDate = (
-    value?: string | null,
-  ): string => {
+  const formatDate = (value?: string | null): string => {
     if (!value) {
       return emptyValue;
     }
@@ -285,82 +209,39 @@ export const useEmployeeTasks = () => {
     return value;
   };
 
-
-  const taskRows = (
-    data: unknown,
-  ): TaskAssignmentEmployeeTaskModel[] => {
-    return Array.isArray(data)
-      ? (
-          data as
-            TaskAssignmentEmployeeTaskModel[]
-        )
-      : [];
+  const taskRows = (data: unknown): TaskAssignmentEmployeeTaskModel[] => {
+    return Array.isArray(data) ? (data as TaskAssignmentEmployeeTaskModel[]) : [];
   };
 
-
-  const getResultMessage = (
-    result: ResultWithError,
-  ) => {
+  const getResultMessage = (result: ResultWithError) => {
     return (
-      result.error?.displayMessage ||
-      result.error?.title ||
-      t(
-        'task_assignment.unexpected_error',
-      )
+      result.error?.displayMessage || result.error?.title || t('task_assignment.unexpected_error')
     );
   };
-
 
   /**
    * =========================================
    * Fetch Tasks
    * =========================================
    */
-  const fetchEmployeeTasks = async (
-    page = currentTasksPage.value,
-  ): Promise<void> => {
+  const fetchEmployeeTasks = async (page = currentTasksPage.value): Promise<void> => {
     currentTasksPage.value = page;
 
-    console.log(
-      'route status:',
-      route.query.status,
-    );
+    const params = new FetchEmployeeTasksParams({
+      pageNumber: page,
 
-    console.log(
-      'selected status:',
-      selectedStatus.value,
-    );
+      perPage: tasksPerPage.value,
 
+      employeeId: tasksFilters.employee_id ?? undefined,
 
-    const params =
-      new FetchEmployeeTasksParams({
-        pageNumber: page,
+      /**
+       * أهم سطر
+       */
+      status: selectedStatus.value,
+    });
 
-        perPage:
-          tasksPerPage.value,
-
-        employeeId:
-          tasksFilters.employee_id ??
-          undefined,
-
-        /**
-         * أهم سطر
-         */
-        status:
-          selectedStatus.value,
-      });
-
-
-    console.log(
-      'tasks params:',
-      params.toMap(),
-    );
-
-
-    await taskAssignmentController
-      .fetchEmployeeTasks(params);
+    await taskAssignmentController.fetchEmployeeTasks(params);
   };
-
 
   /**
    * =========================================
@@ -368,182 +249,146 @@ export const useEmployeeTasks = () => {
    * =========================================
    */
   const onEmployeeFilterChange = (
-    value:
-      | TitleInterface<number>
-      | TitleInterface<number>[]
-      | null,
+    value: TitleInterface<number> | TitleInterface<number>[] | null,
   ): void => {
-    const selected =
-      Array.isArray(value)
-        ? null
-        : value;
+    const selected = Array.isArray(value) ? null : value;
 
-    selectedEmployeeFilter.value =
-      selected;
+    selectedEmployeeFilter.value = selected;
 
-    tasksFilters.employee_id =
-      selected
-        ? Number(selected.id)
-        : null;
+    tasksFilters.employee_id = selected ? Number(selected.id) : null;
 
     void fetchEmployeeTasks(1);
   };
 
-
   const clearEmployeeFilter = (): void => {
     onEmployeeFilterChange(null);
   };
-
 
   /**
    * =========================================
    * Task status
    * =========================================
    */
-  const isTaskUpdating = (
-    task: TaskAssignmentEmployeeTaskModel,
-  ): boolean => {
-    return Boolean(
-      task.id &&
-      updatingTasks.value[task.id],
-    );
+  const isTaskUpdating = (task: TaskAssignmentEmployeeTaskModel): boolean => {
+    return Boolean(task.id && updatingTasks.value[task.id]);
   };
 
-
-  const getTaskStatusValue = (
-    task: TaskAssignmentEmployeeTaskModel,
-  ): string => {
-    return (
-      task.status === undefined ||
-      task.status === null
-    )
-      ? ''
-      : String(task.status);
+  const getTaskStatusValue = (task: TaskAssignmentEmployeeTaskModel): string => {
+    return task.status === undefined || task.status === null ? '' : String(task.status);
   };
 
-
-  const getStatusDisplay = (
-    task: TaskAssignmentEmployeeTaskModel,
-  ): string => {
-    return (
-      task.statusLabel ||
-      valueOrEmpty(
-        task.status ?? null,
-      )
-    );
+  const getStatusDisplay = (task: TaskAssignmentEmployeeTaskModel): string => {
+    return task.statusLabel || valueOrEmpty(task.status ?? null);
   };
 
-
-  const getStatusClass = (
-    task: TaskAssignmentEmployeeTaskModel,
-  ): string => {
-    return (
-      task.status === undefined ||
-      task.status === null
-    )
-      ? 'is-muted'
-      : 'is-progress';
+  const getStatusClass = (task: TaskAssignmentEmployeeTaskModel): string => {
+    return task.status === undefined || task.status === null ? 'is-muted' : 'is-progress';
   };
-
 
   const getSelectedStatusPayload = (
-    task:
-      TaskAssignmentEmployeeTaskModel,
+    task: TaskAssignmentEmployeeTaskModel,
 
     selectedStatus: string,
   ): string | number => {
     return (
-      task.availableStatuses.find(
-        (status) =>
-          String(status.id) ===
-          selectedStatus,
-      )?.id ??
+      task.availableStatuses.find((status) => String(status.id) === selectedStatus)?.id ??
       selectedStatus
     );
   };
 
+  const isInsideStatusUpdating = (task: TaskAssignmentEmployeeTaskModel): boolean => {
+    return Boolean(
+      task.projectDepartmentItemId && updatingInsideStatusItems.value[task.projectDepartmentItemId],
+    );
+  };
+
+  const setInsideStatusUpdating = (projectDepartmentItemId: number, isUpdating: boolean): void => {
+    updatingInsideStatusItems.value = {
+      ...updatingInsideStatusItems.value,
+      [projectDepartmentItemId]: isUpdating,
+    };
+  };
+
+  const changeInsideStatus = async (
+    task: TaskAssignmentEmployeeTaskModel,
+    status: InsideStatusDecisionValue,
+  ): Promise<void> => {
+    const projectDepartmentItemId = task.projectDepartmentItemId;
+
+    if (!projectDepartmentItemId || isInsideStatusUpdating(task)) {
+      return;
+    }
+
+    setInsideStatusUpdating(projectDepartmentItemId, true);
+
+    try {
+      const statusChange = await taskAssignmentController.changeInsideStatus(
+        new ChangeInsideStatusParams({
+          projectDepartmentItemId,
+          status,
+        }),
+      );
+
+      if (!(statusChange instanceof DataSuccess)) {
+        dialogManager.toastError(getResultMessage(statusChange));
+        return;
+      }
+
+      dialogManager.toastSuccess(statusChange.message || t('task_assignment.status_updated'));
+      await fetchEmployeeTasks();
+    } finally {
+      setInsideStatusUpdating(projectDepartmentItemId, false);
+    }
+  };
 
   const changeTaskStatus = async (
-    task:
-      TaskAssignmentEmployeeTaskModel,
+    task: TaskAssignmentEmployeeTaskModel,
 
     selectedStatus: string,
   ): Promise<void> => {
-    if (
-      !task.id ||
-      !task.statusUpdateAction ||
-      isTaskUpdating(task)
-    ) {
+    if (!task.id || !task.statusUpdateAction || isTaskUpdating(task)) {
       return;
     }
 
-    if (
-      !selectedStatus ||
-      selectedStatus ===
-        getTaskStatusValue(task)
-    ) {
+    if (!selectedStatus || selectedStatus === getTaskStatusValue(task)) {
       return;
     }
-
 
     updatingTasks.value = {
       ...updatingTasks.value,
       [task.id]: true,
     };
 
-
     statusUpdateErrors.value = {
       ...statusUpdateErrors.value,
       [task.id]: '',
     };
 
-
     try {
-      const result =
-        await taskAssignmentController
-          .changeEmployeeTaskStatus(
-            task.statusUpdateAction,
-            {
-              task_id: task.id,
+      const result = await taskAssignmentController.changeEmployeeTaskStatus(
+        task.statusUpdateAction,
+        {
+          task_id: task.id,
 
-              status:
-                getSelectedStatusPayload(
-                  task,
-                  selectedStatus,
-                ),
-            },
-          );
+          status: getSelectedStatusPayload(task, selectedStatus),
+        },
+      );
 
-
-      if (
-        result instanceof DataSuccess
-      ) {
-        dialogManager.toastSuccess(
-          result.message ||
-            t(
-              'task_assignment.status_updated',
-            ),
-        );
+      if (result instanceof DataSuccess) {
+        dialogManager.toastSuccess(result.message || t('task_assignment.status_updated'));
 
         await fetchEmployeeTasks();
 
         return;
       }
 
-
       statusUpdateErrors.value = {
         ...statusUpdateErrors.value,
 
-        [task.id]:
-          getResultMessage(result),
+        [task.id]: getResultMessage(result),
       };
 
-
-      dialogManager.toastError(
-        statusUpdateErrors.value[
-          task.id
-        ] ?? '',
-      );
+      dialogManager.toastError(statusUpdateErrors.value[task.id] ?? '');
     } finally {
       updatingTasks.value = {
         ...updatingTasks.value,
@@ -553,47 +398,33 @@ export const useEmployeeTasks = () => {
     }
   };
 
-
   /**
    * =========================================
    * Per page
    * =========================================
    */
-  const onPerPageChange = (
-    count: number,
-  ): void => {
+  const onPerPageChange = (count: number): void => {
     tasksPerPage.value = count;
 
     void fetchEmployeeTasks(1);
   };
-
 
   /**
    * =========================================
    * Initialize
    * =========================================
    */
-  const initializeEmployeeTasks =
-    async (): Promise<void> => {
-      await Promise.all([
-        employeeController.fetchList(
-          new IndexEmployeeParams(
-            '',
-            1,
-            100,
-            0,
-          ),
-        ),
+  const initializeEmployeeTasks = async (): Promise<void> => {
+    await Promise.all([
+      employeeController.fetchList(new IndexEmployeeParams('', 1, 100, 0)),
 
-        fetchEmployeeTasks(1),
-      ]);
-    };
-
+      fetchEmployeeTasks(1),
+    ]);
+  };
 
   onMounted(() => {
     void initializeEmployeeTasks();
   });
-
 
   /**
    * لما sidebar يغير:
@@ -607,13 +438,8 @@ export const useEmployeeTasks = () => {
   watch(
     () => route.query.status,
 
-    (
-      newStatus,
-      oldStatus,
-    ) => {
-      if (
-        newStatus === oldStatus
-      ) {
+    (newStatus, oldStatus) => {
+      if (newStatus === oldStatus) {
         return;
       }
 
@@ -622,7 +448,6 @@ export const useEmployeeTasks = () => {
       void fetchEmployeeTasks(1);
     },
   );
-
 
   return {
     selectedStatus,
@@ -655,7 +480,11 @@ export const useEmployeeTasks = () => {
 
     changeTaskStatus,
 
+    changeInsideStatus,
+
     isTaskUpdating,
+
+    isInsideStatusUpdating,
 
     getTaskStatusValue,
 

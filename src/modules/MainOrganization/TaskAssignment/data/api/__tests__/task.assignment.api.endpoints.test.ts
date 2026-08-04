@@ -18,6 +18,7 @@ describe('TaskAssignmentApiEndpoints', () => {
       'mainportal/assign_project_department_item_task',
     );
     expect(endpoints.fetchEmployeeTasks).toContain('mainportal/fetch_employee_tasks');
+    expect(endpoints.changeInsideStatus).toContain('mainportal/change_inside_status');
     expect(endpoints.taskStatusAction('update_employee_task_status')).toContain(
       'mainportal/update_employee_task_status',
     );
@@ -32,5 +33,6 @@ describe('TaskAssignmentApiEndpoints', () => {
       'organization/assign_project_department_item_task',
     );
     expect(endpoints.fetchEmployeeTasks).toContain('organization/fetch_employee_tasks');
+    expect(endpoints.changeInsideStatus).toContain('organization/change_inside_status');
   });
 });

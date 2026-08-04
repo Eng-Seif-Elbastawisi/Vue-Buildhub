@@ -6,18 +6,18 @@
   const steps = [
     {
       id: 1,
-      titleKey: 'Project.steps.project_data',
-      descriptionKey: 'Project.steps.project_data_description',
+      titleKey: 'Project.steps.request_data',
+      descriptionKey: 'Project.steps.request_data_description',
     },
     {
       id: 2,
-      titleKey: 'Project.steps.project_preview',
-      descriptionKey: 'Project.steps.project_preview_description',
+      titleKey: 'Project.steps.request_preview',
+      descriptionKey: 'Project.steps.request_preview_description',
     },
     {
       id: 3,
-      titleKey: 'Project.steps.project_floors',
-      descriptionKey: 'Project.steps.project_floors_description',
+      titleKey: 'Project.steps.request_floors',
+      descriptionKey: 'Project.steps.request_floors_description',
     },
   ];
 </script>

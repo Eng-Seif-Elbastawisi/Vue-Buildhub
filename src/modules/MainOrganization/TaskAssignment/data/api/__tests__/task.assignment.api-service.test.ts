@@ -1,4 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
+import { InsideStatusDecision } from '../../../core/constants/inside.status.decision.enum';
+import ChangeInsideStatusParams from '../../../core/params/change.inside.status.params';
 import TaskAssignmentApiService from '../task.assignment.api-service';
 
 vi.mock('@/stores/user', () => ({
@@ -43,6 +45,22 @@ describe('TaskAssignmentApiService', () => {
         task_id: 7,
         status: 'done',
       },
+    );
+  });
+
+  it('sends review decisions to the change_inside_status endpoint', async () => {
+    const service = TaskAssignmentApiService.getInstance();
+    const customPost = vi.spyOn(service, 'customPost').mockResolvedValue({} as never);
+    const params = new ChangeInsideStatusParams({
+      projectDepartmentItemId: 39,
+      status: InsideStatusDecision.ACCEPT,
+    });
+
+    await service.changeInsideStatus(params);
+
+    expect(customPost).toHaveBeenCalledWith(
+      expect.stringContaining('/mainportal/change_inside_status'),
+      params,
     );
   });
 });
