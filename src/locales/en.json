@@ -2087,5 +2087,8 @@
   "employee.pricing_responsible": "Pricing Responsible",
   "employee.seller": "Seller",
   "employee.engineer": "Engineer",
-  "employee.employee": "Employee"
+  "employee.employee": "Employee",
+  "employee.form_title": "Employee form",
+  "employee.form_description":"Employee form description"
+  
 }
