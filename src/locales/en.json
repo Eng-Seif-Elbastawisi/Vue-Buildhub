@@ -2081,5 +2081,11 @@
   "request.add": "Add request",
   "request.list_title": "Request list",
   "request.list_description": "Request list description",
-  "search_request": "Search request"
+  "search_request": "Search request",
+  "employee.team_leader": "Team Leader",
+  "employee.reviewer": "Reviewer",
+  "employee.pricing_responsible": "Pricing Responsible",
+  "employee.seller": "Seller",
+  "employee.engineer": "Engineer",
+  "employee.employee": "Employee"
 }
