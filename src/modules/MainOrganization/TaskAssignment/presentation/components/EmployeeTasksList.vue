@@ -94,9 +94,9 @@
                 <th>{{ $t('task_assignment.department_item') }}</th>
                 <th>{{ $t('task_assignment.assigned_employees') }}</th>
                 <th>{{ $t('task_assignment.notes') }}</th>
-                <th>{{ $t('status') }}</th>
+                <!-- <th>{{ $t('status') }}</th> -->
+                <th v-if="taskRows(data).some((task) => task.insideStatus === 4)">{{ $t('task_assignment.review_decision') }}</th>
                 <th>{{ $t('general.actions') }}</th>
-                <th>{{ $t('task_assignment.review_decision') }}</th>
               </tr>
             </thead>
 
@@ -120,25 +120,14 @@
                   </span>
                 </td>
                 <td>{{ valueOrEmpty(task.notes) }}</td>
-                <td>
+                <!-- <td>
                   <span class="task-assignment-status-badge" :class="getStatusClass(task)">
                     {{ getStatusDisplay(task) }}
                   </span>
-                </td>
+                </td> -->
                 <!-- <td>{{ formatDate(task.createdAt) }}</td> -->
                 <!-- <td>{{ formatDate(task.dueDate) }}</td> -->
-                <td>
-                  <TaskStatusAction
-                    :task="task"
-                    :disabled="isTaskUpdating(task)"
-                    :status-error="task.id ? statusUpdateErrors[task.id] : ''"
-                    @change-status="
-                      (selectedTask, selectedStatus) =>
-                        emit('change-status', selectedTask, selectedStatus)
-                    "
-                  />
-                </td>
-                <td>
+                <td v-if="task.insideStatus === 4">
                   <div class="employee-tasks-list__review-actions">
                     <button
                       type="button"
@@ -166,6 +155,18 @@
                     </button>
                   </div>
                 </td>
+                <td>
+                  <TaskStatusAction
+                    :task="task"
+                    :disabled="isTaskUpdating(task)"
+                    :status-error="task.id ? statusUpdateErrors[task.id] : ''"
+                    @change-status="
+                      (selectedTask, selectedStatus) =>
+                        emit('change-status', selectedTask, selectedStatus)
+                    "
+                  />
+                </td>
+
               </tr>
             </tbody>
           </table>

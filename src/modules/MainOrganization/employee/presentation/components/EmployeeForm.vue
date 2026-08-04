@@ -31,10 +31,11 @@
   const type = ref<EmployeeType>(EmployeeType.EMPLOYEE);
   const employeeTypeOptions = computed<TitleInterface<EmployeeType>[]>(() => [
     { id: EmployeeType.EMPLOYEE, title: t('employee.employee') },
-    { id: EmployeeType.ENGINEER, title: t(' employee.engineer') },
-    { id: EmployeeType.SELLER, title: t(' employee.seller') },
+    { id: EmployeeType.ENGINEER, title: t('employee.engineer') },
+    { id: EmployeeType.SELLER, title: t('employee.seller') },
     { id: EmployeeType.PRICING_RESPONSIBLE, title: t('employee.pricing_responsible') },
-    { id: EmployeeType.REVIEWER, title: t('employee.blaner') },
+    { id: EmployeeType.REVIEWER, title: t('employee.reviewer') },
+    { id: EmployeeType.TEAM_LEADER, title: t('employee.team_leader') },
   ]);
   const selectedEmployeeType = ref<TitleInterface<EmployeeType> | null>(null);
   const updateData = () => {

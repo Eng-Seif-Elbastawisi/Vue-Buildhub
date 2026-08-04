@@ -2092,5 +2092,12 @@
   "request.add": "إضافة طلب",
   "request.list_title": "قائمة الطلبات",
   "request.list_description": "قائمة الطلبات",
-  "search_request": "بحث في الطلبات"
+  "search_request": "بحث في الطلبات",
+   "employee.team_leader": "قائد الفريق",
+  "employee.reviewer": "المراجع",
+  "employee.pricing_responsible": "مسؤول التسعير",
+  "employee.seller": "البائع", 
+  "employee.engineer": "المهندس",
+  "employee.employee": "الموظف"
+  
 }
