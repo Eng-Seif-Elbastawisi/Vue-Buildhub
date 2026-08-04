@@ -3,7 +3,7 @@ import { ProjectItemPriceEnum } from '../constant/project.item.Price.enum';
 import OrganizationShowModel from '@/modules/shared/Organization/core/models/organization.show.model';
 import OrganizationEmployeeModel from '@/modules/shared/Organization/core/models/employee.model';
 import ItemShowModel from '@/modules/shared/Item/core/models/Item.show.model';
-import { ProjectFloorShowModel } from '@/modules/MainOrganization/ProjectFloor';
+import {  ProjectFloorShowModel } from '@/modules/MainOrganization/ProjectFloor';
 import ProjectAttachmentModel from '@/modules/MainOrganization/Project/core/models/project.show.attachment';
 import type ProjectHistoryModel from './project.history.model';
 import ProjectSimpleModel from './project.simple.model';
@@ -35,6 +35,7 @@ export default class ProjectItemShowModel {
   public readonly inside_status?: InsideStatusType;
   public readonly duration?: number;
   public readonly duration_type?: TaskDurationType;
+
 
   constructor(data: {
     id?: number;
@@ -86,6 +87,7 @@ export default class ProjectItemShowModel {
     this.inside_status = data.inside_status;
     this.duration = data.duration;
     this.duration_type = data.duration_type;
+    this.project_floor = data.project_floor;
 
     Object.freeze(this);
   }

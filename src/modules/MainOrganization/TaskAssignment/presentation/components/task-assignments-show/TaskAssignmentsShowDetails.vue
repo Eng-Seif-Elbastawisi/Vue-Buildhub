@@ -5,12 +5,13 @@ import type ProjectItemShowModel from '@/modules/MainOrganization/ProjectItem/co
 import projectIllustration from '@/assets/images/task-assignment/project-illustration.svg';
 
 import { TaskDurationType } from '../../../core/constants/taskDurationType.enum';
+import { getFloorNumberNameKey } from '@/modules/MainOrganization/ProjectFloor/core/constants/floor.number.enum';
 
 const { model } = defineProps({
   model: {
     type: Object as PropType<ProjectItemShowModel | null>,
     default: null,
-  },
+  }, 
 });
 
 const durationTypeName = (durationType: TaskDurationType): string => {
@@ -54,6 +55,12 @@ const durationTypeName = (durationType: TaskDurationType): string => {
         <span class="task-assignment-show__metric-icon task-assignment-show__metric-icon--department" aria-hidden="true" />
         <span class="detail-label">{{ $t('department') }}</span>
         <span class="detail-value">{{ model?.department ?? '-' }}</span>
+      </div>
+
+       <div class="detail-item task-assignment-show__metric task-assignment-show__metric--floor">
+        <span class="task-assignment-show__metric-icon task-assignment-show__metric-icon--floor" aria-hidden="true" />
+        <span class="detail-label">{{ $t('floor') }}</span>
+        <span class="detail-value">{{  $t(getFloorNumberNameKey(model?.project_floor?.floor_number)) }}</span>
       </div>
 
       <div class="detail-item task-assignment-show__metric task-assignment-show__metric--duration-type">

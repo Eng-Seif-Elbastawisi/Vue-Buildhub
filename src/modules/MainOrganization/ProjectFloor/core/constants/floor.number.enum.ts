@@ -1,7 +1,7 @@
 /**
  * Floor number enumeration
  */
-export const FloorNumber = {
+export const FloorNumber = { 
   BASEMENT: -1,
   GROUND_FLOOR: 0,
   FIRST_FLOOR: 1,
