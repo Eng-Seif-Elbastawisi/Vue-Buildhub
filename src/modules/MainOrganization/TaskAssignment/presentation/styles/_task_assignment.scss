@@ -478,6 +478,53 @@
   font-size: var(--xs-size);
 }
 
+.employee-tasks-list__review-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  min-width: 180px;
+}
+
+.task-review-action {
+  display: inline-flex;
+  min-height: 36px;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.75rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-family: 'Bold';
+  font-size: var(--xs-size);
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease,
+    color 150ms ease;
+}
+
+.task-review-action--accept {
+  border-color: var(--success);
+  background: var(--success-light);
+  color: var(--success-dark);
+}
+
+.task-review-action--reject {
+  border-color: var(--danger);
+  background: var(--danger-light);
+  color: var(--danger-dark);
+}
+
+.task-review-action:focus-visible {
+  outline: 2px solid var(--PrimaryColor);
+  outline-offset: 2px;
+}
+
+.task-review-action:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
 .employee-tasks-list__skeleton {
   display: grid;
   gap: 0.6rem;

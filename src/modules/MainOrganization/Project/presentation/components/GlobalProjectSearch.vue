@@ -597,7 +597,7 @@
   }
 
   :global(.project-search-dialog) {
-    width: min(760px, calc(100vw - 2rem));
+    width: min(860px, calc(100vw - 2rem));
     max-height: min(780px, calc(100vh - 2rem));
     overflow: hidden;
     border: 1px solid var(--border-weak);

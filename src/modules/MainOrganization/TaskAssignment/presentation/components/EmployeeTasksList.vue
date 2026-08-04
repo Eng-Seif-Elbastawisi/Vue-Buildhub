@@ -2,6 +2,10 @@
   import type { DataState } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
   import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
   import Pagination from '@/shared/HelpersComponents/Pagination.vue';
+  import {
+    InsideStatusDecision,
+    type InsideStatusDecisionValue,
+  } from '../../core/constants/inside.status.decision.enum';
   import type TaskAssignmentEmployeeTaskModel from '../../core/models/task.assignment.employee-task.model';
   import TaskStatusAction from './TaskStatusAction.vue';
 
@@ -22,6 +26,7 @@
     formatDate: (value?: string | null) => string;
     valueOrEmpty: (value?: string | number | null) => string;
     isTaskUpdating: (task: TaskAssignmentEmployeeTaskModel) => boolean;
+    isInsideStatusUpdating: (task: TaskAssignmentEmployeeTaskModel) => boolean;
     getStatusDisplay: (task: TaskAssignmentEmployeeTaskModel) => string;
     getStatusClass: (task: TaskAssignmentEmployeeTaskModel) => string;
   }>();
@@ -31,6 +36,11 @@
     (event: 'change-page', page: number): void;
     (event: 'per-page-change', count: number): void;
     (event: 'change-status', task: TaskAssignmentEmployeeTaskModel, selectedStatus: string): void;
+    (
+      event: 'change-inside-status',
+      task: TaskAssignmentEmployeeTaskModel,
+      status: InsideStatusDecisionValue,
+    ): void;
   }>();
 
   const retryTasks = async () => {
@@ -84,10 +94,9 @@
                 <th>{{ $t('task_assignment.department_item') }}</th>
                 <th>{{ $t('task_assignment.assigned_employees') }}</th>
                 <th>{{ $t('task_assignment.notes') }}</th>
-                <!-- <th>{{ $t('status') }}</th> -->
-                <th>{{ $t('task_assignment.created_at') }}</th>
-                <!-- <th>{{ $t('task_assignment.due_date') }}</th> -->
+                <th>{{ $t('status') }}</th>
                 <th>{{ $t('general.actions') }}</th>
+                <th>{{ $t('task_assignment.review_decision') }}</th>
               </tr>
             </thead>
 
@@ -126,8 +135,36 @@
                     @change-status="
                       (selectedTask, selectedStatus) =>
                         emit('change-status', selectedTask, selectedStatus)
-                    " 
+                    "
                   />
+                </td>
+                <td>
+                  <div class="employee-tasks-list__review-actions">
+                    <button
+                      type="button"
+                      class="task-review-action task-review-action--accept"
+                      :disabled="!task.projectDepartmentItemId || isInsideStatusUpdating(task)"
+                      @click="emit('change-inside-status', task, InsideStatusDecision.ACCEPT)"
+                    >
+                      <i
+                        :class="
+                          isInsideStatusUpdating(task) ? 'pi pi-spin pi-spinner' : 'pi pi-check'
+                        "
+                        aria-hidden="true"
+                      ></i>
+                      {{ $t('task_assignment.accept') }}
+                    </button>
+
+                    <button
+                      type="button"
+                      class="task-review-action task-review-action--reject"
+                      :disabled="!task.projectDepartmentItemId || isInsideStatusUpdating(task)"
+                      @click="emit('change-inside-status', task, InsideStatusDecision.REJECT)"
+                    >
+                      <i class="pi pi-times" aria-hidden="true"></i>
+                      {{ $t('task_assignment.reject') }}
+                    </button>
+                  </div>
                 </td>
               </tr>
             </tbody>

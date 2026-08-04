@@ -1,4 +1,4 @@
-import { computed, onMounted, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { jsPDF } from 'jspdf';
 import autoTable, { type CellHookData, type RowInput } from 'jspdf-autotable';
 import { useRoute } from 'vue-router';
@@ -1320,9 +1320,14 @@ export const useProjectShow = () => {
     status: currentConvertStatus.value,
   }));
 
-  onMounted(() => {
-    void fetchProject();
-  });
+  watch(
+    projectId,
+    () => {
+      localConvertStatus.value = null;
+      void fetchProject();
+    },
+    { immediate: true },
+  );
 
   return {
     t,

@@ -4,6 +4,8 @@ import {
   DataSuccess,
 } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
 import TaskAssignmentEmployeeTaskModel from '../../../core/models/task.assignment.employee-task.model';
+import { InsideStatusDecision } from '../../../core/constants/inside.status.decision.enum';
+import ChangeInsideStatusParams from '../../../core/params/change.inside.status.params';
 import TaskAssignmentApiService from '../../api/task.assignment.api-service';
 import TaskAssignmentRepository from '../task.assignment.repository';
 
@@ -41,6 +43,10 @@ describe('TaskAssignmentRepository', () => {
       data: { status: true, message: 'Task status changed' },
       statusCode: 200,
     });
+    vi.spyOn(apiService, 'changeInsideStatus').mockResolvedValue({
+      data: { status: true, message: 'Inside status changed' },
+      statusCode: 200,
+    });
 
     const assigned = await repository.assignProjectDepartmentItemTask({
       project_department_item_id: 39,
@@ -52,6 +58,12 @@ describe('TaskAssignmentRepository', () => {
       task_id: 7,
       status: 'done',
     });
+    const insideStatus = await repository.changeInsideStatus(
+      new ChangeInsideStatusParams({
+        projectDepartmentItemId: 39,
+        status: InsideStatusDecision.ACCEPT,
+      }),
+    );
 
     expect(assigned).toBeInstanceOf(DataSuccess);
     expect(tasks).toBeInstanceOf(DataSuccess);
@@ -59,6 +71,7 @@ describe('TaskAssignmentRepository', () => {
     expect(tasks.data?.[0].title).toBe('Design review');
     expect(tasks.pagination?.total).toBe(1);
     expect(taskStatus).toBeInstanceOf(DataSuccess);
+    expect(insideStatus).toBeInstanceOf(DataSuccess);
   });
 
   it('returns DataFailed when the service reports a failed action', async () => {

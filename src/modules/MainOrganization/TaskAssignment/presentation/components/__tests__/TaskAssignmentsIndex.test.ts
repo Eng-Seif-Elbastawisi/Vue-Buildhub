@@ -5,6 +5,7 @@ import TaskAssignmentsIndex from '../TaskAssignmentsIndex.vue';
 const mocks = vi.hoisted(() => ({
   fetchEmployeeTasks: vi.fn(),
   changeTaskStatus: vi.fn(),
+  changeInsideStatus: vi.fn(),
   onPerPageChange: vi.fn(),
 }));
 
@@ -20,7 +21,9 @@ vi.mock('../../composables/useEmployeeTasks', () => ({
     taskRows: () => [],
     fetchEmployeeTasks: mocks.fetchEmployeeTasks,
     changeTaskStatus: mocks.changeTaskStatus,
+    changeInsideStatus: mocks.changeInsideStatus,
     isTaskUpdating: () => false,
+    isInsideStatusUpdating: () => false,
     getStatusDisplay: () => 'Pending',
     getStatusClass: () => 'is-progress',
     onPerPageChange: mocks.onPerPageChange,

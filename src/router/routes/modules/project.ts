@@ -31,7 +31,7 @@ export const ProjectRoutes: RouteRecordRaw[] = [
     name: 'add-project',
     component: () => import('@/views/MainOrganization/Project/AddProject.vue'),
     meta: {
-      breadcrumb: 'Add project',
+      breadcrumb: 'Add request',
       parent: 'project',
     },
   },
@@ -41,7 +41,7 @@ export const ProjectRoutes: RouteRecordRaw[] = [
     component: () => import('@/views/MainOrganization/Project/EditProject.vue'),
     props: true,
     meta: {
-      breadcrumb: 'Edit project',
+      breadcrumb: 'Edit request',
       parent: 'project',
     },
   },

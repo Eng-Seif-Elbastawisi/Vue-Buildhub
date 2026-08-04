@@ -5,21 +5,17 @@ import {
   DataFailed,
   DataSuccess,
 } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
-import {
-  ErrorModel,
-  ErrorType,
-} from '@/base/Core/NetworkStructure/Resources/errors/errorModel';
+import { ErrorModel, ErrorType } from '@/base/Core/NetworkStructure/Resources/errors/errorModel';
 import PaginationModel from '@/base/Core/Models/paginationModel';
 import type { ApiResponse } from '@/base/Data/ApiService/baseApiService';
-import BaseRepository, {
-  type RepositoryConfig,
-} from '@/base/Domain/Repositories/baseRepository';
+import BaseRepository, { type RepositoryConfig } from '@/base/Domain/Repositories/baseRepository';
 
 import { HttpStatusCode } from 'axios';
 
 import TaskAssignmentEmployeeTaskModel from '../../core/models/task.assignment.employee-task.model';
 import TaskAssignmentApprovedTaskModel from '../../core/models/task.assignment.approved-task.model';
 import type FetchApprovedTasksParams from '../../core/params/fetch.approved.tasks.params';
+import type ChangeInsideStatusParams from '../../core/params/change.inside.status.params';
 import TaskAssignmentApiService from '../api/task.assignment.api-service';
 
 interface TaskAssignmentActionResponse {
@@ -30,9 +26,7 @@ interface TaskAssignmentActionResponse {
   pagination?: unknown;
 }
 
-type TaskAssignmentActionParams =
-  | Params
-  | Record<string, unknown>;
+type TaskAssignmentActionParams = Params | Record<string, unknown>;
 
 export default class TaskAssignmentRepository extends BaseRepository<
   TaskAssignmentEmployeeTaskModel,
@@ -62,66 +56,45 @@ export default class TaskAssignmentRepository extends BaseRepository<
 
   public static getInstance(): TaskAssignmentRepository {
     if (!TaskAssignmentRepository.instance) {
-      TaskAssignmentRepository.instance =
-        new TaskAssignmentRepository();
+      TaskAssignmentRepository.instance = new TaskAssignmentRepository();
     }
 
     return TaskAssignmentRepository.instance;
   }
 
-  protected parseItem(
-    data: Record<string, unknown>,
-  ): TaskAssignmentEmployeeTaskModel {
+  protected parseItem(data: Record<string, unknown>): TaskAssignmentEmployeeTaskModel {
     return TaskAssignmentEmployeeTaskModel.fromJson(data);
   }
 
-  protected parseList(
-    data: unknown,
-  ): TaskAssignmentEmployeeTaskModel[] {
+  protected parseList(data: unknown): TaskAssignmentEmployeeTaskModel[] {
     if (!Array.isArray(data)) {
       return [];
     }
 
     return data
-      .filter(
-        (
-          item,
-        ): item is Record<string, unknown> =>
-          Boolean(
-            item &&
-            typeof item === 'object' &&
-            !Array.isArray(item),
-          ),
+      .filter((item): item is Record<string, unknown> =>
+        Boolean(item && typeof item === 'object' && !Array.isArray(item)),
       )
-      .map((item) =>
-        TaskAssignmentEmployeeTaskModel.fromJson(item),
-      );
+      .map((item) => TaskAssignmentEmployeeTaskModel.fromJson(item));
   }
 
   public async assignProjectDepartmentItemTask(
     params?: TaskAssignmentActionParams,
   ): Promise<DataState<void>> {
     return this.executeTaskAssignmentAction(() =>
-      this.apiService.assignProjectDepartmentItemTask(
-        params,
-      ),
+      this.apiService.assignProjectDepartmentItemTask(params),
     );
   }
 
   public async fetchEmployeeTasks(
     params?: TaskAssignmentActionParams,
-  ): Promise<
-    DataState<TaskAssignmentEmployeeTaskModel[]>
-  > {
+  ): Promise<DataState<TaskAssignmentEmployeeTaskModel[]>> {
     try {
-      const response =
-        await this.apiService.fetchEmployeeTasks(params);
+      const response = await this.apiService.fetchEmployeeTasks(params);
 
       return this.processEmployeeTasksResponse(response);
     } catch (error) {
-      return this.handleError<
-        TaskAssignmentEmployeeTaskModel[]
-      >(error);
+      return this.handleError<TaskAssignmentEmployeeTaskModel[]>(error);
     }
   }
 
@@ -130,49 +103,39 @@ export default class TaskAssignmentRepository extends BaseRepository<
     params?: TaskAssignmentActionParams,
   ): Promise<DataState<void>> {
     return this.executeTaskAssignmentAction(() =>
-      this.apiService.changeEmployeeTaskStatus(
-        action,
-        params,
-      ),
+      this.apiService.changeEmployeeTaskStatus(action, params),
     );
   }
 
   public async setTaskEmployeeStatus(
     params?: TaskAssignmentActionParams,
   ): Promise<DataState<void>> {
-    return this.executeTaskAssignmentAction(() =>
-      this.apiService.setTaskEmployeeStatus(params),
-    );
+    return this.executeTaskAssignmentAction(() => this.apiService.setTaskEmployeeStatus(params));
+  }
+
+  public async changeInsideStatus(params: ChangeInsideStatusParams): Promise<DataState<void>> {
+    return this.executeTaskAssignmentAction(() => this.apiService.changeInsideStatus(params));
   }
 
   public async fetchApprovedTasks(
     params: FetchApprovedTasksParams,
-  ): Promise<
-    DataState<TaskAssignmentApprovedTaskModel[]>
-  > {
+  ): Promise<DataState<TaskAssignmentApprovedTaskModel[]>> {
     try {
-      const response =
-        await this.apiService.fetchApprovedTasks(params);
+      const response = await this.apiService.fetchApprovedTasks(params);
 
       return this.processApprovedTasksResponse(response);
     } catch (error) {
-      return this.handleError<
-        TaskAssignmentApprovedTaskModel[]
-      >(error);
+      return this.handleError<TaskAssignmentApprovedTaskModel[]>(error);
     }
   }
 
   private async executeTaskAssignmentAction(
-    apiCall: () => Promise<
-      ApiResponse<TaskAssignmentActionResponse>
-    >,
+    apiCall: () => Promise<ApiResponse<TaskAssignmentActionResponse>>,
   ): Promise<DataState<void>> {
     try {
       const response = await apiCall();
 
-      return this.processTaskAssignmentActionResponse(
-        response,
-      );
+      return this.processTaskAssignmentActionResponse(response);
     } catch (error) {
       return this.handleError<void>(error);
     }
@@ -188,10 +151,7 @@ export default class TaskAssignmentRepository extends BaseRepository<
     }
 
     return new DataFailed<void>({
-      error: new ErrorModel(
-        response.data.message ?? 'error.retry_later',
-        ErrorType.serviceSide,
-      ),
+      error: new ErrorModel(response.data.message ?? 'error.retry_later', ErrorType.serviceSide),
     });
   }
 
@@ -199,53 +159,29 @@ export default class TaskAssignmentRepository extends BaseRepository<
     response: ApiResponse<TaskAssignmentActionResponse>,
   ): DataState<TaskAssignmentEmployeeTaskModel[]> {
     if (!this.isSuccessfulResponse(response)) {
-      return new DataFailed<
-        TaskAssignmentEmployeeTaskModel[]
-      >({
-        error: new ErrorModel(
-          response.data.message ?? 'error.retry_later',
-          ErrorType.serviceSide,
-        ),
+      return new DataFailed<TaskAssignmentEmployeeTaskModel[]>({
+        error: new ErrorModel(response.data.message ?? 'error.retry_later', ErrorType.serviceSide),
       });
     }
 
     const responsePayload = response.data.data;
-    const rows = this.extractEmployeeTaskRows(
-      responsePayload,
-    );
+    const rows = this.extractEmployeeTaskRows(responsePayload);
 
     if (!rows.length) {
-      return new DataEmpty<
-        TaskAssignmentEmployeeTaskModel[]
-      >(
-        new ErrorModel(
-          response.data.message ?? 'no_data',
-          ErrorType.dataEmpty,
-        ),
+      return new DataEmpty<TaskAssignmentEmployeeTaskModel[]>(
+        new ErrorModel(response.data.message ?? 'no_data', ErrorType.dataEmpty),
       );
     }
 
     const tasks = rows
-      .filter(
-        (
-          row,
-        ): row is Record<string, unknown> =>
-          Boolean(
-            row &&
-            typeof row === 'object' &&
-            !Array.isArray(row),
-          ),
+      .filter((row): row is Record<string, unknown> =>
+        Boolean(row && typeof row === 'object' && !Array.isArray(row)),
       )
-      .map((row) =>
-        TaskAssignmentEmployeeTaskModel.fromJson(row),
-      );
+      .map((row) => TaskAssignmentEmployeeTaskModel.fromJson(row));
 
-    return new DataSuccess<
-      TaskAssignmentEmployeeTaskModel[]
-    >({
+    return new DataSuccess<TaskAssignmentEmployeeTaskModel[]>({
       data: tasks,
-      pagination:
-        this.extractPagination(responsePayload),
+      pagination: this.extractPagination(responsePayload),
       message: response.data.message,
     });
   }
@@ -254,99 +190,58 @@ export default class TaskAssignmentRepository extends BaseRepository<
     response: ApiResponse<TaskAssignmentActionResponse>,
   ): DataState<TaskAssignmentApprovedTaskModel[]> {
     if (!this.isSuccessfulResponse(response)) {
-      return new DataFailed<
-        TaskAssignmentApprovedTaskModel[]
-      >({
-        error: new ErrorModel(
-          response.data.message ?? 'error.retry_later',
-          ErrorType.serviceSide,
-        ),
+      return new DataFailed<TaskAssignmentApprovedTaskModel[]>({
+        error: new ErrorModel(response.data.message ?? 'error.retry_later', ErrorType.serviceSide),
       });
     }
 
-    const rows = this.extractApprovedTaskRows(
-      response.data.data,
-    );
+    const rows = this.extractApprovedTaskRows(response.data.data);
 
     if (!rows.length) {
-      return new DataEmpty<
-        TaskAssignmentApprovedTaskModel[]
-      >(
-        new ErrorModel(
-          response.data.message ?? 'no_data',
-          ErrorType.dataEmpty,
-        ),
+      return new DataEmpty<TaskAssignmentApprovedTaskModel[]>(
+        new ErrorModel(response.data.message ?? 'no_data', ErrorType.dataEmpty),
       );
     }
 
     const tasks = rows
-      .filter(
-        (
-          row,
-        ): row is Record<string, unknown> =>
-          Boolean(
-            row &&
-            typeof row === 'object' &&
-            !Array.isArray(row),
-          ),
+      .filter((row): row is Record<string, unknown> =>
+        Boolean(row && typeof row === 'object' && !Array.isArray(row)),
       )
-      .map((row) =>
-        TaskAssignmentApprovedTaskModel.fromJson(row),
-      );
+      .map((row) => TaskAssignmentApprovedTaskModel.fromJson(row));
 
     if (!tasks.length) {
-      return new DataEmpty<
-        TaskAssignmentApprovedTaskModel[]
-      >(
-        new ErrorModel(
-          response.data.message ?? 'no_data',
-          ErrorType.dataEmpty,
-        ),
+      return new DataEmpty<TaskAssignmentApprovedTaskModel[]>(
+        new ErrorModel(response.data.message ?? 'no_data', ErrorType.dataEmpty),
       );
     }
 
-    return new DataSuccess<
-      TaskAssignmentApprovedTaskModel[]
-    >({
+    return new DataSuccess<TaskAssignmentApprovedTaskModel[]>({
       data: tasks,
-      pagination:
-        this.extractApprovedTasksPagination(response),
+      pagination: this.extractApprovedTasksPagination(response),
       message: response.data.message,
     });
   }
 
-  private isSuccessfulResponse(
-    response: ApiResponse<TaskAssignmentActionResponse>,
-  ): boolean {
+  private isSuccessfulResponse(response: ApiResponse<TaskAssignmentActionResponse>): boolean {
     const successCodes: number[] = [
       HttpStatusCode.Ok,
       HttpStatusCode.Created,
       HttpStatusCode.Accepted,
     ];
 
-    return (
-      successCodes.includes(response.statusCode) &&
-      (response.data.status ?? true)
-    );
+    return successCodes.includes(response.statusCode) && (response.data.status ?? true);
   }
 
-  private extractEmployeeTaskRows(
-    responsePayload: unknown,
-  ): unknown[] {
+  private extractEmployeeTaskRows(responsePayload: unknown): unknown[] {
     if (Array.isArray(responsePayload)) {
       return responsePayload;
     }
 
-    if (
-      !responsePayload ||
-      typeof responsePayload !== 'object' ||
-      Array.isArray(responsePayload)
-    ) {
+    if (!responsePayload || typeof responsePayload !== 'object' || Array.isArray(responsePayload)) {
       return [];
     }
 
-    const payload =
-      responsePayload as Record<string, unknown>;
+    const payload = responsePayload as Record<string, unknown>;
 
     if (Array.isArray(payload.data)) {
       return payload.data;
@@ -363,23 +258,16 @@ export default class TaskAssignmentRepository extends BaseRepository<
     return [];
   }
 
-  private extractApprovedTaskRows(
-    responsePayload: unknown,
-  ): unknown[] {
+  private extractApprovedTaskRows(responsePayload: unknown): unknown[] {
     if (Array.isArray(responsePayload)) {
       return responsePayload;
     }
 
-    if (
-      !responsePayload ||
-      typeof responsePayload !== 'object' ||
-      Array.isArray(responsePayload)
-    ) {
+    if (!responsePayload || typeof responsePayload !== 'object' || Array.isArray(responsePayload)) {
       return [];
     }
 
-    const payload =
-      responsePayload as Record<string, unknown>;
+    const payload = responsePayload as Record<string, unknown>;
 
     if (Array.isArray(payload.data)) {
       return payload.data;
@@ -396,44 +284,26 @@ export default class TaskAssignmentRepository extends BaseRepository<
     return [];
   }
 
-  private extractPagination(
-    responsePayload: unknown,
-  ): PaginationModel | null {
-    if (
-      !responsePayload ||
-      typeof responsePayload !== 'object' ||
-      Array.isArray(responsePayload)
-    ) {
+  private extractPagination(responsePayload: unknown): PaginationModel | null {
+    if (!responsePayload || typeof responsePayload !== 'object' || Array.isArray(responsePayload)) {
       return null;
     }
 
-    const payload =
-      responsePayload as Record<string, unknown>;
+    const payload = responsePayload as Record<string, unknown>;
 
-    const pagination =
-      payload.meta ?? payload.pagination;
+    const pagination = payload.meta ?? payload.pagination;
 
-    if (
-      !pagination ||
-      typeof pagination !== 'object' ||
-      Array.isArray(pagination)
-    ) {
+    if (!pagination || typeof pagination !== 'object' || Array.isArray(pagination)) {
       return null;
     }
 
-    return PaginationModel.fromMap(
-      pagination as Parameters<
-        typeof PaginationModel.fromMap
-      >[0],
-    );
+    return PaginationModel.fromMap(pagination as Parameters<typeof PaginationModel.fromMap>[0]);
   }
 
   private extractApprovedTasksPagination(
     response: ApiResponse<TaskAssignmentActionResponse>,
   ): PaginationModel | null {
-    const topLevelPagination =
-      response.data.meta ??
-      response.data.pagination;
+    const topLevelPagination = response.data.meta ?? response.data.pagination;
 
     if (
       topLevelPagination &&
@@ -441,9 +311,7 @@ export default class TaskAssignmentRepository extends BaseRepository<
       !Array.isArray(topLevelPagination)
     ) {
       return PaginationModel.fromMap(
-        topLevelPagination as Parameters<
-          typeof PaginationModel.fromMap
-        >[0],
+        topLevelPagination as Parameters<typeof PaginationModel.fromMap>[0],
       );
     }
 

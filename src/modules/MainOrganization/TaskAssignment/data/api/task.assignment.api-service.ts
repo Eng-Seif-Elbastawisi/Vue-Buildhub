@@ -1,5 +1,6 @@
 import BaseApiService, { CrudType, type ApiEndpoints } from '@/base/Data/ApiService/baseApiService';
 import type Params from '@/base/Core/Params/params';
+import type ChangeInsideStatusParams from '../../core/params/change.inside.status.params';
 import { TaskAssignmentApiEndpoints } from './task.assignment.api.endpoints';
 
 type TaskAssignmentActionParams = Params | Record<string, unknown>;
@@ -56,5 +57,9 @@ export default class TaskAssignmentApiService extends BaseApiService {
       method: CrudType.POST,
       params: params as Params,
     });
+  }
+
+  async changeInsideStatus(params: ChangeInsideStatusParams) {
+    return await this.customPost(this.taskAssignmentEndpoints.changeInsideStatus, params);
   }
 }
