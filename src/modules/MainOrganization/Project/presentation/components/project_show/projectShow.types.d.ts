@@ -38,7 +38,6 @@ export type FloorSpace = {
 
 export type ProjectPreview = {
   id?: number;
-  engineer?: NamedEntity | null;
   pricing_responsible?: NamedEntity | null;
   notification_type?: number | string | null;
   notification_message?: string | null;
@@ -46,6 +45,7 @@ export type ProjectPreview = {
   preview_time?: string | null;
   site_link?: string | null;
   address?: string | null;
+  engineer?: NamedEntity | null;
 };
 
 export type ProjectFloor = {
@@ -57,6 +57,7 @@ export type ProjectFloor = {
   project_preview?: ProjectPreview | null;
   spaces?: FloorSpace[];
   created_at?: string | null;
+
 };
 
 export type ProjectDepartmentItemRow = {

@@ -1166,6 +1166,7 @@ export const useProjectShow = () => {
     title: t('ProjectShow.project_information_summary'),
     items: projectInfo.value,
     additionalDetailsLabel: t('ProjectShow.view_all_information'),
+    
   }));
 
   const floorsSectionProps = computed(() => ({
@@ -1206,6 +1207,7 @@ export const useProjectShow = () => {
     formatNumber,
     formatArea,
     status: currentConvertStatus.value,
+    withPreview: project.value?.with_preview === true,
   }));
 
   const spacesSectionProps = computed(() => ({

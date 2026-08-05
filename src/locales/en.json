@@ -2089,6 +2089,9 @@
   "employee.engineer": "Engineer",
   "employee.employee": "Employee",
   "employee.form_title": "Employee form",
-  "employee.form_description":"Employee form description"
-  
+  "employee.form_description": "Employee form description",
+  "ProjectFloor": {
+    "floors_locked": "Adding floors is locked",
+    "preview_required_before_floor": "The preview must be added before adding a floor"
+  }
 }

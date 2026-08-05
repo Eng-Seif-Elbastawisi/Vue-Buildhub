@@ -75,7 +75,6 @@ export default class EditProjectParams implements Params {
 
     project_type_id: requiredSelectRule(),
 
-    location_id: requiredSelectRule(),
 
     service_type: requiredSelectRule(),
   });
