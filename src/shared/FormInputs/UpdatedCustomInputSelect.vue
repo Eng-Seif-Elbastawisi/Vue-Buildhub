@@ -1,9 +1,14 @@
 <script lang="ts" setup>
   import MultiSelect from 'primevue/multiselect';
-
   import Select from 'primevue/select';
 
-  import { computed, ref, watch, toRefs } from 'vue';
+  import {
+    computed,
+    ref,
+    watch,
+    toRefs,
+  } from 'vue';
+
   import { useI18n } from 'vue-i18n';
 
   import type Params from '@/base/Core/Params/params';
@@ -11,27 +16,36 @@
   import ValidationService from '@/base/Presentation/Utils/validationService';
 
   import IconBackStage from '@/shared/icons/IconBackStage.vue';
-
   import PlusIcon from '@/shared/icons/PlusIcon.vue';
-
-  // import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
 
   import type TitleInterface from '@/base/Data/Models/titleInterface';
 
   import type BaseController from '@/base/Presentation/Controller/baseController';
 
-  export type ComponentType = 'select' | 'multiselect';
+  export type ComponentType =
+    | 'select'
+    | 'multiselect';
 
   interface Props {
     label?: string;
 
-    options?: TitleInterface<string | number>[];
+    options?: TitleInterface<
+      string | number
+    >[];
 
-    staticOptions?: TitleInterface<string | number>[] | null;
+    staticOptions?:
+      | TitleInterface<
+          string | number
+        >[]
+      | null;
 
     modelValue:
-      | TitleInterface<string | number>
-      | TitleInterface<string | number>[]
+      | TitleInterface<
+          string | number
+        >
+      | TitleInterface<
+          string | number
+        >[]
       | null
       | undefined;
 
@@ -68,29 +82,49 @@
     helpExamples?: string[];
 
     showHelp?: boolean;
+
+    disabled?: boolean;
   }
 
-  const emit = defineEmits(['update:modelValue', 'update:slot']);
+  const emit = defineEmits<{
+    'update:modelValue': [
+      value:
+        | TitleInterface<
+            string | number
+          >
+        | TitleInterface<
+            string | number
+          >[]
+        | null,
+    ];
+
+    'update:slot': [];
+  }>();
 
   const { t } = useI18n();
 
-  const props = withDefaults(defineProps<Props>(), {
-    type: 1,
+  const props = withDefaults(
+    defineProps<Props>(),
+    {
+      type: 1,
 
-    required: false,
+      required: false,
 
-    autoFill: false,
+      autoFill: false,
 
-    id: 'custom-select-input',
+      id: 'custom-select-input',
 
-    reload: true,
+      reload: true,
 
-    staticOptions: null,
+      staticOptions: null,
 
-    optional: false,
+      optional: false,
 
-    showHelp: true,
-  });
+      showHelp: true,
+
+      disabled: false,
+    },
+  );
 
   const {
     modelValue,
@@ -110,135 +144,288 @@
     required,
 
     reload: enableReload,
-  } = toRefs(props);
 
-  // Reactive state
+    disabled,
+  } = toRefs(props);
 
   const loading = ref(false);
 
-  const message = ref(t('no_data_found'));
-
-  const localValue = ref(props.modelValue);
-
-  const dynamicOptions = ref<TitleInterface<string | number>[]>([]);
-
-  // Computed properties
-
-  const isMultiselect = computed(() => Number(type.value) === 2);
-
-  const componentType = computed(() => (isMultiselect.value ? MultiSelect : Select));
-
-  const mergedOptions = computed(() => staticOptions?.value ?? dynamicOptions.value);
-
-  const multiselectProps = computed(() =>
-    isMultiselect.value ? { display: 'chip', maxSelectedLabels: 6 } : {},
+  const message = ref(
+    t('no_data_found'),
   );
 
-  // Value handling
+  const localValue = ref(
+    props.modelValue,
+  );
+
+  const dynamicOptions = ref<
+    TitleInterface<
+      string | number
+    >[]
+  >([]);
+
+  const isMultiselect = computed(
+    () => Number(type.value) === 2,
+  );
+
+  const componentType = computed(
+    () =>
+      isMultiselect.value
+        ? MultiSelect
+        : Select,
+  );
+
+  const mergedOptions = computed(
+    () =>
+      staticOptions?.value ??
+      dynamicOptions.value,
+  );
+
+  const multiselectProps = computed(
+    () =>
+      isMultiselect.value
+        ? {
+            display: 'chip',
+            maxSelectedLabels: 6,
+          }
+        : {},
+  );
 
   const normalizedValue = computed({
     get: () => localValue.value,
 
     set: (newValue) => {
-      localValue.value = isMultiselect.value ? ensureArray(newValue) : ensureSingle(newValue);
+      if (disabled.value) {
+        return;
+      }
 
-      // console.log(localValue.value, 'localValue.value');
+      localValue.value =
+        isMultiselect.value
+          ? ensureArray(newValue)
+          : ensureSingle(newValue);
 
       emitUpdate();
     },
   });
 
-  // Watchers
+  watch(
+    modelValue,
+    syncLocalValue,
+  );
 
-  watch(modelValue, syncLocalValue);
+  watch(
+    [
+      params,
+      controller,
+      disabled,
+    ],
+    handleOptionUpdates,
+    {
+      immediate: true,
+    },
+  );
 
-  watch([params, controller], handleOptionUpdates, { immediate: true });
+  watch(
+    mergedOptions,
+    () => {
+      if (
+        !modelValue.value ||
+        Array.isArray(
+          modelValue.value,
+        )
+      ) {
+        syncLocalValue(
+          modelValue.value,
+        );
 
-  watch(mergedOptions, () => {
-    if (!modelValue.value || Array.isArray(modelValue.value)) {
-      syncLocalValue(modelValue.value);
-      return;
-    }
-    const id = (modelValue.value as TitleInterface<string | number>).id;
-    const match = mergedOptions.value.find((opt) => opt.id === id);
-    if (match && match !== localValue.value) {
-      localValue.value = match;
-    }
-  });
+        return;
+      }
 
-  // Initialization
+      const currentId = (
+        modelValue.value as TitleInterface<
+          string | number
+        >
+      ).id;
 
-  syncLocalValue(props.modelValue);
+      const match =
+        mergedOptions.value.find(
+          (option) =>
+            option.id === currentId,
+        );
 
-  // Methods
+      if (
+        match &&
+        match !== localValue.value
+      ) {
+        localValue.value = match;
+      }
+    },
+  );
 
-  function ensureArray(value: unknown): TitleInterface<string | number>[] {
-    return Array.isArray(value) ? (value as TitleInterface<string | number>[]) : [];
+  syncLocalValue(
+    props.modelValue,
+  );
+
+  function ensureArray(
+    value: unknown,
+  ): TitleInterface<
+    string | number
+  >[] {
+    return Array.isArray(value)
+      ? (value as TitleInterface<
+          string | number
+        >[])
+      : [];
   }
 
-  function ensureSingle(value: unknown): TitleInterface<number | string> | null {
-    if (value !== null && typeof value === 'object' && 'id' in value) {
-      return value as TitleInterface<number | string>;
+  function ensureSingle(
+    value: unknown,
+  ): TitleInterface<
+    number | string
+  > | null {
+    if (
+      value !== null &&
+      typeof value === 'object' &&
+      'id' in value
+    ) {
+      return value as TitleInterface<
+        number | string
+      >;
     }
+
     return null;
   }
 
-  function syncLocalValue(newValue: typeof props.modelValue): void {
-    if (newValue === localValue.value) return;
-
-    // Handle multiselect (array)
-
-    if (Array.isArray(newValue)) {
-      // if (mergedOptions.value.length > 0) {
-      localValue.value = newValue.map((item) => {
-        const match = mergedOptions.value.find((opt) => opt.id === item.id);
-        return match ?? item;
-      });
-      // } else {
-      //   localValue.value = newValue;
-      // }
+  function syncLocalValue(
+    newValue:
+      | TitleInterface<
+          string | number
+        >
+      | TitleInterface<
+          string | number
+        >[]
+      | null
+      | undefined,
+  ): void {
+    if (
+      newValue ===
+      localValue.value
+    ) {
       return;
     }
 
-    // Handle single select
-    if (newValue && mergedOptions.value.length > 0) {
-      const id = (newValue as TitleInterface<string | number>).id;
-      const match = mergedOptions.value.find((opt) => opt.id === id);
-      localValue.value = match ?? newValue;
+    if (
+      Array.isArray(newValue)
+    ) {
+      localValue.value =
+        newValue.map((item) => {
+          const match =
+            mergedOptions.value.find(
+              (option) =>
+                option.id === item.id,
+            );
+
+          return match ?? item;
+        });
+
+      return;
+    }
+
+    if (
+      newValue &&
+      mergedOptions.value.length >
+        0
+    ) {
+      const currentId = (
+        newValue as TitleInterface<
+          string | number
+        >
+      ).id;
+
+      const match =
+        mergedOptions.value.find(
+          (option) =>
+            option.id === currentId,
+        );
+
+      localValue.value =
+        match ?? newValue;
     } else {
-      localValue.value = newValue;
+      localValue.value =
+        newValue;
     }
   }
 
   function emitUpdate(): void {
-    // console.log(localValue.value, 'localValue.value');
+    if (disabled.value) {
+      return;
+    }
 
-    emit('update:modelValue', localValue.value);
+    emit(
+      'update:modelValue',
+      localValue.value as
+        | TitleInterface<
+            string | number
+          >
+        | TitleInterface<
+            string | number
+          >[]
+        | null,
+    );
 
-    ValidationService.clearError(id.value);
+    ValidationService.clearError(
+      id.value,
+    );
   }
 
   async function handleOptionUpdates(): Promise<void> {
-    if (params?.value && controller?.value) {
+    if (disabled.value) {
+      loading.value = false;
+
+      if (
+        !staticOptions?.value
+      ) {
+        dynamicOptions.value =
+          [];
+      }
+
+      return;
+    }
+
+    if (
+      params?.value &&
+      controller?.value
+    ) {
       await fetchOptions();
     } else {
-      dynamicOptions.value = staticOptions?.value ?? [];
+      dynamicOptions.value =
+        staticOptions?.value ?? [];
     }
   }
 
   async function fetchOptions(): Promise<void> {
-    if (!controller?.value || !params?.value) return;
+    if (
+      disabled.value ||
+      !controller?.value ||
+      !params?.value
+    ) {
+      return;
+    }
 
     try {
       loading.value = true;
 
-      message.value = t('loading_data');
+      message.value = t(
+        'loading_data',
+      );
 
-      // Before: const response = await controller.value.fetch(params.value);
+      const response =
+        await controller.value.fetchAsOptions(
+          params.value,
+        );
 
-      const response = await controller.value.fetchAsOptions(params.value);
-
-      dynamicOptions.value = response;
+      dynamicOptions.value =
+        response;
 
       updateControllerState();
 
@@ -251,83 +438,188 @@
   }
 
   function updateControllerState(): void {
-    if (!controller?.value) return;
+    if (!controller?.value) {
+      return;
+    }
 
-    if (controller.value.isListFailed()) {
-      message.value = t('an_error_occurred');
-    } else if (controller.value.isListSuccess()) {
-      message.value = t('no_data_found');
+    if (
+      controller.value.isListFailed()
+    ) {
+      message.value = t(
+        'an_error_occurred',
+      );
+    } else if (
+      controller.value.isListSuccess()
+    ) {
+      message.value = t(
+        'no_data_found',
+      );
     }
   }
 
-  function handleAutoFill(options: TitleInterface<number | string>[]): void {
-    if (autoFill?.value && options.length === 1) {
-      normalizedValue.value = isMultiselect.value ? [options[0]!] : options[0]!;
+  function handleAutoFill(
+    options: TitleInterface<
+      number | string
+    >[],
+  ): void {
+    if (
+      disabled.value ||
+      !autoFill?.value ||
+      options.length !== 1
+    ) {
+      return;
     }
+
+    normalizedValue.value =
+      isMultiselect.value
+        ? [options[0]!]
+        : options[0]!;
   }
 
-  function handleFetchError(error: unknown): void {
-    console.error('Fetch error:', error);
+  function handleFetchError(
+    error: unknown,
+  ): void {
+    console.error(
+      'Fetch error:',
+      error,
+    );
 
-    message.value = t('failed_to_load_data');
+    message.value = t(
+      'failed_to_load_data',
+    );
 
     dynamicOptions.value = [];
   }
 
   async function reloadData(): Promise<void> {
-    if (loading.value) return;
+    if (
+      disabled.value ||
+      loading.value
+    ) {
+      return;
+    }
 
     await fetchOptions();
 
-    normalizedValue.value = isMultiselect.value ? [] : null;
+    normalizedValue.value =
+      isMultiselect.value
+        ? []
+        : null;
   }
+
+  const handleAddClick = (): void => {
+    if (
+      disabled.value ||
+      !props.onclick
+    ) {
+      return;
+    }
+
+    props.onclick();
+  };
 </script>
 
 <template>
-  <div class="input-label flex justify-between w-full">
+  <div
+    class="
+      input-label
+      flex
+      justify-between
+      w-full
+    "
+    :class="{
+      'input-label--disabled':
+        disabled,
+    }"
+  >
     <slot v-if="!hasHeader">
       <div class="flex items-center">
-        <slot name="reloadHeader"></slot>
+        <slot
+          name="reloadHeader"
+        />
 
         <span
           v-if="enableReload"
-          class="reload-icon cursor-pointer flex items-center gap-sm me-2 w-full"
+          class="
+            reload-icon
+            flex
+            items-center
+            gap-sm
+            me-2
+            w-full
+          "
+          :class="{
+            'reload-icon--disabled':
+              disabled,
+            'cursor-pointer':
+              !disabled,
+          }"
           @click="reloadData"
         >
-          <span v-if="optional" class="optional-text">({{ $t('optional') }})</span>
+          <span
+            v-if="optional"
+            class="optional-text"
+          >
+            ({{
+              $t('optional')
+            }})
+          </span>
 
           <IconBackStage />
         </span>
       </div>
 
-      <div class="flex items-center gap-2">
-        <div v-if="onclick" class="add-dialog" @click="onclick">
+      <div
+        class="
+          flex
+          items-center
+          gap-2
+        "
+      >
+        <div
+          v-if="onclick"
+          class="add-dialog"
+          :class="{
+            'add-dialog--disabled':
+              disabled,
+          }"
+          @click="handleAddClick"
+        >
           <PlusIcon />
         </div>
 
-        <span class="field-help-label-row">
-          <label :class="{ required: required }" class="input-label">
-            <span v-if="required" class="text-red-500">*</span>
+        <span
+          class="
+            field-help-label-row
+          "
+        >
+          <label
+            :class="{
+              required,
+              'input-label__text--disabled':
+                disabled,
+            }"
+            class="input-label"
+          >
+            <span
+              v-if="required"
+              class="text-red-500"
+            >
+              *
+            </span>
 
             {{ $t(label ?? '') }}
           </label>
-
-          <!-- <FieldHelpIcon
-            :label="$t(label ?? '')"
-            :field-name="name ?? id"
-            :field-id="id"
-            :help-title="helpTitle"
-            :help-text="helpText"
-            :help-examples="helpExamples"
-            :show-help="showHelp"
-          /> -->
         </span>
 
-        <slot name="LabelHeader"></slot>
+        <slot name="LabelHeader" />
       </div>
     </slot>
 
-    <slot v-else name="Header"></slot>
+    <slot
+      v-else
+      name="Header"
+    />
   </div>
 
   <slot v-if="!hascontent">
@@ -336,7 +628,12 @@
       v-model="normalizedValue"
       :options="mergedOptions"
       :placeholder="placeholder"
+      :disabled="disabled"
       class="input-select w-full"
+      :class="{
+        'input-select--disabled':
+          disabled,
+      }"
       option-label="title"
       v-bind="multiselectProps"
       filter
@@ -344,10 +641,19 @@
       :empty-message="message"
     />
 
-    <input :id="id" type="text" class="hidden w-full" :value="normalizedValue" />
+    <input
+      :id="id"
+      type="text"
+      class="hidden w-full"
+      :value="normalizedValue"
+      :disabled="disabled"
+    />
   </slot>
 
-  <slot v-else name="content"> </slot>
+  <slot
+    v-else
+    name="content"
+  />
 </template>
 
 <style scoped lang="scss">
@@ -357,7 +663,12 @@
 
   .reload-icon {
     z-index: 9999;
-    cursor: pointer;
+
+    &--disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+      pointer-events: none;
+    }
   }
 
   .add-dialog {
@@ -370,15 +681,55 @@
       width: 18px;
       height: 18px;
     }
+
+    &--disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+      pointer-events: none;
+    }
+  }
+
+  .input-label--disabled {
+    opacity: 0.75;
+  }
+
+  .input-label__text--disabled {
+    cursor: not-allowed;
+    color: var(--gray-4);
   }
 
   .input-select {
     width: 100%;
-    background-color: transparent;
     border-radius: 50px;
+    background-color: transparent;
 
     &:focus {
-      border: 1px solid #d9dbe9 !important;
+      border:
+        1px solid #d9dbe9 !important;
     }
+  }
+
+  .input-select--disabled {
+    cursor: not-allowed;
+    opacity: 0.65;
+    pointer-events: none;
+  }
+
+  :deep(.p-select.p-disabled),
+  :deep(.p-multiselect.p-disabled) {
+    cursor: not-allowed;
+    opacity: 0.65;
+    pointer-events: none;
+  }
+
+  :deep(
+    .p-select.p-disabled
+      .p-select-dropdown
+  ),
+  :deep(
+    .p-multiselect.p-disabled
+      .p-multiselect-dropdown
+  ) {
+    pointer-events: none;
   }
 </style>
