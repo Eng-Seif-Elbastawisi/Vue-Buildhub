@@ -89,6 +89,22 @@
     return [];
   });
 
+  const hasSavedFloor = computed<boolean>(() => {
+    return projectFloors.value.length > 0;
+  });
+
+  const isPreviewMode = computed<boolean>(() => {
+    return projectPreviewId.value !== undefined;
+  });
+
+  const canShowFinalResults = computed<boolean>(() => {
+    return isPreviewMode.value && hasSavedFloor.value;
+  });
+
+  const canShowNextStep = computed<boolean>(() => {
+    return !isPreviewMode.value;
+  });
+
   const projectItem = computed(() => {
     return projectFloors.value[0]?.id ?? 0;
   });
@@ -291,14 +307,14 @@
     </section>
 
     <FinalResults
-      v-if="projectPreviewId !== undefined"
+      v-if="canShowFinalResults"
       :project-id="projectId"
       :project-preview-id="projectPreviewId"
       :loading="loading"
       @submit-final-result="submitFinalResult"
     />
 
-    <div v-else class="next-step-card">
+    <div v-if="canShowNextStep" class="next-step-card">
       <div class="next-step-card__content">
         <span class="next-step-card__icon">
           <i class="pi pi-arrow-right"></i>
