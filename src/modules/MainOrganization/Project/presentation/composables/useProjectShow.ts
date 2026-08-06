@@ -404,7 +404,7 @@ export const useProjectShow = () => {
     return title !== emptyValue ? title : `Project #${valueOrEmpty(project.value.id)}`;
   });
 
-  const projectInfo = computed(() => [
+  const projectInfo = computed<ProjectInfoItem[]>(() => [
     {
       icon: 'pi pi-address-book',
       label: t('ProjectShow.client'),
@@ -442,6 +442,14 @@ export const useProjectShow = () => {
       label: t('Project.service_type'),
       value: getServiceTypeLabel(project.value.service_type),
     },
+
+    // المسؤول الهندسي
+    {
+      icon: 'pi pi-user',
+      label: t('Project.engineering_responsible'),
+      value: preview.value?.engineering_responsible?.name ?? emptyValue,
+    },
+
     {
       icon: 'pi pi-verified',
       label: t('Project.engineer'),
@@ -462,12 +470,6 @@ export const useProjectShow = () => {
       label: t('Project.notes'),
       value: valueOrEmpty(project.value.notes),
     },
-    //     {
-    //   icon: 'pi pi-shield',
-    //   label: t('status'),
-    //   value: getStatusMeta(project.value.status).label,
-    //   badge: getStatusMeta(project.value.status).className,
-    // },
   ]);
 
   const stats = computed(() => [
@@ -1206,6 +1208,7 @@ export const useProjectShow = () => {
     formatNumber,
     formatArea,
     status: currentConvertStatus.value,
+    withPreview: project.value?.with_preview === true,
   }));
 
   const spacesSectionProps = computed(() => ({

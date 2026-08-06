@@ -23,9 +23,9 @@
   const selectedDepartment = ref<TitleInterface<number>>();
   const indexDepartmentParams = new IndexDepartmentParams('');
   const indexDepartmentController = DepartmentController.getInstance();
+  const translations = ref<Record<string, string>>({});
 
   const updateData = () => {
-    const translations = new TranslationParams({ title: title.value });
     const departmentId = Number(selectedDepartment.value?.id);
 
     if (props.term?.id) {
@@ -33,7 +33,9 @@
         'updateData',
         new EditTermParams({
           id: props.term.id,
-          translations,
+          translations: new TranslationParams({
+            title: translations.value,
+          }),
           departmentId,
         }),
       );
@@ -43,14 +45,16 @@
     emit(
       'updateData',
       new AddTermParams({
-        translations,
+        translations: new TranslationParams({
+          title: translations.value,
+        }),
         departmentId,
       }),
     );
   };
 
-  const updateTitle = (value: Record<string, string>) => {
-    title.value = value;
+  const updateTranslations = (value: Record<string, string>) => {
+    translations.value = value;
     updateData();
   };
 
@@ -66,7 +70,7 @@
     (term) => {
       if (!term) return;
 
-      title.value = { ...term.translations.title };
+      translations.value = { ...term.translations.title };
       selectedDepartment.value = {
         id: Number(term?.department?.id ?? undefined) as number,
         title: term?.department?.title,
@@ -84,9 +88,9 @@
         field-key="title"
         :label="$t('title')"
         :languages="['en', 'ar']"
-        :model-value="title"
+        :model-value="translations"
         type="title"
-        @update:model-value="updateTitle"
+        @update:model-value="updateTranslations"
       />
     </div>
 
