@@ -2094,5 +2094,9 @@
     "floors_locked": "Adding floors is locked",
     "preview_required_before_floor": "The preview must be added before adding a floor"
   },
-  "Project.engineering_responsible": "Engineering Responsible"
+  "Project.engineering_responsible": "Engineering Responsible",
+  "project_pricing.tax_required": "Tax percentage is required.",
+  "project_pricing.tax_invalid": "Please enter a valid tax percentage.",
+  "project_pricing.tax_min_error": "Tax percentage cannot be less than 0%.",
+  "project_pricing.tax_max_error": "Tax percentage cannot exceed 100%."
 }

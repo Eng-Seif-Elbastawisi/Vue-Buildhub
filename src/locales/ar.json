@@ -2105,5 +2105,9 @@
     "floors_locked": "إضافة الطوابق مقفولة",
     "preview_required_before_floor": "يجب إضافة المعاينة أولاً قبل إضافة طابق"
   },
-  "Project.engineering_responsible": "المسؤول الهندسي"
+  "Project.engineering_responsible": "المسؤول الهندسي",
+  "project_pricing.tax_required": "النسبة المئوية للضريبة مطلوبة.",
+  "project_pricing.tax_invalid": "يرجى إدخال نسبة ضريبة صحيحة.",
+  "project_pricing.tax_min_error": "لا يمكن أن تقل النسبة المئوية للضريبة عن 0%.",
+  "project_pricing.tax_max_error": "لا يمكن أن تتجاوز النسبة المئوية للضريبة 100%."
 }
