@@ -2104,5 +2104,6 @@
   "ProjectFloor": {
     "floors_locked": "إضافة الطوابق مقفولة",
     "preview_required_before_floor": "يجب إضافة المعاينة أولاً قبل إضافة طابق"
-  }
+  },
+  "Project.engineering_responsible": "المسؤول الهندسي"
 }

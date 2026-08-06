@@ -16,6 +16,11 @@ export type NamedEntity = {
   parent?: NamedEntity | null;
 };
 
+export type EngineeringResponsible = {
+  id?: number;
+  name?: string | null;
+};
+
 export type Attachment = {
   id?: number;
   file?: string;
@@ -39,6 +44,7 @@ export type FloorSpace = {
 export type ProjectPreview = {
   id?: number;
   pricing_responsible?: NamedEntity | null;
+  engineering_responsible?: EngineeringResponsible | null;
   notification_type?: number | string | null;
   notification_message?: string | null;
   preview_date?: string | null;
@@ -57,7 +63,6 @@ export type ProjectFloor = {
   project_preview?: ProjectPreview | null;
   spaces?: FloorSpace[];
   created_at?: string | null;
-
 };
 
 export type ProjectDepartmentItemRow = {

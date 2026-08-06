@@ -2093,5 +2093,6 @@
   "ProjectFloor": {
     "floors_locked": "Adding floors is locked",
     "preview_required_before_floor": "The preview must be added before adding a floor"
-  }
+  },
+  "Project.engineering_responsible": "Engineering Responsible"
 }
