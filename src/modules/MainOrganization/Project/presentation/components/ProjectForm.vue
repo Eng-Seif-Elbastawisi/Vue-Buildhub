@@ -147,6 +147,14 @@
     );
   });
 
+  const isGovernorateDisabled = computed<boolean>(() => {
+    return !selectedCountry.value?.id;
+  });
+
+  const isCityDisabled = computed<boolean>(() => {
+    return !selectedGovernorate.value?.id;
+  });
+
   const formatDateForApi = (value: Date | null): string => {
     if (!value) return '';
 
@@ -323,12 +331,25 @@
   };
 
   const updateGovernorate = (value: TitleInterface<number> | null) => {
+    if (!selectedCountry.value?.id) {
+      selectedGovernorate.value = null;
+      selectedCity.value = null;
+      updateData();
+      return;
+    }
+
     selectedGovernorate.value = value;
     selectedCity.value = null;
     updateData();
   };
 
   const updateCity = (value: TitleInterface<number> | null) => {
+    if (!selectedGovernorate.value?.id) {
+      selectedCity.value = null;
+      updateData();
+      return;
+    }
+
     selectedCity.value = value;
     updateData();
   };
@@ -616,8 +637,15 @@
           :model-value="selectedGovernorate"
           :label="$t('location.governorate')"
           :controller="locationController"
-          :placeholder="$t('location.governorate_placeholder')"
+          :placeholder="
+            isGovernorateDisabled
+              ? $t('location.select_country_first')
+              : $t('location.governorate_placeholder')
+          "
           :params="governorateParams"
+          :disabled="isGovernorateDisabled"
+          :readonly="isGovernorateDisabled"
+          @click.prevent="isGovernorateDisabled ? undefined : null"
           @update:model-value="updateGovernorate"
         />
       </div>
@@ -628,8 +656,15 @@
           :model-value="selectedCity"
           :label="$t('location.city')"
           :controller="locationController"
-          :placeholder="$t('location.city_placeholder')"
+          :placeholder="
+            isCityDisabled
+              ? $t('location.select_governorate_first')
+              : $t('location.city_placeholder')
+          "
           :params="cityParams"
+          :disabled="isCityDisabled"
+          :readonly="isCityDisabled"
+          @click.prevent="isCityDisabled ? undefined : null"
           @update:model-value="updateCity"
         />
       </div>
@@ -860,6 +895,21 @@
 
   .col-span-2 {
     grid-column: span 2;
+  }
+
+  .dependent-field-hint {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    color: var(--gray-5);
+    font-family: 'Medium';
+    font-size: var(--xs-size);
+    line-height: 1.5;
+
+    i {
+      flex: 0 0 auto;
+      font-size: 0.8rem;
+    }
   }
 
   @media (max-width: 768px) {

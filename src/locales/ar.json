@@ -2123,5 +2123,7 @@
   "Project.validation.client_type_required": "نوع العميل مطلوب",
   "Project.validation.project_type_required": "نوع المشروع مطلوب",
   "Project.validation.service_type_required": "نوع الخدمة مطلوب",
-  "Project.validation.city_required": "المدينة مطلوبة"
+  "Project.validation.city_required": "المدينة مطلوبة",
+  "location.select_country_first": "اختر الدولة أولاً",
+  "location.select_governorate_first": "اختر المحافظة أولاً"
 }
