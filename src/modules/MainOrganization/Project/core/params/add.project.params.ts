@@ -76,6 +76,8 @@ export default class AddProjectParams implements Params {
     project_type_id: requiredSelectRule(),
 
     service_type: requiredSelectRule(),
+    
+    location_id: requiredSelectRule(),
   });
 
   constructor(data: {

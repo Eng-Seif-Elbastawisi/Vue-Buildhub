@@ -2090,13 +2090,21 @@
   "employee.employee": "Employee",
   "employee.form_title": "Employee form",
   "employee.form_description": "Employee form description",
-  "ProjectFloor": {
-    "floors_locked": "Adding floors is locked",
-    "preview_required_before_floor": "The preview must be added before adding a floor"
-  },
+  "ProjectFloor.floors_locked": "Adding floors is locked",
+  "ProjectFloor.preview_required_before_floor": "The preview must be added before adding a floor",
+  "ProjectFloor.preview_not_started": "Preview not started yet",
+  "ProjectFloor.preview_pending_title": "Do you want to add floor data before the preview date?",
+  "ProjectFloor.preview_pending_description": "The preview date is {date}. The spaces and dimensions data may not be final before the preview is executed.",
+  "ProjectFloor.continue_before_preview": "Add data now",
+  "ProjectFloor.wait_for_preview": "Wait for preview",
+  "ProjectFloor.preview_pending_hint": "You can continue now, but it is recommended to review the data after the preview ends.",
   "Project.engineering_responsible": "Engineering Responsible",
   "project_pricing.tax_required": "Tax percentage is required.",
   "project_pricing.tax_invalid": "Please enter a valid tax percentage.",
   "project_pricing.tax_min_error": "Tax percentage cannot be less than 0%.",
-  "project_pricing.tax_max_error": "Tax percentage cannot exceed 100%."
+  "project_pricing.tax_max_error": "Tax percentage cannot exceed 100%.",
+  "general": {
+    "not_specified": "Not specified",
+    "no_address": "No address"
+  }
 }

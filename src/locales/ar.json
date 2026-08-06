@@ -2109,5 +2109,15 @@
   "project_pricing.tax_required": "النسبة المئوية للضريبة مطلوبة.",
   "project_pricing.tax_invalid": "يرجى إدخال نسبة ضريبة صحيحة.",
   "project_pricing.tax_min_error": "لا يمكن أن تقل النسبة المئوية للضريبة عن 0%.",
-  "project_pricing.tax_max_error": "لا يمكن أن تتجاوز النسبة المئوية للضريبة 100%."
+  "project_pricing.tax_max_error": "لا يمكن أن تتجاوز النسبة المئوية للضريبة 100%.",
+  "ProjectFloor.preview_not_started": "المعاينة لم تبدأ بعد",
+  "ProjectFloor.preview_pending_title": "هل تريد إضافة بيانات الدور قبل موعد المعاينة؟",
+  "ProjectFloor.preview_pending_description": "موعد المعاينة المحدد هو {date}. قد تكون بيانات المساحات والأبعاد غير نهائية قبل تنفيذ المعاينة.",
+  "ProjectFloor.continue_before_preview": "إضافة البيانات الآن",
+  "ProjectFloor.wait_for_preview": "الانتظار حتى المعاينة",
+  "ProjectFloor.preview_pending_hint": "يمكنك المتابعة الآن، لكن يُفضل مراجعة البيانات بعد انتهاء المعاينة.",
+  "general": {
+    "not_specified": "غير محدد",
+    "no_address": "لا يوجد عنوان"
+  }
 }
