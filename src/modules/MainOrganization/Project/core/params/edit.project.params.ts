@@ -55,7 +55,6 @@ export default class EditProjectParams implements Params {
 
   public terms?: string;
 
- 
   public with_preview?: WithPreviewValue;
 
   public static readonly validation = new ClassValidation().setRules({
