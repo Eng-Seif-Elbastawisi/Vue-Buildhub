@@ -1,14 +1,15 @@
 <script setup lang="ts">
   import { computed, ref, watch } from 'vue';
   import { onBeforeRouteLeave } from 'vue-router';
+  import { useI18n } from 'vue-i18n';
+
   import type TitleInterface from '@/base/Data/Models/titleInterface';
   import { useFormsStore } from '@/stores/formsStore';
-  import { useI18n } from 'vue-i18n';
+  import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
 
   import AddProjectPricingParams from '../../core/params/add.project.pricing.params';
   import { ProjectPricingDiscountEnum } from '../../core/constant/project.pricing.discount.enum';
   import type ProjectPricingShowModel from '../../core/models/project.pricing.show.model';
-  import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
 
   const emit = defineEmits<{
     updateData: [params: AddProjectPricingParams];
@@ -26,15 +27,28 @@
   const { t } = useI18n();
 
   const totalTax = ref<number>(0);
+
+  /**
+   * نحفظ قيمة input كنص حتى نعرض نفس القيمة
+   * التي كتبها المستخدم مثل 200 بدون تحويلها إلى 100.
+   */
+  const totalTaxInput = ref<string>('0');
+
+  const totalTaxError = ref<string>('');
+
   const discountType = ref<TitleInterface<string | number> | null>(null);
+
   const discountValue = ref<number>(0);
 
   const discountMode = ref<'value' | 'percentage'>('value');
 
   const VALUE_DISCOUNT_ID = ProjectPricingDiscountEnum.FIXED;
+
   const PERCENTAGE_DISCOUNT_ID = ProjectPricingDiscountEnum.PERCENTAGE;
 
-  const totalDesignItems = computed(() => Number(props.totalItemsPrice ?? 0));
+  const totalDesignItems = computed(() => {
+    return Number(props.totalItemsPrice ?? 0);
+  });
 
   const valueDiscountOption = computed<TitleInterface<string | number>>(() => ({
     id: VALUE_DISCOUNT_ID,
@@ -55,15 +69,19 @@
   });
 
   const optionFromId = (id?: number | string): TitleInterface<string | number> | null => {
-    if (id === undefined || id === null) return null;
+    if (id === undefined || id === null) {
+      return null;
+    }
 
     if (Number(id) === Number(VALUE_DISCOUNT_ID)) {
       discountMode.value = 'value';
+
       return valueDiscountOption.value;
     }
 
     if (Number(id) === Number(PERCENTAGE_DISCOUNT_ID)) {
       discountMode.value = 'percentage';
+
       return percentDiscountOption.value;
     }
 
@@ -73,15 +91,95 @@
     };
   };
 
-  const formatMoney = (value?: number) => {
+  const formatMoney = (value?: number): string => {
     return Number(value ?? 0).toLocaleString();
   };
 
-  const setDiscountType = (type: 'value' | 'percentage') => {
+  const setDiscountType = (type: 'value' | 'percentage'): void => {
     discountMode.value = type;
 
     discountType.value = type === 'value' ? valueDiscountOption.value : percentDiscountOption.value;
 
+    updateData();
+  };
+
+  /**
+   * منع الحروف غير المناسبة في input number.
+   *
+   * لا نمنع النقطة لأن القيمة قد تحتوي
+   * على أرقام عشرية مثل 14.5.
+   */
+  const preventInvalidNumberKeys = (event: KeyboardEvent): void => {
+    if (['+', 'e', 'E'].includes(event.key)) {
+      event.preventDefault();
+    }
+  };
+
+  const validateTotalTax = (value: string): boolean => {
+    if (value.trim() === '') {
+      totalTaxError.value = t('project_pricing.tax_required');
+
+      return false;
+    }
+
+    const numericValue = Number(value);
+
+    if (!Number.isFinite(numericValue)) {
+      totalTaxError.value = t('project_pricing.tax_invalid');
+
+      return false;
+    }
+
+    if (numericValue < 0) {
+      totalTaxError.value = t('project_pricing.tax_min_error');
+
+      return false;
+    }
+
+    if (numericValue > 100) {
+      totalTaxError.value = t('project_pricing.tax_max_error');
+
+      return false;
+    }
+
+    totalTaxError.value = '';
+
+    return true;
+  };
+
+  const updateTotalTax = (event: Event): void => {
+    const input = event.target as HTMLInputElement;
+
+    /**
+     * نحفظ نفس النص الذي كتبه المستخدم.
+     *
+     * مثال:
+     * 200 تظل 200 ويظهر الخطأ.
+     */
+    totalTaxInput.value = input.value;
+
+    if (!validateTotalTax(input.value)) {
+      return;
+    }
+
+    totalTax.value = Number(input.value);
+
+    updateData();
+  };
+
+  const validateDiscountValue = (): void => {
+    if (!Number.isFinite(Number(discountValue.value))) {
+      discountValue.value = 0;
+      return;
+    }
+
+    if (discountValue.value < 0) {
+      discountValue.value = 0;
+    }
+  };
+
+  const updateDiscountValue = (): void => {
+    validateDiscountValue();
     updateData();
   };
 
@@ -98,14 +196,27 @@
     (item) => {
       if (!item) {
         discountMode.value = 'value';
+
         discountType.value = valueDiscountOption.value;
+
         totalTax.value = 0;
+        totalTaxInput.value = '0';
+        totalTaxError.value = '';
+
         discountValue.value = 0;
+
         updateData();
+
         return;
       }
 
-      totalTax.value = Number(item.total_tax ?? 0);
+      const initialTax = Number(item.total_tax ?? 0);
+
+      totalTax.value = Number.isFinite(initialTax) ? initialTax : 0;
+
+      totalTaxInput.value = String(totalTax.value);
+
+      validateTotalTax(totalTaxInput.value);
 
       discountType.value = item.discount_type
         ? optionFromId(item.discount_type)
@@ -117,18 +228,33 @@
 
       discountValue.value = Number(item.discount_value ?? 0);
 
+      validateDiscountValue();
+
       updateData();
     },
-    { immediate: true },
+    {
+      immediate: true,
+    },
   );
 
-  function updateData() {
+  function updateData(): void {
+    /**
+     * لا نرسل params للصفحة الأب
+     * طالما قيمة الضريبة غير صحيحة.
+     */
+    if (totalTaxError.value) {
+      return;
+    }
+
     emit(
       'updateData',
       new AddProjectPricingParams({
         project_id: props.projectId,
+
         total_tax: totalTax.value,
+
         discount_type: discountType.value?.id as ProjectPricingDiscountEnum,
+
         discount_value: discountValue.value,
       }),
     );
@@ -154,13 +280,16 @@
             <span class="summary-label">
               {{ $t('project_pricing.discount') }}
             </span>
+
             <FieldHelpIcon :label="$t('project_pricing.discount')" field-name="discount" />
           </span>
 
           <div class="discount-toggle">
             <button
               type="button"
-              :class="{ active: isValueDiscount }"
+              :class="{
+                active: isValueDiscount,
+              }"
               @click="setDiscountType('value')"
             >
               {{ $t('project_pricing.value') }}
@@ -168,7 +297,9 @@
 
             <button
               type="button"
-              :class="{ active: isPercentageDiscount }"
+              :class="{
+                active: isPercentageDiscount,
+              }"
               @click="setDiscountType('percentage')"
             >
               %
@@ -183,8 +314,10 @@
           min="0"
           step="0.01"
           type="number"
+          inputmode="decimal"
           :placeholder="$t('project_pricing.discount_value_placeholder')"
-          @input="updateData"
+          @keydown="preventInvalidNumberKeys"
+          @input="updateDiscountValue"
         />
       </article>
 
@@ -193,6 +326,7 @@
           <label class="summary-label" for="project-pricing-total-tax">
             {{ $t('project_pricing.tax_percentage') }}
           </label>
+
           <FieldHelpIcon
             :label="$t('project_pricing.tax_percentage')"
             field-name="tax"
@@ -200,17 +334,40 @@
           />
         </span>
 
-        <input
-          id="project-pricing-total-tax"
-          v-model.number="totalTax"
-          class="field-input"
-          min="0"
-          step="0.01"
-          max="100"
-          type="number"
-          :placeholder="$t('project_pricing.total_tax_placeholder')"
-          @input="updateData"
-        />
+        <div class="tax-input-wrapper">
+          <input
+            id="project-pricing-total-tax"
+            :value="totalTaxInput"
+            class="field-input"
+            :class="{
+              'field-input--error': totalTaxError,
+            }"
+            min="0"
+            max="100"
+            step="0.01"
+            type="number"
+            inputmode="decimal"
+            :aria-invalid="Boolean(totalTaxError)"
+            aria-describedby="project-pricing-total-tax-error"
+            :placeholder="$t('project_pricing.total_tax_placeholder')"
+            @keydown="preventInvalidNumberKeys"
+            @input="updateTotalTax"
+          />
+
+          <small
+            v-if="totalTaxError"
+            id="project-pricing-total-tax-error"
+            class="field-error"
+            role="alert"
+            aria-live="polite"
+          >
+            <i class="pi pi-exclamation-circle" aria-hidden="true" />
+
+            <span>
+              {{ totalTaxError }}
+            </span>
+          </small>
+        </div>
       </article>
     </div>
   </section>
@@ -300,7 +457,18 @@
         color: var(--bg-main);
         box-shadow: 0 6px 14px rgba(15, 23, 42, 0.18);
       }
+
+      &:disabled {
+        cursor: not-allowed;
+        opacity: 0.65;
+      }
     }
+  }
+
+  .tax-input-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
   }
 
   .field-input {
@@ -320,6 +488,41 @@
     &:focus {
       border-color: var(--PrimaryColor);
       box-shadow: 0 0 0 3px var(--PrimaryColor-light);
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+  }
+
+  .field-input--error {
+    border-color: #dc2626;
+
+    &:focus {
+      border-color: #dc2626;
+      box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12);
+    }
+  }
+
+  .field-error {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.4rem;
+    color: #dc2626;
+    font-family: 'Medium';
+    font-size: var(--xs-size);
+    line-height: 1.5;
+    text-align: start;
+
+    i {
+      flex: 0 0 auto;
+      margin-top: 0.15rem;
+    }
+
+    span {
+      min-width: 0;
+      flex: 1;
     }
   }
 
