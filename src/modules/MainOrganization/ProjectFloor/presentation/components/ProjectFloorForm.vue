@@ -13,6 +13,7 @@
   import { FloorNumber } from '../../core/constants/floor.number.enum';
 
   import ProjectPreviewIndex from '../../../../../modules/MainOrganization/Project/presentation/components/project_preview/ProjectPreviewIndex.vue';
+  import type ProjectPreviewModel from '@/modules/MainOrganization/Project/core/models/project.preview.model';
 
   import IndexSpaceParams from '@/modules/shared/Space/core/params/index.space.params';
   import SpaceController from '@/modules/shared/Space/presentation/controllers/space.controller';
@@ -43,6 +44,45 @@
   );
 
   const { t } = useI18n();
+
+  const hasUpcomingPreview = ref(false);
+  const upcomingPreview = ref<ProjectPreviewModel | null>(null);
+  const previewWarningIgnored = ref(false);
+
+  const floorFormLocked = computed<boolean>(() => {
+    return hasUpcomingPreview.value && !previewWarningIgnored.value && !props.isEdit;
+  });
+
+  const formatUpcomingPreviewDate = computed<string>(() => {
+    const preview = upcomingPreview.value;
+
+    if (!preview) return '';
+
+    const date = preview.preview_date ?? '';
+    const time = preview.preview_time ? preview.preview_time.slice(0, 5) : '';
+
+    return [date, time].filter(Boolean).join(' ');
+  });
+
+  const handleUpcomingPreviewChange = (payload: {
+    hasUpcoming: boolean;
+    preview: ProjectPreviewModel | null;
+  }): void => {
+    hasUpcomingPreview.value = payload.hasUpcoming;
+    upcomingPreview.value = payload.preview;
+
+    if (!payload.hasUpcoming) {
+      previewWarningIgnored.value = false;
+    }
+  };
+
+  const allowAddingBeforePreview = (): void => {
+    previewWarningIgnored.value = true;
+  };
+
+  const keepFormLocked = (): void => {
+    previewWarningIgnored.value = false;
+  };
 
   const spaceController = SpaceController.getInstance();
   const spaceParams = new IndexSpaceParams('', 1, 100, 0);
@@ -347,246 +387,473 @@
 </script>
 
 <template>
-  <ProjectPreviewIndex />
+  <ProjectPreviewIndex @upcoming-change="handleUpcomingPreviewChange" />
 
-  <div class="project-floor-form-card">
-    <header class="form-header">
-      <div>
-        <span class="form-header__eyebrow">{{ $t('ProjectFloor.form_title') }}</span>
-        <h3>{{ $t('ProjectFloor.floor_data') }}</h3>
-        <p>{{ $t('ProjectFloor.form_description') }}</p>
-      </div>
+  <div
+    class="project-floor-form-wrapper"
+    :class="{
+      'project-floor-form-wrapper--locked': floorFormLocked,
+    }"
+  >
+    <div v-if="floorFormLocked" class="preview-gate" role="alert" aria-live="polite">
+      <div class="preview-gate__backdrop" aria-hidden="true"></div>
 
-      <div class="form-summary">
-        <div>
-          <span>{{ $t('ProjectFloor.floors') }}</span>
-          <strong>{{ floors.length }}</strong>
+      <section class="preview-gate__card">
+        <span class="preview-gate__icon" aria-hidden="true">
+          <i class="pi pi-calendar-clock"></i>
+        </span>
+
+        <div class="preview-gate__content">
+          <span class="preview-gate__eyebrow">
+            {{ $t('ProjectFloor.preview_not_started') }}
+          </span>
+
+          <h3>{{ $t('ProjectFloor.preview_pending_title') }}</h3>
+
+          <p>
+            {{
+              $t('ProjectFloor.preview_pending_description', {
+                date: formatUpcomingPreviewDate,
+              })
+            }}
+          </p>
+
+          <div class="preview-gate__date">
+            <i class="pi pi-clock" aria-hidden="true"></i>
+            <span>{{ formatUpcomingPreviewDate }}</span>
+          </div>
+
+          <div class="preview-gate__actions">
+            <button
+              type="button"
+              class="preview-gate__button preview-gate__button--primary"
+              @click="allowAddingBeforePreview"
+            >
+              <i class="pi pi-unlock" aria-hidden="true"></i>
+              {{ $t('ProjectFloor.continue_before_preview') }}
+            </button>
+
+            <button
+              type="button"
+              class="preview-gate__button preview-gate__button--secondary"
+              @click="keepFormLocked"
+            >
+              <i class="pi pi-calendar" aria-hidden="true"></i>
+              {{ $t('ProjectFloor.wait_for_preview') }}
+            </button>
+          </div>
+
+          <small>{{ $t('ProjectFloor.preview_pending_hint') }}</small>
         </div>
-        <div>
-          <span>{{ $t('ProjectFloor.selected_spaces') }}</span>
-          <strong>{{ totalSpacesCount }}</strong>
-        </div>
-      </div>
-    </header>
+      </section>
+    </div>
 
-    <div class="form-body" :class="{ disabled: loading }">
-      <section class="section-card">
-        <div class="section-head">
-          <span class="section-head__icon">🏢</span>
+    <div class="project-floor-form-card">
+      <header class="form-header">
+        <div>
+          <span class="form-header__eyebrow">{{ $t('ProjectFloor.form_title') }}</span>
+          <h3>{{ $t('ProjectFloor.floor_data') }}</h3>
+          <p>{{ $t('ProjectFloor.form_description') }}</p>
+        </div>
+
+        <div class="form-summary">
           <div>
-            <h4>{{ $t('ProjectFloor.floor_data') }}</h4>
-            <p>{{ $t('ProjectFloor.floor_data_description') }}</p>
+            <span>{{ $t('ProjectFloor.floors') }}</span>
+            <strong>{{ floors.length }}</strong>
+          </div>
+          <div>
+            <span>{{ $t('ProjectFloor.selected_spaces') }}</span>
+            <strong>{{ totalSpacesCount }}</strong>
           </div>
         </div>
+      </header>
 
-        <div class="picker-panel">
-          <div class="picker-field">
-            <!-- <label class="field-label">{{ $t('ProjectFloor.floor_number') }}</label> -->
-            <UpdatedCustomInputSelect
-              id="floor_number"
-              :label="$t('ProjectFloor.floor_number')"
-              :model-value="selectedFloorNumber"
-              :static-options="floorNumberOptions"
-              :placeholder="$t('ProjectFloor.floor_number_placeholder')"
-              @update:model-value="updateFloorNumber"
-            />
+      <div class="form-body" :class="{ disabled: loading }">
+        <section class="section-card">
+          <div class="section-head">
+            <span class="section-head__icon">🏢</span>
+            <div>
+              <h4>{{ $t('ProjectFloor.floor_data') }}</h4>
+              <p>{{ $t('ProjectFloor.floor_data_description') }}</p>
+            </div>
           </div>
 
-          <div class="picker-field">
-            <!-- <label class="field-label">{{ $t('ProjectFloor.space') }}</label> -->
-            <UpdatedCustomInputSelect
-              id="space_id"
-              :label="$t('ProjectFloor.space')"
-              :model-value="selectedSpace"
-              :static-options="spaceOptions"
-              :placeholder="$t('ProjectFloor.space_placeholder')"
-              :type="2"
-              @update:model-value="updateSelectedSpace"
-            />
+          <div class="picker-panel">
+            <div class="picker-field">
+              <!-- <label class="field-label">{{ $t('ProjectFloor.floor_number') }}</label> -->
+              <UpdatedCustomInputSelect
+                id="floor_number"
+                :label="$t('ProjectFloor.floor_number')"
+                :model-value="selectedFloorNumber"
+                :static-options="floorNumberOptions"
+                :placeholder="$t('ProjectFloor.floor_number_placeholder')"
+                @update:model-value="updateFloorNumber"
+              />
+            </div>
+
+            <div class="picker-field">
+              <!-- <label class="field-label">{{ $t('ProjectFloor.space') }}</label> -->
+              <UpdatedCustomInputSelect
+                id="space_id"
+                :label="$t('ProjectFloor.space')"
+                :model-value="selectedSpace"
+                :static-options="spaceOptions"
+                :placeholder="$t('ProjectFloor.space_placeholder')"
+                :type="2"
+                @update:model-value="updateSelectedSpace"
+              />
+            </div>
+
+            <button
+              type="button"
+              class="secondary-action-btn"
+              :disabled="!selectedSpace.length"
+              @click="addSpace"
+            >
+              <i class="pi pi-plus"></i>
+              {{ $t('ProjectFloor.add_space') }}
+            </button>
+          </div>
+
+          <div v-if="currentSpaces.length" class="current-spaces">
+            <article
+              v-for="(item, index) in currentSpaces"
+              :key="`${item.space.id}-${index}`"
+              class="space-row"
+            >
+              <strong class="space-name">{{ item.space.title }}</strong>
+
+              <input
+                v-model="item.length"
+                class="mini-input"
+                type="number"
+                min="0"
+                step="0.01"
+                :placeholder="$t('ProjectFloor.length')"
+              />
+              <input
+                v-model="item.width"
+                class="mini-input"
+                type="number"
+                min="0"
+                step="0.01"
+                :placeholder="$t('ProjectFloor.width')"
+              />
+              <input
+                v-model="item.height"
+                class="mini-input"
+                type="number"
+                min="0"
+                step="0.01"
+                :placeholder="$t('ProjectFloor.height')"
+              />
+              <input
+                v-model="item.notes"
+                class="mini-input"
+                type="text"
+                :placeholder="$t('ProjectFloor.notes')"
+              />
+
+              <label class="upload-chip">
+                <input
+                  type="file"
+                  multiple
+                  @change="updateCurrentSpaceAttachments($event, index)"
+                />
+                <i class="pi pi-upload"></i>
+                <span>{{ item.attachments.length || $t('ProjectFloor.choose_files') }}</span>
+              </label>
+
+              <button
+                type="button"
+                class="icon-btn icon-btn--danger"
+                @click="removeCurrentSpace(index)"
+              >
+                <i class="pi pi-trash"></i>
+              </button>
+            </article>
           </div>
 
           <button
             type="button"
-            class="secondary-action-btn"
-            :disabled="!selectedSpace.length"
-            @click="addSpace"
+            class="primary-action-btn"
+            :disabled="!selectedFloorNumber || !currentSpaces.length"
+            @click="addFloor"
           >
-            <i class="pi pi-plus"></i>
-            {{ $t('ProjectFloor.add_space') }}
+            <i class="pi pi-plus-circle"></i>
+            {{ $t('ProjectFloor.add_floor') }}
           </button>
-        </div>
+        </section>
 
-        <div v-if="currentSpaces.length" class="current-spaces">
-          <article
-            v-for="(item, index) in currentSpaces"
-            :key="`${item.space.id}-${index}`"
-            class="space-row"
-          >
-            <strong class="space-name">{{ item.space.title }}</strong>
+        <section class="section-card">
+          <div class="section-head section-head--between">
+            <div class="section-head__start">
+              <span class="section-head__icon">📚</span>
+              <div>
+                <h4>{{ $t('ProjectFloor.saved_floors') }}</h4>
+                <p>{{ $t('ProjectFloor.selected_spaces_description') }}</p>
+              </div>
+            </div>
+            <span class="count-badge">{{ floors.length }}</span>
+          </div>
 
-            <input
-              v-model="item.length"
-              class="mini-input"
-              type="number"
-              min="0"
-              step="0.01"
-              :placeholder="$t('ProjectFloor.length')"
-            />
-            <input
-              v-model="item.width"
-              class="mini-input"
-              type="number"
-              min="0"
-              step="0.01"
-              :placeholder="$t('ProjectFloor.width')"
-            />
-            <input
-              v-model="item.height"
-              class="mini-input"
-              type="number"
-              min="0"
-              step="0.01"
-              :placeholder="$t('ProjectFloor.height')"
-            />
-            <input
-              v-model="item.notes"
-              class="mini-input"
-              type="text"
-              :placeholder="$t('ProjectFloor.notes')"
-            />
+          <div v-if="!floors.length" class="empty-state">
+            {{ $t('ProjectFloor.no_spaces_title') }}
+          </div>
 
-            <label class="upload-chip">
-              <input type="file" multiple @change="updateCurrentSpaceAttachments($event, index)" />
-              <i class="pi pi-upload"></i>
-              <span>{{ item.attachments.length || $t('ProjectFloor.choose_files') }}</span>
+          <div v-else class="floors-list">
+            <article v-for="(floor, floorIndex) in floors" :key="floor.localId" class="floor-card">
+              <header class="floor-card__head">
+                <div>
+                  <span>{{ $t('ProjectFloor.floor_number') }}</span>
+                  <strong>{{ floor.floorNumber.title }}</strong>
+                </div>
+
+                <div class="floor-card__actions">
+                  <span class="count-badge">{{ floor.spaces.length }}</span>
+                  <button type="button" class="icon-btn" @click="editFloor(floorIndex)">
+                    <i class="pi pi-pencil"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="icon-btn icon-btn--danger"
+                    @click="removeFloor(floorIndex)"
+                  >
+                    <i class="pi pi-trash"></i>
+                  </button>
+                </div>
+              </header>
+
+              <div class="floor-spaces-table">
+                <div class="floor-spaces-table__head">
+                  <span>#</span>
+                  <span>{{ $t('ProjectFloor.space') }}</span>
+                  <span>{{ $t('ProjectFloor.length') }}</span>
+                  <span>{{ $t('ProjectFloor.width') }}</span>
+                  <span>{{ $t('ProjectFloor.height') }}</span>
+                  <span>{{ $t('ProjectFloor.notes') }}</span>
+                </div>
+
+                <div
+                  v-for="(space, spaceIndex) in floor.spaces"
+                  :key="`${floor.localId}-${space.space.id}`"
+                  class="floor-space-row"
+                >
+                  <span>{{ spaceIndex + 1 }}</span>
+                  <strong>{{ space.space.title }}</strong>
+                  <span>{{ space.length || '-' }}</span>
+                  <span>{{ space.width || '-' }}</span>
+                  <span>{{ space.height || '-' }}</span>
+                  <span>{{ space.notes || '-' }}</span>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="section-card">
+          <div class="section-head">
+            <span class="section-head__icon">📝</span>
+            <div>
+              <h4>{{ $t('ProjectFloor.site_recommendations') }}</h4>
+              <p>{{ $t('ProjectFloor.site_recommendations_description') }}</p>
+            </div>
+          </div>
+
+          <div class="notes-grid">
+            <label class="note-field">
+              <span>{{ $t('ProjectFloor.site_description') }}</span>
+              <textarea
+                v-model="siteDescription"
+                class="field-input"
+                @input="updateData"
+              ></textarea>
             </label>
 
-            <button
-              type="button"
-              class="icon-btn icon-btn--danger"
-              @click="removeCurrentSpace(index)"
-            >
-              <i class="pi pi-trash"></i>
-            </button>
-          </article>
-        </div>
+            <label class="note-field">
+              <span>{{ $t('ProjectFloor.technical_general_notes') }}</span>
+              <textarea
+                v-model="technicalGeneralNotes"
+                class="field-input"
+                @input="updateData"
+              ></textarea>
+            </label>
 
-        <button
-          type="button"
-          class="primary-action-btn"
-          :disabled="!selectedFloorNumber || !currentSpaces.length"
-          @click="addFloor"
-        >
-          <i class="pi pi-plus-circle"></i>
-          {{ $t('ProjectFloor.add_floor') }}
-        </button>
-      </section>
-
-      <section class="section-card">
-        <div class="section-head section-head--between">
-          <div class="section-head__start">
-            <span class="section-head__icon">📚</span>
-            <div>
-              <h4>{{ $t('ProjectFloor.saved_floors') }}</h4>
-              <p>{{ $t('ProjectFloor.selected_spaces_description') }}</p>
-            </div>
+            <label class="note-field">
+              <span>{{ $t('ProjectFloor.inspection_recommendations') }}</span>
+              <textarea
+                v-model="inspectionRecommendations"
+                class="field-input"
+                @input="updateData"
+              ></textarea>
+            </label>
           </div>
-          <span class="count-badge">{{ floors.length }}</span>
-        </div>
-
-        <div v-if="!floors.length" class="empty-state">
-          {{ $t('ProjectFloor.no_spaces_title') }}
-        </div>
-
-        <div v-else class="floors-list">
-          <article v-for="(floor, floorIndex) in floors" :key="floor.localId" class="floor-card">
-            <header class="floor-card__head">
-              <div>
-                <span>{{ $t('ProjectFloor.floor_number') }}</span>
-                <strong>{{ floor.floorNumber.title }}</strong>
-              </div>
-
-              <div class="floor-card__actions">
-                <span class="count-badge">{{ floor.spaces.length }}</span>
-                <button type="button" class="icon-btn" @click="editFloor(floorIndex)">
-                  <i class="pi pi-pencil"></i>
-                </button>
-                <button
-                  type="button"
-                  class="icon-btn icon-btn--danger"
-                  @click="removeFloor(floorIndex)"
-                >
-                  <i class="pi pi-trash"></i>
-                </button>
-              </div>
-            </header>
-
-            <div class="floor-spaces-table">
-              <div class="floor-spaces-table__head">
-                <span>#</span>
-                <span>{{ $t('ProjectFloor.space') }}</span>
-                <span>{{ $t('ProjectFloor.length') }}</span>
-                <span>{{ $t('ProjectFloor.width') }}</span>
-                <span>{{ $t('ProjectFloor.height') }}</span>
-                <span>{{ $t('ProjectFloor.notes') }}</span>
-              </div>
-
-              <div
-                v-for="(space, spaceIndex) in floor.spaces"
-                :key="`${floor.localId}-${space.space.id}`"
-                class="floor-space-row"
-              >
-                <span>{{ spaceIndex + 1 }}</span>
-                <strong>{{ space.space.title }}</strong>
-                <span>{{ space.length || '-' }}</span>
-                <span>{{ space.width || '-' }}</span>
-                <span>{{ space.height || '-' }}</span>
-                <span>{{ space.notes || '-' }}</span>
-              </div>
-            </div>
-          </article>
-        </div>
-      </section>
-
-      <section class="section-card">
-        <div class="section-head">
-          <span class="section-head__icon">📝</span>
-          <div>
-            <h4>{{ $t('ProjectFloor.site_recommendations') }}</h4>
-            <p>{{ $t('ProjectFloor.site_recommendations_description') }}</p>
-          </div>
-        </div>
-
-        <div class="notes-grid">
-          <label class="note-field">
-            <span>{{ $t('ProjectFloor.site_description') }}</span>
-            <textarea v-model="siteDescription" class="field-input" @input="updateData"></textarea>
-          </label>
-
-          <label class="note-field">
-            <span>{{ $t('ProjectFloor.technical_general_notes') }}</span>
-            <textarea
-              v-model="technicalGeneralNotes"
-              class="field-input"
-              @input="updateData"
-            ></textarea>
-          </label>
-
-          <label class="note-field">
-            <span>{{ $t('ProjectFloor.inspection_recommendations') }}</span>
-            <textarea
-              v-model="inspectionRecommendations"
-              class="field-input"
-              @input="updateData"
-            ></textarea>
-          </label>
-        </div>
-      </section>
+        </section>
+      </div>
     </div>
   </div>
 </template>
 
 <style scoped lang="scss">
+  .project-floor-form-wrapper {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .project-floor-form-wrapper--locked {
+    min-height: 520px;
+  }
+
+  .project-floor-form-wrapper--locked .project-floor-form-card {
+    pointer-events: none;
+    user-select: none;
+    filter: blur(5px);
+    opacity: 0.45;
+    transform: scale(0.995);
+  }
+
+  .preview-gate {
+    position: absolute;
+    z-index: 20;
+    inset: 0;
+    display: grid;
+    min-height: 520px;
+    padding: 1.5rem;
+    place-items: center;
+  }
+
+  .preview-gate__backdrop {
+    position: absolute;
+    inset: 0;
+    border-radius: 24px;
+    background: linear-gradient(135deg, rgb(255 255 255 / 65%), rgb(248 250 252 / 82%));
+    backdrop-filter: blur(8px);
+  }
+
+  .preview-gate__card {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    width: min(100%, 620px);
+    align-items: flex-start;
+    gap: 1.1rem;
+    padding: 1.5rem;
+    border: 1px solid rgba(245, 158, 11, 0.35);
+    border-radius: 24px;
+    background: #fff;
+    box-shadow: 0 24px 70px rgba(15, 23, 42, 0.16);
+    animation: preview-gate-enter 0.3s ease-out;
+  }
+
+  .preview-gate__icon {
+    display: inline-grid;
+    width: 58px;
+    height: 58px;
+    flex: 0 0 auto;
+    border-radius: 18px;
+    background: #fff7ed;
+    color: #ea580c;
+    font-size: 1.35rem;
+    place-items: center;
+    box-shadow: inset 0 0 0 1px rgba(234, 88, 12, 0.14);
+  }
+
+  .preview-gate__content {
+    min-width: 0;
+    flex: 1;
+
+    h3 {
+      margin: 0.3rem 0 0.5rem;
+      color: #111827;
+      font-family: 'Bold';
+      font-size: 1.15rem;
+    }
+
+    p {
+      margin: 0;
+      color: #64748b;
+      line-height: 1.8;
+    }
+
+    small {
+      display: block;
+      margin-top: 0.85rem;
+      color: #94a3b8;
+      line-height: 1.6;
+    }
+  }
+
+  .preview-gate__eyebrow {
+    color: #ea580c;
+    font-family: 'Bold';
+    font-size: var(--xs-size);
+  }
+
+  .preview-gate__date {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin-top: 1rem;
+    padding: 0.55rem 0.8rem;
+    border-radius: 999px;
+    background: #fff7ed;
+    color: #c2410c;
+    font-family: 'Bold';
+    font-size: var(--sm-size);
+  }
+
+  .preview-gate__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+    margin-top: 1.15rem;
+  }
+
+  .preview-gate__button {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    padding-inline: 1rem;
+    border-radius: 13px;
+    cursor: pointer;
+    font-family: 'Medium';
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease,
+      background-color 0.2s ease;
+  }
+
+  .preview-gate__button:hover {
+    transform: translateY(-1px);
+  }
+
+  .preview-gate__button--primary {
+    border: 1px solid #ea580c;
+    background: #ea580c;
+    color: #fff;
+    box-shadow: 0 10px 22px rgba(234, 88, 12, 0.22);
+  }
+
+  .preview-gate__button--secondary {
+    border: 1px solid #e2e8f0;
+    background: #fff;
+    color: #475569;
+  }
+
+  @keyframes preview-gate-enter {
+    from {
+      opacity: 0;
+      transform: translateY(10px) scale(0.98);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
   .project-floor-form-card {
     display: flex;
     flex-direction: column;
@@ -962,6 +1229,34 @@
 
     .floor-space-row {
       grid-template-columns: 1fr;
+    }
+  }
+  @media (max-width: 640px) {
+    .preview-gate {
+      padding: 1rem;
+    }
+
+    .preview-gate__card {
+      flex-direction: column;
+      padding: 1.15rem;
+    }
+
+    .preview-gate__actions {
+      flex-direction: column;
+    }
+
+    .preview-gate__button {
+      width: 100%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .preview-gate__card {
+      animation: none;
+    }
+
+    .preview-gate__button {
+      transition: none;
     }
   }
 </style>

@@ -55,10 +55,7 @@ export default class EditProjectParams implements Params {
 
   public terms?: string;
 
-  /**
-   * 1 = المشروع به Preview
-   * 0 = المشروع بدون Preview
-   */
+ 
   public with_preview?: WithPreviewValue;
 
   public static readonly validation = new ClassValidation().setRules({
@@ -75,8 +72,9 @@ export default class EditProjectParams implements Params {
 
     project_type_id: requiredSelectRule(),
 
-
     service_type: requiredSelectRule(),
+
+    location_id: requiredSelectRule(),
   });
 
   constructor(data: {

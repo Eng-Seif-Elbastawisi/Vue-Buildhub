@@ -1,6 +1,7 @@
 <script setup lang="ts">
-  import { computed, onMounted, ref } from 'vue';
+  import { computed, onMounted, ref, watch } from 'vue';
   import { useRoute } from 'vue-router';
+  import { useI18n } from 'vue-i18n';
 
   import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
   import TableSkelaton from '@/shared/HelpersComponents/TableSkelaton.vue';
@@ -8,7 +9,15 @@
   import type ProjectPreviewModel from '../../../core/models/project.preview.model';
   import IndexProjectPreviewParams from '../../../core/params/index.project.preview.params';
   import ProjectPreviewController from '../../controllers/project.preview.controller';
-  import { useI18n } from 'vue-i18n';
+
+  const emit = defineEmits<{
+    upcomingChange: [
+      payload: {
+        hasUpcoming: boolean;
+        preview: ProjectPreviewModel | null;
+      },
+    ];
+  }>();
 
   const controller = ProjectPreviewController.getInstance();
   const state = computed(() => controller.listState.value);
@@ -25,7 +34,47 @@
     route.query.project_preview_id ? Number(route.query.project_preview_id) : undefined,
   );
 
-  const fetchProjectPreviews = async (page: number = 1) => {
+  const previewItems = computed<ProjectPreviewModel[]>(() => {
+    const currentState = controller.listState.value as any;
+
+    const data =
+      currentState?.data?.data ??
+      currentState?.data ??
+      currentState?.response?.data?.data ??
+      currentState?.response?.data ??
+      [];
+
+    return Array.isArray(data) ? (data as ProjectPreviewModel[]) : [];
+  });
+
+  const isPreviewUpcoming = (preview: ProjectPreviewModel): boolean => {
+    const previewDate = preview.preview_date?.trim();
+
+    if (!previewDate) return false;
+
+    const previewTime = preview.preview_time?.trim() || '00:00:00';
+    const scheduledTimestamp = new Date(`${previewDate}T${previewTime}`).getTime();
+
+    return Number.isFinite(scheduledTimestamp) && scheduledTimestamp > Date.now();
+  };
+
+  const upcomingPreview = computed<ProjectPreviewModel | null>(() => {
+    return (
+      previewItems.value.filter(isPreviewUpcoming).sort((first, second) => {
+        const firstTimestamp = new Date(
+          `${first.preview_date}T${first.preview_time?.trim() || '00:00:00'}`,
+        ).getTime();
+
+        const secondTimestamp = new Date(
+          `${second.preview_date}T${second.preview_time?.trim() || '00:00:00'}`,
+        ).getTime();
+
+        return firstTimestamp - secondTimestamp;
+      })[0] ?? null
+    );
+  });
+
+  const fetchProjectPreviews = async (page: number = 1): Promise<void> => {
     await controller.fetchList(
       new IndexProjectPreviewParams(
         '',
@@ -39,35 +88,37 @@
     );
   };
 
-  const formatVisitTitle = (index: number) => {
+  const formatVisitTitle = (index: number): string => {
     return t('ProjectPreview.visit_title', {
       number: index + 1,
     });
   };
-  const formatDateTime = (item: ProjectPreviewModel) => {
+
+  const formatDateTime = (item: ProjectPreviewModel): string => {
     const date = item.preview_date ?? '';
     const time = item.preview_time ? item.preview_time.slice(0, 5) : '';
 
     return [date, time].filter(Boolean).join(' ');
   };
 
-  const isPreviewUpcoming = (preview: ProjectPreviewModel) => {
-    const previewDate = preview.preview_date?.trim();
-    if (!previewDate) return false;
-
-    const previewTime = preview.preview_time?.trim() || '00:00:00';
-    const scheduledTimestamp = new Date(`${previewDate}T${previewTime}`).getTime();
-
-    return Number.isFinite(scheduledTimestamp) && scheduledTimestamp > Date.now();
+  const getEngineerName = (item: ProjectPreviewModel): string => {
+    return item.engineer?.title ?? t('general.not_specified');
   };
 
-  const getEngineerName = (item: ProjectPreviewModel) => {
-    return item.engineer?.title ?? 'غير محدد';
+  const getAddress = (item: ProjectPreviewModel): string => {
+    return item.address || t('general.no_address');
   };
 
-  const getAddress = (item: ProjectPreviewModel) => {
-    return item.address || 'لا يوجد عنوان';
-  };
+  watch(
+    upcomingPreview,
+    (preview) => {
+      emit('upcomingChange', {
+        hasUpcoming: Boolean(preview),
+        preview,
+      });
+    },
+    { immediate: true },
+  );
 
   onMounted(async () => {
     await fetchProjectPreviews();
@@ -97,6 +148,9 @@
             v-for="(item, index) in data as ProjectPreviewModel[]"
             :key="item.id"
             class="preview-card"
+            :class="{
+              'preview-card--upcoming': isPreviewUpcoming(item),
+            }"
           >
             <div class="preview-card__side">
               <span class="preview-card__step">{{ index + 1 }}</span>
@@ -178,8 +232,8 @@
 
     h4 {
       margin: 0;
-      font-family: 'Bold';
       color: var(--gray-8);
+      font-family: 'Bold';
     }
 
     p {
@@ -211,6 +265,11 @@
     }
   }
 
+  .preview-card--upcoming {
+    border-color: rgba(245, 158, 11, 0.38);
+    box-shadow: 0 10px 30px rgba(245, 158, 11, 0.08);
+  }
+
   .preview-card__side {
     display: flex;
     align-items: flex-start;
@@ -219,10 +278,10 @@
 
   .preview-card__step {
     display: inline-flex;
-    align-items: center;
-    justify-content: center;
     width: 42px;
     height: 42px;
+    align-items: center;
+    justify-content: center;
     border-radius: 14px;
     background: var(--PrimaryColor-light);
     color: var(--PrimaryColor);
@@ -231,9 +290,9 @@
   }
 
   .preview-card__content {
-    flex: 1;
-    min-width: 0;
     display: flex;
+    min-width: 0;
+    flex: 1;
     flex-direction: column;
     gap: 0.85rem;
   }
@@ -246,9 +305,9 @@
 
     h5 {
       margin: 0;
+      color: var(--gray-8);
       font-family: 'Bold';
       font-size: 1rem;
-      color: var(--gray-8);
     }
   }
 
@@ -281,13 +340,13 @@
 
   .preview-card__icon {
     display: inline-flex;
-    align-items: center;
-    justify-content: center;
     width: 26px;
     height: 26px;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border-weak);
     border-radius: 50%;
     background: var(--white);
-    border: 1px solid var(--border-weak);
     font-size: 0.78rem;
   }
 
@@ -296,14 +355,10 @@
     align-items: flex-start;
     gap: 0.75rem;
     padding: 0.85rem 0.95rem;
-    border: 1px solid color-mix(in sRGB, var(--warning) 34%, transparent);
+    border: 1px solid rgba(245, 158, 11, 0.34);
     border-radius: 14px;
-    color: var(--warning-dark);
-    background: linear-gradient(
-      135deg,
-      var(--warning-light),
-      color-mix(in sRGB, var(--warning-light) 72%, transparent)
-    );
+    background: linear-gradient(135deg, #fffbeb, #fff7ed);
+    color: #92400e;
 
     strong {
       display: block;
@@ -321,13 +376,29 @@
 
   .preview-card__warning-icon {
     display: grid;
-    flex: 0 0 34px;
     width: 34px;
     height: 34px;
+    flex: 0 0 34px;
     border-radius: 10px;
-    color: var(--warning-dark);
-    background: color-mix(in sRGB, var(--warning) 18%, transparent);
+    background: rgba(245, 158, 11, 0.18);
+    color: #92400e;
     place-items: center;
+  }
+
+  .empty-state {
+    padding: 2rem;
+    border: 1px dashed var(--border-weak);
+    border-radius: 16px;
+    color: var(--gray-5);
+    text-align: center;
+
+    h3 {
+      margin: 0;
+    }
+
+    p {
+      margin: 0.4rem 0 0;
+    }
   }
 
   @media (max-width: 768px) {
@@ -336,12 +407,18 @@
     }
 
     .preview-card__header {
-      flex-direction: column;
       align-items: flex-start;
+      flex-direction: column;
     }
 
     .preview-card__badge {
       white-space: normal;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .preview-card {
+      transition: none;
     }
   }
 </style>
