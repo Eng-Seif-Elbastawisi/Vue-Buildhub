@@ -2106,5 +2106,9 @@
   "general": {
     "not_specified": "Not specified",
     "no_address": "No address"
-  }
+  },
+  "Project.validation.client_type_required": "Client type is required",
+  "Project.validation.project_type_required": "Project type is required",
+  "Project.validation.service_type_required": "Service type is required",
+  "Project.validation.city_required": "City is required"
 }

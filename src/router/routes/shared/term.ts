@@ -4,19 +4,19 @@ export const termRoutes: RouteRecordRaw[] = [
   {
     path: 'terms',
     name: 'Terms',
-    component: () => import('@/views/shared/Term/IndexTerm.vue'),
+    component: () => import('@/views/MainOrganization/Term/IndexTerm.vue'),
     meta: { breadcrumb: 'Terms' },
   },
   {
     path: 'terms/add',
     name: 'Add Term',
-    component: () => import('@/views/shared/Term/AddTerm.vue'),
+    component: () => import('@/views/MainOrganization/Term/AddTerm.vue'),
     meta: { breadcrumb: 'Add Term', parent: 'Terms' },
   },
   {
     path: 'terms/edit/:id',
     name: 'Edit Term',
-    component: () => import('@/views/shared/Term/EditTerm.vue'),
+    component: () => import('@/views/MainOrganization/Term/EditTerm.vue'),
     meta: { breadcrumb: 'Edit Term', parent: 'Terms' },
   },
 ];

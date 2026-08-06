@@ -8,11 +8,7 @@ import {
 
 import type TranslationParams from '@/base/Core/Params/translationParams';
 
-import {
-  hasSelectValue,
-  hasTitleTranslation,
-  requiredSelectRule,
-} from '@/base/Presentation/Utils/input_title';
+import { hasSelectValue, hasTitleTranslation } from '@/base/Presentation/Utils/input_title';
 
 import { translate } from '@/locales/i18n';
 
@@ -62,7 +58,6 @@ export default class AddProjectParams implements Params {
   public terms?: string;
 
   public with_preview?: WithPreviewValue;
-
   public static readonly validation = new ClassValidation().setRules({
     translations: {
       required: true,
@@ -71,15 +66,26 @@ export default class AddProjectParams implements Params {
         hasTitleTranslation(value) || translate('validation.title_required'),
     },
 
-    client_exist: requiredSelectRule(),
+    client_exist: {
+      custom: (value?: boolean) =>
+        value === true || value === false || translate('Project.validation.client_type_required'),
+    },
 
-    project_type_id: requiredSelectRule(),
+    project_type_id: {
+      custom: (value?: number) =>
+        hasSelectValue(value) || translate('Project.validation.project_type_required'),
+    },
 
-    service_type: requiredSelectRule(),
-    
-    location_id: requiredSelectRule(),
+    service_type: {
+      custom: (value?: ServiceType) =>
+        hasSelectValue(value) || translate('Project.validation.service_type_required'),
+    },
+
+    location_id: {
+      custom: (value?: number) =>
+        hasSelectValue(value) || translate('Project.validation.city_required'),
+    },
   });
-
   constructor(data: {
     translations?: TranslationParams;
 
@@ -117,12 +123,6 @@ export default class AddProjectParams implements Params {
 
     terms?: string;
 
-    /**
-     * يمكن إرسال:
-     *
-     * true أو 1  → تتحول إلى 1
-     * false أو 0 → تتحول إلى 0
-     */
     with_preview?: boolean | WithPreviewValue;
   }) {
     this.translations = data.translations;
@@ -207,9 +207,6 @@ export default class AddProjectParams implements Params {
 
       terms: this.terms,
 
-      /**
-       * القيمة النهائية في الـ request ستكون 0 أو 1.
-       */
       with_preview: this.with_preview,
     };
   }
@@ -221,7 +218,7 @@ export default class AddProjectParams implements Params {
       errors.push({
         field: 'client_id',
 
-        message: translate('validation.select_required'),
+        message: translate('Project.validation.client_required'),
       });
     }
 
@@ -229,7 +226,7 @@ export default class AddProjectParams implements Params {
       errors.push({
         field: 'client_source',
 
-        message: translate('validation.select_required'),
+        message: translate('Project.validation.client_source_required'),
       });
     }
 
@@ -248,7 +245,7 @@ export default class AddProjectParams implements Params {
     };
   }
 
-  validateOrThrow() {
+  validateOrThrow(): void {
     const validation = this.validate();
 
     if (!validation.isValid) {
