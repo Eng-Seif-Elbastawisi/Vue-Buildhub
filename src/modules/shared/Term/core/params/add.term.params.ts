@@ -1,12 +1,12 @@
 import type Params from '@/base/Core/Params/params';
-import type TranslationParams from '@/base/Core/Params/translationParams';
 import { ClassValidation } from '@/base/Presentation/Utils/classValidation';
 import { hasTitleTranslation, requiredSelectRule } from '@/base/Presentation/Utils/input_title';
 import { translate } from '@/locales/i18n';
+import type TranslationParams from '@/base/Core/Params/translationParams';
 
 export default class AddTermParams implements Params {
-  public readonly translations: TranslationParams;
-  public readonly departmentId: number;
+  public translations: TranslationParams;
+  public departmentId: number;
 
   public static readonly validation = new ClassValidation().setRules({
     translations: {
@@ -28,7 +28,6 @@ export default class AddTermParams implements Params {
   validate() {
     return AddTermParams.validation.validate(this);
   }
-
   validateOrThrow() {
     return AddTermParams.validation.validateOrThrow(this);
   }

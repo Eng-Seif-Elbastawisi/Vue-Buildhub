@@ -60,7 +60,7 @@ export default class AddInvoiceParams implements Params {
 
   toMap(): Record<string, unknown> {
     const invoiceBase = {
-      invoice_type: this.type,
+      type: this.type,
       project_id: this.project_id,
     };
 

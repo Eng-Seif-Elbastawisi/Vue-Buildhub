@@ -2093,12 +2093,17 @@
   "request.list_title": "قائمة الطلبات",
   "request.list_description": "قائمة الطلبات",
   "search_request": "بحث في الطلبات",
-   "employee.team_leader": "قائد الفريق",
+  "employee.team_leader": "قائد الفريق",
   "employee.reviewer": "المراجع",
   "employee.pricing_responsible": "مسؤول التسعير",
-  "employee.seller": "البائع", 
+  "employee.seller": "البائع",
   "employee.engineer": "المهندس",
   "employee.employee": "الموظف",
-   "employee.form_title": "نموذج الموظف",
-  "employee.form_description":"وصف نموذج الموظف"
+  "employee.form_title": "نموذج الموظف",
+  "employee.form_description": "وصف نموذج الموظف",
+  "ProjectFloor": {
+    "floors_locked": "إضافة الطوابق مقفولة",
+    "preview_required_before_floor": "يجب إضافة المعاينة أولاً قبل إضافة طابق"
+  },
+  "Project.engineering_responsible": "المسؤول الهندسي"
 }

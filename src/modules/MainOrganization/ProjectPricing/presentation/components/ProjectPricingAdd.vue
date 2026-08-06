@@ -2,6 +2,8 @@
   import { computed, onMounted, ref } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
 
+  import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
+
   import ProjectPricingController from '../controllers/project.pricing.controller';
   import type AddProjectPricingParams from '../../core/params/add.project.pricing.params';
   import IndexProjectPricingParams from '../../core/params/index.project.pricing.params';
@@ -16,12 +18,21 @@
   const projectItemController = ProjectItemController.getInstance();
 
   const route = useRoute();
+  const router = useRouter();
+
   const formKey = route.fullPath;
 
   const params = ref<AddProjectPricingParams | null>(null);
+
   const loading = ref(false);
   const itemsLoading = ref(false);
   const pricingLoading = ref(false);
+
+  /**
+   * رسالة محلية لضمان ظهور خطأ الـ API
+   * وعدم الاعتماد فقط على errorMessage في Controller.
+   */
+  const submitError = ref('');
 
   const projectId = computed(() => {
     const value = Number(route.query.project_id);
@@ -65,8 +76,10 @@
     return pricingData[0] as ProjectPricingShowModel | undefined;
   });
 
-  const fetchProjectItems = async () => {
-    if (!projectId.value) return;
+  const fetchProjectItems = async (): Promise<void> => {
+    if (!projectId.value) {
+      return;
+    }
 
     itemsLoading.value = true;
 
@@ -79,8 +92,10 @@
     }
   };
 
-  const fetchProjectPricing = async () => {
-    if (!projectId.value) return;
+  const fetchProjectPricing = async (): Promise<void> => {
+    if (!projectId.value) {
+      return;
+    }
 
     pricingLoading.value = true;
 
@@ -93,23 +108,58 @@
     }
   };
 
-  const router = useRouter();
-  const saveItem = async () => {
-    if (!params.value) return;
+  const backToEditProject = (): void => {
+    router.push(`/organization/project/show/${projectId.value}`);
+  };
+
+  const getResultMessage = (result: unknown): string => {
+    const response = result as any;
+
+    return (
+      response?.message ??
+      response?.error?.message ??
+      response?.data?.message ??
+      response?.response?.data?.message ??
+      controller.errorMessage.value ??
+      ''
+    );
+  };
+
+  const saveItem = async (): Promise<void> => {
+    if (!params.value || loading.value) {
+      return;
+    }
 
     loading.value = true;
+    submitError.value = '';
 
     try {
-      await controller.create(params.value, undefined, formKey);
+      const result = await controller.create(params.value, undefined, formKey);
+
+      /**
+       * التحويل إلى صفحة Show يتم فقط
+       * عندما تكون النتيجة ناجحة بالفعل.
+       */
+      if (!(result instanceof DataSuccess)) {
+        submitError.value = getResultMessage(result) || 'حدث خطأ أثناء حفظ تسعير المشروع.';
+
+        return;
+      }
+
       await fetchProjectPricing();
+
       backToEditProject();
+    } catch (error: unknown) {
+      const apiError = error as any;
+
+      submitError.value =
+        apiError?.response?.data?.message ??
+        apiError?.message ??
+        controller.errorMessage.value ??
+        'حدث خطأ أثناء حفظ تسعير المشروع.';
     } finally {
       loading.value = false;
     }
-  };
-
-  const backToEditProject = () => {
-    router.push(`/organization/project/show/${route.query.project_id}`);
   };
 
   onMounted(async () => {
@@ -128,21 +178,31 @@
       @update-data="params = $event"
     />
 
-    <div class="actions" :class="{ disabled: loading || itemsLoading || pricingLoading }">
+    <div
+      class="actions"
+      :class="{
+        disabled: loading || itemsLoading || pricingLoading,
+      }"
+    >
       <button
-        :class="{ 'btn--loading': loading }"
         class="btn btn-primary w-full"
+        :class="{
+          'btn--loading': loading,
+        }"
         type="button"
         :disabled="loading || itemsLoading || pricingLoading"
         @click="saveItem"
       >
         <span v-if="loading" class="loader"></span>
-        <span v-else>{{ $t('project_pricing.save') }}</span>
+
+        <span v-else>
+          {{ $t('project_pricing.save') }}
+        </span>
       </button>
     </div>
 
-    <div v-if="controller.errorMessage.value" class="error">
-      {{ controller.errorMessage.value }}
+    <div v-if="submitError || controller.errorMessage.value" class="error" role="alert">
+      {{ submitError || controller.errorMessage.value }}
     </div>
   </div>
 </template>
@@ -160,11 +220,13 @@
   }
 
   .error {
-    margin-top: 20px;
-    padding: 10px;
+    margin-top: 0.25rem;
+    padding: 0.85rem 1rem;
+    border: 1px solid var(--danger-dark);
+    border-radius: 8px;
     background-color: var(--danger-light);
     color: var(--danger-dark);
-    border: 1px solid #f5c6cb;
-    border-radius: 4px;
+    font-family: 'Medium';
+    line-height: 1.6;
   }
 </style>

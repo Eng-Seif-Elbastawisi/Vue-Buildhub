@@ -9,6 +9,11 @@ export type ProjectSelectItem = {
   parent?: ProjectSelectItem | null;
 };
 
+export type EngineeringResponsible = {
+  id: number;
+  name: string;
+};
+
 export type ProjectPreviewModel = {
   id: number;
   status?: number;
@@ -21,6 +26,7 @@ export type ProjectPreviewModel = {
   address?: string;
   created_at?: string;
   terms?: string;
+  engineering_responsible?: EngineeringResponsible | null;
 };
 
 export default class ProjectShowModel {
