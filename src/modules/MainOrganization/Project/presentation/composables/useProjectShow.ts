@@ -3,12 +3,16 @@ import { jsPDF } from 'jspdf';
 import autoTable, { type CellHookData, type RowInput } from 'jspdf-autotable';
 import { useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
-import pdfArabicBoldFontUrl from '@/assets/fonts/Noto/NotoNaskhArabic-Bold.ttf?url';
-import pdfArabicRegularFontUrl from '@/assets/fonts/Noto/NotoNaskhArabic-Regular.ttf?url';
 import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
 import fallbackCompanyLogo from '@/assets/images/BuildHubLogo.jpg';
 import fallbackProjectImage from '@/assets/images/ChatGPT Image Jul 1, 2026, 11_19_16 AM.png';
 import { loadFirstPdfImage } from '@/shared/Pdf/loadPdfImage';
+import {
+  configurePdfDocumentFont,
+  getPdfFontFamily,
+  isArabicPdfLocale,
+  shapeArabicPdfText,
+} from '@/shared/Pdf/pdfArabicFont';
 import { addPdfPageBranding, type PdfPageBranding } from '@/shared/Pdf/pdfPageBranding';
 import { useUserStore } from '@/stores/user';
 import { getSystemIdentityCompany } from '@/modules/shared/SystemIdentity/presentation/utils/systemIdentityCompany';
@@ -40,12 +44,6 @@ type PdfTableDocument = jsPDF & {
 };
 
 type PdfFontStyle = 'normal' | 'bold';
-
-const pdfArabicFontFamily = 'NotoNaskhArabic';
-let pdfArabicFontFiles: {
-  regular: string;
-  bold: string;
-} | null = null;
 
 export const useProjectShow = () => {
   const route = useRoute();
@@ -618,66 +616,22 @@ export const useProjectShow = () => {
 
   const pdfMargin = 16;
 
-  const isPdfRtl = () => locale.value.startsWith('ar');
+  const isPdfRtl = () => isArabicPdfLocale(locale.value);
 
   const pdfAlign = () => (isPdfRtl() ? 'right' : 'left');
 
-  const pdfFontFamily = () => (isPdfRtl() ? pdfArabicFontFamily : 'helvetica');
+  const pdfFontFamily = () => getPdfFontFamily(locale.value);
 
   const setPdfFont = (pdf: jsPDF, style: PdfFontStyle = 'normal') => {
     pdf.setFont(pdfFontFamily(), style);
   };
 
-  const arrayBufferToBase64 = (buffer: ArrayBuffer) => {
-    const bytes = new Uint8Array(buffer);
-    const chunkSize = 0x8000;
-    let binary = '';
-
-    for (let index = 0; index < bytes.length; index += chunkSize) {
-      binary += String.fromCharCode(...bytes.subarray(index, index + chunkSize));
-    }
-
-    return window.btoa(binary);
-  };
-
-  const fetchPdfFont = async (fontUrl: string) => {
-    const response = await fetch(fontUrl);
-
-    return arrayBufferToBase64(await response.arrayBuffer());
-  };
-
-  const loadPdfArabicFonts = async () => {
-    if (pdfArabicFontFiles) return pdfArabicFontFiles;
-
-    const [regular, bold] = await Promise.all([
-      fetchPdfFont(pdfArabicRegularFontUrl),
-      fetchPdfFont(pdfArabicBoldFontUrl),
-    ]);
-
-    pdfArabicFontFiles = { regular, bold };
-
-    return pdfArabicFontFiles;
-  };
-
-  const setupPdfDocument = async (pdf: jsPDF) => {
-    if (!isPdfRtl()) {
-      pdf.setR2L(false);
-      return;
-    }
-
-    const fonts = await loadPdfArabicFonts();
-
-    pdf.addFileToVFS('NotoNaskhArabic-Regular.ttf', fonts.regular);
-    pdf.addFont('NotoNaskhArabic-Regular.ttf', pdfArabicFontFamily, 'normal');
-    pdf.addFileToVFS('NotoNaskhArabic-Bold.ttf', fonts.bold);
-    pdf.addFont('NotoNaskhArabic-Bold.ttf', pdfArabicFontFamily, 'bold');
-    pdf.setR2L(false);
-  };
-
   const formatPdfText = (pdf: jsPDF, text: string | number | null | undefined) => {
     const pdfText = valueOrEmpty(text);
 
-    return isPdfRtl() && /[\u0600-\u06FF]/.test(pdfText) ? pdf.processArabic(pdfText) : pdfText;
+    return isPdfRtl() && /[\u0600-\u06FF]/.test(pdfText)
+      ? shapeArabicPdfText(pdf, pdfText)
+      : pdfText;
   };
 
   const formatPdfTableCell = (pdf: jsPDF, cellData: CellHookData) => {
@@ -889,7 +843,7 @@ export const useProjectShow = () => {
     try {
       const pdf = new jsPDF('p', 'mm', 'a4');
       const [, companyLogo] = await Promise.all([
-        setupPdfDocument(pdf),
+        configurePdfDocumentFont(pdf, locale.value),
         loadFirstPdfImage([company.value.logo, fallbackCompanyLogo]),
       ]);
 

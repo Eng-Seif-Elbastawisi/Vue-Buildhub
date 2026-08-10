@@ -4,6 +4,8 @@ import type { UserType } from '@/modules/auth/core/constants/userType.enum';
 declare module 'vue-router' {
   interface RouteMeta {
     allowedUserTypes?: readonly UserType[];
+    pageHeaderActionLabel?: string;
+    pageHeaderDescription?: string;
   }
 }
 

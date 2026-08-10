@@ -6,7 +6,9 @@ export const ProjectRoutes: RouteRecordRaw[] = [
     name: 'project',
     component: () => import('@/views/MainOrganization/Project/IndexProject.vue'),
     meta: {
-      breadcrumb: 'requests',
+      breadcrumb: 'project.breadcrumb.requests',
+      pageHeaderDescription: 'project.page.requests_description',
+      pageHeaderActionLabel: 'project.page.add_request',
     },
   },
   {
@@ -14,7 +16,9 @@ export const ProjectRoutes: RouteRecordRaw[] = [
     name: 'converted-projects',
     component: () => import('@/views/MainOrganization/Project/IndexConvertedProject.vue'),
     meta: {
-      breadcrumb: 'Project',
+      breadcrumb: 'project.breadcrumb.converted',
+      pageHeaderDescription: 'project.page.converted_description',
+      pageHeaderActionLabel: 'project.page.add_project',
     },
   },
   {
@@ -22,7 +26,9 @@ export const ProjectRoutes: RouteRecordRaw[] = [
     name: 'offers-projects',
     component: () => import('@/views/MainOrganization/Project/IndexOfferProject.vue'),
     meta: {
-      breadcrumb: 'Offer Project',
+      breadcrumb: 'project.breadcrumb.offers',
+      pageHeaderDescription: 'project.page.offers_description',
+      pageHeaderActionLabel: 'project.page.add_offer',
     },
   },
 

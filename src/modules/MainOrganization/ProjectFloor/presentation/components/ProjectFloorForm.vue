@@ -433,14 +433,16 @@
               {{ $t('ProjectFloor.continue_before_preview') }}
             </button>
 
-            <button
-              type="button"
-              class="preview-gate__button preview-gate__button--secondary"
-              @click="keepFormLocked"
-            >
-              <i class="pi pi-calendar" aria-hidden="true"></i>
-              {{ $t('ProjectFloor.wait_for_preview') }}
-            </button>
+            <router-link :to="{ name: 'offers-projects' }">
+              <button
+                type="button"
+                class="preview-gate__button preview-gate__button--secondary"
+                @click="keepFormLocked"
+              >
+                <i class="pi pi-calendar" aria-hidden="true"></i>
+                {{ $t('ProjectFloor.wait_for_preview') }}
+              </button>
+            </router-link>
           </div>
 
           <small>{{ $t('ProjectFloor.preview_pending_hint') }}</small>

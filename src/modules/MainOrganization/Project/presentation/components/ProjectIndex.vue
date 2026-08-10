@@ -1,5 +1,6 @@
 <script setup lang="ts">
   import { computed, onMounted, ref, watch } from 'vue';
+  import { useI18n } from 'vue-i18n';
   import { useRoute, useRouter } from 'vue-router';
 
   import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
@@ -32,6 +33,7 @@
 
   const route = useRoute();
   const router = useRouter();
+  const { locale, t } = useI18n();
 
   const { user } = useUserStore();
 
@@ -74,6 +76,26 @@
       props.statuses[0] === ConvertStatus.PENDING
     );
   });
+
+  const pageHeaderTitle = computed(() => {
+    void locale.value;
+    const breadcrumb = route.meta.breadcrumb;
+
+    return typeof breadcrumb === 'string'
+      ? t(breadcrumb)
+      : t(isPendingPage.value ? 'requests' : 'request.list_title');
+  });
+
+  const pageHeaderDescription = computed(() =>
+    t(
+      route.meta.pageHeaderDescription ??
+        (isPendingPage.value ? 'requests_description' : 'request.list_description'),
+    ),
+  );
+
+  const pageHeaderActionLabel = computed(() =>
+    t(route.meta.pageHeaderActionLabel ?? 'request.add'),
+  );
 
   const headers = computed<TableHeader[]>(() => {
     const baseHeaders: TableHeader[] = [
@@ -210,25 +232,13 @@
   <div class="Project-page">
     <header class="page-header">
       <div>
-        <template v-if="isPendingPage">
-          <h4>
-            {{ $t('requests') }}
-          </h4>
+        <h4>
+          {{ pageHeaderTitle }}
+        </h4>
 
-          <p>
-            {{ $t('requests_description') }}
-          </p>
-        </template>
-
-        <template v-else>
-          <h4>
-            {{ $t('request.list_title') }}
-          </h4>
-
-          <p>
-            {{ $t('request.list_description') }}
-          </p>
-        </template>
+        <p>
+          {{ pageHeaderDescription }}
+        </p>
         <div class="toolbar">
           <div class="search-field">
             <span class="search-icon">
@@ -257,7 +267,7 @@
             class="btn btn-primary"
             :to="user?.isMaster ? '/admin/Project/add' : '/organization/Project/add'"
           >
-            {{ $t('request.add') }}
+            {{ pageHeaderActionLabel }}
           </router-link>
         </div>
       </div>
