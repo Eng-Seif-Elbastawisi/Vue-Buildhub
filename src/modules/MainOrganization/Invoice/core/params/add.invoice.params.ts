@@ -18,6 +18,7 @@ export default class AddInvoiceParams implements Params {
   public invoice_date?: string;
   public invoice_amount?: number;
   public notes?: string | null;
+  
 
   public static readonly validation = new ClassValidation().setRules({
     type: {

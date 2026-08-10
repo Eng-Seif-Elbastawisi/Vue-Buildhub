@@ -3,12 +3,18 @@
   import { useRoute } from 'vue-router';
   import { useI18n } from 'vue-i18n';
   import { jsPDF } from 'jspdf';
-  import autoTable, { type RowInput } from 'jspdf-autotable';
+  import autoTable, { type CellHookData, type RowInput } from 'jspdf-autotable';
   import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
   import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
   import { dialogManager } from '@/base/Presentation/Dialogs/dialog.manager';
   import fallbackCompanyLogo from '@/assets/images/BuildHubLogo.jpg';
   import { loadFirstPdfImage } from '@/shared/Pdf/loadPdfImage';
+  import {
+    configurePdfDocumentFont,
+    getPdfFontFamily,
+    isArabicPdfLocale,
+    shapeArabicPdfText,
+  } from '@/shared/Pdf/pdfArabicFont';
   import {
     addPdfPageBranding,
     PDF_TABLE_MARGIN,
@@ -41,7 +47,7 @@
   import InvoiceTimelineCard from './invoice_show/InvoiceTimelineCard.vue';
 
   const route = useRoute();
-  const { t } = useI18n();
+  const { locale, t } = useI18n();
   const { user } = useUserStore();
   const { currentPalette } = useSystemIdentityTheme();
   const invoiceController = InvoiceController.getInstance();
@@ -300,7 +306,23 @@
     return `${String(number).replace(/[^a-z0-9]+/gi, '-')}.pdf`;
   };
 
-  const createPdfBranding = async (title: string): Promise<PdfPageBranding> => {
+  const isPdfRtl = () => isArabicPdfLocale(locale.value);
+  const pdfFontFamily = () => getPdfFontFamily(locale.value);
+  const pdfTextAlign = () => (isPdfRtl() ? 'right' : 'left');
+
+  const formatPdfText = (pdf: jsPDF, value: string | number | null | undefined) => {
+    const text = valueOrEmpty(value);
+
+    return isPdfRtl() && /[\u0600-\u06FF]/.test(text) ? shapeArabicPdfText(pdf, text) : text;
+  };
+
+  const formatPdfTableCell = (pdf: jsPDF, cellData: CellHookData) => {
+    if (!isPdfRtl()) return;
+
+    cellData.cell.text = cellData.cell.text.map((line) => formatPdfText(pdf, line));
+  };
+
+  const createPdfBranding = async (pdf: jsPDF, title: string): Promise<PdfPageBranding> => {
     return {
       title,
       company: {
@@ -308,6 +330,8 @@
         logo: await loadFirstPdfImage([company.value.logo, fallbackCompanyLogo]),
         contactLines: companyContactLines.value,
       },
+      fontFamily: pdfFontFamily(),
+      formatText: (text: string) => formatPdfText(pdf, text),
     };
   };
 
@@ -318,7 +342,8 @@
 
     try {
       const pdf = new jsPDF('p', 'mm', 'a4');
-      const branding = await createPdfBranding(t('invoice_show.pdf_title'));
+      await configurePdfDocumentFont(pdf, locale.value);
+      const branding = await createPdfBranding(pdf, t('invoice_show.pdf_title'));
       const rows: [string, string][] = [
         [t('invoice.invoice_number'), valueOrEmpty(invoice.value.invoice_number)],
         [t('invoice.invoice_date'), invoiceDateLabel.value],
@@ -338,10 +363,13 @@
 
       autoTable(pdf, {
         startY: PDF_TABLE_MARGIN.top,
-        body: rows,
+        body: isPdfRtl() ? rows.map(([label, value]) => [value, label]) : rows,
         theme: 'grid',
-        styles: { font: 'helvetica', fontSize: 9 },
-        columnStyles: { 0: { fontStyle: 'bold', cellWidth: 55 } },
+        styles: { font: pdfFontFamily(), fontSize: 9, halign: pdfTextAlign() },
+        columnStyles: {
+          [isPdfRtl() ? 1 : 0]: { fontStyle: 'bold', cellWidth: 55 },
+        },
+        didParseCell: (cellData) => formatPdfTableCell(pdf, cellData),
         margin: PDF_TABLE_MARGIN,
       });
 
@@ -370,7 +398,8 @@
           ? itemRows
           : [[emptyValue, t('invoice_show.no_items'), emptyValue, emptyValue, emptyValue]],
         theme: 'striped',
-        styles: { font: 'helvetica', fontSize: 8 },
+        styles: { font: pdfFontFamily(), fontSize: 8, halign: pdfTextAlign() },
+        didParseCell: (cellData) => formatPdfTableCell(pdf, cellData),
         margin: PDF_TABLE_MARGIN,
       });
 
@@ -400,24 +429,29 @@
 
   const downloadPaymentReceipt = async (payment: InvoicePaymentModel) => {
     const pdf = new jsPDF('p', 'mm', 'a4');
-    const branding = await createPdfBranding(t('invoice_show.receipt_title'));
+    await configurePdfDocumentFont(pdf, locale.value);
+    const branding = await createPdfBranding(pdf, t('invoice_show.receipt_title'));
+    const rows: [string, string][] = [
+      [t('invoice.invoice_number'), valueOrEmpty(invoice.value?.invoice_number)],
+      [t('invoice_show.reference_no'), payment.id ? `#${payment.id}` : emptyValue],
+      [
+        t('invoice_payment.payment_amount'),
+        `${formatAmount(payment.payment_amount)} ${currency.value}`,
+      ],
+      [t('invoice_payment.payment_date'), formatDateTime(payment.payment_date)],
+      [t('invoice_payment.payment_method'), paymentMethodLabel(payment.payment_method)],
+      [t('invoice_payment.notes'), valueOrEmpty(payment.notes)],
+    ];
 
     autoTable(pdf, {
       startY: PDF_TABLE_MARGIN.top,
-      body: [
-        [t('invoice.invoice_number'), valueOrEmpty(invoice.value?.invoice_number)],
-        [t('invoice_show.reference_no'), payment.id ? `#${payment.id}` : emptyValue],
-        [
-          t('invoice_payment.payment_amount'),
-          `${formatAmount(payment.payment_amount)} ${currency.value}`,
-        ],
-        [t('invoice_payment.payment_date'), formatDateTime(payment.payment_date)],
-        [t('invoice_payment.payment_method'), paymentMethodLabel(payment.payment_method)],
-        [t('invoice_payment.notes'), valueOrEmpty(payment.notes)],
-      ],
+      body: isPdfRtl() ? rows.map(([label, value]) => [value, label]) : rows,
       theme: 'grid',
-      styles: { font: 'helvetica', fontSize: 9 },
-      columnStyles: { 0: { fontStyle: 'bold', cellWidth: 60 } },
+      styles: { font: pdfFontFamily(), fontSize: 9, halign: pdfTextAlign() },
+      columnStyles: {
+        [isPdfRtl() ? 1 : 0]: { fontStyle: 'bold', cellWidth: 60 },
+      },
+      didParseCell: (cellData) => formatPdfTableCell(pdf, cellData),
       margin: PDF_TABLE_MARGIN,
     });
 

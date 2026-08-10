@@ -9,9 +9,14 @@ const fetchList = vi.fn();
 const deleteProject = vi.fn();
 const routerPush = vi.fn();
 const routeQuery = reactive<Record<string, string | string[] | undefined>>({});
+const routeMeta = reactive<Record<string, unknown>>({
+  breadcrumb: 'project.breadcrumb.requests',
+  pageHeaderDescription: 'project.page.requests_description',
+  pageHeaderActionLabel: 'project.page.add_request',
+});
 
 vi.mock('vue-router', () => ({
-  useRoute: () => ({ query: routeQuery }),
+  useRoute: () => ({ query: routeQuery, meta: routeMeta }),
   useRouter: () => ({ push: routerPush }),
 }));
 
@@ -65,6 +70,9 @@ describe('ProjectIndex', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     Object.keys(routeQuery).forEach((key) => delete routeQuery[key]);
+    routeMeta.breadcrumb = 'project.breadcrumb.requests';
+    routeMeta.pageHeaderDescription = 'project.page.requests_description';
+    routeMeta.pageHeaderActionLabel = 'project.page.add_request';
   });
 
   it('renders translated project index actions and fetches the list', async () => {
@@ -73,12 +81,58 @@ describe('ProjectIndex', () => {
 
     expect(fetchList).toHaveBeenCalled();
     expect(fetchList.mock.calls[0][0].toMap()).toMatchObject({
-      status: [ConvertStatus.PENDING],
+      status: [ConvertStatus.WAITING_PREVIEW, ConvertStatus.WAITING_PREVIEW_RESULT],
     });
-    expect(wrapper.text()).toContain('Requests');
-    expect(wrapper.text()).toContain('Add Project');
     expect(wrapper.find('button.action-btn.delete').attributes('title')).toBe('Delete');
   });
+
+  it.each([
+    {
+      breadcrumb: 'project.breadcrumb.requests',
+      description: 'project.page.requests_description',
+      action: 'project.page.add_request',
+      english: ['Requests', 'Manage new organization requests', 'Add request'],
+      arabic: ['طلبات', 'إدارة طلبات الشركات الجديدة', 'إضافة طلب'],
+    },
+    {
+      breadcrumb: 'project.breadcrumb.offers',
+      description: 'project.page.offers_description',
+      action: 'project.page.add_offer',
+      english: ['Offer Project', 'Manage project offers', 'Add offer'],
+      arabic: ['عروض المشاريع', 'إدارة عروض المشاريع', 'إضافة عرض'],
+    },
+    {
+      breadcrumb: 'project.breadcrumb.converted',
+      description: 'project.page.converted_description',
+      action: 'project.page.add_project',
+      english: ['Project', 'Manage converted projects', 'Add project'],
+      arabic: ['المشروع', 'إدارة المشروعات المحوّلة', 'إضافة مشروع'],
+    },
+  ])(
+    'uses $breadcrumb metadata for all localized page-header copy',
+    async ({ breadcrumb, description, action, english, arabic }) => {
+      routeMeta.breadcrumb = breadcrumb;
+      routeMeta.pageHeaderDescription = description;
+      routeMeta.pageHeaderActionLabel = action;
+      const wrapper = mountProjectIndex();
+      await nextTick();
+      const i18n = wrapper.vm.$i18n as { locale: string };
+      const pageHeader = wrapper.get('.page-header');
+      const actionButton = pageHeader.get('.toolbar .btn-primary');
+
+      expect(pageHeader.get('h4').text()).toBe(english[0]);
+      expect(pageHeader.get('p').text()).toBe(english[1]);
+      expect(actionButton.text()).toBe(english[2]);
+
+      i18n.locale = 'ar';
+      await nextTick();
+
+      expect(pageHeader.get('h4').text()).toBe(arabic[0]);
+      expect(pageHeader.get('p').text()).toBe(arabic[1]);
+      expect(actionButton.text()).toBe(arabic[2]);
+      i18n.locale = 'en';
+    },
+  );
 
   it('fetches projects with the provided status filters', async () => {
     mountProjectIndex({
@@ -115,7 +169,7 @@ describe('ProjectIndex', () => {
     await nextTick();
 
     expect(fetchList.mock.calls.at(-1)?.[0].toMap()).toMatchObject({
-      service_type: [DepartmentTypeEnum.SUPERVISION],
+      service_type: [DepartmentTypeEnum.SUPERVISION, DepartmentTypeEnum.DESIGN],
     });
   });
 

@@ -4,6 +4,7 @@
 
   import { DiscountType } from '@/modules/shared/Package/core/constants/discount.type.enum';
   import {
+    PackageSubscriptionStatus,
     getPackageSubscriptionStatusClass,
     getPackageSubscriptionStatusLabelKey,
   } from '@/modules/shared/Package/core/constants/package.subscription.status.enum';
@@ -61,6 +62,10 @@
   const subscribeDisabled = computed(() => {
     return props.subscribing || !props.subscriptionAccessReady || props.globalSubscriptionBlocked;
   });
+
+  const isCurrentPackage = computed(
+    () => props.subscription?.status === PackageSubscriptionStatus.CONFIRMED,
+  );
 
   const actionLabelKey = computed(() => {
     if (!props.subscriptionAccessReady) {
@@ -255,6 +260,7 @@
     <button
       type="button"
       class="btn btn-primary organization-package-card__action"
+      :class="{ 'organization-package-card__action--current': isCurrentPackage }"
       :disabled="subscribeDisabled"
       @click="handleSubscribe"
     >
@@ -456,6 +462,13 @@
   .organization-package-card__action {
     width: 100%;
     min-height: 2.75rem;
+  }
+
+  .organization-package-card__action--current,
+  .organization-package-card__action--current:hover {
+    border-color: var(--success);
+    background: var(--success);
+    color: var(--BgWhite);
   }
 
   @media (prefers-reduced-motion: reduce) {

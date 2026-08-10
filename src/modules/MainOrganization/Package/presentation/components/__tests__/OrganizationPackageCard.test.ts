@@ -11,6 +11,8 @@ describe('OrganizationPackageCard', () => {
         packageOffer: createPackageOffer(),
         subscription: null,
         subscribing: false,
+        globalSubscriptionBlocked: false,
+        subscriptionAccessReady: true,
       },
     });
 
@@ -32,6 +34,8 @@ describe('OrganizationPackageCard', () => {
         packageOffer: createPackageOffer(),
         subscription: createSubscription(PackageSubscriptionStatus.PENDING),
         subscribing: false,
+        globalSubscriptionBlocked: true,
+        subscriptionAccessReady: true,
       },
     });
     const subscribeButton = wrapper.get<HTMLButtonElement>('.organization-package-card__action');
@@ -41,9 +45,27 @@ describe('OrganizationPackageCard', () => {
 
     await wrapper.setProps({
       subscription: createSubscription(PackageSubscriptionStatus.REJECTED, 2),
+      globalSubscriptionBlocked: false,
     });
 
     expect(subscribeButton.element.disabled).toBe(false);
     expect(subscribeButton.text()).toContain('Subscribe again');
+  });
+
+  it('uses the confirmed visual action for the current package', () => {
+    const wrapper = mount(OrganizationPackageCard, {
+      props: {
+        packageOffer: createPackageOffer(),
+        subscription: createSubscription(PackageSubscriptionStatus.CONFIRMED),
+        subscribing: false,
+        globalSubscriptionBlocked: true,
+        subscriptionAccessReady: true,
+      },
+    });
+    const subscribeButton = wrapper.get<HTMLButtonElement>('.organization-package-card__action');
+
+    expect(subscribeButton.element.disabled).toBe(true);
+    expect(subscribeButton.text()).toContain('Current package');
+    expect(subscribeButton.classes()).toContain('organization-package-card__action--current');
   });
 });
