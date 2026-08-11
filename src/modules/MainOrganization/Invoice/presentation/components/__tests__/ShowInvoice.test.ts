@@ -1,9 +1,13 @@
 import { flushPromises, mount } from '@vue/test-utils';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { DataFailed } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
+import { ErrorModel, ErrorType } from '@/base/Core/NetworkStructure/Resources/errors/errorModel';
+import { dialogManager } from '@/base/Presentation/Dialogs/dialog.manager';
 import AddInvoicePaymentParams from '@/modules/MainOrganization/InvoicePayment/core/params/add.invoice.payment.params';
 import AddInvoicePaymentDialog from '../invoice_show/AddInvoicePaymentDialog.vue';
 import ShowInvoice from '../ShowInvoice.vue';
 
+const exportInvoice = vi.fn();
 const fetchInvoiceById = vi.fn();
 const fetchInvoicePayments = vi.fn();
 const createInvoicePayment = vi.fn();
@@ -64,6 +68,7 @@ const invoiceData = vi.hoisted(() => ({
   invoice_amount: 3666,
   paid_amount: 500,
   remaining_amount: 3166,
+  export_status: 0,
   status: 2,
   currency: 'EGP',
   items: [],
@@ -130,6 +135,7 @@ vi.mock('jspdf-autotable', () => ({
 
 vi.mock('@/base/Presentation/Dialogs/dialog.manager', () => ({
   dialogManager: {
+    toastError: vi.fn(),
     toastSuccess: vi.fn(),
   },
 }));
@@ -137,6 +143,7 @@ vi.mock('@/base/Presentation/Dialogs/dialog.manager', () => ({
 vi.mock('../../controllers/invoice.controller', () => ({
   default: {
     getInstance: () => ({
+      exportInvoice,
       fetchInvoiceById,
       itemState: { value: { data: invoiceData } },
       itemData: {
@@ -182,11 +189,14 @@ const mountSuccessfulInvoice = () =>
 describe('ShowInvoice', () => {
   beforeEach(() => {
     fetchInvoiceById.mockClear();
+    exportInvoice.mockReset();
     fetchInvoicePayments.mockClear();
     createInvoicePayment.mockClear();
     pdfMocks.autoTable.mockClear();
     pdfMocks.jsPDF.mockClear();
     pdfMocks.instances.length = 0;
+    vi.mocked(dialogManager.toastError).mockClear();
+    vi.mocked(dialogManager.toastSuccess).mockClear();
   });
 
   it('shows invoice-specific copy when invoice details are empty', () => {
@@ -244,6 +254,27 @@ describe('ShowInvoice', () => {
     await flushPromises();
 
     expect(createInvoicePayment).toHaveBeenCalledWith(23, paymentParams);
+  });
+
+  it('shows the API error when invoice export is rejected', async () => {
+    exportInvoice.mockResolvedValue(
+      new DataFailed({
+        error: new ErrorModel(
+          'لا يمكن تصدير الفاتورة قبل إرسال المشروع إلى العميل',
+          ErrorType.serviceSide,
+        ),
+      }),
+    );
+    const wrapper = mountSuccessfulInvoice();
+
+    await flushPromises();
+    await wrapper.find('.invoice-show-btn--outline').trigger('click');
+    await flushPromises();
+
+    expect(exportInvoice).toHaveBeenCalledWith(7);
+    expect(dialogManager.toastError).toHaveBeenCalledWith(
+      'لا يمكن تصدير الفاتورة قبل إرسال المشروع إلى العميل',
+    );
   });
 
   it('uses the compact company identity header without a project photo in the invoice PDF', async () => {

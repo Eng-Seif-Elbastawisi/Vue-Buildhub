@@ -53,7 +53,7 @@ protected get userStore() {
   if (result instanceof DataSuccess) {
     const serviceType = router.currentRoute.value.query.service_type;
     await router.push({
-      path: this.userStore.user?.type === 1 ? '/mainportal/item': '/organization/item',
+      path: this.userStore.user?.type === 1 ? '/admin/item': '/organization/item',
       query: serviceType ? { service_type: serviceType, } : undefined,
     });
     if (formKey) { FormStore.clearFormData(formKey); }
@@ -67,7 +67,7 @@ protected get userStore() {
     if (result instanceof DataSuccess) {
       const serviceType = router.currentRoute.value.query.service_type;
       router.push({
-        path: this.userStore.user?.type === 1 ? '/mainportal/item': '/organization/item',
+        path: this.userStore.user?.type === 1 ? '/admin/item': '/organization/item',
         query: serviceType ? { service_type: serviceType, } : undefined,
       });
       if (formKey) FormStore.clearFormData(formKey);

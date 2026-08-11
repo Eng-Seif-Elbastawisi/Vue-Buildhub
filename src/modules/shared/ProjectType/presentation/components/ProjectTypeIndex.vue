@@ -96,7 +96,7 @@
         </div>
         <router-link
           class="btn btn-primary"
-          :to="user?.isMaster ? '/admin/projectType/add' : '/organization/projectType/add'"
+          :to="user?.type === 1 ? '/admin/projectType/add' : '/organization/projectType/add'"
           ><IndexAddIcon />{{ $t('project') }}</router-link
         >
       </div>
@@ -126,7 +126,7 @@
               <router-link
                 class="action-btn edit"
                 :to="
-                  user?.isMaster
+                  user?.type === 1
                     ? `/admin/projectType/edit/${item.id}`
                     : `/organization/projectType/edit/${item.id}`
                 "
@@ -192,7 +192,7 @@
           <p>{{ $t('project_type.empty_description') }}</p>
           <router-link
             class="btn btn-primary"
-            :to="user?.isMaster ? '/admin/projectType/add' : '/organization/projectType/add'"
+            :to="user?.type === 1 ? '/admin/projectType/add' : '/organization/projectType/add'"
             >{{ $t('project_type.add') }}</router-link
           >
         </div></template

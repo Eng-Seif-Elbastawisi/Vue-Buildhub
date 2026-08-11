@@ -3,6 +3,7 @@ import { translate } from '@/locales/i18n';
 
 // class_validation.ts
 export interface ValidationRule {
+  labelKey?: string;
   required?: boolean | ((record: Record<string, unknown>) => boolean);
   minLength?: number;
   maxLength?: number;
@@ -49,11 +50,12 @@ export class ClassValidation {
 
     this.rules.forEach((rule, field) => {
       const value = obj[field];
+      const fieldLabel = this.getFieldLabel(field, rule);
       const isRequired =
         typeof rule.required === 'function' ? rule.required(obj) : Boolean(rule.required);
 
       if (isRequired && this.isEmpty(value)) {
-        errors.push({ field, message: translate('validation.required', { field }) });
+        errors.push({ field, message: translate('validation.required', { field: fieldLabel }) });
         return;
       }
 
@@ -68,7 +70,7 @@ export class ClassValidation {
       ) {
         errors.push({
           field,
-          message: translate('validation.min_length', { field, min: rule.minLength }),
+          message: translate('validation.min_length', { field: fieldLabel, min: rule.minLength }),
         });
       }
 
@@ -79,23 +81,29 @@ export class ClassValidation {
       ) {
         errors.push({
           field,
-          message: translate('validation.max_length', { field, max: rule.maxLength }),
+          message: translate('validation.max_length', { field: fieldLabel, max: rule.maxLength }),
         });
       }
 
       if (rule.min !== undefined && typeof value === 'number' && value < rule.min) {
         errors.push({
           field,
-          message: translate('validation.min', { field, min: rule.min }),
+          message: translate('validation.min', { field: fieldLabel, min: rule.min }),
         });
       }
 
       if (rule.max !== undefined && typeof value === 'number' && value > rule.max) {
-        errors.push({ field, message: translate('validation.max', { field, max: rule.max }) });
+        errors.push({
+          field,
+          message: translate('validation.max', { field: fieldLabel, max: rule.max }),
+        });
       }
 
       if (rule.pattern && typeof value === 'string' && !rule.pattern.test(value)) {
-        errors.push({ field, message: translate('validation.invalid_format', { field }) });
+        errors.push({
+          field,
+          message: translate('validation.invalid_format', { field: fieldLabel }),
+        });
       }
 
       if (rule.custom) {
@@ -104,7 +112,9 @@ export class ClassValidation {
           errors.push({
             field,
             message:
-              typeof result === 'string' ? result : translate('validation.invalid', { field }),
+              typeof result === 'string'
+                ? result
+                : translate('validation.invalid', { field: fieldLabel }),
           });
         }
       }
@@ -126,6 +136,20 @@ export class ClassValidation {
     if (typeof value === 'string' && value.trim() === '') return true;
     if (Array.isArray(value) && value.length === 0) return true;
     return false;
+  }
+
+  private getFieldLabel(field: string, rule: ValidationRule): string {
+    const translationKey = `validation.fields.${rule.labelKey ?? field}`;
+    const translatedLabel = translate(translationKey);
+
+    return translatedLabel === translationKey ? this.formatFieldName(field) : translatedLabel;
+  }
+
+  private formatFieldName(field: string): string {
+    return field
+      .replace(/([a-z])([A-Z])/g, '$1 $2')
+      .replace(/_/g, ' ')
+      .replace(/\b\w/g, (character) => character.toUpperCase());
   }
 }
 

@@ -1,8 +1,10 @@
 <script setup lang="ts">
   import { ref } from 'vue';
+  import { useI18n } from 'vue-i18n';
   import ExportIcon from '@/shared/icons/ExportIcon.vue';
 
   const exporting = ref(false);
+  const { t } = useI18n();
 
   const exportPDF = async (): Promise<void> => {
     const tableElement =
@@ -68,7 +70,7 @@
               content="width=device-width, initial-scale=1"
             />
 
-            <title>table</title>
+            <title>${t('export_pdf')}</title>
 
             ${documentStyles}
 

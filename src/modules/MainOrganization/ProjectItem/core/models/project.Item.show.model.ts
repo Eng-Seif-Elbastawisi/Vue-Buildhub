@@ -9,6 +9,7 @@ import type ProjectHistoryModel from './project.history.model';
 import ProjectSimpleModel from './project.simple.model';
 import type { InsideStatusType } from '@/modules/MainOrganization/TaskAssignment/core/constants/inside.status.enum';
 import type { TaskDurationType } from '@/modules/MainOrganization/TaskAssignment/core/constants/taskDurationType.enum';
+import TitleModel from '@/base/Core/Models/titleModel';
 
 export default class ProjectItemShowModel { 
   public readonly id?: number;
@@ -35,6 +36,7 @@ export default class ProjectItemShowModel {
   public readonly inside_status?: InsideStatusType;
   public readonly duration?: number;
   public readonly duration_type?: TaskDurationType;
+  public readonly reviewer?: TitleModel;
 
 
   constructor(data: {
@@ -62,6 +64,7 @@ export default class ProjectItemShowModel {
     inside_status?: InsideStatusType;
     duration?: number;
     duration_type?: TaskDurationType;
+    reviewer?: TitleModel;
   }) {
     this.id = data.id;
     this.price = data.price;
@@ -87,6 +90,7 @@ export default class ProjectItemShowModel {
     this.inside_status = data.inside_status;
     this.duration = data.duration;
     this.duration_type = data.duration_type;
+    this.reviewer = data.reviewer;
     this.project_floor = data.project_floor;
 
     Object.freeze(this);
@@ -118,6 +122,7 @@ export default class ProjectItemShowModel {
   inside_status: json.inside_status as InsideStatusType | undefined,
   duration: json.duration as number | undefined,
   duration_type: json.duration_type as TaskDurationType | undefined,
+  reviewer: json.reviewer ?  TitleModel.fromMap(json.reviewer) : undefined,
 });
   }
 

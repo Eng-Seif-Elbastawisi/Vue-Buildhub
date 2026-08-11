@@ -24,15 +24,6 @@
     return Number.isFinite(value) && value > 0 ? value : 0;
   });
 
-  /**
-   * قراءة project_preview_id من الـ query.
-   * نحتفظ به لو احتجناه في الصفحة أو في إضافة Floor جديد.
-   */
-  const projectPreviewId = computed<number>(() => {
-    const value = Number(route.query.project_preview_id);
-
-    return Number.isFinite(value) && value > 0 ? value : 0;
-  });
 
   /**
    * دعم project_floor_id أيضًا لو الصفحة فتحت لعرض Floor محدد.
@@ -145,7 +136,7 @@
         <template #header="{ item: floor }">
           <div class="show-header">
             <div>
-              <span class="eyebrow"> Floor Reference </span>
+              <span class="eyebrow">{{ $t('floor_reference') }}</span>
 
               <h3>
                 {{ getFloorTitle(floor) }}
@@ -223,8 +214,8 @@
                 </strong>
               </div>
 
-              <div class="info-item">
-                <span> Project ID </span>
+              <!-- <div class="info-item">
+                <span>{{ $t('project_id') }}</span>
 
                 <strong>
                   {{ projectId || floor.project?.id || '-' }}
@@ -232,12 +223,12 @@
               </div>
 
               <div class="info-item">
-                <span> Project Preview ID </span>
+                <span>{{ $t('project_preview_id') }}</span>
 
                 <strong>
                   {{ projectPreviewId || floor.project_preview?.id || '-' }}
                 </strong>
-              </div>
+              </div> -->
             </div>
 
             <div class="notes-grid">

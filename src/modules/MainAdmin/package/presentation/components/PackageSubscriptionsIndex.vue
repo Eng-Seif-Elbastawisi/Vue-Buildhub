@@ -1,5 +1,6 @@
 <script setup lang="ts">
   import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+  import { useI18n } from 'vue-i18n';
 
   import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
   import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
@@ -17,6 +18,7 @@
   import PackageSubscriptionController from '../controllers/package.subscription.controller';
 
   const controller = PackageSubscriptionController.getInstance();
+  const { t } = useI18n();
 
   const state = computed(() => controller.listState.value);
 
@@ -97,13 +99,13 @@
   });
 
   const dialogTitle = computed<string>(() => {
-    return isAcceptAction.value ? 'Accept Subscription' : 'Reject Subscription';
+    return isAcceptAction.value ? t('package.accept_subscription') : t('package.reject_subscription');
   });
 
   const dialogDescription = computed<string>(() => {
     return isAcceptAction.value
-      ? 'Are you sure you want to accept this subscription?'
-      : 'Are you sure you want to reject this subscription?';
+      ? t('package.accept_subscription_description')
+      : t('package.reject_subscription_description');
   });
 
   const formatDateTime = (rawDateTime: string): string => {
@@ -412,7 +414,7 @@
               </span>
 
               <div>
-                <small> Subscription </small>
+                <small>{{ $t('package.subscription_id') }}</small>
 
                 <strong> #{{ selectedSubscription.id }} </strong>
               </div>

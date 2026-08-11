@@ -25,7 +25,7 @@
 <template>
   <header class="invoice-show-header">
     <div class="invoice-show-header__toolbar">
-      <nav class="invoice-show-breadcrumb" aria-label="breadcrumb">
+      <nav class="invoice-show-breadcrumb" :aria-label="$t('breadcrumb')">
         <RouterLink :to="indexPath">{{ $t('invoice.index.title') }}</RouterLink>
         <i class="pi pi-angle-right" aria-hidden="true"></i>
         <span>{{ $t('invoice_show.details') }}</span>

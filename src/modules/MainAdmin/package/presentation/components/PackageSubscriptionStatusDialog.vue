@@ -151,7 +151,7 @@
           class="package-subscription-modal__backdrop"
           type="button"
           tabindex="-1"
-          aria-label="Close"
+          :aria-label="$t('close')"
           @click="handleBackdropClick"
         />
 

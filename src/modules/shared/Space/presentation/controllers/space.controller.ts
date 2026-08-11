@@ -46,7 +46,7 @@ export default class SpaceController extends BaseController<SpaceShowModel, Spac
     const result = await super.create(params, { ...options, useJson: true });
     if (result instanceof DataSuccess) {
       // await router.push({ name: 'Projects' });
-      router.push(this.userStore.user?.type === 1 ? '/mainportal/space' : '/organization/space');
+      router.push(this.userStore.user?.type === 1 ? '/admin/space' : '/organization/space');
 
       if (formKey) useFormsStore().clearFormData(formKey);
     }
@@ -57,7 +57,7 @@ export default class SpaceController extends BaseController<SpaceShowModel, Spac
     const result = await super.update(params, { ...options, useJson: true });
     if (result instanceof DataSuccess) {
       // await router.push({ name: 'Projects' });
-      router.push(this.userStore.user?.type === 1 ? '/mainportal/space' : '/organization/space');
+      router.push(this.userStore.user?.type === 1 ? '/admin/space' : '/organization/space');
 
       if (formKey) useFormsStore().clearFormData(formKey);
     }

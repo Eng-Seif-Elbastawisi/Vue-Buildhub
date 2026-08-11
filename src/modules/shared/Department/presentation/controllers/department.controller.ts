@@ -50,9 +50,9 @@ export default class DepartmentController extends BaseController<
     const result = await super.create(params, { ...options, useJson: true });
     if (result instanceof DataSuccess) {
       // await router.push({ name: 'Projects' });
-      router.push(
-        this.userStore.user?.type === 1 ? '/mainportal/department' : '/organization/department',
-      );
+      // router.push(
+      //   this.userStore.user?.type === 1 ? '/mainportal/department' : '/organization/department',
+      // );
 
       if (formKey) useFormsStore().clearFormData(formKey);
     }
@@ -63,9 +63,9 @@ export default class DepartmentController extends BaseController<
     const result = await super.update(params, { ...options, useJson: true });
     if (result instanceof DataSuccess) {
       // await router.push({ name: 'Projects' });
-      router.push(
-        this.userStore.user?.type === 1 ? '/mainportal/department' : '/organization/department',
-      );
+      // router.push(
+      //   this.userStore.user?.type === 1 ? '/mainportal/department' : '/organization/department',
+      // );
 
       if (formKey) useFormsStore().clearFormData(formKey);
     }

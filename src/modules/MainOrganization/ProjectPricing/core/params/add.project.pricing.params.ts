@@ -1,11 +1,15 @@
 import type Params from '@/base/Core/Params/params';
-import { ClassValidation } from '@/base/Presentation/Utils/classValidation';
+import { ClassValidation, ValidationError } from '@/base/Presentation/Utils/classValidation';
+import { translate } from '@/locales/i18n';
 import { requiredSelectRule } from '@/base/Presentation/Utils/input_title';
-import { type ProjectPricingDiscountEnum } from '../constant/project.pricing.discount.enum';
+import {
+  isValidProjectPricingDiscount,
+  type ProjectPricingDiscountEnum as ProjectPricingDiscountType,
+} from '../constant/project.pricing.discount.enum';
 
 export default class AddProjectPricingParams implements Params {
   public total_tax?: number;
-  public discount_type?: ProjectPricingDiscountEnum;
+  public discount_type?: ProjectPricingDiscountType;
   public discount_value?: number;
   public project_id?: number;
 
@@ -18,7 +22,7 @@ export default class AddProjectPricingParams implements Params {
 
   constructor(data: {
     total_tax?: number;
-    discount_type?: ProjectPricingDiscountEnum;
+    discount_type?: ProjectPricingDiscountType;
     discount_value?: number;
     project_id?: number;
   }) {
@@ -38,10 +42,29 @@ export default class AddProjectPricingParams implements Params {
   }
 
   validate() {
-    return AddProjectPricingParams.validation.validate(this);
+    const validationResult = AddProjectPricingParams.validation.validate(this);
+
+    if (isValidProjectPricingDiscount(this.discount_type, this.discount_value)) {
+      return validationResult;
+    }
+
+    return {
+      isValid: false,
+      errors: [
+        ...validationResult.errors,
+        {
+          field: 'discount_value',
+          message: translate('project_pricing.discount_percentage_range_error'),
+        },
+      ],
+    };
   }
 
   validateOrThrow() {
-    return AddProjectPricingParams.validation.validateOrThrow(this);
+    const validationResult = this.validate();
+
+    if (!validationResult.isValid) {
+      new ValidationError(validationResult.errors).openDialog();
+    }
   }
 }

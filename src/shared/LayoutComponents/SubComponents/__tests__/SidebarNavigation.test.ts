@@ -4,6 +4,7 @@ import { reactive } from 'vue';
 import SidebarNavigation from '../SidebarNavigation.vue';
 import { createPinia, setActivePinia } from 'pinia';
 import UserModel from '@/modules/auth/core/models/user.model';
+import { UserType } from '@/modules/auth/core/constants/userType.enum';
 import { useUserStore } from '@/stores/user';
 import { DATA_MUTATION_SUCCEEDED_EVENT } from '@/base/Presentation/Controller/dataMutationEvent';
 
@@ -153,5 +154,21 @@ describe('SidebarNavigation.vue', () => {
 
     expect(sidebarCountsMocks.fetchSidebarCounts).toHaveBeenCalledTimes(2);
     expect(wrapper.findAll('.badge').some((badge) => badge.text() === '2')).toBe(true);
+  });
+
+  it('does not request organization sidebar counts for admin users', async () => {
+    const userStore = useUserStore();
+    userStore.user = new UserModel({
+      id: 1,
+      name: 'Admin User',
+      email: 'admin@example.com',
+      type: UserType.ADMIN,
+      WebSocketToken: '',
+    });
+
+    mountSidebar();
+    await flushPromises();
+
+    expect(sidebarCountsMocks.fetchSidebarCounts).not.toHaveBeenCalled();
   });
 });
