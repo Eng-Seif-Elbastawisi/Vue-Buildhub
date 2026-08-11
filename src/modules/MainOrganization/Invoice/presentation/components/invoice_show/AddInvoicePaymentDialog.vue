@@ -149,7 +149,7 @@
               type="button"
               @click="$emit('close')"
             >
-              {{ $t('Cancel') }}
+              {{ $t('cancel') }}
             </button>
             <button
               class="invoice-show-btn invoice-show-btn--primary"

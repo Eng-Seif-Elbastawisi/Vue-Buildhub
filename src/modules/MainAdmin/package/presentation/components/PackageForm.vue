@@ -256,7 +256,7 @@
         <UpdatedCustomInputSelect
           id="package-duration-type"
           :model-value="selectedDurationType"
-          label="package.duration_type"
+          :label="$t('package.duration_type')"
           :placeholder="$t('package.duration_type_placeholder')"
           :static-options="durationTypeOptions"
           :reload="false"
@@ -292,7 +292,7 @@
         <UpdatedCustomInputSelect
           id="package-discount-type"
           :model-value="selectedDiscountType"
-          label="package.discount_type"
+          :label="$t('package.discount_type')"
           :placeholder="$t('package.discount_type_placeholder')"
           :static-options="discountTypeOptions"
           :reload="false"
