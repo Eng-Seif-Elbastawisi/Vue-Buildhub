@@ -4,7 +4,7 @@ import { UserType } from '@/modules/auth/core/constants/userType.enum';
 export const adminCrudRoutes: RouteRecordRaw[] = [
   {
     path: 'admins',
-    name: 'Admins',
+    name: 'Admin',
     component: () => import('@/views/MainAdmin/Admin/IndexAdmin.vue'),
     meta: {
       breadcrumb: 'Admins',

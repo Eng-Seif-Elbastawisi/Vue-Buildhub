@@ -6,7 +6,7 @@ export default class ShowDepartmentParams implements Params {
   public allLocales?: boolean;
 
   public static readonly validation = new ClassValidation().setRules({
-    id: { required: true },
+    id: { labelKey: 'department_id', required: true },
   });
 
   constructor(data: { id: number; allLocales?: boolean }) {

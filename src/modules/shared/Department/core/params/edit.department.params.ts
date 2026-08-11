@@ -12,7 +12,7 @@ export default class EditDepartmentParams implements Params {
   public readonly type: DepartmentTypeEnum;
 
   public static readonly validation = new ClassValidation().setRules({
-    id: { required: true },
+    id: { labelKey: 'department_id', required: true },
     translations: {
       required: true,
       custom: (value) => hasTitleTranslation(value) || translate('validation.title_required'),
