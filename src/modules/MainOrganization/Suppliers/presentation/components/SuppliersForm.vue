@@ -1,10 +1,12 @@
 <script setup lang="ts">
   import { onMounted, ref, watch } from 'vue';
   import { onBeforeRouteLeave } from 'vue-router';
+  import { useI18n } from 'vue-i18n';
   import { useFormsStore } from '@/stores/formsStore';
   import DocumentIcon from '@/shared/icons/DocaumentType/DocumentIcon.vue';
   import type SuppliersShowModel from '../../core/models/Suppliers.show.model';
   import AddSuppliersParams from '../../core/params/add.Suppliers.params';
+  import { isValidSupplierPhone } from '../../core/params/supplier.phone.validation';
   import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
 
   const emit = defineEmits<{
@@ -18,9 +20,23 @@
   }>();
 
   const formStore = useFormsStore();
+  const { t } = useI18n();
 
   const name = ref<string>('');
   const phone = ref<string>('');
+  const phoneError = ref<string>('');
+
+  const validatePhone = (): void => {
+    phoneError.value = isValidSupplierPhone(phone.value)
+      ? ''
+      : t('supplier.phone_positive_digits_error');
+  };
+
+  const preventInvalidPhoneKeys = (event: KeyboardEvent): void => {
+    if (!event.ctrlKey && !event.metaKey && event.key.length === 1 && !/^\d$/.test(event.key)) {
+      event.preventDefault();
+    }
+  };
 
   onBeforeRouteLeave((to, from) => {
     const savedData = props.formKey ? formStore.getFormData(props.formKey) : null;
@@ -30,7 +46,7 @@
     }
   });
 
-  const updateData = () => {
+  const updateData = (): void => {
     emit(
       'updateData',
       new AddSuppliersParams({
@@ -41,7 +57,15 @@
     );
   };
 
-  onMounted(updateData);
+  const updatePhone = (): void => {
+    validatePhone();
+    updateData();
+  };
+
+  onMounted(() => {
+    validatePhone();
+    updateData();
+  });
 
   watch(
     () => props.supplier,
@@ -50,6 +74,7 @@
 
       name.value = supplier.name ?? '';
       phone.value = supplier.phone ?? '';
+      validatePhone();
       updateData();
     },
     { immediate: true },
@@ -115,11 +140,26 @@
           <input
             id="supplier-phone"
             v-model="phone"
-            type="text"
+            type="tel"
             :placeholder="$t('supplier.phone_placeholder')"
             class="field-input"
-            @input="updateData"
+            :class="{ 'field-input--error': phoneError }"
+            inputmode="numeric"
+            pattern="[0-9]*"
+            :aria-invalid="Boolean(phoneError)"
+            aria-describedby="supplier-phone-error"
+            @keydown="preventInvalidPhoneKeys"
+            @input="updatePhone"
           />
+          <small
+            v-if="phoneError"
+            id="supplier-phone-error"
+            class="field-error"
+            role="alert"
+            aria-live="polite"
+          >
+            {{ phoneError }}
+          </small>
         </div>
       </div>
 
@@ -171,6 +211,16 @@
     font-weight: 400;
     font-size: var(--sm-size);
     color: var(--bread-crumb-color-span);
+  }
+
+  .field-input--error {
+    border-color: var(--danger-dark);
+  }
+
+  .field-error {
+    margin-top: 0.35rem;
+    color: var(--danger-dark);
+    font-size: var(--xs-size);
   }
 
   @media (max-width: 768px) {

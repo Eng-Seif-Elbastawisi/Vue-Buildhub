@@ -50,4 +50,22 @@ describe('ProjectPricingForm', () => {
     expect(wrapper.find('.pricing-summary-card.disabled').exists()).toBe(true);
     expect(wrapper.emitted('updateData')?.[0]?.[0]).toBeInstanceOf(AddProjectPricingParams);
   });
+
+  it('shows a validation error for percentage discounts above 100', async () => {
+    const wrapper = mount(ProjectPricingForm, {
+      props: { projectId: 4 },
+      global: {
+        mocks: { $t: (key: string) => key },
+      },
+    });
+
+    await wrapper.findAll('.discount-toggle button')[1].trigger('click');
+    const discountInput = wrapper.find<HTMLInputElement>('#project-pricing-discount-value');
+    await discountInput.setValue('200');
+
+    expect(discountInput.attributes('max')).toBe('100');
+    expect(wrapper.find('#project-pricing-discount-value-error').text()).toBe(
+      'Percentage discount must be between 0% and 100%.',
+    );
+  });
 });

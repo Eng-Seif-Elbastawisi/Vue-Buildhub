@@ -1,5 +1,7 @@
 import type Params from '@/base/Core/Params/params';
 import { ClassValidation } from '@/base/Presentation/Utils/classValidation';
+import { translate } from '@/locales/i18n';
+import { isValidSupplierPhone } from './supplier.phone.validation';
 
 export default class EditSuppliersParams implements Params {
   public suppliers_id: number;
@@ -8,6 +10,11 @@ export default class EditSuppliersParams implements Params {
 
   public static readonly validation = new ClassValidation().setRules({
     // translations: { required: true },
+    phone: {
+      required: false,
+      custom: (phone) =>
+        isValidSupplierPhone(phone) || translate('supplier.phone_positive_digits_error'),
+    },
   });
 
   constructor(data: {

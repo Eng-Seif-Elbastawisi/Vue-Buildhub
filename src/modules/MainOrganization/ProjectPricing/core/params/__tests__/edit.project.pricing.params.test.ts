@@ -29,4 +29,18 @@ describe('EditProjectPricingParams', () => {
       errors: [{ field: 'discount_type' }],
     });
   });
+
+  it('rejects percentage discounts above 100', () => {
+    const params = new EditProjectPricingParams({
+      project_pricing_id: 12,
+      total_tax: 14,
+      discount_type: ProjectPricingDiscountEnum.PERCENTAGE,
+      discount_value: 200,
+    });
+
+    expect(params.validate()).toMatchObject({
+      isValid: false,
+      errors: [{ field: 'discount_value' }],
+    });
+  });
 });

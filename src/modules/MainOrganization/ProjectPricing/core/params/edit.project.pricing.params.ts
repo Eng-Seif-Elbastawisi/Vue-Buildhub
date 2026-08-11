@@ -1,7 +1,11 @@
 import type Params from '@/base/Core/Params/params';
-import { ClassValidation } from '@/base/Presentation/Utils/classValidation';
+import { ClassValidation, ValidationError } from '@/base/Presentation/Utils/classValidation';
+import { translate } from '@/locales/i18n';
 import { requiredSelectRule } from '@/base/Presentation/Utils/input_title';
-import { type ProjectPricingDiscountEnum } from '../constant/project.pricing.discount.enum';
+import {
+  isValidProjectPricingDiscount,
+  type ProjectPricingDiscountEnum,
+} from '../constant/project.pricing.discount.enum';
 
 export default class EditProjectPricingParams implements Params {
   public project_pricing_id?: number;
@@ -38,10 +42,29 @@ export default class EditProjectPricingParams implements Params {
   }
 
   validate() {
-    return EditProjectPricingParams.validation.validate(this);
+    const validationResult = EditProjectPricingParams.validation.validate(this);
+
+    if (isValidProjectPricingDiscount(this.discount_type, this.discount_value)) {
+      return validationResult;
+    }
+
+    return {
+      isValid: false,
+      errors: [
+        ...validationResult.errors,
+        {
+          field: 'discount_value',
+          message: translate('project_pricing.discount_percentage_range_error'),
+        },
+      ],
+    };
   }
 
   validateOrThrow() {
-    return EditProjectPricingParams.validation.validateOrThrow(this);
+    const validationResult = this.validate();
+
+    if (!validationResult.isValid) {
+      new ValidationError(validationResult.errors).openDialog();
+    }
   }
 }

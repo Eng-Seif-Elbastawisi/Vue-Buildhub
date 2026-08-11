@@ -15,4 +15,17 @@ describe('EditSuppliersParams', () => {
       phone: '010',
     });
   });
+
+  it('rejects negative phone numbers before updating a supplier', () => {
+    const params = new EditSuppliersParams({
+      suppliers_id: 4,
+      name: 'Build',
+      phone: '-123456789',
+    });
+
+    expect(params.validate()).toMatchObject({
+      isValid: false,
+      errors: [{ field: 'phone' }],
+    });
+  });
 });

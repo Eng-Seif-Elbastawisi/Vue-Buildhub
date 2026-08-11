@@ -398,6 +398,7 @@
   "supplier.specialization_placeholder": "أدخل التخصص",
   "supplier.phone": "الهاتف",
   "supplier.phone_placeholder": "أدخل رقم الهاتف",
+  "supplier.phone_positive_digits_error": "يجب أن يحتوي رقم الهاتف على أرقام موجبة فقط.",
   "supplier.materials": "المواد",
   "supplier.materials_placeholder": "أدخل المواد الموردة",
   "supplier.save": "حفظ المورد",
@@ -2208,6 +2209,7 @@
   "project_pricing.tax_invalid": "يرجى إدخال نسبة ضريبة صحيحة.",
   "project_pricing.tax_min_error": "لا يمكن أن تقل النسبة المئوية للضريبة عن 0%.",
   "project_pricing.tax_max_error": "لا يمكن أن تتجاوز النسبة المئوية للضريبة 100%.",
+  "project_pricing.discount_percentage_range_error": "يجب أن تكون نسبة الخصم بين 0٪ و100٪.",
   "ProjectFloor.preview_not_started": "المعاينة لم تبدأ بعد",
   "ProjectFloor.preview_pending_title": "هل تريد إضافة بيانات الدور قبل موعد المعاينة؟",
   "ProjectFloor.preview_pending_description": "موعد المعاينة المحدد هو {date}. قد تكون بيانات المساحات والأبعاد غير نهائية قبل تنفيذ المعاينة.",
@@ -2254,5 +2256,7 @@
   "project_id": "معرف المشروع",
   "project_name": "اسم المشروع",
   "project_preview_id": "معرف معاينة المشروع",
-  "show organization": "عرض المؤسسة"
+  "show organization": "عرض المؤسسة",
+  "reviewer.name": "اسم المراجع",
+  "reviewer.email": "البريد الإلكتروني للمراجع"
 }

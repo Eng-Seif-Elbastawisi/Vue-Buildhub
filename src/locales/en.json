@@ -572,6 +572,7 @@
   "supplier.specialization_placeholder": "Enter specialization",
   "supplier.phone": "Phone",
   "supplier.phone_placeholder": "Enter phone number",
+  "supplier.phone_positive_digits_error": "The phone number must contain only positive digits.",
   "supplier.materials": "Materials",
   "supplier.materials_placeholder": "Enter supplied materials",
   "supplier.save": "Save supplier",
@@ -2205,6 +2206,7 @@
   "project_pricing.tax_invalid": "Please enter a valid tax percentage.",
   "project_pricing.tax_min_error": "Tax percentage cannot be less than 0%.",
   "project_pricing.tax_max_error": "Tax percentage cannot exceed 100%.",
+  "project_pricing.discount_percentage_range_error": "Percentage discount must be between 0% and 100%.",
   "general": {
     "not_specified": "Not specified",
     "no_address": "No address"
@@ -2255,5 +2257,7 @@
   "task_assignment.form.employee_reviewer": "Employee reviewer",
   "task_assignment.form.notes": "Notes",
   "task_assignment.form.attachments": "Attachments",
-  "task_assignment.form.add_attachment": "Add attachment"
+  "task_assignment.form.add_attachment": "Add attachment",
+  "reviewer.name": "Reviewer name",
+  "reviewer.email": "Reviewer email"
 }

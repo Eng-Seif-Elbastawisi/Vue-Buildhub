@@ -421,7 +421,10 @@
       if (result instanceof DataSuccess) {
         dialogManager.toastSuccess(t('invoice_show.export_success'));
         await fetchInvoice();
+        return;
       }
+
+      dialogManager.toastError(result.error?.displayMessage ?? t('error.unexpected'));
     } finally {
       exportingInvoice.value = false;
     }

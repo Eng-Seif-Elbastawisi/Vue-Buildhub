@@ -14,4 +14,16 @@ describe('AddSuppliersParams', () => {
     });
     expect(params.validate().isValid).toBe(true);
   });
+
+  it('rejects negative phone numbers before creating a supplier', () => {
+    const params = new AddSuppliersParams({
+      name: 'Build',
+      phone: '-123456789',
+    });
+
+    expect(params.validate()).toMatchObject({
+      isValid: false,
+      errors: [{ field: 'phone' }],
+    });
+  });
 });

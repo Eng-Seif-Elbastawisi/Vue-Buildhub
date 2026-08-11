@@ -40,6 +40,8 @@
 
   const discountValue = ref<number>(0);
 
+  const discountValueError = ref<string>('');
+
   const discountMode = ref<'value' | 'percentage'>('value');
 
   const VALUE_DISCOUNT_ID = ProjectPricingDiscountEnum.FIXED;
@@ -100,6 +102,7 @@
 
     discountType.value = type === 'value' ? valueDiscountOption.value : percentDiscountOption.value;
 
+    validateDiscountValue();
     updateData();
   };
 
@@ -167,15 +170,28 @@
     updateData();
   };
 
-  const validateDiscountValue = (): void => {
-    if (!Number.isFinite(Number(discountValue.value))) {
-      discountValue.value = 0;
-      return;
+  const validateDiscountValue = (): boolean => {
+    const numericValue = Number(discountValue.value);
+
+    if (!Number.isFinite(numericValue)) {
+      discountValueError.value = t('project_pricing.discount_percentage_range_error');
+
+      return false;
     }
 
-    if (discountValue.value < 0) {
+    if (isPercentageDiscount.value && (numericValue < 0 || numericValue > 100)) {
+      discountValueError.value = t('project_pricing.discount_percentage_range_error');
+
+      return false;
+    }
+
+    if (numericValue < 0) {
       discountValue.value = 0;
     }
+
+    discountValueError.value = '';
+
+    return true;
   };
 
   const updateDiscountValue = (): void => {
@@ -204,6 +220,7 @@
         totalTaxError.value = '';
 
         discountValue.value = 0;
+        discountValueError.value = '';
 
         updateData();
 
@@ -307,18 +324,40 @@
           </div>
         </div>
 
-        <input
-          id="project-pricing-discount-value"
-          v-model.number="discountValue"
-          class="field-input"
-          min="0"
-          step="0.01"
-          type="number"
-          inputmode="decimal"
-          :placeholder="$t('project_pricing.discount_value_placeholder')"
-          @keydown="preventInvalidNumberKeys"
-          @input="updateDiscountValue"
-        />
+        <div class="pricing-input-wrapper">
+          <input
+            id="project-pricing-discount-value"
+            v-model.number="discountValue"
+            class="field-input"
+            :class="{
+              'field-input--error': discountValueError,
+            }"
+            min="0"
+            :max="isPercentageDiscount ? 100 : undefined"
+            step="0.01"
+            type="number"
+            inputmode="decimal"
+            :aria-invalid="Boolean(discountValueError)"
+            aria-describedby="project-pricing-discount-value-error"
+            :placeholder="$t('project_pricing.discount_value_placeholder')"
+            @keydown="preventInvalidNumberKeys"
+            @input="updateDiscountValue"
+          />
+
+          <small
+            v-if="discountValueError"
+            id="project-pricing-discount-value-error"
+            class="field-error"
+            role="alert"
+            aria-live="polite"
+          >
+            <i class="pi pi-exclamation-circle" aria-hidden="true" />
+
+            <span>
+              {{ discountValueError }}
+            </span>
+          </small>
+        </div>
       </article>
 
       <article class="summary-box">
@@ -334,7 +373,7 @@
           />
         </span>
 
-        <div class="tax-input-wrapper">
+        <div class="pricing-input-wrapper">
           <input
             id="project-pricing-total-tax"
             :value="totalTaxInput"
@@ -465,7 +504,7 @@
     }
   }
 
-  .tax-input-wrapper {
+  .pricing-input-wrapper {
     display: flex;
     flex-direction: column;
     gap: 0.45rem;
