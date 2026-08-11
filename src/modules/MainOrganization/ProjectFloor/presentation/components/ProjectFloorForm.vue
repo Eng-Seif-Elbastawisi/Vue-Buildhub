@@ -433,7 +433,7 @@
               {{ $t('ProjectFloor.continue_before_preview') }}
             </button>
 
-            <router-link :to="{ name: 'offers-projects' }">
+            <router-link :to="{ name: 'project' }">
               <button
                 type="button"
                 class="preview-gate__button preview-gate__button--secondary"
