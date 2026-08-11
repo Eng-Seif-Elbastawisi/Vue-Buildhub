@@ -51,7 +51,7 @@ export default class ProjectTypeController extends BaseController<
     if (result instanceof DataSuccess) {
       // await router.push({ name: 'Projects' });
       router.push(
-        this.userStore.user?.type === 1 ? '/mainportal/projectType' : '/organization/projectType',
+        this.userStore.user?.type === 1 ? '/admin/projectType' : '/organization/projectType',
       );
 
       if (formKey) useFormsStore().clearFormData(formKey);
@@ -64,7 +64,7 @@ export default class ProjectTypeController extends BaseController<
     if (result instanceof DataSuccess) {
       // await router.push({ name: 'Projects' });
       router.push(
-        this.userStore.user?.type === 1 ? '/mainportal/projectType' : '/organization/projectType',
+        this.userStore.user?.type === 1 ? '/admin/projectType' : '/organization/projectType',
       );
 
       if (formKey) useFormsStore().clearFormData(formKey);

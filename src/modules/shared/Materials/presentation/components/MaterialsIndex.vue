@@ -113,7 +113,7 @@
         </div>
         <router-link
           class="btn btn-primary"
-          :to="user?.isMaster ? '/admin/material/add' : '/organization/material/add'"
+          :to="user?.type === 1 ? '/admin/material/add' : '/organization/material/add'"
         >
           <IndexAddIcon /> {{ $t('material') }}</router-link
         >
@@ -138,7 +138,7 @@
               <router-link
                 class="action-btn edit"
                 :to="
-                  user?.isMaster
+                  user?.type === 1
                     ? `/admin/material/edit/${item.id}`
                     : `/organization/material/edit/${item.id}`
                 "
@@ -208,7 +208,7 @@
           <p>{{ $t('material.empty_description') }}</p>
           <router-link
             class="btn btn-primary"
-            :to="user?.isMaster ? '/admin/material/add' : '/organization/material/add'"
+            :to="user?.type === 1  ? '/admin/material/add' : '/organization/material/add'"
             >{{ $t('material.add') }}</router-link
           >
         </div>

@@ -492,6 +492,8 @@ export const sidebarSections: SidebarSectionConfig[] = [
         labelKey: 'sidebar.terms',
         icon: SidebarTermIcon,
         countKey: 'term_count',
+                roles: ['organization'],
+
       },
 
       {
@@ -661,6 +663,12 @@ export const sidebarSections: SidebarSectionConfig[] = [
         icon: SidebarEmployeeIcon,
         roles: ['admin'],
       },
+      {
+        path: '/admins',
+        labelKey: 'admins',
+        icon: SidebarEmployeeIcon,
+        roles: ['admin'],
+      }
     ],
   },
 ];

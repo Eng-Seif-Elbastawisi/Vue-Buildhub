@@ -33,7 +33,7 @@
     await controller.login(params);
 
     if (useUserStore().user?.type === UserType.ADMIN) {
-      router.push({ name: 'Admin' });
+      router.push({ name: 'Admins' });
     } else {
       router.push({ name: 'Employee' });
     }

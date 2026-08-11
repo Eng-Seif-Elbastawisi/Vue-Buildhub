@@ -91,6 +91,11 @@
   });
 
   const loadSidebarCounts = async () => {
+    if (currentRole.value !== 'organization') {
+      sidebarSectionsState.value = getSidebarSections();
+      return;
+    }
+
     if (!user.value?.id) {
       sidebarSectionsState.value = getSidebarSections();
       return;

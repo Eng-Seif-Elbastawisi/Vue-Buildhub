@@ -46,7 +46,7 @@ export default class TermController extends BaseController<TermShowModel, TermMo
     const result = await super.create(params, { ...options, useJson: true });
     if (result instanceof DataSuccess) {
       // await router.push({ name: 'Projects' });
-      router.push(this.userStore.user?.type === 1 ? '/mainportal/term' : '/organization/term');
+      router.push(this.userStore.user?.type === 1 ? '/admin/term' : '/organization/term');
 
       if (formKey) useFormsStore().clearFormData(formKey);
     }
@@ -57,7 +57,7 @@ export default class TermController extends BaseController<TermShowModel, TermMo
     const result = await super.update(params, { ...options, useJson: true });
     if (result instanceof DataSuccess) {
       // await router.push({ name: 'Projects' });
-      router.push(this.userStore.user?.type === 1 ? '/mainportal/term' : '/organization/term');
+      router.push(this.userStore.user?.type === 1 ? '/admin/term' : '/organization/term');
 
       if (formKey) useFormsStore().clearFormData(formKey);
     }

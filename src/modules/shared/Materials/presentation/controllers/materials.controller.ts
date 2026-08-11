@@ -55,7 +55,7 @@ export default class MaterialController extends BaseController<MaterialShowModel
 
     if (result instanceof DataSuccess) {
       // router.push({ name: 'Material' });
-      router.push(this.userStore.user?.type === 1 ? '/mainportal/material' : '/organization/material');
+      router.push(this.userStore.user?.type === 1 ? '/admin/material' : '/organization/material');
 
       if (formKey) FormStore.clearFormData(formKey);
     }
@@ -70,7 +70,7 @@ export default class MaterialController extends BaseController<MaterialShowModel
 
     if (result instanceof DataSuccess) {
       // router.push({ name: 'Material' });
-      router.push(this.userStore.user?.type === 1 ? '/mainportal/material' : '/organization/material');
+      router.push(this.userStore.user?.type === 1 ? '/admin/material' : '/organization/material');
 
       if (formKey) FormStore.clearFormData(formKey);
     }

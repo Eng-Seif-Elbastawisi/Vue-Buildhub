@@ -52,7 +52,7 @@ export default class LocationController extends BaseController<LocationShowModel
   }
 
   private getLocationRoute(type?: LocationTypeEnum): string {
-    const prefix = this.userStore.user?.type === 1 ? '/mainportal' : '/organization';
+    const prefix = this.userStore.user?.type === 1 ? '/admin' : '/organization';
 
     const routes: Record<LocationTypeEnum, string> = {
       [LocationTypeEnum.COUNTRY]: `${prefix}/location`,

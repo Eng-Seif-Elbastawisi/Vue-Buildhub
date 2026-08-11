@@ -98,7 +98,7 @@
         </div>
         <router-link
           class="btn btn-primary"
-          :to="user?.type === 1 ? '/organization/space/add' : '/organization/space/add'"
+          :to="user?.type === 1 ? '/admin/space/add' : '/organization/space/add'"
           ><IndexAddIcon />{{ $t('Space') }}</router-link
         >
       </div>
@@ -126,7 +126,7 @@
                 class="action-btn edit"
                 :to="
                   user?.type === 1
-                    ? `/organization/space/edit/${item.id}`
+                    ? `/admin/space/edit/${item.id}`
                     : `/organization/space/edit/${item.id}`
                 "
               >
@@ -191,7 +191,7 @@
           <p>{{ $t('Space.empty_description') }}</p>
           <router-link
             class="btn btn-primary"
-            :to="user?.type === 1 ? '/organization/space/add' : '/organization/space/add'"
+            :to="user?.type === 1 ? '/admin/space/add' : '/organization/space/add'"
             ><IndexAddIcon />{{ $t('Space.add') }}</router-link
           >
         </div>
