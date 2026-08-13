@@ -199,28 +199,26 @@
       @update-data="params = $event"
     />
 
-
     <div class="buttons-container">
-          <button
-      :class="{ 'btn--loading': loading }"
-      class="btn btn-primary"
-      type="button"
-      :disabled="loading || !params"
-      @click="saveProjectFloor"
-    >
-      {{ $t('Project.save') }}
-    </button>
+      <button
+        :class="{ 'btn--loading': loading }"
+        class="btn btn-primary"
+        type="button"
+        :disabled="loading || !params"
+        @click="saveProjectFloor"
+      >
+        {{ $t('Project.save') }}
+      </button>
 
-        <button
-      :class="{ 'btn--loading': loading }"
-      class="btn btn-secondary"
-      type="button"
-      :disabled="loading || !params"
-      @click="router.back()"
-    >
-      {{ $t('back_step') }}
-    </button>
-
+      <button
+        :class="{ 'btn--loading': loading }"
+        class="btn btn-secondary"
+        type="button"
+        :disabled="loading || !params"
+        @click="router.back()"
+      >
+        {{ $t('back_step') }}
+      </button>
     </div>
 
     <section v-if="projectFloors.length" class="saved-floors">
@@ -384,17 +382,16 @@
     border: 1px solid #f5c6cb;
     border-radius: 4px;
   }
-.buttons-container{
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex: 1 1;
-  gap: 10px;
-  .btn{
-    width: 100%;
+  .buttons-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1 1;
+    gap: 10px;
+    .btn {
+      width: 100%;
+    }
   }
-}
-  
 
   .next-step-card {
     display: flex;
