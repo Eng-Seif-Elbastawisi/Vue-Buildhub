@@ -2279,5 +2279,6 @@
   "project_preview_id": "معرف معاينة المشروع",
   "show organization": "عرض المؤسسة",
   "reviewer.name": "اسم المراجع",
-  "reviewer.email": "البريد الإلكتروني للمراجع"
+  "reviewer.email": "البريد الإلكتروني للمراجع",
+  "back_step" : "الرجوع خطوه"
 }

@@ -7457,7 +7457,8 @@ html.dark {
   align-items: center;
   gap: 8px;
   padding: 11px 22px;
-  background: linear-gradient(135deg, var(--PrimaryColor) 0%, var(--PrimaryColor-hover) 100%);
+  /* background: linear-gradient(135deg, var(--PrimaryColor) 0%, var(--PrimaryColor-hover) 100%); */
+  background: var(--PrimaryColor);
   color: var(--standard-white);
   border-radius: var(--radius-md);
   font-size: var(--md-size);
