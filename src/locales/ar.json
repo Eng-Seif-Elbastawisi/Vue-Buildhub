@@ -648,6 +648,7 @@
   "admin.edit": "تعديل مشرف",
   "admin.save": "حفظ المشرف",
   "admin.update": "تحديث المشرف",
+  "Project.engineering_responsible": "المسؤول الهندسي",
   "admin.empty_title": "لا يوجد مشرفون حتى الآن",
   "admin.empty_description": "أضف أول مشرف لبدء إدارة الوصول",
   "admin.delete_title": "حذف هذا المشرف؟",
