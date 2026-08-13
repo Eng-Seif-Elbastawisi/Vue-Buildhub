@@ -14311,4 +14311,24 @@ body div {
 .table-bulk-actions {
   display: flex;
   justify-content: flex-end;
+}
+
+.btn-add {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 22px;
+  background: var(--PrimaryColor);
+  color: var(--standard-white);
+  border-radius: var(--radius-md);
+  font-size: var(--md-size);
+  font-weight: 600;
+  font-family: "Medium";
+  text-decoration: none;
+  white-space: nowrap;
+  border: none;
+  box-shadow: 0 3px 10px rgba(99, 102, 241, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
 }/*# sourceMappingURL=main.min.css.map */
