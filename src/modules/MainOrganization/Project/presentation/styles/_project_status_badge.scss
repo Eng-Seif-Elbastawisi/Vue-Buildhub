@@ -26,8 +26,8 @@
   }
 
   .status-4 {
-    color: var(--bg-main);
-    background-color: #f0a800c7;
+    color: var(--warning-dark);
+    background-color: var(--warning-light);
   }
 
   .status-5 {
@@ -35,8 +35,28 @@
     background-color: var(--PrimaryColor-light);
   }
 
+  .status-10 {
+    color: var(--PrimaryColor-dark);
+    background-color: var(--PrimaryColor-light);
+  }
+
+  .status-11 {
+    color: var(--info-dark);
+    background-color: var(--info-light);
+  }
+
+  .status-12 {
+    color: var(--warning-dark);
+    background-color: var(--warning-light);
+  }
+
+  .status-13 {
+    color: var(--success-dark);
+    background-color: var(--success-light);
+  }
+
   .status-14 {
-    color: var(--gray-50);
-    background-color: var(--danger);
+    color: var(--danger-dark);
+    background-color: var(--danger-light);
   }
 }

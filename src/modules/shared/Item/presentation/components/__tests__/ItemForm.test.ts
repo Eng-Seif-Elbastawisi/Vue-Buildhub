@@ -7,7 +7,17 @@ import ItemShowModel from '../../../core/models/Item.show.model';
 import AddItemParams from '../../../core/params/add.Item.params';
 import ItemForm from '../ItemForm.vue';
 
-vi.mock('vue-router', () => ({ onBeforeRouteLeave: vi.fn() }));
+const route = vi.hoisted(() => ({ query: {} }));
+
+vi.mock('vue-router', async (importOriginal) => {
+  const actual = await importOriginal();
+
+  return {
+    ...actual,
+    onBeforeRouteLeave: vi.fn(),
+    useRoute: () => route,
+  };
+});
 
 const MultiLangInputStub = {
   props: ['modelValue'],
@@ -54,6 +64,7 @@ const filterScenarios = [
 describe('ItemForm', () => {
   beforeEach(() => {
     setActivePinia(createPinia());
+    route.query = { service_type: '2' };
   });
 
   it('emits complete item params from form inputs', async () => {
@@ -68,8 +79,8 @@ describe('ItemForm', () => {
     await wrapper.find<HTMLInputElement>('#item-price').setValue('250');
     await wrapper.find('.item-type').trigger('click');
     await wrapper.find('.item-status').trigger('click');
-    await wrapper.find('.item-department').trigger('click');
     await wrapper.find('.item-stage').trigger('click');
+    await wrapper.find('.item-department').trigger('click');
     await wrapper.find('.item-measurement').trigger('click');
     await wrapper.find<HTMLTextAreaElement>('#item-notes').setValue('Some notes');
 

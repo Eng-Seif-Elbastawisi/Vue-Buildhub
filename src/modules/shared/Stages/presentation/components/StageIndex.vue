@@ -2,6 +2,7 @@
   import { onMounted, ref, computed } from 'vue';
   import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
   import AppTable, { type TableHeader } from '@/shared/HelpersComponents/AppTable.vue';
+  import { deleteSelectedRows } from '@/shared/HelpersComponents/deleteSelectedRows';
   import Pagination from '@/shared/HelpersComponents/Pagination.vue';
   import { useRoute, useRouter } from 'vue-router';
   import { debounce } from '@/base/Presentation/Utils/debouced';
@@ -74,23 +75,14 @@
     await fetchStages();
   };
 
+  const deleteSelectedStages = (stages: StageModel[]) =>
+    deleteSelectedRows(stages, (id) => controller.delete(new DeleteStageParams(id)), fetchStages);
+
   const routePrefix = computed(() =>
     route.path?.startsWith('/admin') ? '/admin' : '/organization',
   );
   const formRoute = computed(() => `${routePrefix.value}/stages/add`);
 
-  const SelectedRow = ref<StageModel[]>([]);
-  const setSelectef = (items: StageModel[]) => {
-    SelectedRow.value = items;
-  };
-
-  const deleteSelected = () => {
-    SelectedRow.value.forEach((item) => {
-      if (item.id !== undefined) {
-        deleteCountry(item.id);
-      }
-    });
-  };
   const EditMode = ref(false);
   const selectedStage = computed(() =>
     EditMode.value ? (controller.itemData.value ?? undefined) : undefined,
@@ -116,6 +108,13 @@
 
 <template>
   <div class="stage-page">
+    <header class="page-header stage-page__header">
+      <div>
+        <h4>{{ $t('stage.execution_title') }}</h4>
+        <p>{{ $t('stage.execution_description') }}</p>
+      </div>
+    </header>
+
     <div class="index-header">
       <div class="toolbar">
         <div class="search-field">
@@ -142,11 +141,6 @@
           />
         </div>
       </div>
-      <div class="flex gap-10">
-        <button v-if="SelectedRow.length > 0" class="btn-add" @click="deleteSelected">
-          <span>{{ $t('delete') }}</span>
-        </button>
-      </div>
     </div>
     <StageAdd
       :key="formKey"
@@ -162,11 +156,11 @@
           <AppTable
             :headers="headers"
             :items="data as StageModel[]"
+            :bulk-delete="deleteSelectedStages"
             selectable
             show-index
             hoverable
             striped
-            @selection-change="setSelectef"
           >
             <template #cell-name="{ item }">
               {{ item?.title }}

@@ -17,11 +17,10 @@ describe('AddProjectFloorParams', () => {
     const params = new AddProjectFloorParams({
       project_id: 10,
       project_preview_id: 15,
-      floor_number: FloorNumber.FOURTH_FLOOR,
       site_description: 'Finished concrete work',
       technical_general_notes: 'Needs pricing',
       inspection_recommendations: 'Proceed to pricing',
-      spaces,
+      floors: [{ floor_number: FloorNumber.FOURTH_FLOOR, spaces }],
     });
 
     expect(params.project_id).toBe(10);
@@ -29,11 +28,10 @@ describe('AddProjectFloorParams', () => {
     expect(params.toMap()).toEqual({
       project_id: 10,
       project_preview_id: 15,
-      floor_number: FloorNumber.FOURTH_FLOOR,
       site_description: 'Finished concrete work',
       technical_general_notes: 'Needs pricing',
       inspection_recommendations: 'Proceed to pricing',
-      spaces,
+      floors: [{ floor_number: FloorNumber.FOURTH_FLOOR, spaces }],
     });
   });
 
@@ -41,11 +39,15 @@ describe('AddProjectFloorParams', () => {
     const validParams = new AddProjectFloorParams({
       project_id: 10,
       project_preview_id: 15,
-      floor_number: FloorNumber.GROUND_FLOOR,
       site_description: 'Site description',
       technical_general_notes: 'Technical notes',
       inspection_recommendations: 'Inspection recommendations',
-      spaces: [{ space_id: 1, length: 12, width: 8, height: 3 }],
+      floors: [
+        {
+          floor_number: FloorNumber.GROUND_FLOOR,
+          spaces: [{ space_id: 1, length: 12, width: 8, height: 3 }],
+        },
+      ],
     });
 
     expect(validParams.validate()).toEqual({ isValid: true, errors: [] });
@@ -53,7 +55,6 @@ describe('AddProjectFloorParams', () => {
     const invalidParams = new AddProjectFloorParams({
       project_id: 0,
       project_preview_id: 0,
-      floor_number: 99 as FloorNumber,
       site_description: '',
       technical_general_notes: '',
       inspection_recommendations: '',
@@ -62,42 +63,47 @@ describe('AddProjectFloorParams', () => {
     expect(invalidParams.validate().errors.map((error) => error.field)).toEqual([
       'project_id',
       'project_preview_id',
-      'floor_number',
-      'site_description',
-      'technical_general_notes',
-      'inspection_recommendations',
-      'spaces',
+      'floors',
     ]);
-    expect(invalidParams.toMap()).not.toHaveProperty('spaces');
+    expect(invalidParams.toMap()).not.toHaveProperty('floors');
   });
 
   it('omits nested undefined values while preserving backend null values', () => {
     const params = new AddProjectFloorParams({
       project_id: 10,
       project_preview_id: 15,
-      floor_number: FloorNumber.FIRST_FLOOR,
       site_description: 'Site description',
       technical_general_notes: 'Technical notes',
       inspection_recommendations: 'Recommendations',
-      spaces: [
+      floors: [
         {
-          space_id: 8,
-          length: 12,
-          width: 8,
-          height: 3,
-          notes: undefined,
-          attachments: [{ file: 'floor.pdf', alt: undefined, link: null }],
+          floor_number: FloorNumber.FIRST_FLOOR,
+          spaces: [
+            {
+              space_id: 8,
+              length: 12,
+              width: 8,
+              height: 3,
+              notes: undefined,
+              attachments: [{ file: 'floor.pdf', alt: undefined, link: null }],
+            },
+          ],
         },
       ],
     });
 
-    expect(params.toMap().spaces).toEqual([
+    expect(params.toMap().floors).toEqual([
       {
-        space_id: 8,
-        length: 12,
-        width: 8,
-        height: 3,
-        attachments: [{ file: 'floor.pdf', link: null }],
+        floor_number: FloorNumber.FIRST_FLOOR,
+        spaces: [
+          {
+            space_id: 8,
+            length: 12,
+            width: 8,
+            height: 3,
+            attachments: [{ file: 'floor.pdf', link: null }],
+          },
+        ],
       },
     ]);
   });
@@ -105,11 +111,15 @@ describe('AddProjectFloorParams', () => {
   it('accepts a floor without a preview and omits project_preview_id from the payload', () => {
     const params = new AddProjectFloorParams({
       project_id: 10,
-      floor_number: FloorNumber.FIRST_FLOOR,
       site_description: 'Site description',
       technical_general_notes: 'Technical notes',
       inspection_recommendations: 'Recommendations',
-      spaces: [{ space_id: 8, length: 12, width: 8, height: 3 }],
+      floors: [
+        {
+          floor_number: FloorNumber.FIRST_FLOOR,
+          spaces: [{ space_id: 8, length: 12, width: 8, height: 3 }],
+        },
+      ],
     });
 
     expect(params.validate()).toEqual({ isValid: true, errors: [] });
@@ -120,14 +130,32 @@ describe('AddProjectFloorParams', () => {
     const params = new AddProjectFloorParams({
       project_id: 10,
       project_preview_id: 0,
-      floor_number: FloorNumber.FIRST_FLOOR,
       site_description: 'Site description',
       technical_general_notes: 'Technical notes',
       inspection_recommendations: 'Recommendations',
-      spaces: [{ space_id: 8, length: 12, width: 8, height: 3 }],
+      floors: [
+        {
+          floor_number: FloorNumber.FIRST_FLOOR,
+          spaces: [{ space_id: 8, length: 12, width: 8, height: 3 }],
+        },
+      ],
     });
 
     expect(params.validate().errors.map((error) => error.field)).toContain('project_preview_id');
     expect(params.toMap()).not.toHaveProperty('project_preview_id');
+  });
+
+  it('rejects a floor with a missing room dimension', () => {
+    const params = new AddProjectFloorParams({
+      project_id: 10,
+      floors: [
+        {
+          floor_number: FloorNumber.FIRST_FLOOR,
+          spaces: [{ space_id: 8, length: 12, width: 0, height: 3 }],
+        },
+      ],
+    });
+
+    expect(params.validate().errors.map((error) => error.field)).toContain('floors');
   });
 });

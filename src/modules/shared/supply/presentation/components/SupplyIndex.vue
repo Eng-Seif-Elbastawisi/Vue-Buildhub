@@ -3,6 +3,7 @@
   import { useRoute, useRouter } from 'vue-router';
   import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
   import AppTable, { type TableHeader } from '@/shared/HelpersComponents/AppTable.vue';
+  import { deleteSelectedRows } from '@/shared/HelpersComponents/deleteSelectedRows';
   import Pagination from '@/shared/HelpersComponents/Pagination.vue';
   import TableSkelaton from '@/shared/HelpersComponents/TableSkelaton.vue';
   import type SupplyModel from '../../core/models/supply.model';
@@ -74,6 +75,12 @@
     await controller.delete(new DeleteSupplyParams({ supply_id: id }));
     await fetchSupply();
   };
+  const deleteSelectedSupplies = (supplies: SupplyModel[]) =>
+    deleteSelectedRows(
+      supplies,
+      (id) => controller.delete(new DeleteSupplyParams({ supply_id: id })),
+      fetchSupply,
+    );
 
   onMounted(async () => {
     word.value = route.query.word ? String(route.query.word) : '';
@@ -127,6 +134,7 @@
         <AppTable
           :headers="headers"
           :items="data as SupplyModel[]"
+          :bulk-delete="deleteSelectedSupplies"
           selectable
           show-index
           hoverable

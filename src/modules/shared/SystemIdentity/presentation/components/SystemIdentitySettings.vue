@@ -14,7 +14,7 @@
   const params = ref<StoreSystemIdentityParams | null>(null);
   const loading = ref(false);
   const statusKey = ref('');
-  const { applyPalette } = useSystemIdentityTheme();
+  const { applyPalette, currentPalette } = useSystemIdentityTheme();
 
   const identity = computed(() => controller.itemData.value ?? undefined);
 
@@ -37,6 +37,7 @@
           primary: params.value.primary_color,
           secondary: params.value.secondary_color,
           accent: params.value.accent_color,
+          logo: result.data?.logo || params.value.logo || currentPalette.value.logo,
         });
         statusKey.value = 'system_identity.identity_applied';
       }

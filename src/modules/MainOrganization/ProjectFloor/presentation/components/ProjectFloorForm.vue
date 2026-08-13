@@ -29,6 +29,7 @@
       projectFloor?: ProjectFloorModel | ProjectFloorShowModel;
       projectId?: number;
       projectPreviewId?: number;
+      existingFloors?: ProjectFloorModel[];
       loading?: boolean;
       isEdit?: boolean;
       validationErrors?: Record<string, string>;
@@ -37,6 +38,7 @@
       projectFloor: undefined,
       projectId: undefined,
       projectPreviewId: undefined,
+      existingFloors: () => [],
       loading: false,
       isEdit: false,
       validationErrors: () => ({}),
@@ -96,6 +98,10 @@
     attachments: ProjectFloorAttachmentParams[];
   };
 
+  type DimensionField = 'length' | 'width' | 'height';
+
+  const dimensionFields: DimensionField[] = ['length', 'width', 'height'];
+
   type LocalFloor = {
     localId: number;
     floorNumber: TitleInterface<FloorNumber>;
@@ -106,6 +112,8 @@
   const selectedFloorNumber = ref<TitleInterface<FloorNumber> | null>(null);
   const selectedSpace = ref<TitleInterface<number>[]>([]);
   const currentSpaces = ref<SpaceRow[]>([]);
+  const currentSpaceErrors = ref<Record<string, string>>({});
+  const duplicateFloorSpaceError = ref('');
   const floors = ref<LocalFloor[]>([]);
 
   const siteDescription = ref('');
@@ -167,9 +175,9 @@
   const mapSpaceRowsToParams = (rows: SpaceRow[]): ProjectFloorSpaceParams[] => {
     return rows.map((item) => ({
       space_id: Number(item.space.id),
-      length: Number(item.length || 0),
-      width: Number(item.width || 0),
-      height: Number(item.height || 0),
+      length: Number(item.length),
+      width: Number(item.width),
+      height: Number(item.height),
       notes: item.notes,
       attachments: item.attachments.map((attachment) => ({
         file: attachment.file,
@@ -206,6 +214,7 @@
 
   const updateFloorNumber = (value: TitleInterface<FloorNumber> | null) => {
     selectedFloorNumber.value = value;
+    duplicateFloorSpaceError.value = '';
   };
 
   const updateSelectedSpace = (value: TitleInterface<number>[] | TitleInterface<number> | null) => {
@@ -215,6 +224,7 @@
     }
 
     selectedSpace.value = Array.isArray(value) ? value : [value];
+    duplicateFloorSpaceError.value = '';
   };
 
   const addSpace = () => {
@@ -238,10 +248,79 @@
     });
 
     selectedSpace.value = [];
+    duplicateFloorSpaceError.value = '';
   };
 
   const removeCurrentSpace = (index: number) => {
     currentSpaces.value.splice(index, 1);
+    currentSpaceErrors.value = {};
+    duplicateFloorSpaceError.value = '';
+  };
+
+  const mapExistingSpace = (space: ProjectFloorModel['spaces'][number]): SpaceRow => {
+    return {
+      space: { ...space.space },
+      length: space.length,
+      width: space.width,
+      height: space.height,
+      notes: space.notes,
+      attachments: space.attachments.map((attachment) => ({
+        file: attachment.file,
+        alt: attachment.alt,
+        link: attachment.link,
+      })),
+    };
+  };
+
+  const findSavedFloor = (floorNumber: FloorNumber): ProjectFloorModel | undefined => {
+    return props.existingFloors.find((floor) => Number(floor.floor_number) === Number(floorNumber));
+  };
+
+  const currentSpaceErrorKey = (spaceIndex: number, field: DimensionField): string => {
+    return `spaces.${spaceIndex}.${field}`;
+  };
+
+  const currentSpaceError = (spaceIndex: number, field: DimensionField): string | undefined => {
+    const fieldKey = currentSpaceErrorKey(spaceIndex, field);
+
+    return currentSpaceErrors.value[fieldKey] ?? props.validationErrors[fieldKey];
+  };
+
+  const clearCurrentSpaceError = (spaceIndex: number, field: DimensionField): void => {
+    const fieldKey = currentSpaceErrorKey(spaceIndex, field);
+
+    if (!currentSpaceErrors.value[fieldKey]) {
+      return;
+    }
+
+    const nextErrors = { ...currentSpaceErrors.value };
+    delete nextErrors[fieldKey];
+    currentSpaceErrors.value = nextErrors;
+  };
+
+  const hasPositiveDimension = (value: string): boolean => {
+    const dimension = Number(value);
+
+    return Number.isFinite(dimension) && dimension > 0;
+  };
+
+  const validateCurrentSpaces = (): boolean => {
+    const errors: Record<string, string> = {};
+
+    currentSpaces.value.forEach((space, spaceIndex) => {
+      dimensionFields.forEach((field) => {
+        if (!hasPositiveDimension(space[field])) {
+          errors[currentSpaceErrorKey(spaceIndex, field)] = t(
+            'ProjectFloor.validation_dimension_positive',
+            { field: t(`ProjectFloor.${field}`) },
+          );
+        }
+      });
+    });
+
+    currentSpaceErrors.value = errors;
+
+    return Object.keys(errors).length === 0;
   };
 
   const updateCurrentSpaceAttachments = async (event: Event, index: number) => {
@@ -262,21 +341,51 @@
   };
 
   const addFloor = () => {
-    if (!selectedFloorNumber.value || !currentSpaces.value.length) return;
+    if (
+      !selectedFloorNumber.value ||
+      !currentSpaces.value.length ||
+      !validateCurrentSpaces()
+    ) {
+      return;
+    }
 
     const existingFloorIndex = floors.value.findIndex(
       (floor) => Number(floor.floorNumber.id) === Number(selectedFloorNumber.value?.id),
     );
+    const localFloor = floors.value[existingFloorIndex];
+    const savedFloor = findSavedFloor(selectedFloorNumber.value.id);
+    const existingSpaces = localFloor?.spaces ?? savedFloor?.spaces.map(mapExistingSpace) ?? [];
+    const duplicateSpace = currentSpaces.value.find((space) => {
+      return existingSpaces.some(
+        (existingSpace) => Number(existingSpace.space.id) === Number(space.space.id),
+      );
+    });
+
+    if (duplicateSpace) {
+      duplicateFloorSpaceError.value = t('ProjectFloor.duplicate_floor_space', {
+        floor: selectedFloorNumber.value.title,
+        space: duplicateSpace.space.title,
+      });
+
+      return;
+    }
 
     const floorData: LocalFloor = {
-      localId: existingFloorIndex >= 0 ? floors.value[existingFloorIndex].localId : Date.now(),
+      localId: localFloor?.localId ?? savedFloor?.id ?? Date.now(),
       floorNumber: { ...selectedFloorNumber.value },
-      spaces: currentSpaces.value.map((space) => ({
+      spaces: [...existingSpaces, ...currentSpaces.value].map((space) => ({
         ...space,
         space: { ...space.space },
         attachments: [...space.attachments],
       })),
-      attachments: [],
+      attachments:
+        localFloor?.attachments ??
+        savedFloor?.attachments.map((attachment) => ({
+          file: attachment.file,
+          alt: attachment.alt,
+          link: attachment.link,
+        })) ??
+        [],
     };
 
     if (existingFloorIndex >= 0) {
@@ -288,6 +397,8 @@
     selectedFloorNumber.value = getDefaultFloorNumber();
     selectedSpace.value = [];
     currentSpaces.value = [];
+    currentSpaceErrors.value = {};
+    duplicateFloorSpaceError.value = '';
     updateData();
   };
 
@@ -301,6 +412,8 @@
       space: { ...space.space },
       attachments: [...space.attachments],
     }));
+    currentSpaceErrors.value = {};
+    duplicateFloorSpaceError.value = '';
 
     floors.value.splice(index, 1);
     updateData();
@@ -315,6 +428,8 @@
     selectedFloorNumber.value = getDefaultFloorNumber();
     selectedSpace.value = [];
     currentSpaces.value = [];
+    currentSpaceErrors.value = {};
+    duplicateFloorSpaceError.value = '';
     floors.value = [];
     siteDescription.value = '';
     technicalGeneralNotes.value = '';
@@ -331,6 +446,8 @@
         selectedFloorNumber.value = getDefaultFloorNumber();
         selectedSpace.value = [];
         currentSpaces.value = [];
+        currentSpaceErrors.value = {};
+        duplicateFloorSpaceError.value = '';
         floors.value = [];
         siteDescription.value = '';
         technicalGeneralNotes.value = '';
@@ -525,30 +642,35 @@
             >
               <strong class="space-name">{{ item.space.title }}</strong>
 
-              <input
-                v-model="item.length"
-                class="mini-input"
-                type="number"
-                min="0"
-                step="0.01"
-                :placeholder="$t('ProjectFloor.length')"
-              />
-              <input
-                v-model="item.width"
-                class="mini-input"
-                type="number"
-                min="0"
-                step="0.01"
-                :placeholder="$t('ProjectFloor.width')"
-              />
-              <input
-                v-model="item.height"
-                class="mini-input"
-                type="number"
-                min="0"
-                step="0.01"
-                :placeholder="$t('ProjectFloor.height')"
-              />
+              <div v-for="field in dimensionFields" :key="field" class="space-dimension-field">
+                <input
+                  v-model="item[field]"
+                  class="mini-input"
+                  :class="{ 'mini-input--invalid': currentSpaceError(index, field) }"
+                  type="number"
+                  min="0.01"
+                  step="0.01"
+                  required
+                  :placeholder="$t(`ProjectFloor.${field}`)"
+                  :aria-label="$t(`ProjectFloor.${field}`)"
+                  aria-required="true"
+                  :aria-invalid="Boolean(currentSpaceError(index, field))"
+                  :aria-describedby="
+                    currentSpaceError(index, field)
+                      ? `floor-space-${index}-${field}-error`
+                      : undefined
+                  "
+                  @input="clearCurrentSpaceError(index, field)"
+                />
+                <small
+                  v-if="currentSpaceError(index, field)"
+                  :id="`floor-space-${index}-${field}-error`"
+                  class="space-dimension-field__error"
+                  role="alert"
+                >
+                  {{ currentSpaceError(index, field) }}
+                </small>
+              </div>
               <input
                 v-model="item.notes"
                 class="mini-input"
@@ -585,6 +707,11 @@
             <i class="pi pi-plus-circle"></i>
             {{ $t('ProjectFloor.add_floor') }}
           </button>
+
+          <p v-if="duplicateFloorSpaceError" class="floor-duplicate-error" role="alert">
+            <i class="pi pi-exclamation-circle" aria-hidden="true"></i>
+            {{ duplicateFloorSpaceError }}
+          </p>
         </section>
 
         <section class="section-card">
@@ -1054,6 +1181,10 @@
     white-space: nowrap;
   }
 
+  .space-dimension-field {
+    min-width: 0;
+  }
+
   .mini-input,
   .field-input {
     width: 100%;
@@ -1063,6 +1194,18 @@
     border-radius: 12px;
     background: var(--BgWhite);
     outline: none;
+  }
+
+  .mini-input--invalid {
+    border-color: var(--Red);
+  }
+
+  .space-dimension-field__error {
+    display: block;
+    margin-top: 0.35rem;
+    color: var(--Red);
+    font-size: var(--xs-size);
+    line-height: 1.35;
   }
 
   .upload-chip {
@@ -1233,6 +1376,7 @@
       grid-template-columns: 1fr;
     }
   }
+
   @media (max-width: 640px) {
     .preview-gate {
       padding: 1rem;

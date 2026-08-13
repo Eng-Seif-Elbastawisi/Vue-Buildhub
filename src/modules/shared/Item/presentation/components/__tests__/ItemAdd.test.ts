@@ -19,9 +19,14 @@ vi.mock('../../controllers/Item.controller', () => ({
   default: { getInstance: () => mockController },
 }));
 
-vi.mock('vue-router', () => ({
-  useRoute: () => route,
-}));
+vi.mock('vue-router', async (importOriginal) => {
+  const actual = await importOriginal();
+
+  return {
+    ...actual,
+    useRoute: () => route,
+  };
+});
 
 const params = new AddItemParams({
   type: ItemTypeEnum.MATERIAL,

@@ -180,7 +180,6 @@
     formatDateTime(invoice.value?.created_at || invoice.value?.invoice_date),
   );
   const invoiceDateLabel = computed(() => formatDateTime(invoice.value?.invoice_date));
-  const dueDateLabel = computed(() => formatDateTime(invoice.value?.due_date));
 
   const normalizeInvoiceStatus = (
     value?: string | number | null,
@@ -487,7 +486,6 @@
         >
           <InvoiceStatusOverview
             :invoice-date="invoiceDateLabel"
-            :due-date="dueDateLabel"
             :status-label="statusLabel"
             :export-status-label="exportStatusLabel"
             :currency="currency"

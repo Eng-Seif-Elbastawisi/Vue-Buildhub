@@ -3,6 +3,8 @@ import { InvoiceStatusEnum } from '@/modules/MainOrganization/Invoice/core/const
 import { InsideStatusType } from '@/modules/MainOrganization/TaskAssignment/core/constants/inside.status.enum';
 import { DepartmentTypeEnum } from '@/modules/shared/Department/core/constants/Type.enum';
 import { ItemServiceTypeEnum } from '@/modules/shared/Item/core/constant/item.service.type.enum';
+import arabicMessages from '@/locales/ar.json';
+import englishMessages from '@/locales/en.json';
 import { sidebarSections } from '../sidebar.config';
 
 describe('sidebarSections', () => {
@@ -25,6 +27,21 @@ describe('sidebarSections', () => {
     );
   });
 
+  it('keeps every sidebar label localized in Arabic and English', () => {
+    const labelKeys = sidebarSections.flatMap((section) => [
+      section.labelKey,
+      ...section.items.map((item) => item.labelKey),
+    ]);
+
+    expect(labelKeys.every((labelKey) => Object.hasOwn(englishMessages, labelKey))).toBe(true);
+    expect(labelKeys.every((labelKey) => Object.hasOwn(arabicMessages, labelKey))).toBe(true);
+  });
+
+  it('shows Arabic copy for the organization administration section', () => {
+    expect(arabicMessages['sidebar.organization']).toBe('المنظمة');
+    expect(arabicMessages['sidebar.admins']).toBe('المشرفون');
+  });
+
   it('uses the requested sidebar section order', () => {
     expect(sidebarSections.map((section) => section.labelKey)).toEqual([
       'sidebar.crm',
@@ -34,7 +51,7 @@ describe('sidebarSections', () => {
       'sidebar.reports',
       'sidebar.sys_config',
       'sidebar.sys_identity',
-      'organization',
+      'sidebar.organization',
     ]);
   });
 
@@ -156,7 +173,23 @@ describe('sidebarSections', () => {
       items.find((item) => item.path === `/task-assignment?status=${InsideStatusType.ASSIGN}`),
     ).toEqual(
       expect.objectContaining({
-        labelKey: 'task',
+        labelKey: 'sidebar.task',
+        roles: ['organization'],
+      }),
+    );
+    expect(
+      items.find((item) => item.path === `/task-assignment?status=${InsideStatusType.HOLD}`),
+    ).toEqual(
+      expect.objectContaining({
+        labelKey: 'sidebar.holding',
+        roles: ['organization'],
+      }),
+    );
+    expect(
+      items.find((item) => item.path === `/task-assignment?status=${InsideStatusType.REVIEW}`),
+    ).toEqual(
+      expect.objectContaining({
+        labelKey: 'sidebar.review',
         roles: ['organization'],
       }),
     );

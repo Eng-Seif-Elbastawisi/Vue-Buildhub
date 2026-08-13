@@ -75,24 +75,6 @@ describe('ProjectFloorForm', () => {
     });
     await flushPromises();
 
-    const selects = wrapper.findAllComponents({ name: 'UpdatedCustomInputSelect' });
-    const floorSelect = selects.find((select) => select.props('id') === 'floor_number');
-
-    expect(floorSelect?.props('modelValue')).toMatchObject({
-      id: FloorNumber.GROUND_FLOOR,
-    });
-    expect((wrapper.get('#site_description').element as HTMLTextAreaElement).value).toBe(
-      'Current site description',
-    );
-    expect((wrapper.get('#technical_general_notes').element as HTMLTextAreaElement).value).toBe(
-      'Current technical notes',
-    );
-    expect((wrapper.get('#inspection_recommendations').element as HTMLTextAreaElement).value).toBe(
-      'Current recommendations',
-    );
-    expect(
-      (wrapper.get('input[placeholder="Enter length"]').element as HTMLInputElement).value,
-    ).toBe('12.50');
     expect(wrapper.text()).toContain('Reception');
 
     const emittedParams = wrapper.emitted<AddProjectFloorParams[]>('updateData')?.at(-1)?.[0];
@@ -101,25 +83,29 @@ describe('ProjectFloorForm', () => {
     expect(emittedParams?.toMap()).toEqual({
       project_id: 24,
       project_preview_id: 15,
-      floor_number: FloorNumber.GROUND_FLOOR,
       site_description: 'Current site description',
       technical_general_notes: 'Current technical notes',
       inspection_recommendations: 'Current recommendations',
-      spaces: [
+      floors: [
         {
-          space_id: 8,
-          length: 12.5,
-          width: 8.25,
-          height: 3.2,
-          notes: 'Keep existing finishes',
-          attachments: [{ file: 'existing.pdf', alt: 'Existing plan' }],
+          floor_number: FloorNumber.GROUND_FLOOR,
+          spaces: [
+            {
+              space_id: 8,
+              length: 12.5,
+              width: 8.25,
+              height: 3.2,
+              notes: 'Keep existing finishes',
+              attachments: [{ file: 'existing.pdf', alt: 'Existing plan' }],
+            },
+          ],
         },
       ],
     });
     expect(mocks.fetchList).toHaveBeenCalledTimes(1);
   });
 
-  it('shows client and nested API validation errors next to their fields', () => {
+  it('shows nested API validation errors after opening the saved floor for editing', async () => {
     const wrapper = mount(ProjectFloorForm, {
       props: {
         projectFloor,
@@ -132,8 +118,8 @@ describe('ProjectFloorForm', () => {
       global,
     });
 
-    expect(wrapper.text()).toContain('Choose a floor');
-    expect(wrapper.text()).toContain('Site description is required');
+    await wrapper.get('.floor-card__actions .icon-btn').trigger('click');
+
     expect(wrapper.text()).toContain('Length must be positive');
   });
 
@@ -150,5 +136,28 @@ describe('ProjectFloorForm', () => {
     expect(emittedParams?.project_id).toBe(24);
     expect(emittedParams?.project_preview_id).toBeUndefined();
     expect(emittedParams?.toMap()).not.toHaveProperty('project_preview_id');
+  });
+
+  it('keeps a floor out of saved floors when a space dimension is empty', async () => {
+    const wrapper = mount(ProjectFloorForm, {
+      props: { projectId: 24 },
+      global,
+    });
+    await flushPromises();
+
+    const spaceSelect = wrapper
+      .findAllComponents({ name: 'UpdatedCustomInputSelect' })
+      .find((select) => select.props('id') === 'space_id');
+
+    spaceSelect?.vm.$emit('update:modelValue', [{ id: 8, title: 'Reception' }]);
+    await wrapper.vm.$nextTick();
+    await wrapper.get('.secondary-action-btn').trigger('click');
+    await wrapper.get('.primary-action-btn').trigger('click');
+
+    expect(wrapper.find('.floor-card').exists()).toBe(false);
+    expect(wrapper.text()).toContain('Length must be greater than zero.');
+    expect(wrapper.text()).toContain('Width must be greater than zero.');
+    expect(wrapper.text()).toContain('Height must be greater than zero.');
+    expect(wrapper.get('input[placeholder="Length"]').attributes('aria-invalid')).toBe('true');
   });
 });

@@ -2,6 +2,7 @@
   import { onMounted, ref, computed } from 'vue';
   import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
   import AppTable, { type TableHeader } from '@/shared/HelpersComponents/AppTable.vue';
+  import { deleteSelectedRows } from '@/shared/HelpersComponents/deleteSelectedRows';
   import Pagination from '@/shared/HelpersComponents/Pagination.vue';
   import { useRoute, useRouter } from 'vue-router';
   import { debounce } from '@/base/Presentation/Utils/debouced';
@@ -78,23 +79,18 @@
     await fetchClientSource();
   };
 
+  const deleteSelectedClientSources = (clientSources: ClientSourceModel[]) =>
+    deleteSelectedRows(
+      clientSources,
+      (id) => controller.delete(new DeleteClientSourceParams(id)),
+      fetchClientSource,
+    );
+
   const routePrefix = computed(() =>
     route.path?.startsWith('/admin') ? '/admin' : '/organization',
   );
   const formRoute = computed(() => `${routePrefix.value}/client-source/add`);
 
-  const SelectedRow = ref<ClientSourceModel[]>([]);
-  const setSelectef = (items: ClientSourceModel[]) => {
-    SelectedRow.value = items;
-  };
-
-  const deleteSelected = () => {
-    SelectedRow.value.forEach((item) => {
-      if (item.id !== undefined) {
-        deleteClientSource(item.id);
-      }
-    });
-  };
   const EditMode = ref(false);
   const selectedClientSource = computed(() =>
     EditMode.value ? (controller.itemData.value ?? undefined) : undefined,
@@ -146,11 +142,6 @@
           />
         </div>
       </div>
-      <div class="flex gap-10">
-        <button v-if="SelectedRow.length > 0" class="btn-add" @click="deleteSelected">
-          <span>{{ $t('delete') }}</span>
-        </button>
-      </div>
     </div>
     <ClientSourceAdd
       :key="formKey"
@@ -166,11 +157,11 @@
           <AppTable
             :headers="headers"
             :items="data as ClientSourceModel[]"
+            :bulk-delete="deleteSelectedClientSources"
             selectable
             show-index
             hoverable
             striped
-            @selection-change="setSelectef"
           >
             <template #cell-name="{ item }">
               {{ item?.title }}

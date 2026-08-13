@@ -2,6 +2,7 @@
   import { onMounted, ref, computed } from 'vue';
   import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
   import AppTable, { type TableHeader } from '@/shared/HelpersComponents/AppTable.vue';
+  import { deleteSelectedRows } from '@/shared/HelpersComponents/deleteSelectedRows';
   import Pagination from '@/shared/HelpersComponents/Pagination.vue';
   import { useRoute, useRouter } from 'vue-router';
   import TableSkelaton from '@/shared/HelpersComponents/TableSkelaton.vue';
@@ -74,6 +75,12 @@
     await controller.delete(new DeleteBrandParams({ brand_id: id }));
     await fetchBrand();
   };
+  const deleteSelectedBrands = (brands: SuppliersModel[]) =>
+    deleteSelectedRows(
+      brands,
+      (id) => controller.delete(new DeleteBrandParams({ brand_id: id })),
+      fetchBrand,
+    );
 
   // const FormStore = useFormsStore();
   // const formRoute = computed(() => '/Suppliers/add');
@@ -183,6 +190,7 @@
           <AppTable
             :headers="headers"
             :items="data as SuppliersModel[]"
+            :bulk-delete="deleteSelectedBrands"
             selectable
             show-index
             hoverable

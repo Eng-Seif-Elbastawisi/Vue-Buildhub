@@ -1,12 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { flushPromises, mount, type VueWrapper } from '@vue/test-utils';
-import { reactive } from 'vue';
+import { nextTick, reactive } from 'vue';
 import SidebarNavigation from '../SidebarNavigation.vue';
 import { createPinia, setActivePinia } from 'pinia';
 import UserModel from '@/modules/auth/core/models/user.model';
 import { UserType } from '@/modules/auth/core/constants/userType.enum';
 import { useUserStore } from '@/stores/user';
 import { DATA_MUTATION_SUCCEEDED_EVENT } from '@/base/Presentation/Controller/dataMutationEvent';
+import { useSystemIdentityTheme } from '@/modules/shared/SystemIdentity/presentation/composables/useSystemIdentityTheme';
 
 const routerMocks = vi.hoisted(() => ({
   push: vi.fn(),
@@ -90,6 +91,34 @@ describe('SidebarNavigation.vue', () => {
     const wrapper = mountSidebar();
     const logo = wrapper.find('img.logo');
     expect(logo.exists()).toBe(true);
+  });
+
+  it('updates the sidebar logo when system identity changes during the session', async () => {
+    const userStore = useUserStore();
+    userStore.setUser(
+      new UserModel({
+        id: 1,
+        name: 'Test User',
+        email: 'test@example.com',
+        WebSocketToken: '',
+        setting: {
+          logo: 'https://assets.test/original-logo.webp',
+          primary_color: '#123456',
+          secondary_color: '#101418',
+          accent_color: '#ABCDEF',
+        },
+      }),
+    );
+    const wrapper = mountSidebar();
+    const theme = useSystemIdentityTheme();
+
+    theme.applyPalette({
+      ...theme.currentPalette.value,
+      logo: 'https://assets.test/updated-logo.webp',
+    });
+    await nextTick();
+
+    expect(wrapper.get('img.logo').attributes('src')).toBe('https://assets.test/updated-logo.webp');
   });
 
   it('renders menu groups and items', () => {

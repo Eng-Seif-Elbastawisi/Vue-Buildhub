@@ -4,6 +4,7 @@
   import { useRoute, useRouter } from 'vue-router';
   import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
   import AppTable, { type TableHeader } from '@/shared/HelpersComponents/AppTable.vue';
+  import { deleteSelectedRows } from '@/shared/HelpersComponents/deleteSelectedRows';
   import Pagination from '@/shared/HelpersComponents/Pagination.vue';
   import TableSkelaton from '@/shared/HelpersComponents/TableSkelaton.vue';
   import DeleteDialog from '@/base/Presentation/Dialogs/MainDialogs/DeleteDialog.vue';
@@ -14,7 +15,7 @@
   import IndexItemParams from '../../core/params/index.Item.params';
   import { debounce } from '@/base/Presentation/Utils/debouced';
   import IndexAddIcon from '@/shared/icons/IndexAddIcon.vue';
-  import type { ItemServiceTypeEnum } from '../../core/constant/item.service.type.enum';
+  import { ItemServiceTypeEnum } from '../../core/constant/item.service.type.enum';
   import {
     getItemServiceTypeFromQuery,
     getItemServiceTypeQuery,
@@ -62,6 +63,28 @@
 
   const serviceTypeQuery = computed(() => getItemServiceTypeQuery(route.query.service_type));
 
+  const itemTitleKey = computed(() => {
+    switch (getServiceType()) {
+      case ItemServiceTypeEnum.DESIGN:
+        return 'item.design_title';
+      case ItemServiceTypeEnum.SUPERVISION:
+        return 'item.execution_title';
+      default:
+        return 'item.index.title';
+    }
+  });
+
+  const itemDescriptionKey = computed(() => {
+    switch (getServiceType()) {
+      case ItemServiceTypeEnum.DESIGN:
+        return 'item.design_description';
+      case ItemServiceTypeEnum.SUPERVISION:
+        return 'item.execution_description';
+      default:
+        return 'item.index.description';
+    }
+  });
+
   const addRoute = computed(() => ({
     path: user?.type === 1 ? '/admin/item/add' : '/organization/item/add',
     query: serviceTypeQuery.value,
@@ -103,6 +126,13 @@
     await fetchItems();
   };
 
+  const deleteSelectedItems = (items: ItemModel[]) =>
+    deleteSelectedRows(
+      items,
+      (id) => controller.delete(new DeleteItemParams({ item_id: id })),
+      fetchItems,
+    );
+
   onMounted(async () => {
     word.value = getRouteWord();
     await fetchItems(getRoutePage(), word.value);
@@ -121,8 +151,8 @@
   <div class="item-page">
     <div class="item-header">
       <div>
-        <h4>{{ $t('item.index.title') }}</h4>
-        <p>{{ $t('item.index.description') }}</p>
+        <h4>{{ $t(itemTitleKey) }}</h4>
+        <p>{{ $t(itemDescriptionKey) }}</p>
       </div>
     </div>
     <div class="toolbar">
@@ -161,6 +191,7 @@
         <AppTable
           :headers="headers"
           :items="data as ItemModel[]"
+          :bulk-delete="deleteSelectedItems"
           selectable
           show-index
           hoverable
@@ -246,24 +277,24 @@
 </template>
 
 <style scoped lang="scss">
-  .material-page,
-  .material-header,
+  .item-page,
+  .item-header,
   .row-actions {
     display: flex;
   }
 
-  .material-page {
+  .item-page {
     flex-direction: column;
     gap: 1.5rem;
   }
 
-  .material-header {
+  .item-header {
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
   }
 
-  .material-header p,
+  .item-header p,
   .empty-state p {
     color: var(--gray-5);
   }

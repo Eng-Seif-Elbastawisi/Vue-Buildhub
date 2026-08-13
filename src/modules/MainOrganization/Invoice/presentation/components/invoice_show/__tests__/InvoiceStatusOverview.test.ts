@@ -3,11 +3,10 @@ import { describe, expect, it } from 'vitest';
 import InvoiceStatusOverview from '../InvoiceStatusOverview.vue';
 
 describe('InvoiceStatusOverview', () => {
-  it('renders invoice status overview values', () => {
+  it('renders invoice status overview values without the due date', () => {
     const wrapper = mount(InvoiceStatusOverview, {
       props: {
         invoiceDate: '05 Jul 2026',
-        dueDate: '12 Jul 2026',
         statusLabel: 'Paid',
         exportStatusLabel: 'Not exported',
         currency: 'EGP',
@@ -22,5 +21,6 @@ describe('InvoiceStatusOverview', () => {
     expect(wrapper.text()).toContain('05 Jul 2026');
     expect(wrapper.text()).toContain('Paid');
     expect(wrapper.text()).toContain('EGP');
+    expect(wrapper.text()).not.toContain('invoice_show.due_date');
   });
 });

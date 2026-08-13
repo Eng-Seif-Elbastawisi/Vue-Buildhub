@@ -52,7 +52,17 @@ describe('OrganizationTogglIndex', () => {
 
     expect(mockController.showSetting).toHaveBeenCalledTimes(1);
     expect(wrapper.text()).toContain('show organization');
-    expect(wrapper.text()).toContain('organization_toggle.active');
+    expect(wrapper.text()).toContain('organization_toggle.inactive');
+  });
+
+  it('renders the irreversible access warning before the setting is enabled', async () => {
+    const wrapper = mount(OrganizationTogglIndex, { global });
+    await flushPromises();
+
+    expect(wrapper.get('.toggle-warning').text()).toContain(
+      'organization_toggle.irreversible_warning',
+    );
+    expect(wrapper.get('.toggle-warning').attributes('role')).toBe('alert');
   });
 
   it('sends numeric toggle params when the switch changes', async () => {
@@ -65,10 +75,10 @@ describe('OrganizationTogglIndex', () => {
     expect(mockController.toggleSetting).toHaveBeenCalledWith(expect.any(ToggleOrganizationParams));
     expect(mockController.toggleSetting.mock.calls[0]?.[0].toggle_status).toBe(2);
     expect(window.localStorage.getItem('organizationFetchToggleStatus')).toBe('2');
-    expect(wrapper.text()).toContain('organization_toggle.inactive');
+    expect(wrapper.text()).toContain('organization_toggle.active');
   });
 
-  it('keeps the selected inactive label even when toggle response returns stale active data', async () => {
+  it('keeps the selected active state when the toggle response returns stale inactive data', async () => {
     mockController.toggleSetting.mockResolvedValue(
       new DataSuccess({
         data: new OrganizationToggledModel({ id: 10, toggle_status: 1 }),
@@ -81,8 +91,8 @@ describe('OrganizationTogglIndex', () => {
     await flushPromises();
 
     expect(mockController.toggleSetting.mock.calls[0]?.[0].toggle_status).toBe(2);
-    expect(wrapper.text()).toContain('organization_toggle.inactive');
-    expect(wrapper.find('.toggle-switch-stub').text()).toBe('false');
+    expect(wrapper.text()).toContain('organization_toggle.active');
+    expect(wrapper.find('.toggle-switch-stub').text()).toBe('true');
   });
 
   it('loads the numeric value from the show endpoint when no local selection exists', async () => {
@@ -95,7 +105,7 @@ describe('OrganizationTogglIndex', () => {
     const wrapper = mount(OrganizationTogglIndex, { global });
     await flushPromises();
 
-    expect(wrapper.text()).toContain('organization_toggle.inactive');
+    expect(wrapper.text()).toContain('organization_toggle.active');
     expect(window.localStorage.getItem('organizationFetchToggleStatus')).toBe('2');
   });
 
@@ -110,7 +120,7 @@ describe('OrganizationTogglIndex', () => {
     const wrapper = mount(OrganizationTogglIndex, { global });
     await flushPromises();
 
-    expect(wrapper.text()).toContain('organization_toggle.inactive');
+    expect(wrapper.text()).toContain('organization_toggle.active');
     expect(window.localStorage.getItem('organizationFetchToggleStatus')).toBe('2');
   });
 

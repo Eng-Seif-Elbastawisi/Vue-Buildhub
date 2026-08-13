@@ -23,6 +23,19 @@ describe('useSystemIdentityTheme', () => {
     expect(window.localStorage.getItem('systemIdentityPalette')).toContain('Test Palette');
   });
 
+  it('keeps the active logo in the shared identity palette', () => {
+    theme.applyPalette({
+      name: 'Logo Identity',
+      primary: '#123456',
+      secondary: '#101418',
+      accent: '#ABCDEF',
+      logo: 'https://assets.test/logo.webp',
+    });
+
+    expect(theme.currentPalette.value.logo).toBe('https://assets.test/logo.webp');
+    expect(window.localStorage.getItem('systemIdentityPalette')).toContain('logo.webp');
+  });
+
   it('applies login setting colors and clears them on logout', () => {
     theme.applySettingTheme({
       primary_color: '#1a5fb4',

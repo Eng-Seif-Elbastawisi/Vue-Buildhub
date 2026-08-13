@@ -157,12 +157,12 @@ export class ValidationError extends Error {
   errors: FieldError[];
 
   constructor(errors: FieldError[]) {
-    super(`Validation failed: ${errors.map((e) => `${e.field}: ${e.message}`).join(', ')}`);
+    super(`Validation failed: ${errors.map(({ message }) => message).join(', ')}`);
     this.errors = errors;
     this.name = 'ValidationError';
   }
 
   openDialog() {
-    dialogManager.toastWarning(this.errors.map((e) => `${e.field}: ${e.message}`).join('\n'));
+    dialogManager.toastWarning(this.errors.map(({ message }) => message).join('\n'));
   }
 }

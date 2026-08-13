@@ -5,6 +5,7 @@
   import DeleteDialog from '@/base/Presentation/Dialogs/MainDialogs/DeleteDialog.vue';
   import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
   import AppTable, { type TableHeader } from '@/shared/HelpersComponents/AppTable.vue';
+  import { deleteSelectedRows } from '@/shared/HelpersComponents/deleteSelectedRows';
   import Pagination from '@/shared/HelpersComponents/Pagination.vue';
   import TableSkelaton from '@/shared/HelpersComponents/TableSkelaton.vue';
 
@@ -127,6 +128,13 @@
     await fetchPackages(currentPage.value, word.value);
   };
 
+  const deleteSelectedPackages = (packages: PackageModel[]) =>
+    deleteSelectedRows(
+      packages,
+      (id) => controller.delete(new DeletePackageParams(id)),
+      () => fetchPackages(currentPage.value, word.value),
+    );
+
   onMounted(async () => {
     word.value = typeof route.query.word === 'string' ? route.query.word : '';
 
@@ -157,6 +165,7 @@
         <AppTable
           :headers="headers"
           :items="data as PackageModel[]"
+          :bulk-delete="deleteSelectedPackages"
           hoverable
           selectable
           show-index

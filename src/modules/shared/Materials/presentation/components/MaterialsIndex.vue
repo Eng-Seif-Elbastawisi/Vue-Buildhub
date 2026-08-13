@@ -3,6 +3,7 @@
   import { useRoute, useRouter } from 'vue-router';
   import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
   import AppTable, { type TableHeader } from '@/shared/HelpersComponents/AppTable.vue';
+  import { deleteSelectedRows } from '@/shared/HelpersComponents/deleteSelectedRows';
   import Pagination from '@/shared/HelpersComponents/Pagination.vue';
   import TableSkelaton from '@/shared/HelpersComponents/TableSkelaton.vue';
   import type MaterialsModel from '../../core/models/materials.model';
@@ -72,6 +73,12 @@
     await controller.delete(new DeleteMaterialParams({ material_id: id }));
     await fetchMaterials();
   };
+  const deleteSelectedMaterials = (materials: MaterialsModel[]) =>
+    deleteSelectedRows(
+      materials,
+      (id) => controller.delete(new DeleteMaterialParams({ material_id: id })),
+      fetchMaterials,
+    );
 
   onMounted(async () => {
     word.value = route.query.word ? String(route.query.word) : '';
@@ -125,6 +132,7 @@
         <AppTable
           :headers="headers"
           :items="data as MaterialsModel[]"
+          :bulk-delete="deleteSelectedMaterials"
           selectable
           show-index
           hoverable
@@ -208,7 +216,7 @@
           <p>{{ $t('material.empty_description') }}</p>
           <router-link
             class="btn btn-primary"
-            :to="user?.type === 1  ? '/admin/material/add' : '/organization/material/add'"
+            :to="user?.type === 1 ? '/admin/material/add' : '/organization/material/add'"
             >{{ $t('material.add') }}</router-link
           >
         </div>

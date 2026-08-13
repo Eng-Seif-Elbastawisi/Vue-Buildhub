@@ -152,6 +152,7 @@ const sanitizePalette = (palette: SystemIdentityPalette): SystemIdentityPalette 
   primary: normalizeHex(palette.primary),
   secondary: normalizeHex(palette.secondary),
   accent: normalizeHex(palette.accent),
+  logo: palette.logo || undefined,
 });
 
 const savePalette = (palette: SystemIdentityPalette) => {

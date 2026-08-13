@@ -19,7 +19,7 @@ export default class AddItemParams implements Params {
   public static readonly validation = new ClassValidation().setRules({
     // type: requiredSelectRule(),
     status: requiredSelectRule(),
-    stage: {
+    stage_id: {
       ...requiredSelectRule(),
       required: (params) => params.service_type === ItemServiceTypeEnum.SUPERVISION,
     },
@@ -29,10 +29,10 @@ export default class AddItemParams implements Params {
     type: {
       required: (params) => params.service_type === ItemServiceTypeEnum.SUPERVISION,
     },
-     measurement_unit_id: {
+    measurement_unit_id: {
       required: (params) => params.service_type === ItemServiceTypeEnum.SUPERVISION,
     },
-    department: requiredSelectRule(),
+    department_id: requiredSelectRule(),
     // measurement_unit_id: requiredSelectRule(),
     translations: {
       required: true,

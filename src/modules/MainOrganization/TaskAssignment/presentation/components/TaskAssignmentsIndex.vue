@@ -44,7 +44,7 @@
             {{ tasksCount }} {{ $t('task_assignment.tasks_count') }}
           </span>
           <span class="task-assignment-page-header__count">
-            {{ getTypeNameKey(selectedStatus) }}
+            {{ $t(getTypeNameKey(selectedStatus)) }}
           </span>
 
           <!-- <button

@@ -1,7 +1,6 @@
 <script setup lang="ts">
   defineProps<{
     invoiceDate: string;
-    dueDate: string;
     statusLabel: string;
     exportStatusLabel: string;
     currency: string;
@@ -20,16 +19,6 @@
       <div>
         <p>{{ $t('invoice.invoice_date') }}</p>
         <strong>{{ invoiceDate }}</strong>
-      </div>
-    </article>
-
-    <article class="invoice-status-overview__item">
-      <span class="invoice-show-icon invoice-show-icon--primary">
-        <i class="pi pi-calendar-clock"></i>
-      </span>
-      <div>
-        <p>{{ $t('invoice_show.due_date') }}</p>
-        <strong>{{ dueDate }}</strong>
       </div>
     </article>
 

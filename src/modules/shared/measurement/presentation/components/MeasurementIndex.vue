@@ -2,6 +2,7 @@
   import { onMounted, ref, computed } from 'vue';
   import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
   import AppTable, { type TableHeader } from '@/shared/HelpersComponents/AppTable.vue';
+  import { deleteSelectedRows } from '@/shared/HelpersComponents/deleteSelectedRows';
   import Pagination from '@/shared/HelpersComponents/Pagination.vue';
   import { useRoute, useRouter } from 'vue-router';
   import { debounce } from '@/base/Presentation/Utils/debouced';
@@ -78,23 +79,18 @@
     await fetchMeasurements();
   };
 
+  const deleteSelectedMeasurements = (measurements: measurementModel[]) =>
+    deleteSelectedRows(
+      measurements,
+      (id) => controller.delete(new DeleteMeasurementParams(id)),
+      fetchMeasurements,
+    );
+
   const routePrefix = computed(() =>
     route.path.startsWith('/admin') ? '/admin' : '/organization',
   );
   const formRoute = computed(() => `${routePrefix.value}/measurement/add`);
 
-  const SelectedRow = ref<measurementModel[]>([]);
-  const setSelectef = (items: measurementModel[]) => {
-    SelectedRow.value = items;
-  };
-
-  const deleteSelected = () => {
-    SelectedRow.value.forEach((item) => {
-      if (item.id !== undefined) {
-        deleteMeasurement(item.id);
-      }
-    });
-  };
   const EditMode = ref(false);
   const selectedMeasurement = computed(() =>
     EditMode.value ? (controller.itemData.value ?? undefined) : undefined,
@@ -146,11 +142,6 @@
           />
         </div>
       </div>
-      <div class="flex gap-10">
-        <button v-if="SelectedRow.length > 0" class="btn-add" @click="deleteSelected">
-          <span>{{ $t('delete') }}</span>
-        </button>
-      </div>
     </div>
     <MeasurementAdd
       :key="formKey"
@@ -166,11 +157,11 @@
           <AppTable
             :headers="headers"
             :items="data as measurementModel[]"
+            :bulk-delete="deleteSelectedMeasurements"
             selectable
             show-index
             hoverable
             striped
-            @selection-change="setSelectef"
           >
             <template #cell-name="{ item }">
               {{ item?.title }}

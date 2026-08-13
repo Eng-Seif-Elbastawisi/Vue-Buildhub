@@ -107,6 +107,29 @@
 
   const termsText = ref<string>('');
 
+  const validationFieldAnchors: Record<string, string> = {
+    translations: 'project-title-field',
+    project_type_id: 'project-type-field',
+    client_exist: 'client-type-field',
+    client_id: 'client-field',
+    client_source: 'client-source-field',
+    location_id: 'city-field',
+    service_type: 'service-type-field',
+  };
+
+  const scrollToValidationField = (field: string): void => {
+    const targetId = validationFieldAnchors[field];
+
+    if (!targetId) return;
+
+    document.getElementById(targetId)?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'center',
+    });
+  };
+
+  defineExpose({ scrollToValidationField });
+
   const attachments = ref<ProjectAttachmentParams[]>([]);
   const existingAttachmentFiles = ref<string[]>([]);
   const attachmentFiles = computed(() => existingAttachmentFiles.value);
@@ -503,18 +526,19 @@
     </header>
 
     <div class="form-fields" :class="{ disabled: loading }">
-      <div class="field-group">
+      <div id="project-title-field" class="field-group">
         <MultiLangInput
           field-key="title"
           :label="$t('title')"
           :languages="['ar', 'en']"
           :model-value="titleTranslations"
           type="title"
+          required
           @update:model-value="updateTitleTranslations"
         />
       </div>
 
-      <div class="field-group">
+      <div id="project-type-field" class="field-group">
         <UpdatedCustomInputSelect
           id="project_type_id"
           :model-value="selectedProjectType"
@@ -522,6 +546,7 @@
           :controller="projectTypeController"
           :placeholder="$t('project_type_id_placeholder')"
           :params="indexProjectTypeParams"
+          required
           @update:model-value="updateProjectType"
         />
       </div>
@@ -547,18 +572,19 @@
       </div>
 
       <template v-if="!isEdit">
-        <div class="field-group">
+        <div id="client-type-field" class="field-group">
           <UpdatedCustomInputSelect
             id="client_exist"
             :model-value="selectedClientExist"
             :label="$t('client_type')"
             :static-options="clientExistOptions"
             :placeholder="$t('Project.client_exist_placeholder')"
+            required
             @update:model-value="updateClientExist"
           />
         </div>
 
-        <div v-if="selectedClientExist && client_exist" class="field-group">
+        <div v-if="selectedClientExist && client_exist" id="client-field" class="field-group">
           <UpdatedCustomInputSelect
             id="client_id"
             :model-value="selectedClient"
@@ -566,12 +592,13 @@
             :controller="clientController"
             :placeholder="$t('client_id_placeholder')"
             :params="indexClientParams"
+            required
             @update:model-value="updateClient"
           />
         </div>
 
         <template v-if="selectedClientExist && client_exist === false">
-          <div class="field-group">
+          <div id="client-source-field" class="field-group">
             <span class="field-help-label-row field-help-label-row--block">
               <label class="field-label" for="client_name">{{ $t('client_name') }}</label>
               <FieldHelpIcon :label="$t('client_name')" field-name="name" field-id="client_name" />
@@ -613,13 +640,14 @@
               :controller="clientSourceController"
               :placeholder="$t('client_source_placeholder')"
               :params="indexClientSourceParams"
+              required
               @update:model-value="updateClientSource"
             />
           </div>
         </template>
       </template>
 
-      <div class="field-group">
+      <div id="country-field" class="field-group">
         <UpdatedCustomInputSelect
           id="country_id"
           :model-value="selectedCountry"
@@ -627,11 +655,12 @@
           :controller="locationController"
           :placeholder="$t('location.country_placeholder')"
           :params="countryParams"
+          required
           @update:model-value="updateCountry"
         />
       </div>
 
-      <div class="field-group">
+      <div id="governorate-field" class="field-group">
         <UpdatedCustomInputSelect
           id="governorate_id"
           :model-value="selectedGovernorate"
@@ -645,12 +674,13 @@
           :params="governorateParams"
           :disabled="isGovernorateDisabled"
           :readonly="isGovernorateDisabled"
+          required
           @click.prevent="isGovernorateDisabled ? undefined : null"
           @update:model-value="updateGovernorate"
         />
       </div>
 
-      <div class="field-group">
+      <div id="city-field" class="field-group">
         <UpdatedCustomInputSelect
           id="city_id"
           :model-value="selectedCity"
@@ -664,12 +694,13 @@
           :params="cityParams"
           :disabled="isCityDisabled"
           :readonly="isCityDisabled"
+          required
           @click.prevent="isCityDisabled ? undefined : null"
           @update:model-value="updateCity"
         />
       </div>
 
-      <div class="field-group">
+      <div id="term-field" class="field-group">
         <UpdatedCustomInputSelect
           id="term_id"
           :model-value="selectedTerm"
@@ -678,13 +709,15 @@
           :placeholder="$t('term_placeholder')"
           :params="indexTermParams"
           :type="2"
+          required
           @update:model-value="updateTerms"
         />
       </div>
 
-      <div class="field-group col-span-2">
+      <div id="terms-field" class="field-group col-span-2">
         <span class="field-help-label-row field-help-label-row--block">
           <label class="field-label" for="terms">
+            <span class="required-indicator" aria-hidden="true">*</span>
             {{ $t('terms') }}
           </label>
           <FieldHelpIcon :label="$t('terms')" field-name="terms" field-id="terms" />
@@ -699,9 +732,12 @@
         />
       </div>
 
-      <div class="field-group col-span-2">
+      <div id="service-type-field" class="field-group col-span-2">
         <span class="field-help-label-row field-help-label-row--block">
-          <label class="field-label">{{ $t('service_type') }}</label>
+          <label class="field-label">
+            <span class="required-indicator" aria-hidden="true">*</span>
+            {{ $t('service_type') }}
+          </label>
           <FieldHelpIcon :label="$t('service_type')" field-name="type" field-id="service_type" />
         </span>
 
@@ -730,20 +766,24 @@
         </div>
       </div>
 
-      <div class="field-group col-span-2">
+      <div id="description-field" class="field-group col-span-2">
         <MultiLangInput
           field-key="description"
           :label="$t('description')"
           :languages="['ar', 'en']"
           :model-value="descriptionTranslations"
           type="description"
+          required
           @update:model-value="updateDescriptionTranslations"
         />
       </div>
 
-      <div class="field-group col-span-2">
+      <div id="notes-field" class="field-group col-span-2">
         <span class="field-help-label-row field-help-label-row--block">
-          <label class="field-label" for="notes">{{ $t('notes') }}</label>
+          <label class="field-label" for="notes">
+            <span class="required-indicator" aria-hidden="true">*</span>
+            {{ $t('notes') }}
+          </label>
           <FieldHelpIcon :label="$t('notes')" field-name="notes" field-id="notes" />
         </span>
 
@@ -802,6 +842,10 @@
     font-family: 'Medium';
     font-size: var(--sm-size);
     color: var(--gray-6);
+  }
+
+  .required-indicator {
+    color: var(--danger);
   }
 
   .field-input {

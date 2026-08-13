@@ -1,4 +1,5 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
+import { i18n } from '@/locales/i18n';
 import { ItemServiceTypeEnum } from '../../constant/item.service.type.enum';
 import { ItemStatusEnum } from '../../constant/item.status.enum';
 import { ItemTypeEnum } from '../../constant/item.type.enum copy';
@@ -14,6 +15,12 @@ const payload = {
   notes: 'Ready mix',
   translations: { title: { en: 'Concrete', ar: 'Concrete AR' } },
 };
+
+const originalLocale = i18n.global.locale;
+
+afterEach(() => {
+  i18n.global.locale = originalLocale;
+});
 
 describe('AddItemParams', () => {
   it('maps and validates add payloads', () => {
@@ -46,6 +53,17 @@ describe('AddItemParams', () => {
     });
 
     expect(params.validate()).toEqual({ isValid: true, errors: [] });
+  });
+
+  it('shows the localized department validation message when no department is selected', () => {
+    i18n.global.locale = 'ar';
+    const params = new AddItemParams({
+      ...payload,
+      service_type: ItemServiceTypeEnum.DESIGN,
+      department_id: undefined,
+    });
+
+    expect(params.validate().errors).toEqual([{ field: 'department_id', message: 'القسم مطلوب' }]);
   });
 
   it('requires stage and price for supervision items', () => {

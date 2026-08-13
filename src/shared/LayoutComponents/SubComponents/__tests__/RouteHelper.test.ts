@@ -1,9 +1,10 @@
 import { describe, it, expect } from 'vitest';
 import { buildBreadcrumb } from '../RouteHelper';
 
-const makeRoute = (params: Record<string, string>, matched: any[]) => ({
+const makeRoute = (params: Record<string, string>, matched: any[], query = {}) => ({
   params,
   matched,
+  query,
 });
 
 const makeRouter = (routes: any[]) => ({
@@ -101,5 +102,23 @@ describe('buildBreadcrumb', () => {
 
     expect(crumbs[1]).toMatchObject({ label: 'BuildHub Tower' });
     expect(crumbs[1]?.labelKey).toBeUndefined();
+  });
+
+  it('resolves breadcrumb label keys from the current route query', () => {
+    const matchedRoute = {
+      name: 'Departments',
+      meta: {
+        breadcrumb: (route: { query: { type?: string } }) => ({
+          labelKey:
+            route.query.type === '1' ? 'department.design_title' : 'department.execution_title',
+        }),
+      },
+      path: '/departments',
+    };
+    const route = makeRoute({}, [matchedRoute], { type: '2' });
+
+    const crumbs = buildBreadcrumb(route, makeRouter([matchedRoute]));
+
+    expect(crumbs[1]?.labelKey).toBe('department.execution_title');
   });
 });

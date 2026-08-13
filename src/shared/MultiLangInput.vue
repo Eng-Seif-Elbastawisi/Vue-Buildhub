@@ -15,6 +15,7 @@
     helpText?: string;
     helpExamples?: string[];
     showHelp?: boolean;
+    required?: boolean;
   }
 
   const props = withDefaults(defineProps<Props>(), {
@@ -27,6 +28,7 @@
     helpText: '',
     helpExamples: () => [],
     showHelp: true,
+    required: false,
   });
 
   const { t } = useI18n();
@@ -85,7 +87,10 @@
   <div class="multi-lang-input">
     <div class="header-input">
       <span v-if="label" class="field-help-label-row">
-        <label class="field-label">{{ label }}</label>
+        <label class="field-label">
+          <span v-if="required" class="required-indicator" aria-hidden="true">*</span>
+          {{ label }}
+        </label>
 
         <FieldHelpIcon
           :label="label"
@@ -146,6 +151,10 @@
     font-weight: 400;
     font-size: var(--sm-size);
     color: var(--bread-crumb-color-span);
+  }
+
+  .required-indicator {
+    color: var(--danger);
   }
 
   .field-input--text {

@@ -4,6 +4,7 @@
   import { useRoute, useRouter } from 'vue-router';
   import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
   import AppTable, { type TableHeader } from '@/shared/HelpersComponents/AppTable.vue';
+  import { deleteSelectedRows } from '@/shared/HelpersComponents/deleteSelectedRows';
   import Pagination from '@/shared/HelpersComponents/Pagination.vue';
   import TableSkelaton from '@/shared/HelpersComponents/TableSkelaton.vue';
   import DeleteDialog from '@/base/Presentation/Dialogs/MainDialogs/DeleteDialog.vue';
@@ -77,6 +78,12 @@
     await controller.delete(new DeleteLocationParams({ location_id: id }));
     await fetchLocations();
   };
+  const deleteSelectedLocations = (locations: LocationModel[]) =>
+    deleteSelectedRows(
+      locations,
+      (id) => controller.delete(new DeleteLocationParams({ location_id: id })),
+      fetchLocations,
+    );
 
   onMounted(async () => {
     word.value = route.query.word ? String(route.query.word) : '';
@@ -130,6 +137,7 @@
         <AppTable
           :headers="headers"
           :items="data as LocationModel[]"
+          :bulk-delete="deleteSelectedLocations"
           selectable
           show-index
           hoverable

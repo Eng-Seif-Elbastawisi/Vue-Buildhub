@@ -13,6 +13,9 @@ import type ItemModel from '../../core/models/Item.model';
 import type ShowItemParams from '../../core/params/show.Item.params';
 import ItemRepository from '../../data/repositories/Item.repository';
 import { useUserStore } from '@/stores/user';
+// import type AddDepartmentParams from '@/modules/shared/Department/core/params/add.department.params';
+import type AddItemParams from '../../core/params/add.Item.params';
+import type EditItemParams from '../../core/params/edit.Item.params';
 
 export default class ItemController extends BaseController<ItemShowModel, ItemModel[]> {
   private static instance: ItemController;
@@ -47,11 +50,14 @@ protected get userStore() {
     return ItemController.instance;
   }
 
-  async create(params: Params, options?: ApiCallOptions, formKey?: string) {
+  async create(params: AddItemParams, options?: ApiCallOptions, formKey?: string) {
   const FormStore = useFormsStore();
   const result = await super.create(params, { ...options, useJson: true });
+  // console.log("test");
   if (result instanceof DataSuccess) {
-    const serviceType = router.currentRoute.value.query.service_type;
+    // console.log(params);
+    const serviceType = params.service_type;
+    // console.log(serviceType);
     await router.push({
       path: this.userStore.user?.type === 1 ? '/admin/item': '/organization/item',
       query: serviceType ? { service_type: serviceType, } : undefined,
@@ -61,11 +67,12 @@ protected get userStore() {
   return result;
 }
 
-  async update(params: Params, options?: ApiCallOptions, formKey?: string) {
+  async update(params: EditItemParams, options?: ApiCallOptions, formKey?: string) {
     const FormStore = useFormsStore();
     const result = await super.update(params, { ...options, useJson: true });
     if (result instanceof DataSuccess) {
-      const serviceType = router.currentRoute.value.query.service_type;
+
+    const serviceType = params.service_type;
       router.push({
         path: this.userStore.user?.type === 1 ? '/admin/item': '/organization/item',
         query: serviceType ? { service_type: serviceType, } : undefined,

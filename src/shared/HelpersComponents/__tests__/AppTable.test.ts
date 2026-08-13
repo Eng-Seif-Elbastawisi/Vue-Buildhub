@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
-import { mount } from '@vue/test-utils';
+import { describe, it, expect, vi } from 'vitest';
+import { flushPromises, mount } from '@vue/test-utils';
 import AppTable from '../AppTable.vue';
 
 // Mock dialogManager
@@ -35,6 +35,14 @@ const createWrapper = (props = {}, slots = {}) =>
     slots,
     global: {
       mocks: { $t: (key: string) => key },
+      stubs: {
+        DeleteDialog: {
+          props: ['triggerLabel'],
+          emits: ['delete'],
+          template:
+            '<div class="delete-dialog-stub">{{ triggerLabel }}<button class="confirm-bulk-delete" @click="$emit(\'delete\')">Confirm</button></div>',
+        },
+      },
     },
   });
 
@@ -113,6 +121,31 @@ describe('AppTable', () => {
     const headerCheckbox = wrapper.find('.th-checkbox input[type="checkbox"]');
     await headerCheckbox.trigger('change');
     expect(wrapper.emitted('selection-change')).toBeTruthy();
+  });
+
+  it('shows a confirmed bulk delete action for selected rows', async () => {
+    const bulkDelete = vi.fn().mockResolvedValue(undefined);
+    const wrapper = createWrapper({ selectable: true, bulkDelete });
+
+    await wrapper.find('.td-checkbox input[type="checkbox"]').trigger('change');
+
+    expect(wrapper.text()).toContain('Delete selected (1)');
+
+    await wrapper.find('.confirm-bulk-delete').trigger('click');
+    await flushPromises();
+
+    expect(bulkDelete).toHaveBeenCalledWith([mockItems[0]]);
+    expect(wrapper.find('.table-bulk-actions').exists()).toBe(false);
+  });
+
+  it('clears selection when the table receives a new page of items', async () => {
+    const bulkDelete = vi.fn().mockResolvedValue(undefined);
+    const wrapper = createWrapper({ selectable: true, bulkDelete });
+
+    await wrapper.find('.td-checkbox input[type="checkbox"]').trigger('change');
+    await wrapper.setProps({ items: [mockItems[1]] });
+
+    expect(wrapper.find('.table-bulk-actions').exists()).toBe(false);
   });
 
   it('handles sortable columns', async () => {
