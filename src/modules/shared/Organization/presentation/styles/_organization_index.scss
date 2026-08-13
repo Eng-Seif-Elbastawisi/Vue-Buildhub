@@ -161,8 +161,7 @@
     align-items: center;
     gap: 8px;
     padding: 11px 22px;
-    background: linear-gradient(135deg, var(--PrimaryColor) 0%, var(--PrimaryColor-hover) 100%);
-    color: $StandardWhite;
+background: var(--PrimaryColor);    color: $StandardWhite;
     border-radius: var(--radius-md);
     font-size: $MdSize;
     font-weight: $BaseFontSemiBoldWeight;

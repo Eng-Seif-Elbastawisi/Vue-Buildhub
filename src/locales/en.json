@@ -2280,5 +2280,6 @@
   "task_assignment.form.attachments": "Attachments",
   "task_assignment.form.add_attachment": "Add attachment",
   "reviewer.name": "Reviewer name",
-  "reviewer.email": "Reviewer email"
+  "reviewer.email": "Reviewer email",
+  "back_step" : "Back A Step"
 }

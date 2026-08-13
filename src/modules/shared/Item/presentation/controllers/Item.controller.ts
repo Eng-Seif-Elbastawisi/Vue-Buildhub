@@ -19,8 +19,8 @@ import type EditItemParams from '../../core/params/edit.Item.params';
 
 export default class ItemController extends BaseController<ItemShowModel, ItemModel[]> {
   private static instance: ItemController;
-  
-protected get userStore() {
+
+  protected get userStore() {
     return useUserStore();
   }
   protected get repository() {
@@ -51,31 +51,32 @@ protected get userStore() {
   }
 
   async create(params: AddItemParams, options?: ApiCallOptions, formKey?: string) {
-  const FormStore = useFormsStore();
-  const result = await super.create(params, { ...options, useJson: true });
-  // console.log("test");
-  if (result instanceof DataSuccess) {
-    // console.log(params);
-    const serviceType = params.service_type;
-    // console.log(serviceType);
-    await router.push({
-      path: this.userStore.user?.type === 1 ? '/admin/item': '/organization/item',
-      query: serviceType ? { service_type: serviceType, } : undefined,
-    });
-    if (formKey) { FormStore.clearFormData(formKey); }
+    const FormStore = useFormsStore();
+    const result = await super.create(params, { ...options, useJson: true });
+    // console.log("test");
+    if (result instanceof DataSuccess) {
+      // console.log(params);
+      const serviceType = params.service_type;
+      // console.log(serviceType);
+      await router.push({
+        path: this.userStore.user?.type === 1 ? '/admin/item' : '/organization/item',
+        query: serviceType ? { service_type: serviceType } : undefined,
+      });
+      if (formKey) {
+        FormStore.clearFormData(formKey);
+      }
+    }
+    return result;
   }
-  return result;
-}
 
   async update(params: EditItemParams, options?: ApiCallOptions, formKey?: string) {
     const FormStore = useFormsStore();
     const result = await super.update(params, { ...options, useJson: true });
     if (result instanceof DataSuccess) {
-
-    const serviceType = params.service_type;
+      const serviceType = params.service_type;
       router.push({
-        path: this.userStore.user?.type === 1 ? '/admin/item': '/organization/item',
-        query: serviceType ? { service_type: serviceType, } : undefined,
+        path: this.userStore.user?.type === 1 ? '/admin/item' : '/organization/item',
+        query: serviceType ? { service_type: serviceType } : undefined,
       });
       if (formKey) FormStore.clearFormData(formKey);
     }

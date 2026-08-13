@@ -199,7 +199,9 @@
       @update-data="params = $event"
     />
 
-    <button
+
+    <div class="buttons-container">
+          <button
       :class="{ 'btn--loading': loading }"
       class="btn btn-primary"
       type="button"
@@ -208,6 +210,18 @@
     >
       {{ $t('Project.save') }}
     </button>
+
+        <button
+      :class="{ 'btn--loading': loading }"
+      class="btn btn-secondary"
+      type="button"
+      :disabled="loading || !params"
+      @click="router.back()"
+    >
+      {{ $t('back_step') }}
+    </button>
+
+    </div>
 
     <section v-if="projectFloors.length" class="saved-floors">
       <header class="saved-floors__header">
@@ -370,10 +384,17 @@
     border: 1px solid #f5c6cb;
     border-radius: 4px;
   }
-
-  .btn-primary {
+.buttons-container{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1 1;
+  gap: 10px;
+  .btn{
     width: 100%;
   }
+}
+  
 
   .next-step-card {
     display: flex;
