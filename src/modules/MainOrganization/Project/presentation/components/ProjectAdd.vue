@@ -21,6 +21,8 @@
 
   const params = ref<AddProjectParams | null>(null);
 
+  const projectForm = ref<{ scrollToValidationField: (field: string) => void } | null>(null);
+
   const loading = ref(false);
 
   const nextStep = ref<ProjectNextStep>('preview');
@@ -35,6 +37,12 @@
     const validation = params.value.validate();
 
     if (!validation.isValid) {
+      const firstInvalidField = validation.errors[0]?.field;
+
+      if (firstInvalidField) {
+        projectForm.value?.scrollToValidationField(firstInvalidField);
+      }
+
       dialogManager.toastWarning(
         validation.errors[0]?.message || t('Project.validation.cant_send_empty_data'),
       );
@@ -66,7 +74,12 @@
   <div class="Project-crud-page">
     <ProjectSteps :current-step="1" />
 
-    <ProjectForm :loading="loading" :is-edit="false" @update-data="params = $event" />
+    <ProjectForm
+      ref="projectForm"
+      :loading="loading"
+      :is-edit="false"
+      @update-data="params = $event"
+    />
 
     <fieldset class="next-step-selector" :disabled="loading">
       <legend>

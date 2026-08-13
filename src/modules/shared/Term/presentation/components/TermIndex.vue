@@ -2,6 +2,7 @@
   import { onMounted, ref, computed } from 'vue';
   import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
   import AppTable, { type TableHeader } from '@/shared/HelpersComponents/AppTable.vue';
+  import { deleteSelectedRows } from '@/shared/HelpersComponents/deleteSelectedRows';
   import Pagination from '@/shared/HelpersComponents/Pagination.vue';
   import { useRoute, useRouter } from 'vue-router';
   import { debounce } from '@/base/Presentation/Utils/debouced';
@@ -73,16 +74,9 @@
     await fetchTerms();
   };
 
-  const SelectedRow = ref<TermModel[]>([]);
-  const setSelectef = (items: TermModel[]) => {
-    SelectedRow.value = items;
-  };
+  const deleteSelectedTerms = (terms: TermModel[]) =>
+    deleteSelectedRows(terms, (id) => controller.delete(new TermIdParams(id)), fetchTerms);
 
-  const deleteSelected = () => {
-    SelectedRow.value.forEach((item) => {
-      deleteTerm(item.id!);
-    });
-  };
   const EditMode = ref(false);
   const selectedTerm = computed(() =>
     EditMode.value ? (controller.itemData.value ?? undefined) : undefined,
@@ -128,11 +122,6 @@
           />
         </div>
       </div>
-      <div class="flex gap-10">
-        <button v-if="SelectedRow.length > 0" class="btn-add" @click="deleteSelected">
-          <span>{{ $t('delete') }}</span>
-        </button>
-      </div>
     </div>
     <TermAdd :term="selectedTerm" @update-data="onTermSaved" />
 
@@ -143,11 +132,11 @@
           <AppTable
             :headers="headers"
             :items="data as TermModel[]"
+            :bulk-delete="deleteSelectedTerms"
             selectable
             show-index
             hoverable
             striped
-            @selection-change="setSelectef"
           >
             <template #cell-name="{ item }">
               {{ item.title }}

@@ -80,6 +80,23 @@ describe('DepartmentIndex', () => {
     expect(wrapper.text()).not.toContain('no_emails_yet');
   });
 
+  it.each([
+    [DepartmentTypeEnum.DESIGN, 'department.design_title', 'department.design_description'],
+    [
+      DepartmentTypeEnum.SUPERVISION,
+      'department.execution_title',
+      'department.execution_description',
+    ],
+  ])(
+    'identifies the department configuration type in the page header',
+    async (type, title, description) => {
+      const wrapper = await mountComponent(`/departments?type=${type}`);
+
+      expect(wrapper.get('.department-page__header h4').text()).toBe(title);
+      expect(wrapper.get('.department-page__header p').text()).toBe(description);
+    },
+  );
+
   it('fetches departments again when the type query changes on the same page', async () => {
     await mountComponent(`/departments?type=${DepartmentTypeEnum.DESIGN}`);
 

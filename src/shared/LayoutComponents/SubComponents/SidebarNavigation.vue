@@ -9,6 +9,7 @@
   import IconLogout from '@/shared/icons/IconLogout.vue';
 
   import { useUserStore } from '@/stores/user';
+  import { useSystemIdentityTheme } from '@/modules/shared/SystemIdentity/presentation/composables/useSystemIdentityTheme';
   import { DATA_MUTATION_SUCCEEDED_EVENT } from '@/base/Presentation/Controller/dataMutationEvent';
   import SidebarCountsApiService from './sidebar.counts.api-service';
   import { UserType } from '@/modules/auth/core/constants/userType.enum';
@@ -31,6 +32,7 @@
 
   const userStore = useUserStore();
   const { user } = storeToRefs(userStore);
+  const { currentPalette } = useSystemIdentityTheme();
 
   const isPanelOpen = ref(false);
   const selectedSectionKey = ref<string | null>(null);
@@ -63,6 +65,10 @@
   const organizationName = computed(() => {
     return sidebarCounts.value?.organization?.name || t('Organization');
   });
+
+  const brandLogo = computed(
+    () => currentPalette.value.logo || user.value?.setting?.logo || BuildHubLogo,
+  );
 
   const appPrefix = computed(() => {
     return currentRole.value === 'admin' ? '/admin' : '/organization';
@@ -265,11 +271,7 @@
   <aside class="sidebar-shell" :class="{ 'is-open': isPanelOpen }">
     <nav class="sidebar-rail" :aria-label="$t('sidebar_groups')">
       <div class="rail-brand">
-        <img
-          class="rail-logo"
-          :src="user?.setting?.logo ?? BuildHubLogo"
-          :alt="$t('buildhub_logo')"
-        />
+        <img class="rail-logo" :src="brandLogo" :alt="$t('buildhub_logo')" />
       </div>
 
       <button
@@ -290,11 +292,7 @@
       <div class="sidebar-wrapper">
         <header class="brand-panel">
           <div class="brand-mark">
-            <img
-              class="logo"
-              :src="user?.setting?.logo ?? BuildHubLogo"
-              :alt="$t('buildhub_logo')"
-            />
+            <img class="logo" :src="brandLogo" :alt="$t('buildhub_logo')" />
           </div>
 
           <div class="brand-copy">

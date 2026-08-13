@@ -3,6 +3,7 @@
   import { useRoute, useRouter } from 'vue-router';
   import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
   import AppTable, { type TableHeader } from '@/shared/HelpersComponents/AppTable.vue';
+  import { deleteSelectedRows } from '@/shared/HelpersComponents/deleteSelectedRows';
   import Pagination from '@/shared/HelpersComponents/Pagination.vue';
   import TableSkelaton from '@/shared/HelpersComponents/TableSkelaton.vue';
   import type SpaceModel from '../../core/models/space.model';
@@ -58,6 +59,12 @@
     await controller.delete(new DeleteSpaceParams({ spaceId: id }));
     await fetchSpaces();
   };
+  const deleteSelectedSpaces = (spaces: SpaceModel[]) =>
+    deleteSelectedRows(
+      spaces,
+      (id) => controller.delete(new DeleteSpaceParams({ spaceId: id })),
+      fetchSpaces,
+    );
   onMounted(async () => {
     word.value = route.query.word ? String(route.query.word) : '';
     await fetchSpaces();
@@ -66,7 +73,7 @@
 </script>
 
 <template>
-  <div class="Space-page"> 
+  <div class="Space-page">
     <header class="page-header">
       <div class="header-text">
         <h4>{{ $t('Space.list_title') }}</h4>
@@ -115,6 +122,7 @@
         <AppTable
           :headers="headers"
           :items="data as SpaceModel[]"
+          :bulk-delete="deleteSelectedSpaces"
           selectable
           show-index
           hoverable
@@ -210,11 +218,11 @@
 </template>
 
 <style scoped lang="scss">
+  .header-text {
+    margin-bottom: 1rem;
+  }
 
-.header-text{
-  margin-bottom: 1rem;
-}
-   .Space-page {
+  .Space-page {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
@@ -232,8 +240,6 @@
     align-items: center;
     gap: 10px;
   }
-
- 
 
   .page-header p,
   .empty-state p {

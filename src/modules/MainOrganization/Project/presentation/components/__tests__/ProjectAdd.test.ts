@@ -8,6 +8,7 @@ import ProjectAdd from '../ProjectAdd.vue';
 const mocks = vi.hoisted(() => ({
   create: vi.fn(),
   toastWarning: vi.fn(),
+  scrollToValidationField: vi.fn(),
   errorMessage: { value: null as string | null },
 }));
 
@@ -65,6 +66,16 @@ vi.mock('primevue/radiobutton', () => ({
   },
 }));
 
+const projectFormStub = (projectParams: AddProjectParams, testId: string) => ({
+  emits: ['updateData'],
+  template: `<button data-test="${testId}" type="button" @click="$emit('updateData', projectParams)">emit</button>`,
+  setup: (_props: unknown, { expose }: { expose: (value: object) => void }) => {
+    expose({ scrollToValidationField: mocks.scrollToValidationField });
+
+    return { projectParams };
+  },
+});
+
 describe('ProjectAdd.vue', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -87,12 +98,7 @@ describe('ProjectAdd.vue', () => {
           ProjectSteps: {
             template: '<div />',
           },
-          ProjectForm: {
-            emits: ['updateData'],
-            template:
-              '<button data-test="emit-invalid" type="button" @click="$emit(\'updateData\', invalidParams)">emit</button>',
-            setup: () => ({ invalidParams }),
-          },
+          ProjectForm: projectFormStub(invalidParams, 'emit-invalid'),
         },
         mocks: {
           $t: (key: string) => key,
@@ -108,6 +114,32 @@ describe('ProjectAdd.vue', () => {
     expect(mocks.toastWarning).toHaveBeenCalledWith('validation.title_required');
   });
 
+  it('scrolls to the first incomplete field before showing its validation message', async () => {
+    const invalidParams = new AddProjectParams({
+      translations: new TranslationParams({ title: { en: ' ', ar: '' } }),
+    });
+
+    const wrapper = mount(ProjectAdd, {
+      global: {
+        stubs: {
+          ProjectSteps: {
+            template: '<div />',
+          },
+          ProjectForm: projectFormStub(invalidParams, 'emit-invalid'),
+        },
+        mocks: {
+          $t: (key: string) => key,
+        },
+      },
+    });
+
+    await wrapper.find('[data-test="emit-invalid"]').trigger('click');
+    await wrapper.find('.btn-primary').trigger('click');
+    await flushPromises();
+
+    expect(mocks.scrollToValidationField).toHaveBeenCalledWith('translations');
+  });
+
   it('does not create a project when required select values are missing', async () => {
     const invalidParams = new AddProjectParams({
       translations: new TranslationParams({ title: { en: 'Project title' } }),
@@ -120,12 +152,7 @@ describe('ProjectAdd.vue', () => {
           ProjectSteps: {
             template: '<div />',
           },
-          ProjectForm: {
-            emits: ['updateData'],
-            template:
-              '<button data-test="emit-invalid" type="button" @click="$emit(\'updateData\', invalidParams)">emit</button>',
-            setup: () => ({ invalidParams }),
-          },
+          ProjectForm: projectFormStub(invalidParams, 'emit-invalid'),
         },
         mocks: {
           $t: (key: string) => key,
@@ -160,12 +187,7 @@ describe('ProjectAdd.vue', () => {
           ProjectSteps: {
             template: '<div />',
           },
-          ProjectForm: {
-            emits: ['updateData'],
-            template:
-              '<button data-test="emit-valid" type="button" @click="$emit(\'updateData\', validParams)">emit</button>',
-            setup: () => ({ validParams }),
-          },
+          ProjectForm: projectFormStub(validParams, 'emit-valid'),
         },
         mocks: {
           $t: (key: string) => key,

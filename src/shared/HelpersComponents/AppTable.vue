@@ -7,9 +7,10 @@
     sortable?: boolean;
   }
 
-  import { ref, computed } from 'vue';
+  import { ref, computed, watch } from 'vue';
   import { useI18n } from 'vue-i18n';
   import { dialogManager } from '@/base/Presentation/Dialogs/dialog.manager';
+  import DeleteDialog from '@/base/Presentation/Dialogs/MainDialogs/DeleteDialog.vue';
 
   const { t, te } = useI18n();
 
@@ -22,6 +23,7 @@
     rowKey?: string;
     striped?: boolean;
     hoverable?: boolean;
+    bulkDelete?: (items: T[]) => Promise<void>;
   }>();
 
   const emit = defineEmits<{
@@ -49,10 +51,19 @@
 
   // --- Selection ---
   const selectedRows = ref<Set<number>>(new Set());
+  const isBulkDeleting = ref(false);
 
   const allSelected = computed(() => {
     return props.items.length > 0 && selectedRows.value.size === props.items.length;
   });
+
+  const selectedItems = computed(() =>
+    props.items.filter((_, index) => selectedRows.value.has(index)),
+  );
+
+  const bulkDeleteLabel = computed(() =>
+    t('bulk_delete_selected', { count: selectedItems.value.length }),
+  );
 
   const translateIfExists = (value: string) => {
     return te(value) ? t(value) : value;
@@ -85,8 +96,31 @@
   }
 
   function emitSelection() {
-    const selected = props.items.filter((_, i) => selectedRows.value.has(i));
-    emit('selection-change', selected);
+    emit('selection-change', selectedItems.value);
+  }
+
+  watch(
+    () => props.items,
+    () => {
+      if (selectedRows.value.size === 0) return;
+
+      selectedRows.value.clear();
+      emitSelection();
+    },
+  );
+
+  async function deleteSelectedRows() {
+    if (!props.bulkDelete || selectedItems.value.length === 0) return;
+
+    isBulkDeleting.value = true;
+
+    try {
+      await props.bulkDelete(selectedItems.value);
+      selectedRows.value.clear();
+      emitSelection();
+    } finally {
+      isBulkDeleting.value = false;
+    }
   }
 
   // --- Row key ---
@@ -116,6 +150,22 @@
 
 <template>
   <div class="app-table-wrapper">
+    <div
+      v-if="bulkDelete && selectedItems.length > 0"
+      class="table-bulk-actions"
+      role="toolbar"
+      :aria-label="bulkDeleteLabel"
+    >
+      <DeleteDialog
+        :title="$t('bulk_delete_title')"
+        :message="$t('bulk_delete_message')"
+        :trigger-label="bulkDeleteLabel"
+        trigger-class="btn-add"
+        :disabled="isBulkDeleting"
+        @delete="deleteSelectedRows"
+      />
+    </div>
+
     <div class="table-responsive">
       <table class="app-table" :class="{ striped, hoverable }">
         <!-- Header -->

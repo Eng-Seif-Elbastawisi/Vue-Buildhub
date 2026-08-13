@@ -338,7 +338,7 @@ export const sidebarSections: SidebarSectionConfig[] = [
       },
       {
         path: `/task-assignment?status=${InsideStatusType.ASSIGN}`,
-        labelKey: 'task',
+        labelKey: 'sidebar.task',
         icon: SidebarProductivityIcon,
         roles: ['organization'],
       },
@@ -353,14 +353,14 @@ export const sidebarSections: SidebarSectionConfig[] = [
 
       {
         path: `/task-assignment?status=${InsideStatusType.HOLD}`,
-        labelKey: 'holding',
+        labelKey: 'sidebar.holding',
         icon: SidebarFullPackageIcon,
         roles: ['organization'],
         // disabled: true,
       },
       {
         path: `/task-assignment?status=${InsideStatusType.REVIEW}`,
-        labelKey: 'review',
+        labelKey: 'sidebar.review',
         icon: SidebarFullPackageIcon,
         roles: ['organization'],
         // disabled: true,
@@ -654,18 +654,18 @@ export const sidebarSections: SidebarSectionConfig[] = [
 
   {
     key: 'organization',
-    labelKey: 'organization',
+    labelKey: 'sidebar.organization',
     icon: SidebarSysDataIcon,
     items: [
       {
         path: '/organization',
-        labelKey: 'organization',
+        labelKey: 'sidebar.organization',
         icon: SidebarEmployeeIcon,
         roles: ['admin'],
       },
       {
         path: '/admins',
-        labelKey: 'admins',
+        labelKey: 'sidebar.admins',
         icon: SidebarEmployeeIcon,
         roles: ['admin'],
       }

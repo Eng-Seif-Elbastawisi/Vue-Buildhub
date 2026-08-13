@@ -6,6 +6,15 @@
 
   gap: $XlSize2;
 
+  &__header {
+    width: 100%;
+
+    p {
+      margin: 0;
+      color: var(--gray-5);
+    }
+  }
+
   .email-crud-example {
     margin: 0;
     width: 100%;

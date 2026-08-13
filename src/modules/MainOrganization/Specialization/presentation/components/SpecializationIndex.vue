@@ -3,6 +3,7 @@
   import { useRoute, useRouter } from 'vue-router';
   import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
   import AppTable, { type TableHeader } from '@/shared/HelpersComponents/AppTable.vue';
+  import { deleteSelectedRows } from '@/shared/HelpersComponents/deleteSelectedRows';
   import Pagination from '@/shared/HelpersComponents/Pagination.vue';
   import TableSkelaton from '@/shared/HelpersComponents/TableSkelaton.vue';
   import type SpecializationModel from '../../core/models/specialization.model';
@@ -58,6 +59,12 @@
     await controller.delete(new DeleteSpecializationParams({ specializationId: id }));
     await fetchSpecializations();
   };
+  const deleteSelectedSpecializations = (specializations: SpecializationModel[]) =>
+    deleteSelectedRows(
+      specializations,
+      (id) => controller.delete(new DeleteSpecializationParams({ specializationId: id })),
+      fetchSpecializations,
+    );
   onMounted(async () => {
     word.value = route.query.word ? String(route.query.word) : '';
     await fetchSpecializations();
@@ -119,6 +126,7 @@
         <AppTable
           :headers="headers"
           :items="data as SpecializationModel[]"
+          :bulk-delete="deleteSelectedSpecializations"
           selectable
           show-index
           hoverable

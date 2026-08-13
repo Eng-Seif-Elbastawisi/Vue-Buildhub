@@ -29,6 +29,12 @@ const removeUndefinedValues = (data: Record<string, unknown>): Record<string, un
   return Object.fromEntries(Object.entries(data).filter(([, value]) => value !== undefined));
 };
 
+const isPositiveDimension = (value: unknown): boolean => {
+  const dimension = Number(value);
+
+  return Number.isFinite(dimension) && dimension > 0;
+};
+
 export const mapProjectFloorAttachmentsToPayload = (
   attachments?: ProjectFloorAttachmentParams[],
 ): Record<string, unknown>[] | undefined => {
@@ -147,9 +153,20 @@ export default class AddProjectFloorParams implements Params {
             .filter((item) => typeof item === 'number')
             .includes(floorNumber as FloorNumber);
 
-          const hasSpaces = Array.isArray(floorData.spaces) && floorData.spaces.length > 0;
+          const hasValidSpaces =
+            Array.isArray(floorData.spaces) &&
+            floorData.spaces.length > 0 &&
+            floorData.spaces.every((space) => {
+              return (
+                Number.isInteger(Number(space.space_id)) &&
+                Number(space.space_id) > 0 &&
+                isPositiveDimension(space.length) &&
+                isPositiveDimension(space.width) &&
+                isPositiveDimension(space.height)
+              );
+            });
 
-          return validFloorNumber && hasSpaces;
+          return validFloorNumber && hasValidSpaces;
         });
       },
     },

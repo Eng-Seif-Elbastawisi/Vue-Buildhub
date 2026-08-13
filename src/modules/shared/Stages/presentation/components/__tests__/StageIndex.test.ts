@@ -62,6 +62,13 @@ describe('StageIndex.vue', () => {
     expect(wrapper.find('.stage-page').exists()).toBe(true);
   });
 
+  it('identifies the list as execution stages', () => {
+    const wrapper = mount(StageIndex, mountOptions);
+
+    expect(wrapper.get('.stage-page__header h4').text()).toBe('stage.execution_title');
+    expect(wrapper.get('.stage-page__header p').text()).toBe('stage.execution_description');
+  });
+
   it('renders the search input', () => {
     const wrapper = mount(StageIndex, mountOptions);
     expect(wrapper.find('input.search-input').exists()).toBe(true);

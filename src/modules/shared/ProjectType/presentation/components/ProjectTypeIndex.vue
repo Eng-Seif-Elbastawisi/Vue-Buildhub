@@ -3,6 +3,7 @@
   import { useRoute, useRouter } from 'vue-router';
   import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
   import AppTable, { type TableHeader } from '@/shared/HelpersComponents/AppTable.vue';
+  import { deleteSelectedRows } from '@/shared/HelpersComponents/deleteSelectedRows';
   import Pagination from '@/shared/HelpersComponents/Pagination.vue';
   import TableSkelaton from '@/shared/HelpersComponents/TableSkelaton.vue';
   import { ProjectType } from '../../core/constant/project-type.enum';
@@ -57,6 +58,12 @@
     await controller.delete(new DeleteProjectTypeParams({ projectId: id }));
     await fetchProjects();
   };
+  const deleteSelectedProjectTypes = (projectTypes: ProjectTypeModel[]) =>
+    deleteSelectedRows(
+      projectTypes,
+      (id) => controller.delete(new DeleteProjectTypeParams({ projectId: id })),
+      fetchProjects,
+    );
   onMounted(async () => {
     await fetchProjects();
   });
@@ -113,6 +120,7 @@
         <AppTable
           :headers="headers"
           :items="data as ProjectTypeModel[]"
+          :bulk-delete="deleteSelectedProjectTypes"
           selectable
           show-index
           hoverable

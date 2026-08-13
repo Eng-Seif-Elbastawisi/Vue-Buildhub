@@ -157,6 +157,11 @@
       <p>
         {{ $t('if you choose is active it will show the system owner') }}
       </p>
+
+      <p class="toggle-warning" role="alert">
+        <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
+        <span>{{ $t('organization_toggle.irreversible_warning') }}</span>
+      </p>
     </section>
   </main>
 </template>

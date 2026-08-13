@@ -11,6 +11,7 @@
   import AuthArrowIcon from '@/shared/icons/SidebarIcons/AuthArrowIcon.vue';
   import IconLogout from '@/shared/icons/IconLogout.vue';
   import { useUserStore } from '@/stores/user';
+  import { useSystemIdentityTheme } from '@/modules/shared/SystemIdentity/presentation/composables/useSystemIdentityTheme';
   import { DATA_MUTATION_SUCCEEDED_EVENT } from '@/base/Presentation/Controller/dataMutationEvent';
   import SidebarCountsApiService from './sidebar.counts.api-service';
   import { UserType } from '@/modules/auth/core/constants/userType.enum';
@@ -35,6 +36,7 @@
   const router = useRouter();
   const userStore = useUserStore();
   const { user } = storeToRefs(userStore);
+  const { currentPalette } = useSystemIdentityTheme();
   const expandedSections = ref<string[]>([]);
   const sidebarSectionsState = ref(getSidebarSections());
 
@@ -58,6 +60,10 @@
   const currentRole = computed<SidebarRole>(() => {
     return user.value?.isMaster || user.value?.type === UserType.ADMIN ? 'admin' : 'organization';
   });
+
+  const brandLogo = computed(
+    () => currentPalette.value.logo || user.value?.setting?.logo || BuildHubLogo,
+  );
 
   const appPrefix = computed(() => {
     return currentRole.value === 'admin' ? '/admin' : '/organization';
@@ -230,7 +236,7 @@
         <aside class="mobile-sidebar-drawer" :aria-label="$t('main_navigation')">
           <header class="drawer-header">
             <div class="drawer-brand">
-              <img class="drawer-logo" :src="BuildHubLogo" :alt="$t('buildhub_logo')" />
+              <img class="drawer-logo" :src="brandLogo" :alt="$t('buildhub_logo')" />
               <div class="drawer-copy">
                 <strong>{{ $t('buildhub') }}</strong>
                 <span>{{ currentRole === 'admin' ? $t('Admin') : $t('Organization') }}</span>

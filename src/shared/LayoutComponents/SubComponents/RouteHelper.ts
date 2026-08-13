@@ -31,8 +31,11 @@ export const buildBreadcrumb = (route: any, router: any): BreadcrumbItem[] => {
     }
 
     const breadcrumb = r.meta.breadcrumb;
+    const resolvedBreadcrumb = typeof breadcrumb === 'function' ? breadcrumb(route) : breadcrumb;
     const breadcrumbLabel =
-      typeof breadcrumb === 'string' ? { labelKey: breadcrumb } : (breadcrumb as BreadcrumbItem);
+      typeof resolvedBreadcrumb === 'string'
+        ? { labelKey: resolvedBreadcrumb }
+        : (resolvedBreadcrumb as BreadcrumbItem);
 
     result.push({
       ...breadcrumbLabel,

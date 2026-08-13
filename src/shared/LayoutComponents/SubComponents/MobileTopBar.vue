@@ -1,10 +1,12 @@
 <script setup lang="ts">
+  import { computed } from 'vue';
   import { storeToRefs } from 'pinia';
 
   import BuildHubLogo from '@/assets/images/BuildHubLogo.jpg';
   import EmployeeImage from '@/assets/images/headerIMages/employee.jpg';
   import HeaderSidebarIcon from '@/shared/icons/HeaderIcons/HeaderSidebarIcon.vue';
   import { useUserStore } from '@/stores/user';
+  import { useSystemIdentityTheme } from '@/modules/shared/SystemIdentity/presentation/composables/useSystemIdentityTheme';
   import GlobalProjectSearch from '@/modules/MainOrganization/Project/presentation/components/GlobalProjectSearch.vue';
 
   defineEmits<{
@@ -13,12 +15,16 @@
 
   const userStore = useUserStore();
   const { user } = storeToRefs(userStore);
+  const { currentPalette } = useSystemIdentityTheme();
+  const brandLogo = computed(
+    () => currentPalette.value.logo || user.value?.setting?.logo || BuildHubLogo,
+  );
 </script>
 
 <template>
   <header class="mobile-topbar">
     <div class="mobile-brand">
-      <img class="mobile-logo" :src="BuildHubLogo" :alt="$t('buildhub_logo')" />
+      <img class="mobile-logo" :src="brandLogo" :alt="$t('buildhub_logo')" />
       <div class="mobile-copy">
         <strong>{{ $t('buildhub') }}</strong>
         <span>{{ $t('main_navigation') }}</span>

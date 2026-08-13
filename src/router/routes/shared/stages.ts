@@ -6,7 +6,7 @@ export const stagesRoutes: RouteRecordRaw[] = [
     name: 'Stages',
     component: () => import('@/views/shared/Stages/IndexStage.vue'),
     meta: {
-      breadcrumb: 'Stages',
+      breadcrumb: 'stage.execution_title',
     },
   },
   {

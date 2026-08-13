@@ -93,6 +93,20 @@ describe('ItemIndex', () => {
     });
   });
 
+  it.each([
+    [ItemServiceTypeEnum.DESIGN, 'item.design_title', 'item.design_description'],
+    [ItemServiceTypeEnum.SUPERVISION, 'item.execution_title', 'item.execution_description'],
+  ])(
+    'identifies the item configuration type in the page header',
+    (serviceType, title, description) => {
+      route.query = { service_type: String(serviceType) };
+      const wrapper = mount(ItemIndex, { global });
+
+      expect(wrapper.get('.item-header h4').text()).toBe(title);
+      expect(wrapper.get('.item-header p').text()).toBe(description);
+    },
+  );
+
   it('carries service type query to add and edit routes', () => {
     route.query = { service_type: String(ItemServiceTypeEnum.DESIGN) };
     const wrapper = mount(ItemIndex, { global });
