@@ -184,7 +184,24 @@
         disabled: loading || itemsLoading || pricingLoading,
       }"
     >
-      <button
+      <!-- <button
+        class="btn btn-primary w-full"
+        :class="{
+          'btn--loading': loading,
+        }"
+        type="button"
+        :disabled="loading || itemsLoading || pricingLoading"
+        @click="saveItem"
+      >
+        <span v-if="loading" class="loader"></span>
+
+        <span v-else>
+          {{ $t('project_pricing.save') }}
+        </span>
+      </button> -->
+
+    <div class="buttons-container">
+           <button
         class="btn btn-primary w-full"
         :class="{
           'btn--loading': loading,
@@ -199,6 +216,18 @@
           {{ $t('project_pricing.save') }}
         </span>
       </button>
+
+
+      <button
+        :class="{ 'btn--loading': loading }"
+        class="btn btn-secondary"
+        type="button"
+        :disabled="loading || !params"
+        @click="router.back()"
+      >
+        {{ $t('back_step') }}
+      </button>
+        </div>
     </div>
 
     <div v-if="submitError || controller.errorMessage.value" class="error" role="alert">
@@ -228,5 +257,18 @@
     color: var(--danger-dark);
     font-family: 'Medium';
     line-height: 1.6;
+  }
+
+
+    .buttons-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1 1;
+    margin: 20px 0;
+    gap: 10px;
+    .btn {
+      width: 100%;
+    }
   }
 </style>
