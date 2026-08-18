@@ -63,7 +63,7 @@ const durationTypeName = (durationType: TaskDurationType): string => {
       <div class="detail-item task-assignment-show__metric task-assignment-show__metric--department">
         <span class="task-assignment-show__metric-icon task-assignment-show__metric-icon--department" aria-hidden="true" />
         <span class="detail-label">{{ $t('department') }}</span>
-        <span class="detail-value">{{ model?.department ?? '-' }}</span>
+        <span class="detail-value">{{ model?.department?.title ?? '-' }}</span>
       </div>
 
        <div class="detail-item task-assignment-show__metric task-assignment-show__metric--floor">
