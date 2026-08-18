@@ -8,6 +8,7 @@ import {
   InvoiceTypeEnum,
   type InvoiceTypeEnum as InvoiceType,
 } from '../constant/invoice.type.enum';
+import { ServiceType } from '@/modules/MainOrganization/Project/core/constants/serviceType.enum';
 
 export default class AddInvoiceParams implements Params {
   public type?: InvoiceType;
@@ -61,17 +62,20 @@ export default class AddInvoiceParams implements Params {
 
   toMap(): Record<string, unknown> {
     const invoiceBase = {
-      type: this.type,
+      invoice_type: this.type,
       project_id: this.project_id,
+              title: this.title,
+      type: ServiceType.DESIGNONLY,
     };
 
     if (this.type === InvoiceTypeEnum.GROUP) {
       return {
         ...invoiceBase,
-        title: this.title,
         invoice_ids: this.invoice_ids,
       };
     }
+
+    
 
     return {
       ...invoiceBase,

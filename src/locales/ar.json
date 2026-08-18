@@ -1581,7 +1581,7 @@
   "enter_duration": "أدخل المدة",
   "enter_phone": "أدخل الهاتف",
   "enter_pricing": "أدخل التسعير",
-  "if you choose is active it will show the system owner": "إذا اخترت نشط فسيظهر مالك النظام",
+  "if you choose is active it will show the system owner data" : "إذا اخترت نشط فسيظهر  بيانات مالك النظام",
   "location": "الموقع",
   "location-city.edit": "تعديل المدينة",
   "location-governorate.edit": "تعديل المحافظة",
