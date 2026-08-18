@@ -6,7 +6,7 @@
   import type EmployeeModel from '../../core/models/employee.model';
   import AddEmployeeParams from '../../core/params/add.employee.params';
   import { EmployeeType } from '../../core/constants/type.enum';
-  import type TitleInterface from '@/base/Data/Models/titleInterface';
+  import TitleInterface from '@/base/Data/Models/titleInterface';
   import { useI18n } from 'vue-i18n';
   import UpdatedCustomInputSelect from '@/shared/FormInputs/UpdatedCustomInputSelect.vue';
   import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
@@ -30,14 +30,19 @@
   const password = ref('');
   const type = ref<EmployeeType>(EmployeeType.EMPLOYEE);
   const employeeTypeOptions = computed<TitleInterface<EmployeeType>[]>(() => [
-    { id: EmployeeType.EMPLOYEE, title: t('employee.employee') },
-    { id: EmployeeType.ENGINEER, title: t('employee.engineer') },
-    { id: EmployeeType.SELLER, title: t('employee.seller') },
-    { id: EmployeeType.PRICING_RESPONSIBLE, title: t('employee.pricing_responsible') },
-    { id: EmployeeType.REVIEWER, title: t('employee.reviewer') },
-    { id: EmployeeType.TEAM_LEADER, title: t('employee.team_leader') },
+    new TitleInterface<EmployeeType>({ id: EmployeeType.EMPLOYEE, title: t('employee.employee') }),
+    new TitleInterface<EmployeeType>({ id: EmployeeType.ENGINEER, title: t('employee.engineer') }),
+    new TitleInterface<EmployeeType>({ id: EmployeeType.SELLER, title: t('employee.seller') }),
+    new TitleInterface<EmployeeType>({ id: EmployeeType.PRICING_RESPONSIBLE, title: t('employee.pricing_responsible') }),
+    new TitleInterface<EmployeeType>({ id: EmployeeType.REVIEWER, title: t('employee.reviewer') }),
+    new TitleInterface<EmployeeType>({ id: EmployeeType.TEAM_LEADER, title: t('employee.team_leader') }),
   ]);
-  const selectedEmployeeType = ref<TitleInterface<EmployeeType> | null>(null);
+  const selectedEmployeeType = ref<TitleInterface<EmployeeType> | null>(
+    new TitleInterface<EmployeeType>({
+      id: EmployeeType.EMPLOYEE,
+      title: t('employee.employee'),
+    }),
+  );
   const updateData = () => {
     emit(
       'updateData',
@@ -97,6 +102,8 @@
         <p>{{ $t('employee.form_description') }}</p>
       </div>
     </div>
+
+    <!-- {{ selectedEmployeeType }} -->
 
     <div class="form-fields" :class="{ disabled: loading }">
       <div class="field-group">
