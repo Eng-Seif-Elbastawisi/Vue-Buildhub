@@ -2206,5 +2206,7 @@
   "show organization": "عرض المؤسسة",
   "reviewer.name": "اسم المراجع",
   "reviewer.email": "البريد الإلكتروني للمراجع",
-  "back_step": "الرجوع خطوه"
+  "back_step": "الرجوع خطوه",
+  "created_by" : "تم الانشاء بواسطه",
+  "can_be_attached_upload_attachments_or_not": "يمكن إرفاق ملفات أو لا"
 }

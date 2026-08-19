@@ -427,7 +427,7 @@ export const useProjectShow = () => {
     },
     {
       icon: 'pi pi-user-edit',
-      label: t('ProjectShow.project_manager'),
+      label: t('created_by'),
       value: getEntityName(project.value.employee),
     },
     {
@@ -448,11 +448,11 @@ export const useProjectShow = () => {
       value: preview.value?.engineering_responsible?.name ?? emptyValue,
     },
 
-    {
-      icon: 'pi pi-verified',
-      label: t('Project.engineer'),
-      value: getEntityName(preview.value?.engineer),
-    },
+    // {
+    //   icon: 'pi pi-verified',
+    //   label: t('Project.engineer'),
+    //   value: getEntityName(preview.value?.engineer),
+    // },
     {
       icon: 'pi pi-book',
       label: t('Project.site_description'),

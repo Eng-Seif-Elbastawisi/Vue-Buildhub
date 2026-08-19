@@ -2281,5 +2281,7 @@
   "task_assignment.form.add_attachment": "Add attachment",
   "reviewer.name": "Reviewer name",
   "reviewer.email": "Reviewer email",
-  "back_step" : "Back A Step"
+  "back_step" : "Back A Step",
+  "created_by" : "Created by",
+  "can_be_attached_upload_attachments_or_not": "Can be attached upload attachments or not"
 }
