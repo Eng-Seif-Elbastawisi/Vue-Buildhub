@@ -129,10 +129,11 @@
                 <!-- <td>{{ formatDate(task.dueDate) }}</td> -->
                 <td v-if="task.insideStatus === 4">
                   <div class="employee-tasks-list__review-actions">
+                    <!--     :disabled="!task.projectDepartmentItemId || isInsideStatusUpdating(task)" -->
                     <button
                       type="button"
                       class="task-review-action task-review-action--accept"
-                      :disabled="!task.projectDepartmentItemId || isInsideStatusUpdating(task)"
+                  
                       @click="emit('change-inside-status', task, InsideStatusDecision.ACCEPT)"
                     >
                       <i
@@ -147,9 +148,10 @@
                     <button
                       type="button"
                       class="task-review-action task-review-action--reject"
-                      :disabled="!task.projectDepartmentItemId || isInsideStatusUpdating(task)"
+                     
                       @click="emit('change-inside-status', task, InsideStatusDecision.REJECT)"
                     >
+                    <!--  :disabled="!task.projectDepartmentItemId || isInsideStatusUpdating(task)" -->
                       <i class="pi pi-times" aria-hidden="true"></i>
                       {{ $t('task_assignment.reject') }}
                     </button>

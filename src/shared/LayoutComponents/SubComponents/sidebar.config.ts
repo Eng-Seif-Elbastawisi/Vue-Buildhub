@@ -45,7 +45,7 @@ import {
   SidebarSystemIcon,
   SidebarTermIcon,
   SidebarUnpaidInvoiceIcon,
-  SidebarUpcomingPaymentIcon,
+  SidebarUpcomingPaymentIcon, 
   SidebarEmployeeIcon,
 } from '@/shared/icons/SidebarIcons/sidebarPrimeIcons';
 import { DepartmentTypeEnum } from '@/modules/shared/Department/core/constants/Type.enum';
@@ -62,6 +62,12 @@ export interface SidebarLocationCounts {
   cities_count?: SidebarCountValue;
   regions_count?: SidebarCountValue;
   places_count?: SidebarCountValue;
+}
+export interface SidebarInvoiceCounts {
+  total_count?: SidebarCountValue;
+  paid_count?: SidebarCountValue;
+  unpaid_count?: SidebarCountValue;
+  not_exported_count?: SidebarCountValue;
 }
 export interface SidebarItemCounts {
   design_count?: SidebarCountValue;
@@ -110,6 +116,7 @@ export interface SidebarCountsPayload {
 
   projects?: SidebarProjectCounts;
   locations?: SidebarLocationCounts;
+  invoices?: SidebarInvoiceCounts;
 
   items?: SidebarItemCounts;
   departments?: SidebarDepartmentCounts;
@@ -148,6 +155,11 @@ export type SidebarLocationCountKey =
   | 'locations.cities_count'
   | 'locations.regions_count'
   | 'locations.places_count';
+export type SidebarInvoiceCountKey =
+  | 'invoices.total_count'
+  | 'invoices.paid_count'
+  | 'invoices.unpaid_count'
+  | 'invoices.not_exported_count';
 
 export type SidebarProjectCountKey =
   | 'projects.total_count'
@@ -166,6 +178,7 @@ export type SidebarCountKey =
   | SidebarRootCountKey
   | SidebarProjectCountKey
   | SidebarLocationCountKey
+  | SidebarInvoiceCountKey
   | SidebarItemCountKey
   | SidebarDepartmentCountKey;
 
@@ -378,13 +391,14 @@ export const sidebarSections: SidebarSectionConfig[] = [
         path: '/invoice',
         labelKey: 'sidebar.all_invoices',
         icon: SidebarInvoiceIcon,
-        countKey: 'invoices_count',
+        countKey: 'invoices.total_count',
         roles: ['organization'],
       },
       {
         path: '/invoice/add',
         labelKey: 'sidebar.new_invoices',
         icon: SidebarInvoiceIcon,
+        countKey: 'invoices.not_exported_count',
         roles: ['organization'],
       },
 
@@ -392,6 +406,7 @@ export const sidebarSections: SidebarSectionConfig[] = [
         path: `/invoice?status=${InvoiceStatusEnum.PAID}`,
         labelKey: 'sidebar.paid_invoices',
         icon: SidebarPaidInvoiceIcon,
+        countKey: 'invoices.paid_count',
         roles: ['organization'],
       },
 
@@ -399,6 +414,7 @@ export const sidebarSections: SidebarSectionConfig[] = [
         path: `/invoice?status=${InvoiceStatusEnum.UNPAID}`,
         labelKey: 'sidebar.unpaid_invoices',
         icon: SidebarUnpaidInvoiceIcon,
+        countKey: 'invoices.unpaid_count',
         roles: ['organization'],
       },
     ],
