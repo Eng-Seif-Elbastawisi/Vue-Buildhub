@@ -398,7 +398,7 @@ export const sidebarSections: SidebarSectionConfig[] = [
         path: '/invoice/add',
         labelKey: 'sidebar.new_invoices',
         icon: SidebarInvoiceIcon,
-        countKey: 'invoices.not_exported_count',
+        // countKey: 'invoices.not_exported_count',
         roles: ['organization'],
       },
 
