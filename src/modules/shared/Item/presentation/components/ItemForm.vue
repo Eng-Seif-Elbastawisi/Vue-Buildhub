@@ -95,14 +95,16 @@
     return `item-department-${selectedStageId.value ?? 'without-stage'}`;
   });
 
-  const departmentParams = computed(() => {
-    return new IndexDepartmentParams({
-      perPage: 100,
-      withPage: 0,
-      stageId: selectedStageId.value,
-      type: Number(route.query.service_type) as DepartmentTypeEnum,
-    });
-  });
+  const departmentParams = computed(() =>
+    selectedStageId.value !== undefined && selectedStageId.value !== null
+      ? new IndexDepartmentParams({
+          perPage: 100,
+          withPage: 0,
+          stageId: selectedStageId.value,
+          type: Number(route.query.service_type) as DepartmentTypeEnum,
+        })
+      : null,
+  );
 
   const stageParams = computed(() => {
     return new IndexStageParams({
