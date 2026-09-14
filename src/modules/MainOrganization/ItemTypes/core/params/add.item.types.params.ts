@@ -22,6 +22,14 @@ export default class AddItemTypesParams implements Params {
       required: true,
       custom: (value) => hasTitleTranslation(value) || translate('validation.title_required'),
     },
+
+    type: {
+      required: true,
+    },
+
+    code: {
+      required: true,
+    },
   });
 
   constructor(data: { translations?: TranslationParams; type?: ItemTypeEnum; code?: string }) {
