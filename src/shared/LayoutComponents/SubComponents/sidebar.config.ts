@@ -45,7 +45,7 @@ import {
   SidebarSystemIcon,
   SidebarTermIcon,
   SidebarUnpaidInvoiceIcon,
-  SidebarUpcomingPaymentIcon, 
+  SidebarUpcomingPaymentIcon,
   SidebarEmployeeIcon,
 } from '@/shared/icons/SidebarIcons/sidebarPrimeIcons';
 import { DepartmentTypeEnum } from '@/modules/shared/Department/core/constants/Type.enum';
@@ -508,8 +508,7 @@ export const sidebarSections: SidebarSectionConfig[] = [
         labelKey: 'sidebar.terms',
         icon: SidebarTermIcon,
         countKey: 'term_count',
-                roles: ['organization'],
-
+        roles: ['organization'],
       },
 
       {
@@ -599,6 +598,11 @@ export const sidebarSections: SidebarSectionConfig[] = [
         icon: SidebarItemIcon,
         countKey: 'items.supervision_count',
       },
+      {
+        path: '/item_types',
+        labelKey: 'sidebar.item_types',
+        icon: SidebarMeasurementIcon,
+      },
 
       {
         path: '/measurement',
@@ -684,7 +688,7 @@ export const sidebarSections: SidebarSectionConfig[] = [
         labelKey: 'sidebar.admins',
         icon: SidebarEmployeeIcon,
         roles: ['admin'],
-      }
+      },
     ],
   },
 ];
