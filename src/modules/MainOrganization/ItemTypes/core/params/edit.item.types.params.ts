@@ -20,9 +20,21 @@ export default class EditItemTypesParams implements Params {
   public code?: string;
 
   public static readonly validation = new ClassValidation().setRules({
+    itemTypesId: {
+      required: true,
+    },
+
     translations: {
       required: true,
       custom: (value) => hasTitleTranslation(value) || translate('validation.title_required'),
+    },
+
+    type: {
+      required: true,
+    },
+
+    code: {
+      required: true,
     },
   });
 
