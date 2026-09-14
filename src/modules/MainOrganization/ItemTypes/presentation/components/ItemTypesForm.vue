@@ -124,7 +124,6 @@
           :languages="['ar', 'en']"
           :model-value="descriptionTranslations"
           type="description"
-          required
           @update:model-value="updateDescriptionTranslations"
         />
       </div>
