@@ -2239,5 +2239,6 @@
   "ItemTypes": "أنواع البنود",
   "Add ItemTypes": "إضافة نوع عنصر",
   "Edit ItemTypes": "تعديل نوع البند",
-  "sidebar.item_types": "أنواع البنود"
+  "sidebar.item_types": "أنواع البنود",
+  "ItemTypes.update": "تحديث نوع البند"
 }
