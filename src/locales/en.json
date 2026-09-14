@@ -2311,5 +2311,6 @@
   "ItemTypes.form_description": "Enter the item type information.",
   "ItemTypes": "Item Types",
   "Add ItemTypes": "Add Item Type",
-  "Edit ItemTypes": "Edit Item Type"
+  "Edit ItemTypes": "Edit Item Type",
+  "sidebar.item_types": "Item Types"
 }
