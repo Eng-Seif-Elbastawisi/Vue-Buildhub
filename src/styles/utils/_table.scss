@@ -109,12 +109,10 @@
 
         &.hoverable {
           &:hover {
-            background: linear-gradient(
-              90deg,
-              var(--PrimaryColor-light) 0%,
-              var(--PrimaryColor-alpha-12) 30%,
-              transparent 100%
-            );
+            background: linear-gradient(90deg,
+                var(--PrimaryColor-light) 0%,
+                var(--PrimaryColor-alpha-12) 30%,
+                transparent 100%);
             transform: scale(1.001);
             box-shadow:
               inset 0 0 0 1px var(--PrimaryColor-alpha-8),
@@ -130,22 +128,18 @@
           background: var(--gray-50);
 
           &:hover {
-            background: linear-gradient(
-              90deg,
-              var(--PrimaryColor-light) 0%,
-              var(--PrimaryColor-alpha-12) 30%,
-              transparent 100%
-            );
+            background: linear-gradient(90deg,
+                var(--PrimaryColor-light) 0%,
+                var(--PrimaryColor-alpha-12) 30%,
+                transparent 100%);
           }
         }
 
         &.selected {
-          background: linear-gradient(
-            90deg,
-            var(--PrimaryColor-light) 0%,
-            var(--PrimaryColor-alpha-20) 50%,
-            transparent 100%
-          ) !important;
+          background: linear-gradient(90deg,
+              var(--PrimaryColor-light) 0%,
+              var(--PrimaryColor-alpha-20) 50%,
+              transparent 100%) !important;
 
           td {
             color: var(--PrimaryColor);
@@ -231,11 +225,9 @@
         background: var(--bg-main);
 
         &:checked {
-          background: linear-gradient(
-            135deg,
-            var(--PrimaryColor) 0%,
-            var(--PrimaryColor-hover) 100%
-          );
+          background: linear-gradient(135deg,
+              var(--PrimaryColor) 0%,
+              var(--PrimaryColor-hover) 100%);
           border-color: var(--PrimaryColor);
           box-shadow: 0 2px 6px var(--PrimaryColor-alpha-20);
 
@@ -267,11 +259,12 @@
       text-align: center;
     }
   }
-/* ---- Checkbox ---- */
-.app-table input[type='checkbox'] {
-  width: 16px;
-  height: 16px;
-  cursor: pointer;
-  accent-color: var(--table-checkbox-color, #6366f1);
-}
+
+  /* ---- Checkbox ---- */
+  // .app-table input[type='checkbox'] {
+  //   width: 16px;
+  //   height: 16px;
+  //   cursor: pointer;
+  //   accent-color: var(--table-checkbox-color, #6366f1);
+  // }
 }

@@ -16,7 +16,9 @@ import { debounce } from '@/base/Presentation/Utils/debouced';
 import MeasurementController from '../controllers/measurement.controller.ts';
 import DeleteMeasurementParams from '../../core/params/delete.measurement.params.ts';
 import IndexMeasurementParams from '../../core/params/index.measurement.params.ts';
-import type measurementModel from '../../core/models/measurement.model.ts';
+import type MeasurementModel from '../../core/models/measurement.model.ts';
+import ChangeStatusButton from '@/modules/MainOrganization/ChangeStatus/presentation/components/ChangeStatusButton.vue';
+import { StatusTypeEnum } from '@/modules/MainOrganization/ChangeStatus/core/constant/change_status.type.enum.ts';
 
 // -----------------------------------------------------------------------------
 // Controller & Router
@@ -28,6 +30,7 @@ const router = useRouter();
 const route = useRoute();
 
 const state = computed(() => controller.listState.value);
+
 
 // -----------------------------------------------------------------------------
 // Table
@@ -58,7 +61,17 @@ const headers: TableHeader[] = [
     width: '25%',
     sortable: false,
   },
+
+  // {
+  //   key: 'status',
+  //   label: 'status',
+  //   width: '25%',
+  //   sortable: false,
+  // },
+
 ];
+
+
 
 // -----------------------------------------------------------------------------
 // State
@@ -143,7 +156,7 @@ const deleteMeasurement = async (id: number) => {
 };
 
 const deleteSelectedMeasurements = (
-  measurements: measurementModel[],
+  measurements: MeasurementModel[],
 ) =>
   deleteSelectedRows(
     measurements,
@@ -203,11 +216,11 @@ onMounted(async () => {
     <DataStatusBuilder :controller="state" :on-retry="async () => await fetchMeasurements()">
       <template #success="{ data }">
         <div class="table-frame">
-          <AppTable :headers="headers" :items="data as measurementModel[]" :bulk-delete="deleteSelectedMeasurements"
+          <AppTable :headers="headers" :items="data as MeasurementModel[]" :bulk-delete="deleteSelectedMeasurements"
             selectable show-index hoverable striped>
             <!-- Title -->
             <template #cell-title="{ item }">
-              {{ item?.title }}
+              {{ item?.title || '-' }}
             </template>
 
             <!-- Code -->
@@ -217,23 +230,27 @@ onMounted(async () => {
 
             <!-- Symbol -->
             <template #cell-symbol="{ item }">
-              <span v-if="item?.symbol?.title && item.symbol.title.length">
-                {{ item.symbol.title }}
-              </span>
-
-              <span v-else class="empty-value">
-                -
-              </span>
+              {{ item?.symbol || '-' }}
             </template>
+
             <!-- Precision -->
             <template #cell-precision="{ item }">
-              {{ item?.precision || '-' }}
+              {{ item?.precision ?? '-' }}
             </template>
+
+            <!-- <template #cell-status="{ item }">
+              {{ item?.status ?? '-' }}
+            </template> -->
 
             <!-- Actions -->
             <template #actions="{ item }">
               <div class="row-actions">
                 <!-- Edit -->
+
+
+                <ChangeStatusButton :id="item.id!" :initialIsActive="item.status === 1 ? true : false"
+                  :type="StatusTypeEnum.MEASUREMENT" @reload="fetchMeasurements" />
+
                 <button class="action-btn edit" :title="$t('Edit')" @click="
                   router.push(
                     `${routePrefix}/measurement/edit/${item.id}`,
@@ -251,8 +268,8 @@ onMounted(async () => {
                       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                         stroke-linecap="round" stroke-linejoin="round">
                         <path d="M3 6h18" />
-                        <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
-                        <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+                        <path d="M19 6v14c0 1-1.2 2-2 2H7c-.8 0-2-1-2-2V6" />
+                        <path d="M8 6V4c0-1.1.9-2 2-2h4c1.1 0 2 .9 2 2v2" />
                       </svg>
                     </button>
                   </template>
