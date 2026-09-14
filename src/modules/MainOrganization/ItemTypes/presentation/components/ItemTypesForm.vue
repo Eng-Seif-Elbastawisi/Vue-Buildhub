@@ -117,7 +117,7 @@
       </div>
 
       <!-- Description - Full Row -->
-      <div class="field-group full-row">
+      <div id="description-field" class="field-group col-span-2">
         <MultiLangInput
           field-key="description"
           :label="$t('description')"
