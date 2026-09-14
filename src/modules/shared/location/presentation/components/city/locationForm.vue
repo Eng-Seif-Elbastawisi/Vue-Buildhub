@@ -146,7 +146,7 @@
         />
       </div>
 
-      <div class="field-group">
+      <div class="field-group" :class="{ disabled: !country?.id }">
         <UpdatedCustomInputSelect
           id="governorate"
           v-model="governorate"
@@ -163,6 +163,10 @@
   </div>
 </template>
 <style scoped lang="scss">
+  .disabled {
+    pointer-events: none;
+    opacity: 0.7;
+  }
   .document-form-header {
     display: flex;
     align-items: center;

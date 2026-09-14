@@ -369,16 +369,7 @@
         />
       </div>
 
-      <!-- Has Attached -->
-      <div class="task-assignment-form__field">
-        <label class="task-assignment-form__checkbox" for="has_attached">
-          <input id="has_attached" v-model="form.hasAttached" type="checkbox" :disabled="loading" />
-
-          <span>
-            {{ $t('task_assignment.form.has_attached.label') }}
-          </span>
-        </label>
-      </div>
+    
 
       <!-- Notes -->
       <div class="task-assignment-form__field task-assignment-form__field--full">
@@ -395,13 +386,24 @@
         />
       </div>
 
+        <!-- Has Attached -->
+      <div class="task-assignment-form__field">
+        <label class="task-assignment-form__checkbox" for="has_attached">
+          <input id="has_attached" v-model="form.hasAttached" type="checkbox" :disabled="loading" />
+
+          <span>
+            {{ $t('task_assignment.form.has_attached.label') }}
+          </span>
+        </label>
+      </div>
+      
       <!-- Attachments -->
       <div class="task-assignment-form__field task-assignment-form__field--full">
         <section class="task-assignment-attachments">
           <div class="task-assignment-attachments__header">
             <div>
               <h2>
-                {{ $t('task_assignment.form.attachments.label') }}
+                {{ $t('task_assignment.form.attachments.label') }} ({{ $t('optional') }} )
               </h2>
 
               <p>

@@ -155,7 +155,7 @@
       </div>
 
       <p>
-        {{ $t('if you choose is active it will show the system owner') }}
+        {{ $t('if you choose is active it will show the system owner data') }}
       </p>
 
       <p class="toggle-warning" role="alert">

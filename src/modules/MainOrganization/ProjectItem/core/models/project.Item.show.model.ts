@@ -32,7 +32,7 @@ export default class ProjectItemShowModel {
   public readonly attachments?: ProjectAttachmentModel[];
   public readonly assigned_employees?: OrganizationEmployeeModel[];
   public readonly histories?:  ProjectHistoryModel[];
-  public readonly department?: string;
+  public readonly department?: TitleInterface<string>;
   public readonly inside_status?: InsideStatusType;
   public readonly duration?: number;
   public readonly duration_type?: TaskDurationType;
@@ -60,7 +60,7 @@ export default class ProjectItemShowModel {
     attachments?: ProjectAttachmentModel[];
     assigned_employees?: OrganizationEmployeeModel[];
     histories?: ProjectHistoryModel[];
-    department?: string;
+    department?: TitleInterface<string>;
     inside_status?: InsideStatusType;
     duration?: number;
     duration_type?: TaskDurationType;
@@ -118,7 +118,7 @@ export default class ProjectItemShowModel {
   attachments: (json.attachments as Record<string, unknown>[] | undefined)?.map((item) => ProjectAttachmentModel.fromJson(item)),
   assigned_employees: (  json.assigned_employees as Record<string, unknown>[] | undefined )?.map((item) => OrganizationEmployeeModel.fromJson(item)),
   histories: json.histories as ProjectHistoryModel[] | undefined,
-  department: json.department as string | undefined,
+  department: json.department ? new TitleInterface({ id: json.department?.id as number, title: json.department?.title as string  }) : undefined,
   inside_status: json.inside_status as InsideStatusType | undefined,
   duration: json.duration as number | undefined,
   duration_type: json.duration_type as TaskDurationType | undefined,
