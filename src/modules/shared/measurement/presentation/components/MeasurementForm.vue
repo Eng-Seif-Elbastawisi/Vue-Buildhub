@@ -3,35 +3,42 @@ import { ref, watch } from 'vue';
 import MultiLangInput from '@/shared/MultiLangInput.vue';
 import AddMeasurementParams from '../../core/params/add.measurement.params';
 import EditMeasurementParams from '../../core/params/edit.measurement.params';
-import type measurementModel from '../../core/models/measurement.model';
+import type MeasurementModel from '../../core/models/measurement.model';
 
 const emit = defineEmits<{
   updateData: [params: AddMeasurementParams | EditMeasurementParams];
 }>();
 
 const props = defineProps<{
-  stage?: measurementModel;
+  stage?: MeasurementModel;
   loading?: boolean;
   resetKey?: number;
 }>();
 
 const translations = ref<{ [key: string]: string }>({});
+
 const code = ref<string>('');
+
 const symbol = ref<{ [key: string]: string }>({});
+
 const precision = ref<number>(0);
 
 const updateData = () => {
+  const data = {
+    translations: {
+      title: translations.value,
+      symbol: symbol.value,
+    },
+    code: code.value,
+    precision: precision.value,
+  };
+
   if (props.stage?.id) {
     emit(
       'updateData',
       new EditMeasurementParams({
         id: props.stage.id,
-        translations: { title: translations.value },
-        code: code.value,
-        symbol: {
-          title: symbol.value,
-        },
-        precision: precision.value,
+        ...data,
       }),
     );
 
@@ -40,14 +47,7 @@ const updateData = () => {
 
   emit(
     'updateData',
-    new AddMeasurementParams({
-      translations: { title: translations.value },
-      code: code.value,
-      symbol: {
-        title: symbol.value,
-      },
-      precision: precision.value,
-    }),
+    new AddMeasurementParams(data),
   );
 };
 
@@ -56,18 +56,20 @@ watch(
   (newStage) => {
     translations.value = newStage?.translations?.title ?? {};
     code.value = newStage?.code ?? '';
-    symbol.value = newStage?.symbol?.title ?? {};
+    symbol.value = newStage?.translations?.symbol ?? {};
     precision.value = newStage?.precision ?? 0;
-
-    updateData();
   },
-  { immediate: true },
+  {
+    immediate: true,
+  },
 );
-
 watch(
   () => props.resetKey,
   () => {
     translations.value = {};
+    code.value = '';
+    symbol.value = {};
+    precision.value = 0;
   },
 );
 </script>
@@ -90,7 +92,6 @@ watch(
     </div>
 
     <!-- Symbol -->
-    <!-- Measurement Title -->
     <div class="field-group" :class="{ disabled: props.loading }">
       <MultiLangInput v-model="symbol" field-key="symbol" :label="$t('symbol')" :languages="['en', 'ar']" type="title"
         @update:model-value="updateData" />
@@ -126,16 +127,6 @@ watch(
     pointer-events: none;
     opacity: 0.65;
   }
-
-  // label {
-  //   display: block;
-  //   margin-bottom: 0.5rem;
-  //   font-family: 'Medium', sans-serif;
-  //   font-size: var(--sm-size);
-  //   font-weight: 500;
-  //   line-height: 1.4;
-  //   color: var(--bread-crumb-color-span);
-  // }
 }
 
 .field-input {
@@ -152,6 +143,7 @@ watch(
   color: var(--bread-crumb-color-span);
 
   outline: none;
+
   font-family: 'Medium', sans-serif;
   font-size: var(--sm-size);
   font-weight: 400;
@@ -181,7 +173,6 @@ watch(
   }
 }
 
-/* Remove browser number arrows when not needed */
 input[type='number'] {
   appearance: textfield;
 
@@ -192,7 +183,6 @@ input[type='number'] {
   }
 }
 
-/* Tablet */
 @media (max-width: 768px) {
   .measurement-form {
     grid-template-columns: 1fr;
@@ -200,7 +190,6 @@ input[type='number'] {
   }
 }
 
-/* Mobile */
 @media (max-width: 480px) {
   .measurement-form {
     gap: 0.875rem;
