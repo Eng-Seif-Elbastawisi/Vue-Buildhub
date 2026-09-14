@@ -15,6 +15,9 @@ export default class measurementModel {
   public readonly branches: BranchesModel[];
   public readonly EducationType: TitleInterface<EducationType>;
   public readonly children: measurementModel[];
+  public readonly code: string;
+  public readonly symbol: { title: Record<string, string> };;
+  public readonly precision: number;
 
   constructor(data: {
     id?: number;
@@ -24,6 +27,9 @@ export default class measurementModel {
     branches: BranchesModel[];
     EducationType: TitleInterface<EducationType>;
     children: measurementModel[];
+    code?: string;
+    symbol?: { title: Record<string, string> };
+    precision?: number;
   }) {
     this.id = data.id;
     this.translations = data.translations ?? { title: { en: data.title ?? '' } };
@@ -33,6 +39,9 @@ export default class measurementModel {
     this.branches = data.branches;
     this.EducationType = data.EducationType;
     this.children = data.children;
+    this.code = data.code ?? '';
+    this.symbol = data.symbol ?? { title: { en: data.symbol ?? '' } };
+    this.precision = data.precision ?? 0;
 
     Object.freeze(this);
   }
@@ -68,6 +77,9 @@ export default class measurementModel {
       branches: json.branches?.map((branch: any) => BranchesModel.fromJson(branch)) ?? [],
       EducationType: json.education_type,
       children: json.children?.map((child: any) => measurementModel.fromJson(child)) ?? [],
+      code: json.code,
+      symbol: { title: measurementModel.mapTranslations(json.symbol) },
+      precision: json.precision,
     });
   }
 
@@ -80,5 +92,8 @@ export default class measurementModel {
       title: 'General',
     }),
     children: [],
+    code: 'code',
+    symbol: { title: { en: 'symbol', ar: 'symbol' } },
+    precision: 0,
   });
 }

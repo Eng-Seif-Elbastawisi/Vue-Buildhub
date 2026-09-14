@@ -10,7 +10,7 @@
   .header-input {
     display: flex;
     justify-content: space-between;
-    align-items: end;
+    align-items: center;
     margin-bottom: 2px;
     padding: 0 !important;
     font-family: 'Medium';
@@ -135,7 +135,7 @@
 
   // RTL support for indicator
   [dir='rtl'] .active-indicator,
-  .field-input[dir='rtl'] + .active-indicator {
+  .field-input[dir='rtl']+.active-indicator {
     right: auto;
     left: 12px;
   }

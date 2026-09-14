@@ -13374,7 +13374,7 @@ body.invoice-payment-dialog-open .p-multiselect-overlay {
 .multi-lang-input .header-input {
   display: flex;
   justify-content: space-between;
-  align-items: end;
+  align-items: center;
   margin-bottom: 2px;
   padding: 0 !important;
   font-family: "Medium";
