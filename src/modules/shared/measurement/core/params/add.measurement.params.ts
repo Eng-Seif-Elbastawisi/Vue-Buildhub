@@ -14,7 +14,6 @@ export default class AddMeasurementParams implements Params {
     translations: {
       required: true,
       custom: (value) => hasTitleTranslation(value) || translate('validation.title_required'),
-
     },
     code: {
       required: true,
@@ -31,7 +30,9 @@ export default class AddMeasurementParams implements Params {
   });
 
   constructor(data: {
-    translations?: { title: Record<string, string> }; parentId?: number; code?: string;
+    translations?: { title: Record<string, string> };
+    parentId?: number;
+    code?: string;
     symbol?: { title: Record<string, string> };
     precision?: number;
   }) {
