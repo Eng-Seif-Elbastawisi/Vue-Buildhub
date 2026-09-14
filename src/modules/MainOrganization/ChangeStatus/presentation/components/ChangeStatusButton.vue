@@ -2,7 +2,7 @@
 import { ref, watch } from 'vue'
 import ToggleSwitch from 'primevue/toggleswitch'
 
-import ChangeStatusController from '../controllers/client.controller'
+import ChangeStatusController from '../controllers/change_status.controller'
 import { StatusTypeEnum } from '../../core/constant/change_status.type.enum'
 import ChangeStatusParams from '../../core/params/change_status.params'
 

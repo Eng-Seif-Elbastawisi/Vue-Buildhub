@@ -249,7 +249,7 @@ onMounted(async () => {
 
 
                 <ChangeStatusButton :id="item.id!" :initialIsActive="item.status === 1 ? true : false"
-                  :type="StatusTypeEnum.MEASUREMENT" @reload="fetchMeasurements" />
+                  :type="StatusTypeEnum.MEASUREMENT_UNIT" @reload="fetchMeasurements" />
 
                 <button class="action-btn edit" :title="$t('Edit')" @click="
                   router.push(
@@ -272,6 +272,8 @@ onMounted(async () => {
                         <path d="M8 6V4c0-1.1.9-2 2-2h4c1.1 0 2 .9 2 2v2" />
                       </svg>
                     </button>
+
+
                   </template>
                 </DeleteDialog>
               </div>

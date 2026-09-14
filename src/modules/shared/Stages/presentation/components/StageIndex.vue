@@ -14,6 +14,8 @@
   import ShowStageParams from '../../core/params/show.stage.params';
   import EditIcon from '@/shared/icons/EditIcon.vue';
   import DeleteDialog from '@/base/Presentation/Dialogs/MainDialogs/DeleteDialog.vue';
+import ChangeStatusButton from '@/modules/MainOrganization/ChangeStatus/presentation/components/ChangeStatusButton.vue';
+import { StatusTypeEnum } from '@/modules/MainOrganization/ChangeStatus/core/constant/change_status.type.enum.ts';
 
   // Controller instance
   const controller = StageController.getInstance();
@@ -168,6 +170,11 @@
 
             <template #actions="{ item }">
               <div class="row-actions">
+
+
+
+                <ChangeStatusButton :id="item.id!" :initialIsActive="item.status === 1 ? true : false"
+                  :type="StatusTypeEnum.STAGE" @reload="fetchStages" />
                 <button class="action-btn edit" :title="$t('Edit')" @click="ShowStage(item.id!)">
                   <EditIcon />
                 </button>

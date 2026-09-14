@@ -1,8 +1,7 @@
 export const StatusTypeEnum = {
-  MEASUREMENT: 1,
-  MEASUREMENT_UNIT: 2,
-  ITEM_TYPE: 3,
-  STAGE: 4,
+  MEASUREMENT_UNIT: 1,
+  ITEM_TYPE: 2,
+  STAGE: 3,
 } as const;
 
 export type StatusTypeEnum = (typeof StatusTypeEnum)[keyof typeof StatusTypeEnum];
