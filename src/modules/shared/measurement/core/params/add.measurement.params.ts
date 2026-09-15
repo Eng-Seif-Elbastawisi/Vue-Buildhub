@@ -4,10 +4,10 @@ import { hasTitleTranslation } from '@/base/Presentation/Utils/input_title';
 import { translate } from '@/locales/i18n';
 
 export default class AddMeasurementParams implements Params {
-  public translations?: { title: Record<string, string> };
+  public translations?: { title: Record<string, string> , symbol: Record<string, string> };
   public parentId?: number;
   public code?: string;
-  public symbol?: { title: Record<string, string> };
+ 
   public precision?: number;
 
   public static readonly validation = new ClassValidation().setRules({
@@ -15,17 +15,21 @@ export default class AddMeasurementParams implements Params {
       required: true,
       custom: (value) => hasTitleTranslation(value) || translate('validation.title_required'),
     },
+
     code: {
       required: true,
-      custom: (value) => !!value || translate('validation.code_required'),
+      custom: (value) =>
+        !!value || translate('validation.code_required'),
     },
-    symbol: {
-      required: true,
-      custom: (value) => !!value || translate('validation.symbol_required'),
-    },
+
+
     precision: {
       required: true,
-      custom: (value) => !!value || translate('validation.precision_required'),
+      custom: (value) =>
+        value !== undefined &&
+        value !== null &&
+        value !== '' ||
+        translate('validation.precision_required'),
     },
   });
 
@@ -39,7 +43,6 @@ export default class AddMeasurementParams implements Params {
     this.translations = data.translations;
     this.parentId = data.parentId;
     this.code = data.code;
-    this.symbol = data.symbol;
     this.precision = data.precision;
   }
 
@@ -47,12 +50,13 @@ export default class AddMeasurementParams implements Params {
     const map: { [key: string]: any } = {
       translations: this.translations,
       code: this.code,
-      symbol: this.symbol,
       precision: this.precision,
     };
+
     if (this.parentId) {
       map.parent_id = this.parentId;
     }
+
     return map;
   }
 

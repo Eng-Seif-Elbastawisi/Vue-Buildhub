@@ -5,9 +5,11 @@ import MeasurementRepository from '../../data/repositories/measurement.repositor
 import type Params from '@/base/Core/Params/params';
 import type { ApiCallOptions } from '@/base/Data/ApiService/baseApiService';
 import type ShowMeasurementParams from '../../core/params/show.measurement.params';
+import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
+import router from '@/router';
 
 export default class MeasurementController extends BaseController<
-  measurementModel, 
+  measurementModel,
   measurementModel[]
 > {
   private static instance: MeasurementController;
@@ -38,13 +40,26 @@ export default class MeasurementController extends BaseController<
     }
     return MeasurementController.instance;
   }
-    async fetchOne(params: Params, options?: ApiCallOptions) {
-      return await super.fetchOne(params, {
-        ...options,
-        useJson: true,
-        headers: {
-          'Accept-Language': (params as ShowMeasurementParams).allLocales ? '*' : 'en',
-        },
-      });
+
+
+  async create(params: Params, options?: ApiCallOptions) {
+    const result = await super.create(params, {
+      ...options,
+      useJson: true,
+    });
+    if (result instanceof DataSuccess) {
+      router.push('/organization/measurement');
     }
+    return result;
+  }
+
+  async fetchOne(params: Params, options?: ApiCallOptions) {
+    return await super.fetchOne(params, {
+      ...options,
+      useJson: true,
+      headers: {
+        'Accept-Language': (params as ShowMeasurementParams).allLocales ? '*' : 'en',
+      },
+    });
+  }
 }
