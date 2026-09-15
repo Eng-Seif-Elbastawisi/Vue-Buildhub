@@ -13,9 +13,7 @@ export default class AddMeasurementParams implements Params {
   public static readonly validation = new ClassValidation().setRules({
     translations: {
       required: true,
-      custom: (value) =>
-        hasTitleTranslation(value) ||
-        translate('validation.title_required'),
+      custom: (value) => hasTitleTranslation(value) || translate('validation.title_required'),
     },
 
     code: {
@@ -36,9 +34,10 @@ export default class AddMeasurementParams implements Params {
   });
 
   constructor(data: {
-    translations?: { title: Record<string, string>  , symbol: Record<string, string>};
+    translations?: { title: Record<string, string> };
     parentId?: number;
     code?: string;
+    symbol?: { title: Record<string, string> };
     precision?: number;
   }) {
     this.translations = data.translations;

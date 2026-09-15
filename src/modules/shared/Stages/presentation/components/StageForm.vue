@@ -1,107 +1,108 @@
 <script setup lang="ts">
-  import { ref, watch } from 'vue';
-  import type StageModel from '../../core/models/stage.model';
-  import AddStageParams from '../../core/params/add.stges.params';
-  import EditStageParams from '../../core/params/edit.stage.params';
+  import { onMounted, ref, watch } from 'vue';
+
+  import TranslationParams from '@/base/Core/Params/translationParams';
   import MultiLangInput from '@/shared/MultiLangInput.vue';
 
+  import type StageShowModel from '../../core/models/stage.model';
+  import AddStageParams from '../../core/params/add.stges.params';
+
   const emit = defineEmits<{
-    updateData: [params: AddStageParams | EditStageParams];
+    updateData: [params: AddStageParams];
   }>();
 
   const props = defineProps<{
-    stage?: StageModel;
+    Stage?: StageShowModel;
     loading?: boolean;
-    resetKey?: number;
   }>();
-  const translations = ref<{ [key: string]: string }>({});
-  const updateData = () => {
-    if (props.stage?.id) {
-      emit(
-        'updateData',
-        new EditStageParams({
-          id: props.stage.id,
-          translations: { title: translations.value },
-        }),
-      );
-      return;
-    }
 
+  const translations = ref<Record<string, string>>({});
+
+  const updateData = () => {
     emit(
       'updateData',
       new AddStageParams({
-        translations: { title: translations.value },
+        translations: new TranslationParams({
+          title: translations.value,
+        }),
       }),
     );
   };
 
+  const updateTranslations = (value: Record<string, string>) => {
+    translations.value = value;
+    updateData();
+  };
+
+  onMounted(updateData);
+
   watch(
-    () => props.stage,
-    (newStage) => {
-      translations.value = newStage?.translations?.title ?? {};
+    () => props.Stage,
+    (Stage) => {
+      if (!Stage) return;
+
+      translations.value = {
+        ...(Stage.translations?.title ?? {}),
+      };
+
       updateData();
     },
     { immediate: true },
   );
-
-  watch(
-    () => props.resetKey,
-    () => {
-      translations.value = {};
-    },
-  );
 </script>
 
 <template>
-  <div class="form-fields">
-    <div class="field-group" :class="{ disabled: props.loading }">
-      <MultiLangInput
-        v-model="translations"
-        field-key="title"
-        :label="$t('stage_title')"
-        :languages="['en', 'ar']"
-        type="title"
-        @update:model-value="updateData"
-      />
+  <div class="Stage-form-card">
+    <header>
+      <h3>{{ $t('stage.form_title') }}</h3>
+      <p>{{ $t('stage.form_description') }}</p>
+    </header>
+
+    <div class="form-fields" :class="{ disabled: loading }">
+      <div class="field-group full-row">
+        <MultiLangInput
+          field-key="title"
+          :label="$t('title')"
+          :languages="['ar', 'en']"
+          :model-value="translations"
+          type="title"
+          required
+          @update:model-value="updateTranslations"
+        />
+      </div>
     </div>
   </div>
 </template>
 
 <style scoped lang="scss">
-  .form-fields {
-    padding: 0;
-    display: block;
-    width: 100%;
+  .Stage-form-card {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
   }
 
-  .field-group {
-    width: 100%;
+  header p {
+    color: var(--gray-5);
+  }
+
+  .form-fields {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
 
     &.disabled {
-      cursor: not-allowed;
       pointer-events: none;
       opacity: 0.7;
     }
   }
-  // .field-input{
-  //   width: 100%;
-  //   padding: 12px 16px;
-  //     padding-right: 16px;
-  //   padding-right: 16px;
-  //   padding-right: 50px;
-  //   border: 1px solid var(--border-weak);
-  //   border-radius: 28px;
-  //   background: var(--white);
-  //   outline: none;
-  //   transition: all 0.25s ease;
-  //   font-family: "Medium";
-  //   font-weight: 400;
-  //   font-size: var(--sm-size);
-  //   color: var(--bread-crumb-color-span);
-  //   max-height: 200px;
-  //   max-width: 100%;
-  // }
-  // .email-crud-example .:hover{
-  //   background-color: transparent !important;
-  // }
+
+  .field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .full-row {
+    grid-column: 1 / -1;
+  }
 </style>
