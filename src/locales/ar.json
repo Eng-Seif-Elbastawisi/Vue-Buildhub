@@ -1601,8 +1601,8 @@
   "measurement_title": "عنوان وحدة القياس",
   "symbol": "رمز",
   "symbol_placeholder": "أدخل رمز",
-  "precision": "الدقة",
-  "precision_placeholder": "أدخل الدقة",
+  "precision": "عدد الخانات العشرية",
+  "precision_placeholder": "أدخل عدد الخانات العشرية",
   "months": "أشهر",
   "no_Suppliers_yet": "لا يوجد موردون بعد",
   "notes_placeholder": "أدخل الملاحظات",
@@ -2222,7 +2222,7 @@
   "description": "الوصف",
   "type": "النوع",
   "type_placeholder": "اختر نوع البند",
-  "code": "الرمز",
+  "code": "الكود",
   "code_placeholder": "أدخل رمز نوع البند",
   "ItemTypes.list_title": "أنواع البنود",
   "ItemTypes.list_description": "إدارة وتنظيم أنواع البنود.",
@@ -2258,8 +2258,10 @@
     "empty_title": "لا توجد مراحل فرعية",
     "empty_description": "لا توجد مراحل فرعية لعرضها.",
     "title": "المراحل الفرعية",
-    "form_title": "تعديل المرحلة الفرعية",
-    "form_description": "إدارة وتحديث بيانات المرحلة الفرعية"
+    "form_title": "اضافه المرحلة الفرعية",
+    "form_description": "إدارة وتحديث بيانات المرحلة الفرعية",
+    "add_title": "إضافة مرحلة فرعية",
+    "edit_title": "تعديل المرحلة الفرعية"
   },
   "title": "العنوان",
   "search_stages": "البحث في المراحل...",
@@ -2272,5 +2274,9 @@
   "Sub Stages": "المراحل الفرعية",
   "Add Sub Stage": "إضافة مرحلة فرعية",
   "Edit Sub Stage": "تعديل المرحلة الفرعية",
-  "stage.execution_title": "تنفيذ المرحلة"
+  "stage.execution_title": "تنفيذ المرحلة",
+  "measurement": {
+    "add": "إضافة وحده قياس"
+  },
+  "Are you sure you want to remove this measurement unit?": "هل أنت متأكد من حذف وحدة القياس ؟"
 }

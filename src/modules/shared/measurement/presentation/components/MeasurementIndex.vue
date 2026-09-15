@@ -1,183 +1,167 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+  import { computed, onMounted, ref } from 'vue';
+  import { useRoute, useRouter } from 'vue-router';
 
-import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
-import AppTable, {
-  type TableHeader,
-} from '@/shared/HelpersComponents/AppTable.vue';
-import Pagination from '@/shared/HelpersComponents/Pagination.vue';
-import { deleteSelectedRows } from '@/shared/HelpersComponents/deleteSelectedRows';
-import DeleteDialog from '@/base/Presentation/Dialogs/MainDialogs/DeleteDialog.vue';
-import EditIcon from '@/shared/icons/EditIcon.vue';
+  import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
+  import AppTable, { type TableHeader } from '@/shared/HelpersComponents/AppTable.vue';
+  import Pagination from '@/shared/HelpersComponents/Pagination.vue';
+  import { deleteSelectedRows } from '@/shared/HelpersComponents/deleteSelectedRows';
+  import DeleteDialog from '@/base/Presentation/Dialogs/MainDialogs/DeleteDialog.vue';
+  import EditIcon from '@/shared/icons/EditIcon.vue';
 
-import { debounce } from '@/base/Presentation/Utils/debouced';
+  import { debounce } from '@/base/Presentation/Utils/debouced';
 
-import MeasurementController from '../controllers/measurement.controller.ts';
-import DeleteMeasurementParams from '../../core/params/delete.measurement.params.ts';
-import IndexMeasurementParams from '../../core/params/index.measurement.params.ts';
-import type MeasurementModel from '../../core/models/measurement.model.ts';
-import ChangeStatusButton from '@/modules/MainOrganization/ChangeStatus/presentation/components/ChangeStatusButton.vue';
-import { StatusTypeEnum } from '@/modules/MainOrganization/ChangeStatus/core/constant/change_status.type.enum.ts';
+  import MeasurementController from '../controllers/measurement.controller.ts';
+  import DeleteMeasurementParams from '../../core/params/delete.measurement.params.ts';
+  import IndexMeasurementParams from '../../core/params/index.measurement.params.ts';
+  import type MeasurementModel from '../../core/models/measurement.model.ts';
+  import ChangeStatusButton from '@/modules/MainOrganization/ChangeStatus/presentation/components/ChangeStatusButton.vue';
+  import { StatusTypeEnum } from '@/modules/MainOrganization/ChangeStatus/core/constant/change_status.type.enum.ts';
 
-// -----------------------------------------------------------------------------
-// Controller & Router
-// -----------------------------------------------------------------------------
+  // -----------------------------------------------------------------------------
+  // Controller & Router
+  // -----------------------------------------------------------------------------
 
-const controller = MeasurementController.getInstance();
+  const controller = MeasurementController.getInstance();
 
-const router = useRouter();
-const route = useRoute();
+  const router = useRouter();
+  const route = useRoute();
 
-const state = computed(() => controller.listState.value);
+  const state = computed(() => controller.listState.value);
 
+  // -----------------------------------------------------------------------------
+  // Table
+  // -----------------------------------------------------------------------------
 
-// -----------------------------------------------------------------------------
-// Table
-// -----------------------------------------------------------------------------
-
-const headers: TableHeader[] = [
-  {
-    key: 'title',
-    label: 'title',
-    width: '25%',
-    sortable: false,
-  },
-  {
-    key: 'code',
-    label: 'code',
-    width: '25%',
-    sortable: false,
-  },
-  {
-    key: 'symbol',
-    label: 'symbol',
-    width: '25%',
-    sortable: false,
-  },
-  {
-    key: 'precision',
-    label: 'precision',
-    width: '25%',
-    sortable: false,
-  },
-
-  // {
-  //   key: 'status',
-  //   label: 'status',
-  //   width: '25%',
-  //   sortable: false,
-  // },
-
-];
-
-
-
-// -----------------------------------------------------------------------------
-// State
-// -----------------------------------------------------------------------------
-
-const perPage = ref(10);
-const word = ref('');
-
-// -----------------------------------------------------------------------------
-// Routes
-// -----------------------------------------------------------------------------
-
-const routePrefix = computed(() =>
-  route.path.startsWith('/admin') ? '/admin' : '/organization',
-);
-
-const formRoute = computed(
-  () => `${routePrefix.value}/measurement/add`,
-);
-
-// -----------------------------------------------------------------------------
-// Fetch
-// -----------------------------------------------------------------------------
-
-const fetchMeasurements = async (
-  page: number = 1,
-  searchWord: string = '',
-) => {
-  await controller.fetchList(
-    new IndexMeasurementParams(
-      searchWord,
-      route.query.page ? Number(route.query.page) : page,
-      perPage.value,
-    ),
-  );
-};
-
-// -----------------------------------------------------------------------------
-// Search
-// -----------------------------------------------------------------------------
-
-const search = debounce(() => {
-  router.push({
-    query: {
-      ...route.query,
-      page: Number(route.query.page ?? 1),
-      word: word.value || undefined,
+  const headers: TableHeader[] = [
+    {
+      key: 'title',
+      label: 'title',
+      width: '25%',
+      sortable: false,
     },
+    {
+      key: 'code',
+      label: 'code',
+      width: '25%',
+      sortable: false,
+    },
+    {
+      key: 'symbol',
+      label: 'symbol',
+      width: '25%',
+      sortable: false,
+    },
+    {
+      key: 'precision',
+      label: 'precision',
+      width: '25%',
+      sortable: false,
+    },
+
+    // {
+    //   key: 'status',
+    //   label: 'status',
+    //   width: '25%',
+    //   sortable: false,
+    // },
+  ];
+
+  // -----------------------------------------------------------------------------
+  // State
+  // -----------------------------------------------------------------------------
+
+  const perPage = ref(10);
+  const word = ref('');
+
+  // -----------------------------------------------------------------------------
+  // Routes
+  // -----------------------------------------------------------------------------
+
+  const routePrefix = computed(() =>
+    route.path.startsWith('/admin') ? '/admin' : '/organization',
+  );
+
+  const formRoute = computed(() => `${routePrefix.value}/measurement/add`);
+
+  // -----------------------------------------------------------------------------
+  // Fetch
+  // -----------------------------------------------------------------------------
+
+  const fetchMeasurements = async (page: number = 1, searchWord: string = '') => {
+    await controller.fetchList(
+      new IndexMeasurementParams(
+        searchWord,
+        route.query.page ? Number(route.query.page) : page,
+        perPage.value,
+      ),
+    );
+  };
+
+  // -----------------------------------------------------------------------------
+  // Search
+  // -----------------------------------------------------------------------------
+
+  const search = debounce(() => {
+    router.push({
+      query: {
+        ...route.query,
+        page: Number(route.query.page ?? 1),
+        word: word.value || undefined,
+      },
+    });
+
+    fetchMeasurements(1, word.value);
   });
 
-  fetchMeasurements(1, word.value);
-});
+  // -----------------------------------------------------------------------------
+  // Pagination
+  // -----------------------------------------------------------------------------
 
-// -----------------------------------------------------------------------------
-// Pagination
-// -----------------------------------------------------------------------------
+  const onPageChange = (page: number) => {
+    fetchMeasurements(page);
 
-const onPageChange = (page: number) => {
-  fetchMeasurements(page);
+    router.push({
+      query: {
+        ...route.query,
+        page: String(page),
+        word: word.value,
+      },
+    });
+  };
 
-  router.push({
-    query: {
-      ...route.query,
-      page: String(page),
-      word: word.value,
-    },
+  const onPerPageChange = (count: number) => {
+    perPage.value = count;
+    fetchMeasurements(1);
+  };
+
+  // -----------------------------------------------------------------------------
+  // Delete
+  // -----------------------------------------------------------------------------
+
+  const deleteMeasurement = async (id: number) => {
+    await controller.delete(new DeleteMeasurementParams(id));
+    await fetchMeasurements();
+  };
+
+  const deleteSelectedMeasurements = (measurements: MeasurementModel[]) =>
+    deleteSelectedRows(
+      measurements,
+      (id) => controller.delete(new DeleteMeasurementParams(id)),
+      fetchMeasurements,
+    );
+
+  // -----------------------------------------------------------------------------
+  // Lifecycle
+  // -----------------------------------------------------------------------------
+
+  onMounted(async () => {
+    if (route.query.word) {
+      word.value = String(route.query.word);
+    }
+
+    await fetchMeasurements(route.query.page ? Number(route.query.page) : 1, word.value);
   });
-};
-
-const onPerPageChange = (count: number) => {
-  perPage.value = count;
-  fetchMeasurements(1);
-};
-
-// -----------------------------------------------------------------------------
-// Delete
-// -----------------------------------------------------------------------------
-
-const deleteMeasurement = async (id: number) => {
-  await controller.delete(new DeleteMeasurementParams(id));
-  await fetchMeasurements();
-};
-
-const deleteSelectedMeasurements = (
-  measurements: MeasurementModel[],
-) =>
-  deleteSelectedRows(
-    measurements,
-    (id) => controller.delete(new DeleteMeasurementParams(id)),
-    fetchMeasurements,
-  );
-
-// -----------------------------------------------------------------------------
-// Lifecycle
-// -----------------------------------------------------------------------------
-
-onMounted(async () => {
-  if (route.query.word) {
-    word.value = String(route.query.word);
-  }
-
-  await fetchMeasurements(
-    route.query.page ? Number(route.query.page) : 1,
-    word.value,
-  );
-});
 </script>
 
 <template>
@@ -187,27 +171,48 @@ onMounted(async () => {
       <div class="toolbar">
         <div class="search-field">
           <span class="search-icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-              stroke-linecap="round">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            >
               <circle cx="11" cy="11" r="8" />
               <path d="m21 21-4.35-4.35" />
             </svg>
           </span>
 
-          <input v-model="word" class="search-input" type="text" :placeholder="$t('search_measurements')"
-            @input="search" />
+          <input
+            v-model="word"
+            class="search-input"
+            type="text"
+            :placeholder="$t('search_measurements')"
+            @input="search"
+          />
         </div>
       </div>
 
       <div class="d-flex justify-end">
-        <button class="app-btn btn btn-primary btn--md btn--has-icon btn-save"
-          @click="router.push(`${routePrefix}/measurement/add`)">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-            stroke-linecap="round">
+        <button
+          class="app-btn btn btn-primary btn--md btn--has-icon btn-save"
+          @click="router.push(`${routePrefix}/measurement/add`)"
+        >
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            stroke-linecap="round"
+          >
             <path d="M12 5v14M5 12h14" />
           </svg>
 
-          Add measurement
+          {{ $t('measurement.add') }}
         </button>
       </div>
     </div>
@@ -216,8 +221,15 @@ onMounted(async () => {
     <DataStatusBuilder :controller="state" :on-retry="async () => await fetchMeasurements()">
       <template #success="{ data }">
         <div class="table-frame">
-          <AppTable :headers="headers" :items="data as MeasurementModel[]" :bulk-delete="deleteSelectedMeasurements"
-            selectable show-index hoverable striped>
+          <AppTable
+            :headers="headers"
+            :items="data as MeasurementModel[]"
+            :bulk-delete="deleteSelectedMeasurements"
+            selectable
+            show-index
+            hoverable
+            striped
+          >
             <!-- Title -->
             <template #cell-title="{ item }">
               {{ item?.title || '-' }}
@@ -247,33 +259,45 @@ onMounted(async () => {
               <div class="row-actions">
                 <!-- Edit -->
 
+                <ChangeStatusButton
+                  :id="item.id!"
+                  :initialIsActive="item.status === 1 ? true : false"
+                  :type="StatusTypeEnum.MEASUREMENT_UNIT"
+                  @reload="fetchMeasurements"
+                />
 
-                <ChangeStatusButton :id="item.id!" :initialIsActive="item.status === 1 ? true : false"
-                  :type="StatusTypeEnum.MEASUREMENT_UNIT" @reload="fetchMeasurements" />
-
-                <button class="action-btn edit" :title="$t('Edit')" @click="
-                  router.push(
-                    `${routePrefix}/measurement/edit/${item.id}`,
-                  )
-                  ">
+                <button
+                  class="action-btn edit"
+                  :title="$t('Edit')"
+                  @click="router.push(`${routePrefix}/measurement/edit/${item.id}`)"
+                >
                   <EditIcon />
                 </button>
 
                 <!-- Delete -->
-                <DeleteDialog :title="$t(
-                  'Are you sure you want to remove this stage?',
-                )" :message="$t('This action cannot be undone.')" :hasbtn="true" @delete="deleteMeasurement(item.id!)">
+                <DeleteDialog
+                  :title="$t('Are you sure you want to remove this measurement unit?')"
+                  :message="$t('This action cannot be undone.')"
+                  :hasbtn="true"
+                  @delete="deleteMeasurement(item.id!)"
+                >
                   <template #btn>
                     <button class="action-btn delete" :title="$t('Delete')">
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        stroke-linecap="round" stroke-linejoin="round">
+                      <svg
+                        width="15"
+                        height="15"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
                         <path d="M3 6h18" />
                         <path d="M19 6v14c0 1-1.2 2-2 2H7c-.8 0-2-1-2-2V6" />
                         <path d="M8 6V4c0-1.1.9-2 2-2h4c1.1 0 2 .9 2 2v2" />
                       </svg>
                     </button>
-
-
                   </template>
                 </DeleteDialog>
               </div>
@@ -282,15 +306,25 @@ onMounted(async () => {
         </div>
 
         <!-- Pagination -->
-        <Pagination :pagination="controller.pagination.value" @change-page="onPageChange"
-          @count-per-page="onPerPageChange" />
+        <Pagination
+          :pagination="controller.pagination.value"
+          @change-page="onPageChange"
+          @count-per-page="onPerPageChange"
+        />
       </template>
 
       <!-- Empty -->
       <template #empty>
         <div class="empty-state">
-          <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"
-            stroke-linecap="round">
+          <svg
+            width="56"
+            height="56"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1"
+            stroke-linecap="round"
+          >
             <rect x="2" y="4" width="20" height="16" rx="2" />
             <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
           </svg>
@@ -304,8 +338,15 @@ onMounted(async () => {
           </p>
 
           <router-link :to="formRoute" class="btn-add empty-cta">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-              stroke-linecap="round">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+            >
               <path d="M12 5v14M5 12h14" />
             </svg>
 

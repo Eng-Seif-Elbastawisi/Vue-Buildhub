@@ -1,104 +1,129 @@
 <script setup lang="ts">
   import { onMounted, ref } from 'vue';
-  import { useRoute } from 'vue-router';
-  import MeasurementForm from './MeasurementForm.vue';
-  import MeasurementController from '../controllers/measurement.controller.ts';
-  import type EditMeasurementParams from '../../core/params/edit.measurement.params.ts';
-  import ShowMeasurementParams from '../../core/params/show.measurement.params.ts';
-  import type AddMeasurementParams from '../../core/params/add.measurement.params.ts';
+  import { useRoute, useRouter } from 'vue-router';
 
-  // Controller instance
+  import AppButton from '@/shared/HelpersComponents/AppButton.vue';
+  import IconAccept from '@/shared/icons/IconAccept.vue';
+
+  import type AddMeasurementParams from '../../core/params/add.measurement.params';
+  import EditMeasurementParams from '../../core/params/edit.measurement.params';
+  import ShowMeasurementParams from '../../core/params/show.measurement.params';
+
+  import MeasurementController from '../controllers/measurement.controller';
+  import MeasurementForm from './MeasurementForm.vue';
+
   const controller = MeasurementController.getInstance();
 
-  // Form state
+  const route = useRoute();
+  const router = useRouter();
+
+  const measurementId = Number(route.params.id);
+
   const params = ref<EditMeasurementParams | null>(null);
   const loading = ref(false);
-  const resetKey = ref(0);
-  /**
-   * Save (create or update) email
-   */
-  const saveEmail = async () => {
-    if (!params.value) {
-      console.error('No email parameters to save');
-      return;
-    }
+
+  const routePrefix = route.path.startsWith('/admin') ? '/admin' : '/organization';
+
+  const updateData = (data: AddMeasurementParams) => {
+    params.value = new EditMeasurementParams({
+      id: measurementId,
+      translations: data.translations,
+    });
+  };
+
+  const saveMeasurement = async () => {
+    if (!params.value) return;
 
     loading.value = true;
+
     try {
-      await controller.update(params.value);
+      await controller.update(params.value, undefined, route.fullPath);
     } finally {
       loading.value = false;
     }
   };
 
-  // const updateData = (updatedParams: EditMeasurementParams ) => {
-  //   params.value = updatedParams;
-  //   // saveEmail();
-  // };
-  const updateData = (updatedParams: AddMeasurementParams | EditMeasurementParams) => {
-    params.value = updatedParams as EditMeasurementParams;
+  const cancelMeasurement = () => {
+    void router.push(`${routePrefix}/measurement`);
   };
 
-  const clearInputs = () => {
-    params.value = null;
-    resetKey.value += 1;
-  };
-
-  const route = useRoute();
   onMounted(async () => {
-    await controller.fetchOne(new ShowMeasurementParams(Number(route.params.id), true));
+    if (!measurementId || Number.isNaN(measurementId)) {
+      console.error('Invalid Measurement ID:', route.params.id);
+      return;
+    }
+
+    await controller.fetchOne(new ShowMeasurementParams(measurementId, true));
   });
 </script>
 
 <template>
-  <div class="email-crud-example">
-    <div class="email-form-card">
-      <MeasurementForm
-        :stage="controller.itemData.value!"
+  <div class="Measurement-crud-page">
+    <MeasurementForm
+      :measurement="controller.itemData.value!"
+      :loading="loading"
+      @update-data="updateData"
+      :is-edit="true"
+    />
+
+    <div class="actions" :class="{ disabled: loading }">
+      <AppButton
         :loading="loading"
-        :reset-key="resetKey"
-        @update-data="updateData"
-      />
+        class="btn-save"
+        :title="$t('measurement.save')"
+        size="sm"
+        type="submit"
+        @click="saveMeasurement"
+      >
+        {{ $t('measurement.save') }}
 
-      <div class="actions" :class="{ disabled: loading }">
-        <button
-          class="btn btn-primary"
-          :class="{ 'btn--loading': loading }"
-          type="button"
-          :disabled="loading"
-          @click="saveEmail"
-        >
-          {{ $t('measurement.save') }}
-        </button>
-        <button type="button" @click="clearInputs">{{ $t('cancel') }}</button>
-      </div>
+        <template #icon>
+          <IconAccept />
+        </template>
+      </AppButton>
 
-      <!-- Error Display -->
-      <div v-if="controller.errorMessage.value" class="error">
-        {{ controller.errorMessage.value }}
-      </div>
+      <AppButton
+        class="btn-cancel"
+        theme="secondary"
+        :title="$t('cancel')"
+        type="button"
+        @click="cancelMeasurement"
+      >
+        {{ $t('cancel') }}
+      </AppButton>
+    </div>
+
+    <div v-if="controller.errorMessage.value" class="error">
+      {{ controller.errorMessage.value }}
     </div>
   </div>
 </template>
 
-<style scoped lang="scss">
-  .email-crud-example {
-    padding: 0;
-    padding-block: 20px;
+<style scoped>
+  .Measurement-crud-page {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
   }
 
   .actions {
-    padding: 0 0 10px 20px;
     display: flex;
     gap: 0.75rem;
   }
 
-  .actions {
-    &.disabled {
-      cursor: not-allowed;
-      pointer-events: none;
-      opacity: 0.7;
-    }
+  .btn-save {
+    flex: 1;
+    width: 100%;
+  }
+
+  .btn-cancel {
+    flex: 0 0 auto;
+  }
+
+  .actions.disabled {
+    cursor: not-allowed;
+    pointer-events: none;
+    opacity: 0.7;
   }
 
   .error {

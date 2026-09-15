@@ -2336,8 +2336,10 @@
     "empty_title": "No Sub Stages Found",
     "empty_description": "There are no sub stages to display.",
     "title": "Sub Stages",
-    "form_title": "Edit Sub Stage",
-    "form_description": "Manage and update sub stage information"
+    "form_title": "Add Sub Stage",
+    "form_description": "Manage and update sub stage information",
+    "add_title": "Add Sub Stage",
+    "edit_title": "Edit Sub Stage"
   },
   "search_sub_stages": "Search sub stages...",
   "Are you sure you want to remove this sub stage?": "Are you sure you want to remove this sub stage?",
@@ -2347,5 +2349,9 @@
   "Sub Stages": "Sub Stages",
   "Add Sub Stage": "Add Sub Stage",
   "Edit Sub Stage": "Edit Sub Stage",
-  "stage.execution_title": "Stage Execution"
+  "stage.execution_title": "Stage Execution",
+  "measurement": {
+    "add": "Add Measurement Unit"
+  },
+  "Are you sure you want to remove this measurement unit?": "Are you sure you want to remove this measurement unit?"
 }
