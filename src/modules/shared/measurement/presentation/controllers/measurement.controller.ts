@@ -38,18 +38,33 @@ export default class MeasurementController extends BaseController<
     if (!MeasurementController.instance) {
       MeasurementController.instance = new MeasurementController();
     }
+
     return MeasurementController.instance;
   }
-
 
   async create(params: Params, options?: ApiCallOptions) {
     const result = await super.create(params, {
       ...options,
       useJson: true,
     });
+
     if (result instanceof DataSuccess) {
       router.push('/organization/measurement');
     }
+
+    return result;
+  }
+
+  async update(params: Params, options?: ApiCallOptions) {
+    const result = await super.update(params, {
+      ...options,
+      useJson: true,
+    });
+
+    if (result instanceof DataSuccess) {
+      router.push('/organization/measurement');
+    }
+
     return result;
   }
 

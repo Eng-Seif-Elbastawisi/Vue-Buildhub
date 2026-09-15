@@ -35,8 +35,12 @@
 
 <template>
   <div class="Stage-crud-page">
-    <StageForm :parent-id="parentId" :loading="loading" @update-data="updateData" />
-
+    <StageForm
+      :parent-id="parentId"
+      :loading="loading"
+      :is-edit="false"
+      @update-data="updateData"
+    />
     <button
       class="btn btn-primary"
       :class="{ 'btn--loading': loading }"
