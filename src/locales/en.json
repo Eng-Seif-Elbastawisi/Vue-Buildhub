@@ -2301,6 +2301,9 @@
   "code_placeholder": "Enter item type code",
   "LABOR": "Labor",
   "MATERIALS": "Materials",
+  "play": "Play",
+  "pause": "Pause",
+
   "PRODUCTS": "Products",
   "ItemTypes.list_title": "Item Types",
   "ItemTypes.list_description": "Manage and organize item types.",

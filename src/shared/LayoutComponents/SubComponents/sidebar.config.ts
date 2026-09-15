@@ -618,7 +618,11 @@ export const sidebarSections: SidebarSectionConfig[] = [
         roles: ['organization'],
         countKey: 'specializations_count',
       },
-
+      {
+        path: '/products',
+        labelKey: 'sidebar.products',
+        icon: SidebarItemIcon,
+      },
       {
         path: '/suppliers',
         labelKey: 'sidebar.suppliers',

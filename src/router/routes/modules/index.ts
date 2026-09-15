@@ -15,6 +15,7 @@ import { InvoicePaymentRoutes } from './invoice_payment';
 import { TaskAssignmentRoutes } from './task_assignment';
 import { OrganizationPackageRoutes } from './organization_package';
 import { ItemTypesRoutes } from './item.types';
+import { ProductsRoutes } from './products';
 
 export const dashboardRoutes: RouteRecordRaw[] = [
   // ...countryRoutes,
@@ -33,4 +34,5 @@ export const dashboardRoutes: RouteRecordRaw[] = [
   ...InvoicePaymentRoutes,
   ...OrganizationPackageRoutes,
   ...ItemTypesRoutes,
+  ...ProductsRoutes,
 ];
