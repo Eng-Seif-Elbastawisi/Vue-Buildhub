@@ -15,6 +15,7 @@
     Stage?: StageShowModel;
     parentId: number;
     loading?: boolean;
+    isEdit?: boolean;
   }>();
 
   const translations = ref<Record<string, string>>({});
@@ -56,7 +57,9 @@
 <template>
   <div class="Stage-form-card">
     <header>
-      <h3>{{ $t('sub_stage.form_title') }}</h3>
+      <h3>
+        {{ isEdit ? $t('sub_stage.edit_title') : $t('sub_stage.add_title') }}
+      </h3>
       <p>{{ $t('sub_stage.form_description') }}</p>
     </header>
 

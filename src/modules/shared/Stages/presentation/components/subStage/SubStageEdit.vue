@@ -63,6 +63,7 @@
       :Stage="controller.itemData.value!"
       :parent-id="parentId"
       :loading="loading"
+      :is-edit="true"
       @update-data="updateData"
     />
 

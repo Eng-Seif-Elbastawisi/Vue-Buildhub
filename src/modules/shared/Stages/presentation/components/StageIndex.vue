@@ -41,11 +41,12 @@
 
   const fetchStages = async (page: number = 1, searchWord: string = '') => {
     await controller.fetchList(
-      new IndexStageParams(
-        searchWord,
-        route.query.page ? Number(route.query.page) : page,
-        perPage.value,
-      ),
+      new IndexStageParams({
+        word: searchWord,
+        page: route.query.page ? Number(route.query.page) : page,
+        perPage: perPage.value,
+        parentId: null,
+      }),
     );
   };
 
