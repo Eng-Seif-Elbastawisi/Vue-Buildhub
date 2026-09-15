@@ -1,5 +1,6 @@
 <script setup lang="ts">
   import { ref, watch } from 'vue';
+  import ToggleSwitch from 'primevue/toggleswitch';
   import MultiLangInput from '@/shared/MultiLangInput.vue';
 
   import AddMeasurementParams from '../../core/params/add.measurement.params';
@@ -20,6 +21,7 @@
   const symbol = ref<Record<string, string>>({});
   const code = ref('');
   const precision = ref(0);
+  const status = ref(true);
 
   const updateData = () => {
     const data = {
@@ -29,6 +31,7 @@
       },
       code: code.value,
       precision: precision.value,
+      status: status.value,
     };
 
     if (props.measurement?.id) {
@@ -70,6 +73,13 @@
       };
 
       precision.value = newMeasurement?.precision ?? 0;
+
+      status.value =
+        newMeasurement?.status !== undefined
+          ? (typeof newMeasurement.status === 'number'
+            ? newMeasurement.status === 1
+            : Boolean(newMeasurement.status))
+          : true;
 
       updateData();
     },
@@ -133,6 +143,24 @@
         :disabled="loading || isEdit"
         @input="updateData"
       />
+    </div>
+
+    <div class="field-group status-group" :class="{ disabled: loading }">
+      <label for="measurement-status">
+        {{ $t('status') }}
+      </label>
+
+      <div class="status-toggle-wrapper">
+        <ToggleSwitch
+          inputId="measurement-status"
+          v-model="status"
+          :disabled="loading"
+          @update:model-value="updateData"
+        />
+        <span class="status-text" :class="{ active: status }">
+          {{ status ? $t('active') : $t('inactive') }}
+        </span>
+      </div>
     </div>
   </div>
 </template>
@@ -230,6 +258,31 @@
 
     .field-group label {
       margin-bottom: 0.4rem;
+    }
+  }
+
+  .status-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .status-toggle-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    height: 46px;
+  }
+
+  .status-text {
+    font-family: 'Medium', sans-serif;
+    font-size: var(--sm-size);
+    color: var(--text-muted, #999);
+    transition: color 0.2s ease;
+
+    &.active {
+      color: var(--primary-color, #b28f57);
+      font-weight: 500;
     }
   }
 </style>

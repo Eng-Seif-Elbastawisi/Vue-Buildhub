@@ -15,7 +15,7 @@ export default class StageModel {
   public readonly branches: BranchesModel[];
   public readonly EducationType: TitleInterface<EducationType>;
   public readonly children: StageModel[];
-   public readonly status : boolean;
+  public readonly status: boolean;
 
   constructor(data: {
     id?: number;

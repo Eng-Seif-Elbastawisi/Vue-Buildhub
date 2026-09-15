@@ -194,6 +194,7 @@
   "add": "إضافة",
   "unactive": "غير نشط",
   "active": "نشط",
+  "inactive": "غير نشط",
   "add_education_type": "إضافة نوع تعليم",
   "enter_the_name_of_the_education_type_you_want_to_add": "أدخل اسم نوع التعليم الذي تريد إضافته",
   "education_type": "نوع التعليم",

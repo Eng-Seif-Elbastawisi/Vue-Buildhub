@@ -340,6 +340,7 @@
   "add": "Add",
   "unactive": "Unactive",
   "active": "Active",
+  "inactive": "Inactive",
   "add_education_type": "Add Education Type",
   "enter_the_name_of_the_education_type_you_want_to_add": "Enter The Name Of The Education Type You Want To Add",
   "education_type": "Education Type",

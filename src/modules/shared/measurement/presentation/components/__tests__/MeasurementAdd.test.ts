@@ -1,11 +1,11 @@
 import { mount } from '@vue/test-utils';
-import { describe, expect, it, vi } from 'vitest';
-import MeasurementModel from '../../../core/models/measurement.model';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import AddMeasurementParams from '../../../core/params/add.measurement.params';
 import MeasurementAdd from '../MeasurementAdd.vue';
 
+const mockPush = vi.fn();
 const mockController = vi.hoisted(() => ({
-  create: vi.fn(),
-  update: vi.fn(),
+  create: vi.fn().mockResolvedValue(true),
   errorMessage: { value: null as string | null },
 }));
 
@@ -14,24 +14,57 @@ vi.mock('../../controllers/measurement.controller', () => ({
 }));
 
 vi.mock('vue-router', () => ({
-  useRoute: () => ({ fullPath: '/measurement/add' }),
+  useRoute: () => ({ path: '/organization/measurement/add', fullPath: '/organization/measurement/add' }),
+  useRouter: () => ({ push: mockPush }),
 }));
 
-describe('MeasurementAdd smoke suite', () => {
-  it('is covered by the current module tests', () => {
-    expect(MeasurementAdd).toBeDefined();
+describe('MeasurementAdd', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
   });
 
-  it('shows cancel during edit and emits cancel while resetting the child form', async () => {
+  it('renders and saves measurement params including status', async () => {
     const wrapper = mount(MeasurementAdd, {
-      props: { stage: MeasurementModel.example },
       global: {
         mocks: { $t: (key: string) => key },
         stubs: {
           MeasurementForm: {
-            props: ['resetKey'],
-            template: '<div class="measurement-form-stub" :data-reset-key="resetKey"></div>',
+            emits: ['updateData'],
+            template: '<div class="measurement-form-stub"></div>',
           },
+          AppButton: {
+            props: ['loading', 'disabled'],
+            emits: ['click'],
+            template: '<button class="app-button-stub" @click="$emit(\'click\')"><slot /></button>',
+          },
+          IconAccept: true,
+        },
+      },
+    });
+
+    const addParams = new AddMeasurementParams({
+      translations: { title: { en: 'Kg', ar: 'كجم' } },
+      code: 'KG',
+      precision: 2,
+      status: true,
+    });
+
+    // Emit updateData from child form
+    wrapper.findComponent({ name: 'MeasurementForm' }).vm.$emit('updateData', addParams);
+
+    // Click Save
+    const saveBtn = wrapper.findAll('.app-button-stub')[0];
+    await saveBtn.trigger('click');
+
+    expect(mockController.create).toHaveBeenCalledWith(addParams, undefined, '/organization/measurement/add');
+  });
+
+  it('navigates to measurement list on cancel', async () => {
+    const wrapper = mount(MeasurementAdd, {
+      global: {
+        mocks: { $t: (key: string) => key },
+        stubs: {
+          MeasurementForm: true,
           AppButton: {
             emits: ['click'],
             template: '<button class="app-button-stub" @click="$emit(\'click\')"><slot /></button>',
@@ -41,11 +74,9 @@ describe('MeasurementAdd smoke suite', () => {
       },
     });
 
-    expect(wrapper.find('.measurement-form-stub').attributes('data-reset-key')).toBe('0');
+    const cancelBtn = wrapper.findAll('.app-button-stub')[1];
+    await cancelBtn.trigger('click');
 
-    await wrapper.findAll('.app-button-stub').at(1)?.trigger('click');
-
-    expect(wrapper.emitted('cancel')).toBeTruthy();
-    expect(wrapper.find('.measurement-form-stub').attributes('data-reset-key')).toBe('1');
+    expect(mockPush).toHaveBeenCalledWith('/organization/measurement');
   });
 });
