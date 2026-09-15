@@ -1,3 +1,4 @@
+
 import type Params from '@/base/Core/Params/params';
 
 import { ClassValidation } from '@/base/Presentation/Utils/classValidation';
@@ -11,21 +12,35 @@ import type TranslationParams from '@/base/Core/Params/translationParams';
 export default class AddStageParams implements Params {
   public translations?: TranslationParams;
 
+  public parentId?: number;
+
   public static readonly validation = new ClassValidation().setRules({
     translations: {
       required: true,
-      custom: (value) => hasTitleTranslation(value) || translate('validation.title_required'),
+      custom: (value) =>
+        hasTitleTranslation(value) ||
+        translate('validation.title_required'),
     },
   });
 
-  constructor(data: { translations?: TranslationParams }) {
+  constructor(data: {
+    translations?: TranslationParams;
+    parentId?: number;
+  }) {
     this.translations = data.translations;
+    this.parentId = data.parentId;
   }
 
   toMap(): Record<string, unknown> {
-    return {
+    const map: Record<string, unknown> = {
       translations: this.translations?.toMap(),
     };
+
+    if (this.parentId !== undefined) {
+      map.parent_id = this.parentId;
+    }
+
+    return map;
   }
 
   validate() {
@@ -36,3 +51,4 @@ export default class AddStageParams implements Params {
     return AddStageParams.validation.validateOrThrow(this);
   }
 }
+

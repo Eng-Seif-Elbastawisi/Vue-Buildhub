@@ -50,6 +50,19 @@ export default class StageController extends BaseController<StageModel, StageMod
     return StageController.instance;
   }
 
+  /**
+   * Get redirect path after create/update
+   */
+  private getStagesPath(parentId?: number): string {
+    const prefix = this.userStore.user?.type === 1 ? '/mainportal' : '/organization';
+
+    if (parentId !== undefined) {
+      return `${prefix}/stages/${parentId}/sub-stages`;
+    }
+
+    return `${prefix}/stages`;
+  }
+
   async create(params: Params, options?: ApiCallOptions, formKey?: string) {
     const result = await super.create(params, {
       ...options,
@@ -57,7 +70,9 @@ export default class StageController extends BaseController<StageModel, StageMod
     });
 
     if (result instanceof DataSuccess) {
-      router.push(this.userStore.user?.type === 1 ? '/mainportal/stages' : '/organization/stages');
+      const parentId = (params as Params & { parentId?: number }).parentId;
+
+      router.push(this.getStagesPath(parentId));
 
       if (formKey) {
         useFormsStore().clearFormData(formKey);
@@ -74,7 +89,9 @@ export default class StageController extends BaseController<StageModel, StageMod
     });
 
     if (result instanceof DataSuccess) {
-      router.push(this.userStore.user?.type === 1 ? '/mainportal/stages' : '/organization/stages');
+      const parentId = (params as Params & { parentId?: number }).parentId;
+
+      router.push(this.getStagesPath(parentId));
 
       if (formKey) {
         useFormsStore().clearFormData(formKey);

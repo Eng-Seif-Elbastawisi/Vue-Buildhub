@@ -98,6 +98,7 @@
 
   const formRoute = computed(() => `${routePrefix.value}/stages/add`);
 
+  const subStagesRoute = (stageId: number) => `${routePrefix.value}/stages/${stageId}/sub-stages`;
   const showStage = async (id: number) => {
     await controller.fetchOne(
       new ShowStageParams({
@@ -178,10 +179,37 @@
 
             <template #actions="{ item }">
               <div class="row-actions">
-                <button class="action-btn edit" :title="$t('Edit')" @click="showStage(item.id!)">
-                  <EditIcon />
-                </button>
+                <!-- Sub Stages -->
+                <router-link
+                  class="action-btn"
+                  :to="subStagesRoute(item.id)"
+                  :title="$t('sub_stage.list_title')"
+                >
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M8 6h13" />
+                    <path d="M8 12h13" />
+                    <path d="M8 18h13" />
+                    <path d="M3 6h.01" />
+                    <path d="M3 12h.01" />
+                    <path d="M3 18h.01" />
+                  </svg>
+                </router-link>
 
+                <!-- Edit -->
+                <router-link class="action-btn edit" :to="`${routePrefix}/stages/edit/${item.id}`">
+                  <EditIcon />
+                </router-link>
+
+                <!-- Delete -->
                 <DeleteDialog
                   :title="$t('Are you sure you want to remove this stage?')"
                   :message="$t('This action cannot be undone.')"
@@ -257,18 +285,18 @@
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
+    width: 100%;
   }
 
   .page-header {
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
     gap: 1rem;
+    width: 100%;
   }
 
   .page-info {
-    flex-shrink: 0;
+    width: 100%;
   }
 
   .page-info h4 {
@@ -283,23 +311,35 @@
   .toolbar {
     display: flex;
     align-items: center;
+    width: 100%;
     gap: 1rem;
-    margin-left: auto;
+    box-sizing: border-box;
   }
 
   .search-field {
     display: flex;
     align-items: center;
+    width: 50%;
+    flex: 0 0 40%;
+    min-width: 0;
   }
 
   .search-icon {
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
+    margin-inline-end: 0.5rem;
   }
 
   .search-input {
     width: 100%;
+    min-width: 0;
+  }
+  .toolbar .btn-primary {
+    margin-inline-start: auto;
+    flex-shrink: 0;
+    white-space: nowrap;
   }
 
   .row-actions {
@@ -319,8 +359,8 @@
   }
 
   .empty-state p {
-    color: var(--gray-5);
     margin: 0;
+    color: var(--gray-5);
   }
 
   .table-loading {
@@ -330,18 +370,12 @@
   }
 
   @media (max-width: 768px) {
-    .page-header {
-      flex-direction: column;
-      align-items: stretch;
-    }
-
     .toolbar {
-      width: 100%;
-      margin-left: 0;
+      gap: 0.75rem;
     }
 
-    .search-field {
-      flex: 1;
+    .toolbar .btn-primary {
+      margin-inline-start: auto;
     }
   }
 </style>
