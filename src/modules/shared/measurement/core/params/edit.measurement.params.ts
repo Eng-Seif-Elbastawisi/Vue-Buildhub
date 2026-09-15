@@ -8,9 +8,8 @@ import { translate } from '@/locales/i18n';
  */
 export default class EditMeasurementParams implements Params {
   public id: number;
-  public translations?: { title: Record<string, string> };
+  public translations?: { title: Record<string, string> , symbol: {title: Record<string, string>}} ;
   public code?: string;
-  public symbol?: { title: Record<string, string> };
   public precision?: number;
 
   public static readonly validation = new ClassValidation().setRules({
@@ -25,15 +24,13 @@ export default class EditMeasurementParams implements Params {
 
   constructor(data: {
     id: number;
-    translations?: { title: Record<string, string> };
+    translations?: { title: Record<string, string> , symbol: {title: Record<string, string>}} ;
     code?: string;
-    symbol?: { title: Record<string, string> };
     precision?: number;
   }) {
     this.id = data.id;
     this.translations = data.translations;
     this.code = data.code;
-    this.symbol = data.symbol;
     this.precision = data.precision;
   }
 
@@ -42,7 +39,6 @@ export default class EditMeasurementParams implements Params {
       measurement_unit_id: this.id,
       translations: this.translations,
       code: this.code,
-      symbol: this.symbol,
       precision: this.precision,
     };
   }

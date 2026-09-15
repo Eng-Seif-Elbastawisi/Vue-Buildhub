@@ -2240,5 +2240,37 @@
   "Add ItemTypes": "إضافة نوع عنصر",
   "Edit ItemTypes": "تعديل نوع البند",
   "sidebar.item_types": "أنواع البنود",
-  "ItemTypes.update": "تحديث نوع البند"
+  "ItemTypes.update": "تحديث نوع البند",
+  "stage": {
+    "list_title": "المراحل",
+    "list_description": "إدارة المراحل",
+    "add": "إضافة مرحلة",
+    "empty_title": "لا توجد مراحل",
+    "empty_description": "لا توجد مراحل لعرضها.",
+    "form_description": "إدارة وتحديث بيانات المرحلة",
+    "form_title": "بيانات المرحلة",
+    "update": "تحديث المرحلة"
+  },
+  "sub_stage": {
+    "list_title": "المراحل الفرعية",
+    "list_description": "إدارة المراحل الفرعية",
+    "add": "إضافة مرحلة فرعية",
+    "empty_title": "لا توجد مراحل فرعية",
+    "empty_description": "لا توجد مراحل فرعية لعرضها.",
+    "title": "المراحل الفرعية",
+    "form_title": "تعديل المرحلة الفرعية",
+    "form_description": "إدارة وتحديث بيانات المرحلة الفرعية"
+  },
+  "title": "العنوان",
+  "search_stages": "البحث في المراحل...",
+  "search_sub_stages": "البحث في المراحل الفرعية...",
+  "Are you sure you want to remove this stage?": "هل أنت متأكد من حذف هذه المرحلة؟",
+  "Are you sure you want to remove this sub stage?": "هل أنت متأكد من حذف هذه المرحلة الفرعية؟",
+  "Stages": "المراحل",
+  "Add Stage": "إضافة مرحلة",
+  "Edit Stage": "تعديل المرحلة",
+  "Sub Stages": "المراحل الفرعية",
+  "Add Sub Stage": "إضافة مرحلة فرعية",
+  "Edit Sub Stage": "تعديل المرحلة الفرعية",
+  "stage.execution_title": "تنفيذ المرحلة"
 }

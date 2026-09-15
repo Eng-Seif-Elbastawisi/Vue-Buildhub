@@ -14,6 +14,8 @@
   import DeleteDialog from '@/base/Presentation/Dialogs/MainDialogs/DeleteDialog.vue';
   import { debounce } from '@/base/Presentation/Utils/debouced';
   import IndexAddIcon from '@/shared/icons/IndexAddIcon.vue';
+import ChangeStatusButton from '@/modules/MainOrganization/ChangeStatus/presentation/components/ChangeStatusButton.vue';
+import { StatusTypeEnum } from '@/modules/MainOrganization/ChangeStatus/core/constant/change_status.type.enum';
 
   const controller = ItemTypesController.getInstance();
   const state = computed(() => controller.listState.value);
@@ -130,6 +132,12 @@
         >
           <template #actions="{ item }">
             <div class="row-actions">
+
+
+               <ChangeStatusButton :id="item.id!" :initialIsActive="item.status === 1 ? true : false"
+                  :type="StatusTypeEnum.ITEM_TYPE" @reload="fetchItemTypess" />
+
+
               <router-link
                 class="action-btn edit"
                 :to="

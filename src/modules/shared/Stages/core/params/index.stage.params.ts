@@ -5,14 +5,19 @@ type IndexStageParamsData = {
   page?: number;
   perPage?: number;
   withPage?: number;
-  departmentId?: number;
+  parentId?: number;
 };
 
 export default class IndexStageParams extends IndexParams {
-  public departmentId?: number;
+  public parentId?: number;
 
   constructor(data?: IndexStageParamsData);
-  constructor(word?: string, pageNumber?: number, perPage?: number, withPage?: number);
+  constructor(
+    word?: string,
+    pageNumber?: number,
+    perPage?: number,
+    withPage?: number,
+  );
   constructor(
     dataOrWord: IndexStageParamsData | string = '',
     pageNumber: number = 1,
@@ -26,17 +31,25 @@ export default class IndexStageParams extends IndexParams {
         dataOrWord.perPage ?? 10,
         dataOrWord.withPage ?? 1,
       );
-      this.departmentId = dataOrWord.departmentId;
+
+      this.parentId = dataOrWord.parentId;
+
       return;
     }
 
-    super(dataOrWord, pageNumber, perPage, withPage);
+    super(
+      dataOrWord,
+      pageNumber,
+      perPage,
+      withPage,
+    );
   }
 
   toMap(): Record<string, string | number | number[] | null> {
     const data = super.toMap();
-    if (this.departmentId !== undefined) {
-      data.department_id = this.departmentId;
+
+    if (this.parentId !== undefined) {
+      data.parent_id = this.parentId;
     }
 
     return data;

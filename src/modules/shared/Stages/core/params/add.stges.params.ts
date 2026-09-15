@@ -1,33 +1,45 @@
+
 import type Params from '@/base/Core/Params/params';
-import type TranslationParams from '@/base/Core/Params/translationParams';
+
 import { ClassValidation } from '@/base/Presentation/Utils/classValidation';
+
 import { hasTitleTranslation } from '@/base/Presentation/Utils/input_title';
+
 import { translate } from '@/locales/i18n';
 
+import type TranslationParams from '@/base/Core/Params/translationParams';
+
 export default class AddStageParams implements Params {
-  public translations?: { title: Record<string, string> };
+  public translations?: TranslationParams;
+
   public parentId?: number;
 
   public static readonly validation = new ClassValidation().setRules({
     translations: {
       required: true,
-      custom: (value?: TranslationParams) =>
-        hasTitleTranslation(value) || translate('validation.title_required'),
+      custom: (value) =>
+        hasTitleTranslation(value) ||
+        translate('validation.title_required'),
     },
   });
 
-  constructor(data: { translations?: { title: Record<string, string> }; parentId?: number }) {
+  constructor(data: {
+    translations?: TranslationParams;
+    parentId?: number;
+  }) {
     this.translations = data.translations;
     this.parentId = data.parentId;
   }
 
-  toMap(): { [p: string]: any } {
-    const map: { [key: string]: any } = {
-      translations: this.translations,
+  toMap(): Record<string, unknown> {
+    const map: Record<string, unknown> = {
+      translations: this.translations?.toMap(),
     };
-    if (this.parentId) {
+
+    if (this.parentId !== undefined) {
       map.parent_id = this.parentId;
     }
+
     return map;
   }
 
@@ -39,3 +51,4 @@ export default class AddStageParams implements Params {
     return AddStageParams.validation.validateOrThrow(this);
   }
 }
+
