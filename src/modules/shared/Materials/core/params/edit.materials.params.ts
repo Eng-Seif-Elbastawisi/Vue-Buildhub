@@ -9,7 +9,9 @@ export default class EditMaterialParams implements Params {
   public brandId?: number;
   public measurementId?: number;
   public translations?: { title: Record<string, string> };
-
+  public itemTypeId?: number;
+  public stageId?: number;
+  public subStageId?: number;
   public static readonly validation = new ClassValidation().setRules({
     material_id: { required: true },
     price: { required: true },
@@ -27,12 +29,18 @@ export default class EditMaterialParams implements Params {
     brandId?: number;
     measurementId?: number;
     translations?: { title: Record<string, string> };
+    itemTypeId?: number;
+    stageId?: number;
+    subStageId?: number;
   }) {
     this.material_id = data.material_id;
     this.price = data.price;
     this.brandId = data.brandId;
     this.measurementId = data.measurementId;
     this.translations = data.translations;
+    this.itemTypeId = data.itemTypeId;
+    this.stageId = data.stageId;
+    this.subStageId = data.subStageId;
   }
 
   toMap(): { [p: string]: any } {
@@ -42,6 +50,9 @@ export default class EditMaterialParams implements Params {
       brand_id: this.brandId,
       measurement_unit_id: this.measurementId,
       translations: this.translations,
+      item_type_id: this.itemTypeId,
+      stage_id: this.stageId,
+      sub_stage_id: this.subStageId,
     };
 
     return map;

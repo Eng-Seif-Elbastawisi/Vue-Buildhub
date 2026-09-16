@@ -2450,9 +2450,16 @@
   "measurement": "Measurement Unit",
   "measurement.unit_placeholder": "Select Measurement Unit",
   "image": "Image",
-  "description": "Description"
+  "description": "Description",
+  "sub_stages": "Sub Stages",
+  "total_materials": "Total Materials",
 
 
+  "stage_placeholder": "Select Stage",
+  "measurement_placeholder": "Select Measurement Unit",
+  "item_type_placeholder": "Select Item Type",
+  "sub_stage_placeholder": "Select Sub Stage",
+  "item_type": "Item Type",
   "back_to_parent_stage": "Back to Parent Stage",
   "Are you sure you want to remove this measurement unit?": "Are you sure you want to remove this measurement unit?"
 }

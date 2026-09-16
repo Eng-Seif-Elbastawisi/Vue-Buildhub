@@ -10,6 +10,9 @@ export default class MaterialsShowModel {
   public readonly measurementId?: measurementModel;
   public readonly translations: { title: Record<string, string> };
   public readonly unit?: UnitTypeEnum;
+  public readonly itemTypeId?: number;
+  public readonly stageId?: number;
+  public readonly subStageId?: number;
 
   constructor(data: {
     id?: number;
@@ -19,6 +22,9 @@ export default class MaterialsShowModel {
      measurementId?: measurementModel;
     unit?: UnitTypeEnum;
     translations: { title: Record<string, string> };
+    itemTypeId?: number;
+    stageId?: number;
+    subStageId?: number;
   }) {
     this.id = data.id;
     this.price = data.price;
@@ -27,6 +33,9 @@ export default class MaterialsShowModel {
      this.measurementId = data.measurementId;
     this.unit = data.unit;
     this.translations = data.translations;
+    this.itemTypeId = data.itemTypeId;
+    this.stageId = data.stageId;
+    this.subStageId = data.subStageId;
     Object.freeze(this);
   }
 
@@ -55,6 +64,9 @@ export default class MaterialsShowModel {
       unit: json.unit as UnitTypeEnum | undefined,
        title: json.title as string | undefined,
       translations: { title: MaterialsModel.mapTranslations(json.title) },
+      itemTypeId: json.itemTypeId as number | undefined,
+      stageId: json.stageId as number | undefined,
+      subStageId: json.subStageId as number | undefined,
     });
   }
 

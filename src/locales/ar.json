@@ -2282,8 +2282,8 @@
   "drag_to_reorder": "اسحب لإعادة الترتيب",
   "measurement": {
     "add": "إضافة وحده قياس",
-    "children_count": "عدد المراحل الفرعية",
-    "sub_stages": "المراحل الفرعية"
+    "children_count": "عدد المراحل الفرعية"
+
   },
   "Are you sure you want to remove this measurement unit?": "هل أنت متأكد من حذف وحدة القياس ؟",
   "Products": {
@@ -2382,8 +2382,16 @@
     "delete": "حذف",
     "close": "إغلاق",
     "loading": "جاري التحميل..."
-  }
-}
+  },
+  "total_materials": "إجمالي المواد",
+  "total_price": "إجمالي السعر",
+  "sub_stages": "المراحل الفرعية",
+  "stage_placeholder": "اختر المرحلة",
+  "measurement_placeholder": "اختر وحدة القياس",
+  "item_type_placeholder": "اختر نوع البند",
+  "sub_stage_placeholder":"اختر المرحلة الفرعية",
+  "Stage": "المرحلة",
+  "item_type": "نوع البند",
   "back_to_parent_stage": "الرجوع الي المرحلة الرئيسية",
   "Are you sure you want to remove this measurement unit?": "هل أنت متأكد من حذف وحدة القياس ؟"
 }

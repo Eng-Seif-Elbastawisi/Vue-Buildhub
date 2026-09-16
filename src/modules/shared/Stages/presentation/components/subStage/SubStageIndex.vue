@@ -193,7 +193,7 @@ onMounted(async () => {
           {{ $t('sub_stage.add') }}
         </router-link>
 
-        <button class="btn btn-back-step" type="button" @click="router.push(`${routePrefix}/stages`) ">
+        <button class="btn btn-back-step" type="button" @click="router.push(`${routePrefix}/stages`)">
           {{ $t('back_to_parent_stage') }}
         </button>
       </div>
