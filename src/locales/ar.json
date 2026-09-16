@@ -2285,5 +2285,6 @@
     "children_count": "عدد المراحل الفرعية",
     "sub_stages": "المراحل الفرعية"
   },
+  "back_to_parent_stage": "الرجوع الي المرحلة الرئيسية",
   "Are you sure you want to remove this measurement unit?": "هل أنت متأكد من حذف وحدة القياس ؟"
 }

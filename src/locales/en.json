@@ -2358,7 +2358,9 @@
   "measurement": {
     "add": "Add Measurement Unit",
     "children_count": "Children Count"
-    
+
   },
+
+  "back_to_parent_stage": "Back to Parent Stage",
   "Are you sure you want to remove this measurement unit?": "Are you sure you want to remove this measurement unit?"
 }
