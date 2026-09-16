@@ -7,8 +7,6 @@ import ToggleSwitch from 'primevue/toggleswitch';
 import type StageShowModel from '../../../core/models/stage.model';
 import AddStageParams from '../../../core/params/add.stges.params';
 
-
-const status = ref(true);
 const emit = defineEmits<{
   updateData: [params: AddStageParams];
 }>();
@@ -20,8 +18,26 @@ const props = defineProps<{
   isEdit?: boolean;
 }>();
 
-
+const status = ref(true);
 const translations = ref<Record<string, string>>({});
+
+
+const fillForm = () => {
+  if (props.isEdit && props.stage) {
+    translations.value = {
+      ...(props.stage.translations?.title ?? {}),
+    };
+
+    status.value = Boolean(props.stage.status);
+  } else {
+    
+    translations.value = {};
+    status.value = true;
+  }
+
+  updateData();
+};
+
 
 const updateData = () => {
   emit(
@@ -36,28 +52,25 @@ const updateData = () => {
   );
 };
 
+
 const updateTranslations = (value: Record<string, string>) => {
   translations.value = value;
   updateData();
 };
 
-onMounted(updateData);
 
 watch(
-  () => props.stage,
-  (stage) => {
-    if (!stage) return;
-
-    translations.value = {
-      ...(stage.translations?.title ?? {}),
-    };
-
-    status.value = Boolean(stage.status);
-
-    updateData();
+  () => [props.stage, props.isEdit],
+  () => {
+    fillForm();
   },
   { immediate: true },
 );
+
+
+onMounted(() => {
+  fillForm();
+});
 </script>
 
 <template>
@@ -71,14 +84,12 @@ watch(
 
     <div class="form-fields" :class="{ disabled: loading }">
       <div class="field-group full-row">
-        <MultiLangInput
-field-key="title" :label="$t('title')" :languages="['ar', 'en']" :model-value="translations"
+        <MultiLangInput field-key="title" :label="$t('title')" :languages="['ar', 'en']" :model-value="translations"
           type="title" required @update:model-value="updateTranslations" />
       </div>
 
       <div class="status-toggle-wrapper">
-        <ToggleSwitch
-v-model="status" input-id="sub-stage-status" :disabled="loading"
+        <ToggleSwitch v-model="status" input-id="sub-stage-status" :disabled="loading"
           @update:model-value="updateData" />
         <span class="status-text" :class="{ active: status }">
           {{ status ? $t('active') : $t('inactive') }}

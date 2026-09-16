@@ -48,15 +48,9 @@ export default class MeasurementModel {
     };
 
     this.title =
-      data.title ??
-      this.translations.title.en ??
-      Object.values(this.translations.title)[0] ??
-      '';
+      data.title ?? this.translations.title.en ?? Object.values(this.translations.title)[0] ?? '';
 
-    this.status =
-      typeof data.status === 'number'
-        ? data.status === 1
-        : (data.status ?? false);
+    this.status = typeof data.status === 'number' ? data.status === 1 : (data.status ?? false);
 
     this.symbol =
       data.symbol ??
@@ -71,9 +65,7 @@ export default class MeasurementModel {
     Object.freeze(this);
   }
 
-  static mapTranslations(
-    value: unknown,
-  ): Record<string, string> {
+  static mapTranslations(value: unknown): Record<string, string> {
     if (!value) {
       return {};
     }
@@ -89,49 +81,36 @@ export default class MeasurementModel {
       return value as Record<string, string>;
     }
 
-    return value.reduce<Record<string, string>>(
-      (result, translation) => {
-        const item = translation as Record<string, string>;
+    return value.reduce<Record<string, string>>((result, translation) => {
+      const item = translation as Record<string, string>;
 
-        if (item.locale) {
-          const translationValue =
-            item.title ??
-            item.symbol ??
-            item.value;
+      if (item.locale) {
+        const translationValue = item.title ?? item.symbol ?? item.value;
 
-          if (translationValue) {
-            result[item.locale] = translationValue;
-          }
+        if (translationValue) {
+          result[item.locale] = translationValue;
         }
+      }
 
-        return result;
-      },
-      {},
-    );
+      return result;
+    }, {});
   }
 
   static fromJson(json: any): MeasurementModel {
     if (!json) {
-      throw new Error(
-        'Cannot create MeasurementModel from null or undefined',
-      );
+      throw new Error('Cannot create MeasurementModel from null or undefined');
     }
 
-    const titleTranslations =
-      MeasurementModel.mapTranslations(json.title);
+    const titleTranslations = MeasurementModel.mapTranslations(json.title);
 
-    const symbolTranslations =
-      MeasurementModel.mapTranslations(json.symbol);
+    const symbolTranslations = MeasurementModel.mapTranslations(json.symbol);
 
     return new MeasurementModel({
       id: json.id,
 
       title: json.title,
 
-      status:
-        typeof json.status === 'number'
-          ? json.status === 1
-          : (json.status ?? false),
+      status: Boolean(json.status),
 
       symbol: json.symbol,
 
