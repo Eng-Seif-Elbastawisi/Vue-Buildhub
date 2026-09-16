@@ -14,7 +14,7 @@
 
         <div>
           <h3>
-            {{ $t('description') || 'الوصف' }}
+            {{ $t('description') }}
           </h3>
         </div>
       </div>
@@ -32,7 +32,7 @@
       v-if="translations?.description?.en && translations?.description?.ar"
       class="description-en"
     >
-      <span class="en-badge"> EN </span>
+      <span class="en-badge">{{ $t('Products.languages.english') }}</span>
 
       {{ translations.description.en }}
     </div>

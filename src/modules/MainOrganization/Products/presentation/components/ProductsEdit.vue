@@ -90,7 +90,7 @@ onMounted(async () => {
       :disabled="loading || !params"
       @click="saveProducts"
     >
-      {{ $t('Products.update') }}
+      {{ $t('Products.form.update') }}
     </button>
 
     <!-- Error -->

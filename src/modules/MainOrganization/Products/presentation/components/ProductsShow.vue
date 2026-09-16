@@ -93,7 +93,7 @@
       <div class="empty-icon">📦</div>
 
       <h3>
-        {{ $t('Products.show.no_data') || 'لا توجد بيانات' }}
+        {{ $t('Products.show.no_data') }}
       </h3>
 
       <p v-if="controller.errorMessage.value">

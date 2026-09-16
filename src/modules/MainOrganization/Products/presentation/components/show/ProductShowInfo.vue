@@ -31,21 +31,11 @@ const formatPrice = (
 
         <div>
           <h3>
-            {{
-              $t(
-                'Products.form.product_data',
-              ) ||
-              'بيانات المنتج'
-            }}
+            {{ $t('Products.form.product_data') }}
           </h3>
 
           <p>
-            {{
-              $t(
-                'Products.show.subtitle',
-              ) ||
-              'المعلومات الأساسية'
-            }}
+            {{ $t('Products.show.subtitle') }}
           </p>
         </div>
       </div>
@@ -54,12 +44,7 @@ const formatPrice = (
     <div class="info-grid">
       <div class="info-item full">
         <span class="label">
-          {{
-            $t(
-              'Products.form.product_name',
-            ) ||
-            'اسم المنتج'
-          }}
+            {{ $t('Products.form.product_name') }}
         </span>
 
         <span class="value">
@@ -83,7 +68,7 @@ const formatPrice = (
 
       <div class="info-item">
         <span class="label">
-          {{ $t('item_type') || 'نوع المنتج' }}
+          {{ $t('item_type') }}
         </span>
 
         <span class="value">
@@ -93,7 +78,7 @@ const formatPrice = (
 
       <div class="info-item">
         <span class="label">
-          {{ $t('measurement') || 'وحدة القياس' }}
+          {{ $t('measurement') }}
         </span>
 
         <span class="value">
@@ -103,12 +88,7 @@ const formatPrice = (
 
       <div class="info-item">
         <span class="label">
-          {{
-            $t(
-              'Products.form.expected_price',
-            ) ||
-            'السعر المتوقع'
-          }}
+            {{ $t('Products.form.expected_price') }}
         </span>
 
         <span class="value price">
@@ -118,12 +98,7 @@ const formatPrice = (
 
       <div class="info-item">
         <span class="label">
-          {{
-            $t(
-              'Products.form.active',
-            ) ||
-            'الحالة'
-          }}
+            {{ $t('Products.form.status') }}
         </span>
 
         <span

@@ -2306,6 +2306,59 @@
     "delete_dialog": {
       "title": "حذف المنتج",
       "message": "هل أنت متأكد من رغبتك في حذف هذا المنتج؟"
+    },
+    "form": {
+      "title": "منتج جديد",
+      "subtitle": "إضافة منتج جديد للمكتبة العامة وربطه بالمراحل.",
+      "back": "رجوع للمنتجات",
+      "save": "حفظ المنتج",
+      "update": "تحديث المنتج",
+      "image_and_sorting": "الصورة والفرز",
+      "active": "فعال",
+      "inactive": "غير فعال",
+      "status": "الحالة",
+      "sorting": "فرز",
+      "sorting_number": "02",
+      "sorting_label": "فرز {number}",
+      "sorting_prices": "أسعار الفرز المختلفة",
+      "sorting_hint": "أضف سعر الفرز",
+      "sorting_name": "اسم الفرز",
+      "sorting_price": "سعر الفرز",
+      "sorting_price_placeholder": "0",
+      "add_sorting": "إضافة فرز",
+      "currency": "ج.م",
+      "product_data": "بيانات المنتج",
+      "product_name": "اسم المنتج",
+      "expected_price": "السعر المتوقع",
+      "stages_title": "المراحل المرتبطة",
+      "stages_hint": "اختر المراحل المرتبطة بهذا المنتج",
+      "stages_loading": "جاري تحميل المراحل...",
+      "stages_empty": "لا توجد مراحل متاحة",
+      "selected": "محدد"
+    },
+    "show": {
+      "subtitle": "المعلومات الأساسية",
+      "no_data": "لا توجد بيانات للمنتج",
+      "no_image": "لا توجد صورة",
+      "no_sortings": "لا يوجد فرز",
+      "no_stages": "لا توجد مراحل مرتبطة",
+      "no_sub_stages": "لا توجد مراحل فرعية",
+      "no_available_stages": "لا توجد مراحل متاحة"
+    },
+    "placeholders": {
+      "price": "0",
+      "measurement_unit": "وحدة القياس"
+    },
+    "stages": {
+      "main": "المرحلة الرئيسية",
+      "sub": "المرحلة الفرعية",
+      "one_label": "مرحلة",
+      "many_label": "مراحل",
+      "id": "المعرّف #{id}",
+      "item": "مرحلة"
+    },
+    "languages": {
+      "english": "EN"
     }
   },
   "item_type": "نوع المنتج",
@@ -2316,53 +2369,6 @@
   "description": "الوصف",
   "common": {
     "edit": "تعديل",
-    "delete": "حذف"
-  },
-  "Products": {
-    "badge": "BuildHub OS",
-    "form": {
-      "title": "منتج جديد",
-      "subtitle": "إضافة منتج جديد للمكتبة العامة وربطه بالمراحل.",
-      "back": "رجوع للمنتجات",
-      "save": "حفظ المنتج",
-      "image_and_sorting": "الصورة والفرز",
-      "active": "فعال",
-      "sorting_label": "فرز {number}",
-      "add_sorting": "إضافة فرز",
-      "currency": "ج.م",
-      "product_data": "بيانات المنتج",
-      "product_name": "اسم المنتج",
-      "expected_price": "السعر المتوقع",
-      "stages_title": "تابع لأي مراحل",
-      "stages_hint": "اختر المراحل المرتبطة بهذا المنتج",
-      "stages_loading": "جاري تحميل المراحل...",
-      "stages_empty": "لا توجد مراحل متاحة"
-    }
-  },
-  "image": "الصورة",
-  "item_type": "نوع المنتج",
-  "item_type.placeholder": "اختر نوع المنتج",
-  "measurement": "وحدة القياس",
-  "measurement.unit_placeholder": "اختر وحدة القياس",
-  "description": "الوصف",
-  "Products": {
-    "form": {
-      "sorting": "فرز",
-      "sorting_number": "02",
-      "image_and_sorting": "الفرز",
-      "sorting_prices": "أسعار الفرز المختلفة",
-      "add_sorting": "إضافة فرز",
-      "sorting_hint": "أضف سعر الفرز",
-      "sorting_name": "اسم الفرز",
-      "sorting_price": "سعر الفرز",
-      "sorting_price_placeholder": "0",
-      "currency": "ر.س"
-    },
-    "show": {
-      "no_sortings": "لا يوجد فرز"
-    }
-  },
-  "common": {
     "add": "إضافة",
     "save": "حفظ",
     "cancel": "إلغاء",

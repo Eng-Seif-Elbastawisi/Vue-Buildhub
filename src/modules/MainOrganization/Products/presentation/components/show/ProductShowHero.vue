@@ -63,7 +63,7 @@ const formatPrice = (
         </svg>
 
         <span>
-          {{ $t('Products.show.no_image') || 'لا توجد صورة' }}
+          {{ $t('Products.show.no_image') }}
         </span>
       </div>
     </div>
@@ -84,15 +84,14 @@ const formatPrice = (
 
         <span class="currency">
           {{
-            $t('Products.form.currency') ||
-            'ر.س'
+            $t('Products.form.currency')
           }}
 
           /
 
           {{
             product.measurementUnitTitle ||
-            'متر'
+            $t('Products.placeholders.measurement_unit')
           }}
         </span>
       </div>
@@ -100,7 +99,7 @@ const formatPrice = (
       <div class="chips">
         <div class="chip">
           <span class="chip-label">
-            {{ $t('item_type') || 'نوع المنتج' }}
+            {{ $t('item_type') }}
           </span>
 
           <span class="chip-value">
@@ -110,7 +109,7 @@ const formatPrice = (
 
         <div class="chip">
           <span class="chip-label">
-            {{ $t('measurement') || 'وحدة القياس' }}
+            {{ $t('measurement') }}
           </span>
 
           <span class="chip-value">

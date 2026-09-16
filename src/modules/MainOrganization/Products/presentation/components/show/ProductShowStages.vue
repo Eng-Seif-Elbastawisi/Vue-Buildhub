@@ -655,8 +655,7 @@ onMounted(() => {
             {{
               $t(
                 'Products.form.stages_title',
-              ) ||
-              'المراحل المرتبطة'
+              )
             }}
           </h3>
 
@@ -664,8 +663,7 @@ onMounted(() => {
             {{
               $t(
                 'Products.form.stages_hint',
-              ) ||
-              'المراحل التي يرتبط بها هذا المنتج'
+              )
             }}
           </p>
         </div>
@@ -716,8 +714,7 @@ onMounted(() => {
             {{
               $t(
                 'common.add',
-              ) ||
-              'إضافة'
+              )
             }}
           </span>
         </button>
@@ -774,7 +771,7 @@ onMounted(() => {
             <div class="main-stage-text">
 
               <span class="main-stage-label">
-                Main Stage
+                {{ $t('Products.stages.main') }}
               </span>
 
               <h4>
@@ -790,8 +787,8 @@ onMounted(() => {
 
               {{
                 mainStage.subStages.length === 1
-                  ? 'Stage'
-                  : 'Stages'
+                  ? $t('Products.stages.one_label')
+                  : $t('Products.stages.many_label')
               }}
             </span>
 
@@ -833,7 +830,7 @@ onMounted(() => {
             <div class="sub-content">
 
               <span class="sub-label">
-                Sub Stage
+                {{ $t('Products.stages.sub') }}
               </span>
 
               <strong>
@@ -841,7 +838,7 @@ onMounted(() => {
               </strong>
 
               <span class="sub-id">
-                ID #{{ stage.id }}
+                {{ $t('Products.stages.id', { id: stage.id }) }}
               </span>
 
             </div>
@@ -958,8 +955,7 @@ onMounted(() => {
           {{
             $t(
               'Products.stages.item',
-            ) ||
-            'مرحلة'
+              )
           }}
 
           #{{ id }}
@@ -990,8 +986,7 @@ onMounted(() => {
         {{
           $t(
             'Products.show.no_stages',
-          ) ||
-          'لا توجد مراحل مرتبطة'
+            )
         }}
       </p>
 
@@ -1025,8 +1020,7 @@ onMounted(() => {
                 {{
                   $t(
                     'Products.form.stages_title',
-                  ) ||
-                  'اختيار المراحل'
+                  )
                 }}
               </h3>
 
@@ -1034,8 +1028,7 @@ onMounted(() => {
                 {{
                   $t(
                     'Products.form.stages_hint',
-                  ) ||
-                  'اختر المراحل الفرعية المرتبطة بالمنتج'
+                  )
                 }}
               </p>
 
@@ -1073,8 +1066,7 @@ onMounted(() => {
               {{
                 $t(
                   'Products.form.stages_loading',
-                ) ||
-                'جاري تحميل المراحل...'
+                )
               }}
             </p>
 
@@ -1120,7 +1112,7 @@ onMounted(() => {
                   </strong>
 
                   <small>
-                    Main Stage
+                    {{ $t('Products.stages.main') }}
                   </small>
 
                 </div>
@@ -1209,8 +1201,7 @@ onMounted(() => {
                 {{
                   $t(
                     'Products.show.no_sub_stages',
-                  ) ||
-                  'لا توجد مراحل فرعية'
+                  )
                 }}
               </div>
 
@@ -1235,8 +1226,7 @@ onMounted(() => {
               {{
                 $t(
                   'Products.show.no_available_stages',
-                ) ||
-                'لا توجد مراحل متاحة'
+                  )
               }}
             </p>
 
@@ -1260,8 +1250,7 @@ onMounted(() => {
               {{
                 $t(
                   'Products.form.selected',
-                ) ||
-                'محدد'
+                  )
               }}
             </span>
 
@@ -1282,8 +1271,7 @@ onMounted(() => {
                 {{
                   $t(
                     'common.cancel',
-                  ) ||
-                  'إلغاء'
+                    )
                 }}
               </button>
 
@@ -1314,8 +1302,7 @@ onMounted(() => {
                   {{
                     $t(
                       'common.save',
-                    ) ||
-                    'حفظ'
+                    )
                   }}
                 </span>
 

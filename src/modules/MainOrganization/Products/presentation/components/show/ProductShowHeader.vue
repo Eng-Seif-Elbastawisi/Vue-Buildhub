@@ -79,7 +79,7 @@ const emit = defineEmits<{
           <path d="M12 19l-7-7 7-7" />
         </svg>
 
-        {{ $t('common.back') || 'رجوع للمنتجات' }}
+        {{ $t('common.back') }}
       </button>
 
       <button
@@ -104,7 +104,7 @@ const emit = defineEmits<{
           />
         </svg>
 
-        {{ $t('common.edit') || 'تعديل المنتج' }}
+        {{ $t('common.edit') }}
       </button>
     </div>
   </header>

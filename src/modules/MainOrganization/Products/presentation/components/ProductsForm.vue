@@ -425,7 +425,7 @@
           </span>
         </p>
       </div>
-
+<!-- 
       <div class="actions">
         <button type="button" class="btn-secondary">
           {{ $t('Products.form.back') }}
@@ -436,7 +436,7 @@
 
           {{ $t('Products.form.save') }}
         </button>
-      </div>
+      </div> -->
     </div>
 
     <div class="form-body">
@@ -550,7 +550,7 @@
                 v-model.number="expectedPrice"
                 type="number"
                 class="field-input"
-                placeholder="0"
+                :placeholder="$t('Products.placeholders.price')"
                 min="0"
               />
             </div>
