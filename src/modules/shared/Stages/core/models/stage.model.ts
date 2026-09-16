@@ -16,6 +16,7 @@ export default class StageModel {
   public readonly EducationType: TitleInterface<EducationType>;
   public readonly children: StageModel[];
   public readonly status: boolean;
+  public readonly stageChildrenCount: number;
 
   constructor(data: {
     id?: number;
@@ -26,6 +27,7 @@ export default class StageModel {
     EducationType: TitleInterface<EducationType>;
     children: StageModel[];
     status?: boolean;
+    stageChildrenCount?: number;
   }) {
     this.id = data.id;
     this.translations = data.translations ?? { title: { en: data.title ?? '' } };
@@ -36,6 +38,7 @@ export default class StageModel {
     this.EducationType = data.EducationType;
     this.children = data.children;
     this.status = data.status ?? false;
+    this.stageChildrenCount = data.stageChildrenCount ?? 0;
     Object.freeze(this);
   }
 
@@ -71,6 +74,7 @@ export default class StageModel {
       EducationType: json.education_type,
       children: json.children?.map((child: any) => StageModel.fromJson(child)) ?? [],
       status: json.status,
+      stageChildrenCount: json.stage_children_count,
     });
   }
 

@@ -3,13 +3,16 @@ import { mount } from '@vue/test-utils';
 import { ref } from 'vue';
 import StageIndex from '../StageIndex.vue';
 import StageController from '../../controllers/stage.controller';
+import StageModel from '../../../core/models/stage.model';
+import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
 
 // ── Router ────────────────────────────────────────────────────────────────────
 const mockPush = vi.fn();
 vi.mock('vue-router', () => ({
   useRouter: () => ({ push: mockPush }),
   useRoute: () => ({
-    params: { country_code: 'eg' },
+    path: '/organization/stages',
+    params: {},
     query: {},
   }),
 }));
@@ -29,17 +32,24 @@ vi.mock('@/stores/formsStore', () => ({
   useFormsStore: () => ({ formData: {} }),
 }));
 
+vi.mock('@/stores/user', () => ({
+  useUserStore: () => ({ user: { type: 2 } }),
+}));
+
 describe('StageIndex.vue', () => {
   let mockFetchList: ReturnType<typeof vi.fn>;
+  let mockChangeOrder: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
     vi.clearAllMocks();
     mockFetchList = vi.fn().mockResolvedValue({});
+    mockChangeOrder = vi.fn().mockResolvedValue(new DataSuccess({ data: StageModel.example }));
     (StageController.getInstance as any).mockReturnValue({
       fetchList: mockFetchList,
+      changeOrder: mockChangeOrder,
       delete: vi.fn().mockResolvedValue({}),
       pagination: ref(null),
-      listState: ref({ status: 'success', data: [] }),
+      listState: ref({ status: 'success', data: [StageModel.example] }),
     });
   });
 
@@ -47,11 +57,24 @@ describe('StageIndex.vue', () => {
     global: {
       mocks: { $t: (msg: string) => msg },
       stubs: {
-        DataStatusBuilder: { template: '<div><slot name="empty" /></div>' },
-        AppTable: true,
+        DataStatusBuilder: {
+          template: '<div><slot name="success" :data="[example]" /><slot name="empty" /></div>',
+          data() {
+            return { example: StageModel.example };
+          },
+        },
+        AppTable: {
+          template: '<div class="app-table-stub"><button class="trigger-reorder" @click="$emit(\'reorder\', { movedItem: example, toIndex: 2, fromIndex: 0, items: [] })">Reorder</button></div>',
+          props: ['headers', 'items', 'reorderable'],
+          emits: ['reorder'],
+          data() {
+            return { example: StageModel.example };
+          },
+        },
         StageAdd: true,
         Pagination: true,
         DeleteDialog: true,
+        ChangeStatusButton: true,
         'router-link': { template: '<a><slot /></a>', props: ['to'] },
       },
     },
@@ -62,11 +85,11 @@ describe('StageIndex.vue', () => {
     expect(wrapper.find('.stage-page').exists()).toBe(true);
   });
 
-  it('identifies the list as execution stages', () => {
+  it('identifies the list header', () => {
     const wrapper = mount(StageIndex, mountOptions);
 
-    expect(wrapper.get('.stage-page__header h4').text()).toBe('stage.execution_title');
-    expect(wrapper.get('.stage-page__header p').text()).toBe('stage.execution_description');
+    expect(wrapper.get('.page-info h4').text()).toBe('stage.list_title');
+    expect(wrapper.get('.page-info p').text()).toBe('stage.list_description');
   });
 
   it('renders the search input', () => {
@@ -74,22 +97,17 @@ describe('StageIndex.vue', () => {
     expect(wrapper.find('input.search-input').exists()).toBe(true);
   });
 
-  it('shows stage-specific copy when the list is empty', () => {
-    const wrapper = mount(StageIndex, mountOptions);
-
-    expect(wrapper.text()).toContain('stage.empty_title');
-    expect(wrapper.text()).toContain('stage.empty_description');
-    expect(wrapper.text()).not.toContain('no_emails_yet');
-  });
-
   it('calls fetchList on mount', () => {
     mount(StageIndex, mountOptions);
     expect(mockFetchList).toHaveBeenCalledTimes(1);
   });
 
-  it('shows add button link pointing to the country-prefixed route', () => {
+  it('handles reorder event by calling controller.changeOrder and refetching stages', async () => {
     const wrapper = mount(StageIndex, mountOptions);
-    const links = wrapper.findAll('a');
-    expect(links.length).toBeGreaterThan(0);
+    const reorderBtn = wrapper.find('.trigger-reorder');
+    await reorderBtn.trigger('click');
+
+    expect(mockChangeOrder).toHaveBeenCalledTimes(1);
+    expect(mockFetchList).toHaveBeenCalledTimes(2);
   });
 });

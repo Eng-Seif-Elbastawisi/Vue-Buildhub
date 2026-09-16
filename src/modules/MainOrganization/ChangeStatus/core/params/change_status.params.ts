@@ -1,7 +1,7 @@
 import type Params from '@/base/Core/Params/params';
 import { ClassValidation } from '@/base/Presentation/Utils/classValidation';
 import { requiredSelectRule } from '@/base/Presentation/Utils/input_title';
-import { StatusTypeEnum } from '../constant/change_status.type.enum';
+import { type StatusTypeEnum } from '../constant/change_status.type.enum';
 
 export default class ChangeStatusParams implements Params {
   public typeId?: number;

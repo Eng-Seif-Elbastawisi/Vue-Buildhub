@@ -69,8 +69,8 @@
     <MeasurementForm
       :measurement="controller.itemData.value!"
       :loading="loading"
-      @update-data="updateData"
       :is-edit="true"
+      @update-data="updateData"
     />
 
     <div class="actions" :class="{ disabled: loading }">

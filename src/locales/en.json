@@ -269,6 +269,10 @@
   "add_contact": "Add Contact",
   "save_change": "Save Change",
   "cancel": "Cancel",
+  "cancel_changes": "Cancel Changes",
+  "are_you_sure_you_want_to_leave": "Are you sure you want to leave without saving?",
+  "leave_without_saving": "Leave Without Saving",
+  "keep_editing": "Keep Editing",
   "edit": "Edit",
   "faqs": "FAQs",
   "faqs_description": "Manage Frequently Asked Questions And Provide Helpful Answers To Users",
@@ -2350,9 +2354,11 @@
   "Sub Stages": "Sub Stages",
   "Add Sub Stage": "Add Sub Stage",
   "Edit Sub Stage": "Edit Sub Stage",
-  "stage.execution_title": "Stage Execution",
+  "drag_to_reorder": "Drag to reorder",
   "measurement": {
-    "add": "Add Measurement Unit"
+    "add": "Add Measurement Unit",
+    "children_count": "Children Count"
+    
   },
   "Are you sure you want to remove this measurement unit?": "Are you sure you want to remove this measurement unit?"
 }

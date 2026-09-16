@@ -297,8 +297,8 @@
 
       <div class="field-group">
         <UpdatedCustomInputSelect
-          :key="departmentSelectKey"
           id="item-department"
+          :key="departmentSelectKey"
           v-model="selectedDepartment"
           :controller="departmentController"
           :label="$t('item.department')"

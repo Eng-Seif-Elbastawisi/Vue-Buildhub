@@ -175,22 +175,26 @@ onMounted(async () => {
       <div class="toolbar">
         <div class="search-field">
           <span class="search-icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            <svg
+width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
               stroke-linecap="round">
               <circle cx="11" cy="11" r="8" />
               <path d="m21 21-4.35-4.35" />
             </svg>
           </span>
 
-          <input v-model="word" class="search-input" type="text" :placeholder="$t('search_measurements')"
+          <input
+v-model="word" class="search-input" type="text" :placeholder="$t('search_measurements')"
             @input="search" />
         </div>
       </div>
 
       <div class="d-flex justify-end">
-        <button class="app-btn btn btn-primary btn--md btn--has-icon btn-save"
+        <button
+class="app-btn btn btn-primary btn--md btn--has-icon btn-save"
           @click="router.push(`${routePrefix}/measurement/add`)">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+          <svg
+width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
             stroke-linecap="round">
             <path d="M12 5v14M5 12h14" />
           </svg>
@@ -204,7 +208,8 @@ onMounted(async () => {
     <DataStatusBuilder :controller="state" :on-retry="async () => await fetchMeasurements()">
       <template #success="{ data }">
         <div class="table-frame">
-          <AppTable :headers="headers" :items="data as MeasurementModel[]" :bulk-delete="deleteSelectedMeasurements"
+          <AppTable
+:headers="headers" :items="data as MeasurementModel[]" :bulk-delete="deleteSelectedMeasurements"
             selectable show-index hoverable striped>
             <!-- Title -->
             <template #cell-title="{ item }">
@@ -235,20 +240,24 @@ onMounted(async () => {
               <div class="row-actions">
                 <!-- Edit -->
 
-                <ChangeStatusButton :key="`${item.id}-${item.status}`" :id="item.id!" :initialIsActive="item.status"
+                <ChangeStatusButton
+:id="item.id!" :key="`${item.id}-${item.status}`" :initial-is-active="item.status"
                   :type="StatusTypeEnum.MEASUREMENT_UNIT" @reload="async () => await fetchMeasurements()" />
 
-                <button class="action-btn edit" :title="$t('Edit')"
+                <button
+class="action-btn edit" :title="$t('Edit')"
                   @click="router.push(`${routePrefix}/measurement/edit/${item.id}`)">
                   <EditIcon />
                 </button>
 
                 <!-- Delete -->
-                <DeleteDialog :title="$t('Are you sure you want to remove this measurement unit?')"
+                <DeleteDialog
+:title="$t('Are you sure you want to remove this measurement unit?')"
                   :message="$t('This action cannot be undone.')" :hasbtn="true" @delete="deleteMeasurement(item.id!)">
                   <template #btn>
                     <button class="action-btn delete" :title="$t('Delete')">
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                      <svg
+width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                         stroke-linecap="round" stroke-linejoin="round">
                         <path d="M3 6h18" />
                         <path d="M19 6v14c0 1-1.2 2-2 2H7c-.8 0-2-1-2-2V6" />
@@ -263,14 +272,16 @@ onMounted(async () => {
         </div>
 
         <!-- Pagination -->
-        <Pagination :pagination="controller.pagination.value" @change-page="onPageChange"
+        <Pagination
+:pagination="controller.pagination.value" @change-page="onPageChange"
           @count-per-page="onPerPageChange" />
       </template>
 
       <!-- Empty -->
       <template #empty>
         <div class="empty-state">
-          <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"
+          <svg
+width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"
             stroke-linecap="round">
             <rect x="2" y="4" width="20" height="16" rx="2" />
             <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
@@ -285,7 +296,8 @@ onMounted(async () => {
           </p>
 
           <router-link :to="formRoute" class="btn-add empty-cta">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+            <svg
+width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
               stroke-linecap="round">
               <path d="M12 5v14M5 12h14" />
             </svg>
