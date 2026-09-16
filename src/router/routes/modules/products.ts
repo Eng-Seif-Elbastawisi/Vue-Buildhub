@@ -28,4 +28,15 @@ export const ProductsRoutes: RouteRecordRaw[] = [
       parent: 'Products',
     },
   },
+    {
+    path: 'products/show/:products_id',
+    name: 'Show Products',
+    component: () => import('@/views/MainOrganization/Products/ShowProducts.vue'),
+    props: true,
+    meta: {
+      breadcrumb: 'Show Products',
+      parent: 'Products',
+    },
+  },
+
 ];

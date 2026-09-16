@@ -12,11 +12,13 @@ import type ProductsShowModel from '../../core/models/products.show.model';
 import ProductsRepository from '../../data/repositories/products.repository';
 import { useUserStore } from '@/stores/user';
 import type ShowProductsParams from '../../core/params/show.products.params';
+import type DeleteProductsSortingParams from '../../core/params/delete.products.sorting.params';
+import type DeleteProductsStageParams from '../../core/params/delete.products.stage.params';
+import type StoreProductsSortingParams from '../../core/params/store.products.sorting.params';
+import type StoreProductsStageParams from '../../core/params/store.products.stage.params';
+import { notifyDataMutationSucceeded } from '@/base/Presentation/Controller/dataMutationEvent';
 
-export default class ProductsController extends BaseController<
-  ProductsShowModel,
-  ProductsModel[]
-> {
+export default class ProductsController extends BaseController<ProductsShowModel, ProductsModel[]> {
   private static instance: ProductsController;
 
   private get userStore() {
@@ -41,8 +43,7 @@ export default class ProductsController extends BaseController<
     super();
   }
   static getInstance(): ProductsController {
-    if (!ProductsController.instance)
-      ProductsController.instance = new ProductsController();
+    if (!ProductsController.instance) ProductsController.instance = new ProductsController();
     return ProductsController.instance;
   }
 
@@ -51,9 +52,7 @@ export default class ProductsController extends BaseController<
     if (result instanceof DataSuccess) {
       // await router.push({ name: 'Projects' });
       router.push(
-        this.userStore.user?.type === 1
-          ? '/mainportal/products'
-          : '/organization/products',
+        this.userStore.user?.type === 1 ? '/mainportal/products' : '/organization/products',
       );
 
       if (formKey) useFormsStore().clearFormData(formKey);
@@ -66,9 +65,7 @@ export default class ProductsController extends BaseController<
     if (result instanceof DataSuccess) {
       // await router.push({ name: 'Projects' });
       router.push(
-        this.userStore.user?.type === 1
-          ? '/mainportal/products'
-          : '/organization/products',
+        this.userStore.user?.type === 1 ? '/mainportal/products' : '/organization/products',
       );
 
       if (formKey) useFormsStore().clearFormData(formKey);
@@ -76,10 +73,7 @@ export default class ProductsController extends BaseController<
     return result;
   }
 
-  async fetchList(
-    params: Params,
-    options?: ApiCallOptions,
-  ): Promise<DataState<ProductsModel[]>> {
+  async fetchList(params: Params, options?: ApiCallOptions): Promise<DataState<ProductsModel[]>> {
     return await super.fetchList(params, { ...options, useJson: true });
   }
   async fetchOne(params: Params, options?: ApiCallOptions) {
@@ -90,5 +84,65 @@ export default class ProductsController extends BaseController<
         'Accept-Language': (params as ShowProductsParams).allLocales ? '*' : 'en',
       },
     });
+  }
+
+  async deleteProductSorting(params?: DeleteProductsSortingParams) {
+    const result = await this.repository.deleteProductSorting(params);
+
+    console.log('DELETE RESULT:', result);
+    console.log('IS SUCCESS:', result.data?.status);
+
+    if (result.data?.status === true) {
+      notifyDataMutationSucceeded();
+    } else {
+      this.handleErrorResponse(result);
+    }
+
+    return result;
+  }
+
+  async deleteProductStage(params?: DeleteProductsStageParams) {
+    const result = await this.repository.deleteProductStage(params);
+
+    console.log('DELETE STAGE RESULT:', result);
+    console.log('IS SUCCESS:', result.data?.status);
+
+    if (result.data?.status === true) {
+      notifyDataMutationSucceeded();
+    } else {
+      this.handleErrorResponse(result);
+    }
+
+    return result;
+  }
+
+  async storeProductSorting(params?: StoreProductsSortingParams) {
+    const result = await this.repository.storeProductSorting(params);
+
+    console.log('STORE SORTING RESULT:', result);
+    console.log('IS SUCCESS:', result.data?.status);
+
+    if (result.data?.status === true) {
+      notifyDataMutationSucceeded();
+    } else {
+      this.handleErrorResponse(result);
+    }
+
+    return result;
+  }
+
+  async storeProductStage(params?: StoreProductsStageParams) {
+    const result = await this.repository.storeProductStage(params);
+
+    console.log('STORE STAGE RESULT:', result);
+    console.log('IS SUCCESS:', result.data?.status);
+
+    if (result.data?.status === true) {
+      notifyDataMutationSucceeded();
+    } else {
+      this.handleErrorResponse(result);
+    }
+
+    return result;
   }
 }

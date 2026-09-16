@@ -2303,7 +2303,6 @@
   "MATERIALS": "Materials",
   "play": "Play",
   "pause": "Pause",
-
   "PRODUCTS": "Products",
   "ItemTypes.list_title": "Item Types",
   "ItemTypes.list_description": "Manage and organize item types.",
@@ -2356,5 +2355,73 @@
   "measurement": {
     "add": "Add Measurement Unit"
   },
-  "Are you sure you want to remove this measurement unit?": "Are you sure you want to remove this measurement unit?"
+  "Are you sure you want to remove this measurement unit?": "Are you sure you want to remove this measurement unit?",
+  "Products": {
+    "library_title": "Products Library",
+    "library_subtitle": "Manage products and link them to stages",
+    "badge": "BuildHub OS",
+    "add": "Add Product",
+    "filter_by_stage": "Filter by Stage",
+    "search_placeholder": "Search for a product...",
+    "stats": {
+      "no_sorting": "No Sorting",
+      "multi_link": "Multiple Stage Links",
+      "has_sorting": "Has Sorting",
+      "all_products": "All Products"
+    },
+    "tags": {
+      "sorting": "Sorting",
+      "stage": "{count} Stages",
+      "unit": "Unit"
+    },
+    "stages": {
+      "one": "{count} Stage",
+      "many": "{count} Stages"
+    },
+    "empty_title": "No Products",
+    "empty_description": "No products have been added yet.",
+    "delete_dialog": {
+      "title": "Delete Product",
+      "message": "Are you sure you want to delete this product?"
+    }
+  },
+  "item_type": "Item Type",
+  "item_type.placeholder": "Select Item Type",
+  "measurement": "Measurement Unit",
+  "measurement.unit_placeholder": "Select Measurement Unit",
+  "image": "Image",
+  "description": "Description",
+  "common": {
+    "edit": "Edit",
+    "delete": "Delete"
+  },
+  "Products": {
+    "badge": "BuildHub OS",
+    "form": {
+      "title": "New Product",
+      "subtitle": "Add a new product to the public library and link it to stages.",
+      "back": "Back to Products",
+      "save": "Save Product",
+      "image_and_sorting": "Image & Sorting",
+      "active": "Active",
+      "sorting_label": "Sorting {number}",
+      "add_sorting": "Add Sorting",
+      "currency": "EGP",
+      "product_data": "Product Data",
+      "product_name": "Product Name",
+      "expected_price": "Expected Price",
+      "stages_title": "Related Stages",
+      "stages_hint": "Select the stages related to this product",
+      "stages_loading": "Loading stages...",
+      "stages_empty": "No stages available"
+    }
+  },
+  "image": "Image",
+  "item_type": "Item Type",
+  "item_type.placeholder": "Select Item Type",
+  "measurement": "Measurement Unit",
+  "measurement.unit_placeholder": "Select Measurement Unit",
+  "description": "Description",
+  "sorting_label": "Sorting {number}"
+
 }

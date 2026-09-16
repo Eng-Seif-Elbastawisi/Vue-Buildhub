@@ -11,7 +11,7 @@ export default class DeleteProductsParams implements Params {
     this.productsId = data.productsId;
   }
   toMap(): Record<string, number> {
-    return { products_id: this.productsId };
+    return { product_id: this.productsId };
   }
   validate() {
     return DeleteProductsParams.validation.validate(this);

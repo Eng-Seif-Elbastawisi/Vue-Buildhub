@@ -2278,5 +2278,96 @@
   "measurement": {
     "add": "إضافة وحده قياس"
   },
-  "Are you sure you want to remove this measurement unit?": "هل أنت متأكد من حذف وحدة القياس ؟"
+  "Are you sure you want to remove this measurement unit?": "هل أنت متأكد من حذف وحدة القياس ؟",
+  "Products": {
+    "library_title": "مكتبة المنتجات",
+    "library_subtitle": "إدارة المنتجات وربطها بالمراحل",
+    "badge": "BuildHub OS",
+    "add": "إضافة منتج",
+    "filter_by_stage": "تصفية حسب المرحلة",
+    "search_placeholder": "ابحث عن منتج...",
+    "stats": {
+      "no_sorting": "بدون فرز",
+      "multi_link": "مرتبط بأكثر من مرحلة",
+      "has_sorting": "يحتوي على فرز",
+      "all_products": "كل المنتجات"
+    },
+    "tags": {
+      "sorting": "فرز",
+      "stage": "{count} مرحلة",
+      "unit": "وحدة"
+    },
+    "stages": {
+      "one": "{count} مرحلة",
+      "many": "{count} مراحل"
+    },
+    "empty_title": "لا توجد منتجات",
+    "empty_description": "لم تتم إضافة أي منتجات حتى الآن.",
+    "delete_dialog": {
+      "title": "حذف المنتج",
+      "message": "هل أنت متأكد من رغبتك في حذف هذا المنتج؟"
+    }
+  },
+  "item_type": "نوع المنتج",
+  "item_type.placeholder": "اختر نوع المنتج",
+  "measurement": "وحدة القياس",
+  "measurement.unit_placeholder": "اختر وحدة القياس",
+  "image": "الصورة",
+  "description": "الوصف",
+  "common": {
+    "edit": "تعديل",
+    "delete": "حذف"
+  },
+  "Products": {
+    "badge": "BuildHub OS",
+    "form": {
+      "title": "منتج جديد",
+      "subtitle": "إضافة منتج جديد للمكتبة العامة وربطه بالمراحل.",
+      "back": "رجوع للمنتجات",
+      "save": "حفظ المنتج",
+      "image_and_sorting": "الصورة والفرز",
+      "active": "فعال",
+      "sorting_label": "فرز {number}",
+      "add_sorting": "إضافة فرز",
+      "currency": "ج.م",
+      "product_data": "بيانات المنتج",
+      "product_name": "اسم المنتج",
+      "expected_price": "السعر المتوقع",
+      "stages_title": "تابع لأي مراحل",
+      "stages_hint": "اختر المراحل المرتبطة بهذا المنتج",
+      "stages_loading": "جاري تحميل المراحل...",
+      "stages_empty": "لا توجد مراحل متاحة"
+    }
+  },
+  "image": "الصورة",
+  "item_type": "نوع المنتج",
+  "item_type.placeholder": "اختر نوع المنتج",
+  "measurement": "وحدة القياس",
+  "measurement.unit_placeholder": "اختر وحدة القياس",
+  "description": "الوصف",
+  "Products": {
+    "form": {
+      "sorting": "فرز",
+      "sorting_number": "02",
+      "image_and_sorting": "الفرز",
+      "sorting_prices": "أسعار الفرز المختلفة",
+      "add_sorting": "إضافة فرز",
+      "sorting_hint": "أضف سعر الفرز",
+      "sorting_name": "اسم الفرز",
+      "sorting_price": "سعر الفرز",
+      "sorting_price_placeholder": "0",
+      "currency": "ر.س"
+    },
+    "show": {
+      "no_sortings": "لا يوجد فرز"
+    }
+  },
+  "common": {
+    "add": "إضافة",
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "delete": "حذف",
+    "close": "إغلاق",
+    "loading": "جاري التحميل..."
+  }
 }

@@ -13,7 +13,7 @@ export default class ShowProductsParams implements Params {
     this.allLocales = data.allLocales;
   }
   toMap(): Record<string, number> {
-    return { products_id: this.productsId };
+    return { product_id: this.productsId };
   }
   validate() {
     return ShowProductsParams.validation.validate(this);

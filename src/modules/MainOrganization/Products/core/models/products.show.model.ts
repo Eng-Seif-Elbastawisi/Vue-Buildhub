@@ -1,85 +1,280 @@
 import TranslationParams from '@/base/Core/Params/translationParams';
 
-export default class SpecializationModel {
+interface ApiTranslationItem {
+  locale: string;
+  title?: string;
+  description?: string;
+}
+
+interface ApiRelation {
+  id: number;
+  title?: string | ApiTranslationItem[];
+}
+
+interface ApiStage {
+  id: number;
+  parent_id: number | null;
+  title: ApiTranslationItem[] | string;
+}
+
+interface ApiAttachment {
+  id: number;
+  file: string;
+  type: number;
+}
+
+interface ApiSorting {
+  id: number;
+  title: string;
+  price: string | number;
+}
+
+export interface ProductShowStage {
+  id: number;
+  title: string;
+}
+
+export interface ProductShowSorting {
+  id?: number;
+  title: string;
+  price: number;
+}
+
+export default class ProductsShowModel {
   public readonly id?: number;
-  public readonly title?: string;
+
   public readonly translations?: TranslationParams;
 
-  constructor(data: { id?: number; title?: string; translations?: TranslationParams }) {
+  public readonly itemTypeId?: number;
+  public readonly itemTypeTitle?: string;
+
+  public readonly measurementUnitId?: number;
+  public readonly measurementUnitTitle?: string;
+
+  public readonly expectedPrice?: number;
+  public readonly isActive?: boolean;
+
+  // مهم للـ Edit
+  public readonly stageIds: number[];
+
+  // مهم للـ Show
+  public readonly stages: ProductShowStage[];
+
+  public readonly sortings: ProductShowSorting[];
+
+  public readonly image?: string;
+
+  constructor(data: {
+    id?: number;
+
+    translations?: TranslationParams;
+
+    itemTypeId?: number;
+    itemTypeTitle?: string;
+
+    measurementUnitId?: number;
+    measurementUnitTitle?: string;
+
+    expectedPrice?: number;
+    isActive?: boolean;
+
+    stageIds?: number[];
+
+    stages?: ProductShowStage[];
+
+    sortings?: ProductShowSorting[];
+
+    image?: string;
+  }) {
     this.id = data.id;
-    this.title = data.title;
+
     this.translations = data.translations;
+
+    this.itemTypeId = data.itemTypeId;
+    this.itemTypeTitle = data.itemTypeTitle;
+
+    this.measurementUnitId = data.measurementUnitId;
+    this.measurementUnitTitle = data.measurementUnitTitle;
+
+    this.expectedPrice = data.expectedPrice;
+    this.isActive = data.isActive;
+
+    // للـ Edit
+    this.stageIds = data.stageIds ?? [];
+
+    // للـ Show
+    this.stages = data.stages ?? [];
+
+    this.sortings = data.sortings ?? [];
+
+    this.image = data.image;
 
     Object.freeze(this);
   }
 
-  static mapTranslations(translations: unknown, key: string = 'title'): Record<string, string> {
-    if (!translations) return {};
+  private static mapLocaleArray(
+    arr: ApiTranslationItem[] | undefined,
+    key: 'title' | 'description',
+  ): Record<string, string> {
+    if (!Array.isArray(arr)) return {};
 
-    if (Array.isArray(translations)) {
-      return translations.reduce<Record<string, string>>((result, translation) => {
-        const item = translation as Record<string, string>;
+    return arr.reduce<Record<string, string>>((acc, item) => {
+      const value = item[key];
 
-        const locale = item.locale;
-        const value = item[key];
+      if (item.locale && value) {
+        acc[item.locale] = value;
+      }
 
-        if (locale && value) {
-          result[locale] = value;
-        }
-
-        return result;
-      }, {});
-    }
-
-    const value = translations as {
-      title?: Record<string, string>;
-    };
-
-    return value?.title ?? (translations as Record<string, string>) ?? {};
+      return acc;
+    }, {});
   }
 
-  static getPlainTitle(json: Record<string, unknown>): string | undefined {
-    const title = json.title;
+  private static extractTitle(
+    relation: ApiRelation | ApiTranslationItem[] | string | undefined,
+  ): string | undefined {
+    if (!relation) return undefined;
 
-    if (typeof title === 'string') {
-      return title;
+    if (typeof relation === 'string') {
+      return relation;
     }
 
-    if (Array.isArray(title)) {
-      const enTitle = title.find((item) => item?.locale === 'en')?.title;
-      const arTitle = title.find((item) => item?.locale === 'ar')?.title;
-      const firstTitle = title[0]?.title;
+    if (Array.isArray(relation)) {
+      const ar = relation.find((item) => item.locale === 'ar')?.title;
 
-      return enTitle || arTitle || firstTitle;
+      const en = relation.find((item) => item.locale === 'en')?.title;
+
+      return ar || en || relation[0]?.title;
     }
 
-    return undefined;
+    if (Array.isArray(relation.title)) {
+      const ar = relation.title.find((item) => item.locale === 'ar')?.title;
+
+      const en = relation.title.find((item) => item.locale === 'en')?.title;
+
+      return ar || en || relation.title[0]?.title;
+    }
+
+    return relation.title;
   }
 
-  static fromJson(json: Record<string, unknown>): SpecializationModel {
+  static fromJson(json: any): ProductsShowModel {
     if (!json) {
-      throw new Error('Cannot create SpecializationModel from null or undefined');
+      throw new Error('Cannot create ProductsShowModel from null or undefined');
     }
 
-    return new SpecializationModel({
-      id: json.id as number | undefined,
+    const data = json.data ?? json;
 
-      title: SpecializationModel.getPlainTitle(json),
+    // =====================================================
+    // Translations
+    // =====================================================
+
+    const titleMap = ProductsShowModel.mapLocaleArray(data.title, 'title');
+
+    const descriptionMap = ProductsShowModel.mapLocaleArray(data.description, 'description');
+
+    // =====================================================
+    // Item Type
+    // =====================================================
+
+    const itemTypeId = data.item_type?.id ?? data.itemTypeId;
+
+    const itemTypeTitle = ProductsShowModel.extractTitle(data.item_type?.title);
+
+    // =====================================================
+    // Measurement
+    // =====================================================
+
+    const measurementUnitId = data.measurement_unit?.id ?? data.measurementUnitId;
+
+    const measurementUnitTitle = ProductsShowModel.extractTitle(data.measurement_unit?.title);
+
+    // =====================================================
+    // Expected Price
+    // =====================================================
+
+    const expectedPrice =
+      data.expected_price != null ? Number(data.expected_price) : data.expectedPrice;
+
+    // =====================================================
+    // Stages
+    // =====================================================
+
+    const stages: ProductShowStage[] = Array.isArray(data.stages)
+      ? data.stages.map((stage: ApiStage) => ({
+          id: stage.id,
+
+          title: ProductsShowModel.extractTitle(stage.title) ?? `Stage ${stage.id}`,
+        }))
+      : [];
+
+    // مهم جداً للـ Edit
+    const stageIds: number[] =
+      stages.length > 0
+        ? stages.map((stage) => stage.id)
+        : Array.isArray(data.stageIds)
+          ? data.stageIds
+          : [];
+
+    // =====================================================
+    // Sortings
+    // =====================================================
+
+    const sortings: ProductShowSorting[] = Array.isArray(data.sortings)
+      ? data.sortings.map((sorting: ApiSorting) => ({
+          id: sorting.id,
+
+          title: sorting.title,
+
+          price: Number(sorting.price ?? 0),
+        }))
+      : [];
+
+    // =====================================================
+    // Image
+    // =====================================================
+
+    const firstAttachment = Array.isArray(data.attachments)
+      ? data.attachments.find((attachment: ApiAttachment) => attachment.type === 1)
+      : undefined;
+
+    const image = firstAttachment?.file ?? data.image;
+
+    // =====================================================
+    // Active
+    // =====================================================
+
+    const isActive = data.is_active != null ? Boolean(data.is_active) : (data.isActive ?? true);
+
+    // =====================================================
+    // Return
+    // =====================================================
+
+    return new ProductsShowModel({
+      id: data.id,
 
       translations: new TranslationParams({
-        title: SpecializationModel.mapTranslations(json.translations ?? json.title),
+        title: titleMap,
+        description: descriptionMap,
       }),
+
+      itemTypeId,
+      itemTypeTitle,
+
+      measurementUnitId,
+      measurementUnitTitle,
+
+      expectedPrice,
+
+      isActive,
+
+      stageIds,
+
+  
+      stages,
+
+      sortings,
+
+      image,
     });
   }
-
-  static example = new SpecializationModel({
-    id: 1,
-    title: 'Commercial project',
-    translations: new TranslationParams({
-      title: {
-        ar: 'مشروع تجاري',
-        en: 'Commercial project',
-      },
-    }),
-  });
 }

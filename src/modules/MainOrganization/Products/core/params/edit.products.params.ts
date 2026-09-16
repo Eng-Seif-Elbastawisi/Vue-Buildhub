@@ -1,11 +1,7 @@
 import type Params from '@/base/Core/Params/params';
-
 import { ClassValidation } from '@/base/Presentation/Utils/classValidation';
-
 import { hasTitleTranslation } from '@/base/Presentation/Utils/input_title';
-
 import { translate } from '@/locales/i18n';
-
 import type TranslationParams from '@/base/Core/Params/translationParams';
 
 export default class EditProductsParams implements Params {
@@ -16,17 +12,10 @@ export default class EditProductsParams implements Params {
   public expectedPrice?: number;
   public image?: string;
   public stageIds?: number[];
-
-  public sortings?: {
-    title: string;
-    price: number;
-  }[];
+  public sortings?: { title: string; price: number }[];
 
   public static readonly validation = new ClassValidation().setRules({
-    productsId: {
-      required: true,
-    },
-
+    productsId: { required: true },
     translations: {
       required: true,
       custom: (value) => hasTitleTranslation(value) || translate('validation.title_required'),
@@ -41,11 +30,7 @@ export default class EditProductsParams implements Params {
     expectedPrice?: number;
     image?: string;
     stageIds?: number[];
-
-    sortings?: {
-      title: string;
-      price: number;
-    }[];
+    sortings?: { title: string; price: number }[];
   }) {
     this.productsId = data.productsId;
     this.translations = data.translations;
@@ -58,16 +43,19 @@ export default class EditProductsParams implements Params {
   }
 
   toMap(): Record<string, unknown> {
-    return {
-      products_id: this.productsId,
+    const map: Record<string, unknown> = {
+      product_id: this.productsId,
       translations: this.translations?.toMap(),
-      item_type_id: this.itemTypeId,
-      measurement_unit_id: this.measurementUnitId,
-      expected_price: this.expectedPrice,
-      image: this.image,
-      stage_ids: this.stageIds,
-      sortings: this.sortings,
     };
+
+    if (this.itemTypeId != null) map.item_type_id = this.itemTypeId;
+    if (this.measurementUnitId != null) map.measurement_unit_id = this.measurementUnitId;
+    if (this.expectedPrice != null) map.expected_price = this.expectedPrice;
+    if (this.image) map.image = this.image;
+    if (this.stageIds?.length) map.stage_ids = this.stageIds;
+    if (this.sortings?.length) map.sortings = this.sortings;
+
+    return map;
   }
 
   validate() {
