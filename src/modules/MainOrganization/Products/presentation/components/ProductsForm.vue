@@ -329,7 +329,6 @@
   watch(locale, () => {
     updateData();
   });
-
   watch(
     () => props.Products,
     (product) => {
@@ -343,23 +342,39 @@
         ...(product.translations?.description ?? {}),
       };
 
-      itemTypeId.value = product.itemTypeId;
+      // =====================================================
+      // Item Type
+      // =====================================================
 
-      if (product.itemTypeId) {
+      itemTypeId.value = product.itemType?.id;
+
+      if (product.itemType) {
         itemTypes.value = {
-          id: product.itemTypeId,
-          title: product.itemTypeTitle ?? '',
+          id: product.itemType.id,
+          title: product.itemType.title ?? '',
         } as TitleInterface<string | number>;
+      } else {
+        itemTypes.value = null;
       }
 
-      measurementUnitId.value = product.measurementUnitId;
+      // =====================================================
+      // Measurement
+      // =====================================================
 
-      if (product.measurementUnitId) {
+      measurementUnitId.value = product.measurementUnit?.id;
+
+      if (product.measurementUnit) {
         measurement.value = {
-          id: product.measurementUnitId,
-          title: product.measurementUnitTitle ?? '',
+          id: product.measurementUnit.id,
+          title: product.measurementUnit.title ?? '',
         } as TitleInterface<string | number>;
+      } else {
+        measurement.value = null;
       }
+
+      // =====================================================
+      // Other Product Data
+      // =====================================================
 
       expectedPrice.value = product.expectedPrice;
 
@@ -425,7 +440,7 @@
           </span>
         </p>
       </div>
-<!-- 
+      <!-- 
       <div class="actions">
         <button type="button" class="btn-secondary">
           {{ $t('Products.form.back') }}

@@ -1,16 +1,20 @@
 <script setup lang="ts">
+  import { useI18n } from 'vue-i18n';
+
   import type TranslationParams from '@/base/Core/Params/translationParams';
 
   defineProps<{
     translations?: TranslationParams;
   }>();
+
+  const { locale } = useI18n();
 </script>
 
 <template>
   <section class="card full-width">
     <div class="card-header">
       <div class="card-title-wrap">
-        <span class="num"> 04 </span>
+        <span class="num">04</span>
 
         <div>
           <h3>
@@ -21,18 +25,17 @@
     </div>
 
     <div class="description-box">
-      <span class="quote"> “ </span>
+      <span class="quote">“</span>
 
       <p>
-        {{ translations?.description?.ar || translations?.description?.en || '—' }}
+        {{ translations?.description?.[locale] || '—' }}
       </p>
     </div>
 
-    <div
-      v-if="translations?.description?.en && translations?.description?.ar"
-      class="description-en"
-    >
-      <span class="en-badge">{{ $t('Products.languages.english') }}</span>
+    <div v-if="locale === 'ar' && translations?.description?.en" class="description-en">
+      <span class="en-badge">
+        {{ $t('Products.languages.english') }}
+      </span>
 
       {{ translations.description.en }}
     </div>
