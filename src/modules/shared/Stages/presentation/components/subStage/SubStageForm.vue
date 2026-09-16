@@ -6,6 +6,7 @@ import MultiLangInput from '@/shared/MultiLangInput.vue';
 import ToggleSwitch from 'primevue/toggleswitch';
 import type StageShowModel from '../../../core/models/stage.model';
 import AddStageParams from '../../../core/params/add.stges.params';
+import EditStageParams from '../../../core/params/edit.stage.params';
 
 const emit = defineEmits<{
   updateData: [params: AddStageParams];
@@ -30,7 +31,7 @@ const fillForm = () => {
 
     status.value = Boolean(props.stage.status);
   } else {
-    
+
     translations.value = {};
     status.value = true;
   }
@@ -40,37 +41,49 @@ const fillForm = () => {
 
 
 const updateData = () => {
-  emit(
-    'updateData',
-    new AddStageParams({
-      parentId: props.parentId,
-      translations: new TranslationParams({
-        title: translations.value,
+  if (props.isEdit) {
+    emit(
+      'updateData',
+      new EditStageParams({
+        id: props.stage?.id ?? 0,
+        translations: new TranslationParams({
+          title: translations.value,
+        }),
+        status: status.value,
       }),
-      status: status.value,
-    }),
+    );
+  } else {
+    emit(
+      'updateData',
+      new AddStageParams({
+        parentId: props.parentId,
+        translations: new TranslationParams({
+          title: translations.value,
+        }),
+        status: status.value,
+      }),
+    );
+  };
+}
+
+  const updateTranslations = (value: Record<string, string>) => {
+    translations.value = value;
+    updateData();
+  };
+
+
+  watch(
+    () => [props.stage, props.isEdit],
+    () => {
+      fillForm();
+    },
+    { immediate: true },
   );
-};
 
 
-const updateTranslations = (value: Record<string, string>) => {
-  translations.value = value;
-  updateData();
-};
-
-
-watch(
-  () => [props.stage, props.isEdit],
-  () => {
+  onMounted(() => {
     fillForm();
-  },
-  { immediate: true },
-);
-
-
-onMounted(() => {
-  fillForm();
-});
+  });
 </script>
 
 <template>

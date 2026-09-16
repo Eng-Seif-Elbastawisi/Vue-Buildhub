@@ -18,12 +18,7 @@ const params = ref<EditStageParams | null>(null);
 const loading = ref(false);
 
 const updateData = (data: EditStageParams) => {
-  params.value = new EditStageParams({
-    id: stageId,
-    parentId,
-    translations: data.translations,
-    status: data.status,
-  });
+  params.value = data
 };
 
 const saveStage = async () => {
