@@ -1,5 +1,9 @@
-import BaseApiService from '@/base/Data/ApiService/baseApiService';
-import type { ApiEndpoints } from '@/base/Data/ApiService/baseApiService';
+import BaseApiService, {
+  type ApiCallOptions,
+  type ApiEndpoints,
+  type ApiResponse,
+} from '@/base/Data/ApiService/baseApiService';
+import type Params from '@/base/Core/Params/params';
 import { StageEndpoints } from './stage.api.endpoints';
 
 export default class StageApiService extends BaseApiService {
@@ -25,5 +29,13 @@ export default class StageApiService extends BaseApiService {
       update: this.stageEndpoints.update,
       delete: this.stageEndpoints.delete,
     };
+  }
+
+  async changeOrder(params: Params, options?: ApiCallOptions): Promise<ApiResponse> {
+    return this.customPost(
+      this.stageEndpoints.changeOrder,
+      params,
+      options,
+    );
   }
 }

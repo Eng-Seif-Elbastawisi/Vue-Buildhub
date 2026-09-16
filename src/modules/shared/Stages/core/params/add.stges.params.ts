@@ -11,8 +11,8 @@ import type TranslationParams from '@/base/Core/Params/translationParams';
 
 export default class AddStageParams implements Params {
   public translations?: TranslationParams;
-
   public parentId?: number;
+  public status?: boolean;
 
   public static readonly validation = new ClassValidation().setRules({
     translations: {
@@ -21,14 +21,19 @@ export default class AddStageParams implements Params {
         hasTitleTranslation(value) ||
         translate('validation.title_required'),
     },
+    status: {
+      required: true,
+    },
   });
 
   constructor(data: {
     translations?: TranslationParams;
     parentId?: number;
+    status?: boolean;
   }) {
     this.translations = data.translations;
     this.parentId = data.parentId;
+    this.status = data.status;
   }
 
   toMap(): Record<string, unknown> {
@@ -40,6 +45,10 @@ export default class AddStageParams implements Params {
       map.parent_id = this.parentId;
     }
 
+    
+    if (this.status !== undefined) {
+      map.status = this.status
+    }
     return map;
   }
 

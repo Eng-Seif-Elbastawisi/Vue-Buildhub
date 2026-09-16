@@ -20,7 +20,7 @@ export default class MeasurementModel {
     id?: number;
 
     title?: string;
-    status?: boolean;
+    status?: boolean | number;
 
     symbol?: string;
 
@@ -53,7 +53,10 @@ export default class MeasurementModel {
       Object.values(this.translations.title)[0] ??
       '';
 
-    this.status = data.status ?? false;
+    this.status =
+      typeof data.status === 'number'
+        ? data.status === 1
+        : (data.status ?? false);
 
     this.symbol =
       data.symbol ??
@@ -124,9 +127,12 @@ export default class MeasurementModel {
       id: json.id,
 
       title: json.title,
- 
-      status: json.status,
-      
+
+      status:
+        typeof json.status === 'number'
+          ? json.status === 1
+          : (json.status ?? false),
+
       symbol: json.symbol,
 
       translations: {

@@ -9,17 +9,47 @@ const translations = { title: { en: 'Primary', ar: 'Primary AR' } };
 
 describe('measurement params', () => {
   it('maps add and edit payloads', () => {
-    const add = new AddMeasurementParams({ translations, parentId: 5 });
-    const edit = new EditMeasurementParams({ id: 3, translations });
+    const add = new AddMeasurementParams({
+      translations,
+      code: 'KG',
+      precision: 2,
+      status: true,
+      parentId: 5,
+    });
+    const edit = new EditMeasurementParams({
+      id: 3,
+      translations,
+      code: 'KG',
+      precision: 2,
+      status: true,
+    });
 
-    expect(add.toMap()).toEqual({ translations, parent_id: 5 });
-    expect(edit.toMap()).toEqual({ measurement_unit_id: 3, translations });
+    expect(add.toMap()).toEqual({
+      translations,
+      code: 'KG',
+      precision: 2,
+      status: 1,
+      parent_id: 5,
+    });
+    expect(edit.toMap()).toEqual({
+      measurement_unit_id: 3,
+      translations,
+      code: 'KG',
+      precision: 2,
+      status: 1,
+    });
     expect(add.validate().isValid).toBe(true);
     expect(edit.validate().isValid).toBe(true);
   });
 
   it('omits empty optional parent id and maps list filters', () => {
-    expect(new AddMeasurementParams({ translations }).toMap()).toEqual({ translations });
+    expect(
+      new AddMeasurementParams({ translations, code: 'KG', precision: 2 }).toMap(),
+    ).toEqual({
+      translations,
+      code: 'KG',
+      precision: 2,
+    });
     expect(new IndexMeasurementParams('primary', 2, 20, 1).toMap()).toEqual({
       word: 'primary',
       with_pagination: 1,

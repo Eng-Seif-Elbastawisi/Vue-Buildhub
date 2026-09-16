@@ -269,6 +269,10 @@
   "add_contact": "Add Contact",
   "save_change": "Save Change",
   "cancel": "Cancel",
+  "cancel_changes": "Cancel Changes",
+  "are_you_sure_you_want_to_leave": "Are you sure you want to leave without saving?",
+  "leave_without_saving": "Leave Without Saving",
+  "keep_editing": "Keep Editing",
   "edit": "Edit",
   "faqs": "FAQs",
   "faqs_description": "Manage Frequently Asked Questions And Provide Helpful Answers To Users",
@@ -340,6 +344,7 @@
   "add": "Add",
   "unactive": "Unactive",
   "active": "Active",
+  "inactive": "Inactive",
   "add_education_type": "Add Education Type",
   "enter_the_name_of_the_education_type_you_want_to_add": "Enter The Name Of The Education Type You Want To Add",
   "education_type": "Education Type",
@@ -2349,9 +2354,11 @@
   "Sub Stages": "Sub Stages",
   "Add Sub Stage": "Add Sub Stage",
   "Edit Sub Stage": "Edit Sub Stage",
-  "stage.execution_title": "Stage Execution",
+  "drag_to_reorder": "Drag to reorder",
   "measurement": {
-    "add": "Add Measurement Unit"
+    "add": "Add Measurement Unit",
+    "children_count": "Children Count"
+    
   },
   "Are you sure you want to remove this measurement unit?": "Are you sure you want to remove this measurement unit?"
 }

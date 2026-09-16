@@ -15,6 +15,8 @@ export default class EditStageParams implements Params {
 
   public parentId?: number;
 
+  public status?: boolean;
+
   public static readonly validation = new ClassValidation().setRules({
     id: {
       required: true,
@@ -28,10 +30,11 @@ export default class EditStageParams implements Params {
     },
   });
 
-  constructor(data: { id: number; translations?: TranslationParams; parentId?: number }) {
+  constructor(data: { id: number; translations?: TranslationParams; parentId?: number; status?: boolean }) {
     this.id = data.id;
     this.translations = data.translations;
     this.parentId = data.parentId;
+    this.status = data.status;
   }
 
   toMap(): Record<string, unknown> {
@@ -42,6 +45,10 @@ export default class EditStageParams implements Params {
 
     if (this.parentId !== undefined) {
       map.parent_id = this.parentId;
+    }
+
+    if (this.status !== undefined) {
+      map.status = this.status;
     }
 
     return map;

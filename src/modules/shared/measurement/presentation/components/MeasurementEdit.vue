@@ -24,11 +24,18 @@
 
   const routePrefix = route.path.startsWith('/admin') ? '/admin' : '/organization';
 
-  const updateData = (data: AddMeasurementParams) => {
-    params.value = new EditMeasurementParams({
-      id: measurementId,
-      translations: data.translations,
-    });
+  const updateData = (data: EditMeasurementParams | AddMeasurementParams) => {
+    if (data instanceof EditMeasurementParams) {
+      params.value = data;
+    } else {
+      params.value = new EditMeasurementParams({
+        id: measurementId,
+        translations: data.translations,
+        code: data.code,
+        precision: data.precision,
+        status: data.status,
+      });
+    }
   };
 
   const saveMeasurement = async () => {
@@ -62,8 +69,8 @@
     <MeasurementForm
       :measurement="controller.itemData.value!"
       :loading="loading"
-      @update-data="updateData"
       :is-edit="true"
+      @update-data="updateData"
     />
 
     <div class="actions" :class="{ disabled: loading }">

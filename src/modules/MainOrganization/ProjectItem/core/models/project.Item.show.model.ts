@@ -1,6 +1,6 @@
 import TitleInterface from '@/base/Data/Models/titleInterface';
 import { ProjectItemPriceEnum } from '../constant/project.item.Price.enum';
-import OrganizationShowModel from '@/modules/shared/Organization/core/models/organization.show.model';
+import type OrganizationShowModel from '@/modules/shared/Organization/core/models/organization.show.model';
 import OrganizationEmployeeModel from '@/modules/shared/Organization/core/models/employee.model';
 import ItemShowModel from '@/modules/shared/Item/core/models/Item.show.model';
 import {  ProjectFloorShowModel } from '@/modules/MainOrganization/ProjectFloor';

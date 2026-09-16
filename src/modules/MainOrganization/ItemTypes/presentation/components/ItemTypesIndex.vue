@@ -134,7 +134,8 @@ import { StatusTypeEnum } from '@/modules/MainOrganization/ChangeStatus/core/con
             <div class="row-actions">
 
 
-               <ChangeStatusButton :id="item.id!" :initialIsActive="item.status === 1 ? true : false"
+               <ChangeStatusButton
+:id="item.id!" :initial-is-active="item.status === 1 ? true : false"
                   :type="StatusTypeEnum.ITEM_TYPE" @reload="fetchItemTypess" />
 
 
@@ -207,7 +208,7 @@ import { StatusTypeEnum } from '@/modules/MainOrganization/ChangeStatus/core/con
           <p>{{ $t('ItemTypes.empty_description') }}</p>
           <router-link
             class="btn btn-primary"
-            :to="user?.type === 1 ? '/organization/itemTypes/add' : '/organization/itemTypes/add'"
+            :to="user?.type === 1 ? '/organization/item_types/add' : '/organization/item_types/add'"
             ><IndexAddIcon />{{ $t('ItemTypes.add') }}</router-link
           >
         </div>

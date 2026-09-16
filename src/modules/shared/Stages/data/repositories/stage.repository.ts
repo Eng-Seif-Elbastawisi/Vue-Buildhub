@@ -1,13 +1,22 @@
 import BaseRepository, { type RepositoryConfig } from '@/base/Domain/Repositories/baseRepository';
+import type Params from '@/base/Core/Params/params';
+import type { ApiCallOptions } from '@/base/Data/ApiService/baseApiService';
+import {
+  type DataState,
+  DataSuccess,
+  DataFailed,
+} from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
+import { ErrorModel, ErrorType } from '@/base/Core/NetworkStructure/Resources/errors/errorModel';
+import { env } from '@/base/Core/Config';
 import StageModel from '../../core/models/stage.model';
 import StageApiService from '../api/stage.api-service';
 import { EducationType } from '../../core/constants/educationtype.enum';
 import TitleInterface from '@/base/Data/Models/titleInterface';
 
 /**
- * Country Repository for API data operations
+ * Stage Repository for API data operations
  *
- * This repository handles all data access for countries,
+ * This repository handles all data access for stages,
  * including parsing API responses and error handling.
  */
 export default class StageRepository extends BaseRepository<StageModel, StageModel[]> {
@@ -55,7 +64,7 @@ export default class StageRepository extends BaseRepository<StageModel, StageMod
 
   /**
    * Get singleton instance
-   * @returns CountryRepository instance
+   * @returns StageRepository instance
    */
   static getInstance(): StageRepository {
     if (!StageRepository.instance) {
@@ -78,5 +87,31 @@ export default class StageRepository extends BaseRepository<StageModel, StageMod
       } catch {}
       return acc;
     }, []);
+  }
+
+  async changeOrder(params: Params, options?: ApiCallOptions): Promise<DataState<StageModel>> {
+    if (options?.useStaticData ?? env.useStaticData) {
+      return new DataSuccess<StageModel>({ data: this.mockItem });
+    }
+
+    const retryFn = () => this.changeOrder(params, options);
+
+    try {
+      const httpResponse = await this.apiService.changeOrder(params, options);
+      const isSuccess = this.isSuccessStatus(httpResponse.statusCode, httpResponse.data);
+
+      if (isSuccess) {
+        return new DataSuccess<StageModel>({
+          data: httpResponse.data?.data ? this.parseItem(httpResponse.data.data) : undefined,
+          message: httpResponse.data?.message,
+        });
+      }
+
+      return new DataFailed({
+        error: new ErrorModel(httpResponse.data?.message ?? '', ErrorType.serviceSide),
+      });
+    } catch (error) {
+      return this.handleError(error, retryFn);
+    }
   }
 }
