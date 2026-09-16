@@ -201,8 +201,42 @@ describe('AppTable', () => {
     expect(wrapper.find('.hoverable').exists()).toBe(true);
   });
 
-  it('has table-responsive wrapper', () => {
-    const wrapper = createWrapper();
-    expect(wrapper.find('.table-responsive').exists()).toBe(true);
+  it('renders reorder drag handle column when reorderable is true', () => {
+    const wrapper = createWrapper({ reorderable: true });
+    expect(wrapper.find('.th-drag-handle').exists()).toBe(true);
+    expect(wrapper.findAll('.td-drag-handle')).toHaveLength(2);
+    expect(wrapper.find('.drag-handle-icon').exists()).toBe(true);
+  });
+
+  it('handles drag and drop reordering and emits reorder event', async () => {
+    const wrapper = createWrapper({ reorderable: true });
+    const rows = wrapper.findAll('tbody tr');
+
+    const dataTransfer = {
+      effectAllowed: '',
+      dropEffect: '',
+      setData: vi.fn(),
+      getData: vi.fn(),
+    };
+
+    // Drag row 0
+    await rows[0].trigger('dragstart', { dataTransfer });
+    // Drag over row 1
+    await rows[1].trigger('dragover', { dataTransfer });
+    // Drop on row 1
+    await rows[1].trigger('drop', { dataTransfer });
+
+    expect(wrapper.emitted('reorder')).toBeTruthy();
+    const payload = wrapper.emitted('reorder')![0][0] as {
+      items: TestItem[];
+      movedItem: TestItem;
+      fromIndex: number;
+      toIndex: number;
+    };
+    expect(payload.fromIndex).toBe(0);
+    expect(payload.toIndex).toBe(1);
+    expect(payload.movedItem).toEqual(mockItems[0]);
+    expect(payload.items[0]).toEqual(mockItems[1]);
+    expect(payload.items[1]).toEqual(mockItems[0]);
   });
 });

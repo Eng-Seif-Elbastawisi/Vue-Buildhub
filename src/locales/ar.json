@@ -181,6 +181,10 @@
   "add_contact": "إضافة جهة اتصال",
   "save_change": "حفظ التغييرات",
   "cancel": "إلغاء",
+  "cancel_changes": "إلغاء التغييرات",
+  "are_you_sure_you_want_to_leave": "هل أنت متأكد من رغبتك في المغادرة دون حفظ التغييرات؟",
+  "leave_without_saving": "مغادرة دون حفظ",
+  "keep_editing": "متابعة التعديل",
   "save": "حفظ",
   "edit": "تعديل",
   "invalid_input_warning_title": "إدخال غير صحيح",
@@ -194,6 +198,7 @@
   "add": "إضافة",
   "unactive": "غير نشط",
   "active": "نشط",
+  "inactive": "غير نشط",
   "add_education_type": "إضافة نوع تعليم",
   "enter_the_name_of_the_education_type_you_want_to_add": "أدخل اسم نوع التعليم الذي تريد إضافته",
   "education_type": "نوع التعليم",
@@ -2274,9 +2279,11 @@
   "Sub Stages": "المراحل الفرعية",
   "Add Sub Stage": "إضافة مرحلة فرعية",
   "Edit Sub Stage": "تعديل المرحلة الفرعية",
-  "stage.execution_title": "تنفيذ المرحلة",
+  "drag_to_reorder": "اسحب لإعادة الترتيب",
   "measurement": {
-    "add": "إضافة وحده قياس"
+    "add": "إضافة وحده قياس",
+    "children_count": "عدد المراحل الفرعية",
+    "sub_stages": "المراحل الفرعية"
   },
   "Are you sure you want to remove this measurement unit?": "هل أنت متأكد من حذف وحدة القياس ؟",
   "Products": {
@@ -2376,4 +2383,7 @@
     "close": "إغلاق",
     "loading": "جاري التحميل..."
   }
+}
+  "back_to_parent_stage": "الرجوع الي المرحلة الرئيسية",
+  "Are you sure you want to remove this measurement unit?": "هل أنت متأكد من حذف وحدة القياس ؟"
 }

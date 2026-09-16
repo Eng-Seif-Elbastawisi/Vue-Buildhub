@@ -73,7 +73,8 @@ watch(
 
     <div class="form-fields" :class="{ disabled: loading }">
       <div class="field-group">
-        <MultiLangInput field-key="title" :label="$t('title')" :languages="['en', 'ar']" :model-value="translations"
+        <MultiLangInput
+field-key="title" :label="$t('title')" :languages="['en', 'ar']" :model-value="translations"
           type="title" @update:model-value="updateTranslations" />
       </div>
 

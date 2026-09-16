@@ -12,4 +12,5 @@ export class StageEndpoints extends BaseEndpoints {
   readonly store = this.url('store_stage');
   readonly update = this.url('update_stage');
   readonly delete = this.url('delete_stage');
+  readonly changeOrder = this.url('change_stage_order');
 }

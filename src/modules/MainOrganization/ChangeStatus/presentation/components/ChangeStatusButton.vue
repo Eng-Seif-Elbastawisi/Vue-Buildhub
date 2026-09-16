@@ -3,7 +3,7 @@ import { ref, watch } from 'vue'
 import ToggleSwitch from 'primevue/toggleswitch'
 
 import ChangeStatusController from '../controllers/change_status.controller'
-import { StatusTypeEnum } from '../../core/constant/change_status.type.enum'
+import { type StatusTypeEnum } from '../../core/constant/change_status.type.enum'
 import ChangeStatusParams from '../../core/params/change_status.params'
 
 const props = defineProps<{
@@ -58,8 +58,9 @@ const confirm = async (value: boolean) => {
   <div class="change-status-wrapper">
     <i v-if="isLoading" class="pi pi-spin pi-spinner status-loader" />
 
-    <ToggleSwitch v-else :modelValue="isActive" :inputId="`switch-${id}-${type}`" :disabled="isLoading"
-      @update:modelValue="confirm" />
+    <ToggleSwitch
+v-else :model-value="isActive" :input-id="`switch-${id}-${type}`" :disabled="isLoading"
+      @update:model-value="confirm" />
   </div>
 </template>
 

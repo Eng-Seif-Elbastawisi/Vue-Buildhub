@@ -1,6 +1,6 @@
 import type Params from '@/base/Core/Params/params';
 import type { DataState } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
-import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
+import { DataFailed, DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
 import type { ApiCallOptions } from '@/base/Data/ApiService/baseApiService';
 
 import BaseController, {
@@ -117,5 +117,35 @@ export default class StageController extends BaseController<StageModel, StageMod
         'Accept-Language': (params as ShowStageParams).allLocales ? '*' : 'en',
       },
     });
+  }
+
+  async changeOrder(
+    params: Params,
+    options?: ApiCallOptions,
+  ): Promise<DataState<StageModel> | undefined> {
+    params?.validate();
+    if (!params?.validate().isValid) {
+      params?.validateOrThrow();
+      return;
+    }
+
+    try {
+      const result = await this.repository.changeOrder(params, {
+        ...options,
+        useJson: true,
+      });
+
+      if (result instanceof DataSuccess) {
+        this.handleItemResponse(result, 'Updated successfully');
+      } else if (result instanceof DataFailed) {
+        this.handleErrorResponse(result);
+      }
+
+      return result;
+    } catch (error: any) {
+      const failed = new DataFailed<StageModel>({ error });
+      this.handleErrorResponse(failed);
+      return failed;
+    }
   }
 }

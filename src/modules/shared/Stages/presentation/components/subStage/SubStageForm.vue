@@ -1,26 +1,58 @@
 <script setup lang="ts">
-  import { onMounted, ref, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 
-  import TranslationParams from '@/base/Core/Params/translationParams';
-  import MultiLangInput from '@/shared/MultiLangInput.vue';
+import TranslationParams from '@/base/Core/Params/translationParams';
+import MultiLangInput from '@/shared/MultiLangInput.vue';
+import ToggleSwitch from 'primevue/toggleswitch';
+import type StageShowModel from '../../../core/models/stage.model';
+import AddStageParams from '../../../core/params/add.stges.params';
+import EditStageParams from '../../../core/params/edit.stage.params';
 
-  import type StageShowModel from '../../../core/models/stage.model';
-  import AddStageParams from '../../../core/params/add.stges.params';
+const emit = defineEmits<{
+  updateData: [params: AddStageParams];
+}>();
 
-  const emit = defineEmits<{
-    updateData: [params: AddStageParams];
-  }>();
+const props = defineProps<{
+  stage?: StageShowModel;
+  parentId: number;
+  loading?: boolean;
+  isEdit?: boolean;
+}>();
 
-  const props = defineProps<{
-    Stage?: StageShowModel;
-    parentId: number;
-    loading?: boolean;
-    isEdit?: boolean;
-  }>();
+const status = ref(true);
+const translations = ref<Record<string, string>>({});
 
-  const translations = ref<Record<string, string>>({});
 
-  const updateData = () => {
+const fillForm = () => {
+  if (props.isEdit && props.stage) {
+    translations.value = {
+      ...(props.stage.translations?.title ?? {}),
+    };
+
+    status.value = Boolean(props.stage.status);
+  } else {
+
+    translations.value = {};
+    status.value = true;
+  }
+
+  updateData();
+};
+
+
+const updateData = () => {
+  if (props.isEdit) {
+    emit(
+      'updateData',
+      new EditStageParams({
+        id: props.stage?.id ?? 0,
+        translations: new TranslationParams({
+          title: translations.value,
+        }),
+        status: status.value,
+      }),
+    );
+  } else {
     emit(
       'updateData',
       new AddStageParams({
@@ -28,30 +60,30 @@
         translations: new TranslationParams({
           title: translations.value,
         }),
+        status: status.value,
       }),
     );
   };
+}
 
-  const updateTranslations = (value: Record<string, string>) => {
-    translations.value = value;
-    updateData();
-  };
+const updateTranslations = (value: Record<string, string>) => {
+  translations.value = value;
+  updateData();
+};
 
-  onMounted(updateData);
 
-  watch(
-    () => props.Stage,
-    (Stage) => {
-      if (!Stage) return;
+watch(
+  () => [props.stage, props.isEdit],
+  () => {
+    fillForm();
+  },
+  { immediate: true },
+);
 
-      translations.value = {
-        ...(Stage.translations?.title ?? {}),
-      };
 
-      updateData();
-    },
-    { immediate: true },
-  );
+onMounted(() => {
+  fillForm();
+});
 </script>
 
 <template>
@@ -65,49 +97,51 @@
 
     <div class="form-fields" :class="{ disabled: loading }">
       <div class="field-group full-row">
-        <MultiLangInput
-          field-key="title"
-          :label="$t('title')"
-          :languages="['ar', 'en']"
-          :model-value="translations"
-          type="title"
-          required
-          @update:model-value="updateTranslations"
-        />
+        <MultiLangInput field-key="title" :label="$t('title')" :languages="['ar', 'en']" :model-value="translations"
+          type="title" required @update:model-value="updateTranslations" />
       </div>
+
+      <div class="status-toggle-wrapper">
+        <ToggleSwitch v-model="status" input-id="sub-stage-status" :disabled="loading"
+          @update:model-value="updateData" />
+        <span class="status-text" :class="{ active: status }">
+          {{ status ? $t('active') : $t('inactive') }}
+        </span>
+      </div>
+
     </div>
   </div>
 </template>
 
 <style scoped lang="scss">
-  .Stage-form-card {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
+.Stage-form-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
 
-  header p {
-    color: var(--gray-5);
-  }
+header p {
+  color: var(--gray-5);
+}
 
-  .form-fields {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1rem;
+.form-fields {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
 
-    &.disabled {
-      pointer-events: none;
-      opacity: 0.7;
-    }
+  &.disabled {
+    pointer-events: none;
+    opacity: 0.7;
   }
+}
 
-  .field-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
 
-  .full-row {
-    grid-column: 1 / -1;
-  }
+.full-row {
+  grid-column: 1 / -1;
+}
 </style>

@@ -13,9 +13,10 @@ export default class StageModel {
   public readonly e_c_subject_id?: number;
 
   public readonly branches: BranchesModel[];
-  public readonly EducationType: TitleInterface<EducationType>;
+  // public readonly EducationType: TitleInterface<EducationType>;
   public readonly children: StageModel[];
-   public readonly status : boolean;
+  public readonly status: boolean;
+  public readonly stageChildrenCount: number;
 
   constructor(data: {
     id?: number;
@@ -23,9 +24,10 @@ export default class StageModel {
     title?: string;
     e_c_subject_id?: number;
     branches: BranchesModel[];
-    EducationType: TitleInterface<EducationType>;
+    // EducationType: TitleInterface<EducationType>;
     children: StageModel[];
     status?: boolean;
+    stageChildrenCount?: number;
   }) {
     this.id = data.id;
     this.translations = data.translations ?? { title: { en: data.title ?? '' } };
@@ -33,9 +35,10 @@ export default class StageModel {
       data.title ?? this.translations.title.en ?? Object.values(this.translations.title)[0] ?? '';
     this.e_c_subject_id = data.e_c_subject_id;
     this.branches = data.branches;
-    this.EducationType = data.EducationType;
+    // this.EducationType = data.EducationType;
     this.children = data.children;
     this.status = data.status ?? false;
+    this.stageChildrenCount = data.stageChildrenCount ?? 0;
     Object.freeze(this);
   }
 
@@ -68,9 +71,10 @@ export default class StageModel {
       translations: { title: StageModel.mapTranslations(json.title) },
       e_c_subject_id: json.e_c_subject_id,
       branches: json.branches?.map((branch: any) => BranchesModel.fromJson(branch)) ?? [],
-      EducationType: json.education_type,
+      // EducationType: json.education_type,
       children: json.children?.map((child: any) => StageModel.fromJson(child)) ?? [],
       status: json.status,
+      stageChildrenCount: json.stage_children_count,
     });
   }
 
@@ -78,10 +82,10 @@ export default class StageModel {
     id: 1,
     translations: { title: { en: 'title', ar: 'title' } },
     branches: [BranchesModel.example],
-    EducationType: new TitleInterface({
-      id: EducationType.General,
-      title: 'General',
-    }),
+    // EducationType: new TitleInterface({
+    //   id: EducationType.General,
+    //   title: 'General',
+    // }),
     children: [],
   });
 }
