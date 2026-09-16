@@ -1,13 +1,16 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 
 import type AddStageParams from '../../core/params/add.stges.params';
 import StageController from '../controllers/stage.controller';
 import StageForm from './StageForm.vue';
+import ConfirmCancelDialog from '@/base/Presentation/Dialogs/ConfirmCancelDialog.vue';
 
 const controller = StageController.getInstance();
-const route = useRouter();
+const route = useRoute();
+const router = useRouter();
+const routePrefix = route.path.startsWith('/admin') ? '/admin' : '/organization';
 
 const params = ref<AddStageParams | null>(null);
 const loading = ref(false);
@@ -21,13 +24,16 @@ const saveStage = async () => {
     await controller.create(
       params.value,
       undefined,
-      route.currentRoute.value.fullPath,
+      route.fullPath,
     );
   } finally {
     loading.value = false;
   }
 };
 
+const cancelStageAdd = () => {
+  void router.push(`${routePrefix}/stages`);
+};
 
 </script>
 
@@ -37,14 +43,13 @@ const saveStage = async () => {
 
 
     <div class="form-footer">
-      <button
-class="btn btn-primary" :class="{ 'btn--loading': loading }" type="button" :disabled="loading"
+      <button class="btn btn-primary" :class="{ 'btn--loading': loading }" type="button" :disabled="loading"
         @click="saveStage">
         {{ $t('save') }}
       </button>
-      <button class="btn btn-cancel" type="button" @click="route.back()">
-        {{ $t('cancel') }}
-      </button>
+
+      <ConfirmCancelDialog ref="confirmCancelRef" :title="$t('cancel_changes')"
+        :message="$t('are_you_sure_you_want_to_leave')" @confirm="cancelStageAdd" />
     </div>
 
 
@@ -60,6 +65,7 @@ class="btn btn-primary" :class="{ 'btn--loading': loading }" type="button" :disa
   flex-direction: column;
   gap: 1.5rem;
 }
+
 .form-footer {
   display: flex;
   gap: 1rem;

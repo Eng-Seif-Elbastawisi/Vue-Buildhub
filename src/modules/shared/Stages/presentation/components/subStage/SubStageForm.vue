@@ -66,24 +66,24 @@ const updateData = () => {
   };
 }
 
-  const updateTranslations = (value: Record<string, string>) => {
-    translations.value = value;
-    updateData();
-  };
+const updateTranslations = (value: Record<string, string>) => {
+  translations.value = value;
+  updateData();
+};
 
 
-  watch(
-    () => [props.stage, props.isEdit],
-    () => {
-      fillForm();
-    },
-    { immediate: true },
-  );
-
-
-  onMounted(() => {
+watch(
+  () => [props.stage, props.isEdit],
+  () => {
     fillForm();
-  });
+  },
+  { immediate: true },
+);
+
+
+onMounted(() => {
+  fillForm();
+});
 </script>
 
 <template>
