@@ -2360,7 +2360,6 @@
   "measurement": {
     "add": "Add Measurement Unit",
     "children_count": "Children Count"
-
   },
   "Are you sure you want to remove this measurement unit?": "Are you sure you want to remove this measurement unit?",
   "Products": {
@@ -2454,12 +2453,21 @@
   "sub_stages": "Sub Stages",
   "total_materials": "Total Materials",
 
-
   "stage_placeholder": "Select Stage",
   "measurement_placeholder": "Select Measurement Unit",
   "item_type_placeholder": "Select Item Type",
   "sub_stage_placeholder": "Select Sub Stage",
   "item_type": "Item Type",
   "back_to_parent_stage": "Back to Parent Stage",
-  "Are you sure you want to remove this measurement unit?": "Are you sure you want to remove this measurement unit?"
+  "Are you sure you want to remove this measurement unit?": "Are you sure you want to remove this measurement unit?",
+  "labor": {
+    "price": "Price",
+    "title": "labor",
+    "form_title": "Labor",
+    "form_description": "Add Or Edit Labors",
+    "labor": "labor",
+    "description": "Manage materials, prices, units, and translated titles",
+    "price_placeholder": "Enter Labor Price",
+    "add": "Add Labor"
+  }
 }

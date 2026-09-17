@@ -1,17 +1,17 @@
 <script setup lang="ts">
   import { ref } from 'vue';
   import { useRoute } from 'vue-router';
-  import type AddEmployeeParams from '../../core/params/add.labor.params.ts';
-  import EmployeeController from '../controllers/labor.controller.ts';
-  import EmployeeForm from './EmployeeForm.vue';
+  import LaborForm from './LaborForm.vue';
+  import LaborController from '../controllers/labor.controller.ts';
+  import type AddLaborParams from '../../core/params/add.labor.params.ts';
 
-  const controller = EmployeeController.getInstance();
+  const controller = LaborController.getInstance();
   const route = useRoute();
   const formKey = route.fullPath;
-  const params = ref<AddEmployeeParams | null>(null);
+  const params = ref<AddLaborParams | null>(null);
   const loading = ref(false);
 
-  const saveEmployee = async () => {
+  const saveLabor = async () => {
     if (!params.value) return;
     loading.value = true;
     try {
@@ -23,8 +23,8 @@
 </script>
 
 <template>
-  <div class="employee-crud-page">
-    <EmployeeForm :form-key="formKey" :loading="loading" @update-data="params = $event" />
+  <div class="labor-crud-page">
+    <LaborForm :form-key="formKey" :loading="loading" @update-data="params = $event" />
 
     <div class="actions" :class="{ disabled: loading }">
       <button
@@ -32,10 +32,10 @@
         :class="{ 'btn--loading': loading }"
         class="btn btn-primary w-full"
         type="button"
-        @click="saveEmployee"
+        @click="saveLabor"
       >
         <span v-if="loading" class="loader"></span>
-        <span v-else>{{ $t('employee.save') }}</span>
+        <span v-else>{{ $t('save') }}</span>
       </button>
     </div>
 
@@ -46,7 +46,7 @@
 </template>
 
 <style scoped lang="scss">
-  .employee-crud-page {
+  .labor-crud-page {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;

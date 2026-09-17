@@ -2283,7 +2283,6 @@
   "measurement": {
     "add": "إضافة وحده قياس",
     "children_count": "عدد المراحل الفرعية"
-
   },
   "Are you sure you want to remove this measurement unit?": "هل أنت متأكد من حذف وحدة القياس ؟",
   "Products": {
@@ -2389,9 +2388,20 @@
   "stage_placeholder": "اختر المرحلة",
   "measurement_placeholder": "اختر وحدة القياس",
   "item_type_placeholder": "اختر نوع البند",
-  "sub_stage_placeholder":"اختر المرحلة الفرعية",
+  "sub_stage_placeholder": "اختر المرحلة الفرعية",
   "Stage": "المرحلة",
   "item_type": "نوع البند",
   "back_to_parent_stage": "الرجوع الي المرحلة الرئيسية",
-  "Are you sure you want to remove this measurement unit?": "هل أنت متأكد من حذف وحدة القياس ؟"
+  "Are you sure you want to remove this measurement unit?": "هل أنت متأكد من حذف وحدة القياس ؟",
+  "labor": {
+    "price": "السعر",
+    "title": "العمالة",
+    "form_title": "العمالة",
+    "form_description": "إضافة أو تعديل العمالة",
+    "labor": "العمالة",
+    "description": "إدارة العمالة والأسعار والوحدات والعناوين المترجمة",
+    "price_placeholder": "أدخل سعر العمالة",
+    "add" : "إضافة العمالة"
+  }
+ 
 }

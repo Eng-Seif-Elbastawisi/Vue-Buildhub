@@ -1,59 +1,58 @@
 import type Params from '@/base/Core/Params/params';
 import { ClassValidation } from '@/base/Presentation/Utils/classValidation';
-import { requiredSelectRule } from '@/base/Presentation/Utils/input_title';
+import { hasTitleTranslation, requiredSelectRule } from '@/base/Presentation/Utils/input_title';
+import { translate } from '@/locales/i18n';
 
-/**
- * Parameters for adding a new employee
- */
 export default class AddLaborParams implements Params {
-  public title: string;
-  public price: number;
-  public brandId: number;
-  public measurementUnitId: number;
-  public subStageId: number;
-  public stageId: number;
-
+  public price?: number;
+  // public brandId?: number;
+  public measurementId?: number;
+  public translations?: { title: Record<string, string> };
+  public itemTypeId?: number;
+  public stageId?: number;
+  public subStageId?: number;
   public static readonly validation = new ClassValidation().setRules({
-    title: { required: true, minLength: 2, maxLength: 100 },
     price: { required: true },
-    brandId: { required: true },
-    measurementUnitId: { required: true },
-    subStageId: { required: true },
-    stageId: { required: true },
+    // brandId: requiredSelectRule(),
+    measurementId: requiredSelectRule(),
+    translations: {
+      required: true,
+      custom: (value) => hasTitleTranslation(value) || translate('validation.title_required'),
+    },
+    itemTypeId: requiredSelectRule(),
   });
-
   constructor(data: {
-    title: string;
-    price: number;
-    brandId: number;
-    measurementUnitId: number;
-    subStageId: number;
-    stageId: number;
+    price?: number;
+    // brandId?: number;
+    measurementId?: number;
+    translations?: { title: Record<string, string> };
+    itemTypeId?: number;
+    stageId?: number;
+    subStageId?: number;
   }) {
-    this.title = data.title;
     this.price = data.price;
-    this.brandId = data.brandId;
-    this.measurementUnitId = data.measurementUnitId;
-    this.subStageId = data.subStageId;
+    // this.brandId = data.brandId;
+    this.measurementId = data.measurementId;
+    this.translations = data.translations;
+    this.itemTypeId = data.itemTypeId;
     this.stageId = data.stageId;
+    this.subStageId = data.subStageId;
   }
-
   toMap(): { [p: string]: any } {
     return {
-      title: this.title,
       price: this.price,
-      brand_id: this.brandId,
-      measurement_unit_id: this.measurementUnitId,
-      sub_stage_id: this.subStageId,
+      // brand_id: this.brandId,
+      measurement_unit_id: this.measurementId,
+      translations: this.translations,
+      item_type_id: this.itemTypeId,
       stage_id: this.stageId,
+      sub_stage_id: this.subStageId,
     };
   }
-
   validate() {
-    return AddEmployeeParams.validation.validate(this);
+    return AddLaborParams.validation.validate(this);
   }
-
   validateOrThrow() {
-    return AddEmployeeParams.validation.validateOrThrow(this);
+    return AddLaborParams.validation.validateOrThrow(this);
   }
 }

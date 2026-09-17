@@ -6,15 +6,15 @@
   import AppTable, { type TableHeader } from '@/shared/HelpersComponents/AppTable.vue';
   import Pagination from '@/shared/HelpersComponents/Pagination.vue';
   import TableSkelaton from '@/shared/HelpersComponents/TableSkelaton.vue';
-  import type EmployeeModel from '../../core/models/labor.model';
-  import DeleteEmployeeParams from '../../core/params/delete.labor.params';
-  import IndexEmployeeParams from '../../core/params/index.labor.params';
-  import EmployeeController from '../controllers/labor.controller';
+  import type laborModel from '../../core/models/labor.model';
+  import DeletelaborParams from '../../core/params/delete.labor.params';
+  import IndexlaborParams from '../../core/params/index.labor.params';
+  import laborController from '../controllers/labor.controller';
   import { useUserStore } from '@/stores/user';
   import IndexAddIcon from '@/shared/icons/IndexAddIcon.vue';
   import { debounce } from '@/base/Presentation/Utils/debouced';
 
-  const controller = EmployeeController.getInstance();
+  const controller = laborController.getInstance();
   const state = computed(() => controller.listState.value);
   const router = useRouter();
   const route = useRoute();
@@ -22,14 +22,15 @@
   const word = ref('');
 
   const headers: TableHeader[] = [
-    { key: 'name', label: 'name', width: '30%', sortable: true },
-    { key: 'email', label: 'email', width: '35%' },
-    { key: 'phone', label: 'phone', width: '25%' },
+    { key: 'title', label: 'title', width: '50%', sortable: true },
+    // { key: 'brandId', label: 'brand', width: '20%' },
+    { key: 'price', label: 'price', width: '50%' },
+    // { key: 'unit', label: 'unit', width: '20%' },
   ];
 
-  const fetchEmployees = async (page: number = 1, searchWord: string = '') => {
+  const fetchlabors = async (page: number = 1, searchWord: string = '') => {
     await controller.fetchList(
-      new IndexEmployeeParams(
+      new IndexlaborParams(
         searchWord,
         route.query.page ? Number(route.query.page) : page,
         perPage.value,
@@ -45,11 +46,11 @@
         word: word.value || undefined,
       },
     });
-    fetchEmployees(1, word.value);
+    fetchlabors(1, word.value);
   });
 
   const onPageChange = (page: number) => {
-    void fetchEmployees(page);
+    void fetchlabors(page);
     void router.push({
       query: { ...route.query, page: String(page), word: word.value || undefined },
     });
@@ -57,27 +58,27 @@
 
   const onPerPageChange = (count: number) => {
     perPage.value = count;
-    void fetchEmployees(1);
+    void fetchlabors(1);
   };
 
-  const deleteEmployee = async (id: number) => {
-    await controller.delete(new DeleteEmployeeParams(id));
-    void fetchEmployees();
+  const deletelabor = async (id: number) => {
+    await controller.delete(new DeletelaborParams(id));
+    void fetchlabors();
   };
 
   onMounted(async () => {
     word.value = route.query.word ? String(route.query.word) : '';
-    await fetchEmployees(route.query.page ? Number(route.query.page) : 1, word.value);
+    await fetchlabors(route.query.page ? Number(route.query.page) : 1, word.value);
   });
   const { user } = useUserStore();
 </script>
 
 <template>
-  <div class="employee-page">
-    <div class="employee-header">
+  <div class="labor-page">
+    <div class="labor-header">
       <div>
-        <h4>{{ $t('employee.index.title') }}</h4>
-        <p>{{ $t('employee.index.description') }}</p>
+        <h4>{{ $t('labor.title') }}</h4>
+        <p>{{ $t('labor.description') }}</p>
       </div>
       <div class="toolbar">
         <div class="search-field">
@@ -97,7 +98,7 @@
           </span>
           <input
             v-model="word"
-            :placeholder="$t('search_employees')"
+            :placeholder="$t('search_labors')"
             class="search-input"
             type="text"
             @input="Search"
@@ -105,18 +106,18 @@
         </div>
         <router-link
           class="btn btn-primary"
-          :to="user?.type === 1 ? '/admin/employee/add' : '/organization/employee/add'"
+          :to="user?.type === 1 ? '/admin/labor/add' : '/organization/labor/add'"
         >
-          <IndexAddIcon /> {{ $t('employee') }}
+          <IndexAddIcon /> {{ $t('labor.add') }}
         </router-link>
       </div>
     </div>
 
-    <DataStatusBuilder :controller="state" :on-retry="async () => await fetchEmployees()">
+    <DataStatusBuilder :controller="state" :on-retry="async () => await fetchlabors()">
       <template #success="{ data }">
         <AppTable
           :headers="headers"
-          :items="data as EmployeeModel[]"
+          :items="data as laborModel[]"
           selectable
           show-index
           hoverable
@@ -129,7 +130,7 @@
                 :to="
                   user?.type === 1
                     ? `/admin/edit/${item.id}`
-                    : `/organization/employee/edit/${item.id}`
+                    : `/organization/labor/edit/${item.id}`
                 "
                 :title="$t('admin.edit')"
               >
@@ -151,7 +152,7 @@
                 :title="$t('admin.delete_title')"
                 :message="$t('admin.delete_message')"
                 :hasbtn="true"
-                @delete="deleteEmployee(item.id!)"
+                @delete="deletelabor(item.id!)"
               >
                 <template #btn>
                   <button class="action-btn delete" :title="$t('Delete')">
@@ -184,10 +185,10 @@
 
       <template #empty>
         <div class="empty-state">
-          <h3>{{ $t('employee.empty_title') }}</h3>
-          <p>{{ $t('employee.empty_description') }}</p>
-          <router-link class="btn btn-primary" to="/organization/employee/add">{{
-            $t('employee.add')
+          <h3>{{ $t('labor.empty_title') }}</h3>
+          <p>{{ $t('labor.empty_description') }}</p>
+          <router-link class="btn btn-primary" to="/organization/labor/add">{{
+            $t('labor.add')
           }}</router-link>
         </div>
       </template>
@@ -206,19 +207,25 @@
 </template>
 
 <style scoped lang="scss">
-  .admin-page,
-  .admin-header,
+  .labor-header {
+    flex-direction: column !important;
+  }
+
+  .labor-page,
+  .labor-header,
   .row-actions {
     display: flex;
   }
-
-  .admin-page {
+  .toolbar {
+    display: flex;
+    justify-content: space-between;
+  }
+  .labor-page {
     flex-direction: column;
     gap: 1.5rem;
   }
 
-  .admin-header {
-    align-items: center;
+  .labor-header {
     justify-content: space-between;
     gap: 1rem;
   }

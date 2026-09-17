@@ -5,6 +5,7 @@ import MaterialsModel from './materials.model';
 import type SuppliersModel from '@/modules/shared/Brand/core/models/brand.model';
 import type ItemTypesModel from '@/modules/MainOrganization/ItemTypes/core/models/item.types.model';
 import type StageModel from '@/modules/shared/Stages/core/models/stage.model';
+import LaborModel from '@/modules/MainOrganization/Labors/core/models/labor.model';
 
 export default class MaterialsShowModel {
   public readonly id?: number;
@@ -65,7 +66,7 @@ export default class MaterialsShowModel {
       throw new Error('Invalid MaterialsShowModel data');
     }
 
-    const translations = MaterialsModel.mapTranslations(
+    const translations = LaborModel.mapTranslations(
       json.title,
     );
 

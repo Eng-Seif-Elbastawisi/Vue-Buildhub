@@ -5,42 +5,73 @@ import { UnitTypeEnum } from '@/modules/shared/Materials/core/constant/unit.type
  */
 export default class LaborModel {
   public readonly id?: number;
+  // public readonly brandId?: number;
+  public readonly price: number;
   public readonly title: string;
-  public readonly price?: number;
-  public readonly unit?: UnitTypeEnum;
-  
+  public readonly unit: UnitTypeEnum;
+  public readonly translations: { title: Record<string, string> };
+  public readonly itemTypeId?: number;
+  public readonly stageId?: number;
+  public readonly subStageId?: number;
 
   constructor(data: {
     id?: number;
+    translations: { title: Record<string, string> };
+    unit: UnitTypeEnum;
     title: string;
-    price?: number;
-    unit?: UnitTypeEnum;
+    price: number;
+    // brandId?: number;
+    itemTypeId?: number;
+    stageId?: number;
+    subStageId?: number;
   }) {
     this.id = data.id;
-    this.title = data.title;
-    this.price = data.price;
+    this.translations = data.translations;
     this.unit = data.unit;
-
+    this.price = data.price;
+    // this.brandId = data.brandId;
+    this.title = data.title;
+    this.itemTypeId = data.itemTypeId;
+    this.stageId = data.stageId;
+    this.subStageId = data.subStageId;
     Object.freeze(this);
   }
 
-  static fromJson(json: Record<string, unknown>): LaborModel {
-    if (!json) {
-      throw new Error('Cannot create LaborModel from null or undefined');
+  static mapTranslations(translations: unknown, key: string = 'title'): Record<string, string> {
+    if (!Array.isArray(translations)) {
+      const value = translations as { title?: Record<string, string> } | undefined;
+      return value?.title ?? (translations as Record<string, string>) ?? {};
     }
 
+    return translations.reduce<Record<string, string>>((result, translation) => {
+      const item = translation as Record<string, string>;
+      if (item.locale && item[key]) result[item.locale] = item[key];
+      return result;
+    }, {});
+  }
+
+  static fromJson(json: Record<string, unknown>): LaborModel {
+    if (!json) throw new Error('Cannot create LaborModel from null or undefined');
+
     return new LaborModel({
-      id: Number(json.id ?? json.admin_id),
-      title: (json.title as string) || '',
+      id: json.id as number | undefined,
+      translations: { title: LaborModel.mapTranslations(json.translations) },
+      unit: json.unit as UnitTypeEnum,
+      title: json.title as string,
       price: Number(json.price),
-      unit: UnitTypeEnum[json.unit as keyof typeof UnitTypeEnum] || UnitTypeEnum.meter,
+      // brandId: (json.brandId ?? json.brand_id) as number | undefined,
+      itemTypeId: json.itemTypeId as number | undefined,
+      stageId: json.stageId as number | undefined,
+      subStageId: json.subStageId as number | undefined,
     });
   }
 
   static example: LaborModel = new LaborModel({
-    id: 1,
-    title: 'Mohamed Saad',
-    price: 10,
+    id: 10,
+    translations: { title: { ar: 'مادة', en: 'Material' } },
     unit: UnitTypeEnum.meter,
+    title: 'm',
+    price: 100,
+    // brandId: 10,
   });
 }

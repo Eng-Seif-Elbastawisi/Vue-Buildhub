@@ -5,20 +5,20 @@ import { ClassValidation } from '@/base/Presentation/Utils/classValidation';
  * Parameters for showing an employee
  */
 export default class ShowLaborParams implements Params {
-  public id: number;
+  public labor_id: number;
+  public allLocales?: boolean;
 
   public static readonly validation = new ClassValidation().setRules({
-    id: { required: true },
+    labor_id: { required: true },
   });
 
-  constructor(id: number) {
-    this.id = id;
+  constructor(data: { labor_id: number; allLocales?: boolean }) {
+    this.labor_id = data.labor_id;
+    this.allLocales = data.allLocales;
   }
 
-  toMap(): { [p: string]: any } {
-    return {
-      labor_id: this.id,
-    };
+  toMap(): { [p: string]: number } {
+    return { labor_id: this.labor_id };
   }
 
   validate() {

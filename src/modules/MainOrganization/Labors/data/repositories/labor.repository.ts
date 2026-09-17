@@ -1,8 +1,9 @@
 import BaseRepository, { type RepositoryConfig } from '@/base/Domain/Repositories/baseRepository';
 import LaborModel from '../../core/models/labor.model';
 import LaborApiService from '../api/labor.api-service';
+import laborShowModel from '../../core/models/labor.show.model';
 
-export default class LaborRepository extends BaseRepository<LaborModel, LaborModel[]> {
+export default class LaborRepository extends BaseRepository<laborShowModel, LaborModel[]> {
   private static instance: LaborRepository;
 
   protected get apiService() {
@@ -31,20 +32,14 @@ export default class LaborRepository extends BaseRepository<LaborModel, LaborMod
     }
     return LaborRepository.instance;
   }
+    protected parseItem(data: any): laborShowModel {
+      return laborShowModel.fromJson(data);
+    }
+  
+    protected parseList(data: any): LaborModel[] {
+      if (!Array.isArray(data)) return [];
+  
+      return data.map((item) => LaborModel.fromJson(item));
+    }
 
-  protected parseItem(data: any): LaborModel {
-    return LaborModel.fromJson(data);
-  }
-
-  protected parseList(data: any): LaborModel[] {
-    if (!Array.isArray(data)) return [];
-    return data.reduce((acc: LaborModel[], item) => {
-      try {
-        if (item != null) {
-          acc.push(this.parseItem(item));
-        }
-      } catch {}
-      return acc;
-    }, []);
-  }
 }

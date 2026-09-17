@@ -1,31 +1,31 @@
 <script setup lang="ts">
   import { onMounted, ref } from 'vue';
   import { useRoute } from 'vue-router';
-  import type AddEmployeeParams from '../../core/params/add.labor.params.ts';
-  import EditEmployeeParams from '../../core/params/edit.labor.params.ts';
-  import ShowEmployeeParams from '../../core/params/show.labor.params.ts';
-  import EmployeeController from '../controllers/labor.controller.ts';
-  import EmployeeForm from './EmployeeForm.vue';
+  import type AddlaborParams from '../../core/params/add.labor.params.ts';
+  import EditlaborParams from '../../core/params/edit.labor.params.ts';
+  import ShowlaborParams from '../../core/params/show.labor.params.ts';
+  import laborController from '../controllers/labor.controller.ts';
+  import LaborForm from './LaborForm.vue';
 
-  const controller = EmployeeController.getInstance();
+  const controller = laborController.getInstance();
   const route = useRoute();
   const formKey = route.fullPath;
-  const employeeId = Number(route.params.employee_id);
-  const params = ref<EditEmployeeParams | null>(null);
+  const laborId = Number(route.params.labor_id);
+  const params = ref<EditlaborParams | null>(null);
+
   const loading = ref(false);
 
-  const updateData = (data: AddEmployeeParams) => {
-    params.value = new EditEmployeeParams({
-      id: employeeId,
-      name: data.name,
-      email: data.email,
-      phone: data.phone,
-      password: data.password || undefined,
-      type: data.type,
+  const updateData = (data: AddlaborParams) => {
+    params.value = new EditlaborParams({
+      labor_id: laborId,
+      brandId: data.brandId,
+      measurementId: data.measurementId,
+      price: data.price,
+      translations: data.translations,
     });
   };
 
-  const saveAdmin = async () => {
+  const saveLabor = async () => {
     if (!params.value) return;
     loading.value = true;
     try {
@@ -36,14 +36,27 @@
   };
 
   onMounted(async () => {
-    await controller.fetchOne(new ShowEmployeeParams(employeeId));
+    await controller.fetchOne(
+      new ShowlaborParams({
+        labor_id: laborId,
+        allLocales: true,
+      }),
+      {
+        headers: {
+          'accept-language': '*',
+        },
+      },
+    );
   });
 </script>
 
 <template>
-  <div class="employee-crud-page">
-    <EmployeeForm
-      :admin="controller.itemData.value!"
+  <div class="labor-crud-page">
+    <!-- <pre>
+      {{ controller.itemData.value! }}
+    </pre> -->
+    <LaborForm
+      :labor="controller.itemData.value!"
       :form-key="formKey"
       :loading="loading"
       @update-data="updateData"
@@ -55,10 +68,10 @@
         :class="{ 'btn--loading': loading }"
         class="btn btn-primary w-full"
         type="button"
-        @click="saveAdmin"
+        @click="saveLabor"
       >
         <span v-if="loading" class="loader"></span>
-        <span v-else>{{ $t('employee.update') }}</span>
+        <span v-else>{{ $t('labor.update') }}</span>
       </button>
     </div>
 
@@ -69,7 +82,7 @@
 </template>
 
 <style scoped lang="scss">
-  .employee-crud-page {
+  .labor-crud-page {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
