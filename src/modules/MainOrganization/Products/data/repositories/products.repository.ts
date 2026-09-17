@@ -1,12 +1,19 @@
 import BaseRepository, { type RepositoryConfig } from '@/base/Domain/Repositories/baseRepository';
+
 import ProductsModel from '../../core/models/products.model';
 import ProductsShowModel from '../../core/models/products.show.model';
 import ProductsApiService from '../api/products.api-service';
+
 import type DeleteProductsSortingParams from '../../core/params/delete.products.sorting.params';
 import type DeleteProductsStageParams from '../../core/params/delete.products.stage.params';
 import type StoreProductsSortingParams from '../../core/params/store.products.sorting.params';
 import type StoreProductsStageParams from '../../core/params/store.products.stage.params';
+
+import type Params from '@/base/Core/Params/params';
+import type { ApiCallOptions } from '@/base/Data/ApiService/baseApiService';
 import type { DataState } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
+
+import ProductStatsModel from '../../core/models/product.stats.model';
 
 export default class ProductsRepository extends BaseRepository<ProductsShowModel, ProductsModel[]> {
   private static instance: ProductsRepository;
@@ -61,5 +68,15 @@ export default class ProductsRepository extends BaseRepository<ProductsShowModel
 
   async storeProductStage(data?: StoreProductsStageParams): Promise<DataState<void>> {
     return await this.apiService.storeProductStage(data);
+  }
+
+  async fetchStats(params: Params, options?: ApiCallOptions) {
+    const res = await this.apiService.fetchStats(params, options);
+
+    if (res.data) {
+      return ProductStatsModel.fromJson(res.data.data);
+    }
+
+    return null;
   }
 }

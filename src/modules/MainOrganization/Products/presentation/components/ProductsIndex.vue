@@ -1,40 +1,69 @@
 <script setup lang="ts">
   import { computed, onMounted, ref } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
+
   import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
   import Pagination from '@/shared/HelpersComponents/Pagination.vue';
-  import type ProductsModel from '../../core/models/products.model';
-  import DeleteProductsParams from '../../core/params/delete.products.params';
-  import IndexProductsParams from '../../core/params/index.products.params';
-  import ProductsController from '../controllers/products.controller';
-  import { useUserStore } from '@/stores/user';
-  import DeleteDialog from '@/base/Presentation/Dialogs/MainDialogs/DeleteDialog.vue';
   import { debounce } from '@/base/Presentation/Utils/debouced';
   import IndexAddIcon from '@/shared/icons/IndexAddIcon.vue';
+  import DeleteDialog from '@/base/Presentation/Dialogs/MainDialogs/DeleteDialog.vue';
+  import { useUserStore } from '@/stores/user';
+
+  import type ProductsModel from '../../core/models/products.model';
+  import type ProductStatsModel from '../../core/models/product.stats.model';
+
+  import DeleteProductsParams from '../../core/params/delete.products.params';
+  import IndexProductsParams from '../../core/params/index.products.params';
+
+  import ProductsController from '../controllers/products.controller';
 
   const controller = ProductsController.getInstance();
+
   const state = computed(() => controller.listState.value);
+
   const route = useRoute();
   const router = useRouter();
+
   const perPage = ref(12);
   const word = ref('');
+
   const { user } = useUserStore();
+
+  // ======================================================
+  // Stats
+  // ======================================================
+
+  const statsData = ref<ProductStatsModel | null>(null);
+
+  const stats = computed(() => {
+    return [
+      {
+        label: 'no_sorting',
+        value: statsData.value?.hasNotSortingCount ?? 0,
+        color: 'bg-slate-50',
+      },
+      {
+        label: 'has_sorting',
+        value: statsData.value?.hasSortingCount ?? 0,
+        color: 'bg-emerald-50',
+      },
+      {
+        label: 'all_products',
+        value: statsData.value?.productsCount ?? 0,
+        color: 'bg-amber-50',
+      },
+    ];
+  });
+
+  // ======================================================
+  // Products
+  // ======================================================
 
   const products = computed(() => (state.value.data as ProductsModel[]) ?? []);
 
-  const stats = computed(() => {
-    const list = products.value;
-    const total = list.length;
-    const withSorting = list.filter((p) => p.sortings?.length > 0).length;
-    const multiLink = list.filter((p) => p.stageIds?.length > 1).length;
-    const noSorting = total - withSorting;
-
-    return [
-      { label: 'no_sorting', value: noSorting, color: 'bg-slate-50' },
-      { label: 'has_sorting', value: withSorting, color: 'bg-emerald-50' },
-      { label: 'all_products', value: total, color: 'bg-amber-50' },
-    ];
-  });
+  // ======================================================
+  // Fetch Products
+  // ======================================================
 
   const fetchProducts = async (page: number = 1, searchWord: string = '') =>
     controller.fetchList(
@@ -46,12 +75,35 @@
       ),
     );
 
+  // ======================================================
+  // Fetch Stats
+  // ======================================================
+
+  const fetchStats = async () => {
+    const result = await controller.fetchStats(new IndexProductsParams('', 1, 1, 0));
+
+    statsData.value = result;
+  };
+
+  // ======================================================
+  // Pagination
+  // ======================================================
+
   const onPageChange = (page: number) => {
     void fetchProducts(page);
+
     void router.push({
-      query: { ...route.query, page: String(page), word: word.value || undefined },
+      query: {
+        ...route.query,
+        page: String(page),
+        word: word.value || undefined,
+      },
     });
   };
+
+  // ======================================================
+  // Search
+  // ======================================================
 
   const Search = debounce(() => {
     router.push({
@@ -61,37 +113,64 @@
         word: word.value || undefined,
       },
     });
+
     fetchProducts(1, word.value);
   });
+
+  // ======================================================
+  // Per Page
+  // ======================================================
 
   const onPerPageChange = (count: number) => {
     perPage.value = count;
     void fetchProducts(1);
   };
 
+  // ======================================================
+  // Delete Product
+  // ======================================================
+
   const deleteProduct = async (id: number) => {
-    await controller.delete(new DeleteProductsParams({ productsId: id }));
-    await fetchProducts();
+    await controller.delete(
+      new DeleteProductsParams({
+        productsId: id,
+      }),
+    );
+
+    await Promise.all([fetchProducts(), fetchStats()]);
   };
 
-  onMounted(async () => {
-    word.value = route.query.word ? String(route.query.word) : '';
-    await fetchProducts();
-  });
+  // ======================================================
+  // Helpers
+  // ======================================================
 
   const formatPrice = (price?: number) => {
     if (price == null) return '—';
+
     return new Intl.NumberFormat('ar-EG').format(price);
   };
 
   const getStageLabel = (product: ProductsModel) => {
     const count = product.stageIds?.length ?? 0;
+
     if (count === 0) return null;
+
     if (count === 1) return 'Products.stages.one';
+
     return 'Products.stages.many';
   };
 
   const getStageCount = (product: ProductsModel) => product.stageIds?.length ?? 0;
+
+  // ======================================================
+  // Mounted
+  // ======================================================
+
+  onMounted(async () => {
+    word.value = route.query.word ? String(route.query.word) : '';
+
+    await Promise.all([fetchProducts(), fetchStats()]);
+  });
 </script>
 
 <template>
@@ -99,10 +178,16 @@
     <!-- Header -->
     <header class="page-header">
       <div class="header-left">
-        <h1 class="title">{{ $t('Products.library_title') }}</h1>
+        <h1 class="title">
+          {{ $t('Products.library_title') }}
+        </h1>
+
         <p class="subtitle">
           {{ $t('Products.library_subtitle') }}
-          <span class="badge">{{ $t('Products.badge') }}</span>
+
+          <span class="badge">
+            {{ $t('Products.badge') }}
+          </span>
         </p>
       </div>
 
@@ -111,6 +196,7 @@
         :to="user?.type === 1 ? '/organization/products/add' : '/organization/products/add'"
       >
         <IndexAddIcon />
+
         {{ $t('Products.add') }}
       </router-link>
     </header>
@@ -118,8 +204,13 @@
     <!-- Stats Cards -->
     <div class="stats-grid">
       <div v-for="(stat, i) in stats" :key="i" class="stat-card" :class="stat.color">
-        <span class="stat-label">{{ $t(`Products.stats.${stat.label}`) }}</span>
-        <span class="stat-value">{{ stat.value }}</span>
+        <span class="stat-label">
+          {{ $t(`Products.stats.${stat.label}`) }}
+        </span>
+
+        <span class="stat-value">
+          {{ stat.value }}
+        </span>
       </div>
     </div>
 
@@ -139,6 +230,7 @@
             <circle cx="11" cy="11" r="8" />
             <path d="m21 21-4.35-4.35" />
           </svg>
+
           <input
             v-model="word"
             type="text"
@@ -158,6 +250,7 @@
             <!-- Image -->
             <div class="card-image">
               <img v-if="product.image" :src="product.image" :alt="product.title" class="img" />
+
               <div v-else class="placeholder">
                 <svg
                   width="32"
@@ -170,7 +263,9 @@
                   <path
                     d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"
                   />
+
                   <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+
                   <line x1="12" y1="22.08" x2="12" y2="12" />
                 </svg>
               </div>
@@ -179,8 +274,13 @@
             <!-- Body -->
             <div class="card-body">
               <div class="card-top">
-                <h3 class="product-title">{{ product.title }}</h3>
-                <span class="price">{{ formatPrice(product.expectedPrice) }}</span>
+                <h3 class="product-title">
+                  {{ product.title }}
+                </h3>
+
+                <span class="price">
+                  {{ formatPrice(product.expectedPrice) }}
+                </span>
               </div>
 
               <div class="meta">
@@ -195,7 +295,11 @@
                 </span>
 
                 <span v-if="getStageLabel(product)" class="tag tag-stage">
-                  {{ $t(getStageLabel(product)!, { count: getStageCount(product) }) }}
+                  {{
+                    $t(getStageLabel(product)!, {
+                      count: getStageCount(product),
+                    })
+                  }}
                 </span>
 
                 <span v-if="product.measurementUnitTitle" class="tag tag-unit">
@@ -223,9 +327,11 @@
                   stroke-linejoin="round"
                 >
                   <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+
                   <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
                 </svg>
               </router-link>
+
               <!-- Show -->
               <router-link
                 class="action-btn show"
@@ -242,6 +348,7 @@
                   stroke-linejoin="round"
                 >
                   <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+
                   <circle cx="12" cy="12" r="3" />
                 </svg>
               </router-link>
@@ -266,8 +373,10 @@
                       stroke-linejoin="round"
                     >
                       <path d="M3 6h18" />
+
                       <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
-                      <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+
+                      <path d="M8 6V4c0-1 1-1 2-1h4c1 0 2 1 2 2v2" />
                     </svg>
                   </button>
                 </template>
@@ -287,13 +396,21 @@
       <template #empty>
         <div class="empty-state">
           <div class="empty-icon">📦</div>
-          <h3>{{ $t('Products.empty_title') }}</h3>
-          <p>{{ $t('Products.empty_description') }}</p>
+
+          <h3>
+            {{ $t('Products.empty_title') }}
+          </h3>
+
+          <p>
+            {{ $t('Products.empty_description') }}
+          </p>
+
           <router-link
             class="btn-add"
             :to="user?.type === 1 ? '/organization/products/add' : '/organization/products/add'"
           >
             <IndexAddIcon />
+
             {{ $t('Products.add') }}
           </router-link>
         </div>
@@ -304,9 +421,12 @@
         <div class="products-grid">
           <div v-for="i in 8" :key="i" class="product-card skeleton">
             <div class="card-image skeleton-box"></div>
+
             <div class="card-body">
               <div class="skeleton-line w-70"></div>
+
               <div class="skeleton-line w-40"></div>
+
               <div class="skeleton-line w-50"></div>
             </div>
           </div>
@@ -658,9 +778,11 @@
       &.w-70 {
         width: 70%;
       }
+
       &.w-40 {
         width: 40%;
       }
+
       &.w-50 {
         width: 50%;
       }
@@ -671,6 +793,7 @@
     0% {
       background-position: 200% 0;
     }
+
     100% {
       background-position: -200% 0;
     }
