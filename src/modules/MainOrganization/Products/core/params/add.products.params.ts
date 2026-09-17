@@ -8,18 +8,22 @@ import { translate } from '@/locales/i18n';
 
 import type TranslationParams from '@/base/Core/Params/translationParams';
 
+import AddProductsSortingParams from '../params/add.products.sorting.params';
+
 export default class AddProductsParams implements Params {
   public translations?: TranslationParams;
+
   public itemTypeId?: number;
+
   public measurementUnitId?: number;
+
   public expectedPrice?: number;
+
   public image?: string;
+
   public stageIds?: number[];
 
-  public sortings?: {
-    title: string;
-    price: number;
-  }[];
+  public sortings?: AddProductsSortingParams[];
 
   public static readonly validation = new ClassValidation().setRules({
     translations: {
@@ -35,11 +39,7 @@ export default class AddProductsParams implements Params {
     expectedPrice?: number;
     image?: string;
     stageIds?: number[];
-
-    sortings?: {
-      title: string;
-      price: number;
-    }[];
+    sortings?: AddProductsSortingParams[];
   }) {
     this.translations = data.translations;
     this.itemTypeId = data.itemTypeId;
@@ -58,7 +58,7 @@ export default class AddProductsParams implements Params {
       expected_price: this.expectedPrice,
       image: this.image,
       stage_ids: this.stageIds,
-      sortings: this.sortings,
+      sortings: this.sortings?.map((sorting) => sorting.toMap()),
     };
   }
 

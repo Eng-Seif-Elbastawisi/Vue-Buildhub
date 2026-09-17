@@ -31,7 +31,7 @@
       await controller.fetchOne(
         new ShowProductsParams({
           productsId,
-          allLocales: true,
+          allLocales: false,
         }),
       );
     } finally {
@@ -70,11 +70,11 @@
       />
 
       <!-- Hero -->
-      <ProductShowHero :product="product" />
+      <ProductShowHero :product="product" :title="product.title" />
 
       <!-- Content -->
       <div class="content-grid">
-        <ProductShowInfo :product="product" />
+        <ProductShowInfo :product="product" :title="product.title" />
 
         <ProductShowSortings :product-id="product.id" :sortings="product.sortings" />
 
@@ -84,7 +84,7 @@
           :stage-ids="product.stageIds"
         />
 
-        <ProductShowDescription :translations="product.translations" />
+        <ProductShowDescription :description="product.description" />
       </div>
     </template>
 

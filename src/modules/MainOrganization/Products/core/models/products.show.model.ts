@@ -1,43 +1,16 @@
 import TranslationParams from '@/base/Core/Params/translationParams';
 
+import ItemTypesModel from '@/modules/MainOrganization/ItemTypes/core/models/item.types.show.model';
+import AttachmentModel from './attachment.model';
+import MeasurementModel from '@/modules/shared/measurement/core/models/measurement.model';
+import StageModel from '@/modules/shared/Stages/core/models/stage.model';
+
+import ProductShowSortingModel from './ProductShowSortingModel';
+
 interface ApiTranslationItem {
   locale: string;
   title?: string;
   description?: string;
-}
-
-interface ApiRelation {
-  id: number;
-  title?: string | ApiTranslationItem[];
-}
-
-interface ApiStage {
-  id: number;
-  parent_id: number | null;
-  title: ApiTranslationItem[] | string;
-}
-
-interface ApiAttachment {
-  id: number;
-  file: string;
-  type: number;
-}
-
-interface ApiSorting {
-  id: number;
-  title: string;
-  price: string | number;
-}
-
-export interface ProductShowStage {
-  id: number;
-  title: string;
-}
-
-export interface ProductShowSorting {
-  id?: number;
-  title: string;
-  price: number;
 }
 
 export default class ProductsShowModel {
@@ -45,22 +18,22 @@ export default class ProductsShowModel {
 
   public readonly translations?: TranslationParams;
 
-  public readonly itemTypeId?: number;
-  public readonly itemTypeTitle?: string;
+  public title?: string;
+  public description?: string;
 
-  public readonly measurementUnitId?: number;
-  public readonly measurementUnitTitle?: string;
+  public readonly itemType?: ItemTypesModel;
+
+  public readonly measurementUnit?: MeasurementModel;
 
   public readonly expectedPrice?: number;
+
   public readonly isActive?: boolean;
 
-  // مهم للـ Edit
   public readonly stageIds: number[];
 
-  // مهم للـ Show
-  public readonly stages: ProductShowStage[];
+  public readonly stages: StageModel[];
 
-  public readonly sortings: ProductShowSorting[];
+  public readonly sortings: ProductShowSortingModel[];
 
   public readonly image?: string;
 
@@ -69,45 +42,45 @@ export default class ProductsShowModel {
 
     translations?: TranslationParams;
 
-    itemTypeId?: number;
-    itemTypeTitle?: string;
+    itemType?: ItemTypesModel;
 
-    measurementUnitId?: number;
-    measurementUnitTitle?: string;
+    measurementUnit?: MeasurementModel;
 
     expectedPrice?: number;
+
     isActive?: boolean;
 
     stageIds?: number[];
 
-    stages?: ProductShowStage[];
+    stages?: StageModel[];
 
-    sortings?: ProductShowSorting[];
+    sortings?: ProductShowSortingModel[];
 
     image?: string;
+    title?: string;
+    description?: string;
   }) {
     this.id = data.id;
 
     this.translations = data.translations;
 
-    this.itemTypeId = data.itemTypeId;
-    this.itemTypeTitle = data.itemTypeTitle;
+    this.itemType = data.itemType;
 
-    this.measurementUnitId = data.measurementUnitId;
-    this.measurementUnitTitle = data.measurementUnitTitle;
+    this.measurementUnit = data.measurementUnit;
 
     this.expectedPrice = data.expectedPrice;
+
     this.isActive = data.isActive;
 
-    // للـ Edit
     this.stageIds = data.stageIds ?? [];
 
-    // للـ Show
     this.stages = data.stages ?? [];
 
     this.sortings = data.sortings ?? [];
 
     this.image = data.image;
+    this.title = data.title;
+    this.description = data.description;
 
     Object.freeze(this);
   }
@@ -116,7 +89,9 @@ export default class ProductsShowModel {
     arr: ApiTranslationItem[] | undefined,
     key: 'title' | 'description',
   ): Record<string, string> {
-    if (!Array.isArray(arr)) return {};
+    if (!Array.isArray(arr)) {
+      return {};
+    }
 
     return arr.reduce<Record<string, string>>((acc, item) => {
       const value = item[key];
@@ -127,34 +102,6 @@ export default class ProductsShowModel {
 
       return acc;
     }, {});
-  }
-
-  private static extractTitle(
-    relation: ApiRelation | ApiTranslationItem[] | string | undefined,
-  ): string | undefined {
-    if (!relation) return undefined;
-
-    if (typeof relation === 'string') {
-      return relation;
-    }
-
-    if (Array.isArray(relation)) {
-      const ar = relation.find((item) => item.locale === 'ar')?.title;
-
-      const en = relation.find((item) => item.locale === 'en')?.title;
-
-      return ar || en || relation[0]?.title;
-    }
-
-    if (Array.isArray(relation.title)) {
-      const ar = relation.title.find((item) => item.locale === 'ar')?.title;
-
-      const en = relation.title.find((item) => item.locale === 'en')?.title;
-
-      return ar || en || relation.title[0]?.title;
-    }
-
-    return relation.title;
   }
 
   static fromJson(json: any): ProductsShowModel {
@@ -176,17 +123,15 @@ export default class ProductsShowModel {
     // Item Type
     // =====================================================
 
-    const itemTypeId = data.item_type?.id ?? data.itemTypeId;
-
-    const itemTypeTitle = ProductsShowModel.extractTitle(data.item_type?.title);
+    const itemType = data.item_type ? ItemTypesModel.fromJson(data.item_type) : undefined;
 
     // =====================================================
     // Measurement
     // =====================================================
 
-    const measurementUnitId = data.measurement_unit?.id ?? data.measurementUnitId;
-
-    const measurementUnitTitle = ProductsShowModel.extractTitle(data.measurement_unit?.title);
+    const measurementUnit = data.measurement_unit
+      ? MeasurementModel.fromJson(data.measurement_unit)
+      : undefined;
 
     // =====================================================
     // Expected Price
@@ -199,18 +144,13 @@ export default class ProductsShowModel {
     // Stages
     // =====================================================
 
-    const stages: ProductShowStage[] = Array.isArray(data.stages)
-      ? data.stages.map((stage: ApiStage) => ({
-          id: stage.id,
-
-          title: ProductsShowModel.extractTitle(stage.title) ?? `Stage ${stage.id}`,
-        }))
+    const stages: StageModel[] = Array.isArray(data.stages)
+      ? data.stages.map((stage: any) => StageModel.fromJson(stage))
       : [];
 
-    // مهم جداً للـ Edit
     const stageIds: number[] =
       stages.length > 0
-        ? stages.map((stage) => stage.id)
+        ? stages.map((stage) => stage.id).filter((id): id is number => id !== undefined)
         : Array.isArray(data.stageIds)
           ? data.stageIds
           : [];
@@ -219,23 +159,19 @@ export default class ProductsShowModel {
     // Sortings
     // =====================================================
 
-    const sortings: ProductShowSorting[] = Array.isArray(data.sortings)
-      ? data.sortings.map((sorting: ApiSorting) => ({
-          id: sorting.id,
-
-          title: sorting.title,
-
-          price: Number(sorting.price ?? 0),
-        }))
+    const sortings: ProductShowSortingModel[] = Array.isArray(data.sortings)
+      ? data.sortings.map((sorting: any) => ProductShowSortingModel.fromJson(sorting))
       : [];
 
     // =====================================================
-    // Image
+    // Attachments
     // =====================================================
 
-    const firstAttachment = Array.isArray(data.attachments)
-      ? data.attachments.find((attachment: ApiAttachment) => attachment.type === 1)
-      : undefined;
+    const attachments: AttachmentModel[] = Array.isArray(data.attachments)
+      ? data.attachments.map((attachment: any) => AttachmentModel.fromJson(attachment))
+      : [];
+
+    const firstAttachment = attachments.find((attachment) => attachment.type === 1);
 
     const image = firstAttachment?.file ?? data.image;
 
@@ -256,12 +192,12 @@ export default class ProductsShowModel {
         title: titleMap,
         description: descriptionMap,
       }),
+      title: data.title,
+      description: data.description,
 
-      itemTypeId,
-      itemTypeTitle,
+      itemType,
 
-      measurementUnitId,
-      measurementUnitTitle,
+      measurementUnit,
 
       expectedPrice,
 
@@ -269,7 +205,6 @@ export default class ProductsShowModel {
 
       stageIds,
 
-  
       stages,
 
       sortings,

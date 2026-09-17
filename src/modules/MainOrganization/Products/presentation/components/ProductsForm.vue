@@ -7,6 +7,7 @@
 
   import type ProductsShowModel from '../../core/models/products.show.model';
   import AddProductsParams from '../../core/params/add.products.params';
+  import AddProductsSortingParams from '../../core/params/add.products.sorting.params';
   import DeleteProductsSortingParams from '../../core/params/delete.products.sorting.params';
 
   import ProductsController from '../controllers/products.controller';
@@ -27,7 +28,11 @@
 
   import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
 
-  interface Sorting {
+  // ======================================================
+  // Types
+  // ======================================================
+
+  interface SortingItem {
     id?: number;
     title: string;
     price: number;
@@ -45,6 +50,10 @@
     stages: StageItem[];
   }
 
+  // ======================================================
+  // Constants
+  // ======================================================
+
   const STAGE_COLORS = [
     'bg-blue-50',
     'bg-yellow-50',
@@ -56,7 +65,15 @@
     'bg-rose-50',
   ] as const;
 
+  // ======================================================
+  // i18n
+  // ======================================================
+
   const { t, locale } = useI18n();
+
+  // ======================================================
+  // Props & Emits
+  // ======================================================
 
   const emit = defineEmits<{
     updateData: [params: AddProductsParams];
@@ -67,14 +84,26 @@
     loading?: boolean;
   }>();
 
+  // ======================================================
+  // Controllers
+  // ======================================================
+
   const productsController = ProductsController.getInstance();
 
   const itemTypesController = ItemTypesController.getInstance();
   const measurementController = MeasurementController.getInstance();
   const stageController = StageController.getInstance();
 
+  // ======================================================
+  // Params
+  // ======================================================
+
   const itemTypesParams = new IndexItemTypesParams('', 1, 100, 0);
   const measurementParams = new IndexMeasurementParams('', 1, 100, 0);
+
+  // ======================================================
+  // Helpers
+  // ======================================================
 
   const extractTitle = (item: any): string => {
     if (!item) return '';
@@ -109,10 +138,23 @@
     });
   };
 
-  const createSorting = (price = 0): Sorting => ({
-    title: '',
-    price,
-  });
+  /**
+   * Important:
+   * SortingItem is a plain object because the form needs
+   * to modify price using v-model.
+   *
+   * Do NOT return AddProductsSortingModel / frozen model here.
+   */
+  const createSorting = (price = 0): SortingItem => {
+    return {
+      title: '',
+      price,
+    };
+  };
+
+  // ======================================================
+  // State
+  // ======================================================
 
   const itemTypes = ref<TitleInterface<string | number> | null>(null);
   const measurement = ref<TitleInterface<string | number> | null>(null);
@@ -124,6 +166,7 @@
   const measurementUnitId = ref<number | undefined>();
 
   const expectedPrice = ref<number | undefined>();
+
   const isActive = ref(true);
 
   const imageFiles = ref<UploadedFile[]>([]);
@@ -132,12 +175,18 @@
   const imageFileValue = computed(() => imageBase64.value);
 
   const selectedStageIds = ref<number[]>([]);
+
   const stageGroups = ref<StageGroup[]>([]);
+
   const stagesLoading = ref(false);
 
-  const sortings = ref<Sorting[]>([createSorting()]);
+  const sortings = ref<SortingItem[]>([createSorting()]);
 
   const deletingSortingId = ref<number | undefined>();
+
+  // ======================================================
+  // Image
+  // ======================================================
 
   const updateImage = (files: UploadedFile[]) => {
     imageFiles.value = files;
@@ -149,11 +198,19 @@
     imageBase64.value = image?.base64 ?? undefined;
   };
 
+  // ======================================================
+  // Sortings
+  // ======================================================
+
   const addSorting = () => {
     sortings.value.push(createSorting());
   };
 
-  const deleteSorting = async (sorting: Sorting, index: number) => {
+  const deleteSorting = async (sorting: SortingItem, index: number) => {
+    /**
+     * New sorting:
+     * There is no id yet, so just remove it locally.
+     */
     if (!sorting.id) {
       sortings.value.splice(index, 1);
 
@@ -182,6 +239,10 @@
       deletingSortingId.value = undefined;
     }
   };
+
+  // ======================================================
+  // Stages
+  // ======================================================
 
   const toggleStage = (id: number) => {
     const index = selectedStageIds.value.indexOf(id);
@@ -217,6 +278,10 @@
 
       let subStages = allStages.filter((stage: any) => stage.parent_id);
 
+      /**
+       * If the first request returned only parent stages,
+       * fetch children for each parent.
+       */
       if (mainStages.length > 0 && subStages.length === 0) {
         const subResults = await Promise.all(
           mainStages.map((stage: any) =>
@@ -269,6 +334,10 @@
     }
   };
 
+  // ======================================================
+  // Update Data
+  // ======================================================
+
   const updateData = () => {
     emit(
       'updateData',
@@ -288,13 +357,24 @@
 
         stageIds: [...selectedStageIds.value],
 
-        sortings: sortings.value.map((sorting, index) => ({
-          title: getSortingTitle(index),
-          price: sorting.price,
-        })),
+        /**
+         * Convert the editable plain objects into
+         * AddProductsSortingParams only when sending.
+         */
+        sortings: sortings.value.map(
+          (sorting, index) =>
+            new AddProductsSortingParams({
+              title: getSortingTitle(index),
+              price: sorting.price,
+            }),
+        ),
       }),
     );
   };
+
+  // ======================================================
+  // Translation Updates
+  // ======================================================
 
   const updateTranslations = (value: Record<string, string>) => {
     translations.value = value;
@@ -303,6 +383,10 @@
   const updateDescriptionTranslations = (value: Record<string, string>) => {
     descriptionTranslations.value = value;
   };
+
+  // ======================================================
+  // Watchers
+  // ======================================================
 
   watch(
     itemTypes,
@@ -335,6 +419,10 @@
     (product) => {
       if (!product) return;
 
+      // =====================================================
+      // Translations
+      // =====================================================
+
       translations.value = {
         ...(product.translations?.title ?? {}),
       };
@@ -343,23 +431,39 @@
         ...(product.translations?.description ?? {}),
       };
 
-      itemTypeId.value = product.itemTypeId;
+      // =====================================================
+      // Item Type
+      // =====================================================
 
-      if (product.itemTypeId) {
+      itemTypeId.value = product.itemType?.id;
+
+      if (product.itemType) {
         itemTypes.value = {
-          id: product.itemTypeId,
-          title: product.itemTypeTitle ?? '',
+          id: product.itemType.id,
+          title: product.itemType.title ?? '',
         } as TitleInterface<string | number>;
+      } else {
+        itemTypes.value = null;
       }
 
-      measurementUnitId.value = product.measurementUnitId;
+      // =====================================================
+      // Measurement
+      // =====================================================
 
-      if (product.measurementUnitId) {
+      measurementUnitId.value = product.measurementUnit?.id;
+
+      if (product.measurementUnit) {
         measurement.value = {
-          id: product.measurementUnitId,
-          title: product.measurementUnitTitle ?? '',
+          id: product.measurementUnit.id,
+          title: product.measurementUnit.title ?? '',
         } as TitleInterface<string | number>;
+      } else {
+        measurement.value = null;
       }
+
+      // =====================================================
+      // Other Product Data
+      // =====================================================
 
       expectedPrice.value = product.expectedPrice;
 
@@ -372,11 +476,23 @@
 
       imageFiles.value = [];
 
+      // =====================================================
+      // Sortings
+      // =====================================================
+
+      /**
+       * IMPORTANT:
+       * Create new plain objects here.
+       *
+       * Do not assign ProductShowSortingModel /
+       * AddProductsSortingModel instances directly,
+       * because they may be frozen with Object.freeze().
+       */
       sortings.value = product.sortings?.length
-        ? product.sortings.map((s) => ({
-            id: s.id,
+        ? product.sortings.map((sorting) => ({
+            id: sorting.id,
             title: '',
-            price: Number(s.price ?? 0),
+            price: Number(sorting.price ?? 0),
           }))
         : [createSorting()];
     },
@@ -403,8 +519,13 @@
     },
   );
 
+  // ======================================================
+  // Mounted
+  // ======================================================
+
   onMounted(async () => {
     await fetchStages();
+
     updateData();
   });
 </script>
@@ -425,18 +546,26 @@
           </span>
         </p>
       </div>
-<!-- 
+
+      <!--
       <div class="actions">
-        <button type="button" class="btn-secondary">
+        <button
+          type="button"
+          class="btn-secondary"
+        >
           {{ $t('Products.form.back') }}
         </button>
 
-        <button type="button" class="btn-primary">
+        <button
+          type="button"
+          class="btn-primary"
+        >
           <span>+</span>
 
           {{ $t('Products.form.save') }}
         </button>
-      </div> -->
+      </div>
+      -->
     </div>
 
     <div class="form-body">
@@ -490,7 +619,7 @@
             >
               <span v-if="deletingSortingId === s.id"> ... </span>
 
-              <span v-else>×</span>
+              <span v-else> × </span>
             </button>
           </div>
 
