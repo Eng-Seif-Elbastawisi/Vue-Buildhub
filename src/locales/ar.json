@@ -2395,5 +2395,12 @@
   "Stage": "المرحلة",
   "item_type": "نوع البند",
   "back_to_parent_stage": "الرجوع الي المرحلة الرئيسية",
-  "Are you sure you want to remove this measurement unit?": "هل أنت متأكد من حذف وحدة القياس ؟"
+  "Are you sure you want to remove this measurement unit?": "هل أنت متأكد من حذف وحدة القياس ؟",
+  "sidebar.products": "المنتجات",
+  "common.back": "رجوع",
+  "Products.stages.one_label": "مرحلة",
+  "Products.stages.many_label": "مراحل",
+  "common.add": "اضافه",
+   "common.edit": "تعديل"
+
 }

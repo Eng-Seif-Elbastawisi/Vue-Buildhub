@@ -503,7 +503,7 @@
               {{
                 mainStage.subStages.length === 1
                   ? $t('Products.stages.one_label')
-                  : $t('products.stages.many_label')
+                  : $t('Products.stages.many_label')
               }}
             </span>
           </div>

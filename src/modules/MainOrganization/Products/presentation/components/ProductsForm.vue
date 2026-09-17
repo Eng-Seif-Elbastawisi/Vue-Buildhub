@@ -29,9 +29,6 @@
   import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
   import { useRoute } from 'vue-router';
 
-  // ======================================================
-  // Types
-  // ======================================================
   const route = useRoute();
 
   const id = computed(() => {
@@ -39,6 +36,7 @@
 
     return value ? Number(value) : undefined;
   });
+
   interface SortingItem {
     id?: number;
     title: string;
@@ -57,10 +55,6 @@
     stages: StageItem[];
   }
 
-  // ======================================================
-  // Constants
-  // ======================================================
-
   const STAGE_COLORS = [
     'bg-blue-50',
     'bg-yellow-50',
@@ -72,27 +66,16 @@
     'bg-rose-50',
   ] as const;
 
-  // ======================================================
-  // i18n
-  // ======================================================
-
   const { t, locale } = useI18n();
-
-  // ======================================================
-  // Props & Emits
-  // ======================================================
 
   const emit = defineEmits<{
     (event: 'updateData', data: AddProductsParams | EditProductsParams): void;
   }>();
+
   const props = defineProps<{
     Products?: ProductsShowModel;
     loading?: boolean;
   }>();
-
-  // ======================================================
-  // Controllers
-  // ======================================================
 
   const productsController = ProductsController.getInstance();
 
@@ -100,16 +83,8 @@
   const measurementController = MeasurementController.getInstance();
   const stageController = StageController.getInstance();
 
-  // ======================================================
-  // Params
-  // ======================================================
-
   const itemTypesParams = new IndexItemTypesParams('', 1, 100, 0);
   const measurementParams = new IndexMeasurementParams('', 1, 100, 0);
-
-  // ======================================================
-  // Helpers
-  // ======================================================
 
   const extractTitle = (item: any): string => {
     if (!item) return '';
@@ -144,23 +119,12 @@
     });
   };
 
-  /**
-   * Important:
-   * SortingItem is a plain object because the form needs
-   * to modify price using v-model.
-   *
-   * Do NOT return AddProductsSortingModel / frozen model here.
-   */
   const createSorting = (price = 0): SortingItem => {
     return {
       title: '',
       price,
     };
   };
-
-  // ======================================================
-  // State
-  // ======================================================
 
   const itemTypes = ref<TitleInterface<string | number> | null>(null);
   const measurement = ref<TitleInterface<string | number> | null>(null);
@@ -190,11 +154,9 @@
 
   const deletingSortingId = ref<number | undefined>();
 
-  // ======================================================
-  // Image
-  // ======================================================
-
   const updateImage = (files: UploadedFile[]) => {
+    if (!isActive.value) return;
+
     imageFiles.value = files;
 
     const image = files.find(
@@ -204,19 +166,15 @@
     imageBase64.value = image?.base64 ?? undefined;
   };
 
-  // ======================================================
-  // Sortings
-  // ======================================================
-
   const addSorting = () => {
+    if (!isActive.value) return;
+
     sortings.value.push(createSorting());
   };
 
   const deleteSorting = async (sorting: SortingItem, index: number) => {
-    /**
-     * New sorting:
-     * There is no id yet, so just remove it locally.
-     */
+    if (!isActive.value) return;
+
     if (!sorting.id) {
       sortings.value.splice(index, 1);
 
@@ -245,10 +203,6 @@
       deletingSortingId.value = undefined;
     }
   };
-
-  // ======================================================
-  // Stages
-  // ======================================================
 
   const toggleStage = (id: number) => {
     const index = selectedStageIds.value.indexOf(id);
@@ -284,10 +238,6 @@
 
       let subStages = allStages.filter((stage: any) => stage.parent_id);
 
-      /**
-       * If the first request returned only parent stages,
-       * fetch children for each parent.
-       */
       if (mainStages.length > 0 && subStages.length === 0) {
         const subResults = await Promise.all(
           mainStages.map((stage: any) =>
@@ -340,11 +290,22 @@
     }
   };
 
-  // ======================================================
-  // Update Data
-  // ======================================================
-
   const updateData = () => {
+    const image = isActive.value ? imageBase64.value : undefined;
+
+    const validSortings = isActive.value
+      ? sortings.value
+          .map((sorting, originalIndex) => ({ sorting, originalIndex }))
+          .filter(({ sorting }) => Number(sorting.price) > 0)
+          .map(
+            ({ sorting, originalIndex }) =>
+              new AddProductsSortingParams({
+                title: getSortingTitle(originalIndex),
+                price: sorting.price,
+              }),
+          )
+      : [];
+
     const params = id.value
       ? new EditProductsParams({
           productsId: id.value,
@@ -355,22 +316,12 @@
           }),
 
           itemTypeId: itemTypeId.value,
-
           measurementUnitId: measurementUnitId.value,
-
           expectedPrice: expectedPrice.value,
 
-          image: imageBase64.value,
-
+          image: image,
           stageIds: [...selectedStageIds.value],
-
-          sortings: sortings.value.map(
-            (sorting, index) =>
-              new AddProductsSortingParams({
-                title: getSortingTitle(index),
-                price: sorting.price,
-              }),
-          ),
+          sortings: validSortings,
         })
       : new AddProductsParams({
           translations: new TranslationParams({
@@ -379,30 +330,16 @@
           }),
 
           itemTypeId: itemTypeId.value,
-
           measurementUnitId: measurementUnitId.value,
-
           expectedPrice: expectedPrice.value,
 
-          image: imageBase64.value,
-
+          image: image,
           stageIds: [...selectedStageIds.value],
-
-          sortings: sortings.value.map(
-            (sorting, index) =>
-              new AddProductsSortingParams({
-                title: getSortingTitle(index),
-                price: sorting.price,
-              }),
-          ),
+          sortings: validSortings,
         });
 
     emit('updateData', params);
   };
-
-  // ======================================================
-  // Translation Updates
-  // ======================================================
 
   const updateTranslations = (value: Record<string, string>) => {
     translations.value = value;
@@ -411,10 +348,6 @@
   const updateDescriptionTranslations = (value: Record<string, string>) => {
     descriptionTranslations.value = value;
   };
-
-  // ======================================================
-  // Watchers
-  // ======================================================
 
   watch(
     itemTypes,
@@ -447,10 +380,6 @@
     (product) => {
       if (!product) return;
 
-      // =====================================================
-      // Translations
-      // =====================================================
-
       translations.value = {
         ...(product.translations?.title ?? {}),
       };
@@ -458,10 +387,6 @@
       descriptionTranslations.value = {
         ...(product.translations?.description ?? {}),
       };
-
-      // =====================================================
-      // Item Type
-      // =====================================================
 
       itemTypeId.value = product.itemType?.id;
 
@@ -474,10 +399,6 @@
         itemTypes.value = null;
       }
 
-      // =====================================================
-      // Measurement
-      // =====================================================
-
       measurementUnitId.value = product.measurementUnit?.id;
 
       if (product.measurementUnit) {
@@ -488,10 +409,6 @@
       } else {
         measurement.value = null;
       }
-
-      // =====================================================
-      // Other Product Data
-      // =====================================================
 
       expectedPrice.value = product.expectedPrice;
 
@@ -504,18 +421,6 @@
 
       imageFiles.value = [];
 
-      // =====================================================
-      // Sortings
-      // =====================================================
-
-      /**
-       * IMPORTANT:
-       * Create new plain objects here.
-       *
-       * Do not assign ProductShowSortingModel /
-       * AddProductsSortingModel instances directly,
-       * because they may be frozen with Object.freeze().
-       */
       sortings.value = product.sortings?.length
         ? product.sortings.map((sorting) => ({
             id: sorting.id,
@@ -547,10 +452,6 @@
     },
   );
 
-  // ======================================================
-  // Mounted
-  // ======================================================
-
   onMounted(async () => {
     await fetchStages();
 
@@ -574,26 +475,6 @@
           </span>
         </p>
       </div>
-
-      <!--
-      <div class="actions">
-        <button
-          type="button"
-          class="btn-secondary"
-        >
-          {{ $t('Products.form.back') }}
-        </button>
-
-        <button
-          type="button"
-          class="btn-primary"
-        >
-          <span>+</span>
-
-          {{ $t('Products.form.save') }}
-        </button>
-      </div>
-      -->
     </div>
 
     <div class="form-body">
@@ -615,25 +496,32 @@
             </label>
           </div>
 
-          <div class="image-upload">
+          <div class="image-upload" :class="{ 'is-disabled': !isActive }">
             <HandleFilesUpload
               id="product-image"
               :label="$t('image')"
               :file="imageFileValue"
               :multiple="false"
               :max-files="1"
+              :disabled="!isActive"
               @change="updateImage"
             />
           </div>
         </div>
 
-        <div class="card sortings-card">
+        <div class="card sortings-card" :class="{ 'is-disabled': !isActive }">
           <div v-for="(s, i) in sortings" :key="s.id ?? `new-${i}`" class="sorting-row">
             <span class="sort-label">
               {{ getSortingTitle(i) }}
             </span>
 
-            <input v-model.number="s.price" type="number" class="price-input" min="0" />
+            <input
+              v-model.number="s.price"
+              type="number"
+              class="price-input"
+              min="0"
+              :disabled="!isActive"
+            />
 
             <span class="currency">
               {{ $t('Products.form.currency') }}
@@ -642,7 +530,7 @@
             <button
               type="button"
               class="delete-sorting-btn"
-              :disabled="deletingSortingId === s.id"
+              :disabled="!isActive || deletingSortingId === s.id"
               @click="deleteSorting(s, i)"
             >
               <span v-if="deletingSortingId === s.id"> ... </span>
@@ -651,7 +539,7 @@
             </button>
           </div>
 
-          <button type="button" class="add-sorting-btn" @click="addSorting">
+          <button type="button" class="add-sorting-btn" :disabled="!isActive" @click="addSorting">
             <span>+</span>
 
             <span>
@@ -921,9 +809,21 @@
     padding: 1rem;
     text-align: center;
     background: var(--bg-section);
+
+    &.is-disabled {
+      opacity: 0.5;
+      pointer-events: none;
+      cursor: not-allowed;
+      background: var(--gray-100);
+    }
   }
 
   .sortings-card {
+    &.is-disabled {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
     .sorting-row {
       display: flex;
       align-items: center;
@@ -949,6 +849,11 @@
           outline: none;
           border-color: var(--PrimaryColor);
           box-shadow: 0 0 0 3px var(--PrimaryColor-alpha-15);
+        }
+
+        &:disabled {
+          background: var(--gray-100);
+          cursor: not-allowed;
         }
       }
 
@@ -1014,8 +919,15 @@
       font-weight: 700;
     }
 
-    &:hover {
+    &:hover:not(:disabled) {
       background: var(--PrimaryColor-alpha-8);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      border-color: var(--gray-300);
+      color: var(--gray-400);
     }
   }
 
