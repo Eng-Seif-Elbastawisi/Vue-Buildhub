@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue';
+import { onMounted, ref, watch, nextTick } from 'vue';
 import { onBeforeRouteLeave } from 'vue-router';
 
 import type TitleInterface from '@/base/Data/Models/titleInterface';
-import TranslationParams from '@/base/Core/Params/translationParams';
 
 import IndexBrandParams from '@/modules/shared/Brand/core/params/index.brand.params';
 import BrandController from '@/modules/shared/Brand/presentation/controllers/brand.controller';
@@ -27,11 +26,9 @@ import IndexItemTypesParams from '@/modules/MainOrganization/ItemTypes/core/para
 import StageController from '@/modules/shared/Stages/presentation/controllers/stage.controller';
 import IndexStageParams from '@/modules/shared/Stages/core/params/index.stage.params';
 
-
 const emit = defineEmits<{
   updateData: [params: AddMaterialsParams];
 }>();
-
 
 const props = defineProps<{
   material?: MaterialsShowModel;
@@ -39,200 +36,185 @@ const props = defineProps<{
   loading?: boolean;
 }>();
 
-
 const formStore = useFormsStore();
 
-
 const brandController = BrandController.getInstance();
-const brandParams = new IndexBrandParams('', 1, 100, 0, undefined, 1);
-
-
 const measurementController = MeasurementController.getInstance();
-const measurementParams = new IndexMeasurementParams('', 1, 100, 0);
-
-
 const itemTypeController = ItemTypesController.getInstance();
-const itemTypeParams = new IndexItemTypesParams('', 1, 100, 0);
-
-
 const stageController = StageController.getInstance();
 
+const brandParams = new IndexBrandParams('', 1, 100, 0, undefined, 1);
+const measurementParams = new IndexMeasurementParams('', 1, 100, 0);
+const itemTypeParams = new IndexItemTypesParams('', 1, 100, 0);
+const stageParams = new IndexStageParams('', 1, 100, 0, null);
 
-// Main stages
-const stageParams = new IndexStageParams(
-  '',
-  1,
-  100,
-  0,
-  null,
-);
-
-
-// Sub stages
 const subStageParams = ref(
-  new IndexStageParams(
-    '',
-    1,
-    100,
-    0,
-    undefined,
-  )
+  new IndexStageParams('', 1, 100, 0, undefined),
 );
-
-
 
 const translations = ref<Record<string, string>>({});
-
 const price = ref<number>();
 
 const brand = ref<TitleInterface<string | number> | null>(null);
-
 const measurement = ref<TitleInterface<string | number> | null>(null);
-
 const itemType = ref<TitleInterface<string | number> | null>(null);
-
 const stage = ref<TitleInterface<string | number> | null>(null);
-
 const subStage = ref<TitleInterface<string | number> | null>(null);
 
+const isInitializing = ref(false);
+const isSubStageInitializing = ref(false);
 
+const toSelectOption = (
+  item?: { id?: number; title?: string } | null,
+): TitleInterface<string | number> | null => {
+  if (item?.id === undefined || item?.id === null) {
+    return null;
+  }
 
-const toSelectOption = (item?: { id?: number; title?: string } | null) => {
-  return item?.id !== undefined && item.id !== null
-    ? {
-      id: item.id,
-      title: item.title ?? '',
-    }
-    : null;
+  return {
+    id: item.id,
+    title: item.title ?? '',
+  };
 };
-
-
 
 watch(
   stage,
-  (value) => {
+  async (value) => {
+    if (!value?.id) {
+      if (!isInitializing.value) {
+        subStage.value = null;
+        updateData();
+      }
 
-    // reset sub stage when stage changes
-    subStage.value = null;
+      return;
+    }
 
+    subStageParams.value = new IndexStageParams(
+      '',
+      1,
+      100,
+      0,
+      Number(value.id),
+    );
 
-    if (value?.id) {
+    if (!isInitializing.value) {
+      subStage.value = null;
+      updateData();
+      return;
+    }
 
+    await nextTick();
+
+    if (props.material?.subStage) {
+      isSubStageInitializing.value = true;
+
+      subStage.value = toSelectOption(props.material.subStage);
+
+      await nextTick();
+
+      isSubStageInitializing.value = false;
+    }
+  },
+  { flush: 'post' },
+);
+
+watch(
+  () => props.material,
+  async (material) => {
+    if (!material) {
+      return;
+    }
+
+    isInitializing.value = true;
+    isSubStageInitializing.value = true;
+
+    translations.value = {
+      ...(material.translations?.title ?? {}),
+    };
+
+    price.value = material.price;
+
+    brand.value = toSelectOption(material.brand);
+    measurement.value = toSelectOption(material.measurementId);
+    itemType.value = toSelectOption(material.itemType);
+
+    stage.value = toSelectOption(material.stage);
+
+    if (material.stage?.id !== undefined && material.stage?.id !== null) {
       subStageParams.value = new IndexStageParams(
         '',
         1,
         100,
         0,
-        Number(value.id)
+        Number(material.stage.id),
       );
-
     }
 
-    updateData();
+    subStage.value = toSelectOption(material.subStage);
 
-  }
-);
+    await nextTick();
 
+    if (material.subStage) {
+      subStage.value = toSelectOption(material.subStage);
+    }
 
-
-watch(
-  () => props.material,
-  (material) => {
-
-    if (!material) return;
-
-
-    translations.value = {
-      ...material.translations.title
-    };
-
-
-    price.value = material.price;
-
-
-    brand.value = toSelectOption(material.brandId);
-
-
-    measurement.value = toSelectOption(material.measurementId);
-
-
-    stage.value = toSelectOption(material.stageId);
-
-
-    subStage.value = toSelectOption(material.subStageId);
-
+    isSubStageInitializing.value = false;
+    isInitializing.value = false;
   },
   {
-    immediate: true
-  }
+    immediate: true,
+    flush: 'post',
+  },
 );
 
-
-
 const updateData = () => {
-
   emit(
     'updateData',
     new AddMaterialsParams({
-
       price: price.value,
-
       brandId: brand.value?.id,
-
       measurementId: measurement.value?.id,
-
-      translations: {
-        title: translations.value
-      },
-
       itemTypeId: itemType.value?.id,
-
       stageId: stage.value?.id,
-
       subStageId: subStage.value?.id,
-
-    })
+      translations: {
+        title: translations.value,
+      },
+    }),
   );
-
 };
 
-
-
-const updateTranslations = (
-  value: Record<string, string>
-) => {
-
+const updateTranslations = (value: Record<string, string>) => {
   translations.value = value;
-
   updateData();
-
 };
 
+const handleSubStageUpdate = (
+  value: TitleInterface<string | number> | null,
+) => {
+  if (isSubStageInitializing.value) {
+    return;
+  }
 
+  subStage.value = value;
+  updateData();
+};
 
 onBeforeRouteLeave((to, from) => {
-
   const savedData = props.formKey
     ? formStore.getFormData(props.formKey)
     : null;
 
-
-  if (
-    savedData &&
-    to.path !== from.path &&
-    props.formKey
-  ) {
-
+  if (savedData && to.path !== from.path && props.formKey) {
     formStore.showReturnWarning(props.formKey);
-
   }
-
 });
 
-
-
-onMounted(updateData);
-
+onMounted(() => {
+  if (!props.material) {
+    updateData();
+  }
+});
 </script>
 
 <template>
@@ -244,54 +226,107 @@ onMounted(updateData);
 
     <div class="form-fields" :class="{ disabled: loading }">
       <div class="field-group col-span-2">
-        <!-- {{ translations }} -->
-        <MultiLangInput field-key="title" :label="$t('material.title')" :languages="['en', 'ar']"
-          :model-value="translations" type="title" @update:model-value="updateTranslations" />
+        <MultiLangInput
+          field-key="title"
+          :label="$t('material.title')"
+          :languages="['en', 'ar']"
+          :model-value="translations"
+          type="title"
+          @update:model-value="updateTranslations"
+        />
       </div>
 
       <div class="field-group">
         <span class="field-help-label-row field-help-label-row--block">
-          <label class="field-label" for="material-price">{{ $t('material.price') }}</label>
-          <FieldHelpIcon :label="$t('material.price')" field-name="price" field-id="material-price" />
+          <label class="field-label" for="material-price">
+            {{ $t('material.price') }}
+          </label>
+
+          <FieldHelpIcon
+            :label="$t('material.price')"
+            field-name="price"
+            field-id="material-price"
+          />
         </span>
+
         <div class="input-wrap">
-          <input id="material-price" v-model.number="price" class="field-input" min="0" step="0.01" type="number"
-            :placeholder="$t('material.price_placeholder')" @input="updateData" />
+          <input
+            id="material-price"
+            v-model.number="price"
+            class="field-input"
+            min="0"
+            step="0.01"
+            type="number"
+            :placeholder="$t('material.price_placeholder')"
+            @input="updateData"
+          />
         </div>
       </div>
 
-      <!-- {{ itemType }} -->
       <div class="field-group">
-        <UpdatedCustomInputSelect id="material-item-type" v-model="itemType" :controller="itemTypeController"
-          :label="$t('item_type')" :params="itemTypeParams" :placeholder="$t('item_type_placeholder')" required
-          @update:model-value="updateData" />
-      </div>
-      <!-- {{ stage }} -->
-      <div class="field-group">
-        <UpdatedCustomInputSelect id="material-stage" v-model="stage" :controller="stageController" :label="$t('Stage')"
-          :params="stageParams" :placeholder="$t('stage_placeholder')" required @update:model-value="updateData" />
-      </div>
-
-      <!-- {{ subStage }} -->
-      <div class="field-group">
-
-        <UpdatedCustomInputSelect id="material-sub-stage" v-model="subStage" :controller="stageController"
-          :label="$t('sub_stages')" :params="subStageParams" :placeholder="$t('sub_stage_placeholder')"
-          :disabled="!stage" required @update:model-value="updateData" />
-
+        <UpdatedCustomInputSelect
+          id="material-item-type"
+          v-model="itemType"
+          :controller="itemTypeController"
+          :label="$t('item_type')"
+          :params="itemTypeParams"
+          :placeholder="$t('item_type_placeholder')"
+          required
+          @update:model-value="updateData"
+        />
       </div>
 
-      <!-- {{ brand }} -->
       <div class="field-group">
-        <UpdatedCustomInputSelect id="material-brand" v-model="brand" :controller="brandController"
-          :label="$t('material.brand')" :params="brandParams" :placeholder="$t('material.brand_placeholder')" required
-          @update:model-value="updateData" />
+        <UpdatedCustomInputSelect
+          id="material-stage"
+          v-model="stage"
+          :controller="stageController"
+          :label="$t('Stage')"
+          :params="stageParams"
+          :placeholder="$t('stage_placeholder')"
+          required
+          @update:model-value="updateData"
+        />
       </div>
-      <!-- {{ measurement }} -->
+
       <div class="field-group">
-        <UpdatedCustomInputSelect id="material-measurement" v-model="measurement" :controller="measurementController"
-          :label="$t('Measurement')" :params="measurementParams" :placeholder="$t('measurement.unit_placeholder')"
-          required @update:model-value="updateData" />
+        <UpdatedCustomInputSelect
+          id="material-sub-stage"
+          v-model="subStage"
+          :controller="stageController"
+          :label="$t('sub_stages')"
+          :params="subStageParams"
+          :placeholder="$t('sub_stage_placeholder')"
+          :disabled="!stage"
+          required
+          @update:model-value="handleSubStageUpdate"
+        />
+      </div>
+
+      <div class="field-group">
+        <UpdatedCustomInputSelect
+          id="material-brand"
+          v-model="brand"
+          :controller="brandController"
+          :label="$t('material.brand')"
+          :params="brandParams"
+          :placeholder="$t('material.brand_placeholder')"
+          required
+          @update:model-value="updateData"
+        />
+      </div>
+
+      <div class="field-group">
+        <UpdatedCustomInputSelect
+          id="material-measurement"
+          v-model="measurement"
+          :controller="measurementController"
+          :label="$t('Measurement')"
+          :params="measurementParams"
+          :placeholder="$t('measurement.unit_placeholder')"
+          required
+          @update:model-value="updateData"
+        />
       </div>
     </div>
   </div>
