@@ -85,13 +85,11 @@ export default class ProductsController extends BaseController<ProductsShowModel
       },
     });
   }
-
   async deleteProductSorting(params?: DeleteProductsSortingParams) {
     const result = await this.repository.deleteProductSorting(params);
 
-
-
     if (result.data?.status === true) {
+      this.showSuccessToast('Deleted successfully');
       notifyDataMutationSucceeded();
     } else {
       this.handleErrorResponse(result);
@@ -103,9 +101,8 @@ export default class ProductsController extends BaseController<ProductsShowModel
   async deleteProductStage(params?: DeleteProductsStageParams) {
     const result = await this.repository.deleteProductStage(params);
 
-
-
     if (result.data?.status === true) {
+      this.showSuccessToast('Deleted successfully');
       notifyDataMutationSucceeded();
     } else {
       this.handleErrorResponse(result);
@@ -117,8 +114,8 @@ export default class ProductsController extends BaseController<ProductsShowModel
   async storeProductSorting(params?: StoreProductsSortingParams) {
     const result = await this.repository.storeProductSorting(params);
 
-
     if (result.data?.status === true) {
+      this.showSuccessToast('Created successfully');
       notifyDataMutationSucceeded();
     } else {
       this.handleErrorResponse(result);
@@ -130,9 +127,8 @@ export default class ProductsController extends BaseController<ProductsShowModel
   async storeProductStage(params?: StoreProductsStageParams) {
     const result = await this.repository.storeProductStage(params);
 
-
-
     if (result.data?.status === true) {
+      this.showSuccessToast('Created successfully');
       notifyDataMutationSucceeded();
     } else {
       this.handleErrorResponse(result);

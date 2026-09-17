@@ -15,10 +15,25 @@ export default class EditProductsParams implements Params {
   public sortings?: { title: string; price: number }[];
 
   public static readonly validation = new ClassValidation().setRules({
-    productsId: { required: true },
     translations: {
       required: true,
       custom: (value) => hasTitleTranslation(value) || translate('validation.title_required'),
+    },
+
+    itemTypeId: {
+      required: true,
+    },
+
+    measurementUnitId: {
+      required: true,
+    },
+
+    expectedPrice: {
+      required: true,
+    },
+
+    stageIds: {
+      required: true,
     },
   });
 

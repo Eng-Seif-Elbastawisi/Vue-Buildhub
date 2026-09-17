@@ -31,7 +31,6 @@
 
     return [
       { label: 'no_sorting', value: noSorting, color: 'bg-slate-50' },
-      { label: 'multi_link', value: multiLink, color: 'bg-blue-50' },
       { label: 'has_sorting', value: withSorting, color: 'bg-emerald-50' },
       { label: 'all_products', value: total, color: 'bg-amber-50' },
     ];
@@ -126,22 +125,6 @@
 
     <!-- Toolbar -->
     <div class="toolbar">
-      <div class="toolbar-left">
-        <button class="btn-filter">
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
-          </svg>
-          {{ $t('Products.filter_by_stage') }}
-        </button>
-      </div>
-
       <div class="toolbar-right">
         <div class="search-box">
           <svg
@@ -223,9 +206,11 @@
 
             <!-- Actions -->
             <div class="card-actions">
+              <!-- Edit -->
               <router-link
                 class="action-btn edit"
                 :to="`/organization/products/edit/${product.id}`"
+                :title="$t('common.edit')"
               >
                 <svg
                   width="15"
@@ -240,9 +225,28 @@
                   <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
                   <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
                 </svg>
-                <span>{{ $t('common.edit') }}</span>
+              </router-link>
+              <!-- Show -->
+              <router-link
+                class="action-btn show"
+                :to="`/organization/products/show/${product.id}`"
+              >
+                <svg
+                  width="15"
+                  height="15"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
               </router-link>
 
+              <!-- Delete -->
               <DeleteDialog
                 :title="$t('Products.delete_dialog.title')"
                 :message="$t('Products.delete_dialog.message')"
@@ -250,7 +254,7 @@
                 @delete="deleteProduct(product.id!)"
               >
                 <template #btn>
-                  <button class="action-btn delete" type="button">
+                  <button class="action-btn delete" type="button" :title="$t('common.delete')">
                     <svg
                       width="15"
                       height="15"
@@ -372,7 +376,7 @@
   /* ========== Stats ========== */
   .stats-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: var(--md-size);
   }
 
@@ -400,28 +404,9 @@
   /* ========== Toolbar ========== */
   .toolbar {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
     align-items: center;
     gap: var(--md-size);
-  }
-
-  .btn-filter {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--xs-size-4);
-    background: var(--gray-100);
-    color: var(--gray-700);
-    border: 1px solid var(--border-weak);
-    padding: var(--xs-size) var(--md-size);
-    border-radius: var(--radius-sm);
-    font-weight: 500;
-    cursor: pointer;
-    font-size: var(--sm-size);
-    transition: var(--transition-fast);
-
-    &:hover {
-      background: var(--gray-200);
-    }
   }
 
   .search-box {
@@ -577,9 +562,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: var(--xs-size-4);
     height: 36px;
-    padding: 0 var(--md-size);
     border-radius: var(--radius-xs);
     border: none;
     cursor: pointer;
@@ -587,10 +570,20 @@
     font-weight: 600;
     transition: var(--transition-fast);
     text-decoration: none;
-    white-space: nowrap;
 
     svg {
       flex-shrink: 0;
+    }
+
+    &.show {
+      background: var(--info-light);
+      color: var(--info-dark);
+
+      &:hover {
+        background: var(--info);
+        color: var(--standard-white);
+        box-shadow: var(--shadow-md);
+      }
     }
 
     &.edit {

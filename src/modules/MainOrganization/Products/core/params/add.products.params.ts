@@ -30,6 +30,22 @@ export default class AddProductsParams implements Params {
       required: true,
       custom: (value) => hasTitleTranslation(value) || translate('validation.title_required'),
     },
+
+    itemTypeId: {
+      required: true,
+    },
+
+    measurementUnitId: {
+      required: true,
+    },
+
+    expectedPrice: {
+      required: true,
+    },
+
+    stageIds: {
+      required: true,
+    },
   });
 
   constructor(data: {

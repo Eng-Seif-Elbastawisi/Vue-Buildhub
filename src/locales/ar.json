@@ -2283,7 +2283,6 @@
   "measurement": {
     "add": "إضافة وحده قياس",
     "children_count": "عدد المراحل الفرعية"
-
   },
   "Are you sure you want to remove this measurement unit?": "هل أنت متأكد من حذف وحدة القياس ؟",
   "Products": {
@@ -2362,7 +2361,10 @@
       "one_label": "مرحلة",
       "many_label": "مراحل",
       "id": "المعرّف #{id}",
-      "item": "مرحلة"
+      "item": "مرحلة",
+      "one_label": "مرحلة واحدة",
+      "many_label": "مراحل",
+      "many": "مراحل"
     },
     "languages": {
       "english": "EN"
@@ -2389,7 +2391,7 @@
   "stage_placeholder": "اختر المرحلة",
   "measurement_placeholder": "اختر وحدة القياس",
   "item_type_placeholder": "اختر نوع البند",
-  "sub_stage_placeholder":"اختر المرحلة الفرعية",
+  "sub_stage_placeholder": "اختر المرحلة الفرعية",
   "Stage": "المرحلة",
   "item_type": "نوع البند",
   "back_to_parent_stage": "الرجوع الي المرحلة الرئيسية",
