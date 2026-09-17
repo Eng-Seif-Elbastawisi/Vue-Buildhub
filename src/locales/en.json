@@ -2454,6 +2454,8 @@
   "description": "Description",
   "sub_stages": "Sub Stages",
   "total_materials": "Total Materials",
+
+
   "stage_placeholder": "Select Stage",
   "measurement_placeholder": "Select Measurement Unit",
   "item_type_placeholder": "Select Item Type",
@@ -2466,5 +2468,15 @@
   "Products.stages.one_label": "Stage",
   "Products.stages.many_label": "Stages",
   "common.add": "Add",
-  "common.edit": "Edit"
+  "common.edit": "Edit",
+  "labor": {
+    "price": "Price",
+    "title": "labor",
+    "form_title": "Labor",
+    "form_description": "Add Or Edit Labors",
+    "labor": "labor",
+    "description": "Manage materials, prices, units, and translated titles",
+    "price_placeholder": "Enter Labor Price",
+    "add": "Add Labor"
+  }
 }
