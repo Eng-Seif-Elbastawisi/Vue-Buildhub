@@ -6,7 +6,7 @@ export const ProductsRoutes: RouteRecordRaw[] = [
     name: 'Products',
     component: () => import('@/views/MainOrganization/Products/IndexProducts.vue'),
     meta: {
-      breadcrumb: 'Products',
+      breadcrumb: 'Products.library_title',
     },
   },
   {
@@ -14,8 +14,8 @@ export const ProductsRoutes: RouteRecordRaw[] = [
     name: 'Add Products',
     component: () => import('@/views/MainOrganization/Products/AddProducts.vue'),
     meta: {
-      breadcrumb: 'Add Products',
-      parent: 'Products',
+      breadcrumb: 'Products.add',
+      parent: 'Products.library_title',
     },
   },
   {
@@ -24,19 +24,18 @@ export const ProductsRoutes: RouteRecordRaw[] = [
     component: () => import('@/views/MainOrganization/Products/EditProducts.vue'),
     props: true,
     meta: {
-      breadcrumb: 'Edit Products',
-      parent: 'Products',
+      breadcrumb: 'Products.form.update',
+      parent: 'Products.library_title',
     },
   },
-    {
+  {
     path: 'products/show/:products_id',
     name: 'Show Products',
     component: () => import('@/views/MainOrganization/Products/ShowProducts.vue'),
     props: true,
     meta: {
-      breadcrumb: 'Show Products',
-      parent: 'Products',
+      breadcrumb: 'Products.show.subtitle',
+      parent: 'Products.library_title',
     },
   },
-
 ];

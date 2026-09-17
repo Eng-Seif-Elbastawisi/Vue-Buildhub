@@ -17,6 +17,7 @@ import { OrganizationPackageRoutes } from './organization_package';
 import { ItemTypesRoutes } from './item.types';
 import { ProductsRoutes } from './products';
 import { LaborRoutes } from './labor';
+import { quoteTypesRoutes } from './quote_types';
 
 export const dashboardRoutes: RouteRecordRaw[] = [
   // ...countryRoutes,
@@ -37,4 +38,5 @@ export const dashboardRoutes: RouteRecordRaw[] = [
   ...ItemTypesRoutes,
   ...ProductsRoutes,
   ...LaborRoutes,
+  ...quoteTypesRoutes,
 ];
