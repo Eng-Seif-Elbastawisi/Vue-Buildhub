@@ -14,6 +14,7 @@ import { useUserStore } from '@/stores/user';
 import type StageModel from '../../core/models/stage.model';
 import type ShowStageParams from '../../core/params/show.stage.params';
 import StageRepository from '../../data/repositories/stage.repository';
+import type AddStageParams from '../../core/params/add.stges.params';
 
 export default class StageController extends BaseController<StageModel, StageModel[]> {
   private static instance: StageController;
@@ -63,7 +64,7 @@ export default class StageController extends BaseController<StageModel, StageMod
     return `${prefix}/stages`;
   }
 
-  async create(params: Params, options?: ApiCallOptions, formKey?: string) {
+  async create(params: AddStageParams, options?: ApiCallOptions, formKey?: string) {
     const result = await super.create(params, {
       ...options,
       useJson: true,

@@ -2306,6 +2306,8 @@
   "code_placeholder": "Enter item type code",
   "LABOR": "Labor",
   "MATERIALS": "Materials",
+  "play": "Play",
+  "pause": "Pause",
   "PRODUCTS": "Products",
   "ItemTypes.list_title": "Item Types",
   "ItemTypes.list_description": "Manage and organize item types.",
@@ -2358,9 +2360,111 @@
   "measurement": {
     "add": "Add Measurement Unit",
     "children_count": "Children Count"
-
   },
-
+  "Are you sure you want to remove this measurement unit?": "Are you sure you want to remove this measurement unit?",
+  "Products": {
+    "library_title": "Products Library",
+    "library_subtitle": "Manage products and link them to stages",
+    "badge": "BuildHub OS",
+    "add": "Add Product",
+    "filter_by_stage": "Filter by Stage",
+    "search_placeholder": "Search for a product...",
+    "stats": {
+      "no_sorting": "No Sorting",
+      "multi_link": "Multiple Stage Links",
+      "has_sorting": "Has Sorting",
+      "all_products": "All Products"
+    },
+    "tags": {
+      "sorting": "Sorting",
+      "stage": "{count} Stages",
+      "unit": "Unit"
+    },
+    "stages": {
+      "one": "{count} Stage",
+      "many": "{count} Stages",
+      "one_label": "One stage",
+      "many_label": "Stages"
+    },
+    "empty_title": "No Products",
+    "empty_description": "No products have been added yet.",
+    "delete_dialog": {
+      "title": "Delete Product",
+      "message": "Are you sure you want to delete this product?"
+    },
+    "form": {
+      "title": "New Product",
+      "subtitle": "Add a new product to the public library and link it to stages.",
+      "back": "Back to Products",
+      "save": "Save Product",
+      "update": "Update Product",
+      "image_and_sorting": "Image & Sorting",
+      "active": "Active",
+      "inactive": "Inactive",
+      "status": "Status",
+      "sorting": "Sorting",
+      "sorting_number": "02",
+      "sorting_label": "Sorting {number}",
+      "sorting_prices": "Sorting prices",
+      "sorting_hint": "Add a sorting price",
+      "sorting_name": "Sorting name",
+      "sorting_price": "Sorting price",
+      "sorting_price_placeholder": "0",
+      "add_sorting": "Add Sorting",
+      "currency": "EGP",
+      "product_data": "Product Data",
+      "product_name": "Product Name",
+      "expected_price": "Expected Price",
+      "stages_title": "Related Stages",
+      "stages_hint": "Select the stages related to this product",
+      "stages_loading": "Loading stages...",
+      "stages_empty": "No stages available",
+      "selected": "Selected"
+    },
+    "show": {
+      "subtitle": "Basic information",
+      "no_data": "No product data",
+      "no_image": "No image",
+      "no_sortings": "No sortings",
+      "no_stages": "No related stages",
+      "no_sub_stages": "No sub stages",
+      "no_available_stages": "No stages available"
+    },
+    "languages": {
+      "english": "EN"
+    },
+    "placeholders": {
+      "price": "0",
+      "measurement_unit": "Measurement unit"
+    },
+    "stages": {
+      "main": "Main Stage",
+      "sub": "Sub Stage",
+      "one_label": "Stage",
+      "many_label": "Stages",
+      "id": "ID #{id}",
+      "item": "Stage"
+    }
+  },
+  "item_type": "Item Type",
+  "item_type.placeholder": "Select Item Type",
+  "measurement": "Measurement Unit",
+  "measurement.unit_placeholder": "Select Measurement Unit",
+  "image": "Image",
+  "description": "Description",
+  "sub_stages": "Sub Stages",
+  "total_materials": "Total Materials",
+  "stage_placeholder": "Select Stage",
+  "measurement_placeholder": "Select Measurement Unit",
+  "item_type_placeholder": "Select Item Type",
+  "sub_stage_placeholder": "Select Sub Stage",
+  "item_type": "Item Type",
   "back_to_parent_stage": "Back to Parent Stage",
-  "Are you sure you want to remove this measurement unit?": "Are you sure you want to remove this measurement unit?"
+  "Are you sure you want to remove this measurement unit?": "Are you sure you want to remove this measurement unit?",
+  "sidebar.products": "Products",
+  "common.back": "Back",
+  "Products.stages.one_label": "Stage",
+  "Products.stages.many_label": "Stages",
+  "common.add": "Add",
+  "common.edit": "Edit"
 }

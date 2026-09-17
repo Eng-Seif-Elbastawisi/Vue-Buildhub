@@ -1,6 +1,11 @@
 import BaseApiService from '@/base/Data/ApiService/baseApiService';
-import type { ApiEndpoints } from '@/base/Data/ApiService/baseApiService';
+import type {
+  ApiCallOptions,
+  ApiEndpoints,
+  ApiResponse,
+} from '@/base/Data/ApiService/baseApiService';
 import { MaterialApiEndpoints } from './materials.api.endpoints';
+import type Params from '@/base/Core/Params/params';
 
 export default class MaterialApiService extends BaseApiService {
   private static instance: MaterialApiService;
@@ -22,5 +27,9 @@ export default class MaterialApiService extends BaseApiService {
       update: this.MaterialEndpoints.update,
       delete: this.MaterialEndpoints.delete,
     };
+  }
+
+  async fetchStats(params: Params, options?: ApiCallOptions): Promise<ApiResponse> {
+    return this.customPost(this.MaterialEndpoints.fetchStats, params, options);
   }
 }

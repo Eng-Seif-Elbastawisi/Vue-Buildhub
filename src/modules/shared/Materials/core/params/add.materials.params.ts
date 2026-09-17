@@ -8,6 +8,9 @@ export default class AddMaterialsParams implements Params {
   public brandId?: number;
   public measurementId?: number;
   public translations?: { title: Record<string, string> };
+  public itemTypeId?: number;
+  public stageId?: number;
+  public subStageId?: number;
   public static readonly validation = new ClassValidation().setRules({
     price: { required: true },
     brandId: requiredSelectRule(),
@@ -16,17 +19,24 @@ export default class AddMaterialsParams implements Params {
       required: true,
       custom: (value) => hasTitleTranslation(value) || translate('validation.title_required'),
     },
+    itemTypeId: requiredSelectRule(),
   });
   constructor(data: {
     price?: number;
     brandId?: number;
     measurementId?: number;
     translations?: { title: Record<string, string> };
+    itemTypeId?: number;
+    stageId?: number;
+    subStageId?: number;
   }) {
     this.price = data.price;
     this.brandId = data.brandId;
     this.measurementId = data.measurementId;
     this.translations = data.translations;
+    this.itemTypeId = data.itemTypeId;
+    this.stageId = data.stageId;
+    this.subStageId = data.subStageId;
   }
   toMap(): { [p: string]: any } {
     return {
@@ -34,6 +44,9 @@ export default class AddMaterialsParams implements Params {
       brand_id: this.brandId,
       measurement_unit_id: this.measurementId,
       translations: this.translations,
+      item_type_id: this.itemTypeId,
+      stage_id: this.stageId,
+      sub_stage_id: this.subStageId,
     };
   }
   validate() {

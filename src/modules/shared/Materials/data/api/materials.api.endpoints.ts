@@ -12,4 +12,5 @@ export class MaterialApiEndpoints extends BaseEndpoints {
   readonly store = this.url('store_material');
   readonly update = this.url('update_material');
   readonly delete = this.url('delete_material');
+  readonly fetchStats = this.url('fetch_material_statses');
 }

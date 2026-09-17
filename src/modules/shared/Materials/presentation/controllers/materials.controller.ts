@@ -91,4 +91,8 @@ export default class MaterialController extends BaseController<MaterialShowModel
       },
     });
   }
+
+  async fetchStats(params: Params, options?: ApiCallOptions) {
+    return await this.repository.fetchStats(params, options);
+  }
 }

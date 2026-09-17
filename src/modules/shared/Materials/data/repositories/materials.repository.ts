@@ -2,6 +2,9 @@ import BaseRepository, { type RepositoryConfig } from '@/base/Domain/Repositorie
 import MaterialApiService from '../api/materials.api-service';
 import MaterialModel from '../../core/models/materials.model';
 import MaterialShowModel from '../../core/models/materials.show.model';
+import type Params from '@/base/Core/Params/params';
+import type { ApiCallOptions } from '@/base/Data/ApiService/baseApiService';
+import MaterialStatsModel from '../../core/models/material.stats.model';
 
 export default class MaterialRepository extends BaseRepository<MaterialShowModel, MaterialModel[]> {
   private static instance: MaterialRepository;
@@ -41,5 +44,14 @@ export default class MaterialRepository extends BaseRepository<MaterialShowModel
     if (!Array.isArray(data)) return [];
 
     return data.map((item) => MaterialModel.fromJson(item));
+  }
+
+  async fetchStats(params: Params, options?: ApiCallOptions) {
+    const res = await this.apiService.fetchStats(params, options);
+
+    if (res.data) {
+      return MaterialStatsModel.fromJson(res.data.data);
+    }
+    return null;
   }
 }

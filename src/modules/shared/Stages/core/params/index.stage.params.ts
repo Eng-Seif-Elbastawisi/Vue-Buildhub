@@ -12,13 +12,14 @@ export default class IndexStageParams extends IndexParams {
   public parentId?: number | null;
 
   constructor(data?: IndexStageParamsData);
-  constructor(word?: string, pageNumber?: number, perPage?: number, withPage?: number);
+  constructor(word?: string, pageNumber?: number, perPage?: number, withPage?: number ,parentId?: number | null);
 
   constructor(
     dataOrWord: IndexStageParamsData | string = '',
     pageNumber: number = 1,
     perPage: number = 10,
     withPage: number = 1,
+    parentId?: number | null,
   ) {
     if (typeof dataOrWord === 'object') {
       super(
@@ -33,6 +34,7 @@ export default class IndexStageParams extends IndexParams {
     }
 
     super(dataOrWord, pageNumber, perPage, withPage);
+    this.parentId = parentId;
   }
 
   toMap(): Record<string, string | number | number[] | null> {

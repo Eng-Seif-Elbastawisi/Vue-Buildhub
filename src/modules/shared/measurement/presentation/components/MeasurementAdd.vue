@@ -42,8 +42,7 @@ const cancelMeasurement = () => {
     <MeasurementForm :loading="loading" @update-data="params = $event" />
 
     <div class="actions" :class="{ disabled: loading }">
-      <AppButton
-:loading="loading" class="btn-save" :title="$t('save')" size="sm" icon="right" type="submit"
+      <AppButton :loading="loading" class="btn-save" :title="$t('save')" size="sm" icon="right" type="submit"
         @click="saveMeasurement">
         {{ $t('save') }}
 
@@ -52,8 +51,7 @@ const cancelMeasurement = () => {
         </template>
       </AppButton>
 
-      <ConfirmCancelDialog
-ref="confirmCancelRef" :title="$t('cancel_changes')"
+      <ConfirmCancelDialog ref="confirmCancelRef" :title="$t('cancel_changes')"
         :message="$t('are_you_sure_you_want_to_leave')" @confirm="cancelMeasurement" />
     </div>
 
