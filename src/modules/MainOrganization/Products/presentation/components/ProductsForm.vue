@@ -9,7 +9,7 @@
   import AddProductsParams from '../../core/params/add.products.params';
   import AddProductsSortingParams from '../../core/params/add.products.sorting.params';
   import DeleteProductsSortingParams from '../../core/params/delete.products.sorting.params';
-
+  import EditProductsParams from '../../core/params/edit.products.params';
   import ProductsController from '../controllers/products.controller';
 
   import ItemTypesController from '@/modules/MainOrganization/ItemTypes/presentation/controllers/item.types.controller';
@@ -27,11 +27,18 @@
   import HandleFilesUpload, { type UploadedFile } from '@/shared/FormInputs/HandleFilesUpload.vue';
 
   import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
+  import { useRoute } from 'vue-router';
 
   // ======================================================
   // Types
   // ======================================================
+  const route = useRoute();
 
+  const id = computed(() => {
+    const value = route.params.products_id;
+
+    return value ? Number(value) : undefined;
+  });
   interface SortingItem {
     id?: number;
     title: string;
@@ -76,9 +83,8 @@
   // ======================================================
 
   const emit = defineEmits<{
-    updateData: [params: AddProductsParams];
+    (event: 'updateData', data: AddProductsParams | EditProductsParams): void;
   }>();
-
   const props = defineProps<{
     Products?: ProductsShowModel;
     loading?: boolean;
@@ -339,37 +345,59 @@
   // ======================================================
 
   const updateData = () => {
-    emit(
-      'updateData',
-      new AddProductsParams({
-        translations: new TranslationParams({
-          title: translations.value,
-          description: descriptionTranslations.value,
-        }),
+    const params = id.value
+      ? new EditProductsParams({
+          productsId: id.value,
 
-        itemTypeId: itemTypeId.value,
+          translations: new TranslationParams({
+            title: translations.value,
+            description: descriptionTranslations.value,
+          }),
 
-        measurementUnitId: measurementUnitId.value,
+          itemTypeId: itemTypeId.value,
 
-        expectedPrice: expectedPrice.value,
+          measurementUnitId: measurementUnitId.value,
 
-        image: imageBase64.value,
+          expectedPrice: expectedPrice.value,
 
-        stageIds: [...selectedStageIds.value],
+          image: imageBase64.value,
 
-        /**
-         * Convert the editable plain objects into
-         * AddProductsSortingParams only when sending.
-         */
-        sortings: sortings.value.map(
-          (sorting, index) =>
-            new AddProductsSortingParams({
-              title: getSortingTitle(index),
-              price: sorting.price,
-            }),
-        ),
-      }),
-    );
+          stageIds: [...selectedStageIds.value],
+
+          sortings: sortings.value.map(
+            (sorting, index) =>
+              new AddProductsSortingParams({
+                title: getSortingTitle(index),
+                price: sorting.price,
+              }),
+          ),
+        })
+      : new AddProductsParams({
+          translations: new TranslationParams({
+            title: translations.value,
+            description: descriptionTranslations.value,
+          }),
+
+          itemTypeId: itemTypeId.value,
+
+          measurementUnitId: measurementUnitId.value,
+
+          expectedPrice: expectedPrice.value,
+
+          image: imageBase64.value,
+
+          stageIds: [...selectedStageIds.value],
+
+          sortings: sortings.value.map(
+            (sorting, index) =>
+              new AddProductsSortingParams({
+                title: getSortingTitle(index),
+                price: sorting.price,
+              }),
+          ),
+        });
+
+    emit('updateData', params);
   };
 
   // ======================================================

@@ -171,9 +171,9 @@ export default class ProductsShowModel {
       ? data.attachments.map((attachment: any) => AttachmentModel.fromJson(attachment))
       : [];
 
-    const firstAttachment = attachments.find((attachment) => attachment.type === 1);
+    const firstAttachment = attachments[0];
 
-    const image = firstAttachment?.file ?? data.image;
+    const image = firstAttachment?.file ?? data.image ?? '';
 
     // =====================================================
     // Active

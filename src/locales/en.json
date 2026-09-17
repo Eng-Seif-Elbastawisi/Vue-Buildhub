@@ -2360,7 +2360,6 @@
   "measurement": {
     "add": "Add Measurement Unit",
     "children_count": "Children Count"
-
   },
   "Are you sure you want to remove this measurement unit?": "Are you sure you want to remove this measurement unit?",
   "Products": {
@@ -2383,7 +2382,9 @@
     },
     "stages": {
       "one": "{count} Stage",
-      "many": "{count} Stages"
+      "many": "{count} Stages",
+      "one_label": "One stage",
+      "many_label": "Stages"
     },
     "empty_title": "No Products",
     "empty_description": "No products have been added yet.",
@@ -2453,8 +2454,6 @@
   "description": "Description",
   "sub_stages": "Sub Stages",
   "total_materials": "Total Materials",
-
-
   "stage_placeholder": "Select Stage",
   "measurement_placeholder": "Select Measurement Unit",
   "item_type_placeholder": "Select Item Type",
