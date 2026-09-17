@@ -89,8 +89,7 @@ export default class ProductsController extends BaseController<ProductsShowModel
   async deleteProductSorting(params?: DeleteProductsSortingParams) {
     const result = await this.repository.deleteProductSorting(params);
 
-    console.log('DELETE RESULT:', result);
-    console.log('IS SUCCESS:', result.data?.status);
+
 
     if (result.data?.status === true) {
       notifyDataMutationSucceeded();
@@ -104,8 +103,7 @@ export default class ProductsController extends BaseController<ProductsShowModel
   async deleteProductStage(params?: DeleteProductsStageParams) {
     const result = await this.repository.deleteProductStage(params);
 
-    console.log('DELETE STAGE RESULT:', result);
-    console.log('IS SUCCESS:', result.data?.status);
+
 
     if (result.data?.status === true) {
       notifyDataMutationSucceeded();
@@ -119,8 +117,6 @@ export default class ProductsController extends BaseController<ProductsShowModel
   async storeProductSorting(params?: StoreProductsSortingParams) {
     const result = await this.repository.storeProductSorting(params);
 
-    console.log('STORE SORTING RESULT:', result);
-    console.log('IS SUCCESS:', result.data?.status);
 
     if (result.data?.status === true) {
       notifyDataMutationSucceeded();
@@ -134,8 +130,7 @@ export default class ProductsController extends BaseController<ProductsShowModel
   async storeProductStage(params?: StoreProductsStageParams) {
     const result = await this.repository.storeProductStage(params);
 
-    console.log('STORE STAGE RESULT:', result);
-    console.log('IS SUCCESS:', result.data?.status);
+
 
     if (result.data?.status === true) {
       notifyDataMutationSucceeded();

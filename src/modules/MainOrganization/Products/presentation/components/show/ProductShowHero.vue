@@ -4,6 +4,7 @@
 
   defineProps<{
     product: ProductsShowModel;
+    title?: string;
   }>();
   const { locale } = useI18n();
 
@@ -51,7 +52,7 @@
 
     <div class="hero-info">
       <h2 class="product-name">
-        {{ product.translations?.title?.[locale] || '—' }}
+        {{ title }}
       </h2>
       <div class="price-row">
         <span class="price">
