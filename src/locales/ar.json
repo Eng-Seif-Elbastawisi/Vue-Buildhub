@@ -2285,6 +2285,27 @@
     "children_count": "عدد المراحل الفرعية"
   },
   "Are you sure you want to remove this measurement unit?": "هل أنت متأكد من حذف وحدة القياس ؟",
+  "quote_type": {
+    "list_title": "أنواع المقايسات",
+    "list_description": "إدارة أنواع المقايسات داخل النظام.",
+    "add": "إضافة نوع مقايسه",
+    "empty_title": "لا توجد أنواع مقايسات",
+    "empty_description": "لم يتم إضافة أي أنواع مقايسات حتى الآن.",
+    "form_title": "بيانات نوع المقايسه",
+    "form_description": "أدخل بيانات نوع المقايسه وقم بإعداد حالته.",
+    "update": "تحديث نوع المقايسه",
+    "execution_title": "أنواع المقايسات",
+    "search_placeholder": "ابحث في أنواع المقايسات...",
+    "delete_title": "حذف نوع المقايسه؟",
+    "delete_message": "هل أنت متأكد من حذف هذا النوع؟ لا يمكن التراجع عن هذا الإجراء."
+  },
+  "sub_quote_type": {
+    "list_title": "أنواع المقايسات الفرعية"
+  },
+  "search_quote_types": "ابحث في أنواع المقايسات...",
+  "Are you sure you want to remove this quote type?": "هل أنت متأكد من حذف هذا النوع؟",
+  "This action cannot be undone.": "لا يمكن التراجع عن هذا الإجراء.",
+  "Delete": "حذف",
   "Products": {
     "library_title": "مكتبة المنتجات",
     "library_subtitle": "إدارة المنتجات وربطها بالمراحل",
@@ -2401,6 +2422,5 @@
   "Products.stages.one_label": "مرحلة",
   "Products.stages.many_label": "مراحل",
   "common.add": "اضافه",
-   "common.edit": "تعديل"
-
+  "common.edit": "تعديل"
 }
