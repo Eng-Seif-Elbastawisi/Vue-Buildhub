@@ -136,4 +136,8 @@ export default class ProductsController extends BaseController<ProductsShowModel
 
     return result;
   }
+
+  async fetchStats(params: Params, options?: ApiCallOptions) {
+    return await this.repository.fetchStats(params, options);
+  }
 }

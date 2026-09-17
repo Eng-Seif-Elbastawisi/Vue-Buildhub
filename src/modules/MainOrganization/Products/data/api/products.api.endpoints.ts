@@ -17,4 +17,5 @@ export class ProductsApiEndpoints extends BaseEndpoints {
 
   readonly storeProductSorting = this.url('store_product_sorting');
   readonly storeProductStage = this.url('store_product_stages');
+  readonly fetchStats = this.url('fetch_product_states');
 }
