@@ -537,9 +537,9 @@
                 {{ stage.title }}
               </strong>
 
-              <span class="sub-id">
+              <!-- <span class="sub-id">
                 {{ $t('Products.stages.id', { id: stage.id }) }}
-              </span>
+              </span> -->
             </div>
 
             <!-- Delete -->

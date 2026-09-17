@@ -70,7 +70,7 @@
         </span>
       </div>
 
-      <div class="info-item">
+      <!-- <div class="info-item">
         <span class="label">
           {{ $t('Products.form.status') }}
         </span>
@@ -80,7 +80,7 @@
 
           {{ product.isActive ? $t('Products.form.active') : $t('Products.form.inactive') }}
         </span>
-      </div>
+      </div> -->
     </div>
   </section>
 </template>
