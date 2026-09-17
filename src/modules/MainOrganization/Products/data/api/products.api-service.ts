@@ -1,17 +1,25 @@
-import BaseApiService, { type ApiEndpoints } from '@/base/Data/ApiService/baseApiService';
+import BaseApiService, {
+  type ApiCallOptions,
+  type ApiEndpoints,
+} from '@/base/Data/ApiService/baseApiService';
+import type Params from '@/base/Core/Params/params';
+
 import { ProductsApiEndpoints } from './products.api.endpoints';
+
 import type DeleteProductsSortingParams from '../../core/params/delete.products.sorting.params';
 import type DeleteProductsStageParams from '../../core/params/delete.products.stage.params';
 import type StoreProductsSortingParams from '../../core/params/store.products.sorting.params';
 import type StoreProductsStageParams from '../../core/params/store.products.stage.params';
-import type Params from '@/base/Core/Params/params';
 
 export default class ProductsApiService extends BaseApiService {
   private static instance: ProductsApiService;
   private readonly productsEndpoints = new ProductsApiEndpoints();
 
   static getInstance(): ProductsApiService {
-    if (!ProductsApiService.instance) ProductsApiService.instance = new ProductsApiService();
+    if (!ProductsApiService.instance) {
+      ProductsApiService.instance = new ProductsApiService();
+    }
+
     return ProductsApiService.instance;
   }
 
@@ -39,5 +47,8 @@ export default class ProductsApiService extends BaseApiService {
 
   async storeProductStage(params?: StoreProductsStageParams) {
     return await this.customPost(this.productsEndpoints.storeProductStage, params as Params);
+  }
+  async fetchStats(params: Params, options?: ApiCallOptions) {
+    return this.customPost(this.productsEndpoints.fetchStats, params, options);
   }
 }
