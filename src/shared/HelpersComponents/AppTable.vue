@@ -37,6 +37,7 @@ const emit = defineEmits<{
 // --- Sorting ---
 const sortKey = ref<string | null>(null);
 const sortDirection = ref<'asc' | 'desc'>('asc');
+const hoveredHeader = ref<string | null>(null);
 
 function handleSort(header: TableHeader) {
   if (!header.sortable) return;
@@ -217,11 +218,9 @@ function onDragEnd() {
 
 <template>
   <div class="app-table-wrapper">
-    <div
-v-if="bulkDelete && selectedItems.length > 0" class="table-bulk-actions" role="toolbar"
+    <div v-if="bulkDelete && selectedItems.length > 0" class="table-bulk-actions" role="toolbar"
       :aria-label="bulkDeleteLabel">
-      <DeleteDialog
-:title="$t('bulk_delete_title')" :message="$t('bulk_delete_message')"
+      <DeleteDialog :title="$t('bulk_delete_title')" :message="$t('bulk_delete_message')"
         :trigger-label="bulkDeleteLabel" trigger-class="btn-add" :disabled="isBulkDeleting"
         @delete="deleteSelectedRows" />
     </div>
@@ -243,29 +242,33 @@ v-if="bulkDelete && selectedItems.length > 0" class="table-bulk-actions" role="t
             <th v-if="reorderable" class="th-drag-handle"></th>
 
             <!-- Data columns -->
-            <th
-v-for="header in headers" :key="header.key" :style="{
+            <th v-for="header in headers" :key="header.key" :style="{
               width: header.width,
               textAlign: header.align || 'left',
             }" :class="{
               sortable: header.sortable,
               active: sortKey === header.key,
-            }" @click="handleSort(header)">
+            }" @click="handleSort(header)" @mouseenter="header.sortable && (hoveredHeader = header.key)"
+              @mouseleave="hoveredHeader = null">
               <div class="th-content">
                 <span>{{ $t(header.label) }}</span>
+
                 <span v-if="header.sortable" class="sort-icon">
                   <template v-if="sortKey === header.key">
                     {{ sortDirection === 'asc' ? '▲' : '▼' }}
                   </template>
-                  <template v-else>⇅</template>
+                  <template v-else>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                      stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M7 15l5 5 5-5M7 9l5-5 5 5" />
+                    </svg>
+                  </template>
                 </span>
               </div>
             </th>
 
             <!-- Actions column (if slot provided) -->
-            <th v-if="$slots.actions" class="th-actions">
-              <!-- <slot name="actions-header">Actions</slot> -->
-            </th>
+            <th v-if="$slots.actions" class="th-actions"></th>
           </tr>
         </thead>
 
@@ -273,8 +276,7 @@ v-for="header in headers" :key="header.key" :style="{
         <tbody>
           <slot name="CustomRow"></slot>
           <tr v-if="items.length === 0">
-            <td
-:colspan="headers.length +
+            <td :colspan="headers.length +
               (showIndex ? 1 : 0) +
               (selectable ? 1 : 0) +
               (reorderable ? 1 : 0) +
@@ -284,20 +286,13 @@ v-for="header in headers" :key="header.key" :style="{
             </td>
           </tr>
 
-          <tr
-v-for="(item, index) in items" :key="getRowKey(item, index)"
-            :class="{
-              selected: selectable && isRowSelected(index),
-              'is-dragging': draggedIndex === index,
-              'drag-over-top': dragOverIndex === index && dragOverPosition === 'top',
-              'drag-over-bottom': dragOverIndex === index && dragOverPosition === 'bottom',
-            }"
-            :draggable="reorderable"
-            @dragstart="onDragStart($event, index)"
-            @dragover="onDragOver($event, index)"
-            @dragleave="onDragLeave($event, index)"
-            @drop="onDrop($event, index)"
-            @dragend="onDragEnd"
+          <tr v-for="(item, index) in items" :key="getRowKey(item, index)" :class="{
+            selected: selectable && isRowSelected(index),
+            'is-dragging': draggedIndex === index,
+            'drag-over-top': dragOverIndex === index && dragOverPosition === 'top',
+            'drag-over-bottom': dragOverIndex === index && dragOverPosition === 'bottom',
+          }" :draggable="reorderable" @dragstart="onDragStart($event, index)" @dragover="onDragOver($event, index)"
+            @dragleave="onDragLeave($event, index)" @drop="onDrop($event, index)" @dragend="onDragEnd"
             @click="emit('row-click', item, index)">
             <!-- Selection checkbox -->
             <td v-if="selectable" class="td-checkbox" @click.stop>
@@ -311,7 +306,8 @@ v-for="(item, index) in items" :key="getRowKey(item, index)"
             <td v-if="reorderable" class="td-drag-handle" @click.stop>
               <slot name="drag-handle" :item="item" :index="index">
                 <span class="drag-handle-icon" :title="$t('drag_to_reorder') || 'Drag to reorder'">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="9" cy="5" r="1" fill="currentColor" />
                     <circle cx="9" cy="12" r="1" fill="currentColor" />
                     <circle cx="9" cy="19" r="1" fill="currentColor" />
@@ -324,13 +320,8 @@ v-for="(item, index) in items" :key="getRowKey(item, index)"
             </td>
 
             <!-- Data cells -->
-            <td
-v-for="header in headers" :key="header.key" :style="{ textAlign: header.align || 'start' }"
+            <td v-for="header in headers" :key="header.key" :style="{ textAlign: header.align || 'start' }"
               class="td-data" @dblclick.stop="copyToClipboard((item as any)?.[header.key])">
-              <!--
-                Use named slot `cell-{key}` for custom rendering,
-                otherwise fall back to item[key]
-              -->
               <slot :name="`cell-${header.key}`" :item="item" :index="index" :value="(item as any)[header.key]">
                 {{ (item as any)[header.key] ?? '--' }}
               </slot>
@@ -347,7 +338,8 @@ v-for="header in headers" :key="header.key" :style="{ textAlign: header.align ||
   </div>
 </template>
 
-<style scoped lang="scss">
+<style lang="scss">
+/* ===== Drag handle ===== */
 .th-drag-handle,
 .td-drag-handle {
   width: 40px;
@@ -374,19 +366,70 @@ v-for="header in headers" :key="header.key" :style="{ textAlign: header.align ||
   }
 }
 
-:deep(tr.is-dragging),
+/* ===== Drag & Drop states ===== */
 tr.is-dragging {
   opacity: 0.4;
   background: var(--gray-100);
 }
 
-:deep(tr.drag-over-top),
 tr.drag-over-top {
   border-top: 2px solid var(--PrimaryColor);
 }
 
-:deep(tr.drag-over-bottom),
 tr.drag-over-bottom {
   border-bottom: 2px solid var(--PrimaryColor);
+}
+
+/* ===== Drag & Drop states ===== */
+.app-table tbody tr {
+  position: relative; // needed for the indicator pseudo-elements below
+}
+
+tr.is-dragging {
+  opacity: 0.4;
+  background: var(--gray-100);
+}
+
+/* Row currently being hovered as a drop target gets a soft tint */
+tr.drag-over-top,
+tr.drag-over-bottom {
+  background: var(--PrimaryColor-light, #eef2ff) !important;
+}
+
+/* The actual insertion line — rendered as a pseudo-element instead of
+   a tr border, since tr borders don't paint in most browsers */
+tr.drag-over-top::before,
+tr.drag-over-bottom::after {
+  content: '';
+  position: absolute;
+  left: 4px;
+  right: 4px;
+  height: 3px;
+  background: var(--PrimaryColor);
+  border-radius: 3px;
+  z-index: 5;
+  box-shadow: 0 0 6px 1px var(--PrimaryColor);
+}
+
+tr.drag-over-top::before {
+  top: -2px;
+}
+
+tr.drag-over-bottom::after {
+  bottom: -2px;
+}
+
+/* small round "handle" markers at the line ends, like Trello/Notion */
+tr.drag-over-top::before,
+tr.drag-over-bottom::after {
+  background-image: radial-gradient(circle 4px, var(--PrimaryColor) 100%, transparent 100%);
+  background-repeat: no-repeat, no-repeat;
+  background-position: left center, right center;
+}
+
+tr.is-dragging {
+  opacity: 0.4;
+  background: var(--gray-100);
+  transform: scale(0.995);
 }
 </style>

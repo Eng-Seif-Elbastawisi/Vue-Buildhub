@@ -38,13 +38,13 @@ const headers: TableHeader[] = [
     key: 'title',
     label: 'title',
     width: '25%',
-    sortable: false,
+    sortable: true,   // ← غيّرها لـ true
   },
   {
     key: 'code',
     label: 'code',
     width: '25%',
-    sortable: false,
+    sortable: true,   // ← غيّرها لـ true
   },
   {
     key: 'symbol',
@@ -58,15 +58,7 @@ const headers: TableHeader[] = [
     width: '25%',
     sortable: false,
   },
-
-  // {
-  //   key: 'status',
-  //   label: 'status',
-  //   width: '25%',
-  //   sortable: false,
-  // },
 ];
-
 // -----------------------------------------------------------------------------
 // State
 // -----------------------------------------------------------------------------
@@ -208,9 +200,16 @@ width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" str
     <DataStatusBuilder :controller="state" :on-retry="async () => await fetchMeasurements()">
       <template #success="{ data }">
         <div class="table-frame">
-          <AppTable
-:headers="headers" :items="data as MeasurementModel[]" :bulk-delete="deleteSelectedMeasurements"
-            selectable show-index hoverable striped>
+<AppTable
+  :headers="headers"
+  :items="data as MeasurementModel[]"
+  :bulk-delete="deleteSelectedMeasurements"
+  selectable
+  show-index
+  hoverable
+  striped
+  @sort="onSort"
+>
             <!-- Title -->
             <template #cell-title="{ item }">
               {{ item?.title || '-' }}
@@ -311,3 +310,4 @@ width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" str
     </DataStatusBuilder>
   </div>
 </template>
+
