@@ -165,8 +165,6 @@
   const deletingSortingId = ref<number | undefined>();
 
   const updateImage = (files: UploadedFile[]) => {
-    if (!isActive.value) return;
-
     imageFiles.value = files;
 
     const image = files.find(
@@ -299,7 +297,7 @@
   };
 
   const updateData = () => {
-    const image = isActive.value ? imageBase64.value : undefined;
+    const image = imageBase64.value;
 
     const validSortings = isActive.value
       ? sortings.value
@@ -471,98 +469,149 @@
 
 <template>
   <div class="products-form" :class="{ disabled: loading }">
-    <div class="form-header">
-      <div>
+    <header class="form-header">
+      <div class="form-header__icon" aria-hidden="true">
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path
+            d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"
+          />
+          <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+          <line x1="12" y1="22.08" x2="12" y2="12" />
+        </svg>
+      </div>
+
+      <div class="form-header__copy">
+        <div class="form-header__eyebrow">
+          <span class="badge">{{ $t('Products.badge') }}</span>
+          <span>{{ id ? $t('Products.form.update') : $t('Products.form.save') }}</span>
+        </div>
+
         <h2 class="title">
-          {{ $t('Products.form.title') }}
+          {{ id ? $t('Products.form.update') : $t('Products.form.title') }}
         </h2>
 
-        <p class="subtitle">
-          {{ $t('Products.form.subtitle') }}
-
-          <span class="badge">
-            {{ $t('Products.badge') }}
-          </span>
-        </p>
+        <p class="subtitle">{{ $t('Products.form.subtitle') }}</p>
       </div>
-    </div>
+    </header>
 
     <div class="form-body">
       <aside class="left-panel">
-        <div class="card image-card">
-          <div class="card-header">
-            <span>
-              {{ $t('Products.form.image_and_sorting') }}
-            </span>
-
-            <StatusToggleField v-model="isActive" input-id="product-status" :disabled="loading" />
+        <section class="card status-card">
+          <div class="status-card__copy">
+            <span class="section-kicker">{{ $t('Products.form.status') }}</span>
+            <strong>{{
+              isActive ? $t('Products.form.active') : $t('Products.form.inactive')
+            }}</strong>
           </div>
 
-          <div class="image-upload" :class="{ 'is-disabled': !isActive }">
+          <div class="status-card__toggle">
+            <StatusToggleField v-model="isActive" input-id="product-status" :disabled="loading" />
+          </div>
+        </section>
+
+        <section class="card image-card">
+          <div class="section-heading section-heading--compact">
+            <span class="section-number">03</span>
+
+            <div>
+              <h3>{{ $t('image') }}</h3>
+              <p>{{ $t('Products.form.image_and_sorting') }}</p>
+            </div>
+          </div>
+
+          <div class="image-upload">
             <HandleFilesUpload
               id="product-image"
               :label="$t('image')"
               :file="imageFileValue"
               :multiple="false"
               :max-files="1"
-              :disabled="!isActive"
               @change="updateImage"
             />
           </div>
-        </div>
+        </section>
 
-        <div class="card sortings-card" :class="{ 'is-disabled': !isActive }">
-          <div v-for="(s, i) in sortings" :key="s.id ?? `new-${i}`" class="sorting-row">
-            <span class="sort-label">
-              {{ getSortingTitle(i) }}
-            </span>
+        <section class="card sortings-card" :class="{ 'is-disabled': !isActive }">
+          <div class="section-heading section-heading--compact">
+            <span class="section-number">04</span>
 
-            <input
-              v-model.number="s.price"
-              type="number"
-              class="price-input"
-              min="0"
-              :disabled="!isActive"
-            />
+            <div>
+              <h3>{{ $t('Products.form.sorting_prices') }}</h3>
+              <p>{{ $t('Products.form.sorting_hint') }}</p>
+            </div>
 
-            <span class="currency">
-              {{ $t('Products.form.currency') }}
-            </span>
+            <span class="sorting-count">{{ sortings.length }}</span>
+          </div>
 
-            <button
-              type="button"
-              class="delete-sorting-btn"
-              :disabled="!isActive || deletingSortingId === s.id"
-              @click="deleteSorting(s, i)"
-            >
-              <span v-if="deletingSortingId === s.id"> ... </span>
+          <div class="sorting-list">
+            <div v-for="(s, i) in sortings" :key="s.id ?? `new-${i}`" class="sorting-row">
+              <div class="sorting-row__header">
+                <span class="sorting-index">{{ String(i + 1).padStart(2, '0') }}</span>
+                <label :for="`sorting-price-${i}`">{{ getSortingTitle(i) }}</label>
 
-              <span v-else> × </span>
-            </button>
+                <button
+                  type="button"
+                  class="delete-sorting-btn"
+                  :disabled="!isActive || deletingSortingId === s.id"
+                  :aria-label="$t('common.delete')"
+                  :title="$t('common.delete')"
+                  @click="deleteSorting(s, i)"
+                >
+                  <span v-if="deletingSortingId === s.id">…</span>
+                  <span v-else aria-hidden="true">×</span>
+                </button>
+              </div>
+
+              <div class="price-control">
+                <input
+                  :id="`sorting-price-${i}`"
+                  v-model.number="s.price"
+                  type="number"
+                  class="price-input"
+                  min="0"
+                  step="0.01"
+                  :placeholder="$t('Products.form.sorting_price_placeholder')"
+                  :disabled="!isActive"
+                />
+
+                <span class="currency">{{ $t('Products.form.currency') }}</span>
+              </div>
+            </div>
           </div>
 
           <button type="button" class="add-sorting-btn" :disabled="!isActive" @click="addSorting">
-            <span>+</span>
-
-            <span>
-              {{ $t('Products.form.add_sorting') }}
-            </span>
+            <span aria-hidden="true">+</span>
+            <span>{{ $t('Products.form.add_sorting') }}</span>
           </button>
-        </div>
+        </section>
       </aside>
 
       <main class="main-panel">
-        <div class="card">
-          <h3 class="section-title">
-            {{ $t('Products.form.product_data') }}
-          </h3>
+        <section class="card details-card">
+          <div class="section-heading">
+            <span class="section-number">01</span>
+
+            <div>
+              <h3>{{ $t('Products.form.product_data') }}</h3>
+              <p>{{ $t('Products.form.subtitle') }}</p>
+            </div>
+          </div>
 
           <div class="grid-2">
             <div class="field">
               <label>
                 {{ $t('Products.form.product_name') }}
 
-                <span class="required"> ? </span>
+                <span class="required">*</span>
               </label>
 
               <MultiLangInput
@@ -590,7 +639,7 @@
               <label>
                 {{ $t('Products.form.expected_price') }}
 
-                <span class="required"> ? </span>
+                <span class="required">*</span>
               </label>
 
               <input
@@ -614,16 +663,30 @@
               />
             </div>
           </div>
-        </div>
 
-        <div class="card">
-          <div class="section-header">
-            <h3 class="section-title">
-              {{ $t('Products.form.stages_title') }}
-            </h3>
+          <div id="description-field" class="description-field">
+            <MultiLangInput
+              field-key="description"
+              :label="$t('description')"
+              :languages="['ar', 'en']"
+              :model-value="descriptionTranslations"
+              type="description"
+              @update:model-value="updateDescriptionTranslations"
+            />
+          </div>
+        </section>
 
-            <span class="hint">
-              {{ $t('Products.form.stages_hint') }}
+        <section class="card stages-card">
+          <div class="section-heading">
+            <span class="section-number">02</span>
+
+            <div>
+              <h3>{{ $t('Products.form.stages_title') }}</h3>
+              <p>{{ $t('Products.form.stages_hint') }}</p>
+            </div>
+
+            <span v-if="selectedStageIds.length" class="selected-count">
+              {{ selectedStageIds.length }}
             </span>
           </div>
 
@@ -673,6 +736,7 @@
                   :class="{
                     selected: isStageSelected(stage.id),
                   }"
+                  :aria-pressed="isStageSelected(stage.id)"
                   @click="toggleStage(stage.id)"
                 >
                   {{ stage.title }}
@@ -680,20 +744,7 @@
               </div>
             </div>
           </div>
-        </div>
-
-        <div class="card">
-          <div id="description-field" class="field-group col-span-2">
-            <MultiLangInput
-              field-key="description"
-              :label="$t('description')"
-              :languages="['ar', 'en']"
-              :model-value="descriptionTranslations"
-              type="description"
-              @update:model-value="updateDescriptionTranslations"
-            />
-          </div>
-        </div>
+        </section>
       </main>
     </div>
   </div>
@@ -737,43 +788,6 @@
       border-radius: var(--radius-full);
       font-size: var(--xs-size);
     }
-
-    .actions {
-      display: flex;
-      gap: 0.75rem;
-    }
-  }
-
-  .btn-primary {
-    background: var(--PrimaryColor);
-    color: var(--standard-white);
-    border: none;
-    padding: 0.6rem 1.2rem;
-    border-radius: var(--radius-sm);
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    cursor: pointer;
-    transition: var(--transition-fast);
-
-    &:hover {
-      background: var(--PrimaryColor-hover);
-    }
-  }
-
-  .btn-secondary {
-    background: var(--bg-card);
-    border: 1px solid var(--border-weak);
-    color: var(--gray-700);
-    padding: 0.6rem 1.2rem;
-    border-radius: var(--radius-sm);
-    cursor: pointer;
-    transition: var(--transition-fast);
-
-    &:hover {
-      background: var(--gray-100);
-    }
   }
 
   .form-body {
@@ -796,75 +810,12 @@
     gap: 1rem;
   }
 
-  .image-card .card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-    font-weight: 600;
-    color: var(--title-card-color);
-  }
-
   .image-upload {
     border: 2px dashed var(--border-strong);
     border-radius: var(--radius-md);
     padding: 1rem;
     text-align: center;
     background: var(--bg-section);
-
-    &.is-disabled {
-      opacity: 0.5;
-      pointer-events: none;
-      cursor: not-allowed;
-      background: var(--gray-100);
-    }
-  }
-
-  .sortings-card {
-    &.is-disabled {
-      opacity: 0.5;
-      pointer-events: none;
-    }
-
-    .sorting-row {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      margin-bottom: 0.5rem;
-
-      .sort-label {
-        width: 60px;
-        font-size: var(--sm-size);
-        color: var(--subtitle-color);
-      }
-
-      .price-input {
-        flex: 1;
-        padding: 0.4rem 0.6rem;
-        border: 1px solid var(--input-border-color);
-        border-radius: var(--radius-sm);
-        text-align: center;
-        font-weight: 600;
-        color: var(--Title-input-Color);
-
-        &:focus {
-          outline: none;
-          border-color: var(--PrimaryColor);
-          box-shadow: 0 0 0 3px var(--PrimaryColor-alpha-15);
-        }
-
-        &:disabled {
-          background: var(--gray-100);
-          cursor: not-allowed;
-        }
-      }
-
-      .currency {
-        font-size: var(--xs-size);
-        color: var(--gray-400);
-        width: 28px;
-      }
-    }
   }
 
   .delete-sorting-btn {
@@ -932,25 +883,6 @@
     display: flex;
     flex-direction: column;
     gap: 1.25rem;
-  }
-
-  .section-title {
-    font-size: var(--md-size-2);
-    font-weight: 700;
-    margin-bottom: 1rem;
-    color: var(--title-color);
-  }
-
-  .section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-
-    .hint {
-      font-size: var(--xs-size);
-      color: var(--subtitle-color);
-    }
   }
 
   .grid-2 {
@@ -1070,6 +1002,395 @@
     .grid-2,
     .stages-grid {
       grid-template-columns: 1fr;
+    }
+  }
+
+  .products-form {
+    gap: 1.25rem;
+    min-height: 100%;
+    padding: clamp(1rem, 2vw, 1.75rem);
+  }
+
+  .form-header {
+    justify-content: flex-start;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem 1.5rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border-weak);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-sm);
+
+    &__icon {
+      display: grid;
+      flex: 0 0 3.25rem;
+      width: 3.25rem;
+      height: 3.25rem;
+      color: var(--standard-white);
+      background: var(--PrimaryColor);
+      border-radius: var(--radius-lg);
+      place-items: center;
+      box-shadow: var(--shadow-md);
+    }
+
+    &__copy {
+      min-width: 0;
+    }
+
+    &__eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.25rem;
+      color: var(--subtitle-color);
+      font-size: var(--xs-size);
+      font-weight: 600;
+    }
+
+    .title {
+      margin: 0;
+      font-size: clamp(var(--lg-size), 2vw, var(--xl-size-2));
+    }
+  }
+
+  .form-body {
+    grid-template-columns: minmax(19rem, 22rem) minmax(0, 1fr);
+    gap: 1.25rem;
+    align-items: start;
+  }
+
+  .card {
+    padding: clamp(1rem, 2vw, 1.5rem);
+    border-radius: var(--radius-lg);
+  }
+
+  .left-panel {
+    position: sticky;
+    top: 1rem;
+  }
+
+  .main-panel {
+    min-width: 0;
+  }
+
+  .section-heading {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+
+    h3 {
+      margin: 0;
+      color: var(--title-color);
+      font-size: var(--md-size-2);
+      font-weight: 700;
+    }
+
+    p {
+      margin: 0.2rem 0 0;
+      color: var(--subtitle-color);
+      font-size: var(--xs-size);
+    }
+
+    &--compact {
+      margin-bottom: 1rem;
+
+      h3 {
+        font-size: var(--md-size);
+      }
+    }
+  }
+
+  .section-number {
+    display: grid;
+    flex: 0 0 2rem;
+    width: 2rem;
+    height: 2rem;
+    color: var(--PrimaryColor);
+    background: var(--PrimaryColor-alpha-8);
+    border: 1px solid var(--PrimaryColor-alpha-20);
+    border-radius: var(--radius-md);
+    font-size: var(--xs-size);
+    font-weight: 700;
+    place-items: center;
+  }
+
+  .status-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    border-inline-start: 0.25rem solid var(--PrimaryColor);
+
+    &__copy {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+
+      strong {
+        color: var(--title-color);
+        font-size: var(--md-size);
+      }
+    }
+
+    &__toggle {
+      :deep(.status-field__label),
+      :deep(.status-field__text) {
+        display: none;
+      }
+
+      :deep(.status-field__control) {
+        min-height: auto;
+      }
+    }
+  }
+
+  .section-kicker {
+    color: var(--subtitle-color);
+    font-size: var(--xs-size);
+    font-weight: 600;
+  }
+
+  .image-upload {
+    padding: 0.75rem;
+    text-align: initial;
+    background: var(--bg-section);
+    border: 1px dashed var(--border-strong);
+    border-radius: var(--radius-lg);
+    transition:
+      border-color var(--transition-fast),
+      background var(--transition-fast);
+
+    &:focus-within,
+    &:hover {
+      background: var(--PrimaryColor-alpha-4);
+      border-color: var(--PrimaryColor);
+    }
+  }
+
+  .sortings-card {
+    transition: opacity var(--transition-fast);
+
+    &.is-disabled {
+      opacity: 0.6;
+      pointer-events: auto;
+    }
+  }
+
+  .sorting-count,
+  .selected-count {
+    display: grid;
+    min-width: 1.75rem;
+    height: 1.75rem;
+    margin-inline-start: auto;
+    padding-inline: 0.4rem;
+    color: var(--standard-white);
+    background: var(--gray-900);
+    border-radius: var(--radius-full);
+    font-size: var(--xs-size);
+    font-weight: 700;
+    place-items: center;
+  }
+
+  .sorting-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .sorting-row {
+    padding: 0.75rem;
+    background: var(--bg-section);
+    border: 1px solid var(--border-weak);
+    border-radius: var(--radius-md);
+
+    &__header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.6rem;
+
+      label {
+        overflow: hidden;
+        color: var(--title-card-color);
+        font-size: var(--sm-size);
+        font-weight: 600;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
+  }
+
+  .sorting-index {
+    color: var(--PrimaryColor);
+    font-size: var(--xs-size);
+    font-weight: 700;
+  }
+
+  .price-control {
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    background: var(--bg-card);
+    border: 1px solid var(--input-border-color);
+    border-radius: var(--radius-sm);
+    transition:
+      border-color var(--transition-fast),
+      box-shadow var(--transition-fast);
+
+    &:focus-within {
+      border-color: var(--PrimaryColor);
+      box-shadow: 0 0 0 3px var(--PrimaryColor-alpha-15);
+    }
+  }
+
+  .price-input {
+    min-width: 0;
+    flex: 1;
+    padding: 0.65rem 0.75rem;
+    color: var(--Title-input-Color);
+    background: transparent;
+    border: 0;
+    outline: 0;
+    font-weight: 600;
+  }
+
+  .currency {
+    padding-inline: 0.7rem;
+    color: var(--gray-500);
+    border-inline-start: 1px solid var(--border-weak);
+    font-size: var(--xs-size);
+    white-space: nowrap;
+  }
+
+  .delete-sorting-btn {
+    display: grid;
+    flex-shrink: 0;
+    width: 1.75rem;
+    height: 1.75rem;
+    margin-inline-start: auto;
+    color: var(--danger);
+    background: transparent;
+    border: 0;
+    border-radius: var(--radius-full);
+    place-items: center;
+  }
+
+  .add-sorting-btn {
+    margin-top: 0.9rem;
+    border-radius: var(--radius-md);
+    font-weight: 700;
+  }
+
+  .grid-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem;
+  }
+
+  .field label {
+    font-weight: 600;
+  }
+
+  .field-input {
+    min-height: 2.75rem;
+    border-radius: var(--radius-md);
+    transition:
+      border-color var(--transition-fast),
+      box-shadow var(--transition-fast);
+  }
+
+  .description-field {
+    margin-top: 1.25rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--border-weak);
+  }
+
+  .stages-grid {
+    grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+    gap: 0.75rem;
+  }
+
+  .stage-group {
+    min-height: 7rem;
+    padding: 0.9rem;
+    background: var(--bg-section);
+    transition:
+      border-color var(--transition-fast),
+      box-shadow var(--transition-fast);
+
+    &:hover {
+      border-color: var(--PrimaryColor-alpha-30);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .group-header .count {
+      display: grid;
+      width: 1.5rem;
+      height: 1.5rem;
+      color: var(--PrimaryColor);
+      background: var(--PrimaryColor-alpha-8);
+      border-radius: var(--radius-full);
+      font-weight: 700;
+      place-items: center;
+    }
+  }
+
+  .stage-tag {
+    padding: 0.38rem 0.7rem;
+
+    &:focus-visible {
+      outline: 2px solid var(--PrimaryColor);
+      outline-offset: 2px;
+    }
+  }
+
+  @media (max-width: 1100px) {
+    .form-body {
+      grid-template-columns: 1fr;
+    }
+
+    .main-panel {
+      grid-row: 1;
+    }
+
+    .left-panel {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      position: static;
+    }
+
+    .status-card {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .products-form {
+      padding: 0.75rem;
+    }
+
+    .form-header {
+      align-items: flex-start;
+      padding: 1rem;
+
+      &__icon {
+        flex-basis: 2.75rem;
+        width: 2.75rem;
+        height: 2.75rem;
+      }
+    }
+
+    .grid-2,
+    .left-panel {
+      grid-template-columns: 1fr;
+    }
+
+    .status-card {
+      grid-column: auto;
+    }
+
+    .section-heading {
+      align-items: flex-start;
     }
   }
 </style>

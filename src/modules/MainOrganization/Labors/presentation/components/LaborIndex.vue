@@ -2,6 +2,8 @@
   import { computed, onMounted, ref } from 'vue';
   import { useI18n } from 'vue-i18n';
   import { useRoute, useRouter } from 'vue-router';
+  import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
+  import { dialogManager } from '@/base/Presentation/Dialogs/dialog.manager';
   import type TitleInterface from '@/base/Data/Models/titleInterface';
   import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
   import UpdatedCustomInputSelect from '@/shared/FormInputs/UpdatedCustomInputSelect.vue';
@@ -9,6 +11,7 @@
   import { StatusTypeEnum } from '@/modules/MainOrganization/ChangeStatus/core/constant/change_status.type.enum';
   import DeleteDialog from '@/base/Presentation/Dialogs/MainDialogs/DeleteDialog.vue';
   import AppTable, { type TableHeader } from '@/shared/HelpersComponents/AppTable.vue';
+  import { deleteSelectedRows } from '@/shared/HelpersComponents/deleteSelectedRows';
   import Pagination from '@/shared/HelpersComponents/Pagination.vue';
   import TableSkelaton from '@/shared/HelpersComponents/TableSkelaton.vue';
   import type LaborModel from '../../core/models/labor.model';
@@ -96,9 +99,20 @@
   };
 
   const deleteLabor = async (id: number) => {
-    await controller.delete(new DeleteLaborParams(id));
-    await fetchLabors(1);
+    const deletionState = await controller.delete(new DeleteLaborParams(id));
+
+    if (deletionState instanceof DataSuccess) {
+      dialogManager.toastSuccess(t('labor.delete_success'));
+      await fetchLabors(1);
+    }
   };
+
+  const deleteSelectedLabors = (labors: LaborModel[]) =>
+    deleteSelectedRows(
+      labors,
+      (id) => controller.delete(new DeleteLaborParams(id)),
+      () => fetchLabors(1),
+    );
 
   onMounted(async () => {
     word.value = route.query.word ? String(route.query.word) : '';
@@ -171,6 +185,7 @@
         <AppTable
           :headers="headers"
           :items="data as LaborModel[]"
+          :bulk-delete="deleteSelectedLabors"
           selectable
           show-index
           hoverable

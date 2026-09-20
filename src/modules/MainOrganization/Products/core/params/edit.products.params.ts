@@ -71,7 +71,7 @@ export default class EditProductsParams implements Params {
     if (this.expectedPrice != null) map.expected_price = this.expectedPrice;
     if (this.image) map.image = this.image;
     if (this.stageIds?.length) map.stage_ids = this.stageIds;
-    if (this.sortings?.length) map.sortings = this.sortings;
+    if (this.sortings !== undefined) map.sortings = this.sortings;
     if (this.isActive !== undefined) map.is_active = this.isActive;
 
     return map;
