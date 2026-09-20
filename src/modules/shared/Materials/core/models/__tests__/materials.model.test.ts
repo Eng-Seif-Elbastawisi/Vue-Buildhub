@@ -13,6 +13,7 @@ describe('MaterialsModel', () => {
         { locale: 'en', title: 'Cement' },
         { locale: 'ar', title: 'Cement AR' },
       ],
+      status: 1,
     });
 
     expect(model).toMatchObject({
@@ -21,6 +22,7 @@ describe('MaterialsModel', () => {
       price: 125,
       unit: UnitTypeEnum.bag,
       translations: { title: { en: 'Cement', ar: 'Cement AR' } },
+      status: true,
     });
   });
 });

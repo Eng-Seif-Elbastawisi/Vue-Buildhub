@@ -5,6 +5,7 @@ import MaterialsIndex from '../MaterialsIndex.vue';
 vi.mock('@/stores/user', () => ({ useUserStore: () => ({ user: { isMaster: true } }) }));
 
 const fetchList = vi.fn().mockResolvedValue({});
+const fetchStats = vi.fn().mockResolvedValue({});
 vi.mock('vue-router', () => ({
   useRoute: () => ({ query: {} }),
   useRouter: () => ({ push: vi.fn() }),
@@ -19,7 +20,13 @@ vi.mock('vue-i18n', () => ({
 }));
 vi.mock('../../controllers/materials.controller', () => ({
   default: {
-    getInstance: () => ({ fetchList, delete: vi.fn(), listState: ref({}), pagination: ref(null) }),
+    getInstance: () => ({
+      fetchList,
+      fetchStats,
+      delete: vi.fn(),
+      listState: ref({}),
+      pagination: ref(null),
+    }),
   },
 }));
 
@@ -36,11 +43,39 @@ describe('MaterialsIndex', () => {
           Pagination: true,
           TableSkelaton: true,
           DeleteDialog: true,
+          ChangeStatusButton: true,
           RouterLink: true,
         },
       },
     });
     expect(wrapper.text()).toContain('material.list_title');
     expect(fetchList).toHaveBeenCalledTimes(1);
+  });
+
+  it('renders the material status action in the list', () => {
+    const wrapper = mount(MaterialsIndex, {
+      global: {
+        mocks: { $t: (key: string) => key },
+        stubs: {
+          DataStatusBuilder: {
+            template: '<div><slot name="success" :data="[{ id: 5, status: true }]" /></div>',
+          },
+          AppTable: {
+            props: ['items'],
+            template: '<div><slot name="actions" :item="items[0]" /></div>',
+          },
+          ChangeStatusButton: {
+            props: ['id', 'type', 'initialIsActive'],
+            template: '<div class="change-status" />',
+          },
+          MaterialStatsCard: true,
+          Pagination: true,
+          DeleteDialog: true,
+          RouterLink: true,
+        },
+      },
+    });
+
+    expect(wrapper.get('.change-status').exists()).toBe(true);
   });
 });

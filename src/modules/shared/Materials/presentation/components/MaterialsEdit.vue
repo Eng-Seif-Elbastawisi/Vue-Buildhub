@@ -21,6 +21,10 @@
       measurementId: data.measurementId,
       price: data.price,
       translations: data.translations,
+      itemTypeId: data.itemTypeId,
+      stageId: data.stageId,
+      subStageId: data.subStageId,
+      status: data.status,
     });
   };
 
@@ -43,7 +47,6 @@
 
 <template>
   <div class="material-crud-page">
-   
     <MaterialsForm
       :material="controller.itemData.value!"
       :form-key="formKey"

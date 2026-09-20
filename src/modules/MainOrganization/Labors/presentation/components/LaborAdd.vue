@@ -11,6 +11,10 @@
   const params = ref<AddLaborParams | null>(null);
   const loading = ref(false);
 
+  const updateData = (updatedParams: AddLaborParams) => {
+    params.value = updatedParams;
+  };
+
   const saveLabor = async () => {
     if (!params.value) return;
     loading.value = true;
@@ -24,7 +28,7 @@
 
 <template>
   <div class="labor-crud-page">
-    <LaborForm :form-key="formKey" :loading="loading" @update-data="params = $event" />
+    <LaborForm :form-key="formKey" :loading="loading" @update-data="updateData" />
 
     <div class="actions" :class="{ disabled: loading }">
       <button
@@ -35,7 +39,7 @@
         @click="saveLabor"
       >
         <span v-if="loading" class="loader"></span>
-        <span v-else>{{ $t('save') }}</span>
+        <span v-else>{{ $t('labor.save') }}</span>
       </button>
     </div>
 
@@ -62,7 +66,7 @@
     padding: 10px;
     background-color: var(--danger-light);
     color: var(--danger-dark);
-    border: 1px solid #f5c6cb;
+    border: 1px solid var(--danger-light);
     border-radius: 4px;
   }
 </style>

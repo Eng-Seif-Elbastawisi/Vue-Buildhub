@@ -4,9 +4,10 @@ export default class MaterialsModel {
   public readonly id?: number;
   public readonly brandId?: number;
   public readonly price: number;
-  public readonly title:string;
+  public readonly title: string;
   public readonly unit: UnitTypeEnum;
   public readonly translations: { title: Record<string, string> };
+  public readonly status: boolean;
   public readonly itemTypeId?: number;
   public readonly stageId?: number;
   public readonly subStageId?: number;
@@ -15,12 +16,13 @@ export default class MaterialsModel {
     id?: number;
     translations: { title: Record<string, string> };
     unit: UnitTypeEnum;
-    title:string;
+    title: string;
     price: number;
     brandId?: number;
     itemTypeId?: number;
     stageId?: number;
     subStageId?: number;
+    status?: boolean;
   }) {
     this.id = data.id;
     this.translations = data.translations;
@@ -31,6 +33,7 @@ export default class MaterialsModel {
     this.itemTypeId = data.itemTypeId;
     this.stageId = data.stageId;
     this.subStageId = data.subStageId;
+    this.status = data.status ?? false;
     Object.freeze(this);
   }
 
@@ -52,7 +55,7 @@ export default class MaterialsModel {
 
     return new MaterialsModel({
       id: json.id as number | undefined,
-      translations: { title: MaterialsModel.mapTranslations(json.translations) }, 
+      translations: { title: MaterialsModel.mapTranslations(json.translations) },
       unit: json.unit as UnitTypeEnum,
       title: json.title as string,
       price: Number(json.price),
@@ -60,6 +63,7 @@ export default class MaterialsModel {
       itemTypeId: json.itemTypeId as number | undefined,
       stageId: json.stageId as number | undefined,
       subStageId: json.subStageId as number | undefined,
+      status: json.status === true || Number(json.status) === 1,
     });
   }
 
@@ -67,8 +71,9 @@ export default class MaterialsModel {
     id: 10,
     translations: { title: { ar: 'مادة', en: 'Material' } },
     unit: UnitTypeEnum.meter,
-    title:'m',
+    title: 'm',
     price: 100,
+    status: true,
     brandId: 10,
   });
 }

@@ -1,39 +1,38 @@
+import TitleModel from '@/base/Core/Models/titleModel';
 import { UnitTypeEnum } from '@/modules/shared/Materials/core/constant/unit.type.enum';
+import StageModel from '@/modules/shared/Stages/core/models/stage.model';
 
-/**
- * Employee model representing an employee entity
- */
 export default class LaborModel {
   public readonly id?: number;
-  // public readonly brandId?: number;
   public readonly price: number;
   public readonly title: string;
   public readonly unit: UnitTypeEnum;
   public readonly translations: { title: Record<string, string> };
-  public readonly itemTypeId?: number;
-  public readonly stageId?: number;
-  public readonly subStageId?: number;
+  public readonly status: boolean;
+  public readonly itemType?: TitleModel;
+  public readonly stage?: StageModel;
+  public readonly subStage?: StageModel;
 
-  constructor(data: {
+  constructor(labor: {
     id?: number;
     translations: { title: Record<string, string> };
     unit: UnitTypeEnum;
     title: string;
     price: number;
-    // brandId?: number;
-    itemTypeId?: number;
-    stageId?: number;
-    subStageId?: number;
+    status?: boolean;
+    itemType?: TitleModel;
+    stage?: StageModel;
+    subStage?: StageModel;
   }) {
-    this.id = data.id;
-    this.translations = data.translations;
-    this.unit = data.unit;
-    this.price = data.price;
-    // this.brandId = data.brandId;
-    this.title = data.title;
-    this.itemTypeId = data.itemTypeId;
-    this.stageId = data.stageId;
-    this.subStageId = data.subStageId;
+    this.id = labor.id;
+    this.translations = labor.translations;
+    this.unit = labor.unit;
+    this.price = labor.price;
+    this.title = labor.title;
+    this.status = labor.status ?? false;
+    this.itemType = labor.itemType;
+    this.stage = labor.stage;
+    this.subStage = labor.subStage;
     Object.freeze(this);
   }
 
@@ -59,19 +58,38 @@ export default class LaborModel {
       unit: json.unit as UnitTypeEnum,
       title: json.title as string,
       price: Number(json.price),
-      // brandId: (json.brandId ?? json.brand_id) as number | undefined,
-      itemTypeId: json.itemTypeId as number | undefined,
-      stageId: json.stageId as number | undefined,
-      subStageId: json.subStageId as number | undefined,
+      status: json.status === true || Number(json.status) === 1,
+      itemType: LaborModel.mapTitleRelation(json.itemType ?? json.item_type),
+      stage: LaborModel.mapStageRelation(json.stage),
+      subStage: LaborModel.mapStageRelation(json.subStage ?? json.sub_stage),
     });
+  }
+
+  private static mapTitleRelation(relation: unknown): TitleModel | undefined {
+    const relationData = LaborModel.toRelationData(relation);
+    return relationData ? TitleModel.fromMap(relationData) : undefined;
+  }
+
+  private static mapStageRelation(relation: unknown): StageModel | undefined {
+    const relationData = LaborModel.toRelationData(relation);
+    return relationData ? StageModel.fromJson(relationData) : undefined;
+  }
+
+  private static toRelationData(relation: unknown): Record<string, unknown> | undefined {
+    return relation !== null && typeof relation === 'object'
+      ? (relation as Record<string, unknown>)
+      : undefined;
   }
 
   static example: LaborModel = new LaborModel({
     id: 10,
-    translations: { title: { ar: 'مادة', en: 'Material' } },
+    translations: { title: { ar: 'عمالة', en: 'Labor' } },
     unit: UnitTypeEnum.meter,
-    title: 'm',
+    title: 'Labor',
     price: 100,
-    // brandId: 10,
+    status: true,
+    itemType: new TitleModel('Item type', 20),
+    stage: StageModel.fromJson({ id: 30, title: 'Stage' }),
+    subStage: StageModel.fromJson({ id: 40, title: 'Sub-stage' }),
   });
 }

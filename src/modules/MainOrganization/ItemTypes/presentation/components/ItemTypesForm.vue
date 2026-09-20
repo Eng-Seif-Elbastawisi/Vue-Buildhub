@@ -5,6 +5,7 @@
   import MultiLangInput from '@/shared/MultiLangInput.vue';
   import TitleInterface from '@/base/Data/Models/titleInterface';
   import UpdatedCustomInputSelect from '@/shared/FormInputs/UpdatedCustomInputSelect.vue';
+  import StatusToggleField from '@/modules/MainOrganization/ChangeStatus/presentation/components/StatusToggleField.vue';
 
   import type ItemTypesShowModel from '../../core/models/item.types.show.model';
   import AddItemTypesParams from '../../core/params/add.item.types.params';
@@ -19,7 +20,7 @@
   }>();
 
   const props = defineProps<{
-    ItemTypes?: ItemTypesShowModel;
+    itemTypes?: ItemTypesShowModel;
     loading?: boolean;
   }>();
 
@@ -30,6 +31,7 @@
   const translations = ref<Record<string, string>>({});
 
   const descriptionTranslations = ref<Record<string, string>>({});
+  const status = ref(true);
 
   const typeOptions = computed<TitleInterface<number>[]>(() => [
     new TitleInterface({
@@ -56,6 +58,7 @@
         }),
         type: selectedType.value?.id as ItemTypeEnum,
         code: code.value,
+        status: status.value,
       }),
     );
   };
@@ -73,21 +76,22 @@
   onMounted(updateData);
 
   watch(
-    () => props.ItemTypes,
-    (ItemTypes) => {
-      if (!ItemTypes) return;
+    () => props.itemTypes,
+    (itemTypes) => {
+      if (!itemTypes) return;
 
       translations.value = {
-        ...(ItemTypes.translations?.title ?? {}),
+        ...(itemTypes.translations?.title ?? {}),
       };
 
       descriptionTranslations.value = {
-        ...(ItemTypes.translations?.description ?? {}),
+        ...(itemTypes.translations?.description ?? {}),
       };
 
-      selectedType.value = typeOptions.value.find((item) => item.id === ItemTypes.type) ?? null;
+      selectedType.value = typeOptions.value.find((item) => item.id === itemTypes.type) ?? null;
 
-      code.value = ItemTypes.code;
+      code.value = itemTypes.code;
+      status.value = itemTypes.status;
 
       updateData();
     },
@@ -156,6 +160,13 @@
           @input="updateData"
         />
       </div>
+
+      <StatusToggleField
+        v-model="status"
+        input-id="item-type-status"
+        :disabled="loading"
+        @update:model-value="updateData"
+      />
     </div>
   </div>
 </template>

@@ -9,12 +9,20 @@ describe('AddMaterialsParams', () => {
       brandId: 3,
       measurementId: 2,
       translations,
+      itemTypeId: 4,
+      stageId: 5,
+      subStageId: 6,
+      status: true,
     });
     expect(params.toMap()).toEqual({
       price: 12,
       brand_id: 3,
       measurement_unit_id: 2,
       translations,
+      item_type_id: 4,
+      stage_id: 5,
+      sub_stage_id: 6,
+      status: true,
     });
     expect(params.validate().isValid).toBe(true);
   });

@@ -8,6 +8,8 @@
   import IndexAddIcon from '@/shared/icons/IndexAddIcon.vue';
   import DeleteDialog from '@/base/Presentation/Dialogs/MainDialogs/DeleteDialog.vue';
   import { useUserStore } from '@/stores/user';
+  import ChangeStatusButton from '@/modules/MainOrganization/ChangeStatus/presentation/components/ChangeStatusButton.vue';
+  import { StatusTypeEnum } from '@/modules/MainOrganization/ChangeStatus/core/constant/change_status.type.enum';
 
   import type ProductsModel from '../../core/models/products.model';
   import type ProductStatsModel from '../../core/models/product.stats.model';
@@ -54,12 +56,6 @@
       },
     ];
   });
-
-  // ======================================================
-  // Products
-  // ======================================================
-
-  const products = computed(() => (state.value.data as ProductsModel[]) ?? []);
 
   // ======================================================
   // Fetch Products
@@ -137,6 +133,10 @@
       }),
     );
 
+    await Promise.all([fetchProducts(), fetchStats()]);
+  };
+
+  const reloadProducts = async () => {
     await Promise.all([fetchProducts(), fetchStats()]);
   };
 
@@ -310,6 +310,14 @@
 
             <!-- Actions -->
             <div class="card-actions">
+              <ChangeStatusButton
+                :id="product.id!"
+                :key="`${product.id}-${product.isActive}`"
+                :initial-is-active="product.isActive"
+                :type="StatusTypeEnum.PRODUCT"
+                @reload="reloadProducts"
+              />
+
               <!-- Edit -->
               <router-link
                 class="action-btn edit"

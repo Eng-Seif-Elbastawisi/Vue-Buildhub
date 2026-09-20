@@ -23,11 +23,7 @@
     loading.value = true;
 
     try {
-      await controller.update(
-        params.value,
-        undefined,
-        route.fullPath,
-      );
+      await controller.update(params.value, undefined, route.fullPath);
     } finally {
       loading.value = false;
     }
@@ -57,7 +53,7 @@
   <div class="Products-crud-page">
     <ProductsForm
       v-if="controller.itemData.value"
-      :Products="controller.itemData.value"
+      :products="controller.itemData.value"
       :loading="loading"
       @update-data="updateData"
     />
@@ -72,10 +68,7 @@
       {{ $t('update') }}
     </button>
 
-    <div
-      v-if="controller.errorMessage.value"
-      class="error"
-    >
+    <div v-if="controller.errorMessage.value" class="error">
       {{ controller.errorMessage.value }}
     </div>
   </div>

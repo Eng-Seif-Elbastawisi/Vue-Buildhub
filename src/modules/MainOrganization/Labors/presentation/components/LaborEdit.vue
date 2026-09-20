@@ -1,28 +1,21 @@
 <script setup lang="ts">
   import { onMounted, ref } from 'vue';
   import { useRoute } from 'vue-router';
-  import type AddlaborParams from '../../core/params/add.labor.params.ts';
-  import EditlaborParams from '../../core/params/edit.labor.params.ts';
-  import ShowlaborParams from '../../core/params/show.labor.params.ts';
-  import laborController from '../controllers/labor.controller.ts';
+  import type EditLaborParams from '../../core/params/edit.labor.params.ts';
+  import ShowLaborParams from '../../core/params/show.labor.params.ts';
+  import LaborController from '../controllers/labor.controller.ts';
   import LaborForm from './LaborForm.vue';
 
-  const controller = laborController.getInstance();
+  const controller = LaborController.getInstance();
   const route = useRoute();
   const formKey = route.fullPath;
   const laborId = Number(route.params.labor_id);
-  const params = ref<EditlaborParams | null>(null);
+  const params = ref<EditLaborParams | null>(null);
 
   const loading = ref(false);
 
-  const updateData = (data: AddlaborParams) => {
-    params.value = new EditlaborParams({
-      labor_id: laborId,
-      brandId: data.brandId,
-      measurementId: data.measurementId,
-      price: data.price,
-      translations: data.translations,
-    });
+  const updateData = (updatedParams: EditLaborParams) => {
+    params.value = updatedParams;
   };
 
   const saveLabor = async () => {
@@ -37,7 +30,7 @@
 
   onMounted(async () => {
     await controller.fetchOne(
-      new ShowlaborParams({
+      new ShowLaborParams({
         labor_id: laborId,
         allLocales: true,
       }),
@@ -52,9 +45,6 @@
 
 <template>
   <div class="labor-crud-page">
-    <!-- <pre>
-      {{ controller.itemData.value! }}
-    </pre> -->
     <LaborForm
       :labor="controller.itemData.value!"
       :form-key="formKey"
@@ -98,7 +88,7 @@
     padding: 10px;
     background-color: var(--danger-light);
     color: var(--danger-dark);
-    border: 1px solid #f5c6cb;
+    border: 1px solid var(--danger-light);
     border-radius: 4px;
   }
 </style>

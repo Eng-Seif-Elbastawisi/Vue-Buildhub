@@ -1,18 +1,17 @@
 <script setup lang="ts">
-  import { onMounted, ref, watch, nextTick } from 'vue';
-  import { onBeforeRouteLeave } from 'vue-router';
+  import { computed, nextTick, onMounted, ref, watch } from 'vue';
+  import { onBeforeRouteLeave, useRoute } from 'vue-router';
 
   import type TitleInterface from '@/base/Data/Models/titleInterface';
 
-  import IndexBrandParams from '@/modules/shared/Brand/core/params/index.brand.params';
-  import BrandController from '@/modules/shared/Brand/presentation/controllers/brand.controller';
-
   import UpdatedCustomInputSelect from '@/shared/FormInputs/UpdatedCustomInputSelect.vue';
   import MultiLangInput from '@/shared/MultiLangInput.vue';
+  import StatusToggleField from '@/modules/MainOrganization/ChangeStatus/presentation/components/StatusToggleField.vue';
 
   import { useFormsStore } from '@/stores/formsStore';
 
   import AddLaborParams from '../../core/params/add.labor.params';
+  import EditLaborParams from '../../core/params/edit.labor.params';
 
   import MeasurementController from '@/modules/shared/measurement/presentation/controllers/measurement.controller';
   import IndexMeasurementParams from '@/modules/shared/measurement/core/params/index.measurement.params';
@@ -23,22 +22,29 @@
   import IndexItemTypesParams from '@/modules/MainOrganization/ItemTypes/core/params/index.item.types.params';
 
   import StageController from '@/modules/shared/Stages/presentation/controllers/stage.controller';
-  import IndexStageParams from '@/modules/shared/Stages/core/params/index.stage.params';
-  import type LaborModel from '../../core/models/labor.model';
-import type laborShowModel from '../../core/models/labor.show.model';
-  // import type laborShowModel from '@/modules/shared/labors/core/models/labors.show.model';
+  import { useStageSubStageFilters } from '@/modules/shared/Stages/presentation/composables/useStageSubStageFilters';
+  import type LaborShowModel from '../../core/models/labor.show.model';
 
   const emit = defineEmits<{
-    updateData: [params: AddLaborParams];
+    updateData: [params: AddLaborParams | EditLaborParams];
   }>();
 
   const props = defineProps<{
-    labor?: laborShowModel;
+    labor?: LaborShowModel;
     formKey?: string;
     loading?: boolean;
   }>();
 
   const formStore = useFormsStore();
+  const route = useRoute();
+
+  const laborId = computed(() => {
+    const routeParam = route.params.labor_id;
+    const value = Array.isArray(routeParam) ? routeParam[0] : routeParam;
+    const parsedId = Number(value);
+
+    return Number.isInteger(parsedId) && parsedId > 0 ? parsedId : undefined;
+  });
 
   const measurementController = MeasurementController.getInstance();
   const itemTypeController = ItemTypesController.getInstance();
@@ -46,39 +52,37 @@ import type laborShowModel from '../../core/models/labor.show.model';
 
   const measurementParams = new IndexMeasurementParams('', 1, 100, 0);
   const itemTypeParams = new IndexItemTypesParams('', 1, 100, 0);
-  const stageParams = new IndexStageParams('', 1, 100, 0, null);
-
-  const subStageParams = ref(new IndexStageParams('', 1, 100, 0, undefined));
-
   const translations = ref<Record<string, string>>({});
   const price = ref<number>();
+  const status = ref(true);
 
-  const brand = ref<TitleInterface<string | number> | null>(null);
   const measurement = ref<TitleInterface<string | number> | null>(null);
   const itemType = ref<TitleInterface<string | number> | null>(null);
   const stage = ref<TitleInterface<string | number> | null>(null);
   const subStage = ref<TitleInterface<string | number> | null>(null);
 
+  const { stageParams, subStageParams } = useStageSubStageFilters(stage);
+
   const isInitializing = ref(false);
   const isSubStageInitializing = ref(false);
 
   const toSelectOption = (
-    item?: { id?: number; title?: string } | null,
+    entity?: { id?: number; title?: string } | null,
   ): TitleInterface<string | number> | null => {
-    if (item?.id === undefined || item?.id === null) {
+    if (entity?.id === undefined || entity?.id === null) {
       return null;
     }
 
     return {
-      id: item.id,
-      title: item.title ?? '',
+      id: entity.id,
+      title: entity.title ?? '',
     };
   };
 
   watch(
     stage,
-    async (value) => {
-      if (!value?.id) {
+    async (selectedStage) => {
+      if (!selectedStage?.id) {
         if (!isInitializing.value) {
           subStage.value = null;
           updateData();
@@ -86,8 +90,6 @@ import type laborShowModel from '../../core/models/labor.show.model';
 
         return;
       }
-
-      subStageParams.value = new IndexStageParams('', 1, 100, 0, Number(value.id));
 
       if (!isInitializing.value) {
         subStage.value = null;
@@ -127,18 +129,13 @@ import type laborShowModel from '../../core/models/labor.show.model';
       };
 
       price.value = labor.price;
-
-      // brand.value = toSelectOption(labor.brand);
+      status.value = labor.status;
 
       measurement.value = toSelectOption(labor.measurementId);
 
       itemType.value = toSelectOption(labor.itemType);
 
       stage.value = toSelectOption(labor.stage);
-
-      if (labor.stage?.id !== undefined && labor.stage?.id !== null) {
-        subStageParams.value = new IndexStageParams('', 1, 100, 0, Number(labor.stage.id));
-      }
 
       subStage.value = toSelectOption(labor.subStage);
 
@@ -150,6 +147,7 @@ import type laborShowModel from '../../core/models/labor.show.model';
 
       isSubStageInitializing.value = false;
       isInitializing.value = false;
+      updateData();
     },
     {
       immediate: true,
@@ -158,33 +156,40 @@ import type laborShowModel from '../../core/models/labor.show.model';
   );
 
   const updateData = () => {
-    emit(
-      'updateData',
-      new AddLaborParams({
-        price: price.value,
-        // brandId: brand.value?.id,
-        measurementId: measurement.value?.id,
-        itemTypeId: itemType.value?.id,
-        stageId: stage.value?.id,
-        subStageId: subStage.value?.id,
-        translations: {
-          title: translations.value,
-        },
-      }),
-    );
+    const laborData = {
+      price: price.value,
+      measurementId: measurement.value?.id,
+      itemTypeId: itemType.value?.id,
+      stageId: stage.value?.id,
+      subStageId: subStage.value?.id,
+      status: status.value,
+      translations: {
+        title: translations.value,
+      },
+    };
+
+    const params = laborId.value
+      ? new EditLaborParams({ laborId: laborId.value, ...laborData })
+      : new AddLaborParams(laborData);
+
+    emit('updateData', params);
   };
 
-  const updateTranslations = (value: Record<string, string>) => {
-    translations.value = value;
+  const updateTranslations = (updatedTranslations: Record<string, string>) => {
+    translations.value = updatedTranslations;
     updateData();
   };
 
-  const handleSubStageUpdate = (value: TitleInterface<string | number> | null) => {
+  const updateSubStage = (
+    selectedSubStage: TitleInterface<string | number> | TitleInterface<string | number>[] | null,
+  ) => {
     if (isSubStageInitializing.value) {
       return;
     }
 
-    subStage.value = value;
+    subStage.value = Array.isArray(selectedSubStage)
+      ? (selectedSubStage[0] ?? null)
+      : selectedSubStage;
     updateData();
   };
 
@@ -197,7 +202,7 @@ import type laborShowModel from '../../core/models/labor.show.model';
   });
 
   onMounted(() => {
-    if (!props.labor) {
+    if (!laborId.value && !props.labor) {
       updateData();
     }
   });
@@ -206,15 +211,15 @@ import type laborShowModel from '../../core/models/labor.show.model';
 <template>
   <div class="labor-form-card">
     <header class="form-header">
-      <h3>{{ $t('labor.title') }}</h3>
-      <p>{{ $t('labor.description') }}</p>
+      <h3>{{ $t('labor.form_title') }}</h3>
+      <p>{{ $t('labor.form_description') }}</p>
     </header>
 
     <div class="form-fields" :class="{ disabled: loading }">
       <div class="field-group col-span-2">
         <MultiLangInput
           field-key="title"
-          :label="$t('labor.title')"
+          :label="$t('labor.name')"
           :languages="['en', 'ar']"
           :model-value="translations"
           type="title"
@@ -250,9 +255,9 @@ import type laborShowModel from '../../core/models/labor.show.model';
           id="labor-item-type"
           v-model="itemType"
           :controller="itemTypeController"
-          :label="$t('item_type')"
+          :label="$t('labor.item_type')"
           :params="itemTypeParams"
-          :placeholder="$t('item_type_placeholder')"
+          :placeholder="$t('labor.item_type_placeholder')"
           required
           @update:model-value="updateData"
         />
@@ -263,9 +268,9 @@ import type laborShowModel from '../../core/models/labor.show.model';
           id="labor-stage"
           v-model="stage"
           :controller="stageController"
-          :label="$t('Stage')"
+          :label="$t('labor.stage')"
           :params="stageParams"
-          :placeholder="$t('stage_placeholder')"
+          :placeholder="$t('labor.stage_placeholder')"
           required
           @update:model-value="updateData"
         />
@@ -274,42 +279,37 @@ import type laborShowModel from '../../core/models/labor.show.model';
       <div class="field-group">
         <UpdatedCustomInputSelect
           id="labor-sub-stage"
+          :key="`labor-sub-stage-${stage?.id ?? 'none'}`"
           v-model="subStage"
           :controller="stageController"
-          :label="$t('sub_stages')"
+          :label="$t('labor.sub_stage')"
           :params="subStageParams"
-          :placeholder="$t('sub_stage_placeholder')"
-          :disabled="!stage"
+          :placeholder="$t('labor.sub_stage_placeholder')"
+          :disabled="!stage?.id"
           required
-          @update:model-value="handleSubStageUpdate"
+          @update:model-value="updateSubStage"
         />
       </div>
-
-      <!-- <div class="field-group">
-        <UpdatedCustomInputSelect
-          id="labor-brand"
-          v-model="brand"
-          :controller="brandController"
-          :label="$t('labor.brand')"
-          :params="brandParams"
-          :placeholder="$t('labor.brand_placeholder')"
-          required
-          @update:model-value="updateData"
-        />
-      </div> -->
 
       <div class="field-group">
         <UpdatedCustomInputSelect
           id="labor-measurement"
           v-model="measurement"
           :controller="measurementController"
-          :label="$t('Measurement')"
+          :label="$t('labor.measurement')"
           :params="measurementParams"
-          :placeholder="$t('measurement.unit_placeholder')"
+          :placeholder="$t('labor.measurement_placeholder')"
           required
           @update:model-value="updateData"
         />
       </div>
+
+      <StatusToggleField
+        v-model="status"
+        input-id="labor-status"
+        :disabled="loading"
+        @update:model-value="updateData"
+      />
     </div>
   </div>
 </template>
@@ -319,7 +319,7 @@ import type laborShowModel from '../../core/models/labor.show.model';
     input {
       width: 100%;
       padding: 12px 16px;
-      padding-right: 50px;
+      padding-inline-end: 50px;
       border: 1px solid var(--border-weak);
       border-radius: 28px;
       background: var(--white);

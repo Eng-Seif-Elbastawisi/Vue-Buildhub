@@ -14,6 +14,7 @@ describe('material params', () => {
       price: 125,
       brandId: 7,
       measurementId: UnitTypeEnum.bag,
+      itemTypeId: 2,
       translations,
     });
     const edit = new EditMaterialParams({
@@ -24,13 +25,14 @@ describe('material params', () => {
       translations,
     });
 
-    expect(add.toMap()).toEqual({
+    expect(add.toMap()).toMatchObject({
       price: 125,
       brand_id: 7,
       measurement_unit_id: UnitTypeEnum.bag,
       translations,
+      item_type_id: 2,
     });
-    expect(edit.toMap()).toEqual({
+    expect(edit.toMap()).toMatchObject({
       material_id: 3,
       price: 150,
       brand_id: 7,

@@ -4,6 +4,7 @@
 
   import TranslationParams from '@/base/Core/Params/translationParams';
   import MultiLangInput from '@/shared/MultiLangInput.vue';
+  import StatusToggleField from '@/modules/MainOrganization/ChangeStatus/presentation/components/StatusToggleField.vue';
 
   import type ProductsShowModel from '../../core/models/products.show.model';
   import AddProductsParams from '../../core/params/add.products.params';
@@ -26,7 +27,6 @@
 
   import HandleFilesUpload, { type UploadedFile } from '@/shared/FormInputs/HandleFilesUpload.vue';
 
-  import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
   import { useRoute } from 'vue-router';
 
   const route = useRoute();
@@ -46,6 +46,14 @@
   interface StageItem {
     id: number;
     title: string;
+  }
+
+  interface StageApiItem {
+    id: number;
+    parent_id?: number | null;
+    title?: string | Record<string, string> | Array<{ locale?: string; title?: string }>;
+    translations?: { title?: Record<string, string> };
+    name?: string;
   }
 
   interface StageGroup {
@@ -73,7 +81,7 @@
   }>();
 
   const props = defineProps<{
-    Products?: ProductsShowModel;
+    products?: ProductsShowModel;
     loading?: boolean;
   }>();
 
@@ -86,7 +94,7 @@
   const itemTypesParams = new IndexItemTypesParams('', 1, 100, 0);
   const measurementParams = new IndexMeasurementParams('', 1, 100, 0);
 
-  const extractTitle = (item: any): string => {
+  const extractTitle = (item: StageApiItem): string => {
     if (!item) return '';
 
     if (typeof item.title === 'string') {
@@ -94,14 +102,16 @@
     }
 
     if (Array.isArray(item.title)) {
-      const en = item.title.find((t: any) => t.locale === 'en')?.title;
-      const ar = item.title.find((t: any) => t.locale === 'ar')?.title;
+      const en = item.title.find((translation) => translation.locale === 'en')?.title;
+      const ar = item.title.find((translation) => translation.locale === 'ar')?.title;
 
       return en || ar || item.title[0]?.title || '';
     }
 
     if (item.title && typeof item.title === 'object') {
-      return item.title.ar || item.title.en || Object.values(item.title)[0] || '';
+      const localizedTitle = item.title as Record<string, string>;
+
+      return localizedTitle.ar || localizedTitle.en || Object.values(localizedTitle)[0] || '';
     }
 
     if (item.translations?.title) {
@@ -194,8 +204,6 @@
         }),
       );
 
-      console.log('DELETE RESULT:', result);
-
       if (result?.data?.status === true) {
         window.location.reload();
       }
@@ -232,15 +240,15 @@
         }),
       );
 
-      const allStages = Array.isArray(result?.data) ? result.data : [];
+      const allStages: StageApiItem[] = Array.isArray(result?.data) ? result.data : [];
 
-      const mainStages = allStages.filter((stage: any) => !stage.parent_id);
+      const mainStages = allStages.filter((stage) => !stage.parent_id);
 
-      let subStages = allStages.filter((stage: any) => stage.parent_id);
+      let subStages = allStages.filter((stage) => stage.parent_id);
 
       if (mainStages.length > 0 && subStages.length === 0) {
         const subResults = await Promise.all(
-          mainStages.map((stage: any) =>
+          mainStages.map((stage) =>
             stageController
               .fetchList(
                 new IndexStageParams({
@@ -253,7 +261,7 @@
               )
               .then((res) => ({
                 parentId: stage.id,
-                data: Array.isArray(res?.data) ? res.data : [],
+                data: (Array.isArray(res?.data) ? res.data : []) as StageApiItem[],
               }))
               .catch(() => ({
                 parentId: stage.id,
@@ -263,20 +271,20 @@
         );
 
         subStages = subResults.flatMap((result) =>
-          result.data.map((stage: any) => ({
+          result.data.map((stage) => ({
             ...stage,
             parent_id: result.parentId,
           })),
         );
       }
 
-      stageGroups.value = mainStages.map((stage: any, index: number) => ({
+      stageGroups.value = mainStages.map((stage, index) => ({
         id: stage.id,
         title: extractTitle(stage),
         color: STAGE_COLORS[index % STAGE_COLORS.length],
         stages: subStages
-          .filter((subStage: any) => subStage.parent_id === stage.id)
-          .map((subStage: any) => ({
+          .filter((subStage) => subStage.parent_id === stage.id)
+          .map((subStage) => ({
             id: subStage.id,
             title: extractTitle(subStage),
           })),
@@ -322,6 +330,7 @@
           image: image,
           stageIds: [...selectedStageIds.value],
           sortings: validSortings,
+          isActive: isActive.value,
         })
       : new AddProductsParams({
           translations: new TranslationParams({
@@ -336,6 +345,7 @@
           image: image,
           stageIds: [...selectedStageIds.value],
           sortings: validSortings,
+          isActive: isActive.value,
         });
 
     emit('updateData', params);
@@ -376,7 +386,7 @@
   });
 
   watch(
-    () => props.Products,
+    () => props.products,
     (product) => {
       if (!product) return;
 
@@ -485,15 +495,7 @@
               {{ $t('Products.form.image_and_sorting') }}
             </span>
 
-            <label class="switch">
-              <input type="checkbox" v-model="isActive" />
-
-              <span class="slider"></span>
-
-              <span class="label">
-                {{ $t('Products.form.active') }}
-              </span>
-            </label>
+            <StatusToggleField v-model="isActive" input-id="product-status" :disabled="loading" />
           </div>
 
           <div class="image-upload" :class="{ 'is-disabled': !isActive }">
@@ -869,20 +871,15 @@
     width: 28px;
     height: 28px;
     flex-shrink: 0;
-
     display: flex;
     align-items: center;
     justify-content: center;
-
     border: 1px solid var(--border-weak);
     border-radius: var(--radius-sm);
-
     background: var(--bg-card);
     color: var(--danger);
-
     font-size: 1.2rem;
     line-height: 1;
-
     cursor: pointer;
     transition: var(--transition-fast);
 
@@ -1056,52 +1053,6 @@
     &:hover:not(.selected) {
       border-color: var(--PrimaryColor);
       color: var(--PrimaryColor);
-    }
-  }
-
-  .switch {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    cursor: pointer;
-
-    input {
-      display: none;
-    }
-
-    .slider {
-      width: 36px;
-      height: 20px;
-      background: var(--gray-300);
-      border-radius: var(--radius-full);
-      position: relative;
-      transition: 0.2s;
-
-      &::after {
-        content: '';
-        position: absolute;
-        width: 16px;
-        height: 16px;
-        background: var(--standard-white);
-        border-radius: 50%;
-        top: 2px;
-        left: 2px;
-        transition: 0.2s;
-      }
-    }
-
-    input:checked + .slider {
-      background: var(--PrimaryColor);
-
-      &::after {
-        transform: translateX(16px);
-      }
-    }
-
-    .label {
-      font-size: var(--sm-size);
-      color: var(--subtitle-color);
     }
   }
 

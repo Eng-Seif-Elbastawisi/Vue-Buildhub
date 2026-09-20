@@ -6,7 +6,7 @@ export const LaborRoutes: RouteRecordRaw[] = [
     name: 'Labor',
     component: () => import('@/views/MainOrganization/Laboor/IndexLabor.vue'),
     meta: {
-      breadcrumb: 'Labor',
+      breadcrumb: 'labor.list_title',
     },
   },
   {
@@ -14,7 +14,7 @@ export const LaborRoutes: RouteRecordRaw[] = [
     name: 'add_labor',
     component: () => import('@/views/MainOrganization/Laboor/AddLabor.vue'),
     meta: {
-      breadcrumb: 'labor',
+      breadcrumb: 'labor.add',
       parent: 'Labor',
     },
   },
@@ -24,7 +24,7 @@ export const LaborRoutes: RouteRecordRaw[] = [
     component: () => import('@/views/MainOrganization/Laboor/EditLabor.vue'),
     props: true,
     meta: {
-      breadcrumb: 'Edit Labor',
+      breadcrumb: 'labor.update',
       parent: 'Labor',
     },
   },

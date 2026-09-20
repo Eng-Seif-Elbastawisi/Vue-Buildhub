@@ -13,6 +13,24 @@ interface ApiTranslationItem {
   description?: string;
 }
 
+interface ApiProductsShowResponse {
+  data?: ApiProductsShowResponse;
+  id?: number;
+  title?: ApiTranslationItem[] | string;
+  description?: ApiTranslationItem[] | string;
+  item_type?: Record<string, unknown>;
+  measurement_unit?: Record<string, unknown>;
+  expected_price?: number | string | null;
+  expectedPrice?: number;
+  stages?: Record<string, unknown>[];
+  stageIds?: number[];
+  sortings?: Record<string, unknown>[];
+  attachments?: Record<string, unknown>[];
+  image?: string;
+  is_active?: boolean | number | string | null;
+  isActive?: boolean;
+}
+
 export default class ProductsShowModel {
   public readonly id?: number;
 
@@ -86,14 +104,14 @@ export default class ProductsShowModel {
   }
 
   private static mapLocaleArray(
-    arr: ApiTranslationItem[] | undefined,
+    translations: unknown,
     key: 'title' | 'description',
   ): Record<string, string> {
-    if (!Array.isArray(arr)) {
+    if (!Array.isArray(translations)) {
       return {};
     }
 
-    return arr.reduce<Record<string, string>>((acc, item) => {
+    return (translations as ApiTranslationItem[]).reduce<Record<string, string>>((acc, item) => {
       const value = item[key];
 
       if (item.locale && value) {
@@ -104,7 +122,7 @@ export default class ProductsShowModel {
     }, {});
   }
 
-  static fromJson(json: any): ProductsShowModel {
+  static fromJson(json: ApiProductsShowResponse): ProductsShowModel {
     if (!json) {
       throw new Error('Cannot create ProductsShowModel from null or undefined');
     }
@@ -145,7 +163,7 @@ export default class ProductsShowModel {
     // =====================================================
 
     const stages: StageModel[] = Array.isArray(data.stages)
-      ? data.stages.map((stage: any) => StageModel.fromJson(stage))
+      ? data.stages.map((stage) => StageModel.fromJson(stage))
       : [];
 
     const stageIds: number[] =
@@ -160,7 +178,7 @@ export default class ProductsShowModel {
     // =====================================================
 
     const sortings: ProductShowSortingModel[] = Array.isArray(data.sortings)
-      ? data.sortings.map((sorting: any) => ProductShowSortingModel.fromJson(sorting))
+      ? data.sortings.map((sorting) => ProductShowSortingModel.fromJson(sorting))
       : [];
 
     // =====================================================
@@ -168,7 +186,7 @@ export default class ProductsShowModel {
     // =====================================================
 
     const attachments: AttachmentModel[] = Array.isArray(data.attachments)
-      ? data.attachments.map((attachment: any) => AttachmentModel.fromJson(attachment))
+      ? data.attachments.map((attachment) => AttachmentModel.fromJson(attachment))
       : [];
 
     const firstAttachment = attachments[0];
@@ -179,7 +197,10 @@ export default class ProductsShowModel {
     // Active
     // =====================================================
 
-    const isActive = data.is_active != null ? Boolean(data.is_active) : (data.isActive ?? true);
+    const isActive =
+      data.is_active != null
+        ? data.is_active === true || Number(data.is_active) === 1
+        : (data.isActive ?? true);
 
     // =====================================================
     // Return
@@ -192,8 +213,11 @@ export default class ProductsShowModel {
         title: titleMap,
         description: descriptionMap,
       }),
-      title: data.title,
-      description: data.description,
+      title: typeof data.title === 'string' ? data.title : (titleMap.en ?? titleMap.ar),
+      description:
+        typeof data.description === 'string'
+          ? data.description
+          : (descriptionMap.en ?? descriptionMap.ar),
 
       itemType,
 
