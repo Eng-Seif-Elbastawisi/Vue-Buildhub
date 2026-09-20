@@ -1,53 +1,79 @@
 <script setup lang="ts">
-  import { onMounted, ref } from 'vue';
-  import { useRouter } from 'vue-router';
+  import { computed, onMounted, ref } from 'vue';
+  import { useRoute, useRouter } from 'vue-router';
 
-  import type AddQuoteTypeParams from '../../core/params/add.quote.types.params.ts';
-  import EditQuoteTypeParams from '../../core/params/edit.quote.types.params.ts';
-  import ShowQuoteTypeParams from '../../core/params/show.quote.types.params.ts';
+  import type AddQuoteTypeParams from '../../core/params/add.quote.types.params';
+  import EditQuoteTypeParams from '../../core/params/edit.quote.types.params';
+  import ShowQuoteTypeParams from '../../core/params/show.quote.types.params';
 
-  import QuoteTypeController from '../controllers/quote.types.controller.ts';
+  import QuoteTypeController from '../controllers/quote.types.controller';
   import QuoteTypeForm from './QuoteTypeForm.vue';
+
+  const route = useRoute();
+  const router = useRouter();
 
   const controller = QuoteTypeController.getInstance();
 
-  const route = useRouter();
-
-  const quoteTypeId = Number(route.currentRoute.value.params.id);
-
-  const params = ref<EditQuoteTypeParams | null>(null);
   const loading = ref(false);
 
-  const updateData = (data: AddQuoteTypeParams) => {
-    params.value = new EditQuoteTypeParams({
-      id: quoteTypeId,
-      translations: data.translations,
-      status: data.status,
-    });
+  const quoteTypeId = computed(() => {
+    const id = Number(route.params.id);
+
+    return Number.isNaN(id) ? null : id;
+  });
+
+  const isEdit = computed(() => quoteTypeId.value !== null);
+
+  const params = ref<AddQuoteTypeParams | EditQuoteTypeParams | null>(null);
+
+  const updateData = (
+    data: AddQuoteTypeParams | EditQuoteTypeParams,
+  ) => {
+    params.value = data;
   };
 
   const saveQuoteType = async () => {
-    if (!params.value) return;
+    if (!params.value) {
+      return;
+    }
 
     loading.value = true;
 
     try {
-      await controller.update(params.value, undefined, route.currentRoute.value.fullPath);
+      if (isEdit.value && quoteTypeId.value) {
+        await controller.update(
+          params.value as EditQuoteTypeParams,
+          undefined,
+          route.fullPath,
+        );
+
+        return;
+      }
+
+      await controller.store(
+        params.value as AddQuoteTypeParams,
+        undefined,
+        route.fullPath,
+      );
     } finally {
       loading.value = false;
     }
   };
 
   onMounted(async () => {
-    if (!quoteTypeId || Number.isNaN(quoteTypeId)) {
-      console.error('Invalid Quote Type ID:', route.currentRoute.value.params.id);
+    if (!isEdit.value) {
+      return;
+    }
+
+    if (!quoteTypeId.value) {
+      console.error('Invalid Quote Type ID:', route.params.id);
 
       return;
     }
 
     await controller.fetchOne(
       new ShowQuoteTypeParams({
-        id: quoteTypeId,
+        id: quoteTypeId.value,
         allLocales: true,
       }),
     );
@@ -57,7 +83,7 @@
 <template>
   <div class="QuoteType-crud-page">
     <QuoteTypeForm
-      :quote-type="controller.itemData.value!"
+      :quote-type="controller.itemData.value ?? undefined"
       :loading="loading"
       @update-data="updateData"
     />
@@ -69,10 +95,17 @@
       :disabled="loading"
       @click="saveQuoteType"
     >
-      {{ $t('quote_type.update') }}
+      {{
+        isEdit
+          ? $t('quote_type.update')
+          : $t('quote_type.save')
+      }}
     </button>
 
-    <div v-if="controller.errorMessage.value" class="error">
+    <div
+      v-if="controller.errorMessage.value"
+      class="error"
+    >
       {{ controller.errorMessage.value }}
     </div>
   </div>
