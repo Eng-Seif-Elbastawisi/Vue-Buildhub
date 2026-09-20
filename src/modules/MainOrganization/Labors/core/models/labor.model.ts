@@ -83,7 +83,7 @@ export default class LaborModel {
 
   static example: LaborModel = new LaborModel({
     id: 10,
-    translations: { title: { ar: 'عمالة', en: 'Labor' } },
+    translations: { title: { ar: 'مصنعية', en: 'Labor' } },
     unit: UnitTypeEnum.meter,
     title: 'Labor',
     price: 100,
