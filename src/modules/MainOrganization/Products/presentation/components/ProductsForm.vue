@@ -148,6 +148,7 @@
   const expectedPrice = ref<number | undefined>();
 
   const isActive = ref(true);
+  const gradesEnabled = ref(true);
 
   const imageFiles = ref<UploadedFile[]>([]);
   const imageBase64 = ref<string | undefined>();
@@ -175,13 +176,13 @@
   };
 
   const addSorting = () => {
-    if (!isActive.value) return;
+    if (!gradesEnabled.value) return;
 
     sortings.value.push(createSorting());
   };
 
   const deleteSorting = async (sorting: SortingItem, index: number) => {
-    if (!isActive.value) return;
+    if (!gradesEnabled.value) return;
 
     if (!sorting.id) {
       sortings.value.splice(index, 1);
@@ -320,9 +321,9 @@
   };
 
   const updateData = () => {
-    const image = imageBase64.value;
+    const image = gradesEnabled.value ? imageBase64.value : undefined;
 
-    const validSortings = isActive.value
+    const validSortings = gradesEnabled.value
       ? sortings.value
           .map((sorting, originalIndex) => ({ sorting, originalIndex }))
           .filter(({ sorting }) => Number(sorting.price) > 0)
@@ -367,6 +368,7 @@
           stageIds: [...selectedStageIds.value],
           sortings: validSortings,
           isActive: isActive.value,
+          gradesEnabled: gradesEnabled.value,
         });
 
     emit('updateData', params);
@@ -444,6 +446,7 @@
       expectedPrice.value = product.expectedPrice;
 
       isActive.value = product.isActive ?? true;
+      gradesEnabled.value = Boolean(product.image || product.sortings?.length);
 
       selectedStageIds.value = [...(product.stageIds ?? [])];
 
@@ -473,6 +476,7 @@
       measurementUnitId,
       expectedPrice,
       isActive,
+      gradesEnabled,
       imageBase64,
       selectedStageIds,
       sortings,
@@ -541,7 +545,28 @@
           </div>
         </section>
 
-        <section class="card image-card">
+        <section class="card status-card grades-card">
+          <div class="status-card__copy">
+            <span class="section-kicker">{{ $t('Products.form.enable_product_grades') }}</span>
+            <strong>
+              {{
+                gradesEnabled
+                  ? $t('Products.form.grades_enabled')
+                  : $t('Products.form.grades_disabled')
+              }}
+            </strong>
+          </div>
+
+          <div class="status-card__toggle">
+            <StatusToggleField
+              v-model="gradesEnabled"
+              input-id="product-grades-status"
+              :disabled="loading"
+            />
+          </div>
+        </section>
+
+        <section v-if="gradesEnabled" class="card image-card">
           <div class="section-heading section-heading--compact">
             <span class="section-number">03</span>
 
@@ -563,7 +588,7 @@
           </div>
         </section>
 
-        <section class="card sortings-card" :class="{ 'is-disabled': !isActive }">
+        <section v-if="gradesEnabled" class="card sortings-card">
           <div class="section-heading section-heading--compact">
             <span class="section-number">04</span>
 
@@ -584,7 +609,7 @@
                 <button
                   type="button"
                   class="delete-sorting-btn"
-                  :disabled="!isActive || deletingSortingId === s.id"
+                  :disabled="deletingSortingId === s.id"
                   :aria-label="$t('common.delete')"
                   :title="$t('common.delete')"
                   @click="deleteSorting(s, i)"
@@ -603,7 +628,6 @@
                   min="0"
                   step="0.01"
                   :placeholder="$t('Products.form.sorting_price_placeholder')"
-                  :disabled="!isActive"
                 />
 
                 <span class="currency">{{ $t('Products.form.currency') }}</span>
@@ -611,7 +635,7 @@
             </div>
           </div>
 
-          <button type="button" class="add-sorting-btn" :disabled="!isActive" @click="addSorting">
+          <button type="button" class="add-sorting-btn" @click="addSorting">
             <span aria-hidden="true">+</span>
             <span>{{ $t('Products.form.add_sorting') }}</span>
           </button>
@@ -1221,15 +1245,6 @@
     &:hover {
       background: var(--PrimaryColor-alpha-4);
       border-color: var(--PrimaryColor);
-    }
-  }
-
-  .sortings-card {
-    transition: opacity var(--transition-fast);
-
-    &.is-disabled {
-      opacity: 0.6;
-      pointer-events: auto;
     }
   }
 

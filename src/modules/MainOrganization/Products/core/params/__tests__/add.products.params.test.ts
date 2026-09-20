@@ -13,12 +13,14 @@ describe('AddProductsParams', () => {
     expect(params.toMap()).toMatchObject({ is_active: true });
   });
 
-  it('requires at least one sorting entry only when the product is active', () => {
+  it('requires a sorting entry only when product grades are enabled', () => {
     const createProductParams = ({
       isActive,
+      gradesEnabled,
       sortings,
     }: {
       isActive: boolean;
+      gradesEnabled: boolean;
       sortings: AddProductsSortingParams[];
     }) =>
       new AddProductsParams({
@@ -29,24 +31,31 @@ describe('AddProductsParams', () => {
         stageIds: [3],
         sortings,
         isActive,
+        gradesEnabled,
       });
 
     const sorting = new AddProductsSortingParams({ title: 'Sorting 1', price: 50 });
-    const activeWithoutSorting = createProductParams({ isActive: true, sortings: [] }).validate();
-    const activeWithSorting = createProductParams({
+    const enabledWithoutSorting = createProductParams({
       isActive: true,
+      gradesEnabled: true,
+      sortings: [],
+    }).validate();
+    const enabledWithSorting = createProductParams({
+      isActive: false,
+      gradesEnabled: true,
       sortings: [sorting],
     }).validate();
-    const inactiveWithoutSorting = createProductParams({
-      isActive: false,
+    const disabledWithoutSorting = createProductParams({
+      isActive: true,
+      gradesEnabled: false,
       sortings: [],
     }).validate();
 
-    expect(activeWithoutSorting).toEqual({
+    expect(enabledWithoutSorting).toEqual({
       isValid: false,
       errors: [{ field: 'sortings', message: 'At least one sorting entry is required' }],
     });
-    expect(activeWithSorting.isValid).toBe(true);
-    expect(inactiveWithoutSorting.isValid).toBe(true);
+    expect(enabledWithSorting.isValid).toBe(true);
+    expect(disabledWithoutSorting.isValid).toBe(true);
   });
 });

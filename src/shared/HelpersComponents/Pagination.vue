@@ -1,9 +1,16 @@
 <script lang="ts" setup>
-  // import type PaginationModel from '@/base/Core/Models/pagination_model';
   import IconArrowDown from '@/shared/icons/IconArrowDown.vue';
 
   import Popover from 'primevue/popover';
   import { computed, ref } from 'vue';
+
+  interface PaginationDisplay {
+    current: number | null;
+    last: number | null;
+    next: number | null;
+    total: number;
+    count: number | null;
+  }
 
   const emit = defineEmits(['changePage', 'countPerPage']);
 
@@ -11,9 +18,13 @@
   const toggle = (event: Event) => {
     op.value.toggle(event);
   };
-  const props = defineProps<{
-    pagination: any | null;
-  }>();
+  const props = withDefaults(
+    defineProps<{
+      pagination: PaginationDisplay | null;
+      showPageSize?: boolean;
+    }>(),
+    { showPageSize: true },
+  );
 
   const numberOfPages = computed(() => {
     return Array.from({ length: props.pagination?.last || 0 }, (_, i) => i + 1);
@@ -59,7 +70,7 @@
       </button>
     </div>
 
-    <div class="count-per-page">
+    <div v-if="showPageSize" class="count-per-page">
       <span>{{ $t('show') }}</span>
       <button class="pagination-btn" @click="toggle">
         {{ pagination?.count }} <span><IconArrowDown /></span>

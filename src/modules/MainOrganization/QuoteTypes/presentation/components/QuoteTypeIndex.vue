@@ -2,7 +2,6 @@
   import { computed, onMounted, ref } from 'vue';
   import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
   import AppTable, { type TableHeader } from '@/shared/HelpersComponents/AppTable.vue';
-  import { deleteSelectedRows } from '@/shared/HelpersComponents/deleteSelectedRows';
   import Pagination from '@/shared/HelpersComponents/Pagination.vue';
 
   import { useRoute, useRouter } from 'vue-router';
@@ -11,42 +10,36 @@
 
   import IndexQuoteTypeParams from '../../core/params/index.quote.types.params';
   import QuoteTypeController from '../controllers/quote.types.controller';
-  import DeleteQuoteTypeParams from '../../core/params/delete.quote.types.params';
   import ChangeQuoteTypeOrderParams from '../../core/params/change.quote.types.order.params';
 
   import type QuoteTypeModel from '../../core/models/quote.types.model';
 
-  import ShowQuoteTypeParams from '../../core/params/show.quote.types.params';
-
   import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
 
   import EditIcon from '@/shared/icons/EditIcon.vue';
-  import DeleteDialog from '@/base/Presentation/Dialogs/MainDialogs/DeleteDialog.vue';
   import IndexAddIcon from '@/shared/icons/IndexAddIcon.vue';
-
-  import { useUserStore } from '@/stores/user';
 
   import ChangeStatusButton from '@/modules/MainOrganization/ChangeStatus/presentation/components/ChangeStatusButton.vue';
   import { StatusTypeEnum } from '@/modules/MainOrganization/ChangeStatus/core/constant/change_status.type.enum';
-
-  import { useI18n } from 'vue-i18n';
 
   const controller = QuoteTypeController.getInstance();
 
   const state = computed(() => controller.listState.value);
 
   const router = useRouter();
-  const { t } = useI18n();
   const route = useRoute();
-
-  const { user } = useUserStore();
 
   const headers: TableHeader[] = [
     {
       key: 'title',
       label: 'title',
-      width: '95%',
+      width: '70%',
       sortable: true,
+    },
+    {
+      key: 'typeCode',
+      label: 'quote_type.type_code',
+      width: '25%',
     },
   ];
 
@@ -94,36 +87,11 @@
     void fetchQuoteTypes(1, word.value);
   };
 
-  const deleteQuoteType = async (id: number) => {
-    await controller.delete(new DeleteQuoteTypeParams(id));
-
-    await fetchQuoteTypes(route.query.page ? Number(route.query.page) : 1, word.value);
-  };
-
-  const deleteSelectedQuoteTypes = (quoteTypes: QuoteTypeModel[]) =>
-    deleteSelectedRows(
-      quoteTypes,
-      (id) => controller.delete(new DeleteQuoteTypeParams(id)),
-      () => fetchQuoteTypes(route.query.page ? Number(route.query.page) : 1, word.value),
-    );
-
   const routePrefix = computed(() =>
     route.path?.startsWith('/admin') ? '/admin' : '/organization',
   );
 
   const formRoute = computed(() => `${routePrefix.value}/quote-types/add`);
-
-  const subQuoteTypesRoute = (quoteTypeId: number) =>
-    `${routePrefix.value}/quote-types/${quoteTypeId}/sub-quote-types`;
-
-  const showQuoteType = async (id: number) => {
-    await controller.fetchOne(
-      new ShowQuoteTypeParams({
-        id,
-        allLocales: true,
-      }),
-    );
-  };
 
   const onReorder = async ({
     movedItem,
@@ -134,13 +102,8 @@
     fromIndex: number;
     toIndex: number;
   }) => {
-    // console.log('🔥 REORDER EVENT:', {
-    //   movedItem,
-    //   toIndex,
-    // });
-
     if (!movedItem?.id) {
-      console.log('❌ NO MOVED ITEM ID');
+      console.warn('Cannot reorder a quote type without an ID');
       return;
     }
 
@@ -148,22 +111,12 @@
 
     const newOrder = (page - 1) * perPage.value + toIndex + 1;
 
-    // console.log('🔥 CHANGE ORDER DATA:', {
-    //   quoteTypeId: movedItem.id,
-    //   order: newOrder,
-    // });
-
     const params = new ChangeQuoteTypeOrderParams({
       quoteTypeId: movedItem.id,
       order: newOrder,
     });
 
-    // console.log('🔥 PARAMS:', params);
-    // console.log('🔥 PARAMS MAP:', params.toMap());
-
     const result = await controller.changeOrder(params);
-
-    // console.log('🔥 CONTROLLER RESULT:', result);
 
     if (result instanceof DataSuccess) {
       await fetchQuoteTypes(page, word.value);
@@ -232,7 +185,6 @@
           <AppTable
             :headers="headers"
             :items="data as QuoteTypeModel[]"
-            :bulk-delete="deleteSelectedQuoteTypes"
             show-index
             hoverable
             striped
@@ -241,6 +193,12 @@
           >
             <template #cell-title="{ item }">
               {{ item?.title }}
+            </template>
+
+            <template #cell-typeCode="{ item }">
+              <span class="type-code" dir="ltr">
+                {{ item?.typeCode || $t('not_available') }}
+              </span>
             </template>
 
             <template #cell-quoteTypeChildrenCount="{ item }">
@@ -259,41 +217,12 @@
                       await fetchQuoteTypes(route.query.page ? Number(route.query.page) : 1, word)
                   "
                 />
-
-                <!-- Edit -->
                 <router-link
                   class="action-btn edit"
                   :to="`${routePrefix}/quote-types/edit/${item.id}`"
                 >
                   <EditIcon />
                 </router-link>
-
-                <!-- Delete -->
-                <DeleteDialog
-                  :title="$t('quote_type.delete_title')"
-                  :message="$t('quote_type.delete_message')"
-                  :hasbtn="true"
-                  @delete="deleteQuoteType(item.id!)"
-                >
-                  <template #btn>
-                    <button class="action-btn delete" :title="$t('common.delete')">
-                      <svg
-                        width="15"
-                        height="15"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      >
-                        <path d="M3 6h18" />
-                        <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
-                        <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
-                      </svg>
-                    </button>
-                  </template>
-                </DeleteDialog>
               </div>
             </template>
           </AppTable>
@@ -410,6 +339,19 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
+  }
+
+  .type-code {
+    display: inline-flex;
+    padding: 0.25rem 0.6rem;
+    color: var(--gray-700);
+    background: var(--gray-100);
+    border-radius: var(--radius-full);
+    font-family: monospace;
+    font-size: var(--xs-size);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
   }
 
   .empty-state {

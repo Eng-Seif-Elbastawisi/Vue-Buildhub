@@ -12,6 +12,7 @@ export default class AddQuoteTypeParams implements Params {
   public translations?: TranslationParams;
   public parentId?: number;
   public status?: boolean;
+  public typeCode?: string;
 
   public static readonly validation = new ClassValidation().setRules({
     translations: {
@@ -22,17 +23,31 @@ export default class AddQuoteTypeParams implements Params {
     status: {
       required: true,
     },
+
+    typeCode: {
+      labelKey: 'type_code',
+      required: true,
+      minLength: 2,
+      maxLength: 100,
+    },
   });
 
-  constructor(data: { translations?: TranslationParams; parentId?: number; status?: boolean }) {
+  constructor(data: {
+    translations?: TranslationParams;
+    parentId?: number;
+    status?: boolean;
+    typeCode?: string;
+  }) {
     this.translations = data.translations;
     this.parentId = data.parentId;
     this.status = data.status;
+    this.typeCode = data.typeCode?.trim();
   }
 
   toMap(): Record<string, unknown> {
     const map: Record<string, unknown> = {
       translations: this.translations?.toMap(),
+      code: this.typeCode,
     };
 
     if (this.parentId !== undefined) {
