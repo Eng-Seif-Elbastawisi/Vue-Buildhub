@@ -1,19 +1,17 @@
 import { flushPromises, mount } from '@vue/test-utils';
 import { ref } from 'vue';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import AddProductsParams from '../../../core/params/add.products.params';
-import EditProductsParams from '../../../core/params/edit.products.params';
+
 import ProductShowSortingModel from '../../../core/models/ProductShowSortingModel';
 import ProductsShowModel from '../../../core/models/products.show.model';
+import AddProductsParams from '../../../core/params/add.products.params';
+import EditProductsParams from '../../../core/params/edit.products.params';
 import ProductsForm from '../ProductsForm.vue';
 
-<<<<<<< HEAD
-const route = vi.hoisted(() => ({ params: {} as Record<string, string> }));
-=======
-const { fetchStagesMock } = vi.hoisted(() => ({
+const { fetchStagesMock, route } = vi.hoisted(() => ({
   fetchStagesMock: vi.fn(),
+  route: { params: {} as Record<string, string> },
 }));
->>>>>>> fix-bug
 
 vi.mock('vue-router', () => ({
   useRoute: () => route,
@@ -53,28 +51,9 @@ vi.mock('@/modules/shared/measurement/presentation/controllers/measurement.contr
   default: { getInstance: () => ({}) },
 }));
 
-<<<<<<< HEAD
-describe('ProductsForm', () => {
-  beforeEach(() => {
-    route.params = {};
-  });
-
-  it('emits the status selected in the product form', async () => {
-    const wrapper = mount(ProductsForm, {
-      global: {
-        mocks: { $t: (key: string) => key },
-        stubs: {
-          MultiLangInput: true,
-          UpdatedCustomInputSelect: true,
-          HandleFilesUpload: true,
-          StatusToggleField: {
-            emits: ['update:modelValue'],
-            template:
-              '<button id="product-status" type="button" @click="$emit(\'update:modelValue\', false)" />',
-          },
-=======
-const mountForm = () =>
+const mountForm = (products?: ProductsShowModel) =>
   mount(ProductsForm, {
+    props: { products },
     global: {
       mocks: { $t: (key: string) => key },
       stubs: {
@@ -82,10 +61,10 @@ const mountForm = () =>
         UpdatedCustomInputSelect: true,
         HandleFilesUpload: true,
         StatusToggleField: {
+          props: ['modelValue', 'inputId'],
           emits: ['update:modelValue'],
           template:
-            '<button id="product-status" type="button" @click="$emit(\'update:modelValue\', false)" />',
->>>>>>> fix-bug
+            '<button :id="inputId" type="button" @click="$emit(\'update:modelValue\', !modelValue)" />',
         },
       },
     },
@@ -100,24 +79,44 @@ const stageFixture = [
 
 describe('ProductsForm', () => {
   beforeEach(() => {
-    fetchStagesMock.mockReset();
-    fetchStagesMock.mockResolvedValue({ data: [] });
+    route.params = {};
+    fetchStagesMock.mockReset().mockResolvedValue({ data: [] });
   });
 
-  it('emits the status selected in the product form', async () => {
+  it('keeps grades fields visible when the product status is deactivated', async () => {
     const wrapper = mountForm();
     await flushPromises();
 
     await wrapper.get('#product-status').trigger('click');
     await flushPromises();
 
+    expect(wrapper.find('.image-card').exists()).toBe(true);
+    expect(wrapper.find('.sortings-card').exists()).toBe(true);
+
     const params = wrapper.emitted('updateData')?.at(-1)?.[0] as AddProductsParams;
     expect(params).toBeInstanceOf(AddProductsParams);
     expect(params.toMap()).toMatchObject({ is_active: false });
   });
 
-<<<<<<< HEAD
-  it('emits an empty sorting list and the selected image when deactivating an edited product', async () => {
+  it('uses a separate grades toggle to hide image and sorting fields', async () => {
+    const wrapper = mountForm();
+    await flushPromises();
+
+    await wrapper.get('#product-grades-status').trigger('click');
+    await flushPromises();
+
+    expect(wrapper.find('.image-card').exists()).toBe(false);
+    expect(wrapper.find('.sortings-card').exists()).toBe(false);
+
+    const params = wrapper.emitted('updateData')?.at(-1)?.[0] as AddProductsParams;
+    expect(params.toMap()).toMatchObject({
+      is_active: true,
+      image: undefined,
+      sortings: [],
+    });
+  });
+
+  it('preserves grades when an edited product is deactivated', async () => {
     route.params = { products_id: '9' };
 
     const product = new ProductsShowModel({
@@ -127,41 +126,22 @@ describe('ProductsForm', () => {
       sortings: [new ProductShowSortingModel({ id: 4, title: 'Sorting 1', price: 50 })],
     });
 
-    const wrapper = mount(ProductsForm, {
-      props: { products: product },
-      global: {
-        mocks: { $t: (key: string) => key },
-        stubs: {
-          MultiLangInput: true,
-          UpdatedCustomInputSelect: true,
-          HandleFilesUpload: {
-            emits: ['change'],
-            template:
-              "<button id=\"product-image\" type=\"button\" @click=\"$emit('change', [{ id: 'new-image', name: 'door.png', type: 'image/png', size: '1 KB', url: 'blob:image', base64: 'data:image/png;base64,new-image' }])\" />",
-          },
-          StatusToggleField: {
-            emits: ['update:modelValue'],
-            template:
-              '<button id="product-status" type="button" @click="$emit(\'update:modelValue\', false)" />',
-          },
-        },
-      },
-    });
+    const wrapper = mountForm(product);
     await flushPromises();
 
     await wrapper.get('#product-status').trigger('click');
-    await wrapper.get('#product-image').trigger('click');
     await flushPromises();
 
     const params = wrapper.emitted('updateData')?.at(-1)?.[0] as EditProductsParams;
     expect(params).toBeInstanceOf(EditProductsParams);
     expect(params.toMap()).toMatchObject({
       product_id: 9,
-      image: 'data:image/png;base64,new-image',
-      sortings: [],
+      image: 'https://example.com/old-image.png',
+      sortings: [expect.objectContaining({ price: 50 })],
       is_active: false,
     });
-=======
+  });
+
   it('selects and deselects every sub-stage from the main stage header', async () => {
     fetchStagesMock.mockResolvedValue({ data: stageFixture });
 
@@ -227,6 +207,5 @@ describe('ProductsForm', () => {
 
     const params = wrapper.emitted('updateData')?.at(-1)?.[0] as AddProductsParams;
     expect(params.toMap()).toMatchObject({ stage_ids: [] });
->>>>>>> fix-bug
   });
 });

@@ -61,7 +61,7 @@ describe('Pagination', () => {
     const prevBtn = wrapper.findAll('.pagination-btn')[0];
     await prevBtn.trigger('click');
     expect(wrapper.emitted('changePage')).toBeTruthy();
-    expect(wrapper.emitted('changePage')![0][0]).toBe(1);
+    expect(wrapper.emitted('changePage')?.[0]?.[0]).toBe(1);
   });
 
   it('emits changePage on Next click', async () => {
@@ -70,7 +70,7 @@ describe('Pagination', () => {
     const nextBtn = buttons[1];
     await nextBtn.trigger('click');
     expect(wrapper.emitted('changePage')).toBeTruthy();
-    expect(wrapper.emitted('changePage')![0][0]).toBe(3);
+    expect(wrapper.emitted('changePage')?.[0]?.[0]).toBe(3);
   });
 
   it('emits changePage on page number click', async () => {
@@ -101,6 +101,12 @@ describe('Pagination', () => {
     expect(wrapper.text()).toContain('10');
     expect(wrapper.text()).toContain('Show');
     expect(wrapper.text()).toContain('per page');
+  });
+
+  it('can hide its built-in page-size control', () => {
+    const wrapper = createWrapper({ showPageSize: false });
+
+    expect(wrapper.find('.count-per-page').exists()).toBe(false);
   });
 
   it('handles null pagination', () => {

@@ -27,6 +27,8 @@ export default class AddProductsParams implements Params {
 
   public isActive?: boolean;
 
+  public gradesEnabled?: boolean;
+
   public static readonly validation = new ClassValidation().setRules({
     translations: {
       required: true,
@@ -51,7 +53,7 @@ export default class AddProductsParams implements Params {
 
     sortings: {
       labelKey: 'product_sorting',
-      required: (product) => product.isActive === true,
+      required: (product) => product.gradesEnabled === true,
     },
   });
 
@@ -64,6 +66,7 @@ export default class AddProductsParams implements Params {
     stageIds?: number[];
     sortings?: AddProductsSortingParams[];
     isActive?: boolean;
+    gradesEnabled?: boolean;
   }) {
     this.translations = data.translations;
     this.itemTypeId = data.itemTypeId;
@@ -73,6 +76,7 @@ export default class AddProductsParams implements Params {
     this.stageIds = data.stageIds;
     this.sortings = data.sortings;
     this.isActive = data.isActive;
+    this.gradesEnabled = data.gradesEnabled;
   }
 
   toMap(): Record<string, unknown> {

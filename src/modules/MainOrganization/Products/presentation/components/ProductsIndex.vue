@@ -77,7 +77,6 @@
     ];
   });
 
-
   // ======================================================
   // Fetch Products
   // ======================================================
@@ -113,7 +112,6 @@
         stageIds: selectedStageIds.value,
       }),
     );
-
 
   const updateFilterQuery = (page: number) => {
     void router.push({
@@ -250,12 +248,11 @@
     updateFilterQuery(page);
   };
 
-
   // ======================================================
   // Search
   // ======================================================
 
-  const Search = debounce(() => {
+  const search = debounce(() => {
     updateFilterQuery(1);
     void fetchProducts(1, word.value);
   });
@@ -397,7 +394,43 @@
           </svg>
         </div>
 
+        <div class="stat-copy">
+          <strong class="stat-value" aria-live="polite">{{ stat.value }}</strong>
+          <span class="stat-label">{{ $t(`Products.stats.${stat.label}`) }}</span>
+        </div>
+      </article>
+    </div>
 
+    <div class="toolbar">
+      <div class="search-box">
+        <label class="sr-only" for="product-search">
+          {{ $t('Products.search_placeholder') }}
+        </label>
+
+        <svg
+          class="search-icon"
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          aria-hidden="true"
+        >
+          <circle cx="11" cy="11" r="8" />
+          <path d="m21 21-4.35-4.35" />
+        </svg>
+
+        <input
+          id="product-search"
+          v-model="word"
+          type="search"
+          :placeholder="$t('Products.search_placeholder')"
+          @input="search"
+        />
+      </div>
+
+      <div class="toolbar-right">
         <div ref="stageFilterRef" class="stage-filter">
           <button
             type="button"

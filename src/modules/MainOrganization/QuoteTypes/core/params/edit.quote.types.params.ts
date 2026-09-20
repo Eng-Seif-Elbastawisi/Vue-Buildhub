@@ -1,4 +1,3 @@
-
 import type Params from '@/base/Core/Params/params';
 
 import { ClassValidation } from '@/base/Presentation/Utils/classValidation';
@@ -18,6 +17,8 @@ export default class EditQuoteTypeParams implements Params {
 
   public status?: boolean;
 
+  public typeCode?: string;
+
   public static readonly validation = new ClassValidation().setRules({
     id: {
       required: true,
@@ -27,9 +28,14 @@ export default class EditQuoteTypeParams implements Params {
 
     translations: {
       required: true,
-      custom: (value) =>
-        hasTitleTranslation(value) ||
-        translate('validation.title_required'),
+      custom: (value) => hasTitleTranslation(value) || translate('validation.title_required'),
+    },
+
+    typeCode: {
+      labelKey: 'type_code',
+      required: true,
+      minLength: 2,
+      maxLength: 100,
     },
   });
 
@@ -38,17 +44,20 @@ export default class EditQuoteTypeParams implements Params {
     translations?: TranslationParams;
     parentId?: number;
     status?: boolean;
+    typeCode?: string;
   }) {
     this.id = data.id;
     this.translations = data.translations;
     this.parentId = data.parentId;
     this.status = data.status;
+    this.typeCode = data.typeCode?.trim();
   }
 
   toMap(): Record<string, unknown> {
     const map: Record<string, unknown> = {
       quote_type_id: this.id,
       translations: this.translations?.toMap(),
+      code: this.typeCode,
     };
 
     if (this.parentId !== undefined) {
@@ -70,4 +79,3 @@ export default class EditQuoteTypeParams implements Params {
     return EditQuoteTypeParams.validation.validateOrThrow(this);
   }
 }
-
