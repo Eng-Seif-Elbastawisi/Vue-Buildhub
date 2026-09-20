@@ -36,7 +36,7 @@ export default class IndexLaborParams extends IndexParams {
 
   toMap(): Record<string, string | number | number[] | null> {
     const query = super.toMap();
-    if (this.active !== undefined) query.status = this.active;
+    if (this.active !== undefined) query.active = this.active;
     if (this.itemTypeIds.length) query.item_type_ids = this.itemTypeIds;
     if (this.measurementUnitIds.length) query.measurement_unit_ids = this.measurementUnitIds;
     if (this.defaultPricingMode !== undefined) {

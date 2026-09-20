@@ -146,7 +146,7 @@
         </small>
       </div>
 
-      <!-- <div class="configuration-field">
+      <div class="configuration-field">
         <label for="quote-type-calculation-model">
           {{ $t('quote_type.calculation_model') }}
         </label>
@@ -161,7 +161,7 @@
           :placeholder="$t('quote_type.calculation_model_placeholder')"
         />
         <small>{{ $t('quote_type.calculation_model_hint') }}</small>
-      </div> -->
+      </div>
     </section>
 
     <div class="form-fields" :class="{ disabled: loading }">
