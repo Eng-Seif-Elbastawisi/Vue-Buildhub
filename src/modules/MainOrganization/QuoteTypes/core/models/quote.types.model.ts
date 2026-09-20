@@ -5,6 +5,9 @@ export default class QuoteTypeModel {
   public readonly id?: number;
   public readonly title: string;
   public readonly description?: string;
+  public readonly typeCode?: string;
+  public readonly calculationModel?: string;
+  public readonly status: boolean;
 
   public readonly translations: {
     title: Record<string, string>;
@@ -19,8 +22,14 @@ export default class QuoteTypeModel {
     };
     title?: string;
     description?: string;
+    typeCode?: string;
+    calculationModel?: string;
+    status?: boolean;
   }) {
     this.id = data.id;
+    this.typeCode = data.typeCode;
+    this.calculationModel = data.calculationModel;
+    this.status = data.status ?? false;
 
     this.translations = {
       title: data.translations?.title ?? {
@@ -161,6 +170,14 @@ export default class QuoteTypeModel {
 
       description: QuoteTypeModel.getPlainDescription(json),
 
+      typeCode: QuoteTypeModel.mapTypeCode(json.typeCode ?? json.type_code ?? json.code),
+
+      calculationModel: QuoteTypeModel.mapCalculationModel(
+        json.calculationModel ?? json.calculation_model,
+      ),
+
+      status: json.status === true || Number(json.status) === 1,
+
       translations: {
         title: QuoteTypeModel.mapTranslations(json.translations ?? json.title, 'title'),
 
@@ -172,8 +189,24 @@ export default class QuoteTypeModel {
     });
   }
 
+  private static mapTypeCode(rawTypeCode: unknown): string | undefined {
+    return typeof rawTypeCode === 'string' && rawTypeCode.trim() ? rawTypeCode.trim() : undefined;
+  }
+
+  private static mapCalculationModel(rawCalculationModel: unknown): string | undefined {
+    if (typeof rawCalculationModel === 'string') return rawCalculationModel;
+    if (!rawCalculationModel || typeof rawCalculationModel !== 'object') return undefined;
+
+    const calculationModel = rawCalculationModel as Record<string, unknown>;
+    const displayValue = calculationModel.title ?? calculationModel.name ?? calculationModel.code;
+    return typeof displayValue === 'string' ? displayValue : undefined;
+  }
+
   static example: QuoteTypeModel = new QuoteTypeModel({
     id: 1,
+    typeCode: 'LUMP_SUM',
+    calculationModel: 'Fixed total',
+    status: true,
 
     translations: {
       title: {
