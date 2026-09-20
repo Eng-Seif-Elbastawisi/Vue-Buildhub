@@ -7,8 +7,6 @@ interface ApiRelation {
 
 interface ApiStage {
   id: number;
-  parent_id: number | null;
-  title?: string;
 }
 
 interface ApiSorting {
@@ -18,7 +16,6 @@ interface ApiSorting {
 }
 
 interface ApiAttachment {
-  id: number;
   file: string;
   type: number;
 }
@@ -44,10 +41,10 @@ export default class ProductsModel {
   public readonly isActive?: boolean;
 
   public readonly stageIds: number[];
-
   public readonly sortings: ProductSorting[];
 
   public readonly image?: string;
+  public readonly status: boolean;
 
   constructor(data: {
     id?: number;
@@ -62,6 +59,7 @@ export default class ProductsModel {
     stageIds?: number[];
     sortings?: ProductSorting[];
     image?: string;
+    status?: boolean;
   }) {
     this.id = data.id;
     this.title = data.title;
@@ -80,6 +78,7 @@ export default class ProductsModel {
     this.sortings = data.sortings ?? [];
 
     this.image = data.image;
+    this.status = data.status ?? false;
 
     Object.freeze(this);
   }
@@ -92,7 +91,7 @@ export default class ProductsModel {
         title?: Record<string, string>;
       };
 
-      return value?.title ?? (translations as Record<string, string>) ?? {};
+      return value?.title ?? {};
     }
 
     return translations.reduce<Record<string, string>>((result, translation) => {
@@ -109,41 +108,29 @@ export default class ProductsModel {
   private static extractTitle(relation: ApiRelation | string | undefined): string | undefined {
     if (!relation) return undefined;
 
-    if (typeof relation === 'string') {
-      return relation;
-    }
-
-    return relation.title;
+    return typeof relation === 'string' ? relation : relation.title;
   }
 
   private static mapSortings(sortings: unknown): ProductSorting[] {
-    if (!Array.isArray(sortings)) {
-      return [];
-    }
+    if (!Array.isArray(sortings)) return [];
 
-    return sortings.map((s: ApiSorting) => ({
-      id: s.id,
-      title: s.title,
-      price: Number(s.price ?? 0),
+    return sortings.map((sorting: ApiSorting) => ({
+      id: sorting.id,
+      title: sorting.title,
+      price: Number(sorting.price ?? 0),
     }));
   }
 
   private static mapStageIds(stages: unknown): number[] {
-    if (!Array.isArray(stages)) {
-      return [];
-    }
+    if (!Array.isArray(stages)) return [];
 
-    return stages.map((s: ApiStage) => s.id).filter((id) => id != null);
+    return stages.map((stage: ApiStage) => stage.id).filter((id) => id != null);
   }
 
   private static extractImage(attachments: unknown): string | undefined {
-    if (!Array.isArray(attachments)) {
-      return undefined;
-    }
+    if (!Array.isArray(attachments)) return undefined;
 
-    const image = attachments.find((a: ApiAttachment) => a.type === 1);
-
-    return image?.file;
+    return attachments.find((attachment: ApiAttachment) => attachment.type === 1)?.file;
   }
 
   static fromJson(json: Record<string, unknown>): ProductsModel {
@@ -153,41 +140,24 @@ export default class ProductsModel {
 
     const data = (json.data as Record<string, unknown>) ?? json;
 
-    // ---------- Title ----------
     const titleTranslations = Array.isArray(data.title)
-      ? ProductsModel.mapTranslations(data.title, 'title')
+      ? ProductsModel.mapTranslations(data.title)
       : {};
 
-    // ---------- Description ----------
     const descriptionTranslations = Array.isArray(data.description)
       ? ProductsModel.mapTranslations(data.description, 'description')
       : {};
 
-    const plainTitle =
-      typeof data.title === 'string'
-        ? data.title
-        : (titleTranslations.ar ?? titleTranslations.en ?? undefined);
+    const title =
+      typeof data.title === 'string' ? data.title : (titleTranslations.ar ?? titleTranslations.en);
 
-    // ---------- Item Type ----------
     const itemType = data.item_type as ApiRelation | undefined;
-
-    // ---------- Measurement ----------
     const measurementUnit = data.measurement_unit as ApiRelation | undefined;
-
-    // ---------- Expected Price ----------
-    const expectedPrice = data.expected_price != null ? Number(data.expected_price) : undefined;
-
-    // ---------- Active ----------
-    const isActive =
-      data.is_active != null ? data.is_active === true || Number(data.is_active) === 1 : true;
-
-    // ---------- Image ----------
-    const image = ProductsModel.extractImage(data.attachments);
 
     return new ProductsModel({
       id: data.id as number | undefined,
 
-      title: plainTitle,
+      title,
 
       translations: new TranslationParams({
         title: titleTranslations,
@@ -200,30 +170,31 @@ export default class ProductsModel {
       measurementUnitId: measurementUnit?.id,
       measurementUnitTitle: ProductsModel.extractTitle(measurementUnit),
 
-      expectedPrice,
-      isActive,
+      expectedPrice: data.expected_price != null ? Number(data.expected_price) : undefined,
+
+      isActive:
+        data.is_active != null ? data.is_active === true || Number(data.is_active) === 1 : true,
 
       stageIds: ProductsModel.mapStageIds(data.stages),
 
       sortings: ProductsModel.mapSortings(data.sortings),
 
-      image,
+      image: ProductsModel.extractImage(data.attachments),
+
+      status: data.status === true || Number(data.status) === 1,
     });
   }
 
   static fromList(json: Record<string, unknown>): ProductsModel[] {
     const list = (json.data as Record<string, unknown[]>)?.data ?? json.data;
 
-    if (!Array.isArray(list)) {
-      return [];
-    }
+    if (!Array.isArray(list)) return [];
 
     return list.map((item) => ProductsModel.fromJson(item as Record<string, unknown>));
   }
 
   static example = new ProductsModel({
     id: 1,
-
     title: 'Commercial project',
 
     translations: new TranslationParams({
@@ -231,7 +202,6 @@ export default class ProductsModel {
         ar: 'مشروع تجاري',
         en: 'Commercial project',
       },
-
       description: {
         ar: 'وصف',
         en: 'Description',
@@ -245,7 +215,6 @@ export default class ProductsModel {
     measurementUnitTitle: 'كيلو ميتر',
 
     expectedPrice: 833333333333,
-
     isActive: true,
 
     stageIds: [98, 96, 95, 93, 92],
