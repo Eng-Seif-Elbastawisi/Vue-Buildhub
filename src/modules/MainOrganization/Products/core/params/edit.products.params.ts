@@ -13,6 +13,7 @@ export default class EditProductsParams implements Params {
   public image?: string;
   public stageIds?: number[];
   public sortings?: { title: string; price: number }[];
+  public isActive?: boolean;
 
   public static readonly validation = new ClassValidation().setRules({
     translations: {
@@ -46,6 +47,7 @@ export default class EditProductsParams implements Params {
     image?: string;
     stageIds?: number[];
     sortings?: { title: string; price: number }[];
+    isActive?: boolean;
   }) {
     this.productsId = data.productsId;
     this.translations = data.translations;
@@ -55,6 +57,7 @@ export default class EditProductsParams implements Params {
     this.image = data.image;
     this.stageIds = data.stageIds;
     this.sortings = data.sortings;
+    this.isActive = data.isActive;
   }
 
   toMap(): Record<string, unknown> {
@@ -69,6 +72,7 @@ export default class EditProductsParams implements Params {
     if (this.image) map.image = this.image;
     if (this.stageIds?.length) map.stage_ids = this.stageIds;
     if (this.sortings?.length) map.sortings = this.sortings;
+    if (this.isActive !== undefined) map.is_active = this.isActive;
 
     return map;
   }

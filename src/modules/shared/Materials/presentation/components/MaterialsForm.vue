@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { onMounted, ref, watch, nextTick } from 'vue';
-import { onBeforeRouteLeave } from 'vue-router';
+import { computed, nextTick, onMounted, ref, watch } from 'vue';
+import { onBeforeRouteLeave, useRoute } from 'vue-router';
 
 import type TitleInterface from '@/base/Data/Models/titleInterface';
 
@@ -9,11 +9,13 @@ import BrandController from '@/modules/shared/Brand/presentation/controllers/bra
 
 import UpdatedCustomInputSelect from '@/shared/FormInputs/UpdatedCustomInputSelect.vue';
 import MultiLangInput from '@/shared/MultiLangInput.vue';
+import StatusToggleField from '@/modules/MainOrganization/ChangeStatus/presentation/components/StatusToggleField.vue';
 
 import { useFormsStore } from '@/stores/formsStore';
 
 import type MaterialsShowModel from '../../core/models/materials.show.model';
 import AddMaterialsParams from '../../core/params/add.materials.params';
+import EditMaterialParams from '../../core/params/edit.materials.params';
 
 import MeasurementController from '@/modules/shared/measurement/presentation/controllers/measurement.controller';
 import IndexMeasurementParams from '@/modules/shared/measurement/core/params/index.measurement.params';
@@ -24,10 +26,10 @@ import ItemTypesController from '@/modules/MainOrganization/ItemTypes/presentati
 import IndexItemTypesParams from '@/modules/MainOrganization/ItemTypes/core/params/index.item.types.params';
 
 import StageController from '@/modules/shared/Stages/presentation/controllers/stage.controller';
-import IndexStageParams from '@/modules/shared/Stages/core/params/index.stage.params';
+import { useStageSubStageFilters } from '@/modules/shared/Stages/presentation/composables/useStageSubStageFilters';
 
 const emit = defineEmits<{
-  updateData: [params: AddMaterialsParams];
+  updateData: [params: AddMaterialsParams | EditMaterialParams];
 }>();
 
 const props = defineProps<{
@@ -37,6 +39,15 @@ const props = defineProps<{
 }>();
 
 const formStore = useFormsStore();
+const route = useRoute();
+
+const materialId = computed(() => {
+  const routeParam = route.params.material_id;
+  const value = Array.isArray(routeParam) ? routeParam[0] : routeParam;
+  const parsedId = Number(value);
+
+  return Number.isInteger(parsedId) && parsedId > 0 ? parsedId : undefined;
+});
 
 const brandController = BrandController.getInstance();
 const measurementController = MeasurementController.getInstance();
@@ -46,20 +57,17 @@ const stageController = StageController.getInstance();
 const brandParams = new IndexBrandParams('', 1, 100, 0, undefined, 1);
 const measurementParams = new IndexMeasurementParams('', 1, 100, 0);
 const itemTypeParams = new IndexItemTypesParams('', 1, 100, 0);
-const stageParams = new IndexStageParams('', 1, 100, 0, null);
-
-const subStageParams = ref(
-  new IndexStageParams('', 1, 100, 0, undefined),
-);
-
 const translations = ref<Record<string, string>>({});
 const price = ref<number>();
+const status = ref(true);
 
 const brand = ref<TitleInterface<string | number> | null>(null);
 const measurement = ref<TitleInterface<string | number> | null>(null);
 const itemType = ref<TitleInterface<string | number> | null>(null);
 const stage = ref<TitleInterface<string | number> | null>(null);
 const subStage = ref<TitleInterface<string | number> | null>(null);
+
+const { stageParams, subStageParams } = useStageSubStageFilters(stage);
 
 const isInitializing = ref(false);
 const isSubStageInitializing = ref(false);
@@ -88,14 +96,6 @@ watch(
 
       return;
     }
-
-    subStageParams.value = new IndexStageParams(
-      '',
-      1,
-      100,
-      0,
-      Number(value.id),
-    );
 
     if (!isInitializing.value) {
       subStage.value = null;
@@ -133,22 +133,13 @@ watch(
     };
 
     price.value = material.price;
+    status.value = material.status;
 
     brand.value = toSelectOption(material.brand);
     measurement.value = toSelectOption(material.measurementId);
     itemType.value = toSelectOption(material.itemType);
 
     stage.value = toSelectOption(material.stage);
-
-    if (material.stage?.id !== undefined && material.stage?.id !== null) {
-      subStageParams.value = new IndexStageParams(
-        '',
-        1,
-        100,
-        0,
-        Number(material.stage.id),
-      );
-    }
 
     subStage.value = toSelectOption(material.subStage);
 
@@ -160,6 +151,7 @@ watch(
 
     isSubStageInitializing.value = false;
     isInitializing.value = false;
+    updateData();
   },
   {
     immediate: true,
@@ -168,20 +160,24 @@ watch(
 );
 
 const updateData = () => {
-  emit(
-    'updateData',
-    new AddMaterialsParams({
-      price: price.value,
-      brandId: brand.value?.id,
-      measurementId: measurement.value?.id,
-      itemTypeId: itemType.value?.id,
-      stageId: stage.value?.id,
-      subStageId: subStage.value?.id,
-      translations: {
-        title: translations.value,
-      },
-    }),
-  );
+  const materialData = {
+    price: price.value,
+    brandId: brand.value?.id,
+    measurementId: measurement.value?.id,
+    itemTypeId: itemType.value?.id,
+    stageId: stage.value?.id,
+    subStageId: subStage.value?.id,
+    status: status.value,
+    translations: {
+      title: translations.value,
+    },
+  };
+
+  const params = materialId.value
+    ? new EditMaterialParams({ material_id: materialId.value, ...materialData })
+    : new AddMaterialsParams(materialData);
+
+  emit('updateData', params);
 };
 
 const updateTranslations = (value: Record<string, string>) => {
@@ -189,9 +185,7 @@ const updateTranslations = (value: Record<string, string>) => {
   updateData();
 };
 
-const handleSubStageUpdate = (
-  value: TitleInterface<string | number> | null,
-) => {
+const handleSubStageUpdate = (value: TitleInterface<string | number> | null) => {
   if (isSubStageInitializing.value) {
     return;
   }
@@ -201,9 +195,7 @@ const handleSubStageUpdate = (
 };
 
 onBeforeRouteLeave((to, from) => {
-  const savedData = props.formKey
-    ? formStore.getFormData(props.formKey)
-    : null;
+  const savedData = props.formKey ? formStore.getFormData(props.formKey) : null;
 
   if (savedData && to.path !== from.path && props.formKey) {
     formStore.showReturnWarning(props.formKey);
@@ -211,7 +203,7 @@ onBeforeRouteLeave((to, from) => {
 });
 
 onMounted(() => {
-  if (!props.material) {
+  if (!materialId.value && !props.material) {
     updateData();
   }
 });
@@ -226,14 +218,8 @@ onMounted(() => {
 
     <div class="form-fields" :class="{ disabled: loading }">
       <div class="field-group col-span-2">
-        <MultiLangInput
-          field-key="title"
-          :label="$t('material.title')"
-          :languages="['en', 'ar']"
-          :model-value="translations"
-          type="title"
-          @update:model-value="updateTranslations"
-        />
+        <MultiLangInput field-key="title" :label="$t('material.title')" :languages="['en', 'ar']"
+          :model-value="translations" type="title" @update:model-value="updateTranslations" />
       </div>
 
       <div class="field-group">
@@ -242,92 +228,47 @@ onMounted(() => {
             {{ $t('material.price') }}
           </label>
 
-          <FieldHelpIcon
-            :label="$t('material.price')"
-            field-name="price"
-            field-id="material-price"
-          />
+          <FieldHelpIcon :label="$t('material.price')" field-name="price" field-id="material-price" />
         </span>
 
         <div class="input-wrap">
-          <input
-            id="material-price"
-            v-model.number="price"
-            class="field-input"
-            min="0"
-            step="0.01"
-            type="number"
-            :placeholder="$t('material.price_placeholder')"
-            @input="updateData"
-          />
+          <input id="material-price" v-model.number="price" class="field-input" min="0" step="0.01" type="number"
+            :placeholder="$t('material.price_placeholder')" @input="updateData" />
         </div>
       </div>
 
       <div class="field-group">
-        <UpdatedCustomInputSelect
-          id="material-item-type"
-          v-model="itemType"
-          :controller="itemTypeController"
-          :label="$t('item_type')"
-          :params="itemTypeParams"
-          :placeholder="$t('item_type_placeholder')"
-          required
-          @update:model-value="updateData"
-        />
+        <UpdatedCustomInputSelect id="material-item-type" v-model="itemType" :controller="itemTypeController"
+          :label="$t('item_type')" :params="itemTypeParams" :placeholder="$t('item_type_placeholder')" required
+          @update:model-value="updateData" />
       </div>
 
       <div class="field-group">
-        <UpdatedCustomInputSelect
-          id="material-stage"
-          v-model="stage"
-          :controller="stageController"
-          :label="$t('Stage')"
-          :params="stageParams"
-          :placeholder="$t('stage_placeholder')"
-          required
-          @update:model-value="updateData"
-        />
+        <UpdatedCustomInputSelect id="material-stage" v-model="stage" :controller="stageController" :label="$t('Stage')"
+          :params="stageParams" :placeholder="$t('stage_placeholder')" required @update:model-value="updateData" />
       </div>
 
       <div class="field-group">
-        <UpdatedCustomInputSelect
-          id="material-sub-stage"
-          v-model="subStage"
-          :controller="stageController"
-          :label="$t('sub_stages')"
-          :params="subStageParams"
-          :placeholder="$t('sub_stage_placeholder')"
-          :disabled="!stage"
-          required
-          @update:model-value="handleSubStageUpdate"
-        />
+        <UpdatedCustomInputSelect id="material-sub-stage" :key="`material-sub-stage-${stage?.id ?? 'none'}`"
+          v-model="subStage" :controller="stageController" :label="$t('sub_stages')" :params="subStageParams"
+          :placeholder="$t('sub_stage_placeholder')" :disabled="!stage?.id" required
+          @update:model-value="handleSubStageUpdate" />
       </div>
 
       <div class="field-group">
-        <UpdatedCustomInputSelect
-          id="material-brand"
-          v-model="brand"
-          :controller="brandController"
-          :label="$t('material.brand')"
-          :params="brandParams"
-          :placeholder="$t('material.brand_placeholder')"
-          required
-          @update:model-value="updateData"
-        />
+        <UpdatedCustomInputSelect id="material-brand" v-model="brand" :controller="brandController"
+          :label="$t('material.brand')" :params="brandParams" :placeholder="$t('material.brand_placeholder')" required
+          @update:model-value="updateData" />
       </div>
 
       <div class="field-group">
-        <UpdatedCustomInputSelect
-          id="material-measurement"
-          v-model="measurement"
-          :controller="measurementController"
-          :label="$t('Measurement')"
-          :params="measurementParams"
-          :placeholder="$t('measurement.unit_placeholder')"
-          required
-          @update:model-value="updateData"
-        />
+        <UpdatedCustomInputSelect id="material-measurement" v-model="measurement" :controller="measurementController"
+          :label="$t('Measurement')" :params="measurementParams" :placeholder="$t('measurement.unit_placeholder')"
+          required @update:model-value="updateData" />
       </div>
+
+      <StatusToggleField v-model="status" input-id="material-status" :disabled="loading"
+        @update:model-value="updateData" />
     </div>
   </div>
 </template>

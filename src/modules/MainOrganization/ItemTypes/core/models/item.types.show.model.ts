@@ -8,6 +8,7 @@ export default class ItemTypesModel {
   public readonly code?: string;
   public readonly description?: string;
   public readonly type?: ItemTypeEnum;
+  public readonly status: boolean;
 
   constructor(data: {
     id?: number;
@@ -16,6 +17,7 @@ export default class ItemTypesModel {
     code?: string;
     description?: string;
     type?: ItemTypeEnum;
+    status?: boolean;
   }) {
     this.id = data.id;
     this.title = data.title;
@@ -23,6 +25,7 @@ export default class ItemTypesModel {
     this.code = data.code;
     this.description = data.description;
     this.type = data.type;
+    this.status = data.status ?? false;
 
     Object.freeze(this);
   }
@@ -134,6 +137,7 @@ export default class ItemTypesModel {
       description: ItemTypesModel.getPlainDescription(json),
 
       type: json.type as ItemTypeEnum | undefined,
+      status: json.status === true || Number(json.status) === 1,
 
       translations: new TranslationParams({
         title: ItemTypesModel.mapTranslations(json.translations ?? json.title, 'title'),
@@ -156,6 +160,7 @@ export default class ItemTypesModel {
     description: 'Commercial project type',
 
     type: ItemTypeEnum.PRODUCTS,
+    status: true,
 
     translations: new TranslationParams({
       title: {

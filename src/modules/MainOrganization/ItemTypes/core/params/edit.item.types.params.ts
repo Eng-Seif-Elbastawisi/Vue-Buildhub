@@ -19,6 +19,8 @@ export default class EditItemTypesParams implements Params {
 
   public code?: string;
 
+  public status?: boolean;
+
   public static readonly validation = new ClassValidation().setRules({
     itemTypesId: {
       required: true,
@@ -43,11 +45,13 @@ export default class EditItemTypesParams implements Params {
     translations?: TranslationParams;
     type?: ItemTypeEnum;
     code?: string;
+    status?: boolean;
   }) {
     this.itemTypesId = data.itemTypesId;
     this.translations = data.translations;
     this.type = data.type;
     this.code = data.code;
+    this.status = data.status;
   }
 
   toMap(): Record<string, unknown> {
@@ -56,6 +60,7 @@ export default class EditItemTypesParams implements Params {
       translations: this.translations?.toMap(),
       type: this.type,
       code: this.code,
+      status: this.status,
     };
   }
 

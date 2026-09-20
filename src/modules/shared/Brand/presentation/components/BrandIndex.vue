@@ -6,7 +6,7 @@
   import Pagination from '@/shared/HelpersComponents/Pagination.vue';
   import { useRoute, useRouter } from 'vue-router';
   import TableSkelaton from '@/shared/HelpersComponents/TableSkelaton.vue';
-  import type SuppliersModel from '../../core/models/brand.model.ts';
+  import type BrandModel from '../../core/models/brand.model.ts';
   import BrandController from '../controllers/brand.controller.ts';
   import IndexBrandParams from '../../core/params/index.brand.params.ts';
   import DeleteBrandParams from '../../core/params/delete.brand.params.ts';
@@ -75,7 +75,7 @@
     await controller.delete(new DeleteBrandParams({ brand_id: id }));
     await fetchBrand();
   };
-  const deleteSelectedBrands = (brands: SuppliersModel[]) =>
+  const deleteSelectedBrands = (brands: BrandModel[]) =>
     deleteSelectedRows(
       brands,
       (id) => controller.delete(new DeleteBrandParams({ brand_id: id })),
@@ -189,7 +189,7 @@
         <div class="table-frame">
           <AppTable
             :headers="headers"
-            :items="data as SuppliersModel[]"
+            :items="data as BrandModel[]"
             :bulk-delete="deleteSelectedBrands"
             selectable
             show-index

@@ -17,6 +17,7 @@
       translations: data.translations,
       type: data.type,
       code: data.code,
+      status: data.status,
     });
   };
   const saveItemTypes = async () => {
@@ -39,7 +40,7 @@
 <template>
   <div class="ItemTypes-crud-page">
     <ItemTypesForm
-      :ItemTypes="controller.itemData.value!"
+      :item-types="controller.itemData.value!"
       :loading="loading"
       @update-data="updateData"
     />
@@ -63,6 +64,7 @@
     flex-direction: column;
     gap: 1.5rem;
   }
+
   .error {
     margin-top: 20px;
     padding: 10px;
@@ -71,6 +73,7 @@
     border: 1px solid #f5c6cb;
     border-radius: 4px;
   }
+
   .btn-primary {
     width: 100%;
   }

@@ -84,10 +84,7 @@ export default class ProductsModel {
     Object.freeze(this);
   }
 
-  static mapTranslations(
-    translations: unknown,
-    key: string = 'title',
-  ): Record<string, string> {
+  static mapTranslations(translations: unknown, key: string = 'title'): Record<string, string> {
     if (!translations) return {};
 
     if (!Array.isArray(translations)) {
@@ -95,30 +92,21 @@ export default class ProductsModel {
         title?: Record<string, string>;
       };
 
-      return (
-        value?.title ??
-        (translations as Record<string, string>) ??
-        {}
-      );
+      return value?.title ?? (translations as Record<string, string>) ?? {};
     }
 
-    return translations.reduce<Record<string, string>>(
-      (result, translation) => {
-        const item = translation as Record<string, string>;
+    return translations.reduce<Record<string, string>>((result, translation) => {
+      const item = translation as Record<string, string>;
 
-        if (item.locale && item[key]) {
-          result[item.locale] = item[key];
-        }
+      if (item.locale && item[key]) {
+        result[item.locale] = item[key];
+      }
 
-        return result;
-      },
-      {},
-    );
+      return result;
+    }, {});
   }
 
-  private static extractTitle(
-    relation: ApiRelation | string | undefined,
-  ): string | undefined {
+  private static extractTitle(relation: ApiRelation | string | undefined): string | undefined {
     if (!relation) return undefined;
 
     if (typeof relation === 'string') {
@@ -145,34 +133,25 @@ export default class ProductsModel {
       return [];
     }
 
-    return stages
-      .map((s: ApiStage) => s.id)
-      .filter((id) => id != null);
+    return stages.map((s: ApiStage) => s.id).filter((id) => id != null);
   }
 
-  private static extractImage(
-    attachments: unknown,
-  ): string | undefined {
+  private static extractImage(attachments: unknown): string | undefined {
     if (!Array.isArray(attachments)) {
       return undefined;
     }
 
-    const image = attachments.find(
-      (a: ApiAttachment) => a.type === 1,
-    );
+    const image = attachments.find((a: ApiAttachment) => a.type === 1);
 
     return image?.file;
   }
 
   static fromJson(json: Record<string, unknown>): ProductsModel {
     if (!json) {
-      throw new Error(
-        'Cannot create ProductsModel from null or undefined',
-      );
+      throw new Error('Cannot create ProductsModel from null or undefined');
     }
 
-    const data =
-      (json.data as Record<string, unknown>) ?? json;
+    const data = (json.data as Record<string, unknown>) ?? json;
 
     // ---------- Title ----------
     const titleTranslations = Array.isArray(data.title)
@@ -180,48 +159,30 @@ export default class ProductsModel {
       : {};
 
     // ---------- Description ----------
-    const descriptionTranslations = Array.isArray(
-      data.description,
-    )
-      ? ProductsModel.mapTranslations(
-          data.description,
-          'description',
-        )
+    const descriptionTranslations = Array.isArray(data.description)
+      ? ProductsModel.mapTranslations(data.description, 'description')
       : {};
 
     const plainTitle =
       typeof data.title === 'string'
         ? data.title
-        : (titleTranslations.ar ??
-          titleTranslations.en ??
-          undefined);
+        : (titleTranslations.ar ?? titleTranslations.en ?? undefined);
 
     // ---------- Item Type ----------
-    const itemType = data.item_type as
-      | ApiRelation
-      | undefined;
+    const itemType = data.item_type as ApiRelation | undefined;
 
     // ---------- Measurement ----------
-    const measurementUnit = data.measurement_unit as
-      | ApiRelation
-      | undefined;
+    const measurementUnit = data.measurement_unit as ApiRelation | undefined;
 
     // ---------- Expected Price ----------
-    const expectedPrice =
-      data.expected_price != null
-        ? Number(data.expected_price)
-        : undefined;
+    const expectedPrice = data.expected_price != null ? Number(data.expected_price) : undefined;
 
     // ---------- Active ----------
     const isActive =
-      data.is_active != null
-        ? Boolean(data.is_active)
-        : true;
+      data.is_active != null ? data.is_active === true || Number(data.is_active) === 1 : true;
 
     // ---------- Image ----------
-    const image = ProductsModel.extractImage(
-      data.attachments,
-    );
+    const image = ProductsModel.extractImage(data.attachments);
 
     return new ProductsModel({
       id: data.id as number | undefined,
@@ -234,44 +195,30 @@ export default class ProductsModel {
       }),
 
       itemTypeId: itemType?.id,
-      itemTypeTitle:
-        ProductsModel.extractTitle(itemType),
+      itemTypeTitle: ProductsModel.extractTitle(itemType),
 
       measurementUnitId: measurementUnit?.id,
-      measurementUnitTitle:
-        ProductsModel.extractTitle(measurementUnit),
+      measurementUnitTitle: ProductsModel.extractTitle(measurementUnit),
 
       expectedPrice,
       isActive,
 
-      stageIds: ProductsModel.mapStageIds(
-        data.stages,
-      ),
+      stageIds: ProductsModel.mapStageIds(data.stages),
 
-      sortings: ProductsModel.mapSortings(
-        data.sortings,
-      ),
+      sortings: ProductsModel.mapSortings(data.sortings),
 
       image,
     });
   }
 
-  static fromList(
-    json: Record<string, unknown>,
-  ): ProductsModel[] {
-    const list =
-      (json.data as Record<string, unknown[]>)?.data ??
-      json.data;
+  static fromList(json: Record<string, unknown>): ProductsModel[] {
+    const list = (json.data as Record<string, unknown[]>)?.data ?? json.data;
 
     if (!Array.isArray(list)) {
       return [];
     }
 
-    return list.map((item) =>
-      ProductsModel.fromJson(
-        item as Record<string, unknown>,
-      ),
-    );
+    return list.map((item) => ProductsModel.fromJson(item as Record<string, unknown>));
   }
 
   static example = new ProductsModel({
@@ -316,7 +263,6 @@ export default class ProductsModel {
       },
     ],
 
-    image:
-      'https://api.buildhub.techlabeg.com/attachments/products/kmaJO3zRlb_1789545286.png',
+    image: 'https://api.buildhub.techlabeg.com/attachments/products/kmaJO3zRlb_1789545286.png',
   });
 }

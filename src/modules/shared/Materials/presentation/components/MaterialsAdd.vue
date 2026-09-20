@@ -11,6 +11,10 @@
   const params = ref<AddMaterialsParams | null>(null);
   const loading = ref(false);
 
+  const updateData = (updatedParams: AddMaterialsParams) => {
+    params.value = updatedParams;
+  };
+
   const saveMaterial = async () => {
     if (!params.value) return;
     loading.value = true;
@@ -24,7 +28,7 @@
 
 <template>
   <div class="material-crud-page">
-    <MaterialsForm :form-key="formKey" :loading="loading" @update-data="params = $event" />
+    <MaterialsForm :form-key="formKey" :loading="loading" @update-data="updateData" />
 
     <div class="actions" :class="{ disabled: loading }">
       <button

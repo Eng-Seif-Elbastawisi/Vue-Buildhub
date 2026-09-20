@@ -17,6 +17,8 @@ export default class AddItemTypesParams implements Params {
 
   public code?: string;
 
+  public status?: boolean;
+
   public static readonly validation = new ClassValidation().setRules({
     translations: {
       required: true,
@@ -32,10 +34,16 @@ export default class AddItemTypesParams implements Params {
     },
   });
 
-  constructor(data: { translations?: TranslationParams; type?: ItemTypeEnum; code?: string }) {
+  constructor(data: {
+    translations?: TranslationParams;
+    type?: ItemTypeEnum;
+    code?: string;
+    status?: boolean;
+  }) {
     this.translations = data.translations;
     this.type = data.type;
     this.code = data.code;
+    this.status = data.status;
   }
 
   toMap(): Record<string, unknown> {
@@ -43,6 +51,7 @@ export default class AddItemTypesParams implements Params {
       translations: this.translations?.toMap(),
       type: this.type,
       code: this.code,
+      status: this.status,
     };
   }
 

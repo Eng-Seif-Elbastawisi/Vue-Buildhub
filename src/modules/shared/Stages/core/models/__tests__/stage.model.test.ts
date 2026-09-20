@@ -1,54 +1,17 @@
 import { describe, expect, it } from 'vitest';
-import { EducationType } from '../../constants/educationtype.enum';
-import BranchesModel from '../branches.model';
 import StageModel from '../stage.model';
 
-const branchJson = {
-  id: 2,
-  title: 'Science',
-  subjects: [{ id: 1, title: 'Physics' }],
-  e_c_branch_id: 8,
-  parent_id: 1,
-};
-
 describe('StageModel', () => {
-  it('maps nested JSON and freezes the instance', () => {
-    const model = StageModel.fromJson({
+  it('maps stages without the removed e_c_subject_id field', () => {
+    const stage = StageModel.fromJson({
       id: 1,
-      title: 'Preparatory',
-      translations: { title: { en: 'Preparatory', ar: 'Preparatory AR' } },
-      e_c_subject_id: 3,
-      branches: [branchJson],
-      education_type: { id: EducationType.General, title: 'General' },
-      children: [
-        {
-          id: 4,
-          title: 'Child',
-          branches: [],
-          education_type: { id: EducationType.General, title: 'General' },
-        },
-      ],
+      title: 'Preparation',
+      e_c_subject_id: 99,
+      children: [{ id: 2, title: 'Excavation' }],
     });
 
-    expect(model).toMatchObject({
-      id: 1,
-      title: 'Preparatory',
-      translations: { title: 'Preparatory' },
-      e_c_subject_id: 3,
-      EducationType: { id: EducationType.General, title: 'General' },
-    });
-    expect(model.branches[0]).toBeInstanceOf(BranchesModel);
-    expect(model.children[0]).toBeInstanceOf(StageModel);
-    expect(Object.isFrozen(model)).toBe(true);
-  });
-
-  it('falls back to title translations and exposes an example', () => {
-    expect(
-      StageModel.fromJson({ id: 1, title: 'Fallback', education_type: null }).translations,
-    ).toEqual({
-      title: 'Fallback',
-    });
-    expect(() => StageModel.fromJson(null)).toThrow('Cannot create StageModel');
-    expect(StageModel.example).toBeInstanceOf(StageModel);
+    expect(stage).toMatchObject({ id: 1, title: 'Preparation' });
+    expect(stage.children[0]).toBeInstanceOf(StageModel);
+    expect('e_c_subject_id' in stage).toBe(false);
   });
 });

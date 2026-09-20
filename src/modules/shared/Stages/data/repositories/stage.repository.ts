@@ -8,17 +8,10 @@ import {
 } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
 import { ErrorModel, ErrorType } from '@/base/Core/NetworkStructure/Resources/errors/errorModel';
 import { env } from '@/base/Core/Config';
+
 import StageModel from '../../core/models/stage.model';
 import StageApiService from '../api/stage.api-service';
-import { EducationType } from '../../core/constants/educationtype.enum';
-import TitleInterface from '@/base/Data/Models/titleInterface';
 
-/**
- * Stage Repository for API data operations
- *
- * This repository handles all data access for stages,
- * including parsing API responses and error handling.
- */
 export default class StageRepository extends BaseRepository<StageModel, StageModel[]> {
   private static instance: StageRepository;
 
@@ -39,37 +32,14 @@ export default class StageRepository extends BaseRepository<StageModel, StageMod
   }
 
   protected get mockList(): StageModel[] {
-    return [
-      StageModel.example,
-      {
-        ...StageModel.example,
-        title: 'المرحلة الإعدادية',
-        id: 2,
-        EducationType: new TitleInterface({
-          id: EducationType.Technical,
-          title: 'Technical',
-        }),
-      },
-      {
-        ...StageModel.example,
-        title: 'المرحلة الابتدائية',
-        id: 3,
-        EducationType: new TitleInterface({
-          id: EducationType.General,
-          title: 'General',
-        }),
-      },
-    ];
+    return [StageModel.example];
   }
 
-  /**
-   * Get singleton instance
-   * @returns StageRepository instance
-   */
   static getInstance(): StageRepository {
     if (!StageRepository.instance) {
       StageRepository.instance = new StageRepository();
     }
+
     return StageRepository.instance;
   }
 
@@ -79,25 +49,30 @@ export default class StageRepository extends BaseRepository<StageModel, StageMod
 
   protected parseList(data: any): StageModel[] {
     if (!Array.isArray(data)) return [];
+
     return data.reduce((acc: StageModel[], item) => {
       try {
         if (item != null) {
           acc.push(this.parseItem(item));
         }
       } catch {}
+
       return acc;
     }, []);
   }
 
   async changeOrder(params: Params, options?: ApiCallOptions): Promise<DataState<StageModel>> {
     if (options?.useStaticData ?? env.useStaticData) {
-      return new DataSuccess<StageModel>({ data: this.mockItem });
+      return new DataSuccess<StageModel>({
+        data: this.mockItem,
+      });
     }
 
     const retryFn = () => this.changeOrder(params, options);
 
     try {
       const httpResponse = await this.apiService.changeOrder(params, options);
+
       const isSuccess = this.isSuccessStatus(httpResponse.statusCode, httpResponse.data);
 
       if (isSuccess) {

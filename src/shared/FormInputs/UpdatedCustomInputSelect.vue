@@ -2,12 +2,7 @@
   import MultiSelect from 'primevue/multiselect';
   import Select from 'primevue/select';
 
-  import {
-    computed,
-    ref,
-    watch,
-    toRefs,
-  } from 'vue';
+  import { computed, ref, watch, toRefs } from 'vue';
 
   import { useI18n } from 'vue-i18n';
 
@@ -20,38 +15,27 @@
 
   import type TitleInterface from '@/base/Data/Models/titleInterface';
 
-  import type BaseController from '@/base/Presentation/Controller/baseController';
+  export type ComponentType = 'select' | 'multiselect';
 
-  export type ComponentType =
-    | 'select'
-    | 'multiselect';
+  interface OptionsController {
+    fetchAsOptions(params?: Params): Promise<TitleInterface<string | number>[]>;
+    isListFailed(): boolean;
+    isListSuccess(): boolean;
+  }
 
   interface Props {
     label?: string;
 
-    options?: TitleInterface<
-      string | number
-    >[];
+    options?: TitleInterface<string | number>[];
 
-    staticOptions?:
-      | TitleInterface<
-          string | number
-        >[]
-      | null;
+    staticOptions?: TitleInterface<string | number>[] | null;
 
     modelValue:
-      | TitleInterface<
-          string | number
-        >
-      | TitleInterface<
-          string | number
-        >[]
-      | null
-      | undefined;
+      TitleInterface<string | number> | TitleInterface<string | number>[] | null | undefined;
 
     placeholder: string;
 
-    controller?: BaseController<any>;
+    controller?: OptionsController;
 
     params?: Params;
 
@@ -88,14 +72,7 @@
 
   const emit = defineEmits<{
     'update:modelValue': [
-      value:
-        | TitleInterface<
-            string | number
-          >
-        | TitleInterface<
-            string | number
-          >[]
-        | null,
+      value: TitleInterface<string | number> | TitleInterface<string | number>[] | null,
     ];
 
     'update:slot': [];
@@ -103,28 +80,43 @@
 
   const { t } = useI18n();
 
-  const props = withDefaults(
-    defineProps<Props>(),
-    {
-      type: 1,
+  const props = withDefaults(defineProps<Props>(), {
+    label: undefined,
 
-      required: false,
+    options: undefined,
 
-      autoFill: false,
+    type: 1,
 
-      id: 'custom-select-input',
+    required: false,
 
-      reload: true,
+    autoFill: false,
 
-      staticOptions: null,
+    id: 'custom-select-input',
 
-      optional: false,
+    reload: true,
 
-      showHelp: true,
+    staticOptions: null,
 
-      disabled: false,
-    },
-  );
+    controller: undefined,
+
+    params: undefined,
+
+    name: undefined,
+
+    onclick: undefined,
+
+    helpTitle: undefined,
+
+    helpText: undefined,
+
+    helpExamples: undefined,
+
+    optional: false,
+
+    showHelp: true,
+
+    disabled: false,
+  });
 
   const {
     modelValue,
@@ -150,45 +142,27 @@
 
   const loading = ref(false);
 
-  const message = ref(
-    t('no_data_found'),
-  );
+  const message = ref(t('no_data_found'));
 
-  const localValue = ref(
-    props.modelValue,
-  );
+  const localValue = ref(props.modelValue);
 
-  const dynamicOptions = ref<
-    TitleInterface<
-      string | number
-    >[]
-  >([]);
+  const dynamicOptions = ref<TitleInterface<string | number>[]>([]);
 
-  const isMultiselect = computed(
-    () => Number(type.value) === 2,
-  );
+  let latestOptionsRequest = 0;
 
-  const componentType = computed(
-    () =>
-      isMultiselect.value
-        ? MultiSelect
-        : Select,
-  );
+  const isMultiselect = computed(() => Number(type.value) === 2);
 
-  const mergedOptions = computed(
-    () =>
-      staticOptions?.value ??
-      dynamicOptions.value,
-  );
+  const componentType = computed(() => (isMultiselect.value ? MultiSelect : Select));
 
-  const multiselectProps = computed(
-    () =>
-      isMultiselect.value
-        ? {
-            display: 'chip',
-            maxSelectedLabels: 6,
-          }
-        : {},
+  const mergedOptions = computed(() => staticOptions?.value ?? dynamicOptions.value);
+
+  const multiselectProps = computed(() =>
+    isMultiselect.value
+      ? {
+          display: 'chip',
+          maxSelectedLabels: 6,
+        }
+      : {},
   );
 
   const normalizedValue = computed({
@@ -199,98 +173,43 @@
         return;
       }
 
-      localValue.value =
-        isMultiselect.value
-          ? ensureArray(newValue)
-          : ensureSingle(newValue);
+      localValue.value = isMultiselect.value ? ensureArray(newValue) : ensureSingle(newValue);
 
       emitUpdate();
     },
   });
 
-  watch(
-    modelValue,
-    syncLocalValue,
-  );
+  watch(modelValue, syncLocalValue);
 
-  watch(
-    [
-      params,
-      controller,
-      disabled,
-    ],
-    handleOptionUpdates,
-    {
-      immediate: true,
-    },
-  );
+  watch([params, controller, disabled], handleOptionUpdates, {
+    immediate: true,
+  });
 
-  watch(
-    mergedOptions,
-    () => {
-      if (
-        !modelValue.value ||
-        Array.isArray(
-          modelValue.value,
-        )
-      ) {
-        syncLocalValue(
-          modelValue.value,
-        );
+  watch(mergedOptions, () => {
+    if (!modelValue.value || Array.isArray(modelValue.value)) {
+      syncLocalValue(modelValue.value);
 
-        return;
-      }
+      return;
+    }
 
-      const currentId = (
-        modelValue.value as TitleInterface<
-          string | number
-        >
-      ).id;
+    const currentId = (modelValue.value as TitleInterface<string | number>).id;
 
-      const match =
-        mergedOptions.value.find(
-          (option) =>
-            option.id === currentId,
-        );
+    const match = mergedOptions.value.find((option) => option.id === currentId);
 
-      if (
-        match &&
-        match !== localValue.value
-      ) {
-        localValue.value = match;
-      }
-    },
-  );
+    if (match && match !== localValue.value) {
+      localValue.value = match;
+    }
+  });
 
-  syncLocalValue(
-    props.modelValue,
-  );
+  syncLocalValue(props.modelValue);
 
-  function ensureArray(
-    value: unknown,
-  ): TitleInterface<
-    string | number
-  >[] {
-    return Array.isArray(value)
-      ? (value as TitleInterface<
-          string | number
-        >[])
-      : [];
+  function ensureArray(value: unknown): TitleInterface<string | number>[] {
+    return Array.isArray(value) ? (value as TitleInterface<string | number>[]) : [];
   }
 
-  function ensureSingle(
-    value: unknown,
-  ): TitleInterface<
-    number | string
-  > | null {
-    if (
-      value !== null &&
-      typeof value === 'object' &&
-      'id' in value
-    ) {
-      return value as TitleInterface<
-        number | string
-      >;
+  function ensureSingle(value: unknown): TitleInterface<number | string> | null {
+    if (value !== null && typeof value === 'object' && 'id' in value) {
+      return value as TitleInterface<number | string>;
     }
 
     return null;
@@ -298,61 +217,30 @@
 
   function syncLocalValue(
     newValue:
-      | TitleInterface<
-          string | number
-        >
-      | TitleInterface<
-          string | number
-        >[]
-      | null
-      | undefined,
+      TitleInterface<string | number> | TitleInterface<string | number>[] | null | undefined,
   ): void {
-    if (
-      newValue ===
-      localValue.value
-    ) {
+    if (newValue === localValue.value) {
       return;
     }
 
-    if (
-      Array.isArray(newValue)
-    ) {
-      localValue.value =
-        newValue.map((item) => {
-          const match =
-            mergedOptions.value.find(
-              (option) =>
-                option.id === item.id,
-            );
+    if (Array.isArray(newValue)) {
+      localValue.value = newValue.map((item) => {
+        const match = mergedOptions.value.find((option) => option.id === item.id);
 
-          return match ?? item;
-        });
+        return match ?? item;
+      });
 
       return;
     }
 
-    if (
-      newValue &&
-      mergedOptions.value.length >
-        0
-    ) {
-      const currentId = (
-        newValue as TitleInterface<
-          string | number
-        >
-      ).id;
+    if (newValue && mergedOptions.value.length > 0) {
+      const currentId = (newValue as TitleInterface<string | number>).id;
 
-      const match =
-        mergedOptions.value.find(
-          (option) =>
-            option.id === currentId,
-        );
+      const match = mergedOptions.value.find((option) => option.id === currentId);
 
-      localValue.value =
-        match ?? newValue;
+      localValue.value = match ?? newValue;
     } else {
-      localValue.value =
-        newValue;
+      localValue.value = newValue;
     }
   }
 
@@ -364,76 +252,63 @@
     emit(
       'update:modelValue',
       localValue.value as
-        | TitleInterface<
-            string | number
-          >
-        | TitleInterface<
-            string | number
-          >[]
-        | null,
+        TitleInterface<string | number> | TitleInterface<string | number>[] | null,
     );
 
-    ValidationService.clearError(
-      id.value,
-    );
+    ValidationService.clearError(id.value);
   }
 
   async function handleOptionUpdates(): Promise<void> {
     if (disabled.value) {
+      latestOptionsRequest += 1;
       loading.value = false;
 
-      if (
-        !staticOptions?.value
-      ) {
-        dynamicOptions.value =
-          [];
+      if (!staticOptions?.value) {
+        dynamicOptions.value = [];
       }
 
       return;
     }
 
-    if (
-      params?.value &&
-      controller?.value
-    ) {
+    if (params?.value && controller?.value) {
       await fetchOptions();
     } else {
-      dynamicOptions.value =
-        staticOptions?.value ?? [];
+      latestOptionsRequest += 1;
+      dynamicOptions.value = staticOptions?.value ?? [];
     }
   }
 
   async function fetchOptions(): Promise<void> {
-    if (
-      disabled.value ||
-      !controller?.value ||
-      !params?.value
-    ) {
+    if (disabled.value || !controller?.value || !params?.value) {
       return;
     }
+
+    const requestId = ++latestOptionsRequest;
 
     try {
       loading.value = true;
 
-      message.value = t(
-        'loading_data',
-      );
+      message.value = t('loading_data');
 
-      const response =
-        await controller.value.fetchAsOptions(
-          params.value,
-        );
+      const fetchedOptions = await controller.value.fetchAsOptions(params.value);
 
-      dynamicOptions.value =
-        response;
+      if (requestId !== latestOptionsRequest) {
+        return;
+      }
+
+      dynamicOptions.value = fetchedOptions;
 
       updateControllerState();
 
-      handleAutoFill(response);
+      handleAutoFill(fetchedOptions);
     } catch (error) {
-      handleFetchError(error);
+      if (requestId === latestOptionsRequest) {
+        handleFetchError(error);
+      }
     } finally {
-      loading.value = false;
+      if (requestId === latestOptionsRequest) {
+        loading.value = false;
+      }
     }
   }
 
@@ -442,76 +317,43 @@
       return;
     }
 
-    if (
-      controller.value.isListFailed()
-    ) {
-      message.value = t(
-        'an_error_occurred',
-      );
-    } else if (
-      controller.value.isListSuccess()
-    ) {
-      message.value = t(
-        'no_data_found',
-      );
+    if (controller.value.isListFailed()) {
+      message.value = t('an_error_occurred');
+    } else if (controller.value.isListSuccess()) {
+      message.value = t('no_data_found');
     }
   }
 
-  function handleAutoFill(
-    options: TitleInterface<
-      number | string
-    >[],
-  ): void {
-    if (
-      disabled.value ||
-      !autoFill?.value ||
-      options.length !== 1
-    ) {
+  function handleAutoFill(options: TitleInterface<number | string>[]): void {
+    const [onlyOption] = options;
+
+    if (disabled.value || !autoFill?.value || !onlyOption || options.length !== 1) {
       return;
     }
 
-    normalizedValue.value =
-      isMultiselect.value
-        ? [options[0]!]
-        : options[0]!;
+    normalizedValue.value = isMultiselect.value ? [onlyOption] : onlyOption;
   }
 
-  function handleFetchError(
-    error: unknown,
-  ): void {
-    console.error(
-      'Fetch error:',
-      error,
-    );
+  function handleFetchError(error: unknown): void {
+    console.error('Fetch error:', error);
 
-    message.value = t(
-      'failed_to_load_data',
-    );
+    message.value = t('failed_to_load_data');
 
     dynamicOptions.value = [];
   }
 
   async function reloadData(): Promise<void> {
-    if (
-      disabled.value ||
-      loading.value
-    ) {
+    if (disabled.value || loading.value) {
       return;
     }
 
     await fetchOptions();
 
-    normalizedValue.value =
-      isMultiselect.value
-        ? []
-        : null;
+    normalizedValue.value = isMultiselect.value ? [] : null;
   }
 
   const handleAddClick = (): void => {
-    if (
-      disabled.value ||
-      !props.onclick
-    ) {
+    if (disabled.value || !props.onclick) {
       return;
     }
 
@@ -521,92 +363,51 @@
 
 <template>
   <div
-    class="
-      input-label
-      flex
-      justify-between
-      w-full
-    "
+    class="input-label flex justify-between w-full"
     :class="{
-      'input-label--disabled':
-        disabled,
+      'input-label--disabled': disabled,
     }"
   >
     <slot v-if="!hasHeader">
       <div class="flex items-center">
-        <slot
-          name="reloadHeader"
-        />
+        <slot name="reloadHeader" />
 
         <span
           v-if="enableReload"
-          class="
-            reload-icon
-            flex
-            items-center
-            gap-sm
-            me-2
-            w-full
-          "
+          class="reload-icon flex items-center gap-sm me-2 w-full"
           :class="{
-            'reload-icon--disabled':
-              disabled,
-            'cursor-pointer':
-              !disabled,
+            'reload-icon--disabled': disabled,
+            'cursor-pointer': !disabled,
           }"
           @click="reloadData"
         >
-          <span
-            v-if="optional"
-            class="optional-text"
-          >
-            ({{
-              $t('optional')
-            }})
-          </span>
+          <span v-if="optional" class="optional-text"> ({{ $t('optional') }}) </span>
 
           <IconBackStage />
         </span>
       </div>
 
-      <div
-        class="
-          flex
-          items-center
-          gap-2
-        "
-      >
+      <div class="flex items-center gap-2">
         <div
           v-if="onclick"
           class="add-dialog"
           :class="{
-            'add-dialog--disabled':
-              disabled,
+            'add-dialog--disabled': disabled,
           }"
           @click="handleAddClick"
         >
           <PlusIcon />
         </div>
 
-        <span
-          class="
-            field-help-label-row
-          "
-        >
+        <span class="field-help-label-row">
           <label
             :class="{
               required,
-              'input-label__text--disabled':
-                disabled,
+              'input-label__text--disabled': disabled,
             }"
             class="input-label"
           >
-            <span
-              v-if="required"
-              class="text-red-500"
-            >
-              *
-            </span>
+            <span v-if="required" class="text-red-500"> * </span>
 
             {{ $t(label ?? '') }}
           </label>
@@ -616,10 +417,7 @@
       </div>
     </slot>
 
-    <slot
-      v-else
-      name="Header"
-    />
+    <slot v-else name="Header" />
   </div>
 
   <slot v-if="!hascontent">
@@ -631,8 +429,7 @@
       :disabled="disabled"
       class="input-select w-full"
       :class="{
-        'input-select--disabled':
-          disabled,
+        'input-select--disabled': disabled,
       }"
       option-label="title"
       v-bind="multiselectProps"
@@ -650,10 +447,7 @@
     />
   </slot>
 
-  <slot
-    v-else
-    name="content"
-  />
+  <slot v-else name="content" />
 </template>
 
 <style scoped lang="scss">
@@ -704,8 +498,7 @@
     background-color: transparent;
 
     &:focus {
-      border:
-        1px solid #d9dbe9 !important;
+      border: 1px solid #d9dbe9 !important;
     }
   }
 
@@ -722,14 +515,8 @@
     pointer-events: none;
   }
 
-  :deep(
-    .p-select.p-disabled
-      .p-select-dropdown
-  ),
-  :deep(
-    .p-multiselect.p-disabled
-      .p-multiselect-dropdown
-  ) {
+  :deep(.p-select.p-disabled .p-select-dropdown),
+  :deep(.p-multiselect.p-disabled .p-multiselect-dropdown) {
     pointer-events: none;
   }
 </style>

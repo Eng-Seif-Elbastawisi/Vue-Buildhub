@@ -635,7 +635,6 @@ export const sidebarSections: SidebarSectionConfig[] = [
         roles: ['organization'],
         countKey: 'suppliers_count',
       },
-      
 
       {
         path: '/material',

@@ -1,8 +1,7 @@
 <script setup lang="ts">
   import { onMounted, ref } from 'vue';
   import { useRoute } from 'vue-router';
-  import type AddMaterialsParams from '../../core/params/add.materials.params';
-  import EditMaterialParams from '../../core/params/edit.materials.params';
+  import type EditMaterialParams from '../../core/params/edit.materials.params';
   import ShowMaterialParams from '../../core/params/show.materials.params';
   import MaterialController from '../controllers/materials.controller';
   import MaterialsForm from './MaterialsForm.vue';
@@ -14,14 +13,8 @@
   const loading = ref(false);
   const materialId = Number(route.params.material_id);
 
-  const updateData = (data: AddMaterialsParams) => {
-    params.value = new EditMaterialParams({
-      material_id: materialId,
-      brandId: data.brandId,
-      measurementId: data.measurementId,
-      price: data.price,
-      translations: data.translations,
-    });
+  const updateData = (updatedParams: EditMaterialParams) => {
+    params.value = updatedParams;
   };
 
   const saveMaterial = async () => {
@@ -43,7 +36,6 @@
 
 <template>
   <div class="material-crud-page">
-   
     <MaterialsForm
       :material="controller.itemData.value!"
       :form-key="formKey"

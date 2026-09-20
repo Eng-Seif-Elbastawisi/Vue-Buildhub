@@ -1,54 +1,61 @@
 import type Params from '@/base/Core/Params/params';
 import { ClassValidation } from '@/base/Presentation/Utils/classValidation';
-/**
- * Parameters for editing an employee
- */
+import { hasTitleTranslation, requiredSelectRule } from '@/base/Presentation/Utils/input_title';
+import { translate } from '@/locales/i18n';
+
 export default class EditLaborParams implements Params {
-  public id: number;
-  public title: string;
-  public price: number;
-  // public brandId: number;
-  public measurementUnitId: number;
-  public subStageId: number;
-  public stageId: number;
+  public laborId?: number;
+  public price?: number;
+  public measurementId?: number;
+  public translations?: { title: Record<string, string> };
+  public itemTypeId?: number;
+  public stageId?: number;
+  public subStageId?: number;
+  public status?: boolean;
 
   public static readonly validation = new ClassValidation().setRules({
-    id: { required: true },
-    title: { required: true, minLength: 2, maxLength: 100 },
+    laborId: { required: true },
     price: { required: true },
-    // brandId: { required: true },
-    measurementUnitId: { required: true },
-    subStageId: { required: true },
-    stageId: { required: true },
+    measurementId: requiredSelectRule(),
+    translations: {
+      required: true,
+      custom: (value) => hasTitleTranslation(value) || translate('validation.title_required'),
+    },
+    itemTypeId: requiredSelectRule(),
+    stageId: requiredSelectRule(),
+    subStageId: requiredSelectRule(),
   });
 
-  constructor(data: {
-    id: number;
-    title: string;
-    price: number;
-    // brandId: number;
-    measurementUnitId: number;
-    subStageId: number;
-    stageId: number;
+  constructor(labor: {
+    laborId?: number;
+    price?: number;
+    measurementId?: number;
+    translations?: { title: Record<string, string> };
+    itemTypeId?: number;
+    stageId?: number;
+    subStageId?: number;
+    status?: boolean;
   }) {
-    this.id = data.id;
-    this.title = data.title;
-    this.price = data.price;
-    // this.brandId = data.brandId;
-    this.measurementUnitId = data.measurementUnitId;
-    this.subStageId = data.subStageId;
-    this.stageId = data.stageId;
+    this.laborId = labor.laborId;
+    this.price = labor.price;
+    this.measurementId = labor.measurementId;
+    this.translations = labor.translations;
+    this.itemTypeId = labor.itemTypeId;
+    this.stageId = labor.stageId;
+    this.subStageId = labor.subStageId;
+    this.status = labor.status;
   }
 
-  toMap(): { [p: string]: any } {
+  toMap(): Record<string, unknown> {
     return {
-      labor_id: this.id,
-      title: this.title,
+      labor_id: this.laborId,
       price: this.price,
-      // brand_id: this.brandId,
-      measurement_unit_id: this.measurementUnitId,
-      sub_stage_id: this.subStageId,
+      measurement_unit_id: this.measurementId,
+      translations: this.translations,
+      item_type_id: this.itemTypeId,
       stage_id: this.stageId,
+      sub_stage_id: this.subStageId,
+      status: this.status,
     };
   }
 

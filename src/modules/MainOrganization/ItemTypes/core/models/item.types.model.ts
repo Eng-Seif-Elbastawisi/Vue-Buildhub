@@ -4,12 +4,17 @@ export default class ItemTypesModel {
   public readonly id?: number;
   public readonly title?: string;
   public readonly translations?: TranslationParams;
- public readonly status : boolean;
-  constructor(data: { id?: number; title?: string; translations?: TranslationParams, status?: boolean }) {
+  public readonly status: boolean;
+  constructor(data: {
+    id?: number;
+    title?: string;
+    translations?: TranslationParams;
+    status?: boolean;
+  }) {
     this.id = data.id;
     this.title = data.title;
     this.translations = data.translations;
- this.status = data.status ?? false;
+    this.status = data.status ?? false;
 
     Object.freeze(this);
   }
@@ -29,7 +34,6 @@ export default class ItemTypesModel {
       if (item.locale && item[key]) {
         result[item.locale] = item[key];
       }
-  
 
       return result;
     }, {});
@@ -47,7 +51,7 @@ export default class ItemTypesModel {
       translations: new TranslationParams({
         title: ItemTypesModel.mapTranslations(json.translations),
       }),
-      status: json.status as boolean | undefined,
+      status: json.status === true || Number(json.status) === 1,
     });
   }
 
