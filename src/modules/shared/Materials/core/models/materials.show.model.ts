@@ -1,7 +1,7 @@
 import type measurementModel from '@/modules/shared/measurement/core/models/measurement.model';
 import type { UnitTypeEnum } from '../constant/unit.type.enum';
 
-import type SuppliersModel from '@/modules/shared/Brand/core/models/brand.model';
+import type BrandModel from '@/modules/shared/Brand/core/models/brand.model';
 import type ItemTypesModel from '@/modules/MainOrganization/ItemTypes/core/models/item.types.model';
 import type StageModel from '@/modules/shared/Stages/core/models/stage.model';
 import LaborModel from '@/modules/MainOrganization/Labors/core/models/labor.model';
@@ -30,7 +30,7 @@ export default class MaterialsShowModel {
   public readonly title?: string;
   public readonly status: boolean;
 
-  public readonly brand?: SuppliersModel;
+  public readonly brand?: BrandModel;
   public readonly measurementId?: measurementModel;
 
   public readonly translations: {
@@ -49,7 +49,7 @@ export default class MaterialsShowModel {
     title?: string;
     status?: boolean;
 
-    brand?: SuppliersModel;
+    brand?: BrandModel;
     measurementId?: measurementModel;
 
     translations: {
@@ -100,7 +100,7 @@ export default class MaterialsShowModel {
         ? ({
             id: json.brand.id,
             title: json.brand.title,
-          } as SuppliersModel)
+          } as BrandModel)
         : undefined,
 
       measurementId: json.measurement_unit
@@ -150,7 +150,7 @@ export default class MaterialsShowModel {
     brand: {
       id: 38,
       title: '50500',
-    } as SuppliersModel,
+    } as BrandModel,
 
     measurementId: {
       id: 165,

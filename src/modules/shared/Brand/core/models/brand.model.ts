@@ -1,6 +1,6 @@
 import { BrandTypeEnum } from '../constant/Brand.type.enum';
 
-export default class SuppliersModel {
+export default class BrandModel {
   public readonly id?: number;
   public readonly title?: string;
   public readonly translations: { title: Record<string, string> };
@@ -18,16 +18,16 @@ export default class SuppliersModel {
     Object.freeze(this);
   }
 
-  static fromJson(json: any): SuppliersModel {
+  static fromJson(json: any): BrandModel {
     if (!json) {
-      throw new Error('Cannot create SuppliersModel from null or undefined');
+      throw new Error('Cannot create BrandModel from null or undefined');
     }
 
-    return new SuppliersModel({
+    return new BrandModel({
       id: json.id,
       title: json.title,
       translations: {
-        title: SuppliersModel.mapTranslations(json.translations, json.title),
+        title: BrandModel.mapTranslations(json.translations, json.title),
       },
       type: json.type,
     });
@@ -59,7 +59,7 @@ export default class SuppliersModel {
     return typeof nestedTitle === 'string' ? { en: nestedTitle } : {};
   }
 
-  static example: SuppliersModel = new SuppliersModel({
+  static example: BrandModel = new BrandModel({
     id: 10,
     translations: { title: { en: 'Geberit' } },
     type: BrandTypeEnum.SUPPLIES,

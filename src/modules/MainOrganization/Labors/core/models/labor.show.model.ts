@@ -1,8 +1,8 @@
-import type measurementModel from '@/modules/shared/measurement/core/models/measurement.model';
+import measurementModel from '@/modules/shared/measurement/core/models/measurement.model';
 
-import type SuppliersModel from '@/modules/shared/Brand/core/models/brand.model';
-import type ItemTypesModel from '@/modules/MainOrganization/ItemTypes/core/models/item.types.model';
-import type StageModel from '@/modules/shared/Stages/core/models/stage.model';
+import BrandModel from '@/modules/shared/Brand/core/models/brand.model';
+import ItemTypesModel from '@/modules/MainOrganization/ItemTypes/core/models/item.types.model';
+import StageModel from '@/modules/shared/Stages/core/models/stage.model';
 import type { UnitTypeEnum } from '@/modules/shared/Materials/core/constant/unit.type.enum';
 import LaborModel from './labor.model';
 
@@ -30,7 +30,7 @@ export default class laborShowModel {
   public readonly title?: string;
   public readonly status: boolean;
 
-  public readonly brand?: SuppliersModel;
+  public readonly brand?: BrandModel;
   public readonly measurementId?: measurementModel;
 
   public readonly translations: {
@@ -49,7 +49,7 @@ export default class laborShowModel {
     title?: string;
     status?: boolean;
 
-    brand?: SuppliersModel;
+    brand?: BrandModel;
     measurementId?: measurementModel;
 
     translations: {
@@ -96,33 +96,17 @@ export default class laborShowModel {
       title: translations.en ?? translations.ar,
       status: json.status === true || Number(json.status) === 1,
 
-      brand: json.brand
-        ? ({
-            id: json.brand.id,
-            title: json.brand.title,
-          } as SuppliersModel)
-        : undefined,
+      brand: json.brand ? BrandModel.fromJson(json.brand) : undefined,
 
       measurementId: json.measurement_unit
-        ? ({
-            id: json.measurement_unit.id,
-            title: json.measurement_unit.title,
-          } as measurementModel)
+        ? measurementModel.fromJson(json.measurement_unit)
         : undefined,
 
       itemType: json.item_type
-        ? ({
-            id: json.item_type.id,
-            title: json.item_type.title,
-          } as ItemTypesModel)
+        ? ItemTypesModel.fromJson(json.item_type as any)
         : undefined,
 
-      stage: json.stage
-        ? ({
-            id: json.stage.id,
-            title: json.stage.title,
-          } as StageModel)
-        : undefined,
+      stage: json.stage ? StageModel.fromJson(json.stage) : undefined,
 
       subStage: json.sub_stage
         ? ({
@@ -150,7 +134,7 @@ export default class laborShowModel {
     brand: {
       id: 38,
       title: '50500',
-    } as SuppliersModel,
+    } as BrandModel,
 
     measurementId: {
       id: 165,

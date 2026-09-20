@@ -2,7 +2,6 @@ export default class StageModel {
   public readonly id?: number;
   public readonly title: string;
   public readonly translations: { title: Record<string, string> };
-  public readonly e_c_subject_id?: number;
   public readonly children: StageModel[];
   public readonly status: boolean;
   public readonly stageChildrenCount: number;
@@ -11,7 +10,6 @@ export default class StageModel {
     id?: number;
     translations?: { title: Record<string, string> };
     title?: string;
-    e_c_subject_id?: number;
     children: StageModel[];
     status?: boolean;
     stageChildrenCount?: number;
@@ -22,7 +20,6 @@ export default class StageModel {
     };
     this.title =
       data.title ?? this.translations.title.en ?? Object.values(this.translations.title)[0] ?? '';
-    this.e_c_subject_id = data.e_c_subject_id;
     this.children = data.children;
     this.status = data.status ?? false;
     this.stageChildrenCount = data.stageChildrenCount ?? 0;
@@ -59,7 +56,6 @@ export default class StageModel {
       translations: {
         title: StageModel.mapTranslations(json.title),
       },
-      e_c_subject_id: json.e_c_subject_id,
       children: json.children?.map((child: any) => StageModel.fromJson(child)) ?? [],
       status: json.status,
       stageChildrenCount: json.stage_children_count,

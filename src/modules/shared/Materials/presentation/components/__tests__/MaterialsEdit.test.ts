@@ -1,6 +1,6 @@
 import { flushPromises, mount } from '@vue/test-utils';
 import { describe, expect, it, vi } from 'vitest';
-import AddMaterialsParams from '../../../core/params/add.materials.params';
+import EditMaterialParams from '../../../core/params/edit.materials.params';
 import MaterialsEdit from '../MaterialsEdit.vue';
 
 const controller = vi.hoisted(() => ({
@@ -40,22 +40,24 @@ describe('MaterialsEdit', () => {
     });
     await flushPromises();
 
-    wrapper.findComponent({ name: 'MaterialsForm' }).vm.$emit(
-      'update-data',
-      new AddMaterialsParams({
-        price: 100,
-        brandId: 2,
-        measurementId: 3,
-        translations: { title: { en: 'Steel' } },
-        itemTypeId: 4,
-        stageId: 5,
-        subStageId: 6,
-        status: false,
-      }),
-    );
+    const editParams = new EditMaterialParams({
+      material_id: 9,
+      price: 100,
+      brandId: 2,
+      measurementId: 3,
+      translations: { title: { en: 'Steel' } },
+      itemTypeId: 4,
+      stageId: 5,
+      subStageId: 6,
+      status: false,
+    });
+
+    wrapper.findComponent({ name: 'MaterialsForm' }).vm.$emit('update-data', editParams);
     await wrapper.get('button').trigger('click');
 
-    expect(controller.update.mock.calls[0]?.[0].toMap()).toMatchObject({
+    const submittedParams = controller.update.mock.calls[0]?.[0] as EditMaterialParams;
+    expect(submittedParams).toBeInstanceOf(EditMaterialParams);
+    expect(submittedParams.toMap()).toMatchObject({
       material_id: 9,
       item_type_id: 4,
       stage_id: 5,

@@ -24,7 +24,7 @@ describe('BrandModel', () => {
   });
 
   it('throws for empty JSON and exposes an example', () => {
-    expect(() => BrandModel.fromJson(null)).toThrow('Cannot create SuppliersModel');
+    expect(() => BrandModel.fromJson(null)).toThrow('Cannot create BrandModel');
     expect(BrandModel.example).toBeInstanceOf(BrandModel);
   });
 });
