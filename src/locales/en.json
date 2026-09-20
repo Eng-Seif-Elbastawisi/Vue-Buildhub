@@ -2461,10 +2461,42 @@
   "item_type": "Item Type",
   "back_to_parent_stage": "Back to Parent Stage",
   "Are you sure you want to remove this measurement unit?": "Are you sure you want to remove this measurement unit?",
+  "quote_type": {
+    "list_title": "Quote Types",
+    "list_description": "Manage quotation types used across the system.",
+    "add": "Add Quote Type",
+    "empty_title": "No Quote Types Found",
+    "empty_description": "No quote types have been added yet.",
+    "form_title": "Quote Type Details",
+    "form_description": "Enter the quote type details and configure its status.",
+    "update": "Update Quote Type",
+    "execution_title": "Quote Types",
+    "search_placeholder": "Search quote types...",
+    "delete_title": "Delete Quote Type?",
+    "delete_message": "Are you sure you want to delete this quote type? This action cannot be undone."
+  },
+  "sub_quote_type": {
+    "list_title": "Sub Quote Types"
+  },
+  "search_quote_types": "Search quote types...",
+  "Are you sure you want to remove this quote type?": "Are you sure you want to remove this quote type?",
+  "This action cannot be undone.": "This action cannot be undone.",
+  "Delete": "Delete",
   "sidebar.products": "Products",
   "common.back": "Back",
   "Products.stages.one_label": "Stage",
   "Products.stages.many_label": "Stages",
   "common.add": "Add",
-  "common.edit": "Edit"
+  "common.edit": "Edit",
+  "labor": {
+    "price": "Price",
+    "title": "labor",
+    "form_title": "Labor",
+    "form_description": "Add Or Edit Labors",
+    "labor": "labor",
+    "description": "Manage materials, prices, units, and translated titles",
+    "price_placeholder": "Enter Labor Price",
+    "add": "Add Labor",
+    "sidebar.quote-types": "Quote Types"
+  }
 }

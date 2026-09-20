@@ -624,12 +624,18 @@ export const sidebarSections: SidebarSectionConfig[] = [
         icon: SidebarItemIcon,
       },
       {
+        path: '/quote-types',
+        labelKey: 'sidebar.quote-types',
+        icon: SidebarItemIcon,
+      },
+      {
         path: '/suppliers',
         labelKey: 'sidebar.suppliers',
         icon: SidebarSupplierIcon,
         roles: ['organization'],
         countKey: 'suppliers_count',
       },
+      
 
       {
         path: '/material',
