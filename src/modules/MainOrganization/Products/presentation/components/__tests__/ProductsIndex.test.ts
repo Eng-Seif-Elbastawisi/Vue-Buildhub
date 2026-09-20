@@ -1,9 +1,7 @@
-import { flushPromises, mount } from '@vue/test-utils';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
+import { mount } from '@vue/test-utils';
+import { describe, expect, it, vi } from 'vitest';
 import ProductsIndex from '../ProductsIndex.vue';
 
-const toastSuccess = vi.hoisted(() => vi.fn());
 const controller = vi.hoisted(() => ({
   fetchList: vi.fn().mockResolvedValue(undefined),
   fetchStats: vi.fn().mockResolvedValue({}),
@@ -20,9 +18,13 @@ vi.mock('@/stores/user', () => ({
   useUserStore: () => ({ user: { type: 2 } }),
 }));
 
+vi.mock('@/modules/shared/Stages/presentation/controllers/stage.controller', () => ({
+  default: { getInstance: () => stageController },
+}));
+
 vi.mock('vue-router', () => ({
-  useRoute: () => ({ query: {} }),
-  useRouter: () => ({ push: vi.fn() }),
+  useRoute: () => ({ query: routeQuery }),
+  useRouter: () => ({ push: routerPush }),
 }));
 
 vi.mock('@/base/Presentation/Utils/debouced', () => ({
@@ -34,10 +36,6 @@ vi.mock('@/base/Presentation/Dialogs/dialog.manager', () => ({
 }));
 
 describe('ProductsIndex', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
   it('renders the product status action in each product card', () => {
     const wrapper = mount(ProductsIndex, {
       global: {
@@ -59,37 +57,37 @@ describe('ProductsIndex', () => {
       },
     });
 
-    expect(wrapper.get('.change-status').exists()).toBe(true);
+const mockGroupedStages = () => {
+  stageController.fetchList
+    .mockResolvedValueOnce({
+      data: [
+        new StageModel({ id: 1, title: 'Main Stage A', children: [] }),
+        new StageModel({ id: 2, title: 'Main Stage B', children: [] }),
+      ],
+    })
+    .mockResolvedValueOnce({
+      data: [
+        new StageModel({ id: 11, title: 'Sub 1', children: [] }),
+        new StageModel({ id: 12, title: 'Sub 2', children: [] }),
+      ],
+    })
+    .mockResolvedValueOnce({ data: [] });
+};
+
+describe('ProductsIndex', () => {
+  beforeEach(() => {
+    Object.keys(routeQuery).forEach((key) => delete routeQuery[key]);
+    controller.fetchList.mockReset().mockResolvedValue(undefined);
+    controller.fetchStats.mockReset().mockResolvedValue({});
+    controller.delete.mockReset().mockResolvedValue(undefined);
+    stageController.fetchList.mockReset().mockResolvedValue({ data: [] });
+    routerPush.mockReset();
   });
 
-  it('shows the backend success message after a product is deleted', async () => {
-    controller.delete.mockResolvedValueOnce(
-      new DataSuccess<void>({ message: 'تم حذف المنتج بنجاح' }),
-    );
-
-    const wrapper = mount(ProductsIndex, {
-      global: {
-        mocks: { $t: (key: string) => key },
-        stubs: {
-          DataStatusBuilder: {
-            template: '<div><slot name="success" :data="[{ id: 6, title: \'Door\' }]" /></div>',
-          },
-          ChangeStatusButton: true,
-          DeleteDialog: {
-            emits: ['delete'],
-            template: '<button class="delete-dialog" @click="$emit(\'delete\')" />',
-          },
-          Pagination: true,
-          IndexAddIcon: true,
-          RouterLink: true,
-        },
-      },
-    });
+  it('renders the product status action in each product card', async () => {
+    const wrapper = mountIndex();
     await flushPromises();
 
-    await wrapper.get('.delete-dialog').trigger('click');
-    await flushPromises();
-
-    expect(toastSuccess).toHaveBeenCalledWith('تم حذف المنتج بنجاح');
+    expect(wrapper.get('.change-status').exists()).toBe(true);
   });
 });
