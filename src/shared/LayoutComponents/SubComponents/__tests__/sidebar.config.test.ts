@@ -228,4 +228,16 @@ describe('sidebarSections', () => {
       ]),
     );
   });
+
+  it('includes the labor destination in the sidebar', () => {
+    const laborItem = sidebarSections
+      .flatMap((section) => section.items)
+      .find((item) => item.path === '/labor');
+
+    expect(laborItem).toEqual(
+      expect.objectContaining({
+        labelKey: 'sidebar.labor',
+      }),
+    );
+  });
 });

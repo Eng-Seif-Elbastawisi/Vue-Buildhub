@@ -26,7 +26,7 @@
   const route = useRoute();
   const router = useRouter();
 
-  const perPage = ref(12);
+  const perPage = ref(12); 
   const word = ref('');
 
   const { user } = useUserStore();
@@ -313,7 +313,7 @@
               <ChangeStatusButton
                 :id="product.id!"
                 :key="`${product.id}-${product.isActive}`"
-                :initial-is-active="product.isActive"
+                :initial-is-active="product.status"
                 :type="StatusTypeEnum.PRODUCT"
                 @reload="reloadProducts"
               />
