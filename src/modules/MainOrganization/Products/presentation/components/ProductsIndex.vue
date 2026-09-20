@@ -1,6 +1,6 @@
 <script setup lang="ts">
-  import { computed, onMounted, ref } from 'vue';
   import { useI18n } from 'vue-i18n';
+  import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
 
   import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
@@ -12,6 +12,8 @@
   import DeleteDialog from '@/base/Presentation/Dialogs/MainDialogs/DeleteDialog.vue';
   import ChangeStatusButton from '@/modules/MainOrganization/ChangeStatus/presentation/components/ChangeStatusButton.vue';
   import { StatusTypeEnum } from '@/modules/MainOrganization/ChangeStatus/core/constant/change_status.type.enum';
+  import StageController from '@/modules/shared/Stages/presentation/controllers/stage.controller';
+  import IndexStageParams from '@/modules/shared/Stages/core/params/index.stage.params';
 
   import type ProductsModel from '../../core/models/products.model';
   import type ProductStatsModel from '../../core/models/product.stats.model';
@@ -21,7 +23,23 @@
 
   import ProductsController from '../controllers/products.controller';
 
+  interface StageItem {
+    id: number;
+    title: string;
+  }
+
+  interface StageApiItem extends StageItem {
+    parent_id?: number | null;
+  }
+
+  interface StageGroup {
+    id: number;
+    title: string;
+    stages: StageItem[];
+  }
+
   const controller = ProductsController.getInstance();
+  const stageController = StageController.getInstance();
 
   const state = computed(() => controller.listState.value);
 
@@ -31,6 +49,11 @@
 
   const perPage = ref(12);
   const word = ref('');
+  const selectedStageIds = ref<number[]>([]);
+  const stageGroups = ref<StageGroup[]>([]);
+  const stagesLoading = ref(false);
+  const isStageFilterOpen = ref(false);
+  const stageFilterRef = ref<HTMLElement | null>(null);
 
   const statsData = ref<ProductStatsModel | null>(null);
 
@@ -54,49 +77,193 @@
     ];
   });
 
-  const fetchProducts = async (page: number = 1, searchWord: string = '') =>
-    controller.fetchList(
-      new IndexProductsParams(
-        searchWord,
-        route.query.page ? Number(route.query.page) : page,
-        perPage.value,
-        1,
-      ),
-    );
 
-  const fetchStats = async () => {
-    const result = await controller.fetchStats(new IndexProductsParams('', 1, 1, 0));
+  // ======================================================
+  // Fetch Products
+  // ======================================================
 
-    statsData.value = result;
+  const getRoutePage = () => {
+    const page = Number(route.query.page);
+
+    return Number.isInteger(page) && page > 0 ? page : 1;
   };
 
-  const onPageChange = (page: number) => {
-    void fetchProducts(page);
+  const parseStageIds = (queryStages: unknown): number[] => {
+    const rawStageIds = Array.isArray(queryStages)
+      ? queryStages.join(',')
+      : String(queryStages ?? '');
 
+    return [
+      ...new Set(
+        rawStageIds
+          .split(',')
+          .map(Number)
+          .filter((stageId) => Number.isInteger(stageId) && stageId > 0),
+      ),
+    ];
+  };
+
+  const fetchProducts = async (page: number = getRoutePage(), searchWord: string = word.value) =>
+    controller.fetchList(
+      new IndexProductsParams({
+        word: searchWord,
+        page,
+        perPage: perPage.value,
+        withPage: 1,
+        stageIds: selectedStageIds.value,
+      }),
+    );
+
+
+  const updateFilterQuery = (page: number) => {
     void router.push({
       query: {
         ...route.query,
         page: String(page),
         word: word.value || undefined,
+        stages: selectedStageIds.value.length ? selectedStageIds.value.join(',') : undefined,
       },
     });
   };
 
-  const search = debounce(() => {
-    router.push({
-      query: {
-        ...route.query,
-        page: 1,
-        word: word.value || undefined,
-      },
-    });
+  // ======================================================
+  // Fetch Stats
+  // ======================================================
 
-    fetchProducts(1, word.value);
+  const fetchStats = async () => {
+    const statsResponse = await controller.fetchStats(
+      new IndexProductsParams({ page: 1, perPage: 1, withPage: 0 }),
+    );
+
+    statsData.value = statsResponse;
+  };
+
+  // ======================================================
+  // Stage Filter
+  // ======================================================
+
+  const fetchSubStagesForMainStage = async (mainStage: StageApiItem) => {
+    const subStageResponse = await stageController.fetchList(
+      new IndexStageParams({
+        word: '',
+        page: 1,
+        perPage: 100,
+        withPage: 0,
+        parentId: mainStage.id,
+      }),
+    );
+
+    return ((subStageResponse.data ?? []) as StageItem[]).map((subStage) => ({
+      ...subStage,
+      parent_id: mainStage.id,
+    }));
+  };
+
+  const fetchSubStages = async (mainStages: StageApiItem[]) =>
+    (await Promise.all(mainStages.map(fetchSubStagesForMainStage))).flat();
+
+  const createStageGroups = (mainStages: StageApiItem[], subStages: StageApiItem[]) =>
+    mainStages.map((mainStage) => ({
+      id: mainStage.id,
+      title: mainStage.title,
+      stages: subStages
+        .filter((subStage) => subStage.parent_id === mainStage.id)
+        .map((subStage) => ({ id: subStage.id, title: subStage.title })),
+    }));
+
+  const fetchStages = async () => {
+    stagesLoading.value = true;
+
+    try {
+      const stageResponse = await stageController.fetchList(
+        new IndexStageParams({
+          word: '',
+          page: 1,
+          perPage: 1000,
+          withPage: 0,
+          parentId: null,
+        }),
+      );
+
+      const allStages = (stageResponse.data ?? []) as StageApiItem[];
+      const mainStages = allStages.filter((stage) => !stage.parent_id);
+      let subStages = allStages.filter((stage) => stage.parent_id);
+
+      if (mainStages.length && !subStages.length) {
+        subStages = await fetchSubStages(mainStages);
+      }
+
+      stageGroups.value = createStageGroups(mainStages, subStages);
+    } finally {
+      stagesLoading.value = false;
+    }
+  };
+
+  const toggleStage = (stageId: number) => {
+    selectedStageIds.value = selectedStageIds.value.includes(stageId)
+      ? selectedStageIds.value.filter((selectedId) => selectedId !== stageId)
+      : [...selectedStageIds.value, stageId];
+  };
+
+  const isStageSelected = (stageId: number) => selectedStageIds.value.includes(stageId);
+
+  const hasSubStages = (group: StageGroup) => group.stages.length > 0;
+
+  const isStageGroupSelected = (group: StageGroup) =>
+    hasSubStages(group) && group.stages.every((stage) => isStageSelected(stage.id));
+
+  const toggleStageGroup = (group: StageGroup) => {
+    if (!hasSubStages(group)) return;
+
+    const subStageIds = group.stages.map((stage) => stage.id);
+
+    selectedStageIds.value = isStageGroupSelected(group)
+      ? selectedStageIds.value.filter((stageId) => !subStageIds.includes(stageId))
+      : [...new Set([...selectedStageIds.value, ...subStageIds])];
+  };
+
+  const applyStageFilter = async () => {
+    isStageFilterOpen.value = false;
+    updateFilterQuery(1);
+    await fetchProducts(1, word.value);
+  };
+
+  const clearStageFilter = async () => {
+    selectedStageIds.value = [];
+    isStageFilterOpen.value = false;
+    updateFilterQuery(1);
+    await fetchProducts(1, word.value);
+  };
+
+  const closeStageFilterOnOutsideClick = (event: PointerEvent) => {
+    if (
+      isStageFilterOpen.value &&
+      event.target instanceof Node &&
+      !stageFilterRef.value?.contains(event.target)
+    ) {
+      isStageFilterOpen.value = false;
+    }
+  };
+
+  const onPageChange = (page: number) => {
+    void fetchProducts(page, word.value);
+    updateFilterQuery(page);
+  };
+
+
+  // ======================================================
+  // Search
+  // ======================================================
+
+  const Search = debounce(() => {
+    updateFilterQuery(1);
+    void fetchProducts(1, word.value);
   });
 
   const onPerPageChange = (count: number) => {
     perPage.value = count;
-    void fetchProducts(1);
+    updateFilterQuery(1);
+    void fetchProducts(1, word.value);
   };
 
   const deleteProduct = async (id: number) => {
@@ -126,8 +293,14 @@
 
   onMounted(async () => {
     word.value = route.query.word ? String(route.query.word) : '';
+    selectedStageIds.value = parseStageIds(route.query.stages);
+    document.addEventListener('pointerdown', closeStageFilterOnOutsideClick);
 
-    await Promise.all([fetchProducts(), fetchStats()]);
+    await Promise.all([fetchProducts(getRoutePage(), word.value), fetchStats(), fetchStages()]);
+  });
+
+  onBeforeUnmount(() => {
+    document.removeEventListener('pointerdown', closeStageFilterOnOutsideClick);
   });
 </script>
 
@@ -224,40 +397,104 @@
           </svg>
         </div>
 
-        <div class="stat-copy">
-          <strong class="stat-value" aria-live="polite">{{ stat.value }}</strong>
-          <span class="stat-label">{{ $t(`Products.stats.${stat.label}`) }}</span>
+
+        <div ref="stageFilterRef" class="stage-filter">
+          <button
+            type="button"
+            class="stage-filter-button"
+            :class="{ active: selectedStageIds.length > 0 }"
+            aria-haspopup="dialog"
+            :aria-expanded="isStageFilterOpen"
+            aria-controls="products-stage-filter"
+            @click="isStageFilterOpen = !isStageFilterOpen"
+          >
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M4 5h16" />
+              <path d="M7 12h10" />
+              <path d="M10 19h4" />
+            </svg>
+
+            <span>
+              {{ $t('Products.filter_by_stage') }}
+
+              <span v-if="selectedStageIds.length"> ({{ selectedStageIds.length }}) </span>
+            </span>
+          </button>
+
+          <div
+            v-if="isStageFilterOpen"
+            id="products-stage-filter"
+            class="stage-filter-popover"
+            role="dialog"
+            :aria-label="$t('Products.filter_by_stage')"
+          >
+            <div class="stage-filter-content">
+              <div v-if="stagesLoading" class="stage-filter-state">
+                {{ $t('Products.form.stages_loading') }}
+              </div>
+
+              <div v-else-if="!stageGroups.length" class="stage-filter-state">
+                {{ $t('Products.form.stages_empty') }}
+              </div>
+
+              <div v-else class="stage-filter-groups">
+                <section v-for="group in stageGroups" :key="group.id" class="stage-filter-group">
+                  <button
+                    type="button"
+                    class="stage-filter-group-button"
+                    :class="{ selected: isStageGroupSelected(group) }"
+                    :disabled="!hasSubStages(group)"
+                    :aria-pressed="hasSubStages(group) ? isStageGroupSelected(group) : undefined"
+                    @click="toggleStageGroup(group)"
+                  >
+                    <span>{{ group.title }}</span>
+                    <span class="stage-filter-count">{{ group.stages.length }}</span>
+                  </button>
+
+                  <div v-if="hasSubStages(group)" class="stage-filter-options">
+                    <label
+                      v-for="stage in group.stages"
+                      :key="stage.id"
+                      class="stage-filter-option"
+                    >
+                      <input
+                        type="checkbox"
+                        :checked="isStageSelected(stage.id)"
+                        @change="toggleStage(stage.id)"
+                      />
+
+                      <span>{{ stage.title }}</span>
+                    </label>
+                  </div>
+                </section>
+              </div>
+            </div>
+
+            <div class="stage-filter-actions">
+              <button
+                type="button"
+                class="stage-filter-apply"
+                :disabled="stagesLoading"
+                @click="applyStageFilter"
+              >
+                {{ $t('Products.apply_filter') }}
+              </button>
+
+              <button type="button" class="stage-filter-clear" @click="clearStageFilter">
+                {{ $t('Products.clear_filter') }}
+              </button>
+            </div>
+          </div>
         </div>
-      </article>
-    </div>
-
-    <div class="toolbar">
-      <div class="search-box">
-        <label class="sr-only" for="product-search">
-          {{ $t('Products.search_placeholder') }}
-        </label>
-
-        <svg
-          class="search-icon"
-          width="18"
-          height="18"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          aria-hidden="true"
-        >
-          <circle cx="11" cy="11" r="8" />
-          <path d="m21 21-4.35-4.35" />
-        </svg>
-
-        <input
-          id="product-search"
-          v-model="word"
-          type="search"
-          :placeholder="$t('Products.search_placeholder')"
-          @input="search"
-        />
       </div>
     </div>
 
@@ -636,6 +873,12 @@
     box-shadow: var(--shadow-sm);
   }
 
+  .toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: var(--xs-size-3);
+  }
+
   .search-box {
     position: relative;
     width: min(100%, 30rem);
@@ -687,6 +930,183 @@
     white-space: nowrap;
   }
 
+  .stage-filter {
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  .stage-filter-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--xs-size-4);
+    min-height: 40px;
+    padding: var(--xs-size) var(--md-size);
+    border: 1px solid var(--input-border-color);
+    border-radius: var(--radius-sm);
+    background: var(--bg-card);
+    color: var(--title-card-color);
+    font-size: var(--sm-size);
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: var(--transition-fast);
+
+    &:hover,
+    &.active {
+      border-color: var(--PrimaryColor);
+      background: var(--PrimaryColor-light);
+      color: var(--PrimaryColor);
+    }
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 3px var(--PrimaryColor-alpha-15);
+    }
+  }
+
+  .stage-filter-popover {
+    position: absolute;
+    z-index: 20;
+    inset-block-start: calc(100% + var(--xs-size-4));
+    inset-inline-end: 0;
+    width: min(360px, calc(100vw - 2rem));
+    overflow: hidden;
+    border: 1px solid var(--border-weak);
+    border-radius: var(--radius-md);
+    background: var(--bg-card);
+    box-shadow: var(--shadow-md);
+  }
+
+  .stage-filter-content {
+    max-height: 360px;
+    overflow-y: auto;
+    padding: var(--sm-size);
+  }
+
+  .stage-filter-state {
+    padding: var(--md-size);
+    color: var(--subtitle-color);
+    font-size: var(--sm-size);
+    text-align: center;
+  }
+
+  .stage-filter-groups {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sm-size);
+  }
+
+  .stage-filter-group {
+    padding-bottom: var(--sm-size);
+    border-bottom: 1px solid var(--border-weak);
+
+    &:last-child {
+      padding-bottom: 0;
+      border-bottom: 0;
+    }
+  }
+
+  .stage-filter-group-button {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--xs-size-4);
+    width: 100%;
+    padding: var(--xs-size-3) var(--xs-size);
+    border: 0;
+    border-radius: var(--radius-xs);
+    background: transparent;
+    color: var(--title-card-color);
+    font-size: var(--sm-size);
+    font-weight: 700;
+    text-align: start;
+    cursor: pointer;
+
+    &:hover:not(:disabled),
+    &.selected {
+      background: var(--PrimaryColor-light);
+      color: var(--PrimaryColor);
+    }
+
+    &:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+  }
+
+  .stage-filter-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 22px;
+    height: 22px;
+    padding-inline: var(--xs-size-5);
+    border-radius: var(--radius-full);
+    background: var(--gray-100);
+    color: var(--gray-600);
+    font-size: var(--xs-size-2);
+  }
+
+  .stage-filter-options {
+    display: flex;
+    flex-direction: column;
+    gap: var(--xs-size-4);
+    padding: var(--xs-size-4) var(--xs-size);
+  }
+
+  .stage-filter-option {
+    display: flex;
+    align-items: center;
+    gap: var(--xs-size-3);
+    color: var(--gray-700);
+    font-size: var(--sm-size);
+    cursor: pointer;
+
+    input {
+      width: 16px;
+      height: 16px;
+      margin: 0;
+      accent-color: var(--PrimaryColor);
+      cursor: pointer;
+    }
+  }
+
+  .stage-filter-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--xs-size-3);
+    padding: var(--sm-size);
+    border-top: 1px solid var(--border-weak);
+    background: var(--bg-section);
+
+    button {
+      padding: var(--xs-size) var(--sm-size);
+      border-radius: var(--radius-xs);
+      font-size: var(--sm-size);
+      font-weight: 600;
+      cursor: pointer;
+
+      &:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+      }
+    }
+  }
+
+  .stage-filter-apply {
+    border: 1px solid var(--PrimaryColor);
+    background: var(--PrimaryColor);
+    color: var(--standard-white);
+  }
+
+  .stage-filter-clear {
+    border: 1px solid var(--border-weak);
+    background: var(--bg-card);
+    color: var(--gray-700);
+  }
+
+  /* ========== Grid ========== */
   .products-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
@@ -1018,8 +1438,18 @@
       align-items: stretch;
     }
 
-    .search-box {
+    .toolbar-right {
       width: 100%;
+    }
+
+    .search-box {
+      width: auto;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .stage-filter-popover {
+      inset-inline-end: 0;
     }
   }
 
