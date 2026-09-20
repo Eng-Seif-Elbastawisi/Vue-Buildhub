@@ -644,6 +644,12 @@ export const sidebarSections: SidebarSectionConfig[] = [
       },
 
       {
+        path: '/labor',
+        labelKey: 'sidebar.labor',
+        icon: SidebarEmployeeIcon,
+      },
+
+      {
         path: '/brand',
         labelKey: 'sidebar.brands',
         icon: SidebarBrandTagIcon,
