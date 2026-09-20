@@ -1,5 +1,3 @@
-import BranchesModel from './branches.model';
-
 /**
  * Quote Type model
  */
@@ -13,13 +11,6 @@ export default class QuoteTypeModel {
     description: Record<string, string>;
   };
 
-  public readonly e_c_subject_id?: number;
-
-  public readonly branches: BranchesModel[];
-  public readonly children: QuoteTypeModel[];
-  public readonly status: boolean;
-  public readonly quoteTypeChildrenCount: number;
-
   constructor(data: {
     id?: number;
     translations?: {
@@ -28,11 +19,6 @@ export default class QuoteTypeModel {
     };
     title?: string;
     description?: string;
-    e_c_subject_id?: number;
-    branches: BranchesModel[];
-    children: QuoteTypeModel[];
-    status?: boolean;
-    quoteTypeChildrenCount?: number;
   }) {
     this.id = data.id;
 
@@ -54,19 +40,16 @@ export default class QuoteTypeModel {
       Object.values(this.translations.description)[0] ??
       '';
 
-    this.e_c_subject_id = data.e_c_subject_id;
-    this.branches = data.branches;
-    this.children = data.children;
-    this.status = data.status ?? false;
-    this.quoteTypeChildrenCount = data.quoteTypeChildrenCount ?? 0;
-
     Object.freeze(this);
   }
 
   /**
    * Map translations from API response
    */
-  static mapTranslations(translations: unknown, key: string = 'title'): Record<string, string> {
+  static mapTranslations(
+    translations: unknown,
+    key: 'title' | 'description' = 'title',
+  ): Record<string, string> {
     if (!translations) {
       return {};
     }
@@ -91,7 +74,7 @@ export default class QuoteTypeModel {
       description?: Record<string, string>;
     };
 
-    return value?.[key as 'title' | 'description'] ?? {};
+    return value[key] ?? {};
   }
 
   /**
@@ -186,22 +169,6 @@ export default class QuoteTypeModel {
           'description',
         ),
       },
-
-      e_c_subject_id: json.e_c_subject_id as number | undefined,
-
-      branches: Array.isArray(json.branches)
-        ? json.branches.map((branch: unknown) => BranchesModel.fromJson(branch))
-        : [],
-
-      children: Array.isArray(json.children)
-        ? json.children.map((child: unknown) =>
-            QuoteTypeModel.fromJson(child as Record<string, unknown>),
-          )
-        : [],
-
-      status: json.status as boolean | undefined,
-
-      quoteTypeChildrenCount: (json.quote_type_children_count as number | undefined) ?? 0,
     });
   }
 
@@ -219,9 +186,5 @@ export default class QuoteTypeModel {
         ar: 'وصف نوع العرض',
       },
     },
-
-    branches: [BranchesModel.example],
-
-    children: [],
   });
 }
