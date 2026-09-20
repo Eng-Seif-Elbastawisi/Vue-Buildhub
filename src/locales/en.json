@@ -2454,8 +2454,6 @@
   "description": "Description",
   "sub_stages": "Sub Stages",
   "total_materials": "Total Materials",
-
-
   "stage_placeholder": "Select Stage",
   "measurement_placeholder": "Select Measurement Unit",
   "item_type_placeholder": "Select Item Type",
@@ -2498,6 +2496,7 @@
     "labor": "labor",
     "description": "Manage materials, prices, units, and translated titles",
     "price_placeholder": "Enter Labor Price",
-    "add": "Add Labor"
+    "add": "Add Labor",
+    "sidebar.quote-types": "Quote Types"
   }
 }
