@@ -48,6 +48,11 @@ export default class AddProductsParams implements Params {
     stageIds: {
       required: true,
     },
+
+    sortings: {
+      labelKey: 'product_sorting',
+      required: (product) => product.isActive === true,
+    },
   });
 
   constructor(data: {

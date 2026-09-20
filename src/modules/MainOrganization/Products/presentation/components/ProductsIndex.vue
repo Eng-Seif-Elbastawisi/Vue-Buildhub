@@ -1,13 +1,15 @@
 <script setup lang="ts">
   import { computed, onMounted, ref } from 'vue';
+  import { useI18n } from 'vue-i18n';
   import { useRoute, useRouter } from 'vue-router';
 
+  import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
+  import { dialogManager } from '@/base/Presentation/Dialogs/dialog.manager';
   import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
   import Pagination from '@/shared/HelpersComponents/Pagination.vue';
   import { debounce } from '@/base/Presentation/Utils/debouced';
   import IndexAddIcon from '@/shared/icons/IndexAddIcon.vue';
   import DeleteDialog from '@/base/Presentation/Dialogs/MainDialogs/DeleteDialog.vue';
-  import { useUserStore } from '@/stores/user';
   import ChangeStatusButton from '@/modules/MainOrganization/ChangeStatus/presentation/components/ChangeStatusButton.vue';
   import { StatusTypeEnum } from '@/modules/MainOrganization/ChangeStatus/core/constant/change_status.type.enum';
 
@@ -25,15 +27,10 @@
 
   const route = useRoute();
   const router = useRouter();
+  const { t } = useI18n();
 
-  const perPage = ref(12); 
+  const perPage = ref(12);
   const word = ref('');
-
-  const { user } = useUserStore();
-
-  // ======================================================
-  // Stats
-  // ======================================================
 
   const statsData = ref<ProductStatsModel | null>(null);
 
@@ -42,24 +39,20 @@
       {
         label: 'no_sorting',
         value: statsData.value?.hasNotSortingCount ?? 0,
-        color: 'bg-slate-50',
+        tone: 'neutral',
       },
       {
         label: 'has_sorting',
         value: statsData.value?.hasSortingCount ?? 0,
-        color: 'bg-emerald-50',
+        tone: 'success',
       },
       {
         label: 'all_products',
         value: statsData.value?.productsCount ?? 0,
-        color: 'bg-amber-50',
+        tone: 'primary',
       },
     ];
   });
-
-  // ======================================================
-  // Fetch Products
-  // ======================================================
 
   const fetchProducts = async (page: number = 1, searchWord: string = '') =>
     controller.fetchList(
@@ -71,19 +64,11 @@
       ),
     );
 
-  // ======================================================
-  // Fetch Stats
-  // ======================================================
-
   const fetchStats = async () => {
     const result = await controller.fetchStats(new IndexProductsParams('', 1, 1, 0));
 
     statsData.value = result;
   };
-
-  // ======================================================
-  // Pagination
-  // ======================================================
 
   const onPageChange = (page: number) => {
     void fetchProducts(page);
@@ -97,11 +82,7 @@
     });
   };
 
-  // ======================================================
-  // Search
-  // ======================================================
-
-  const Search = debounce(() => {
+  const search = debounce(() => {
     router.push({
       query: {
         ...route.query,
@@ -113,26 +94,21 @@
     fetchProducts(1, word.value);
   });
 
-  // ======================================================
-  // Per Page
-  // ======================================================
-
   const onPerPageChange = (count: number) => {
     perPage.value = count;
     void fetchProducts(1);
   };
 
-  // ======================================================
-  // Delete Product
-  // ======================================================
-
   const deleteProduct = async (id: number) => {
-    await controller.delete(
+    const deletionState = await controller.delete(
       new DeleteProductsParams({
         productsId: id,
       }),
     );
 
+    if (!(deletionState instanceof DataSuccess)) return;
+
+    dialogManager.toastSuccess(deletionState.message || t('Products.delete_success'));
     await Promise.all([fetchProducts(), fetchStats()]);
   };
 
@@ -140,31 +116,13 @@
     await Promise.all([fetchProducts(), fetchStats()]);
   };
 
-  // ======================================================
-  // Helpers
-  // ======================================================
-
   const formatPrice = (price?: number) => {
     if (price == null) return '—';
 
     return new Intl.NumberFormat('ar-EG').format(price);
   };
 
-  const getStageLabel = (product: ProductsModel) => {
-    const count = product.stageIds?.length ?? 0;
-
-    if (count === 0) return null;
-
-    if (count === 1) return 'Products.stages.one';
-
-    return 'Products.stages.many';
-  };
-
   const getStageCount = (product: ProductsModel) => product.stageIds?.length ?? 0;
-
-  // ======================================================
-  // Mounted
-  // ======================================================
 
   onMounted(async () => {
     word.value = route.query.word ? String(route.query.word) : '';
@@ -175,81 +133,150 @@
 
 <template>
   <div class="products-library">
-    <!-- Header -->
     <header class="page-header">
-      <div class="header-left">
-        <h1 class="title">
-          {{ $t('Products.library_title') }}
-        </h1>
+      <div class="header-content">
+        <div class="header-icon" aria-hidden="true">
+          <svg
+            width="26"
+            height="26"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path
+              d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"
+            />
+            <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+            <line x1="12" y1="22.08" x2="12" y2="12" />
+          </svg>
+        </div>
 
-        <p class="subtitle">
-          {{ $t('Products.library_subtitle') }}
+        <div class="header-copy">
+          <span class="badge">{{ $t('Products.badge') }}</span>
 
-          <span class="badge">
-            {{ $t('Products.badge') }}
-          </span>
-        </p>
+          <h1 class="title">{{ $t('Products.library_title') }}</h1>
+          <p class="subtitle">{{ $t('Products.library_subtitle') }}</p>
+        </div>
       </div>
 
-      <router-link
-        class="btn-add"
-        :to="user?.type === 1 ? '/organization/products/add' : '/organization/products/add'"
-      >
+      <router-link class="btn-add" to="/organization/products/add">
         <IndexAddIcon />
-
         {{ $t('Products.add') }}
       </router-link>
     </header>
 
-    <!-- Stats Cards -->
     <div class="stats-grid">
-      <div v-for="(stat, i) in stats" :key="i" class="stat-card" :class="stat.color">
-        <span class="stat-label">
-          {{ $t(`Products.stats.${stat.label}`) }}
-        </span>
-
-        <span class="stat-value">
-          {{ stat.value }}
-        </span>
-      </div>
-    </div>
-
-    <!-- Toolbar -->
-    <div class="toolbar">
-      <div class="toolbar-right">
-        <div class="search-box">
+      <article
+        v-for="stat in stats"
+        :key="stat.label"
+        class="stat-card"
+        :class="`stat-card--${stat.tone}`"
+      >
+        <div class="stat-icon" aria-hidden="true">
           <svg
-            class="search-icon"
-            width="18"
-            height="18"
+            v-if="stat.label === 'no_sorting'"
+            width="20"
+            height="20"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
             stroke-width="2"
+            stroke-linecap="round"
           >
-            <circle cx="11" cy="11" r="8" />
-            <path d="m21 21-4.35-4.35" />
+            <circle cx="12" cy="12" r="9" />
+            <path d="m8 8 8 8" />
           </svg>
 
-          <input
-            v-model="word"
-            type="text"
-            :placeholder="$t('Products.search_placeholder')"
-            @input="Search"
-          />
+          <svg
+            v-else-if="stat.label === 'has_sorting'"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="m12 2 9 5-9 5-9-5 9-5Z" />
+            <path d="m3 12 9 5 9-5" />
+            <path d="m3 17 9 5 9-5" />
+          </svg>
+
+          <svg
+            v-else
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <rect x="3" y="3" width="7" height="7" rx="1" />
+            <rect x="14" y="3" width="7" height="7" rx="1" />
+            <rect x="3" y="14" width="7" height="7" rx="1" />
+            <rect x="14" y="14" width="7" height="7" rx="1" />
+          </svg>
         </div>
+
+        <div class="stat-copy">
+          <strong class="stat-value" aria-live="polite">{{ stat.value }}</strong>
+          <span class="stat-label">{{ $t(`Products.stats.${stat.label}`) }}</span>
+        </div>
+      </article>
+    </div>
+
+    <div class="toolbar">
+      <div class="search-box">
+        <label class="sr-only" for="product-search">
+          {{ $t('Products.search_placeholder') }}
+        </label>
+
+        <svg
+          class="search-icon"
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          aria-hidden="true"
+        >
+          <circle cx="11" cy="11" r="8" />
+          <path d="m21 21-4.35-4.35" />
+        </svg>
+
+        <input
+          id="product-search"
+          v-model="word"
+          type="search"
+          :placeholder="$t('Products.search_placeholder')"
+          @input="search"
+        />
       </div>
     </div>
 
-    <!-- Content -->
     <DataStatusBuilder :controller="state" :on-retry="async () => await fetchProducts()">
-      <!-- Success -->
       <template #success="{ data }">
         <div class="products-grid">
-          <div v-for="product in data as ProductsModel[]" :key="product.id" class="product-card">
-            <!-- Image -->
+          <article
+            v-for="product in data as ProductsModel[]"
+            :key="product.id"
+            class="product-card"
+          >
             <div class="card-image">
-              <img v-if="product.image" :src="product.image" :alt="product.title" class="img" />
+              <img
+                v-if="product.image"
+                :src="product.image"
+                :alt="product.title"
+                class="img"
+                loading="lazy"
+              />
 
               <div v-else class="placeholder">
                 <svg
@@ -268,25 +295,27 @@
 
                   <line x1="12" y1="22.08" x2="12" y2="12" />
                 </svg>
+
+                <span>{{ $t('Products.show.no_image') }}</span>
               </div>
+
+              <span v-if="product.itemTypeTitle" class="type-badge">
+                {{ product.itemTypeTitle }}
+              </span>
             </div>
 
-            <!-- Body -->
             <div class="card-body">
               <div class="card-top">
                 <h3 class="product-title">
-                  {{ product.title }}
+                  <router-link :to="`/organization/products/show/${product.id}`">
+                    {{ product.title }}
+                  </router-link>
                 </h3>
 
-                <span class="price">
-                  {{ formatPrice(product.expectedPrice) }}
-                </span>
-              </div>
-
-              <div class="meta">
-                <span v-if="product.itemTypeTitle" class="type-badge">
-                  {{ product.itemTypeTitle }}
-                </span>
+                <div class="price">
+                  <strong>{{ formatPrice(product.expectedPrice) }}</strong>
+                  <span>{{ $t('Products.form.currency') }}</span>
+                </div>
               </div>
 
               <div class="tags">
@@ -294,12 +323,8 @@
                   {{ $t('Products.tags.sorting') }}
                 </span>
 
-                <span v-if="getStageLabel(product)" class="tag tag-stage">
-                  {{
-                    $t(getStageLabel(product)!, {
-                      count: getStageCount(product),
-                    })
-                  }}
+                <span v-if="getStageCount(product)" class="tag tag-stage">
+                  {{ $t('Products.tags.stage', { count: getStageCount(product) }) }}
                 </span>
 
                 <span v-if="product.measurementUnitTitle" class="tag tag-unit">
@@ -308,7 +333,6 @@
               </div>
             </div>
 
-            <!-- Actions -->
             <div class="card-actions">
               <ChangeStatusButton
                 :id="product.id!"
@@ -318,11 +342,11 @@
                 @reload="reloadProducts"
               />
 
-              <!-- Edit -->
               <router-link
                 class="action-btn edit"
                 :to="`/organization/products/edit/${product.id}`"
                 :title="$t('common.edit')"
+                :aria-label="$t('common.edit')"
               >
                 <svg
                   width="15"
@@ -340,10 +364,11 @@
                 </svg>
               </router-link>
 
-              <!-- Show -->
               <router-link
                 class="action-btn show"
                 :to="`/organization/products/show/${product.id}`"
+                :title="$t('show')"
+                :aria-label="$t('show')"
               >
                 <svg
                   width="15"
@@ -361,7 +386,6 @@
                 </svg>
               </router-link>
 
-              <!-- Delete -->
               <DeleteDialog
                 :title="$t('Products.delete_dialog.title')"
                 :message="$t('Products.delete_dialog.message')"
@@ -369,7 +393,12 @@
                 @delete="deleteProduct(product.id!)"
               >
                 <template #btn>
-                  <button class="action-btn delete" type="button" :title="$t('common.delete')">
+                  <button
+                    class="action-btn delete"
+                    type="button"
+                    :title="$t('common.delete')"
+                    :aria-label="$t('common.delete')"
+                  >
                     <svg
                       width="15"
                       height="15"
@@ -390,7 +419,7 @@
                 </template>
               </DeleteDialog>
             </div>
-          </div>
+          </article>
         </div>
 
         <Pagination
@@ -400,7 +429,6 @@
         />
       </template>
 
-      <!-- Empty -->
       <template #empty>
         <div class="empty-state">
           <div class="empty-icon">📦</div>
@@ -413,10 +441,7 @@
             {{ $t('Products.empty_description') }}
           </p>
 
-          <router-link
-            class="btn-add"
-            :to="user?.type === 1 ? '/organization/products/add' : '/organization/products/add'"
-          >
+          <router-link class="btn-add" to="/organization/products/add">
             <IndexAddIcon />
 
             {{ $t('Products.add') }}
@@ -424,7 +449,6 @@
         </div>
       </template>
 
-      <!-- Loader -->
       <template #loader>
         <div class="products-grid">
           <div v-for="i in 8" :key="i" class="product-card skeleton">
@@ -448,115 +472,196 @@
   .products-library {
     display: flex;
     flex-direction: column;
-    gap: var(--md-size-2);
-    padding: 0 var(--sm-size);
+    gap: 1.25rem;
+    padding: clamp(1rem, 2vw, 1.75rem);
+    background: var(--bg-section);
+    border-radius: var(--radius-xl);
   }
 
-  /* ========== Header ========== */
   .page-header {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem 1.5rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border-weak);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-sm);
 
     .title {
-      font-size: var(--xl-size-2);
-      font-weight: 700;
-      color: var(--title-color);
       margin: 0;
+      color: var(--title-color);
+      font-size: clamp(var(--lg-size), 2vw, var(--xl-size-2));
+      font-weight: 700;
     }
 
     .subtitle {
-      color: var(--subtitle-color);
       margin-top: var(--xs-size-4);
+      color: var(--subtitle-color);
       font-size: var(--sm-size);
     }
 
     .badge {
-      background: var(--PrimaryColor-light);
-      color: var(--PrimaryColor);
+      display: inline-flex;
+      margin-bottom: 0.3rem;
       padding: var(--xs-size-5) var(--xs-size-3);
+      color: var(--PrimaryColor);
+      background: var(--PrimaryColor-light);
       border-radius: var(--radius-full);
       font-size: var(--xs-size);
-      font-weight: 500;
-      margin-right: var(--xs-size-4);
+      font-weight: 600;
     }
+  }
+
+  .header-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    min-width: 0;
+  }
+
+  .header-icon {
+    display: grid;
+    flex: 0 0 3.5rem;
+    width: 3.5rem;
+    height: 3.5rem;
+    color: var(--standard-white);
+    background: var(--PrimaryColor);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    place-items: center;
+  }
+
+  .header-copy {
+    min-width: 0;
   }
 
   .btn-add {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: var(--xs-size-4);
-    background: var(--PrimaryColor);
-    color: var(--standard-white);
+    min-height: 2.75rem;
     padding: var(--sm-size) var(--md-size);
-    border-radius: var(--radius-sm);
-    font-weight: 600;
+    color: var(--standard-white);
+    background: var(--PrimaryColor);
+    border-radius: var(--radius-md);
     font-size: var(--sm-size);
+    font-weight: 700;
     text-decoration: none;
     transition: var(--transition-fast);
 
     &:hover {
       background: var(--PrimaryColor-hover);
       box-shadow: var(--shadow-md);
+      transform: translateY(-1px);
     }
   }
 
-  /* ========== Stats ========== */
   .stats-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: var(--md-size);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
   }
 
   .stat-card {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    min-width: 0;
+    padding: 1rem 1.1rem;
     background: var(--bg-card);
     border: 1px solid var(--border-weak);
-    border-radius: var(--radius-md);
-    padding: var(--md-size);
-    display: flex;
-    flex-direction: column;
-    gap: var(--xs-size-4);
+    border-inline-start: 0.25rem solid var(--gray-400);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+
+    &--success {
+      border-inline-start-color: var(--success);
+
+      .stat-icon {
+        color: var(--success-dark);
+        background: var(--success-light);
+      }
+    }
+
+    &--primary {
+      border-inline-start-color: var(--PrimaryColor);
+
+      .stat-icon {
+        color: var(--PrimaryColor);
+        background: var(--PrimaryColor-alpha-8);
+      }
+    }
 
     .stat-label {
-      font-size: var(--sm-size);
       color: var(--subtitle-color);
+      font-size: var(--sm-size);
     }
 
     .stat-value {
+      color: var(--title-color);
       font-size: var(--xl-size-2);
       font-weight: 700;
-      color: var(--title-color);
+      line-height: 1;
     }
   }
 
-  /* ========== Toolbar ========== */
+  .stat-icon {
+    display: grid;
+    flex: 0 0 2.75rem;
+    width: 2.75rem;
+    height: 2.75rem;
+    color: var(--gray-600);
+    background: var(--gray-100);
+    border-radius: var(--radius-md);
+    place-items: center;
+  }
+
+  .stat-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    min-width: 0;
+  }
+
   .toolbar {
     display: flex;
-    justify-content: flex-end;
     align-items: center;
-    gap: var(--md-size);
+    padding: 0.85rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border-weak);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
   }
 
   .search-box {
     position: relative;
-    width: 280px;
+    width: min(100%, 30rem);
 
     .search-icon {
       position: absolute;
-      right: var(--xs-size);
       top: 50%;
-      transform: translateY(-50%);
+      inset-inline-start: 0.9rem;
       color: var(--gray-400);
+      pointer-events: none;
+      transform: translateY(-50%);
     }
 
     input {
       width: 100%;
-      padding: var(--xs-size) calc(var(--md-size) + var(--sm-size)) var(--xs-size) var(--md-size);
-      border: 1px solid var(--input-border-color);
-      border-radius: var(--radius-sm);
-      background: var(--bg-card);
-      font-size: var(--sm-size);
+      min-height: 2.75rem;
+      padding-block: 0.65rem;
+      padding-inline: 2.75rem 1rem;
       color: var(--Title-input-Color);
+      background: var(--bg-card);
+      border: 1px solid var(--input-border-color);
+      border-radius: var(--radius-md);
+      font-size: var(--sm-size);
+      transition:
+        border-color var(--transition-fast),
+        box-shadow var(--transition-fast);
 
       &::placeholder {
         color: var(--placeholder-text);
@@ -570,88 +675,149 @@
     }
   }
 
-  /* ========== Grid ========== */
+  .sr-only {
+    position: absolute;
+    overflow: hidden;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    border: 0;
+    clip: rect(0, 0, 0, 0);
+    margin: -1px;
+    white-space: nowrap;
+  }
+
   .products-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: var(--md-size);
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
+    gap: 1rem;
   }
 
   .product-card {
+    display: flex;
+    overflow: hidden;
+    min-width: 0;
+    flex-direction: column;
     background: var(--bg-card);
     border: 1px solid var(--border-weak);
     border-radius: var(--radius-lg);
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    transition: var(--transition);
+    box-shadow: var(--shadow-sm);
+    transition:
+      box-shadow var(--transition-fast),
+      transform var(--transition-fast),
+      border-color var(--transition-fast);
 
     &:hover {
-      box-shadow: var(--shadow-md);
+      border-color: var(--PrimaryColor-alpha-30);
+      box-shadow: var(--shadow-lg);
       transform: translateY(-2px);
     }
   }
 
   .card-image {
-    height: 140px;
-    background: linear-gradient(135deg, var(--gray-50) 0%, var(--gray-100) 100%);
     display: flex;
+    position: relative;
     align-items: center;
     justify-content: center;
-    position: relative;
+    height: 11rem;
+    overflow: hidden;
+    background: linear-gradient(135deg, var(--gray-50) 0%, var(--gray-100) 100%);
 
     .img {
       width: 100%;
       height: 100%;
       object-fit: cover;
+      transition: transform var(--transition-slow);
     }
 
     .placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
       color: var(--gray-300);
+      font-size: var(--xs-size);
+    }
+
+    .type-badge {
+      position: absolute;
+      inset-inline-start: 0.75rem;
+      bottom: 0.75rem;
+      max-width: calc(100% - 1.5rem);
+      overflow: hidden;
+      padding: 0.3rem 0.65rem;
+      color: var(--title-card-color);
+      background: var(--bg-card);
+      border: 1px solid var(--border-weak);
+      border-radius: var(--radius-full);
+      box-shadow: var(--shadow-sm);
+      font-size: var(--xs-size);
+      font-weight: 600;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
   }
 
+  .product-card:hover .card-image .img {
+    transform: scale(1.03);
+  }
+
   .card-body {
-    padding: var(--md-size);
     flex: 1;
+    padding: 1rem;
   }
 
   .card-top {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    gap: var(--xs-size-4);
-    margin-bottom: var(--xs-size-4);
+    gap: 0.75rem;
+    margin-bottom: 0.85rem;
 
     .product-title {
-      font-size: var(--sm-size);
-      font-weight: 600;
-      color: var(--title-card-color);
+      min-width: 0;
       margin: 0;
+      font-size: var(--md-size);
+      font-weight: 700;
       line-height: 1.35;
+
+      a {
+        display: -webkit-box;
+        overflow: hidden;
+        color: var(--title-card-color);
+        text-decoration: none;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+
+        &:hover {
+          color: var(--PrimaryColor);
+        }
+      }
     }
 
     .price {
-      font-size: var(--sm-size);
-      font-weight: 700;
-      color: var(--PrimaryColor);
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
       white-space: nowrap;
-    }
-  }
 
-  .meta {
-    margin-bottom: var(--xs-size-3);
+      strong {
+        color: var(--PrimaryColor);
+        font-size: var(--md-size);
+      }
 
-    .type-badge {
-      font-size: var(--xs-size);
-      color: var(--subtitle-color);
+      span {
+        color: var(--subtitle-color);
+        font-size: var(--xs-size-2);
+      }
     }
   }
 
   .tags {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--xs-size-4);
+    gap: 0.4rem;
+    min-height: 1.6rem;
   }
 
   .tag {
@@ -676,11 +842,11 @@
     color: var(--gray-600);
   }
 
-  /* ========== Actions ========== */
   .card-actions {
     display: flex;
+    align-items: center;
     gap: var(--xs-size-4);
-    padding: var(--xs-size-3) var(--md-size) var(--md-size);
+    padding: 0.75rem 1rem;
     border-top: 1px solid var(--gray-100);
     background: var(--bg-section);
   }
@@ -690,9 +856,11 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    height: 36px;
-    border-radius: var(--radius-xs);
-    border: none;
+    height: 2.25rem;
+    color: var(--gray-600);
+    background: var(--bg-card);
+    border: 1px solid var(--border-weak);
+    border-radius: var(--radius-sm);
     cursor: pointer;
     font-size: var(--xs-size);
     font-weight: 600;
@@ -704,8 +872,8 @@
     }
 
     &.show {
-      background: var(--info-light);
       color: var(--info-dark);
+      background: var(--info-light);
 
       &:hover {
         background: var(--info);
@@ -715,8 +883,9 @@
     }
 
     &.edit {
-      background: var(--PrimaryColor);
       color: var(--standard-white);
+      background: var(--PrimaryColor);
+      border-color: var(--PrimaryColor);
 
       &:hover {
         background: var(--PrimaryColor-hover);
@@ -725,9 +894,8 @@
     }
 
     &.delete {
-      background: var(--gray-100);
       color: var(--gray-500);
-      border: 1px solid var(--border-weak);
+      background: var(--gray-100);
 
       &:hover {
         background: var(--danger);
@@ -736,15 +904,22 @@
         box-shadow: var(--shadow-md);
       }
     }
+
+    &:focus-visible {
+      outline: 2px solid var(--PrimaryColor);
+      outline-offset: 2px;
+    }
   }
 
-  /* ========== Empty ========== */
   .empty-state {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: var(--xs-size-3);
     padding: var(--section-padding) var(--md-size);
+    background: var(--bg-card);
+    border: 1px dashed var(--border-strong);
+    border-radius: var(--radius-xl);
     text-align: center;
 
     .empty-icon {
@@ -762,7 +937,6 @@
     }
   }
 
-  /* ========== Skeleton ========== */
   .skeleton {
     pointer-events: none;
 
@@ -807,7 +981,6 @@
     }
   }
 
-  /* ========== Responsive ========== */
   @media (max-width: 900px) {
     .stats-grid {
       grid-template-columns: repeat(2, 1fr);
@@ -815,13 +988,29 @@
   }
 
   @media (max-width: 640px) {
+    .products-library {
+      padding: 0.75rem;
+    }
+
     .page-header {
       flex-direction: column;
+      align-items: stretch;
       gap: var(--md-size);
+      padding: 1rem;
+    }
+
+    .header-icon {
+      flex-basis: 3rem;
+      width: 3rem;
+      height: 3rem;
+    }
+
+    .btn-add {
+      width: 100%;
     }
 
     .stats-grid {
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1fr;
     }
 
     .toolbar {
@@ -831,6 +1020,19 @@
 
     .search-box {
       width: 100%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .product-card,
+    .card-image .img,
+    .btn-add {
+      transition: none;
+    }
+
+    .skeleton .skeleton-box,
+    .skeleton .skeleton-line {
+      animation: none;
     }
   }
 </style>

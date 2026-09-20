@@ -7,9 +7,10 @@ describe('EditProductsParams', () => {
     const params = new EditProductsParams({
       productsId: 6,
       translations: new TranslationParams({ title: { en: 'Door' } }),
+      sortings: [],
       isActive: false,
     });
 
-    expect(params.toMap()).toMatchObject({ product_id: 6, is_active: false });
+    expect(params.toMap()).toMatchObject({ product_id: 6, sortings: [], is_active: false });
   });
 });

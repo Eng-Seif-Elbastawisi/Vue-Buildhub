@@ -1805,6 +1805,7 @@
   "validation.fields.preview_date": "تاريخ المعاينة",
   "validation.fields.preview_time": "وقت المعاينة",
   "validation.fields.price": "السعر",
+  "validation.fields.product_sorting": "فرز واحد على الأقل",
   "validation.fields.pricing_method": "طريقة التسعير",
   "validation.fields.pricing_responsible_id": "مسؤول التسعير",
   "validation.fields.primary_color": "اللون الأساسي",
@@ -2335,6 +2336,7 @@
       "title": "حذف المنتج",
       "message": "هل أنت متأكد من رغبتك في حذف هذا المنتج؟"
     },
+    "delete_success": "تم حذف المنتج بنجاح.",
     "form": {
       "title": "منتج جديد",
       "subtitle": "إضافة منتج جديد للمكتبة العامة وربطه بالمراحل.",
@@ -2452,7 +2454,8 @@
     "empty_title": "لا توجد مصنعية",
     "empty_description": "أضف أول سجل مصنعية لبدء إدارة أسعار المصنعية.",
     "delete_title": "حذف المصنعية؟",
-    "delete_message": "هل أنت متأكد من حذف سجل المصنعية؟ لا يمكن التراجع عن هذا الإجراء."
+    "delete_message": "هل أنت متأكد من حذف سجل المصنعية؟ لا يمكن التراجع عن هذا الإجراء.",
+    "delete_success": "تم حذف سجل المصنعية بنجاح."
   },
   "sidebar.quote-types": "نوع المقايسات"
 }
