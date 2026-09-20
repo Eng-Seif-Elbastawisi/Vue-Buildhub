@@ -2282,8 +2282,7 @@
   "Edit Sub Stage": "تعديل المرحلة الفرعية",
   "drag_to_reorder": "اسحب لإعادة الترتيب",
   "measurement": {
-    "add": "إضافة وحده قياس",
-    "children_count": "عدد المراحل الفرعية"
+    "add": "إضافة وحده قياس"
   },
   "Are you sure you want to remove this measurement unit?": "هل أنت متأكد من حذف وحدة القياس ؟",
   "quote_type": {
@@ -2312,7 +2311,9 @@
     "library_subtitle": "إدارة المنتجات وربطها بالمراحل",
     "badge": "BuildHub OS",
     "add": "إضافة منتج",
-    "filter_by_stage": "تصفية حسب المرحلة",
+    "filter_by_stage": "فلتر بالمرحلة",
+    "apply_filter": "تطبيق الفلتر",
+    "clear_filter": "مسح الفلتر",
     "search_placeholder": "ابحث عن منتج...",
     "stats": {
       "no_sorting": "بدون فرز",
@@ -2395,6 +2396,7 @@
   "item_type": "نوع المنتج",
   "item_type.placeholder": "اختر نوع المنتج",
   "measurement": "وحدة القياس",
+  "measurement.children_count": "عدد المراحل الفرعية",
   "measurement.unit_placeholder": "اختر وحدة القياس",
   "image": "الصورة",
   "description": "الوصف",

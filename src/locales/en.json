@@ -2359,8 +2359,7 @@
   "Edit Sub Stage": "Edit Sub Stage",
   "drag_to_reorder": "Drag to reorder",
   "measurement": {
-    "add": "Add Measurement Unit",
-    "children_count": "Children Count"
+    "add": "Add Measurement Unit"
   },
   "Are you sure you want to remove this measurement unit?": "Are you sure you want to remove this measurement unit?",
   "Products": {
@@ -2369,6 +2368,8 @@
     "badge": "BuildHub OS",
     "add": "Add Product",
     "filter_by_stage": "Filter by Stage",
+    "apply_filter": "Apply Filter",
+    "clear_filter": "Clear Filter",
     "search_placeholder": "Search for a product...",
     "stats": {
       "no_sorting": "No Sorting",
@@ -2450,6 +2451,7 @@
   "item_type": "Item Type",
   "item_type.placeholder": "Select Item Type",
   "measurement": "Measurement Unit",
+  "measurement.children_count": "Children Count",
   "measurement.unit_placeholder": "Select Measurement Unit",
   "image": "Image",
   "description": "Description",

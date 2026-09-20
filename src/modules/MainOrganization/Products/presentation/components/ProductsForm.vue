@@ -226,6 +226,29 @@
     return selectedStageIds.value.includes(id);
   };
 
+  const hasSubStages = (group: StageGroup) => {
+    return group.stages.length > 0;
+  };
+
+  const isStageGroupSelected = (group: StageGroup) => {
+    return hasSubStages(group) && group.stages.every((stage) => isStageSelected(stage.id));
+  };
+
+  const toggleStageGroup = (group: StageGroup) => {
+    if (!hasSubStages(group)) return;
+
+    const subStageIds = group.stages.map((stage) => stage.id);
+
+    if (isStageGroupSelected(group)) {
+      selectedStageIds.value = selectedStageIds.value.filter(
+        (stageId) => !subStageIds.includes(stageId),
+      );
+      return;
+    }
+
+    selectedStageIds.value = [...new Set([...selectedStageIds.value, ...subStageIds])];
+  };
+
   const fetchStages = async () => {
     try {
       stagesLoading.value = true;
@@ -652,17 +675,29 @@
               v-for="group in stageGroups"
               :key="group.id"
               class="stage-group"
-              :class="group.color"
+              :class="[
+                group.color,
+                {
+                  selected: isStageGroupSelected(group),
+                  disabled: !hasSubStages(group),
+                },
+              ]"
             >
-              <div class="group-header">
+              <button
+                type="button"
+                class="group-header"
+                :disabled="!hasSubStages(group)"
+                :aria-pressed="hasSubStages(group) ? isStageGroupSelected(group) : undefined"
+                @click="toggleStageGroup(group)"
+              >
                 <span class="count">
                   {{ group.stages.length }}
                 </span>
 
-                <h4>
+                <span class="group-title">
                   {{ group.title }}
-                </h4>
-              </div>
+                </span>
+              </button>
 
               <div class="stage-tags">
                 <button
@@ -1000,12 +1035,32 @@
     border-radius: var(--radius-md);
     padding: 0.85rem;
     border: 1px solid var(--border-weak);
+    transition: var(--transition-fast);
+
+    &.selected {
+      border-color: var(--PrimaryColor);
+      box-shadow: 0 0 0 2px var(--PrimaryColor-alpha-15);
+    }
+
+    &.disabled {
+      opacity: 0.6;
+    }
 
     .group-header {
       display: flex;
       align-items: center;
       gap: 0.5rem;
+      width: 100%;
       margin-bottom: 0.6rem;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      text-align: start;
+      cursor: pointer;
+
+      &:disabled {
+        cursor: not-allowed;
+      }
 
       .count {
         background: var(--gray-900);
@@ -1019,6 +1074,7 @@
         justify-content: center;
       }
 
+      .group-title,
       h4 {
         font-size: var(--sm-size);
         font-weight: 600;
