@@ -16,7 +16,6 @@ import { TaskAssignmentRoutes } from './task_assignment';
 import { OrganizationPackageRoutes } from './organization_package';
 import { ItemTypesRoutes } from './item.types';
 import { ProductsRoutes } from './products';
-import { quoteTypesRoutes } from './quote_types';
 import { LaborRoutes } from './labor';
 import { quoteTypesRoutes } from './quote_types';
 
