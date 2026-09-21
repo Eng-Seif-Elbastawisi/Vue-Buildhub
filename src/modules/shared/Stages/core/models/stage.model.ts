@@ -61,4 +61,13 @@ export default class StageModel {
       stageChildrenCount: json.stage_children_count,
     });
   }
+
+  static example = new StageModel({
+    id: 1,
+    title: 'Stage',
+    translations: { title: { ar: 'مرحلة', en: 'Stage' } },
+    children: [],
+    status: true,
+    stageChildrenCount: 0,
+  });
 }

@@ -1,5 +1,6 @@
-import TitleModel from '@/base/Core/Models/titleModel';
+import ItemTypesModel from '@/modules/MainOrganization/ItemTypes/core/models/item.types.model';
 import { UnitTypeEnum } from '@/modules/shared/Materials/core/constant/unit.type.enum';
+import MeasurementModel from '@/modules/shared/measurement/core/models/measurement.model';
 import StageModel from '@/modules/shared/Stages/core/models/stage.model';
 
 export type LaborPricingMode = 'configured' | 'manual_entry';
@@ -11,13 +12,14 @@ export default class LaborModel {
   public readonly unit: UnitTypeEnum;
   public readonly translations: { title: Record<string, string> };
   public readonly status: boolean;
-  public readonly itemType?: TitleModel;
-  public readonly measurementUnit?: TitleModel;
+  public readonly itemType?: ItemTypesModel;
+  public readonly measurementUnit?: MeasurementModel;
   public readonly stage?: StageModel;
   public readonly subStage?: StageModel;
   public readonly pricingMode: LaborPricingMode;
   public readonly activeMappingCount: number;
   public readonly mappingReady: boolean;
+  public readonly code?: string;
 
   constructor(labor: {
     id?: number;
@@ -26,13 +28,14 @@ export default class LaborModel {
     title: string;
     price: number;
     status?: boolean;
-    itemType?: TitleModel;
-    measurementUnit?: TitleModel;
+    itemType?: ItemTypesModel;
+    measurementUnit?: MeasurementModel;
     stage?: StageModel;
     subStage?: StageModel;
     pricingMode?: LaborPricingMode;
     activeMappingCount?: number;
     mappingReady?: boolean;
+    code?: string;
   }) {
     this.id = labor.id;
     this.translations = labor.translations;
@@ -47,6 +50,8 @@ export default class LaborModel {
     this.pricingMode = labor.pricingMode ?? 'manual_entry';
     this.activeMappingCount = labor.activeMappingCount ?? 0;
     this.mappingReady = labor.mappingReady ?? false;
+    this.code = labor.code;
+
     Object.freeze(this);
   }
 
@@ -77,10 +82,10 @@ export default class LaborModel {
       title: json.title as string,
       price: Number(json.price),
       status: json.status === true || Number(json.status) === 1,
-      itemType: LaborModel.mapTitleRelation(json.itemType ?? json.item_type),
-      measurementUnit: LaborModel.mapTitleRelation(json.measurementUnit ?? json.measurement_unit),
-      stage: LaborModel.mapStageRelation(json.stage),
-      subStage: LaborModel.mapStageRelation(json.subStage ?? json.sub_stage),
+      itemType: ItemTypesModel.fromJson(json.item_type ?? {}),
+      measurementUnit: MeasurementModel.fromJson(json.measurement_unit ?? {}),
+      stage: StageModel.fromJson(json.stage ?? {}),
+      subStage: StageModel.fromJson(json.sub_stage ?? {}),
       pricingMode: LaborModel.mapPricingMode(
         json.pricingMode ?? json.defaultPricingMode ?? json.default_pricing_mode,
       ),
@@ -89,6 +94,7 @@ export default class LaborModel {
         json.mappingReady ?? json.mapping_readiness,
         activeMappingCount,
       ),
+      code: json.code as string | undefined,
     });
   }
 
@@ -111,22 +117,6 @@ export default class LaborModel {
     );
   }
 
-  private static mapTitleRelation(relation: unknown): TitleModel | undefined {
-    const relationData = LaborModel.toRelationData(relation);
-    return relationData ? TitleModel.fromMap(relationData) : undefined;
-  }
-
-  private static mapStageRelation(relation: unknown): StageModel | undefined {
-    const relationData = LaborModel.toRelationData(relation);
-    return relationData ? StageModel.fromJson(relationData) : undefined;
-  }
-
-  private static toRelationData(relation: unknown): Record<string, unknown> | undefined {
-    return relation !== null && typeof relation === 'object'
-      ? (relation as Record<string, unknown>)
-      : undefined;
-  }
-
   static example: LaborModel = new LaborModel({
     id: 10,
     translations: { title: { ar: 'مصنعية', en: 'Labor' } },
@@ -134,10 +124,10 @@ export default class LaborModel {
     title: 'Labor',
     price: 100,
     status: true,
-    itemType: new TitleModel('Item type', 20),
-    measurementUnit: new TitleModel('Meter', 1),
-    stage: StageModel.fromJson({ id: 30, title: 'Stage' }),
-    subStage: StageModel.fromJson({ id: 40, title: 'Sub-stage' }),
+    itemType: ItemTypesModel.example,
+    measurementUnit: MeasurementModel.example,
+    stage: StageModel.example,
+    subStage: StageModel.example,
     pricingMode: 'configured',
     activeMappingCount: 2,
     mappingReady: true,
