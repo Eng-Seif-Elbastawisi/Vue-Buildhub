@@ -7,7 +7,6 @@ import { QuoteSourceEnum } from '../constants/quote.source.enum';
 
 export default class ExecutionQuoteModel {
   public readonly id?: number;
-
   public readonly quoteSource?: QuoteSourceEnum;
 
   public readonly projectId?: ProjectModel;
@@ -15,7 +14,7 @@ export default class ExecutionQuoteModel {
   public readonly quoteTypeId?: QuoteTypeModel;
   public readonly priceEmployeeId?: EmployeeModel;
 
-  constructor(modelData: {
+  constructor(data: {
     id?: number;
     quoteSource?: QuoteSourceEnum;
 
@@ -24,14 +23,13 @@ export default class ExecutionQuoteModel {
     quoteTypeId?: QuoteTypeModel;
     priceEmployeeId?: EmployeeModel;
   }) {
-    this.id = modelData.id;
+    this.id = data.id;
+    this.quoteSource = data.quoteSource;
 
-    this.quoteSource = modelData.quoteSource;
-
-    this.projectId = modelData.projectId;
-    this.clientId = modelData.clientId;
-    this.quoteTypeId = modelData.quoteTypeId;
-    this.priceEmployeeId = modelData.priceEmployeeId;
+    this.projectId = data.projectId;
+    this.clientId = data.clientId;
+    this.quoteTypeId = data.quoteTypeId;
+    this.priceEmployeeId = data.priceEmployeeId;
 
     Object.freeze(this);
   }
@@ -41,80 +39,44 @@ export default class ExecutionQuoteModel {
       throw new Error('Cannot create ExecutionQuoteModel from null or undefined');
     }
 
+    const projectJson =
+      json.project_id && typeof json.project_id === 'object' && !Array.isArray(json.project_id)
+        ? (json.project_id as Record<string, unknown>)
+        : undefined;
+
+    const clientJson =
+      json.client_id && typeof json.client_id === 'object' && !Array.isArray(json.client_id)
+        ? (json.client_id as Record<string, unknown>)
+        : undefined;
+
+    const quoteTypeJson =
+      json.quote_type_id &&
+      typeof json.quote_type_id === 'object' &&
+      !Array.isArray(json.quote_type_id)
+        ? (json.quote_type_id as Record<string, unknown>)
+        : undefined;
+
+    const priceEmployeeJson =
+      json.price_employee_id &&
+      typeof json.price_employee_id === 'object' &&
+      !Array.isArray(json.price_employee_id)
+        ? (json.price_employee_id as Record<string, unknown>)
+        : undefined;
+
     return new ExecutionQuoteModel({
-      id: ExecutionQuoteModel.toNumber(json.id),
+      id: typeof json.id === 'number' ? json.id : undefined,
 
-      quoteSource: ExecutionQuoteModel.toQuoteSource(json.quote_source ?? json.quoteSource),
+      quoteSource:
+        typeof json.quote_source === 'number' ? (json.quote_source as QuoteSourceEnum) : undefined,
 
-      projectId: ExecutionQuoteModel.toProjectModel(json.project_id ?? json.projectId),
+      projectId: projectJson ? ProjectModel.fromJson(projectJson) : undefined,
 
-      clientId: ExecutionQuoteModel.toClientModel(json.client_id ?? json.clientId),
+      clientId: clientJson ? ClientModel.fromJson(clientJson) : undefined,
 
-      quoteTypeId: ExecutionQuoteModel.toQuoteTypeModel(json.quote_type_id ?? json.quoteTypeId),
+      quoteTypeId: quoteTypeJson ? QuoteTypeModel.fromJson(quoteTypeJson) : undefined,
 
-      priceEmployeeId: ExecutionQuoteModel.toEmployeeModel(
-        json.price_employee_id ?? json.priceEmployeeId,
-      ),
+      priceEmployeeId: priceEmployeeJson ? EmployeeModel.fromJson(priceEmployeeJson) : undefined,
     });
-  }
-
-  private static toNumber(rawValue: unknown): number | undefined {
-    if (rawValue === undefined || rawValue === null || rawValue === '') {
-      return undefined;
-    }
-
-    const value = Number(rawValue);
-
-    return Number.isFinite(value) ? value : undefined;
-  }
-
-  private static toQuoteSource(rawValue: unknown): QuoteSourceEnum | undefined {
-    const value = ExecutionQuoteModel.toNumber(rawValue);
-
-    if (value === undefined) {
-      return undefined;
-    }
-
-    if (
-      value === QuoteSourceEnum.EXECUTION_ONLY ||
-      value === QuoteSourceEnum.EXECUTION_FROM_DESIGN_QUOTE
-    ) {
-      return value;
-    }
-
-    return undefined;
-  }
-
-  private static toProjectModel(rawValue: unknown): ProjectModel | undefined {
-    if (!rawValue || typeof rawValue !== 'object' || Array.isArray(rawValue)) {
-      return undefined;
-    }
-
-    return ProjectModel.fromJson(rawValue as Record<string, unknown>);
-  }
-
-  private static toClientModel(rawValue: unknown): ClientModel | undefined {
-    if (!rawValue || typeof rawValue !== 'object' || Array.isArray(rawValue)) {
-      return undefined;
-    }
-
-    return ClientModel.fromJson(rawValue as Record<string, unknown>);
-  }
-
-  private static toQuoteTypeModel(rawValue: unknown): QuoteTypeModel | undefined {
-    if (!rawValue || typeof rawValue !== 'object' || Array.isArray(rawValue)) {
-      return undefined;
-    }
-
-    return QuoteTypeModel.fromJson(rawValue as Record<string, unknown>);
-  }
-
-  private static toEmployeeModel(rawValue: unknown): EmployeeModel | undefined {
-    if (!rawValue || typeof rawValue !== 'object' || Array.isArray(rawValue)) {
-      return undefined;
-    }
-
-    return EmployeeModel.fromJson(rawValue as Record<string, unknown>);
   }
 
   static example = new ExecutionQuoteModel({
