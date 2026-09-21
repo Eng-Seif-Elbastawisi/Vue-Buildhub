@@ -72,7 +72,7 @@ export default class EditProductsParams implements Params {
     if (this.image) map.image = this.image;
     if (this.stageIds?.length) map.stage_ids = this.stageIds;
     if (this.sortings !== undefined) map.sortings = this.sortings;
-    if (this.isActive !== undefined) map.is_active = this.isActive;
+    if (this.isActive !== undefined) map.status = this.isActive;
 
     return map;
   }
