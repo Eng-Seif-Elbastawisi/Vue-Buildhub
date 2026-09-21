@@ -5,27 +5,6 @@ import EmployeeModel from '@/modules/MainOrganization/employee/core/models/emplo
 
 import { QuoteSourceEnum } from '../constants/quote.source.enum';
 
-interface ExecutionQuoteJson {
-  id?: number;
-  quote_source?: QuoteSourceEnum;
-
-  project?: {
-    id?: number;
-  };
-
-  client?: {
-    id?: number;
-  };
-
-  quote_type?: {
-    id?: number;
-  };
-
-  price_employee?: {
-    id?: number;
-  };
-}
-
 export default class ExecutionQuoteModel {
   public readonly id?: number;
   public readonly quoteSource?: QuoteSourceEnum;
@@ -55,34 +34,20 @@ export default class ExecutionQuoteModel {
     Object.freeze(this);
   }
 
-  static fromJson(json: ExecutionQuoteJson): ExecutionQuoteModel {
+  static fromJson(json: any): ExecutionQuoteModel {
     return new ExecutionQuoteModel({
       id: json.id,
 
       quoteSource: json.quote_source,
 
-      projectId: json.project
-        ? new ProjectModel({
-            id: json.project.id,
-          })
-        : undefined,
+      projectId: json.project?.id ? ProjectModel.fromJson(json.project) : undefined,
 
-      clientId: json.client
-        ? ClientModel.fromJson({
-            id: json.client.id,
-          })
-        : undefined,
+      clientId: json.client ? ClientModel.fromJson(json.client) : undefined,
 
-      quoteTypeId: json.quote_type
-        ? QuoteTypeModel.fromJson({
-            id: json.quote_type.id,
-          })
-        : undefined,
+      quoteTypeId: json.quote_type ? QuoteTypeModel.fromJson(json.quote_type) : undefined,
 
       priceEmployeeId: json.price_employee
-        ? EmployeeModel.fromJson({
-            id: json.price_employee.id,
-          })
+        ? EmployeeModel.fromJson(json.price_employee)
         : undefined,
     });
   }
@@ -92,20 +57,12 @@ export default class ExecutionQuoteModel {
 
     quoteSource: QuoteSourceEnum.EXECUTION_ONLY,
 
-    projectId: new ProjectModel({
-      id: 10,
-    }),
+    projectId: ProjectModel.example,
 
-    clientId: ClientModel.fromJson({
-      id: 5,
-    }),
+    clientId: ClientModel.example,
 
-    quoteTypeId: QuoteTypeModel.fromJson({
-      id: 2,
-    }),
+    quoteTypeId: QuoteTypeModel.example,
 
-    priceEmployeeId: EmployeeModel.fromJson({
-      id: 7,
-    }),
+    priceEmployeeId: EmployeeModel.example,
   });
 }
