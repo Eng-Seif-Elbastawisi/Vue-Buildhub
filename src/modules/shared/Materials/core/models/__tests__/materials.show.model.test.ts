@@ -19,4 +19,18 @@ describe('MaterialsShowModel', () => {
     expect(model.translations.title).toEqual({ en: 'Steel' });
     expect(model.status).toBe(false);
   });
+
+  it('maps plural sub-stage relations for edit forms', () => {
+    const model = MaterialsShowModel.fromJson({
+      sub_stages: [
+        { id: 6, title: 'Sub-stage 1' },
+        { id: 7, title: 'Sub-stage 2' },
+      ],
+    });
+
+    expect(model.subStages).toMatchObject([
+      { id: 6, title: 'Sub-stage 1' },
+      { id: 7, title: 'Sub-stage 2' },
+    ]);
+  });
 });

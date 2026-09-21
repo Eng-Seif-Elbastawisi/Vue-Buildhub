@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { mount } from '@vue/test-utils';
+import { flushPromises, mount } from '@vue/test-utils';
 import { ref } from 'vue';
 import StageIndex from '../StageIndex.vue';
 import StageController from '../../controllers/stage.controller';
@@ -64,9 +64,10 @@ describe('StageIndex.vue', () => {
           },
         },
         AppTable: {
-          template: '<div class="app-table-stub"><button class="trigger-reorder" @click="$emit(\'reorder\', { movedItem: example, toIndex: 2, fromIndex: 0, items: [] })">Reorder</button></div>',
+          template:
+            '<div class="app-table-stub"><button class="trigger-sort" @click="$emit(\'sort\', \'stageChildrenCount\', \'desc\')">Sort</button><button class="trigger-reorder" @click="$emit(\'reorder\', { movedItem: example, toIndex: 2, fromIndex: 0, items: [] })">Reorder</button></div>',
           props: ['headers', 'items', 'reorderable'],
-          emits: ['reorder'],
+          emits: ['sort', 'reorder'],
           data() {
             return { example: StageModel.example };
           },
@@ -109,5 +110,18 @@ describe('StageIndex.vue', () => {
 
     expect(mockChangeOrder).toHaveBeenCalledTimes(1);
     expect(mockFetchList).toHaveBeenCalledTimes(2);
+  });
+
+  it('fetches stages with server-side sort parameters', async () => {
+    const wrapper = mount(StageIndex, mountOptions);
+
+    await wrapper.find('.trigger-sort').trigger('click');
+    await flushPromises();
+
+    const request = mockFetchList.mock.calls.at(-1)?.[0];
+    expect(request.toMap()).toMatchObject({
+      sort_by: 'stage_children_count',
+      sort_direction: 'desc',
+    });
   });
 });

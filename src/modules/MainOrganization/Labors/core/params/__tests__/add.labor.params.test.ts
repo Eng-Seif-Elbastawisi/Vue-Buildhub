@@ -9,7 +9,7 @@ describe('AddLaborParams', () => {
       translations: { title: { en: 'Installation', ar: 'تركيب' } },
       itemTypeId: 10,
       stageId: 20,
-      subStageId: 30,
+      subStageIds: [30, 31],
       status: true,
     });
 
@@ -19,7 +19,7 @@ describe('AddLaborParams', () => {
       translations: { title: { en: 'Installation', ar: 'تركيب' } },
       item_type_id: 10,
       stage_id: 20,
-      sub_stage_id: 30,
+      sub_stage_ids: [30, 31],
       status: true,
     });
     expect(params.validate().isValid).toBe(true);
@@ -33,7 +33,7 @@ describe('AddLaborParams', () => {
     }).validate();
 
     expect(result.errors.map(({ field }) => field)).toEqual(
-      expect.arrayContaining(['itemTypeId', 'stageId', 'subStageId']),
+      expect.arrayContaining(['itemTypeId', 'stageId', 'subStageIds']),
     );
   });
 });

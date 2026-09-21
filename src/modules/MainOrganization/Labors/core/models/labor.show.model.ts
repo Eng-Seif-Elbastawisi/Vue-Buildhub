@@ -21,6 +21,7 @@ interface LaborShowResponse {
   item_type?: ApiRelation;
   stage?: ApiRelation;
   sub_stage?: ApiRelation;
+  sub_stages?: ApiRelation[];
   unit?: UnitTypeEnum;
 }
 
@@ -42,6 +43,7 @@ export default class laborShowModel {
   public readonly itemType?: ItemTypesModel;
   public readonly stage?: StageModel;
   public readonly subStage?: StageModel;
+  public readonly subStages: StageModel[];
 
   constructor(data: {
     id?: number;
@@ -61,6 +63,7 @@ export default class laborShowModel {
     itemType?: ItemTypesModel;
     stage?: StageModel;
     subStage?: StageModel;
+    subStages?: StageModel[];
   }) {
     this.id = data.id;
     this.price = data.price;
@@ -77,6 +80,7 @@ export default class laborShowModel {
     this.itemType = data.itemType;
     this.stage = data.stage;
     this.subStage = data.subStage;
+    this.subStages = data.subStages ?? (data.subStage ? [data.subStage] : []);
 
     Object.freeze(this);
   }
@@ -87,6 +91,14 @@ export default class laborShowModel {
     }
 
     const translations = LaborModel.mapTranslations(json.title);
+
+    const subStages = (json.sub_stages ?? (json.sub_stage ? [json.sub_stage] : [])).map(
+      (subStage) =>
+        ({
+          id: subStage.id,
+          title: subStage.title,
+        }) as StageModel,
+    );
 
     return new laborShowModel({
       id: json.id,
@@ -102,18 +114,12 @@ export default class laborShowModel {
         ? measurementModel.fromJson(json.measurement_unit)
         : undefined,
 
-      itemType: json.item_type
-        ? ItemTypesModel.fromJson(json.item_type as any)
-        : undefined,
+      itemType: json.item_type ? ItemTypesModel.fromJson(json.item_type as any) : undefined,
 
       stage: json.stage ? StageModel.fromJson(json.stage) : undefined,
 
-      subStage: json.sub_stage
-        ? ({
-          id: json.sub_stage.id,
-          title: json.sub_stage.title,
-        } as StageModel)
-        : undefined,
+      subStage: subStages[0],
+      subStages,
 
       translations: {
         title: translations,

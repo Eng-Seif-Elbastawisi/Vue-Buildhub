@@ -12,13 +12,11 @@
   import DeleteStageParams from '../../core/params/delete.stage.params';
   import ChangeStageOrderParams from '../../core/params/change.stage.order.params';
   import type StageModel from '../../core/models/stage.model';
-  import ShowStageParams from '../../core/params/show.stage.params';
   import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
 
   import EditIcon from '@/shared/icons/EditIcon.vue';
   import DeleteDialog from '@/base/Presentation/Dialogs/MainDialogs/DeleteDialog.vue';
   import IndexAddIcon from '@/shared/icons/IndexAddIcon.vue';
-  import { useUserStore } from '@/stores/user';
   import ChangeStatusButton from '@/modules/MainOrganization/ChangeStatus/presentation/components/ChangeStatusButton.vue';
   import { StatusTypeEnum } from '@/modules/MainOrganization/ChangeStatus/core/constant/change_status.type.enum';
   import { useI18n } from 'vue-i18n';
@@ -29,8 +27,6 @@
   const router = useRouter();
   const { t } = useI18n();
   const route = useRoute();
-
-  const { user } = useUserStore();
 
   const headers: TableHeader[] = [
     {
@@ -49,46 +45,69 @@
 
   const perPage = ref(10);
   const word = ref('');
+  const sortBy = ref<string>();
+  const sortDirection = ref<'asc' | 'desc'>();
+  const sortableFields: Record<string, string> = {
+    title: 'title',
+    stageChildrenCount: 'stage_children_count',
+  };
+  const activeSortKey = computed(() => {
+    if (!sortBy.value) return undefined;
+
+    return (
+      Object.entries(sortableFields).find(([, serverField]) => serverField === sortBy.value)?.[0] ??
+      sortBy.value
+    );
+  });
 
   const fetchStages = async (page: number = 1, searchWord: string = '') => {
     await controller.fetchList(
       new IndexStageParams({
         word: searchWord,
-        page: route.query.page ? Number(route.query.page) : page,
+        page,
         perPage: perPage.value,
         parentId: null,
+        sortBy: sortBy.value,
+        sortDirection: sortDirection.value,
       }),
     );
   };
 
-  const Search = debounce(() => {
+  const updateRouteQuery = (page: number) =>
     router.push({
       query: {
         ...route.query,
-        page: 1,
+        page: String(page),
         word: word.value || undefined,
+        sort_by: sortBy.value,
+        sort_direction: sortDirection.value,
       },
     });
+
+  const onSort = (key: string, direction: 'asc' | 'desc') => {
+    sortBy.value = sortableFields[key] ?? key;
+    sortDirection.value = direction;
+    void updateRouteQuery(1);
+    void fetchStages(1, word.value);
+  };
+
+  const Search = debounce(() => {
+    void updateRouteQuery(1);
 
     void fetchStages(1, word.value);
   });
 
   const onPageChange = (page: number) => {
-    void fetchStages(page);
+    void fetchStages(page, word.value);
 
-    void router.push({
-      query: {
-        ...route.query,
-        page: String(page),
-        word: word.value || undefined,
-      },
-    });
+    void updateRouteQuery(page);
   };
 
   const onPerPageChange = (count: number) => {
     perPage.value = count;
 
     void fetchStages(1, word.value);
+    void updateRouteQuery(1);
   };
 
   const deleteStage = async (id: number) => {
@@ -111,14 +130,6 @@
   const formRoute = computed(() => `${routePrefix.value}/stages/add`);
 
   const subStagesRoute = (stageId: number) => `${routePrefix.value}/stages/${stageId}/sub-stages`;
-  const showStage = async (id: number) => {
-    await controller.fetchOne(
-      new ShowStageParams({
-        id,
-        allLocales: true,
-      }),
-    );
-  };
 
   const onReorder = async ({
     movedItem,
@@ -148,6 +159,11 @@
 
   onMounted(async () => {
     word.value = route.query.word ? String(route.query.word) : '';
+    sortBy.value = route.query.sort_by ? String(route.query.sort_by) : undefined;
+    sortDirection.value =
+      route.query.sort_direction === 'asc' || route.query.sort_direction === 'desc'
+        ? route.query.sort_direction
+        : undefined;
 
     await fetchStages(route.query.page ? Number(route.query.page) : 1, word.value);
   });
@@ -206,10 +222,13 @@
             :headers="headers"
             :items="data as StageModel[]"
             :bulk-delete="deleteSelectedStages"
+            :initial-sort-key="activeSortKey"
+            :initial-sort-direction="sortDirection"
             show-index
             hoverable
             striped
             reorderable
+            @sort="onSort"
             @reorder="onReorder"
           >
             <template #cell-title="{ item }">

@@ -48,7 +48,7 @@ describe('MaterialsEdit', () => {
       translations: { title: { en: 'Steel' } },
       itemTypeId: 4,
       stageId: 5,
-      subStageId: 6,
+      subStageIds: [6],
       status: false,
     });
 
@@ -61,7 +61,7 @@ describe('MaterialsEdit', () => {
       material_id: 9,
       item_type_id: 4,
       stage_id: 5,
-      sub_stage_id: 6,
+      sub_stage_ids: [6],
       status: false,
     });
   });

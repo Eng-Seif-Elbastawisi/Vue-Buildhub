@@ -13,6 +13,7 @@ export default class MaterialsModel {
   public readonly itemType?: ItemTypesModel;
   public readonly stage?: StageModel;
   public readonly subStage?: StageModel;
+  public readonly subStages: StageModel[];
   public readonly code?: string;
 
   constructor(data: {
@@ -25,6 +26,7 @@ export default class MaterialsModel {
     itemType?: ItemTypesModel;
     stage?: StageModel;
     subStage?: StageModel;
+    subStages?: StageModel[];
     status?: boolean;
     code?: string;
   }) {
@@ -37,6 +39,7 @@ export default class MaterialsModel {
     this.itemType = data.itemType;
     this.stage = data.stage;
     this.subStage = data.subStage;
+    this.subStages = data.subStages ?? (data.subStage ? [data.subStage] : []);
     this.status = data.status ?? false;
     this.code = data.code;
 
@@ -59,6 +62,13 @@ export default class MaterialsModel {
   static fromJson(json: any): MaterialsModel {
     if (!json) throw new Error('Cannot create MaterialsModel from null or undefined');
 
+    const rawSubStages = json.sub_stages ?? json.sub_stage ?? json.subStage;
+    const subStages = Array.isArray(rawSubStages)
+      ? rawSubStages.map((relation: Record<string, unknown>) => StageModel.fromJson(relation))
+      : rawSubStages
+        ? [StageModel.fromJson(rawSubStages)]
+        : [];
+
     return new MaterialsModel({
       id: json.id as number | undefined,
       translations: { title: MaterialsModel.mapTranslations(json.translations) },
@@ -68,7 +78,8 @@ export default class MaterialsModel {
       brandId: (json.brandId ?? json.brand_id) as number | undefined,
       itemType: ItemTypesModel.fromJson(json.item_type ?? {}),
       stage: StageModel.fromJson(json.stage ?? {}),
-      subStage: StageModel.fromJson(json.subStage ?? {}),
+      subStage: subStages[0],
+      subStages,
       status: json.status === true || Number(json.status) === 1,
       code: json.code as string | undefined,
     });
@@ -83,7 +94,8 @@ export default class MaterialsModel {
     status: true,
     brandId: 10,
     itemType: ItemTypesModel.example,
-    stage: StageModel.fromJson({ id: 20, title: 'Stage' }),
-    subStage: StageModel.fromJson({ id: 30, title: 'Sub-stage' }),
+    stage: StageModel.example,
+    subStage: StageModel.example,
+    code: '100',
   });
 }

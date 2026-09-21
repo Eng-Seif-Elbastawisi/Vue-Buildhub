@@ -10,7 +10,7 @@ describe('EditLaborParams', () => {
       translations: { title: { en: 'Painting', ar: 'دهان' } },
       itemTypeId: 11,
       stageId: 21,
-      subStageId: 31,
+      subStageIds: [31, 32],
       status: false,
     });
 
@@ -21,7 +21,7 @@ describe('EditLaborParams', () => {
       translations: { title: { en: 'Painting', ar: 'دهان' } },
       item_type_id: 11,
       stage_id: 21,
-      sub_stage_id: 31,
+      sub_stage_ids: [31, 32],
       status: false,
     });
     expect(params.validate().isValid).toBe(true);
