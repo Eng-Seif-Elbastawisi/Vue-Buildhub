@@ -13,6 +13,7 @@ export default class MaterialsModel {
   public readonly itemType?: ItemTypesModel;
   public readonly stage?: StageModel;
   public readonly subStage?: StageModel;
+  public readonly code?: string;
 
   constructor(data: {
     id?: number;
@@ -25,6 +26,7 @@ export default class MaterialsModel {
     stage?: StageModel;
     subStage?: StageModel;
     status?: boolean;
+    code?: string;
   }) {
     this.id = data.id;
     this.translations = data.translations;
@@ -36,6 +38,8 @@ export default class MaterialsModel {
     this.stage = data.stage;
     this.subStage = data.subStage;
     this.status = data.status ?? false;
+    this.code = data.code;
+
     Object.freeze(this);
   }
 
@@ -66,6 +70,7 @@ export default class MaterialsModel {
       stage: MaterialsModel.mapStage(json.stage),
       subStage: MaterialsModel.mapStage(json.subStage ?? json.sub_stage),
       status: json.status === true || Number(json.status) === 1,
+      code: json.code as string | undefined,
     });
   }
 

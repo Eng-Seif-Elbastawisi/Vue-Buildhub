@@ -14,10 +14,9 @@ export default class MaterialStatsModel {
       throw new Error('Cannot create MaterialStatsModel from null');
     }
 
-    console.log(json, 'json');
     return new MaterialStatsModel({
       total: json.total,
-      materialCount: json.materialCount ?? 0,
+      materialCount: json.materials_count ?? 0,
     });
   }
 

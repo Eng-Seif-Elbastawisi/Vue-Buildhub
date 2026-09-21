@@ -46,6 +46,8 @@ export default class ProductsModel {
   public readonly image?: string;
   public readonly status: boolean;
 
+  public readonly code?: string;
+
   constructor(data: {
     id?: number;
     title?: string;
@@ -60,6 +62,7 @@ export default class ProductsModel {
     sortings?: ProductSorting[];
     image?: string;
     status?: boolean;
+    code?: string;
   }) {
     this.id = data.id;
     this.title = data.title;
@@ -79,6 +82,8 @@ export default class ProductsModel {
 
     this.image = data.image;
     this.status = data.status ?? false;
+
+    this.code = data.code;
 
     Object.freeze(this);
   }
@@ -182,6 +187,8 @@ export default class ProductsModel {
       image: ProductsModel.extractImage(data.attachments),
 
       status: data.status === true || Number(data.status) === 1,
+
+      code: data.code as string | undefined,
     });
   }
 

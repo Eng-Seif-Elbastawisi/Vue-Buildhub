@@ -581,6 +581,7 @@
                     {{ product.title }}
                   </router-link>
                 </h3>
+                
 
                 <div class="price">
                   <strong>{{ formatPrice(product.expectedPrice) }}</strong>

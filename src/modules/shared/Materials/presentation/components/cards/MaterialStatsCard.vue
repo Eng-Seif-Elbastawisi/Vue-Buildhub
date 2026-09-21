@@ -89,7 +89,7 @@ watch(
 
 
         <strong class="stat-value">
-          {{ animatedMaterialCount }}
+          {{ animatedMaterialCount  }}
         </strong>
 
       </div>

@@ -110,9 +110,9 @@ export default class laborShowModel {
 
       subStage: json.sub_stage
         ? ({
-            id: json.sub_stage.id,
-            title: json.sub_stage.title,
-          } as StageModel)
+          id: json.sub_stage.id,
+          title: json.sub_stage.title,
+        } as StageModel)
         : undefined,
 
       translations: {

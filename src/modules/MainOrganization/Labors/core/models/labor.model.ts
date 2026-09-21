@@ -18,6 +18,7 @@ export default class LaborModel {
   public readonly pricingMode: LaborPricingMode;
   public readonly activeMappingCount: number;
   public readonly mappingReady: boolean;
+  public readonly code?: string;
 
   constructor(labor: {
     id?: number;
@@ -33,6 +34,7 @@ export default class LaborModel {
     pricingMode?: LaborPricingMode;
     activeMappingCount?: number;
     mappingReady?: boolean;
+    code?: string;
   }) {
     this.id = labor.id;
     this.translations = labor.translations;
@@ -47,6 +49,8 @@ export default class LaborModel {
     this.pricingMode = labor.pricingMode ?? 'manual_entry';
     this.activeMappingCount = labor.activeMappingCount ?? 0;
     this.mappingReady = labor.mappingReady ?? false;
+    this.code = labor.code;
+
     Object.freeze(this);
   }
 
@@ -89,6 +93,7 @@ export default class LaborModel {
         json.mappingReady ?? json.mapping_readiness,
         activeMappingCount,
       ),
+      code: json.code as string | undefined,
     });
   }
 

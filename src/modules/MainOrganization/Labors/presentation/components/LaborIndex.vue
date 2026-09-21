@@ -142,6 +142,7 @@
 
   const headers: TableHeader[] = [
     { key: 'title', label: 'labor.name' },
+    { key: 'code', label: 'labor.code' },
     { key: 'itemType', label: 'labor.type' },
     { key: 'measurementUnit', label: 'labor.unit' },
     { key: 'pricingMode', label: 'labor.default_pricing_mode' },
