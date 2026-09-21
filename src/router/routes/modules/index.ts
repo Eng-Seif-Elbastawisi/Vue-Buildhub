@@ -18,6 +18,7 @@ import { ItemTypesRoutes } from './item.types';
 import { ProductsRoutes } from './products';
 import { LaborRoutes } from './labor';
 import { quoteTypesRoutes } from './quote_types';
+import { executionQuoteRoutes } from './execution_quotes';
 
 export const dashboardRoutes: RouteRecordRaw[] = [
   // ...countryRoutes,
@@ -40,4 +41,5 @@ export const dashboardRoutes: RouteRecordRaw[] = [
   ...quoteTypesRoutes,
   ...LaborRoutes,
   ...quoteTypesRoutes,
+  ...executionQuoteRoutes,
 ];

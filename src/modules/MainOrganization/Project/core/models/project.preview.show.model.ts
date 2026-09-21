@@ -19,6 +19,9 @@ export default class ProjectPreviewShowModel {
   public readonly notification_message?: string | null;
   public readonly pricing_responsible?: ProjectSelectItem | null;
   public readonly pricing_responsible_id?: number;
+  public readonly quote_type_id?: number;
+  public readonly design_value?: string | number;
+  public readonly area?: string | number;
 
   constructor(data: {
     id?: number;
@@ -36,6 +39,9 @@ export default class ProjectPreviewShowModel {
     notification_message?: string | null;
     pricing_responsible?: ProjectSelectItem | null;
     pricing_responsible_id?: number;
+    quote_type_id?: number;
+    design_value?: string | number;
+    area?: string | number;
   }) {
     this.id = data.id;
     this.project_preview_id = data.project_preview_id;
@@ -52,6 +58,9 @@ export default class ProjectPreviewShowModel {
     this.notification_message = data.notification_message;
     this.pricing_responsible = data.pricing_responsible;
     this.pricing_responsible_id = data.pricing_responsible_id;
+    this.quote_type_id = data.quote_type_id;
+    this.design_value = data.design_value;
+    this.area = data.area;
 
     Object.freeze(this);
   }
@@ -114,6 +123,9 @@ export default class ProjectPreviewShowModel {
         pricingResponsible?.id ??
         ProjectPreviewShowModel.mapOptionalNumber(json.pricing_responsible_id) ??
         undefined,
+      quote_type_id: ProjectPreviewShowModel.mapOptionalNumber(json.quote_type_id) ?? undefined,
+      design_value: ProjectPreviewShowModel.mapOptionalValue(json.design_value),
+      area: ProjectPreviewShowModel.mapOptionalValue(json.area),
     });
   }
 
@@ -143,4 +155,11 @@ export default class ProjectPreviewShowModel {
     },
     pricing_responsible_id: 18,
   });
+
+  private static mapOptionalValue(optionalValue: unknown): string | number | undefined {
+    if (typeof optionalValue === 'string' || typeof optionalValue === 'number') {
+      return optionalValue;
+    }
+    return undefined;
+  }
 }
