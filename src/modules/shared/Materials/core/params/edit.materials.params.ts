@@ -11,7 +11,7 @@ export default class EditMaterialParams implements Params {
   public translations?: { title: Record<string, string> };
   public itemTypeId?: number;
   public stageId?: number;
-  public subStageId?: number;
+  public subStageIds?: number[];
   public status?: boolean;
   public static readonly validation = new ClassValidation().setRules({
     material_id: { required: true },
@@ -32,7 +32,7 @@ export default class EditMaterialParams implements Params {
     translations?: { title: Record<string, string> };
     itemTypeId?: number;
     stageId?: number;
-    subStageId?: number;
+    subStageIds?: number[];
     status?: boolean;
   }) {
     this.material_id = data.material_id;
@@ -42,7 +42,7 @@ export default class EditMaterialParams implements Params {
     this.translations = data.translations;
     this.itemTypeId = data.itemTypeId;
     this.stageId = data.stageId;
-    this.subStageId = data.subStageId;
+    this.subStageIds = data.subStageIds;
     this.status = data.status;
   }
 
@@ -55,7 +55,7 @@ export default class EditMaterialParams implements Params {
       translations: this.translations,
       item_type_id: this.itemTypeId,
       stage_id: this.stageId,
-      sub_stage_id: this.subStageId,
+      sub_stage_ids: this.subStageIds,
       status: this.status,
     };
 

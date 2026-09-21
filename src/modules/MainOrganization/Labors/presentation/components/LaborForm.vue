@@ -59,7 +59,7 @@
   const measurement = ref<TitleInterface<string | number> | null>(null);
   const itemType = ref<TitleInterface<string | number> | null>(null);
   const stage = ref<TitleInterface<string | number> | null>(null);
-  const subStage = ref<TitleInterface<string | number> | null>(null);
+  const subStage = ref<TitleInterface<string | number>[]>([]);
 
   const { stageParams, subStageParams } = useStageSubStageFilters(stage);
 
@@ -69,14 +69,17 @@
   const toSelectOption = (
     entity?: { id?: number; title?: string } | null,
   ): TitleInterface<string | number> | null => {
-    if (entity?.id === undefined || entity?.id === null) {
-      return null;
-    }
+    if (entity?.id === undefined || entity?.id === null) return null;
 
-    return {
-      id: entity.id,
-      title: entity.title ?? '',
-    };
+    return { id: entity.id, title: entity.title ?? '' };
+  };
+
+  const toSelectOptions = (
+    entities: { id?: number; title?: string }[],
+  ): TitleInterface<string | number>[] => {
+    return entities
+      .map((entity) => toSelectOption(entity))
+      .filter((option): option is TitleInterface<string | number> => option !== null);
   };
 
   watch(
@@ -84,7 +87,7 @@
     async (selectedStage) => {
       if (!selectedStage?.id) {
         if (!isInitializing.value) {
-          subStage.value = null;
+          subStage.value = [];
           updateData();
         }
 
@@ -92,22 +95,12 @@
       }
 
       if (!isInitializing.value) {
-        subStage.value = null;
+        subStage.value = [];
         updateData();
         return;
       }
 
       await nextTick();
-
-      if (props.labor?.subStage) {
-        isSubStageInitializing.value = true;
-
-        subStage.value = toSelectOption(props.labor.subStage);
-
-        await nextTick();
-
-        isSubStageInitializing.value = false;
-      }
     },
     {
       flush: 'post',
@@ -137,13 +130,9 @@
 
       stage.value = toSelectOption(labor.stage);
 
-      subStage.value = toSelectOption(labor.subStage);
+      subStage.value = toSelectOptions(labor.subStages);
 
       await nextTick();
-
-      if (labor.subStage) {
-        subStage.value = toSelectOption(labor.subStage);
-      }
 
       isSubStageInitializing.value = false;
       isInitializing.value = false;
@@ -161,7 +150,7 @@
       measurementId: measurement.value?.id,
       itemTypeId: itemType.value?.id,
       stageId: stage.value?.id,
-      subStageId: subStage.value?.id,
+      subStageIds: subStage.value.map((item) => Number(item.id)),
       status: status.value,
       translations: {
         title: translations.value,
@@ -188,8 +177,10 @@
     }
 
     subStage.value = Array.isArray(selectedSubStage)
-      ? (selectedSubStage[0] ?? null)
-      : selectedSubStage;
+      ? selectedSubStage
+      : selectedSubStage
+        ? [selectedSubStage]
+        : [];
     updateData();
   };
 
@@ -242,11 +233,12 @@
             v-model.number="price"
             class="field-input"
             min="0"
-            step="0.01"
+           
             type="number"
             :placeholder="$t('labor.price_placeholder')"
             @input="updateData"
           />
+           <!-- step="0.01" -->
         </div>
       </div>
 
@@ -287,6 +279,7 @@
           :placeholder="$t('labor.sub_stage_placeholder')"
           :disabled="!stage?.id"
           required
+          :type="2"
           @update:model-value="updateSubStage"
         />
       </div>

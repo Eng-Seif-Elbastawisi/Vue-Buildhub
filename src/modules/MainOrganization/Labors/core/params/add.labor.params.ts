@@ -9,7 +9,7 @@ export default class AddLaborParams implements Params {
   public translations?: { title: Record<string, string> };
   public itemTypeId?: number;
   public stageId?: number;
-  public subStageId?: number;
+  public subStageIds?: number[];
   public status?: boolean;
   public static readonly validation = new ClassValidation().setRules({
     price: { required: true },
@@ -20,7 +20,7 @@ export default class AddLaborParams implements Params {
     },
     itemTypeId: requiredSelectRule(),
     stageId: requiredSelectRule(),
-    subStageId: requiredSelectRule(),
+    subStageIds: requiredSelectRule(),
   });
   constructor(labor: {
     price?: number;
@@ -28,7 +28,7 @@ export default class AddLaborParams implements Params {
     translations?: { title: Record<string, string> };
     itemTypeId?: number;
     stageId?: number;
-    subStageId?: number;
+    subStageIds?: number[];
     status?: boolean;
   }) {
     this.price = labor.price;
@@ -36,7 +36,7 @@ export default class AddLaborParams implements Params {
     this.translations = labor.translations;
     this.itemTypeId = labor.itemTypeId;
     this.stageId = labor.stageId;
-    this.subStageId = labor.subStageId;
+    this.subStageIds = labor.subStageIds;
     this.status = labor.status;
   }
   toMap(): Record<string, unknown> {
@@ -46,7 +46,7 @@ export default class AddLaborParams implements Params {
       translations: this.translations,
       item_type_id: this.itemTypeId,
       stage_id: this.stageId,
-      sub_stage_id: this.subStageId,
+      sub_stage_ids: this.subStageIds,
       status: this.status,
     };
   }

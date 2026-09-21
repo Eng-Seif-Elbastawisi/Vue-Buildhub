@@ -37,6 +37,18 @@ describe('stage params', () => {
     });
   });
 
+  it('maps server-side sorting for stage lists', () => {
+    expect(
+      new IndexStageParams({
+        sortBy: 'stage_children_count',
+        sortDirection: 'desc',
+      }).toMap(),
+    ).toMatchObject({
+      sort_by: 'stage_children_count',
+      sort_direction: 'desc',
+    });
+  });
+
   it('maps and validates identifiers', () => {
     expect(new ShowStageParams({ id: 4 }).toMap()).toEqual({ stage_id: 4 });
     expect(new DeleteStageParams(4).toMap()).toEqual({ stage_id: 4 });

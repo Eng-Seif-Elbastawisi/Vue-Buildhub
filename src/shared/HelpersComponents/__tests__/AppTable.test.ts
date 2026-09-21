@@ -161,6 +161,8 @@ describe('AppTable', () => {
     await sortableTh.trigger('click');
     expect(wrapper.emitted('sort')).toBeTruthy();
     expect(wrapper.emitted('sort')![0]).toEqual(['name', 'asc']);
+    expect(sortableTh.attributes('aria-sort')).toBe('ascending');
+    expect(sortableTh.attributes('title')).toContain('Sorted ascending');
   });
 
   it('toggles sort direction on repeated click', async () => {
@@ -173,6 +175,20 @@ describe('AppTable', () => {
 
     const emitted = wrapper.emitted('sort')!;
     expect(emitted[1]).toEqual(['name', 'desc']);
+    expect(sortableTh.attributes('aria-sort')).toBe('descending');
+    expect(sortableTh.attributes('title')).toContain('Sorted descending');
+  });
+
+  it('restores the initial sort state supplied by the server-backed list', () => {
+    const wrapper = createWrapper({
+      headers: [{ key: 'name', label: 'Name', sortable: true }],
+      initialSortKey: 'name',
+      initialSortDirection: 'desc',
+    });
+
+    const sortableTh = wrapper.find('.sortable');
+    expect(sortableTh.attributes('aria-sort')).toBe('descending');
+    expect(sortableTh.attributes('title')).toContain('Sorted descending');
   });
 
   it('shows -- for null values', () => {
@@ -211,6 +227,7 @@ describe('AppTable', () => {
   it('handles drag and drop reordering and emits reorder event', async () => {
     const wrapper = createWrapper({ reorderable: true });
     const rows = wrapper.findAll('tbody tr');
+    const dragHandles = wrapper.findAll('.td-drag-handle');
 
     const dataTransfer = {
       effectAllowed: '',
@@ -219,8 +236,11 @@ describe('AppTable', () => {
       getData: vi.fn(),
     };
 
-    // Drag row 0
-    await rows[0].trigger('dragstart', { dataTransfer });
+    expect(rows[0].attributes('draggable')).toBeUndefined();
+    expect(dragHandles[0].attributes('draggable')).toBe('true');
+
+    // Drag row 0 by its dedicated handle
+    await dragHandles[0].trigger('dragstart', { dataTransfer });
     // Drag over row 1
     await rows[1].trigger('dragover', { dataTransfer });
     // Drop on row 1

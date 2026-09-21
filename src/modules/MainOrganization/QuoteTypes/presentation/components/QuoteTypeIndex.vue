@@ -45,46 +45,57 @@
 
   const perPage = ref(10);
   const word = ref('');
+  const sortBy = ref<string>();
+  const sortDirection = ref<'asc' | 'desc'>();
 
   const fetchQuoteTypes = async (page: number = 1, searchWord: string = '') => {
     await controller.fetchList(
       new IndexQuoteTypeParams({
         word: searchWord,
-        page: route.query.page ? Number(route.query.page) : page,
+        page,
         perPage: perPage.value,
         parentId: null,
+        sortBy: sortBy.value,
+        sortDirection: sortDirection.value,
       }),
     );
   };
 
-  const Search = debounce(() => {
+  const updateRouteQuery = (page: number) =>
     router.push({
       query: {
         ...route.query,
-        page: 1,
+        page: String(page),
         word: word.value || undefined,
+        sort_by: sortBy.value,
+        sort_direction: sortDirection.value,
       },
     });
+
+  const onSort = (key: string, direction: 'asc' | 'desc') => {
+    sortBy.value = key;
+    sortDirection.value = direction;
+    void updateRouteQuery(1);
+    void fetchQuoteTypes(1, word.value);
+  };
+
+  const Search = debounce(() => {
+    void updateRouteQuery(1);
 
     void fetchQuoteTypes(1, word.value);
   });
 
   const onPageChange = (page: number) => {
-    void fetchQuoteTypes(page);
+    void fetchQuoteTypes(page, word.value);
 
-    void router.push({
-      query: {
-        ...route.query,
-        page: String(page),
-        word: word.value || undefined,
-      },
-    });
+    void updateRouteQuery(page);
   };
 
   const onPerPageChange = (count: number) => {
     perPage.value = count;
 
     void fetchQuoteTypes(1, word.value);
+    void updateRouteQuery(1);
   };
 
   const routePrefix = computed(() =>
@@ -125,6 +136,11 @@
 
   onMounted(async () => {
     word.value = route.query.word ? String(route.query.word) : '';
+    sortBy.value = route.query.sort_by ? String(route.query.sort_by) : undefined;
+    sortDirection.value =
+      route.query.sort_direction === 'asc' || route.query.sort_direction === 'desc'
+        ? route.query.sort_direction
+        : undefined;
 
     await fetchQuoteTypes(route.query.page ? Number(route.query.page) : 1, word.value);
   });
@@ -185,10 +201,13 @@
           <AppTable
             :headers="headers"
             :items="data as QuoteTypeModel[]"
+            :initial-sort-key="sortBy"
+            :initial-sort-direction="sortDirection"
             show-index
             hoverable
             striped
             reorderable
+            @sort="onSort"
             @reorder="onReorder"
           >
             <template #cell-title="{ item }">

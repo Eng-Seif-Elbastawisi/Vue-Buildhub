@@ -43,66 +43,70 @@ const headers: TableHeader[] = [
 
 const perPage = ref(10);
 const word = ref('');
+const sortBy = ref<string>();
+const sortDirection = ref<'asc' | 'desc'>();
 
 const fetchSubStages = async (page: number = 1, searchWord: string = '') => {
   await controller.fetchList(
     new IndexStageParams({
       word: searchWord,
-      page: route.query.page ? Number(route.query.page) : page,
+      page,
       perPage: perPage.value,
       parentId,
+      sortBy: sortBy.value,
+      sortDirection: sortDirection.value,
     }),
   );
 };
 
-const Search = debounce(() => {
+const updateRouteQuery = (page: number) =>
   router.push({
     query: {
       ...route.query,
-      page: 1,
+      page: String(page),
       word: word.value || undefined,
+      sort_by: sortBy.value,
+      sort_direction: sortDirection.value,
     },
   });
+
+const onSort = (key: string, direction: 'asc' | 'desc') => {
+  sortBy.value = key;
+  sortDirection.value = direction;
+  void updateRouteQuery(1);
+  void fetchSubStages(1, word.value);
+};
+
+const Search = debounce(() => {
+  void updateRouteQuery(1);
 
   void fetchSubStages(1, word.value);
 });
 
 const onPageChange = (page: number) => {
-  void fetchSubStages(page);
+  void fetchSubStages(page, word.value);
 
-  void router.push({
-    query: {
-      ...route.query,
-      page: String(page),
-      word: word.value || undefined,
-    },
-  });
+  void updateRouteQuery(page);
 };
 
 const onPerPageChange = (count: number) => {
   perPage.value = count;
 
   void fetchSubStages(1, word.value);
+  void updateRouteQuery(1);
 };
 
 const deleteSubStage = async (id: number) => {
   await controller.delete(new DeleteStageParams(id));
 
-  await fetchSubStages(
-    route.query.page ? Number(route.query.page) : 1,
-    word.value,
-  );
+  await fetchSubStages(route.query.page ? Number(route.query.page) : 1, word.value);
 };
 
 const deleteSelectedSubStages = (stages: StageModel[]) =>
   deleteSelectedRows(
     stages,
     (id) => controller.delete(new DeleteStageParams(id)),
-    () =>
-      fetchSubStages(
-        route.query.page ? Number(route.query.page) : 1,
-        word.value,
-      ),
+    () => fetchSubStages(route.query.page ? Number(route.query.page) : 1, word.value),
   );
 
 const routePrefix = computed(() =>
@@ -112,15 +116,12 @@ const routePrefix = computed(() =>
 /*
  * Add SubStage
  */
-const formRoute = computed(
-  () => `${routePrefix.value}/stages/${parentId}/sub-stages/add`,
-);
+const formRoute = computed(() => `${routePrefix.value}/stages/${parentId}/sub-stages/add`);
 
 /*
  * Edit SubStage
  */
-const editRoute = (id: number) =>
-  `${routePrefix.value}/stages/${parentId}/sub-stages/edit/${id}`;
+const editRoute = (id: number) => `${routePrefix.value}/stages/${parentId}/sub-stages/edit/${id}`;
 
 const onReorder = async ({
   movedItem,
@@ -155,11 +156,13 @@ onMounted(async () => {
   }
 
   word.value = route.query.word ? String(route.query.word) : '';
+  sortBy.value = route.query.sort_by ? String(route.query.sort_by) : undefined;
+  sortDirection.value =
+    route.query.sort_direction === 'asc' || route.query.sort_direction === 'desc'
+      ? route.query.sort_direction
+      : undefined;
 
-  await fetchSubStages(
-    route.query.page ? Number(route.query.page) : 1,
-    word.value,
-  );
+  await fetchSubStages(route.query.page ? Number(route.query.page) : 1, word.value);
 });
 </script>
 
@@ -199,23 +202,24 @@ onMounted(async () => {
       </div>
     </header>
 
-    <DataStatusBuilder :controller="state"
-      :on-retry="async () => await fetchSubStages(route.query.page ? Number(route.query.page) : 1, word)">
+    <DataStatusBuilder :controller="state" :on-retry="async () => await fetchSubStages(route.query.page ? Number(route.query.page) : 1, word)
+      ">
       <template #success="{ data }">
         <div class="table-frame">
-          <AppTable :headers="headers" :items="data as StageModel[]" :bulk-delete="deleteSelectedSubStages" selectable
-            show-index hoverable striped reorderable @reorder="onReorder">
+          <AppTable :headers="headers" :items="data as StageModel[]" :bulk-delete="deleteSelectedSubStages"
+            :initial-sort-key="sortBy" :initial-sort-direction="sortDirection" selectable show-index hoverable striped
+            reorderable @sort="onSort" @reorder="onReorder">
             <template #cell-title="{ item }">
               {{ item?.title }}
             </template>
 
             <template #actions="{ item }">
               <div class="row-actions">
-
-
                 <ChangeStatusButton :id="item.id!" :key="`${item.id}-${item.status}`"
-                  :initial-is-active="Boolean(item.status)" :type="StatusTypeEnum.STAGE"
-                  @reload="async () => await fetchSubStages(route.query.page ? Number(route.query.page) : 1, word)" />
+                  :initial-is-active="Boolean(item.status)" :type="StatusTypeEnum.STAGE" @reload="
+                    async () =>
+                      await fetchSubStages(route.query.page ? Number(route.query.page) : 1, word)
+                  " />
 
                 <!-- Edit -->
                 <router-link class="action-btn edit" :to="editRoute(item.id!)">
@@ -223,8 +227,8 @@ onMounted(async () => {
                 </router-link>
 
                 <!-- Delete -->
-                <DeleteDialog :title="$t('Are you sure you want to remove this sub stage?')
-                  " :message="$t('This action cannot be undone.')" :hasbtn="true" @delete="deleteSubStage(item.id!)">
+                <DeleteDialog :title="$t('Are you sure you want to remove this sub stage?')"
+                  :message="$t('This action cannot be undone.')" :hasbtn="true" @delete="deleteSubStage(item.id!)">
                   <template #btn>
                     <button class="action-btn delete" :title="$t('Delete')">
                       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -270,9 +274,7 @@ onMounted(async () => {
       </template>
 
       <template #loader>
-        <div class="table-loading">
-          Loading...
-        </div>
+        <div class="table-loading">Loading...</div>
       </template>
     </DataStatusBuilder>
   </div>

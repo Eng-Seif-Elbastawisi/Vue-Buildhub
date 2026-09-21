@@ -11,4 +11,18 @@ describe('LaborShowModel', () => {
 
     expect(labor.status).toBe(true);
   });
+
+  it('maps plural sub-stage relations for edit forms', () => {
+    const labor = LaborShowModel.fromJson({
+      sub_stages: [
+        { id: 30, title: 'Painting' },
+        { id: 31, title: 'Tiling' },
+      ],
+    });
+
+    expect(labor.subStages).toMatchObject([
+      { id: 30, title: 'Painting' },
+      { id: 31, title: 'Tiling' },
+    ]);
+  });
 });

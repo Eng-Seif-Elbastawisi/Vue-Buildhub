@@ -6,10 +6,14 @@ type IndexQuoteTypeParamsData = {
   perPage?: number;
   withPage?: number;
   parentId?: number | null;
+  sortBy?: string;
+  sortDirection?: 'asc' | 'desc';
 };
 
 export default class IndexQuoteTypeParams extends IndexParams {
   public parentId?: number | null;
+  public sortBy?: string;
+  public sortDirection?: 'asc' | 'desc';
 
   constructor(data?: IndexQuoteTypeParamsData);
 
@@ -19,6 +23,8 @@ export default class IndexQuoteTypeParams extends IndexParams {
     perPage?: number,
     withPage?: number,
     parentId?: number | null,
+    sortBy?: string,
+    sortDirection?: 'asc' | 'desc',
   );
 
   constructor(
@@ -27,6 +33,8 @@ export default class IndexQuoteTypeParams extends IndexParams {
     perPage: number = 10,
     withPage: number = 1,
     parentId?: number | null,
+    sortBy?: string,
+    sortDirection?: 'asc' | 'desc',
   ) {
     if (typeof dataOrWord === 'object') {
       super(
@@ -37,6 +45,8 @@ export default class IndexQuoteTypeParams extends IndexParams {
       );
 
       this.parentId = dataOrWord.parentId;
+      this.sortBy = dataOrWord.sortBy;
+      this.sortDirection = dataOrWord.sortDirection;
 
       return;
     }
@@ -44,6 +54,8 @@ export default class IndexQuoteTypeParams extends IndexParams {
     super(dataOrWord, pageNumber, perPage, withPage);
 
     this.parentId = parentId;
+    this.sortBy = sortBy;
+    this.sortDirection = sortDirection;
   }
 
   toMap(): Record<string, string | number | number[] | null> {
@@ -52,6 +64,9 @@ export default class IndexQuoteTypeParams extends IndexParams {
     if (this.parentId !== undefined) {
       data.parent_id = this.parentId;
     }
+
+    if (this.sortBy) data.sort_by = this.sortBy;
+    if (this.sortDirection) data.sort_direction = this.sortDirection;
 
     return data;
   }

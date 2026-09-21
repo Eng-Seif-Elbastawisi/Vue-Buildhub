@@ -27,7 +27,7 @@ describe('LaborAdd', () => {
       translations: { title: { en: 'Installation' } },
       itemTypeId: 10,
       stageId: 20,
-      subStageId: 30,
+      subStageIds: [30],
     });
     const wrapper = mount(LaborAdd, {
       global: {

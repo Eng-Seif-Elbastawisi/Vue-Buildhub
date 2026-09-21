@@ -16,6 +16,7 @@ export default class LaborModel {
   public readonly measurementUnit?: MeasurementModel;
   public readonly stage?: StageModel;
   public readonly subStage?: StageModel;
+  public readonly subStages: StageModel[];
   public readonly pricingMode: LaborPricingMode;
   public readonly activeMappingCount: number;
   public readonly mappingReady: boolean;
@@ -32,6 +33,7 @@ export default class LaborModel {
     measurementUnit?: MeasurementModel;
     stage?: StageModel;
     subStage?: StageModel;
+    subStages?: StageModel[];
     pricingMode?: LaborPricingMode;
     activeMappingCount?: number;
     mappingReady?: boolean;
@@ -47,6 +49,7 @@ export default class LaborModel {
     this.measurementUnit = labor.measurementUnit;
     this.stage = labor.stage;
     this.subStage = labor.subStage;
+    this.subStages = labor.subStages ?? (labor.subStage ? [labor.subStage] : []);
     this.pricingMode = labor.pricingMode ?? 'manual_entry';
     this.activeMappingCount = labor.activeMappingCount ?? 0;
     this.mappingReady = labor.mappingReady ?? false;
@@ -75,6 +78,13 @@ export default class LaborModel {
       json.activeMappingCount ?? json.active_mapping_count,
     );
 
+    const rawSubStages = json.sub_stages ?? json.sub_stage;
+    const subStages = Array.isArray(rawSubStages)
+      ? rawSubStages.map((relation) => StageModel.fromJson(relation as Record<string, unknown>))
+      : rawSubStages
+        ? [StageModel.fromJson(rawSubStages as Record<string, unknown>)]
+        : [];
+
     return new LaborModel({
       id: json.id as number | undefined,
       translations: { title: LaborModel.mapTranslations(json.translations) },
@@ -85,7 +95,8 @@ export default class LaborModel {
       itemType: ItemTypesModel.fromJson(json.item_type ?? {}),
       measurementUnit: MeasurementModel.fromJson(json.measurement_unit ?? {}),
       stage: StageModel.fromJson(json.stage ?? {}),
-      subStage: StageModel.fromJson(json.sub_stage ?? {}),
+      subStage: subStages[0],
+      subStages,
       pricingMode: LaborModel.mapPricingMode(
         json.pricingMode ?? json.defaultPricingMode ?? json.default_pricing_mode,
       ),

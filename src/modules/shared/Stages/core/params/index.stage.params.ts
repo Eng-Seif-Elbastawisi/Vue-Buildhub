@@ -6,13 +6,25 @@ type IndexStageParamsData = {
   perPage?: number;
   withPage?: number;
   parentId?: number | null;
+  sortBy?: string;
+  sortDirection?: 'asc' | 'desc';
 };
 
 export default class IndexStageParams extends IndexParams {
   public parentId?: number | null;
+  public sortBy?: string;
+  public sortDirection?: 'asc' | 'desc';
 
   constructor(data?: IndexStageParamsData);
-  constructor(word?: string, pageNumber?: number, perPage?: number, withPage?: number ,parentId?: number | null);
+  constructor(
+    word?: string,
+    pageNumber?: number,
+    perPage?: number,
+    withPage?: number,
+    parentId?: number | null,
+    sortBy?: string,
+    sortDirection?: 'asc' | 'desc',
+  );
 
   constructor(
     dataOrWord: IndexStageParamsData | string = '',
@@ -20,6 +32,8 @@ export default class IndexStageParams extends IndexParams {
     perPage: number = 10,
     withPage: number = 1,
     parentId?: number | null,
+    sortBy?: string,
+    sortDirection?: 'asc' | 'desc',
   ) {
     if (typeof dataOrWord === 'object') {
       super(
@@ -30,11 +44,15 @@ export default class IndexStageParams extends IndexParams {
       );
 
       this.parentId = dataOrWord.parentId;
+      this.sortBy = dataOrWord.sortBy;
+      this.sortDirection = dataOrWord.sortDirection;
       return;
     }
 
     super(dataOrWord, pageNumber, perPage, withPage);
     this.parentId = parentId;
+    this.sortBy = sortBy;
+    this.sortDirection = sortDirection;
   }
 
   toMap(): Record<string, string | number | number[] | null> {
@@ -43,6 +61,9 @@ export default class IndexStageParams extends IndexParams {
     if (this.parentId !== undefined) {
       data.parent_id = this.parentId;
     }
+
+    if (this.sortBy) data.sort_by = this.sortBy;
+    if (this.sortDirection) data.sort_direction = this.sortDirection;
 
     return data;
   }
