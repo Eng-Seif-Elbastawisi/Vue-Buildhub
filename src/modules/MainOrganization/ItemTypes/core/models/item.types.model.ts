@@ -39,7 +39,7 @@ export default class ItemTypesModel {
     }, {});
   }
 
-  static fromJson(json: Record<string, unknown>): ItemTypesModel {
+  static fromJson(json: any): ItemTypesModel {
     if (!json) {
       throw new Error('Cannot create ItemTypesModel from null or undefined');
     }

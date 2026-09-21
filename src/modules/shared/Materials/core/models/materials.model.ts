@@ -56,7 +56,7 @@ export default class MaterialsModel {
     }, {});
   }
 
-  static fromJson(json: Record<string, unknown>): MaterialsModel {
+  static fromJson(json: any): MaterialsModel {
     if (!json) throw new Error('Cannot create MaterialsModel from null or undefined');
 
     return new MaterialsModel({
@@ -66,22 +66,12 @@ export default class MaterialsModel {
       title: json.title as string,
       price: Number(json.price),
       brandId: (json.brandId ?? json.brand_id) as number | undefined,
-      itemType: MaterialsModel.mapItemType(json.itemType ?? json.item_type),
-      stage: MaterialsModel.mapStage(json.stage),
-      subStage: MaterialsModel.mapStage(json.subStage ?? json.sub_stage),
+      itemType: ItemTypesModel.fromJson(json.item_type ?? {}),
+      stage: StageModel.fromJson(json.stage ?? {}),
+      subStage: StageModel.fromJson(json.subStage ?? {}),
       status: json.status === true || Number(json.status) === 1,
       code: json.code as string | undefined,
     });
-  }
-
-  private static mapItemType(itemType: unknown): ItemTypesModel | undefined {
-    return itemType !== null && typeof itemType === 'object'
-      ? ItemTypesModel.fromJson(itemType as Record<string, unknown>)
-      : undefined;
-  }
-
-  private static mapStage(stage: unknown): StageModel | undefined {
-    return stage !== null && typeof stage === 'object' ? StageModel.fromJson(stage) : undefined;
   }
 
   static example: MaterialsModel = new MaterialsModel({
