@@ -124,7 +124,7 @@ describe('LaborForm', () => {
           measurementId: { id: 40, title: 'Unit' },
           itemType: { id: 10, title: 'Item type' },
           stage: { id: 20, title: 'Stage' },
-          subStage: { id: 30, title: 'Sub-stage' },
+          subStages: [{ id: 30, title: 'Sub-stage' }],
           translations: { title: { en: 'Installation', ar: 'تركيب' } },
           status: false,
         }),

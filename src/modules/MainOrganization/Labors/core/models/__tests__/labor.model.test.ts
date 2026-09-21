@@ -15,7 +15,7 @@ describe('LaborModel', () => {
       item_type: { id: 10, title: 'Finishing' },
       measurement_unit: { id: 40, title: 'Meter' },
       stage: { id: 20, title: 'Execution' },
-      sub_stage: { id: 30, title: 'Painting' },
+      sub_stages: [{ id: 30, title: 'Painting' }],
       default_pricing_mode: 'configured',
       active_mapping_count: 3,
       mapping_readiness: 'ready',
@@ -29,6 +29,7 @@ describe('LaborModel', () => {
     expect(labor.measurementUnit).toMatchObject({ id: 40, title: 'Meter' });
     expect(labor.stage).toMatchObject({ id: 20, title: 'Execution' });
     expect(labor.subStage).toMatchObject({ id: 30, title: 'Painting' });
+    expect(labor.subStages).toMatchObject([{ id: 30, title: 'Painting' }]);
     expect(labor.status).toBe(true);
     expect(labor.pricingMode).toBe('configured');
     expect(labor.activeMappingCount).toBe(3);
@@ -47,5 +48,18 @@ describe('LaborModel', () => {
     expect(labor.pricingMode).toBe('manual_entry');
     expect(labor.activeMappingCount).toBe(0);
     expect(labor.mappingReady).toBe(false);
+  });
+
+  it('does not convert the legacy singular sub-stage relation into a list', () => {
+    const labor = LaborModel.fromJson({
+      title: 'Manual labor',
+      price: 50,
+      unit: UnitTypeEnum.bag,
+      translations: [],
+      sub_stage: { id: 30, title: 'Legacy sub-stage' },
+    });
+
+    expect(labor.subStages).toEqual([]);
+    expect(labor.subStage).toBeUndefined();
   });
 });

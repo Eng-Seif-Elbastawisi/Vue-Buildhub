@@ -107,7 +107,7 @@ describe('MaterialsForm', () => {
           measurementId: new MeasurementModel({ id: 3, title: 'Unit' }),
           itemType: new ItemTypesModel({ id: 4, title: 'Item type' }),
           stage: StageModel.fromJson({ id: 5, title: 'Stage' }),
-          subStage: StageModel.fromJson({ id: 6, title: 'Sub-stage' }),
+          subStages: [StageModel.fromJson({ id: 6, title: 'Sub-stage' })],
           translations: { title: { en: 'Steel' } },
           status: false,
         }),

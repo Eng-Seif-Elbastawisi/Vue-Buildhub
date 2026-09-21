@@ -278,7 +278,10 @@
           :params="subStageParams"
           :placeholder="$t('labor.sub_stage_placeholder')"
           :disabled="!stage?.id"
+          :selection-limit="5"
+          paginated
           required
+          show-select-all
           :type="2"
           @update:model-value="updateSubStage"
         />

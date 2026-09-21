@@ -1,13 +1,23 @@
 import { describe, expect, it, vi } from 'vitest';
 import { flushPromises, mount } from '@vue/test-utils';
+import { computed, ref } from 'vue';
 import IndexStageParams from '@/modules/shared/Stages/core/params/index.stage.params';
+import PaginationModel from '@/base/Core/Models/paginationModel';
 import UpdatedCustomInputSelect from '../UpdatedCustomInputSelect.vue';
 
 // Stubs
 const MultiSelectStub = {
   name: 'MultiSelect',
-  template: '<div class="multiselect-stub" />',
-  props: ['modelValue', 'options', 'placeholder', 'loading', 'emptyMessage'],
+  template: '<div class="multiselect-stub"><slot name="header" /><slot name="footer" /></div>',
+  props: [
+    'modelValue',
+    'options',
+    'placeholder',
+    'loading',
+    'emptyMessage',
+    'selectionLimit',
+    'showToggleAll',
+  ],
   emits: ['update:modelValue'],
 };
 const SelectStub = {
@@ -65,6 +75,86 @@ describe('UpdatedCustomInputSelect', () => {
     const wrapper = createWrapper({ type: 2 });
     expect(wrapper.findComponent(MultiSelectStub).exists()).toBe(true);
     expect(wrapper.findComponent(SelectStub).exists()).toBe(false);
+  });
+
+  it('shows the selection limit and a clear select-all action for limited multi-selects', async () => {
+    const options = Array.from({ length: 7 }, (_, index) =>
+      makeTitleInterface(index + 1, `Stage ${index + 1}`),
+    );
+    const wrapper = createWrapper({
+      type: 2,
+      modelValue: [],
+      staticOptions: options,
+      showSelectAll: true,
+      selectionLimit: 5,
+    });
+
+    const select = wrapper.findComponent(MultiSelectStub);
+
+    expect(select.props('selectionLimit')).toBe(5);
+    expect(select.props('showToggleAll')).toBe(false);
+    expect(wrapper.text()).toContain('of 5 selected');
+
+    await wrapper.find('.multiselect-select-all').trigger('click');
+
+    expect(wrapper.emitted('update:modelValue')?.at(-1)?.[0]).toEqual(options.slice(0, 5));
+  });
+
+  it('caps programmatic multi-select values at the configured limit', async () => {
+    const options = Array.from({ length: 6 }, (_, index) =>
+      makeTitleInterface(index + 1, `Stage ${index + 1}`),
+    );
+    const wrapper = createWrapper({
+      type: 2,
+      modelValue: options,
+      staticOptions: options,
+      selectionLimit: 5,
+    });
+
+    await wrapper.setProps({ modelValue: options });
+
+    expect(wrapper.findComponent(MultiSelectStub).props('modelValue')).toHaveLength(5);
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined();
+  });
+
+  it('loads the next options page from the multi-select footer', async () => {
+    const currentPage = ref(1);
+    const controller = {
+      fetchAsOptions: vi.fn().mockImplementation((params: IndexStageParams) => {
+        currentPage.value = params.pageNumber;
+
+        return Promise.resolve([
+          makeTitleInterface(params.pageNumber, `Stage ${params.pageNumber}`),
+        ]);
+      }),
+      isListFailed: () => false,
+      isListSuccess: () => true,
+      pagination: computed(() => PaginationModel.fromTotal(40, 20, currentPage.value)),
+    };
+
+    const wrapper = createWrapper({
+      type: 2,
+      modelValue: [],
+      controller,
+      params: new IndexStageParams({ parentId: 10, perPage: 20, withPage: 1 }),
+      paginated: true,
+      showSelectAll: true,
+      selectionLimit: 5,
+    });
+
+    await flushPromises();
+    const nextButton = wrapper.findAll('.multiselect-pagination__button')[1];
+
+    expect(nextButton.exists()).toBe(true);
+    await nextButton.trigger('click');
+    await flushPromises();
+
+    expect(controller.fetchAsOptions).toHaveBeenCalledTimes(2);
+    expect(controller.fetchAsOptions.mock.calls[1][0].toMap()).toMatchObject({
+      page: 2,
+      per_page: 20,
+      parent_id: 10,
+    });
   });
 
   it('renders label when label prop is provided', () => {

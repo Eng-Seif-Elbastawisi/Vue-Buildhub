@@ -2,11 +2,12 @@
   import MultiSelect from 'primevue/multiselect';
   import Select from 'primevue/select';
 
-  import { computed, ref, watch, toRefs } from 'vue';
+  import { computed, ref, watch, toRefs, type ComputedRef } from 'vue';
 
   import { useI18n } from 'vue-i18n';
 
   import type Params from '@/base/Core/Params/params';
+  import type PaginationModel from '@/base/Core/Models/paginationModel';
 
   import ValidationService from '@/base/Presentation/Utils/validationService';
 
@@ -21,6 +22,7 @@
     fetchAsOptions(params?: Params): Promise<TitleInterface<string | number>[]>;
     isListFailed(): boolean;
     isListSuccess(): boolean;
+    pagination?: ComputedRef<PaginationModel | null>;
   }
 
   interface Props {
@@ -68,6 +70,12 @@
     showHelp?: boolean;
 
     disabled?: boolean;
+
+    showSelectAll?: boolean;
+
+    selectionLimit?: number;
+
+    paginated?: boolean;
   }
 
   const emit = defineEmits<{
@@ -116,6 +124,12 @@
     showHelp: true,
 
     disabled: false,
+
+    showSelectAll: false,
+
+    selectionLimit: undefined,
+
+    paginated: false,
   });
 
   const {
@@ -138,6 +152,12 @@
     reload: enableReload,
 
     disabled,
+
+    showSelectAll,
+
+    selectionLimit,
+
+    paginated,
   } = toRefs(props);
 
   const loading = ref(false);
@@ -147,6 +167,8 @@
   const localValue = ref(props.modelValue);
 
   const dynamicOptions = ref<TitleInterface<string | number>[]>([]);
+
+  const optionsPage = ref(1);
 
   let latestOptionsRequest = 0;
 
@@ -161,9 +183,48 @@
       ? {
           display: 'chip',
           maxSelectedLabels: 6,
+          selectionLimit: selectionLimit.value,
+          showToggleAll: !showSelectAll.value,
         }
       : {},
   );
+
+  const selectedValues = computed(() => (Array.isArray(localValue.value) ? localValue.value : []));
+
+  const selectedCount = computed(() => selectedValues.value.length);
+
+  const optionsPagination = computed(() => controller.value?.pagination?.value ?? null);
+
+  const optionsLastPage = computed(() => optionsPagination.value?.lastPage ?? 1);
+
+  const allVisibleOptionsSelected = computed(() => {
+    if (mergedOptions.value.length === 0) return false;
+
+    const selectedIds = new Set(selectedValues.value.map((option) => String(option.id)));
+
+    return mergedOptions.value.every((option) => selectedIds.has(String(option.id)));
+  });
+
+  const selectAllLabel = computed(() =>
+    allVisibleOptionsSelected.value
+      ? t('clear_selected_options')
+      : t('select_all_up_to_limit', {
+          count: selectionLimit.value ?? mergedOptions.value.length,
+        }),
+  );
+
+  const selectionLimitMessage = computed(() => {
+    if (!selectionLimit.value) return '';
+
+    if (selectedCount.value >= selectionLimit.value) {
+      return t('selection_limit_reached', { count: selectionLimit.value });
+    }
+
+    return t('selected_count_limit', {
+      selected: selectedCount.value,
+      count: selectionLimit.value,
+    });
+  });
 
   const normalizedValue = computed({
     get: () => localValue.value,
@@ -204,7 +265,14 @@
   syncLocalValue(props.modelValue);
 
   function ensureArray(value: unknown): TitleInterface<string | number>[] {
-    return Array.isArray(value) ? (value as TitleInterface<string | number>[]) : [];
+    if (!Array.isArray(value)) return [];
+
+    const uniqueValues = value.filter(
+      (option, index, options) =>
+        options.findIndex((candidate) => String(candidate?.id) === String(option?.id)) === index,
+    ) as TitleInterface<string | number>[];
+
+    return selectionLimit.value ? uniqueValues.slice(0, selectionLimit.value) : uniqueValues;
   }
 
   function ensureSingle(value: unknown): TitleInterface<number | string> | null {
@@ -219,12 +287,15 @@
     newValue:
       TitleInterface<string | number> | TitleInterface<string | number>[] | null | undefined,
   ): void {
-    if (newValue === localValue.value) {
+    if (
+      newValue === localValue.value &&
+      (!Array.isArray(newValue) || !selectionLimit.value || newValue.length <= selectionLimit.value)
+    ) {
       return;
     }
 
     if (Array.isArray(newValue)) {
-      localValue.value = newValue.map((item) => {
+      localValue.value = ensureArray(newValue).map((item) => {
         const match = mergedOptions.value.find((option) => option.id === item.id);
 
         return match ?? item;
@@ -259,6 +330,8 @@
   }
 
   async function handleOptionUpdates(): Promise<void> {
+    optionsPage.value = 1;
+
     if (disabled.value) {
       latestOptionsRequest += 1;
       loading.value = false;
@@ -278,7 +351,7 @@
     }
   }
 
-  async function fetchOptions(): Promise<void> {
+  async function fetchOptions(page: number = 1): Promise<void> {
     if (disabled.value || !controller?.value || !params?.value) {
       return;
     }
@@ -290,13 +363,14 @@
 
       message.value = t('loading_data');
 
-      const fetchedOptions = await controller.value.fetchAsOptions(params.value);
+      const fetchedOptions = await controller.value.fetchAsOptions(createPageParams(page));
 
       if (requestId !== latestOptionsRequest) {
         return;
       }
 
       dynamicOptions.value = fetchedOptions;
+      optionsPage.value = page;
 
       updateControllerState();
 
@@ -310,6 +384,69 @@
         loading.value = false;
       }
     }
+  }
+
+  function createPageParams(page: number): Params | undefined {
+    const source = params.value;
+
+    if (!source || !paginated.value) return source;
+
+    const pageParams = Object.assign(
+      Object.create(Object.getPrototypeOf(source)),
+      source,
+    ) as Params & {
+      pageNumber?: number;
+      withPage?: number;
+    };
+
+    pageParams.pageNumber = page;
+    pageParams.withPage = 1;
+
+    return pageParams;
+  }
+
+  async function changeOptionsPage(page: number): Promise<void> {
+    if (
+      !paginated.value ||
+      loading.value ||
+      page < 1 ||
+      page > optionsLastPage.value ||
+      page === optionsPage.value
+    ) {
+      return;
+    }
+
+    await fetchOptions(page);
+  }
+
+  function getSelectionOutsideVisibleOptions(): TitleInterface<string | number>[] {
+    const visibleIds = new Set(mergedOptions.value.map((option) => String(option.id)));
+
+    return selectedValues.value.filter((option) => !visibleIds.has(String(option.id)));
+  }
+
+  function getVisibleSelectionAdditions(remainingSlots: number): TitleInterface<string | number>[] {
+    return mergedOptions.value
+      .filter((option) => !selectedValues.value.some((selected) => selected.id === option.id))
+      .slice(0, remainingSlots);
+  }
+
+  function toggleSelectAll(): void {
+    if (!isMultiselect.value || disabled.value) return;
+
+    const currentSelection = getSelectionOutsideVisibleOptions();
+
+    if (allVisibleOptionsSelected.value) {
+      normalizedValue.value = currentSelection;
+      return;
+    }
+
+    const remainingSlots = selectionLimit.value
+      ? Math.max(selectionLimit.value - currentSelection.length, 0)
+      : mergedOptions.value.length;
+    const additions = getVisibleSelectionAdditions(remainingSlots);
+
+    normalizedValue.value = [...currentSelection, ...additions];
   }
 
   function updateControllerState(): void {
@@ -436,7 +573,69 @@
       filter
       :loading="loading"
       :empty-message="message"
-    />
+      @selectall-change="toggleSelectAll"
+    >
+      <template v-if="isMultiselect && showSelectAll" #header>
+        <button
+          type="button"
+          class="multiselect-select-all"
+          :class="{ 'multiselect-select-all--selected': allVisibleOptionsSelected }"
+          :aria-pressed="allVisibleOptionsSelected"
+          :aria-label="selectAllLabel"
+          :disabled="
+            disabled ||
+            (!allVisibleOptionsSelected &&
+              Boolean(selectionLimit) &&
+              selectedCount >= (selectionLimit ?? 0))
+          "
+          @click.stop="toggleSelectAll"
+        >
+          <span class="multiselect-select-all__check" aria-hidden="true">
+            {{ allVisibleOptionsSelected ? '✓' : '' }}
+          </span>
+          <span>{{ selectAllLabel }}</span>
+        </button>
+      </template>
+
+      <template v-if="isMultiselect && paginated && optionsLastPage > 1" #footer>
+        <div
+          class="multiselect-pagination"
+          role="navigation"
+          :aria-label="$t('options_pagination')"
+        >
+          <button
+            type="button"
+            class="multiselect-pagination__button"
+            :disabled="loading || optionsPage <= 1"
+            :aria-label="$t('prev')"
+            @click.stop="changeOptionsPage(optionsPage - 1)"
+          >
+            {{ $t('prev') }}
+          </button>
+          <span class="multiselect-pagination__status">
+            {{ $t('page_of', { current: optionsPage, total: optionsLastPage }) }}
+          </span>
+          <button
+            type="button"
+            class="multiselect-pagination__button"
+            :disabled="loading || optionsPage >= optionsLastPage"
+            :aria-label="$t('next')"
+            @click.stop="changeOptionsPage(optionsPage + 1)"
+          >
+            {{ $t('next') }}
+          </button>
+        </div>
+      </template>
+    </component>
+
+    <p
+      v-if="isMultiselect && selectionLimit"
+      class="selection-limit-message"
+      role="status"
+      aria-live="polite"
+    >
+      {{ selectionLimitMessage }}
+    </p>
 
     <input
       :id="id"
@@ -506,6 +705,78 @@
     cursor: not-allowed;
     opacity: 0.65;
     pointer-events: none;
+  }
+
+  .selection-limit-message {
+    margin: 0.35rem 0 0;
+    color: var(--gray-5);
+    font-size: var(--xs-size);
+  }
+
+  .multiselect-select-all {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.65rem 0.75rem;
+    border: 0;
+    background: transparent;
+    color: var(--bread-crumb-color-span);
+    cursor: pointer;
+    text-align: start;
+
+    &:hover,
+    &:focus-visible {
+      background: var(--PrimaryColor-light);
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.55;
+    }
+
+    &--selected {
+      color: var(--PrimaryColor);
+      font-weight: 600;
+    }
+  }
+
+  .multiselect-select-all__check {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.15rem;
+    height: 1.15rem;
+    border: 1px solid var(--PrimaryColor);
+    border-radius: 0.25rem;
+    font-size: 0.8rem;
+  }
+
+  .multiselect-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    border-top: 1px solid var(--border-weak);
+  }
+
+  .multiselect-pagination__button {
+    border: 0;
+    background: transparent;
+    color: var(--PrimaryColor);
+    cursor: pointer;
+    font-size: var(--xs-size);
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.45;
+    }
+  }
+
+  .multiselect-pagination__status {
+    color: var(--gray-5);
+    font-size: var(--xs-size);
   }
 
   :deep(.p-select.p-disabled),

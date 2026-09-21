@@ -48,8 +48,8 @@ export default class LaborModel {
     this.itemType = labor.itemType;
     this.measurementUnit = labor.measurementUnit;
     this.stage = labor.stage;
-    this.subStage = labor.subStage;
-    this.subStages = labor.subStages ?? (labor.subStage ? [labor.subStage] : []);
+    this.subStages = labor.subStages ?? [];
+    this.subStage = labor.subStage ?? this.subStages[0];
     this.pricingMode = labor.pricingMode ?? 'manual_entry';
     this.activeMappingCount = labor.activeMappingCount ?? 0;
     this.mappingReady = labor.mappingReady ?? false;
@@ -78,12 +78,9 @@ export default class LaborModel {
       json.activeMappingCount ?? json.active_mapping_count,
     );
 
-    const rawSubStages = json.sub_stages ?? json.sub_stage;
-    const subStages = Array.isArray(rawSubStages)
-      ? rawSubStages.map((relation) => StageModel.fromJson(relation as Record<string, unknown>))
-      : rawSubStages
-        ? [StageModel.fromJson(rawSubStages as Record<string, unknown>)]
-        : [];
+    const subStages = ((json.sub_stages as Record<string, unknown>[] | undefined) ?? []).map(
+      (relation) => StageModel.fromJson(relation),
+    );
 
     return new LaborModel({
       id: json.id as number | undefined,
@@ -138,7 +135,7 @@ export default class LaborModel {
     itemType: ItemTypesModel.example,
     measurementUnit: MeasurementModel.example,
     stage: StageModel.example,
-    subStage: StageModel.example,
+    subStages: [StageModel.example],
     pricingMode: 'configured',
     activeMappingCount: 2,
     mappingReady: true,
