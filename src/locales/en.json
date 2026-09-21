@@ -2505,6 +2505,7 @@
   "This action cannot be undone.": "This action cannot be undone.",
   "Delete": "Delete",
   "sidebar.products": "Products",
+  "sidebar.execution-quotes": "Execution Quotes",
   "common.back": "Back",
   "common.save": "Save changes",
   "Products.stages.one_label": "Stage",

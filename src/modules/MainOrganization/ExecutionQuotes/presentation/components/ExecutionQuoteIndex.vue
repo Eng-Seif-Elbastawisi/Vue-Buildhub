@@ -47,8 +47,8 @@
               <tr v-for="quote in quotes" :key="quote.id">
                 <td>{{ quote.id ?? '—' }}</td>
                 <td>{{ quote.quoteSource ?? '—' }}</td>
-                <td>{{ quote.clientId ?? '—' }}</td>
-                <td>{{ quote.projectId ?? '—' }}</td>
+                <td>{{ quote.client_title ?? '—' }}</td>
+                <td>{{ quote.project_totle ?? '—' }}</td>
               </tr>
             </tbody>
           </table>

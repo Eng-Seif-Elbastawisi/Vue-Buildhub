@@ -629,6 +629,11 @@ export const sidebarSections: SidebarSectionConfig[] = [
         icon: SidebarItemIcon,
       },
       {
+        path: '/execution-quotes/add',
+        labelKey: 'sidebar.execution-quotes',
+        icon: SidebarItemIcon,
+      },
+      {
         path: '/suppliers',
         labelKey: 'sidebar.suppliers',
         icon: SidebarSupplierIcon,
