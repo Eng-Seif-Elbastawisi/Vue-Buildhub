@@ -49,4 +49,18 @@ describe('ProjectPreviewShowModel', () => {
     expect(model.notification_type).toBeNull();
     expect(model.notification_message).toBeNull();
   });
+
+  it('maps optional execution quote source fields when returned by the preview API', () => {
+    const model = ProjectPreviewShowModel.fromJson({
+      id: 12,
+      project_id: 10,
+      quote_type_id: 2,
+      design_value: '5000.00',
+      area: 320,
+    });
+
+    expect(model.quote_type_id).toBe(2);
+    expect(model.design_value).toBe('5000.00');
+    expect(model.area).toBe(320);
+  });
 });
