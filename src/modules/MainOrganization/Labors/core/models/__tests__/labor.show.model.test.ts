@@ -25,4 +25,13 @@ describe('LaborShowModel', () => {
       { id: 31, title: 'Tiling' },
     ]);
   });
+
+  it('does not convert the legacy singular sub-stage relation into a list', () => {
+    const labor = LaborShowModel.fromJson({
+      sub_stage: { id: 30, title: 'Legacy sub-stage' },
+    });
+
+    expect(labor.subStages).toEqual([]);
+    expect(labor.subStage).toBeUndefined();
+  });
 });

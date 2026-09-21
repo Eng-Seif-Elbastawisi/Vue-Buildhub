@@ -38,8 +38,8 @@ export default class MaterialsModel {
     this.title = data.title;
     this.itemType = data.itemType;
     this.stage = data.stage;
-    this.subStage = data.subStage;
-    this.subStages = data.subStages ?? (data.subStage ? [data.subStage] : []);
+    this.subStages = data.subStages ?? [];
+    this.subStage = data.subStage ?? this.subStages[0];
     this.status = data.status ?? false;
     this.code = data.code;
 
@@ -62,12 +62,9 @@ export default class MaterialsModel {
   static fromJson(json: any): MaterialsModel {
     if (!json) throw new Error('Cannot create MaterialsModel from null or undefined');
 
-    const rawSubStages = json.sub_stages ?? json.sub_stage ?? json.subStage;
-    const subStages = Array.isArray(rawSubStages)
-      ? rawSubStages.map((relation: Record<string, unknown>) => StageModel.fromJson(relation))
-      : rawSubStages
-        ? [StageModel.fromJson(rawSubStages)]
-        : [];
+    const subStages = (json.sub_stages ?? []).map((relation: Record<string, unknown>) =>
+      StageModel.fromJson(relation),
+    );
 
     return new MaterialsModel({
       id: json.id as number | undefined,
@@ -95,7 +92,7 @@ export default class MaterialsModel {
     brandId: 10,
     itemType: ItemTypesModel.example,
     stage: StageModel.example,
-    subStage: StageModel.example,
+    subStages: [StageModel.example],
     code: '100',
   });
 }

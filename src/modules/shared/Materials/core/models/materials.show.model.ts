@@ -20,7 +20,6 @@ interface MaterialsShowResponse {
   measurement_unit?: ApiRelation;
   item_type?: ApiRelation;
   stage?: ApiRelation;
-  sub_stage?: ApiRelation;
   sub_stages?: ApiRelation[];
   unit?: UnitTypeEnum;
 }
@@ -79,8 +78,8 @@ export default class MaterialsShowModel {
 
     this.itemType = data.itemType;
     this.stage = data.stage;
-    this.subStage = data.subStage;
-    this.subStages = data.subStages ?? (data.subStage ? [data.subStage] : []);
+    this.subStages = data.subStages ?? [];
+    this.subStage = data.subStage ?? this.subStages[0];
 
     Object.freeze(this);
   }
@@ -92,7 +91,7 @@ export default class MaterialsShowModel {
 
     const translations = LaborModel.mapTranslations(json.title);
 
-    const subStages = (json.sub_stages ?? (json.sub_stage ? [json.sub_stage] : [])).map(
+    const subStages = (json.sub_stages ?? []).map(
       (subStage) =>
         ({
           id: subStage.id,
@@ -175,10 +174,12 @@ export default class MaterialsShowModel {
       title: 'منعم',
     } as StageModel,
 
-    subStage: {
-      id: 150,
-      title: 'sub stage2',
-    } as StageModel,
+    subStages: [
+      {
+        id: 150,
+        title: 'sub stage2',
+      } as StageModel,
+    ],
 
     unit: undefined,
 

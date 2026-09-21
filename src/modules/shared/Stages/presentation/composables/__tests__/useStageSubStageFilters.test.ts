@@ -12,6 +12,10 @@ describe('useStageSubStageFilters', () => {
 
     stage.value = { id: 15 };
 
-    expect(subStageParams.value?.toMap()).toMatchObject({ parent_id: 15 });
+    expect(subStageParams.value?.toMap()).toMatchObject({
+      parent_id: 15,
+      per_page: 20,
+      with_pagination: 1,
+    });
   });
 });

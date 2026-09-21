@@ -33,4 +33,13 @@ describe('MaterialsShowModel', () => {
       { id: 7, title: 'Sub-stage 2' },
     ]);
   });
+
+  it('does not convert the legacy singular sub-stage relation into a list', () => {
+    const model = MaterialsShowModel.fromJson({
+      sub_stage: { id: 6, title: 'Legacy sub-stage' },
+    });
+
+    expect(model.subStages).toEqual([]);
+    expect(model.subStage).toBeUndefined();
+  });
 });
