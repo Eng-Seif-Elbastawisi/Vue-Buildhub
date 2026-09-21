@@ -5,6 +5,27 @@ import EmployeeModel from '@/modules/MainOrganization/employee/core/models/emplo
 
 import { QuoteSourceEnum } from '../constants/quote.source.enum';
 
+interface ExecutionQuoteJson {
+  id?: number;
+  quote_source?: QuoteSourceEnum;
+
+  project?: {
+    id?: number;
+  };
+
+  client?: {
+    id?: number;
+  };
+
+  quote_type?: {
+    id?: number;
+  };
+
+  price_employee?: {
+    id?: number;
+  };
+}
+
 export default class ExecutionQuoteModel {
   public readonly id?: number;
   public readonly quoteSource?: QuoteSourceEnum;
@@ -34,48 +55,35 @@ export default class ExecutionQuoteModel {
     Object.freeze(this);
   }
 
-  static fromJson(json: Record<string, unknown>): ExecutionQuoteModel {
-    if (!json) {
-      throw new Error('Cannot create ExecutionQuoteModel from null or undefined');
-    }
-
-    const projectJson =
-      json.project_id && typeof json.project_id === 'object' && !Array.isArray(json.project_id)
-        ? (json.project_id as Record<string, unknown>)
-        : undefined;
-
-    const clientJson =
-      json.client_id && typeof json.client_id === 'object' && !Array.isArray(json.client_id)
-        ? (json.client_id as Record<string, unknown>)
-        : undefined;
-
-    const quoteTypeJson =
-      json.quote_type_id &&
-      typeof json.quote_type_id === 'object' &&
-      !Array.isArray(json.quote_type_id)
-        ? (json.quote_type_id as Record<string, unknown>)
-        : undefined;
-
-    const priceEmployeeJson =
-      json.price_employee_id &&
-      typeof json.price_employee_id === 'object' &&
-      !Array.isArray(json.price_employee_id)
-        ? (json.price_employee_id as Record<string, unknown>)
-        : undefined;
-
+  static fromJson(json: ExecutionQuoteJson): ExecutionQuoteModel {
     return new ExecutionQuoteModel({
-      id: typeof json.id === 'number' ? json.id : undefined,
+      id: json.id,
 
-      quoteSource:
-        typeof json.quote_source === 'number' ? (json.quote_source as QuoteSourceEnum) : undefined,
+      quoteSource: json.quote_source,
 
-      projectId: projectJson ? ProjectModel.fromJson(projectJson) : undefined,
+      projectId: json.project
+        ? new ProjectModel({
+            id: json.project.id,
+          })
+        : undefined,
 
-      clientId: clientJson ? ClientModel.fromJson(clientJson) : undefined,
+      clientId: json.client
+        ? ClientModel.fromJson({
+            id: json.client.id,
+          })
+        : undefined,
 
-      quoteTypeId: quoteTypeJson ? QuoteTypeModel.fromJson(quoteTypeJson) : undefined,
+      quoteTypeId: json.quote_type
+        ? QuoteTypeModel.fromJson({
+            id: json.quote_type.id,
+          })
+        : undefined,
 
-      priceEmployeeId: priceEmployeeJson ? EmployeeModel.fromJson(priceEmployeeJson) : undefined,
+      priceEmployeeId: json.price_employee
+        ? EmployeeModel.fromJson({
+            id: json.price_employee.id,
+          })
+        : undefined,
     });
   }
 
@@ -84,12 +92,20 @@ export default class ExecutionQuoteModel {
 
     quoteSource: QuoteSourceEnum.EXECUTION_ONLY,
 
-    projectId: ProjectModel.example,
+    projectId: new ProjectModel({
+      id: 10,
+    }),
 
-    clientId: ClientModel.example,
+    clientId: ClientModel.fromJson({
+      id: 5,
+    }),
 
-    quoteTypeId: QuoteTypeModel.example,
+    quoteTypeId: QuoteTypeModel.fromJson({
+      id: 2,
+    }),
 
-    priceEmployeeId: EmployeeModel.example,
+    priceEmployeeId: EmployeeModel.fromJson({
+      id: 7,
+    }),
   });
 }
