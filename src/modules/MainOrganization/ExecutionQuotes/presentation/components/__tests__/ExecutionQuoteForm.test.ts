@@ -11,13 +11,11 @@ import AddExecutionQuoteParams from '../../../core/params/add.execution.quote.pa
 const { controller } = vi.hoisted(() => ({
   controller: () => ({
     fetchAsOptions: vi.fn().mockResolvedValue([]),
-    fetchOne: vi
-      .fn()
-      .mockResolvedValue(
-        new DataSuccess({
-          data: new ProjectPreviewShowModel({ project_id: 20, quote_type_id: 15 }),
-        }),
-      ),
+    fetchOne: vi.fn().mockResolvedValue(
+      new DataSuccess({
+        data: new ProjectPreviewShowModel({ project_id: 20, quote_type_id: 15 }),
+      }),
+    ),
     isListFailed: vi.fn().mockReturnValue(false),
     isListSuccess: vi.fn().mockReturnValue(true),
   }),
@@ -25,6 +23,8 @@ const { controller } = vi.hoisted(() => ({
 
 vi.mock('vue-router', () => ({
   useRouter: () => ({ push: vi.fn() }),
+  createRouter: vi.fn(() => ({ push: vi.fn(), beforeEach: vi.fn() })),
+  createWebHistory: vi.fn(),
 }));
 
 vi.mock('@/modules/MainOrganization/client/presentation/controllers/client.controller', () => ({
@@ -43,6 +43,15 @@ vi.mock(
 );
 vi.mock('@/modules/MainOrganization/employee/presentation/controllers/employee.controller', () => ({
   default: { getInstance: vi.fn(controller) },
+}));
+
+vi.mock('../builder/ExecutionQuoteBuilder.vue', () => ({
+  default: {
+    name: 'ExecutionQuoteBuilder',
+    props: ['modelValue', 'enabled', 'loading'],
+    emits: ['update:modelValue', 'update:stages'],
+    template: '<div class="execution-quote-builder-stub" />',
+  },
 }));
 
 const SelectStub = {
@@ -84,11 +93,13 @@ describe('ExecutionQuoteForm', () => {
     expect(params.toMap().quote_source).toBe(QuoteSourceEnum.EXECUTION_FROM_DESIGN_QUOTE);
   });
 
-  it('serializes both design quote IDs after selecting a design quote', async () => {
+  it('serializes design quote id plus derived project and quote type IDs', async () => {
     const wrapper = mountForm();
 
     await wrapper.findAll('button[role="radio"]').at(1)?.trigger('click');
     await wrapper.find('#execution-quote-client').trigger('click');
+    await wrapper.find('#execution-design-project').trigger('click');
+    await wrapper.find('#execution-design-quote-type').trigger('click');
     await wrapper.find('#execution-design-quote').trigger('click');
     await flushPromises();
 
@@ -99,6 +110,7 @@ describe('ExecutionQuoteForm', () => {
       project_id: 20,
       quote_type_id: 15,
       quote_source: QuoteSourceEnum.EXECUTION_FROM_DESIGN_QUOTE,
+      design_quote_id: 9,
     });
   });
 });

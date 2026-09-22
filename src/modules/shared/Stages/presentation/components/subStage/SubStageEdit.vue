@@ -3,7 +3,7 @@ import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 import type AddStageParams from '../../../core/params/add.stges.params.ts';
-import EditStageParams from '../../../core/params/edit.stage.params.ts';
+import type EditStageParams from '../../../core/params/edit.stage.params.ts';
 import ShowStageParams from '../../../core/params/show.stage.params.ts';
 import StageController from '../../controllers/stage.controller.ts';
 import StageForm from './SubStageForm.vue';
@@ -56,10 +56,12 @@ onMounted(async () => {
 <template>
   <div class="Stage-crud-page">
 
-    <StageForm :stage="controller.itemData.value!" :parent-id="parentId" :loading="loading" :is-edit="true"
+    <StageForm
+:stage="controller.itemData.value!" :parent-id="parentId" :loading="loading" :is-edit="true"
       @update-data="updateData" />
 
-    <button class="btn btn-primary" :class="{ 'btn--loading': loading }" type="button" :disabled="loading"
+    <button
+class="btn btn-primary" :class="{ 'btn--loading': loading }" type="button" :disabled="loading"
       @click="saveStage">
       {{ $t('stage.update') }}
     </button>

@@ -9,8 +9,8 @@ vi.mock('vue-router', () => ({
 vi.mock('../ExecutionQuoteForm.vue', () => ({
   default: {
     name: 'ExecutionQuoteForm',
-    props: ['loading'],
-    emits: ['updateData'],
+    props: ['loading', 'executionQuoteId'],
+    emits: ['updateData', 'updateDetails'],
     template: '<div class="execution-quote-form-stub" />',
   },
 }));
@@ -19,13 +19,14 @@ vi.mock('../../controllers/execution.quote.controller', () => ({
   default: {
     getInstance: vi.fn(() => ({
       errorMessage: { value: null },
-      create: vi.fn(),
+      createBase: vi.fn(),
+      storeDetails: vi.fn(),
     })),
   },
 }));
 
 describe('ExecutionQuoteAdd', () => {
-  it('renders the execution quote form and save action', () => {
+  it('renders the execution quote form and the first-step save action', () => {
     const wrapper = mount(ExecutionQuoteAdd, {
       global: { mocks: { $t: (key: string) => key } },
     });

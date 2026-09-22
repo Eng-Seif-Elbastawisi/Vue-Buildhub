@@ -180,14 +180,16 @@ onMounted(async () => {
       <div class="toolbar">
         <div class="search-field">
           <span class="search-icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            <svg
+width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
               stroke-linecap="round">
               <circle cx="11" cy="11" r="8" />
               <path d="m21 21-4.35-4.35" />
             </svg>
           </span>
 
-          <input v-model="word" :placeholder="$t('search_sub_stages')" class="search-input" type="text"
+          <input
+v-model="word" :placeholder="$t('search_sub_stages')" class="search-input" type="text"
             @input="Search" />
         </div>
 
@@ -202,11 +204,13 @@ onMounted(async () => {
       </div>
     </header>
 
-    <DataStatusBuilder :controller="state" :on-retry="async () => await fetchSubStages(route.query.page ? Number(route.query.page) : 1, word)
+    <DataStatusBuilder
+:controller="state" :on-retry="async () => await fetchSubStages(route.query.page ? Number(route.query.page) : 1, word)
       ">
       <template #success="{ data }">
         <div class="table-frame">
-          <AppTable :headers="headers" :items="data as StageModel[]" :bulk-delete="deleteSelectedSubStages"
+          <AppTable
+:headers="headers" :items="data as StageModel[]" :bulk-delete="deleteSelectedSubStages"
             :initial-sort-key="sortBy" :initial-sort-direction="sortDirection" selectable show-index hoverable striped
             reorderable @sort="onSort" @reorder="onReorder">
             <template #cell-title="{ item }">
@@ -215,7 +219,8 @@ onMounted(async () => {
 
             <template #actions="{ item }">
               <div class="row-actions">
-                <ChangeStatusButton :id="item.id!" :key="`${item.id}-${item.status}`"
+                <ChangeStatusButton
+:id="item.id!" :key="`${item.id}-${item.status}`"
                   :initial-is-active="Boolean(item.status)" :type="StatusTypeEnum.STAGE" @reload="
                     async () =>
                       await fetchSubStages(route.query.page ? Number(route.query.page) : 1, word)
@@ -227,11 +232,13 @@ onMounted(async () => {
                 </router-link>
 
                 <!-- Delete -->
-                <DeleteDialog :title="$t('Are you sure you want to remove this sub stage?')"
+                <DeleteDialog
+:title="$t('Are you sure you want to remove this sub stage?')"
                   :message="$t('This action cannot be undone.')" :hasbtn="true" @delete="deleteSubStage(item.id!)">
                   <template #btn>
                     <button class="action-btn delete" :title="$t('Delete')">
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                      <svg
+width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                         stroke-linecap="round" stroke-linejoin="round">
                         <path d="M3 6h18" />
                         <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
@@ -245,13 +252,15 @@ onMounted(async () => {
           </AppTable>
         </div>
 
-        <Pagination :pagination="controller.pagination.value" @change-page="onPageChange"
+        <Pagination
+:pagination="controller.pagination.value" @change-page="onPageChange"
           @count-per-page="onPerPageChange" />
       </template>
 
       <template #empty>
         <div class="empty-state">
-          <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"
+          <svg
+width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"
             stroke-linecap="round">
             <rect x="2" y="4" width="20" height="16" rx="2" />
 

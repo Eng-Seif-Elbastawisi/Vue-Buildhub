@@ -17,6 +17,9 @@
   const openAdd = () => {
     void router.push({ name: 'Add Execution Quote' });
   };
+
+  const relationTitle = (relation: { title?: string } | number | undefined) =>
+    typeof relation === 'object' && relation !== null ? relation.title ?? '—' : relation ?? '—';
 </script>
 
 <template>
@@ -47,8 +50,8 @@
               <tr v-for="quote in quotes" :key="quote.id">
                 <td>{{ quote.id ?? '—' }}</td>
                 <td>{{ quote.quoteSource ?? '—' }}</td>
-                <td>{{ quote.client.title ?? '—' }}</td>
-                <td>{{ quote.project.title ?? '—' }}</td>
+                <td>{{ relationTitle(quote.client) }}</td>
+                <td>{{ relationTitle(quote.project) }}</td>
               </tr>
             </tbody>
           </table>
