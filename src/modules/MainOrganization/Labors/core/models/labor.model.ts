@@ -78,7 +78,7 @@ export default class LaborModel {
       json.activeMappingCount ?? json.active_mapping_count,
     );
 
-    const subStages = ((json.sub_stages as Record<string, unknown>[] | undefined) ?? []).map(
+    const subStages = ((json.sub_stage as Record<string, unknown>[] | undefined) ?? []).map(
       (relation) => StageModel.fromJson(relation),
     );
 

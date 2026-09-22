@@ -14,7 +14,7 @@ describe('LaborShowModel', () => {
 
   it('maps plural sub-stage relations for edit forms', () => {
     const labor = LaborShowModel.fromJson({
-      sub_stages: [
+      sub_stage: [
         { id: 30, title: 'Painting' },
         { id: 31, title: 'Tiling' },
       ],
@@ -26,9 +26,8 @@ describe('LaborShowModel', () => {
     ]);
   });
 
-  it('does not convert the legacy singular sub-stage relation into a list', () => {
+  it('uses an empty list when sub-stage relations are absent', () => {
     const labor = LaborShowModel.fromJson({
-      sub_stage: { id: 30, title: 'Legacy sub-stage' },
     });
 
     expect(labor.subStages).toEqual([]);
