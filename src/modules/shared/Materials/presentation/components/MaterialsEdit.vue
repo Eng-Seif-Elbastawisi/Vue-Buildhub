@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { onMounted, ref } from 'vue';
-  import { useRoute } from 'vue-router';
+  import { useRoute, useRouter } from 'vue-router';
   import type EditMaterialParams from '../../core/params/edit.materials.params';
   import ShowMaterialParams from '../../core/params/show.materials.params';
   import MaterialController from '../controllers/materials.controller';
@@ -8,9 +8,11 @@
 
   const controller = MaterialController.getInstance();
   const route = useRoute();
+  const router = useRouter();
   const formKey = route.fullPath;
   const params = ref<EditMaterialParams | null>(null);
   const loading = ref(false);
+  const goBack = () => void router.push({ name: 'Material' });
   const materialId = Number(route.params.material_id);
 
   const updateData = (updatedParams: EditMaterialParams) => {
@@ -54,6 +56,9 @@
         <span v-if="loading" class="loader"></span>
         <span v-else>{{ $t('material.update') }}</span>
       </button>
+      <button class="btn btn-secondary back-button" type="button" @click="goBack">
+        {{ $t('common.back') }}
+      </button>
     </div>
 
     <div v-if="controller.errorMessage.value" class="error">
@@ -72,6 +77,15 @@
   .actions.disabled {
     pointer-events: none;
     opacity: 0.7;
+  }
+
+  .actions {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .actions .btn {
+    width: 50%;
   }
 
   .error {

@@ -1,15 +1,17 @@
 <script setup lang="ts">
   import { ref } from 'vue';
-  import { useRoute } from 'vue-router';
+  import { useRoute, useRouter } from 'vue-router';
   import LaborForm from './LaborForm.vue';
   import LaborController from '../controllers/labor.controller.ts';
   import type AddLaborParams from '../../core/params/add.labor.params.ts';
 
   const controller = LaborController.getInstance();
   const route = useRoute();
+  const router = useRouter();
   const formKey = route.fullPath;
   const params = ref<AddLaborParams | null>(null);
   const loading = ref(false);
+  const goBack = () => void router.push({ name: 'Labor' });
 
   const updateData = (updatedParams: AddLaborParams) => {
     params.value = updatedParams;
@@ -41,6 +43,9 @@
         <span v-if="loading" class="loader"></span>
         <span v-else>{{ $t('labor.save') }}</span>
       </button>
+      <button class="btn btn-secondary back-button" type="button" @click="goBack">
+        {{ $t('common.back') }}
+      </button>
     </div>
 
     <div v-if="controller.errorMessage.value" class="error">
@@ -59,6 +64,15 @@
   .actions.disabled {
     pointer-events: none;
     opacity: 0.7;
+  }
+
+  .actions {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .actions .btn {
+    width: 50%;
   }
 
   .error {

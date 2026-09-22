@@ -48,8 +48,10 @@ const cancelStageAdd = () => {
         {{ $t('save') }}
       </button>
 
-      <ConfirmCancelDialog ref="confirmCancelRef" :title="$t('cancel_changes')"
-        :message="$t('are_you_sure_you_want_to_leave')" @confirm="cancelStageAdd" />
+      <ConfirmCancelDialog ref="confirmCancelRef" class="dialog cancel-btn" :title="$t('cancel_changes')"
+        :message="$t('are_you_sure_you_want_to_leave')" :trigger-label="$t('common.back')"
+        trigger-class="back-button"
+        @confirm="cancelStageAdd" />
     </div>
 
 
@@ -67,8 +69,18 @@ const cancelStageAdd = () => {
 }
 
 .form-footer {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 1rem;
+
+  .btn-primary {
+    width: 100%;
+  }
+
+  .cancel-btn {
+    flex-grow: 1;
+    width: 100%;
+  }
 
   @media (max-width: 768px) {
     flex-direction: column;
@@ -84,7 +96,4 @@ const cancelStageAdd = () => {
   border-radius: 4px;
 }
 
-.btn-primary {
-  width: 100%;
-}
 </style>

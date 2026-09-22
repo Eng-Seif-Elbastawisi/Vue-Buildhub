@@ -1,14 +1,16 @@
 <script setup lang="ts">
   import { ref } from 'vue';
-  import { useRoute } from 'vue-router';
+  import { useRoute, useRouter } from 'vue-router';
   import type AddItemTypesParams from '../../core/params/add.item.types.params.js';
   import ItemTypesController from '../controllers/item.types.controller.js';
   import ItemTypesForm from './ItemTypesForm.vue';
 
   const controller = ItemTypesController.getInstance();
   const route = useRoute();
+  const router = useRouter();
   const params = ref<AddItemTypesParams | null>(null);
   const loading = ref(false);
+  const goBack = () => void router.push({ name: 'ItemTypes' });
 
   const saveItemTypes = async () => {
     if (!params.value) return;
@@ -24,15 +26,20 @@
 <template>
   <div class="ItemTypes-crud-page">
     <ItemTypesForm :loading="loading" @update-data="params = $event" />
-    <button
-      :class="{ 'btn--loading': loading }"
-      class="btn btn-primary"
-      type="button"
-      :disabled="loading"
-      @click="saveItemTypes"
-    >
-      {{ $t('save') }}
-    </button>
+    <div class="form-actions">
+      <button
+        :class="{ 'btn--loading': loading }"
+        class="btn btn-primary"
+        type="button"
+        :disabled="loading"
+        @click="saveItemTypes"
+      >
+        {{ $t('save') }}
+      </button>
+      <button class="btn btn-secondary back-button" type="button" @click="goBack">
+        {{ $t('common.back') }}
+      </button>
+    </div>
     <div v-if="controller.errorMessage.value" class="error">
       {{ controller.errorMessage.value }}
     </div>
@@ -56,6 +63,15 @@
   }
 
   .btn-primary {
-    width: 100%;
+    width: 50%;
+  }
+
+  .form-actions {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .back-button {
+    width: 50%;
   }
 </style>

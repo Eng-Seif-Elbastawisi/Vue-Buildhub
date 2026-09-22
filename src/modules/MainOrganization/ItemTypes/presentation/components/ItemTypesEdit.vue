@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { onMounted, ref } from 'vue';
-  import { useRoute } from 'vue-router';
+  import { useRoute, useRouter } from 'vue-router';
   import type AddItemTypesParams from '../../core/params/add.item.types.params.js';
   import EditItemTypesParams from '../../core/params/edit.item.types.params.js';
   import ShowItemTypesParams from '../../core/params/show.item.types.params.js';
@@ -8,9 +8,11 @@
   import ItemTypesForm from './ItemTypesForm.vue';
   const controller = ItemTypesController.getInstance();
   const route = useRoute();
+  const router = useRouter();
   const itemTypesId = Number(route.params.item_types_id);
   const params = ref<EditItemTypesParams | null>(null);
   const loading = ref(false);
+  const goBack = () => void router.push({ name: 'ItemTypes' });
   const updateData = (data: AddItemTypesParams) => {
     params.value = new EditItemTypesParams({
       itemTypesId,
@@ -44,15 +46,20 @@
       :loading="loading"
       @update-data="updateData"
     />
-    <button
-      class="btn btn-primary"
-      :class="{ 'btn--loading': loading }"
-      type="button"
-      :disabled="loading"
-      @click="saveItemTypes"
-    >
-      {{ $t('ItemTypes.update') }}
-    </button>
+    <div class="form-actions">
+      <button
+        class="btn btn-primary"
+        :class="{ 'btn--loading': loading }"
+        type="button"
+        :disabled="loading"
+        @click="saveItemTypes"
+      >
+        {{ $t('ItemTypes.update') }}
+      </button>
+      <button class="btn btn-secondary back-button" type="button" @click="goBack">
+        {{ $t('common.back') }}
+      </button>
+    </div>
     <div v-if="controller.errorMessage.value" class="error">
       {{ controller.errorMessage.value }}
     </div>
@@ -75,6 +82,15 @@
   }
 
   .btn-primary {
-    width: 100%;
+    width: 50%;
+  }
+
+  .form-actions {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .back-button {
+    width: 50%;
   }
 </style>

@@ -20,7 +20,7 @@ interface LaborShowResponse {
   measurement_unit?: ApiRelation;
   item_type?: ApiRelation;
   stage?: ApiRelation;
-  sub_stage?: ApiRelation[];
+  sub_stages?: ApiRelation[];
   unit?: UnitTypeEnum;
 }
 
@@ -91,7 +91,7 @@ export default class laborShowModel {
 
     const translations = LaborModel.mapTranslations(json.title);
 
-    const subStages = (json.sub_stage ?? []).map((subStage) => StageModel.fromJson(subStage));
+    const subStages = (json.sub_stages ?? []).map((subStage) => StageModel.fromJson(subStage));
 
     return new laborShowModel({
       id: json.id,
