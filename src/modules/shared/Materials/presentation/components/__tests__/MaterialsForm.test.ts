@@ -107,7 +107,7 @@ describe('MaterialsForm', () => {
           measurementId: new MeasurementModel({ id: 3, title: 'Unit' }),
           itemType: new ItemTypesModel({ id: 4, title: 'Item type' }),
           stage: StageModel.fromJson({ id: 5, title: 'Stage' }),
-          subStage: StageModel.fromJson({ id: 6, title: 'Sub-stage' }),
+          subStages: [StageModel.fromJson({ id: 6, title: 'Sub-stage' })],
           translations: { title: { en: 'Steel' } },
           status: false,
         }),
@@ -133,7 +133,7 @@ describe('MaterialsForm', () => {
       measurement_unit_id: 3,
       item_type_id: 4,
       stage_id: 5,
-      sub_stage_id: 6,
+      sub_stage_ids: [6],
       status: false,
     });
   });
@@ -185,6 +185,6 @@ describe('MaterialsForm', () => {
     const params = wrapper.emitted('updateData')?.at(-1)?.[0] as {
       toMap: () => Record<string, unknown>;
     };
-    expect(params.toMap()).toMatchObject({ stage_id: 21, sub_stage_id: undefined });
+    expect(params.toMap()).toMatchObject({ stage_id: 21, sub_stage_ids: [] });
   });
 });

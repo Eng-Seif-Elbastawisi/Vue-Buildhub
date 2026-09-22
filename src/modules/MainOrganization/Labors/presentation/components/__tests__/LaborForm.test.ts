@@ -108,7 +108,7 @@ describe('LaborForm', () => {
       measurement_unit_id: 40,
       item_type_id: 10,
       stage_id: 20,
-      sub_stage_id: 30,
+      sub_stage_ids: [30],
       status: true,
     });
   });
@@ -124,7 +124,7 @@ describe('LaborForm', () => {
           measurementId: { id: 40, title: 'Unit' },
           itemType: { id: 10, title: 'Item type' },
           stage: { id: 20, title: 'Stage' },
-          subStage: { id: 30, title: 'Sub-stage' },
+          subStages: [{ id: 30, title: 'Sub-stage' }],
           translations: { title: { en: 'Installation', ar: 'تركيب' } },
           status: false,
         }),
@@ -152,7 +152,7 @@ describe('LaborForm', () => {
       measurement_unit_id: 40,
       item_type_id: 10,
       stage_id: 20,
-      sub_stage_id: 30,
+      sub_stage_ids: [30],
       status: false,
     });
   });
@@ -202,6 +202,6 @@ describe('LaborForm', () => {
     });
 
     const params = wrapper.emitted('updateData')?.at(-1)?.[0] as AddLaborParams;
-    expect(params.toMap()).toMatchObject({ stage_id: 21, sub_stage_id: undefined });
+    expect(params.toMap()).toMatchObject({ stage_id: 21, sub_stage_ids: [] });
   });
 });

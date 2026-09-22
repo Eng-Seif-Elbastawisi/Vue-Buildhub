@@ -824,7 +824,13 @@
   "of": "من",
   "prev": "السابق",
   "next": "التالي",
+  "options_pagination": "التنقل بين صفحات الخيارات",
+  "page_of": "صفحة {current} من {total}",
   "per_page": "لكل صفحة",
+  "select_all_up_to_limit": "اختيار حتى {count}",
+  "clear_selected_options": "مسح الاختيارات الحالية",
+  "selection_limit_reached": "تم الوصول للحد الأقصى: {count} اختيارات",
+  "selected_count_limit": "تم اختيار {selected} من {count}",
   "close": "إغلاق",
   "delete_item_confirmation": "هل أنت متأكد أنك تريد حذف هذا العنصر؟",
   "delete_dialog": "نافذة الحذف",
@@ -925,6 +931,9 @@
   "auto_fit": "ملاءمة الأعمدة تلقائيًا",
   "preview": "معاينة",
   "no_data": "لا توجد بيانات متاحة",
+  "table_sortable": "عمود قابل للفرز. اضغط للفرز تصاعديًا.",
+  "table_sorted_ascending": "الفرز تصاعدي. اضغط للفرز تنازليًا.",
+  "table_sorted_descending": "الفرز تنازلي. اضغط للفرز تصاعديًا.",
   "document_management": "إدارة الوثائق",
   "manage_documents": "إدارة وثائق النظام",
   "create_document": "إنشاء وثيقة",
@@ -1814,6 +1823,8 @@
   "validation.fields.project_department_item_id": "بند قسم المشروع",
   "validation.fields.project_floor_id": "طابق المشروع",
   "validation.fields.project_id": "المشروع",
+  "validation.fields.quote_source": "مصدر المقايسة",
+  "validation.fields.quote_type_id": "نوع المقايسة",
   "validation.fields.project_item_id": "بند المشروع",
   "validation.fields.project_preview_id": "معاينة المشروع",
   "validation.fields.project_pricing_id": "تسعير المشروع",
@@ -2435,6 +2446,7 @@
   "back_to_parent_stage": "الرجوع الي المرحلة الرئيسية",
   "Are you sure you want to remove this measurement unit?": "هل أنت متأكد من حذف وحدة القياس ؟",
   "sidebar.products": "المنتجات",
+  "sidebar.execution-quotes": "مقايسات التنفيذ",
   "common.back": "رجوع",
   "Products.stages.one_label": "مرحلة",
   "Products.stages.many_label": "مراحل",
@@ -2506,5 +2518,74 @@
     "delete_message": "هل أنت متأكد من حذف سجل المصنعية؟ لا يمكن التراجع عن هذا الإجراء.",
     "delete_success": "تم حذف سجل المصنعية بنجاح."
   },
-  "sidebar.quote-types": "نوع المقايسات"
+  "sidebar.quote-types": "نوع المقايسات",
+  "execution_quote": {
+    "title": "مقايسة تنفيذ",
+    "subtitle": "مرحلة التنفيذ",
+    "badge": "BuildHub OS",
+    "new_quote": "مقايسة جديدة",
+    "view_quotes": "عرض المقايسات",
+    "new_draft": "مسودة جديدة",
+    "new_execution_quote": "مقايسة تنفيذ جديدة",
+    "choose_client_and_project": "اختر العميل وأدخل بيانات المشروع",
+    "client_total": "إجمالي العميل",
+    "internal_cost": "تكلفة داخلية",
+    "items": "بنود",
+    "build_path": "مسار بناء المقايسة",
+    "four_steps": "٤ خطوات",
+    "source_title": "مصدر مقايسة التنفيذ",
+    "from_approved_design": "من تصميم معتمد",
+    "quote_data": "بيانات المقايسة",
+    "save": "حفظ مقايسة التنفيذ",
+    "index_description": "راجع مقايسات التنفيذ ومصادر بياناتها.",
+    "validation": {
+      "required_data": "أكمل بيانات المقايسة المطلوبة قبل الحفظ."
+    },
+    "steps": {
+      "data": "بيانات",
+      "type": "النوع",
+      "stages": "المراحل",
+      "review": "المراجعة",
+      "start_here": "ابدأ هنا",
+      "required": "مطلوبة",
+      "complete": "تم",
+      "completed": "مكتملة",
+      "choose_stage": "اختر مرحلة",
+      "awaiting_items": "بانتظار بنود"
+    },
+    "sources": {
+      "execution_only": {
+        "title": "تنفيذ فقط",
+        "description": "طلب تنفيذ مباشر ببيانات فاضية."
+      },
+      "design_quote": {
+        "title": "تنفيذ من مقايسة تصميم",
+        "description": "اختر العميل ثم مقايسة التصميم"
+      }
+    },
+    "fields": {
+      "client": "العميل",
+      "project": "المشروع",
+      "quote_type": "المساحة",
+      "price_employee": "مسؤول التسعير",
+      "design_quote": "مقايسة التصميم",
+      "status": "الحالة",
+      "inspection": "المعاينة",
+      "design_value": "قيمة التصميم",
+      "area": "المساحة"
+    },
+    "placeholders": {
+      "client": "اختر العميل",
+      "project": "اختر المشروع",
+      "quote_type": "اختر نوع المقايسة",
+      "price_employee": "اختر مسؤول التسعير",
+      "design_quote": "اختر مقايسة التصميم"
+    },
+    "table": {
+      "id": "المعرف",
+      "source": "المصدر",
+      "client": "العميل",
+      "project": "المشروع"
+    }
+  }
 }

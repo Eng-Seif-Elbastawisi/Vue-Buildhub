@@ -15,7 +15,7 @@ export const useStageSubStageFilters = (stage: Ref<StageSelection | null>) => {
       return undefined;
     }
 
-    return new IndexStageParams({ perPage: 100, withPage: 0, parentId });
+    return new IndexStageParams({ perPage: 20, withPage: 1, parentId });
   });
 
   return { stageParams, subStageParams };

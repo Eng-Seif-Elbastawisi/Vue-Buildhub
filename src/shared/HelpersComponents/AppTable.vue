@@ -20,6 +20,8 @@ const props = defineProps<{
   showIndex?: boolean;
   selectable?: boolean;
   reorderable?: boolean;
+  initialSortKey?: string;
+  initialSortDirection?: 'asc' | 'desc';
   emptyMessage?: string;
   rowKey?: string;
   striped?: boolean;
@@ -35,9 +37,24 @@ const emit = defineEmits<{
 }>();
 
 // --- Sorting ---
-const sortKey = ref<string | null>(null);
-const sortDirection = ref<'asc' | 'desc'>('asc');
-const hoveredHeader = ref<string | null>(null);
+const sortKey = ref<string | null>(props.initialSortKey ?? null);
+const sortDirection = ref<'asc' | 'desc'>(props.initialSortDirection ?? 'asc');
+
+watch(
+  () => [props.initialSortKey, props.initialSortDirection] as const,
+  ([key, direction]) => {
+    sortKey.value = key ?? null;
+    sortDirection.value = direction ?? 'asc';
+  },
+);
+
+const sortDescription = (header: TableHeader): string => {
+  if (sortKey.value !== header.key) return t('table_sortable');
+
+  return sortDirection.value === 'asc'
+    ? t('table_sorted_ascending')
+    : t('table_sorted_descending');
+};
 
 function handleSort(header: TableHeader) {
   if (!header.sortable) return;
@@ -129,8 +146,8 @@ async function deleteSelectedRows() {
 // --- Row key ---
 function getRowKey(item: T, index: number): string | number {
   const key = props.rowKey ?? 'id';
-  const val = (item as any)?.[key];
-  return val !== undefined ? val : index;
+  const val = (item as Record<string, unknown> | null | undefined)?.[key];
+  return typeof val === 'string' || typeof val === 'number' ? val : index;
 }
 
 // when double click on any filed copy to clipboard
@@ -164,6 +181,36 @@ function onDragStart(event: DragEvent, index: number) {
   }
 }
 
+let dragOverFrame: number | null = null;
+let pendingDragOver: {
+  clientY: number;
+  index: number;
+  target: HTMLElement;
+} | null = null;
+
+function updateDragOverState() {
+  dragOverFrame = null;
+  if (!pendingDragOver) return;
+
+  const { clientY, index: targetIndex, target: targetRow } = pendingDragOver;
+  pendingDragOver = null;
+
+  const rect = targetRow.getBoundingClientRect();
+  const nextPosition = clientY < rect.top + rect.height / 2 ? 'top' : 'bottom';
+
+  if (dragOverIndex.value === targetIndex && dragOverPosition.value === nextPosition) return;
+
+  dragOverIndex.value = targetIndex;
+  dragOverPosition.value = nextPosition;
+}
+
+function scheduleDragOverUpdate(clientY: number, index: number, target: HTMLElement) {
+  pendingDragOver = { clientY, index, target };
+  if (dragOverFrame !== null) return;
+
+  dragOverFrame = requestAnimationFrame(updateDragOverState);
+}
+
 function onDragOver(event: DragEvent, index: number) {
   if (!props.reorderable || draggedIndex.value === null) return;
   event.preventDefault();
@@ -171,13 +218,10 @@ function onDragOver(event: DragEvent, index: number) {
     event.dataTransfer.dropEffect = 'move';
   }
 
-  dragOverIndex.value = index;
   const target = event.currentTarget as HTMLElement | null;
-  if (target) {
-    const rect = target.getBoundingClientRect();
-    const midY = rect.top + rect.height / 2;
-    dragOverPosition.value = event.clientY < midY ? 'top' : 'bottom';
-  }
+  if (!target) return;
+
+  scheduleDragOverUpdate(event.clientY, index, target);
 }
 
 function onDragLeave(_event: DragEvent, index: number) {
@@ -210,6 +254,11 @@ function onDrop(event: DragEvent, targetIndex: number) {
 }
 
 function onDragEnd() {
+  if (dragOverFrame !== null) {
+    cancelAnimationFrame(dragOverFrame);
+    dragOverFrame = null;
+  }
+  pendingDragOver = null;
   draggedIndex.value = null;
   dragOverIndex.value = null;
   dragOverPosition.value = null;
@@ -246,14 +295,22 @@ function onDragEnd() {
               width: header.width,
               textAlign: header.align || 'left',
             }" :class="{
-              sortable: header.sortable,
-              active: sortKey === header.key,
-            }" @click="handleSort(header)" @mouseenter="header.sortable && (hoveredHeader = header.key)"
-              @mouseleave="hoveredHeader = null">
+                sortable: header.sortable,
+                active: sortKey === header.key,
+              }" :aria-label="header.sortable ? sortDescription(header) : undefined" :aria-sort="header.sortable
+                  ? sortKey === header.key
+                    ? sortDirection === 'asc'
+                      ? 'ascending'
+                      : 'descending'
+                    : 'none'
+                  : undefined
+                " :tabindex="header.sortable ? 0 : undefined"
+              :title="header.sortable ? sortDescription(header) : undefined" @click="handleSort(header)"
+              @keydown.enter.prevent="handleSort(header)" @keydown.space.prevent="handleSort(header)">
               <div class="th-content">
                 <span>{{ $t(header.label) }}</span>
 
-                <span v-if="header.sortable" class="sort-icon">
+                <span v-if="header.sortable" class="sort-icon" aria-hidden="true" :title="sortDescription(header)">
                   <template v-if="sortKey === header.key">
                     {{ sortDirection === 'asc' ? '▲' : '▼' }}
                   </template>
@@ -291,9 +348,8 @@ function onDragEnd() {
             'is-dragging': draggedIndex === index,
             'drag-over-top': dragOverIndex === index && dragOverPosition === 'top',
             'drag-over-bottom': dragOverIndex === index && dragOverPosition === 'bottom',
-          }" :draggable="reorderable" @dragstart="onDragStart($event, index)" @dragover="onDragOver($event, index)"
-            @dragleave="onDragLeave($event, index)" @drop="onDrop($event, index)" @dragend="onDragEnd"
-            @click="emit('row-click', item, index)">
+          }" @dragover="onDragOver($event, index)" @dragleave="onDragLeave($event, index)"
+            @drop="onDrop($event, index)" @dragend="onDragEnd" @click="emit('row-click', item, index)">
             <!-- Selection checkbox -->
             <td v-if="selectable" class="td-checkbox" @click.stop>
               <input type="checkbox" :checked="isRowSelected(index)" @change="toggleRow(index)" />
@@ -303,7 +359,8 @@ function onDragEnd() {
             <td v-if="showIndex" class="td-index">{{ index + 1 }}</td>
 
             <!-- Drag handle column -->
-            <td v-if="reorderable" class="td-drag-handle" @click.stop>
+            <td v-if="reorderable" class="td-drag-handle" :draggable="reorderable" @click.stop
+              @dragstart.stop="onDragStart($event, index)">
               <slot name="drag-handle" :item="item" :index="index">
                 <span class="drag-handle-icon" :title="$t('drag_to_reorder') || 'Drag to reorder'">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -339,6 +396,34 @@ function onDragEnd() {
 </template>
 
 <style lang="scss">
+th.sortable {
+  cursor: pointer;
+  user-select: none;
+
+  &:focus-visible {
+    outline: 2px solid var(--PrimaryColor);
+    outline-offset: -2px;
+  }
+}
+
+.sort-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1rem;
+  margin-inline-start: 0.35rem;
+  opacity: 0.7;
+  transition:
+    opacity 0.15s ease,
+    transform 0.15s ease;
+}
+
+th.sortable:hover .sort-icon,
+th.sortable:focus-visible .sort-icon,
+th.sortable.active .sort-icon {
+  opacity: 1;
+}
+
 /* ===== Drag handle ===== */
 .th-drag-handle,
 .td-drag-handle {
@@ -424,7 +509,9 @@ tr.drag-over-top::before,
 tr.drag-over-bottom::after {
   background-image: radial-gradient(circle 4px, var(--PrimaryColor) 100%, transparent 100%);
   background-repeat: no-repeat, no-repeat;
-  background-position: left center, right center;
+  background-position:
+    left center,
+    right center;
 }
 
 tr.is-dragging {

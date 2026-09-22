@@ -16,6 +16,7 @@ export default class LaborModel {
   public readonly measurementUnit?: MeasurementModel;
   public readonly stage?: StageModel;
   public readonly subStage?: StageModel;
+  public readonly subStages: StageModel[];
   public readonly pricingMode: LaborPricingMode;
   public readonly activeMappingCount: number;
   public readonly mappingReady: boolean;
@@ -32,6 +33,7 @@ export default class LaborModel {
     measurementUnit?: MeasurementModel;
     stage?: StageModel;
     subStage?: StageModel;
+    subStages?: StageModel[];
     pricingMode?: LaborPricingMode;
     activeMappingCount?: number;
     mappingReady?: boolean;
@@ -46,7 +48,8 @@ export default class LaborModel {
     this.itemType = labor.itemType;
     this.measurementUnit = labor.measurementUnit;
     this.stage = labor.stage;
-    this.subStage = labor.subStage;
+    this.subStages = labor.subStages ?? [];
+    this.subStage = labor.subStage ?? this.subStages[0];
     this.pricingMode = labor.pricingMode ?? 'manual_entry';
     this.activeMappingCount = labor.activeMappingCount ?? 0;
     this.mappingReady = labor.mappingReady ?? false;
@@ -75,6 +78,10 @@ export default class LaborModel {
       json.activeMappingCount ?? json.active_mapping_count,
     );
 
+    const subStages = ((json.sub_stage as Record<string, unknown>[] | undefined) ?? []).map(
+      (relation) => StageModel.fromJson(relation),
+    );
+
     return new LaborModel({
       id: json.id as number | undefined,
       translations: { title: LaborModel.mapTranslations(json.translations) },
@@ -85,7 +92,8 @@ export default class LaborModel {
       itemType: ItemTypesModel.fromJson(json.item_type ?? {}),
       measurementUnit: MeasurementModel.fromJson(json.measurement_unit ?? {}),
       stage: StageModel.fromJson(json.stage ?? {}),
-      subStage: StageModel.fromJson(json.sub_stage ?? {}),
+      subStage: subStages[0],
+      subStages,
       pricingMode: LaborModel.mapPricingMode(
         json.pricingMode ?? json.defaultPricingMode ?? json.default_pricing_mode,
       ),
@@ -127,7 +135,7 @@ export default class LaborModel {
     itemType: ItemTypesModel.example,
     measurementUnit: MeasurementModel.example,
     stage: StageModel.example,
-    subStage: StageModel.example,
+    subStages: [StageModel.example],
     pricingMode: 'configured',
     activeMappingCount: 2,
     mappingReady: true,

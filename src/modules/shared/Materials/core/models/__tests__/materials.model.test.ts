@@ -18,10 +18,12 @@ describe('MaterialsModel', () => {
         id: 20,
         title: 'Preparation',
       },
-      sub_stage: {
-        id: 21,
-        title: 'Excavation',
-      },
+      sub_stages: [
+        {
+          id: 21,
+          title: 'Excavation',
+        },
+      ],
       price: '125',
       unit: UnitTypeEnum.bag,
       translations: [
@@ -55,5 +57,18 @@ describe('MaterialsModel', () => {
     expect(model.itemType).toBeInstanceOf(ItemTypesModel);
     expect(model.stage).toBeInstanceOf(StageModel);
     expect(model.subStage).toBeInstanceOf(StageModel);
+  });
+
+  it('does not convert the legacy singular sub-stage relation into a list', () => {
+    const model = MaterialsModel.fromJson({
+      title: 'Cement',
+      price: 125,
+      unit: UnitTypeEnum.bag,
+      translations: [],
+      sub_stage: { id: 21, title: 'Legacy sub-stage' },
+    });
+
+    expect(model.subStages).toEqual([]);
+    expect(model.subStage).toBeUndefined();
   });
 });

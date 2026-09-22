@@ -49,7 +49,7 @@ describe('LaborEdit', () => {
         translations: { title: { en: 'Painting' } },
         itemTypeId: 11,
         stageId: 21,
-        subStageId: 31,
+        subStageIds: [31],
       }),
     );
     await wrapper.get('button').trigger('click');
@@ -59,7 +59,7 @@ describe('LaborEdit', () => {
       labor_id: 7,
       item_type_id: 11,
       stage_id: 21,
-      sub_stage_id: 31,
+      sub_stage_ids: [31],
     });
     expect(controller.fetchOne).toHaveBeenCalledOnce();
   });

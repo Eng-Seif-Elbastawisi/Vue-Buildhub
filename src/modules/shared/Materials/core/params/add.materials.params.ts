@@ -10,7 +10,7 @@ export default class AddMaterialsParams implements Params {
   public translations?: { title: Record<string, string> };
   public itemTypeId?: number;
   public stageId?: number;
-  public subStageId?: number;
+  public subStageIds?: number[];
   public status?: boolean;
   public static readonly validation = new ClassValidation().setRules({
     price: { required: true },
@@ -29,7 +29,7 @@ export default class AddMaterialsParams implements Params {
     translations?: { title: Record<string, string> };
     itemTypeId?: number;
     stageId?: number;
-    subStageId?: number;
+    subStageIds?: number[];
     status?: boolean;
   }) {
     this.price = data.price;
@@ -38,7 +38,7 @@ export default class AddMaterialsParams implements Params {
     this.translations = data.translations;
     this.itemTypeId = data.itemTypeId;
     this.stageId = data.stageId;
-    this.subStageId = data.subStageId;
+    this.subStageIds = data.subStageIds;
     this.status = data.status;
   }
   toMap(): Record<string, unknown> {
@@ -49,7 +49,7 @@ export default class AddMaterialsParams implements Params {
       translations: this.translations,
       item_type_id: this.itemTypeId,
       stage_id: this.stageId,
-      sub_stage_id: this.subStageId,
+      sub_stage_ids: this.subStageIds,
       status: this.status,
     };
   }

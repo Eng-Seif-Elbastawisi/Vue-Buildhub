@@ -11,4 +11,26 @@ describe('LaborShowModel', () => {
 
     expect(labor.status).toBe(true);
   });
+
+  it('maps plural sub-stage relations for edit forms', () => {
+    const labor = LaborShowModel.fromJson({
+      sub_stage: [
+        { id: 30, title: 'Painting' },
+        { id: 31, title: 'Tiling' },
+      ],
+    });
+
+    expect(labor.subStages).toMatchObject([
+      { id: 30, title: 'Painting' },
+      { id: 31, title: 'Tiling' },
+    ]);
+  });
+
+  it('uses an empty list when sub-stage relations are absent', () => {
+    const labor = LaborShowModel.fromJson({
+    });
+
+    expect(labor.subStages).toEqual([]);
+    expect(labor.subStage).toBeUndefined();
+  });
 });

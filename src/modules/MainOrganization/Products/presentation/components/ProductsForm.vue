@@ -626,9 +626,10 @@
                   type="number"
                   class="price-input"
                   min="0"
-                  step="0.01"
                   :placeholder="$t('Products.form.sorting_price_placeholder')"
                 />
+                  <!-- step="0.01" -->
+
 
                 <span class="currency">{{ $t('Products.form.currency') }}</span>
               </div>

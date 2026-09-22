@@ -20,7 +20,7 @@ interface MaterialsShowResponse {
   measurement_unit?: ApiRelation;
   item_type?: ApiRelation;
   stage?: ApiRelation;
-  sub_stage?: ApiRelation;
+  sub_stages?: ApiRelation[];
   unit?: UnitTypeEnum;
 }
 
@@ -42,6 +42,7 @@ export default class MaterialsShowModel {
   public readonly itemType?: ItemTypesModel;
   public readonly stage?: StageModel;
   public readonly subStage?: StageModel;
+  public readonly subStages: StageModel[];
 
   constructor(data: {
     id?: number;
@@ -61,6 +62,7 @@ export default class MaterialsShowModel {
     itemType?: ItemTypesModel;
     stage?: StageModel;
     subStage?: StageModel;
+    subStages?: StageModel[];
   }) {
     this.id = data.id;
     this.price = data.price;
@@ -76,7 +78,8 @@ export default class MaterialsShowModel {
 
     this.itemType = data.itemType;
     this.stage = data.stage;
-    this.subStage = data.subStage;
+    this.subStages = data.subStages ?? [];
+    this.subStage = data.subStage ?? this.subStages[0];
 
     Object.freeze(this);
   }
@@ -87,6 +90,14 @@ export default class MaterialsShowModel {
     }
 
     const translations = LaborModel.mapTranslations(json.title);
+
+    const subStages = (json.sub_stages ?? []).map(
+      (subStage) =>
+        ({
+          id: subStage.id,
+          title: subStage.title,
+        }) as StageModel,
+    );
 
     return new MaterialsShowModel({
       id: json.id,
@@ -124,12 +135,8 @@ export default class MaterialsShowModel {
           } as StageModel)
         : undefined,
 
-      subStage: json.sub_stage
-        ? ({
-            id: json.sub_stage.id,
-            title: json.sub_stage.title,
-          } as StageModel)
-        : undefined,
+      subStage: subStages[0],
+      subStages,
 
       translations: {
         title: translations,
@@ -167,10 +174,12 @@ export default class MaterialsShowModel {
       title: 'منعم',
     } as StageModel,
 
-    subStage: {
-      id: 150,
-      title: 'sub stage2',
-    } as StageModel,
+    subStages: [
+      {
+        id: 150,
+        title: 'sub stage2',
+      } as StageModel,
+    ],
 
     unit: undefined,
 

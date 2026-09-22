@@ -12,7 +12,7 @@ describe('EditMaterialParams', () => {
       translations,
       itemTypeId: 5,
       stageId: 6,
-      subStageId: 7,
+      subStageIds: [7, 8],
       status: false,
     });
     expect(params.toMap()).toEqual({
@@ -23,7 +23,7 @@ describe('EditMaterialParams', () => {
       translations,
       item_type_id: 5,
       stage_id: 6,
-      sub_stage_id: 7,
+      sub_stage_ids: [7, 8],
       status: false,
     });
     expect(params.validate().isValid).toBe(true);
