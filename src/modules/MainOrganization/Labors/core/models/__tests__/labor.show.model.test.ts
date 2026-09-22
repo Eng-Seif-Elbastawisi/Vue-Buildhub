@@ -14,7 +14,7 @@ describe('LaborShowModel', () => {
 
   it('maps plural sub-stage relations for edit forms', () => {
     const labor = LaborShowModel.fromJson({
-      sub_stage: [
+      sub_stages: [
         { id: 30, title: 'Painting' },
         { id: 31, title: 'Tiling' },
       ],

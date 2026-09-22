@@ -15,7 +15,7 @@ describe('LaborModel', () => {
       item_type: { id: 10, title: 'Finishing' },
       measurement_unit: { id: 40, title: 'Meter' },
       stage: { id: 20, title: 'Execution' },
-      sub_stage: [{ id: 30, title: 'Painting' }],
+      sub_stages: [{ id: 30, title: 'Painting' }],
       default_pricing_mode: 'configured',
       active_mapping_count: 3,
       mapping_readiness: 'ready',
@@ -60,5 +60,18 @@ describe('LaborModel', () => {
 
     expect(labor.subStages).toEqual([]);
     expect(labor.subStage).toBeUndefined();
+  });
+
+  it('maps sub_stages returned by the list endpoint', () => {
+    const labor = LaborModel.fromJson({
+      title: 'Manual labor',
+      price: 50,
+      unit: UnitTypeEnum.bag,
+      translations: [],
+      sub_stages: [{ id: 30, title: 'Painting' }],
+    });
+
+    expect(labor.subStages).toMatchObject([{ id: 30, title: 'Painting' }]);
+    expect(labor.subStage).toMatchObject({ id: 30, title: 'Painting' });
   });
 });
