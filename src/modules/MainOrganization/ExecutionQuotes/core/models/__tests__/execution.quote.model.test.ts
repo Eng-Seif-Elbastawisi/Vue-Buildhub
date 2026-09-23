@@ -27,11 +27,11 @@ describe('ExecutionQuoteModel', () => {
   it('keeps the execution quote type enum when quote_type is not a relation', () => {
     const model = ExecutionQuoteModel.fromJson({
       quote_source: 1,
-      quote_type: 'lump_sum',
+      quote_type: 1,
       quote_type_id: 2,
     });
 
-    expect(model.quoteType).toBe('lump_sum');
+    expect(model.quoteType).toBe(1);
     expect(model.quoteTypeId).toBe(2);
   });
 
@@ -44,8 +44,8 @@ describe('ExecutionQuoteModel', () => {
           client_price: 5000,
           items: [
             {
-              sub_stage_id: 153,
-              source_type: 'product',
+              stage_id: 153,
+              source_type: 1,
               source_id: 16,
               sorting_id: 45,
               quantity: 1,
@@ -57,6 +57,6 @@ describe('ExecutionQuoteModel', () => {
     });
 
     expect(model.stages[0]?.items[0]?.sorting_id).toBe(45);
+    expect(model.stages[0]?.items[0]?.stage_id).toBe(153);
   });
-
 });

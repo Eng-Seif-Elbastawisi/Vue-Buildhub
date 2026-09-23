@@ -128,7 +128,7 @@
         client_price: stage.client_price,
         items: stage.items.map(
           ({ sub_stage_id, source_type, source_id, sorting_id, quantity, unit_price }) => ({
-            sub_stage_id,
+            stage_id: sub_stage_id,
             source_type,
             source_id,
             ...(sorting_id !== undefined && sorting_id !== null ? { sorting_id } : {}),
@@ -183,31 +183,56 @@
     }
   };
 
-  const openMainStage = async (stage: StageModel) => {
-    if (props.loading || !stage.id) return;
-
-    const state = getOrCreateStageState(stage);
-    selectedMainStageId.value = stage.id;
-    selectedSubStageId.value = state.selected_sub_stage_id;
-    selectedItemSource.value = null;
-
-    await router.push({
-      name: 'Add Execution Quote',
-      query: { ...route.query, stage_id: String(stage.id) },
-    });
-
-    await fetchSubStages();
-  };
-
-  const closeMainStage = async () => {
+  const clearActiveStage = () => {
     selectedMainStageId.value = undefined;
     selectedSubStageId.value = undefined;
     selectedItemSource.value = null;
     subStages.value = [];
+  };
+
+  const activateStageFromRoute = async (rawStageId: unknown) => {
+    const stageIdValue = Array.isArray(rawStageId) ? rawStageId[0] : rawStageId;
+    const stageId = Number(stageIdValue);
+
+    if (!Number.isInteger(stageId) || stageId <= 0) {
+      clearActiveStage();
+      return;
+    }
+
+    if (!mainStages.value.length) await fetchMainStages();
+
+    const stage = mainStages.value.find((candidate) => candidate.id === stageId);
+    if (!stage) {
+      clearActiveStage();
+      return;
+    }
+
+    const state = getOrCreateStageState(stage);
+    selectedMainStageId.value = stageId;
+    selectedSubStageId.value = state.selected_sub_stage_id;
+    selectedItemSource.value = null;
+    await fetchSubStages();
+  };
+
+  const openMainStage = async (stage: StageModel) => {
+    if (props.loading || !stage.id) return;
 
     await router.push({
       name: 'Add Execution Quote',
-      query: { ...route.query, stage_id: undefined },
+      params: {
+        stageView: 'stages',
+        stageId: String(stage.id),
+      },
+    });
+  };
+
+  const closeMainStage = async () => {
+    await router.push({
+      name: 'Add Execution Quote',
+      params: {
+        stageView: undefined,
+        stageId: undefined,
+      },
     });
   };
 
@@ -291,34 +316,14 @@
   );
 
   watch(
-    () => route.query.stage_id,
-    async (rawId) => {
-      const id = Number(rawId);
-      if (!Number.isInteger(id) || id <= 0) return;
-      if (!mainStages.value.length) await fetchMainStages();
-
-      const stage = mainStages.value.find((candidate) => candidate.id === id);
-      if (!stage) return;
-
-      const state = getOrCreateStageState(stage);
-      selectedMainStageId.value = id;
-      selectedSubStageId.value = state.selected_sub_stage_id;
-      await fetchSubStages();
-    },
+    () => route.params.stageId,
+    (stageId) => activateStageFromRoute(stageId),
   );
 
   onMounted(async () => {
     if (!props.enabled || !props.modelValue) return;
     await fetchMainStages();
-
-    const id = Number(route.query.stage_id);
-    const stage = mainStages.value.find((candidate) => candidate.id === id);
-    if (stage) {
-      const state = getOrCreateStageState(stage);
-      selectedMainStageId.value = id;
-      selectedSubStageId.value = state.selected_sub_stage_id;
-      await fetchSubStages();
-    }
+    await activateStageFromRoute(route.params.stageId);
   });
 </script>
 

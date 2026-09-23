@@ -6,7 +6,7 @@ import type { ExecutionQuoteItemSource } from '../constants/execution.quote.item
 import type { ExecutionQuoteType } from '../constants/execution.quote.type.enum';
 
 export interface ExecutionQuoteItemRequest {
-  sub_stage_id: number | string;
+  stage_id: number | string;
   source_type: ExecutionQuoteItemSource;
   source_id: number | string;
   sorting_id?: number | string | null;
@@ -58,7 +58,7 @@ export default class StoreExecutionQuoteDetailsParams implements Params {
         stage_id: stage.stage_id,
         client_price: stage.client_price,
         items: stage.items.map((item) => ({
-          sub_stage_id: item.sub_stage_id,
+          stage_id: item.stage_id,
           source_type: item.source_type,
           source_id: item.source_id,
           ...(item.sorting_id !== undefined && item.sorting_id !== null
@@ -91,9 +91,9 @@ export default class StoreExecutionQuoteDetailsParams implements Params {
       }
 
       stage.items.forEach((item, itemIndex) => {
-        if (!item.sub_stage_id) {
+        if (!item.stage_id) {
           itemErrors.push({
-            field: `stages.${stageIndex}.items.${itemIndex}.sub_stage_id`,
+            field: `stages.${stageIndex}.items.${itemIndex}.stage_id`,
             message: translate('execution_quote.validation.item_required'),
           });
         }

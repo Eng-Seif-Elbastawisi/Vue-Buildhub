@@ -1,6 +1,7 @@
 <script setup lang="ts">
   import {
     ExecutionQuoteTypeEnum,
+    getExecutionQuoteTypeDescriptionKey,
     getExecutionQuoteTypeTitleKey,
     type ExecutionQuoteType,
   } from '../../../core/constants/execution.quote.type.enum';
@@ -45,7 +46,7 @@
         </span>
         <span>
           <strong>{{ $t(getExecutionQuoteTypeTitleKey(type)) }}</strong>
-          <small>{{ $t(`execution_quote.quote_types.${type}.description`) }}</small>
+          <small>{{ $t(getExecutionQuoteTypeDescriptionKey(type)) }}</small>
         </span>
       </button>
     </div>
@@ -103,9 +104,9 @@
   }
 
   .quote-type-option--selected {
-    border-color: var(--primary-green);
-    background: var(--light-green-bg);
-    box-shadow: inset 0 -3px 0 var(--primary-green);
+    border-color: var(--PrimaryColor);
+    background: var(--PrimaryColor-alpha-4);
+    box-shadow: inset 0 -3px 0 var(--PrimaryColor);
   }
 
   .quote-type-option__mark {
@@ -120,7 +121,7 @@
   }
 
   .quote-type-option--selected .quote-type-option__mark {
-    background: var(--primary-green);
+    background: var(--PrimaryColor);
     color: var(--white);
   }
 

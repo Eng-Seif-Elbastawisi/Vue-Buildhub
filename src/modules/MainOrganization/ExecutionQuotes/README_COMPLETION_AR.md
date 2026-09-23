@@ -51,30 +51,30 @@ Payload:
 ```json
 {
   "execution_quote_id": 28,
-  "quote_type": "lump_sum",
+  "quote_type": 1,
   "stages": [
     {
       "stage_id": 152,
       "client_price": 52000,
       "items": [
         {
-          "sub_stage_id": 153,
-          "source_type": "product",
+          "stage_id": 153,
+          "source_type": 1,
           "source_id": 16,
           "sorting_id": 45,
           "quantity": 1,
           "unit_price": 1000
         },
         {
-          "sub_stage_id": 153,
-          "source_type": "building_material",
+          "stage_id": 153,
+          "source_type": 2,
           "source_id": 37,
           "quantity": 120,
           "unit_price": 5000
         },
         {
-          "sub_stage_id": 153,
-          "source_type": "labor",
+          "stage_id": 153,
+          "source_type": 3,
           "source_id": 6,
           "quantity": 32,
           "unit_price": 25000
@@ -114,18 +114,25 @@ Main Stage و Sub Stage ما زالوا نفس resource ونفس `StageControlle
 - Main stages: `parentId: null`
 - Sub stages: `parentId: selectedMainStageId`
 
-## Labor
-
-القيمة المرسلة للباك ثابتة:
+عند اختيار Main Stage ينتقل الـ wizard إلى المسار:
 
 ```text
-labor
+execution-quotes/add/stages/:stageId
 ```
 
-وليس `workmanship`.
+المسار الأساسي ومسار المرحلة يستخدمان نفس route record حتى تظل بيانات المقايسة الحالية في الذاكرة أثناء التنقل. فتح رابط مرحلة مباشرة بدون حفظ بيانات المقايسة يعرض تنبيهاً ثم يعيد المستخدم إلى `execution-quotes/add`.
+
+## قيم الـ enums
+
+القيم المرسلة للباك رقمية:
+
+```text
+quote_type: 1 = lump sum, 2 = supervision
+source_type: 1 = product, 2 = building material, 3 = labor
+```
 
 ## ملاحظة Backend
 
-الـ frontend يفترض أن response الخاص بـ `store_execution_quote` يرجع الـ id داخل الـ parsed `data` حتى يمكن ربط الطلب الثاني به.
+الـ frontend يفترض أن response الخاص بطلب حفظ بيانات المقايسة الأساسي يرجع الـ id داخل الـ parsed `data` حتى يمكن ربط طلب التفاصيل به.
 
 الـ endpoint الجديد `store_execution_quote_details` غير موجود في الباك حالياً حسب متطلبات المهمة، لذلك يجب على الـ backend تنفيذه وفق الـ payload أعلاه.

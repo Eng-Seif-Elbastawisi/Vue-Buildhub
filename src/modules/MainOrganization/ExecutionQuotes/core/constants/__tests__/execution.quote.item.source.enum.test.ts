@@ -8,9 +8,9 @@ import {
 describe('ExecutionQuoteItemSourceEnum', () => {
   it('uses one normalized source value for each reusable item feature', () => {
     expect(ExecutionQuoteItemSourceEnum).toEqual({
-      PRODUCT: 'product',
-      BUILDING_MATERIAL: 'building_material',
-      LABOR: 'labor',
+      PRODUCT: 1,
+      BUILDING_MATERIAL: 2,
+      LABOR: 3,
     });
     expect(getExecutionQuoteItemSourceTitleKey(ExecutionQuoteItemSourceEnum.LABOR)).toBe(
       'execution_quote.item_sources.labor.title',

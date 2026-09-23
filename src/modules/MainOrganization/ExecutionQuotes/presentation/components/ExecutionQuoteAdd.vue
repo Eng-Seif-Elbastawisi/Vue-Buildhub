@@ -1,10 +1,11 @@
 <script setup lang="ts">
-  import { ref } from 'vue';
+  import { computed, ref, watch } from 'vue';
   import { useI18n } from 'vue-i18n';
-  import { useRoute } from 'vue-router';
+  import { useRoute, useRouter } from 'vue-router';
 
   import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
   import { dialogManager } from '@/base/Presentation/Dialogs/dialog.manager';
+  import AppButton from '@/shared/HelpersComponents/AppButton.vue';
 
   import type AddExecutionQuoteParams from '../../core/params/add.execution.quote.params';
   import type StoreExecutionQuoteDetailsParams from '../../core/params/store.execution.quote.details.params';
@@ -13,12 +14,25 @@
 
   const controller = ExecutionQuoteController.getInstance();
   const route = useRoute();
+  const router = useRouter();
   const { t } = useI18n();
 
   const baseParams = ref<AddExecutionQuoteParams | null>(null);
   const detailsParams = ref<StoreExecutionQuoteDetailsParams | null>(null);
   const executionQuoteId = ref<number | null>(null);
   const loading = ref(false);
+  const routeStageId = computed(() => route.params.stageId);
+
+  watch(
+    [routeStageId, executionQuoteId],
+    ([stageId, quoteId]) => {
+      if (!stageId || quoteId) return;
+
+      dialogManager.toastWarning(t('execution_quote.validation.base_quote_required'));
+      void router.replace({ name: 'Add Execution Quote' });
+    },
+    { immediate: true },
+  );
 
   const resolveCreatedExecutionQuoteId = (responseData: unknown): number | null => {
     if (!responseData || typeof responseData !== 'object') return null;
@@ -104,27 +118,32 @@
       @update-details="detailsParams = $event"
     />
 
-    <button
+    <AppButton
       v-if="!executionQuoteId"
-      class="execution-quote-add__save btn btn-primary"
-      :class="{ 'btn--loading': loading }"
-      type="button"
-      :disabled="loading"
+      class="execution-quote-add__save"
+      icon="right"
+      :loading="loading"
       @click="saveBaseExecutionQuote"
     >
+      <template #icon>
+        <i class="pi pi-save" aria-hidden="true"></i>
+      </template>
       {{ $t('execution_quote.save') }}
-    </button>
+    </AppButton>
 
-    <button
+    <AppButton
       v-else
-      class="execution-quote-add__save execution-quote-add__save--details btn btn-primary"
-      :class="{ 'btn--loading': loading }"
-      type="button"
+      class="execution-quote-add__save execution-quote-add__save--details"
+      icon="right"
       :disabled="loading || !detailsParams"
+      :loading="loading"
       @click="saveExecutionQuoteDetails"
     >
+      <template #icon>
+        <i class="pi pi-save" aria-hidden="true"></i>
+      </template>
       {{ $t('execution_quote.save') }}
-    </button>
+    </AppButton>
 
     <div v-if="controller.errorMessage.value" class="execution-quote-add__error">
       {{ controller.errorMessage.value }}
@@ -136,12 +155,21 @@
   .execution-quote-add {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 1.25rem;
+    padding-bottom: 1.5rem;
   }
 
   .execution-quote-add__save {
-    align-self: flex-start;
-    min-width: 10rem;
+    display: inline-flex;
+    align-items: center;
+    align-self: flex-end;
+    justify-content: center;
+    gap: 0.5rem;
+    min-width: 12rem;
+    min-height: 3rem;
+    margin-inline: 1.25rem;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
   }
 
   .execution-quote-add__error {
@@ -150,5 +178,12 @@
     border-radius: var(--radius-sm);
     background: var(--danger-light);
     color: var(--danger-dark);
+  }
+
+  @media (max-width: 700px) {
+    .execution-quote-add__save {
+      align-self: stretch;
+      margin-inline: 0.75rem;
+    }
   }
 </style>

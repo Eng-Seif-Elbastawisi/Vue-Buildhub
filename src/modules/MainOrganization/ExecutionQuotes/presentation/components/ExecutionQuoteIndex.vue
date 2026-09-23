@@ -4,6 +4,10 @@
 
   import IndexParams from '@/base/Core/Params/indexParams';
   import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
+  import AppButton from '@/shared/HelpersComponents/AppButton.vue';
+  import AppTable, { type TableHeader } from '@/shared/HelpersComponents/AppTable.vue';
+  import { QuoteSourceEnum } from '../../core/constants/quote.source.enum';
+  import type ExecutionQuoteModel from '../../core/models/execution.quote.model';
   import ExecutionQuoteController from '../controllers/execution.quote.controller';
 
   const controller = ExecutionQuoteController.getInstance();
@@ -18,8 +22,32 @@
     void router.push({ name: 'Add Execution Quote' });
   };
 
-  const relationTitle = (relation: { title?: string } | number | undefined) =>
-    typeof relation === 'object' && relation !== null ? relation.title ?? '—' : relation ?? '—';
+  const relationTitle = (relation: { title?: string; name?: string } | number | undefined) =>
+    typeof relation === 'object' && relation !== null
+      ? (relation.title ?? relation.name ?? '—')
+      : (relation ?? '—');
+
+  const headers: TableHeader[] = [
+    { key: 'id', label: 'execution_quote.table.id' },
+    { key: 'quoteSource', label: 'execution_quote.table.source' },
+    { key: 'client', label: 'execution_quote.table.client' },
+    { key: 'project', label: 'execution_quote.table.project' },
+  ];
+
+  const quoteSourceTitleKey = (source: QuoteSourceEnum | undefined) => {
+    if (source === QuoteSourceEnum.EXECUTION_ONLY) {
+      return 'execution_quote.sources.execution_only.title';
+    }
+
+    if (source === QuoteSourceEnum.EXECUTION_FROM_DESIGN_QUOTE) {
+      return 'execution_quote.sources.design_quote.title';
+    }
+
+    return '';
+  };
+
+  const asExecutionQuotes = (quotes: unknown): ExecutionQuoteModel[] =>
+    Array.isArray(quotes) ? (quotes as ExecutionQuoteModel[]) : [];
 </script>
 
 <template>
@@ -29,33 +57,40 @@
         <h1>{{ $t('execution_quote.title') }}</h1>
         <p>{{ $t('execution_quote.index_description') }}</p>
       </div>
-      <button class="btn btn-primary" type="button" @click="openAdd">
+      <AppButton icon="right" @click="openAdd">
+        <template #icon>
+          <i class="pi pi-plus" aria-hidden="true"></i>
+        </template>
         {{ $t('execution_quote.new_quote') }}
-      </button>
+      </AppButton>
     </div>
 
     <DataStatusBuilder :controller="state">
       <template #success="{ data: quotes }">
-        <div class="execution-quote-index__table-wrap">
-          <table class="execution-quote-index__table">
-            <thead>
-              <tr>
-                <th>{{ $t('execution_quote.table.id') }}</th>
-                <th>{{ $t('execution_quote.table.source') }}</th>
-                <th>{{ $t('execution_quote.table.client') }}</th>
-                <th>{{ $t('execution_quote.table.project') }}</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="quote in quotes" :key="quote.id">
-                <td>{{ quote.id ?? '—' }}</td>
-                <td>{{ quote.quoteSource ?? '—' }}</td>
-                <td>{{ relationTitle(quote.client) }}</td>
-                <td>{{ relationTitle(quote.project) }}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        <AppTable
+          :headers="headers"
+          :items="asExecutionQuotes(quotes)"
+          row-key="id"
+          striped
+          hoverable
+          empty-message="execution_quote.empty_quotes"
+        >
+          <template #cell-quoteSource="{ item }">
+            {{
+              quoteSourceTitleKey(item.quoteSource)
+                ? $t(quoteSourceTitleKey(item.quoteSource))
+                : '—'
+            }}
+          </template>
+
+          <template #cell-client="{ item }">
+            {{ relationTitle(item.client) }}
+          </template>
+
+          <template #cell-project="{ item }">
+            {{ relationTitle(item.project) }}
+          </template>
+        </AppTable>
       </template>
     </DataStatusBuilder>
   </section>
@@ -83,30 +118,6 @@
 
   .execution-quote-index__header p {
     color: var(--subtitle-color);
-  }
-
-  .execution-quote-index__table-wrap {
-    overflow-x: auto;
-    border: 1px solid var(--border-weak);
-    border-radius: var(--radius-md);
-    background: var(--bg-card);
-  }
-
-  .execution-quote-index__table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-
-  .execution-quote-index__table th,
-  .execution-quote-index__table td {
-    border-bottom: 1px solid var(--border-weak);
-    padding: 0.8rem 1rem;
-    text-align: start;
-  }
-
-  .execution-quote-index__table th {
-    background: var(--bg-section);
-    color: var(--title-card-color);
   }
 
   @media (max-width: 640px) {

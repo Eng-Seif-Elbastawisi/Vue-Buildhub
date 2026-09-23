@@ -2631,6 +2631,13 @@
     "delete_item": "Delete",
     "client_stage_price": "Client stage price",
     "always_visible": "Always visible",
+    "item_guidance": {
+      "title": "Next required step",
+      "choose_item": "Choose the item you want to add. Its type, unit and suggested price will be filled automatically.",
+      "choose_sorting": "Choose the product sorting to use its configured price.",
+      "review_values": "Enter a quantity greater than zero and make sure the unit price is not negative.",
+      "ready": "The item is ready. Review the values, then add it to this stage."
+    },
     "placeholders": {
       "client_stage_price": "Enter client stage price",
       "product": "Select a product",
@@ -2646,6 +2653,8 @@
       "product": "Product",
       "material": "Building material",
       "labor": "Labor",
+      "type": "Item type",
+      "sorting": "Product sorting",
       "quantity": "Quantity",
       "unit": "Unit",
       "unit_price": "Unit price"
@@ -2670,8 +2679,11 @@
     "current_stage_summary": "Current stage cost: {cost} · Expected margin: {margin}",
     "save": "Save execution quote",
     "index_description": "Review execution quotes and their source data.",
+    "empty_quotes": "No execution quotes are available yet.",
+    "store_details_failed": "The execution quote details could not be saved.",
     "validation": {
       "required_data": "Complete the required quote data before saving.",
+      "base_quote_required": "Save the quote data before opening a stage.",
       "item_required": "Select a main stage, sub stage, source and item before adding.",
       "item_values": "Quantity must be greater than zero and unit price cannot be negative.",
       "items_required": "Add at least one quote item before saving."

@@ -123,9 +123,9 @@
   }
 
   .sub-stage-card--selected {
-    border-color: var(--primary-green);
-    background: var(--light-green-bg);
-    box-shadow: inset 0 -3px 0 var(--primary-green);
+    border-color: var(--PrimaryColor);
+    background: var(--PrimaryColor-alpha-4);
+    box-shadow: inset 0 -3px 0 var(--PrimaryColor);
   }
 
   @media (max-width: 800px) {
