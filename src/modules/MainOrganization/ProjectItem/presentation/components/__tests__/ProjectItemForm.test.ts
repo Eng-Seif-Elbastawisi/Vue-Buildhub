@@ -86,7 +86,7 @@ describe('ProjectItemForm', () => {
     await wrapper.find('.department_id').trigger('click');
     await wrapper.find('.project-item-item').trigger('click');
     await wrapper.find('.project-item-pricing-method').trigger('click');
-    await wrapper.find<HTMLInputElement>('.field-input[step="0.01"]').setValue('250');
+    await wrapper.find<HTMLInputElement>('.field-input[step="1"]').setValue('250');
     await wrapper.find<HTMLInputElement>('.field-input[step="1"]').setValue('3');
     await wrapper.find('.add-btn').trigger('click');
 
@@ -147,7 +147,7 @@ describe('ProjectItemForm', () => {
     await wrapper.find('.project-item-item').trigger('click');
     await wrapper.find('.project-item-pricing-method').trigger('click');
     await wrapper.find('.space_id').trigger('click');
-    await wrapper.find<HTMLInputElement>('.field-input[step="0.01"]').setValue('250');
+    await wrapper.find<HTMLInputElement>('.field-input[step="1"]').setValue('250');
     await wrapper.find<HTMLInputElement>('.field-input[step="1"]').setValue('3');
     await wrapper.find('.add-btn').trigger('click');
 
@@ -182,7 +182,7 @@ describe('ProjectItemForm', () => {
       },
     });
 
-    expect(wrapper.find<HTMLInputElement>('.field-input[step="0.01"]').element.value).toBe(
+    expect(wrapper.find<HTMLInputElement>('.field-input[step="1"]').element.value).toBe(
       String(ProjectItemShowModel.example.price),
     );
     expect(wrapper.find('.add-panel.disabled').exists()).toBe(true);
