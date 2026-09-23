@@ -1,5 +1,9 @@
 <script setup lang="ts">
-  import { computed, onMounted } from 'vue';
+  import Accordion from 'primevue/accordion';
+  import AccordionContent from 'primevue/accordioncontent';
+  import AccordionHeader from 'primevue/accordionheader';
+  import AccordionPanel from 'primevue/accordionpanel';
+  import { computed, onMounted, ref } from 'vue';
   import { useI18n } from 'vue-i18n';
   import { useRoute } from 'vue-router';
 
@@ -7,12 +11,18 @@
   import AppButton from '@/shared/HelpersComponents/AppButton.vue';
 
   import {
+    ExecutionQuoteItemSourceEnum,
+    getExecutionQuoteItemSourceTitleKey,
+    type ExecutionQuoteItemSource,
+  } from '../../core/constants/execution.quote.item.source.enum';
+  import {
     ExecutionQuoteTypeEnum,
     getExecutionQuoteTypeTitleKey,
     type ExecutionQuoteType,
   } from '../../core/constants/execution.quote.type.enum';
   import { getQuoteSourceTitleKey } from '../../core/constants/quote.source.enum';
   import type ExecutionQuoteShowModel from '../../core/models/execution.quote.show.model';
+  import type { ExecutionQuoteStageItemSummary } from '../../core/models/execution.quote.show.model';
   import ShowExecutionQuoteParams from '../../core/params/show.execution.quote.params';
   import ExecutionQuoteController from '../controllers/execution.quote.controller';
 
@@ -22,6 +32,8 @@
 
   const state = computed(() => controller.itemState.value);
   const quoteId = computed(() => Number(route.params.id));
+  const activeShowSection = ref('stages');
+  const activeQuoteStages = ref<string[]>(['0']);
 
   const fetchQuote = async () => {
     if (!Number.isInteger(quoteId.value) || quoteId.value <= 0) return;
@@ -75,6 +87,30 @@
     return titleKey ? t(titleKey) : '—';
   };
 
+  const itemSourceLabel = (quoteItem: ExecutionQuoteStageItemSummary) => {
+    const itemSource = quoteItem.itemType as ExecutionQuoteItemSource | undefined;
+    const isKnownSource =
+      itemSource && Object.values(ExecutionQuoteItemSourceEnum).includes(itemSource);
+
+    return isKnownSource
+      ? t(getExecutionQuoteItemSourceTitleKey(itemSource))
+      : (quoteItem.itemableType ?? '—');
+  };
+
+  const formatNumber = (rawNumber: number | undefined) => {
+    if (rawNumber === undefined) return '—';
+
+    return new Intl.NumberFormat(locale.value, {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2,
+    }).format(rawNumber);
+  };
+
+  const itemTotal = (quoteItem: ExecutionQuoteStageItemSummary) => {
+    if (quoteItem.expectedPrice === undefined || quoteItem.quantity === undefined) return undefined;
+    return quoteItem.expectedPrice * quoteItem.quantity;
+  };
+
   onMounted(fetchQuote);
 </script>
 
@@ -89,12 +125,7 @@
         <p>{{ $t('execution_quote.show.description') }}</p>
       </div>
 
-      <AppButton
-        :to="{ name: 'Execution Quotes' }"
-        theme="secondary"
-        outline
-        icon="left"
-      >
+      <AppButton :to="{ name: 'Execution Quotes' }" theme="secondary" outline icon="left">
         <template #icon>
           <i class="pi pi-arrow-right" aria-hidden="true"></i>
         </template>
@@ -112,9 +143,7 @@
                   <i class="pi pi-file" aria-hidden="true"></i>
                   {{ $t('execution_quote.show.eyebrow', { id: quote.id }) }}
                 </span>
-                <span>
-                  {{ quoteSourceLabel(quote) }}
-                </span>
+                <span> {{ quoteSourceLabel(quote) }} · #{{ quote.quoteSource ?? '—' }} </span>
               </div>
 
               <h2>{{ quote.project?.title ?? $t('execution_quote.show.project_fallback') }}</h2>
@@ -152,16 +181,34 @@
 
               <dl class="execution-quote-show__details">
                 <div>
+                  <dt>{{ $t('execution_quote.show.project_id') }}</dt>
+                  <dd>#{{ quote.project?.id ?? '—' }}</dd>
+                </div>
+                <div>
                   <dt>{{ $t('execution_quote.fields.project') }}</dt>
                   <dd>{{ quote.project?.title ?? '—' }}</dd>
                 </div>
                 <div>
                   <dt>{{ $t('execution_quote.show.project_client') }}</dt>
-                  <dd>{{ quote.project?.client?.title ?? quote.client?.name ?? '—' }}</dd>
+                  <dd>
+                    {{ quote.project?.client?.title ?? quote.client?.name ?? '—' }} · #{{
+                      quote.project?.client?.id ?? quote.client?.id ?? '—'
+                    }}
+                  </dd>
                 </div>
                 <div>
                   <dt>{{ $t('execution_quote.show.project_date') }}</dt>
                   <dd>{{ formatDate(quote.project?.date) }}</dd>
+                </div>
+                <div>
+                  <dt>{{ $t('execution_quote.show.project_created_at') }}</dt>
+                  <dd>{{ formatDateTime(quote.project?.createdAt) }}</dd>
+                </div>
+                <div>
+                  <dt>{{ $t('execution_quote.fields.price_employee') }}</dt>
+                  <dd>
+                    {{ quote.priceEmployee?.name ?? '—' }} · #{{ quote.priceEmployee?.id ?? '—' }}
+                  </dd>
                 </div>
                 <div class="execution-quote-show__details-wide">
                   <dt>{{ $t('execution_quote.show.description_label') }}</dt>
@@ -193,6 +240,10 @@
 
               <dl class="execution-quote-show__details">
                 <div>
+                  <dt>{{ $t('execution_quote.show.client_id') }}</dt>
+                  <dd>#{{ quote.client?.id ?? '—' }}</dd>
+                </div>
+                <div>
                   <dt>{{ $t('execution_quote.fields.client') }}</dt>
                   <dd>{{ quote.client?.name ?? '—' }}</dd>
                 </div>
@@ -218,44 +269,147 @@
                   <dt>{{ $t('execution_quote.show.address') }}</dt>
                   <dd>{{ quote.client?.address ?? '—' }}</dd>
                 </div>
+                <div>
+                  <dt>{{ $t('execution_quote.show.client_type') }}</dt>
+                  <dd>{{ quote.client?.type ?? '—' }}</dd>
+                </div>
+                <div>
+                  <dt>{{ $t('execution_quote.show.client_source') }}</dt>
+                  <dd>{{ quote.client?.clientSource ?? $t('execution_quote.not_available') }}</dd>
+                </div>
+                <div>
+                  <dt>{{ $t('execution_quote.show.client_created_at') }}</dt>
+                  <dd>{{ formatDateTime(quote.client?.createdAt) }}</dd>
+                </div>
               </dl>
             </section>
           </div>
 
-          <section class="execution-quote-show__card execution-quote-show__ownership">
-            <div class="execution-quote-show__section-title">
-              <span class="execution-quote-show__section-icon">
-                <i class="pi pi-sitemap" aria-hidden="true"></i>
-              </span>
-              <div>
-                <h2>{{ $t('execution_quote.show.ownership_section') }}</h2>
-                <p>{{ $t('execution_quote.show.ownership_section_hint') }}</p>
-              </div>
-            </div>
+          <Accordion
+            v-model:value="activeShowSection"
+            class="execution-quote-show__stages-accordion"
+          >
+            <AccordionPanel value="stages" class="execution-quote-show__stages-panel">
+              <AccordionHeader class="execution-quote-show__stages-header">
+                <div class="execution-quote-show__section-title">
+                  <span class="execution-quote-show__section-icon">
+                    <i class="pi pi-list-check" aria-hidden="true"></i>
+                  </span>
+                  <div>
+                    <h2>{{ $t('execution_quote.show.stages_section') }}</h2>
+                    <p>
+                      {{
+                        $t('execution_quote.show.stages_section_hint', {
+                          stages: quote.quoteStagesCount,
+                          items: quote.quoteItemsCount,
+                        })
+                      }}
+                    </p>
+                  </div>
+                </div>
+              </AccordionHeader>
 
-            <dl class="execution-quote-show__ownership-grid">
-              <div>
-                <dt>{{ $t('execution_quote.show.organization') }}</dt>
-                <dd>{{ quote.organization?.name ?? '—' }}</dd>
-                <small>{{ quote.organization?.address ?? '—' }}</small>
-              </div>
-              <div>
-                <dt>{{ $t('execution_quote.show.created_by') }}</dt>
-                <dd>{{ quote.employee?.name ?? '—' }}</dd>
-                <small>#{{ quote.employee?.id ?? '—' }}</small>
-              </div>
-              <div>
-                <dt>{{ $t('execution_quote.fields.price_employee') }}</dt>
-                <dd>{{ quote.priceEmployee?.name ?? '—' }}</dd>
-                <small>#{{ quote.priceEmployee?.id ?? '—' }}</small>
-              </div>
-              <div>
-                <dt>{{ $t('execution_quote.show.client_owner') }}</dt>
-                <dd>{{ quote.client?.employee?.name ?? '—' }}</dd>
-                <small>#{{ quote.client?.employee?.id ?? '—' }}</small>
-              </div>
-            </dl>
-          </section>
+              <AccordionContent class="execution-quote-show__stages-content">
+                <Accordion
+                  v-if="quote.quoteStages.length"
+                  v-model:value="activeQuoteStages"
+                  multiple
+                  class="execution-quote-show__stage-list"
+                >
+                  <AccordionPanel
+                    v-for="(stage, stageIndex) in quote.quoteStages"
+                    :key="stage.id ?? `${stage.stageId}-${stage.subStageId}`"
+                    :value="stageIndex.toString()"
+                    class="execution-quote-show__stage-panel"
+                  >
+                    <AccordionHeader class="execution-quote-show__stage-accordion-header">
+                      <div class="execution-quote-show__stage-header">
+                        <div>
+                          <span>{{ $t('execution_quote.show.main_stage') }}</span>
+                          <h3>#{{ stage.stageId ?? '—' }}</h3>
+                        </div>
+                        <div class="execution-quote-show__stage-badges">
+                          <span>
+                            {{ $t('execution_quote.show.sub_stage') }} #{{
+                              stage.subStageId ?? '—'
+                            }}
+                          </span>
+                          <span>
+                            {{ $t('execution_quote.show.stage_record') }} #{{ stage.id ?? '—' }}
+                          </span>
+                        </div>
+                      </div>
+                    </AccordionHeader>
+
+                    <AccordionContent class="execution-quote-show__stage-content">
+                      <dl class="execution-quote-show__stage-meta">
+                        <div>
+                          <dt>{{ $t('execution_quote.show.quote_reference') }}</dt>
+                          <dd>#{{ stage.quoteId ?? '—' }}</dd>
+                        </div>
+                        <div>
+                          <dt>{{ $t('execution_quote.show.project_reference') }}</dt>
+                          <dd>#{{ stage.projectId ?? '—' }}</dd>
+                        </div>
+                        <div>
+                          <dt>{{ $t('execution_quote.show.stage_created_at') }}</dt>
+                          <dd>{{ formatDateTime(stage.createdAt) }}</dd>
+                        </div>
+                      </dl>
+
+                      <div v-if="stage.items.length" class="execution-quote-show__items-table-wrap">
+                        <table class="execution-quote-show__items-table">
+                          <thead>
+                            <tr>
+                              <th scope="col">{{ $t('execution_quote.show.item') }}</th>
+                              <th scope="col">{{ $t('execution_quote.show.item_source') }}</th>
+                              <th scope="col">{{ $t('execution_quote.show.itemable_type') }}</th>
+                              <th scope="col">{{ $t('execution_quote.show.expected_price') }}</th>
+                              <th scope="col">{{ $t('execution_quote.show.quantity') }}</th>
+                              <th scope="col">{{ $t('execution_quote.show.total') }}</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr
+                              v-for="quoteItem in stage.items"
+                              :key="quoteItem.id ?? quoteItem.itemableId"
+                            >
+                              <td>
+                                <strong>{{ quoteItem.itemable?.title ?? '—' }}</strong>
+                                <small>
+                                  #{{ quoteItem.id ?? '—' }} ·
+                                  {{ $t('execution_quote.show.itemable_id') }} #{{
+                                    quoteItem.itemableId ?? '—'
+                                  }}
+                                </small>
+                              </td>
+                              <td>
+                                {{ itemSourceLabel(quoteItem) }} · #{{ quoteItem.itemType ?? '—' }}
+                              </td>
+                              <td>{{ quoteItem.itemableType ?? '—' }}</td>
+                              <td>{{ formatNumber(quoteItem.expectedPrice) }}</td>
+                              <td>{{ formatNumber(quoteItem.quantity) }}</td>
+                              <td class="execution-quote-show__item-total">
+                                {{ formatNumber(itemTotal(quoteItem)) }}
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+
+                      <p v-else class="execution-quote-show__empty-items">
+                        {{ $t('execution_quote.show.no_stage_items') }}
+                      </p>
+                    </AccordionContent>
+                  </AccordionPanel>
+                </Accordion>
+
+                <p v-else class="execution-quote-show__empty-items">
+                  {{ $t('execution_quote.show.no_stages') }}
+                </p>
+              </AccordionContent>
+            </AccordionPanel>
+          </Accordion>
         </div>
       </template>
     </DataStatusBuilder>
@@ -443,15 +597,13 @@
     color: var(--primary-green);
   }
 
-  .execution-quote-show__details,
-  .execution-quote-show__ownership-grid {
+  .execution-quote-show__details {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0.75rem;
   }
 
-  .execution-quote-show__details > div,
-  .execution-quote-show__ownership-grid > div {
+  .execution-quote-show__details > div {
     display: grid;
     gap: 0.35rem;
     padding: 0.9rem;
@@ -464,8 +616,7 @@
     grid-column: 1 / -1;
   }
 
-  .execution-quote-show dt,
-  .execution-quote-show__ownership-grid small {
+  .execution-quote-show dt {
     color: var(--subtitle-color);
     font-size: var(--xs-size);
   }
@@ -486,14 +637,195 @@
     outline-offset: 2px;
   }
 
-  .execution-quote-show__ownership-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+  .execution-quote-show__stage-list {
+    display: grid;
+    gap: 1rem;
   }
 
-  @media (max-width: 900px) {
-    .execution-quote-show__ownership-grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
+  .execution-quote-show__stages-accordion {
+    overflow: hidden;
+    border: 1px solid var(--border-weak);
+    border-radius: var(--radius-md);
+    background: var(--bg-card);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .execution-quote-show__stages-accordion :deep(.p-collapsible-enter-active),
+  .execution-quote-show__stages-accordion :deep(.p-collapsible-leave-active) {
+    display: grid;
+    overflow: hidden;
+    transition:
+      grid-template-rows 320ms cubic-bezier(0.4, 0, 0.2, 1),
+      opacity 220ms ease;
+  }
+
+  .execution-quote-show__stages-accordion :deep(.p-collapsible-enter-from),
+  .execution-quote-show__stages-accordion :deep(.p-collapsible-leave-to) {
+    grid-template-rows: 0fr;
+    opacity: 0;
+  }
+
+  .execution-quote-show__stages-accordion :deep(.p-collapsible-enter-to),
+  .execution-quote-show__stages-accordion :deep(.p-collapsible-leave-from) {
+    grid-template-rows: 1fr;
+    opacity: 1;
+  }
+
+  .execution-quote-show__stages-accordion :deep(.p-accordioncontent-wrapper) {
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .execution-quote-show__stages-accordion :deep(.p-accordionheader-toggle-icon) {
+    transition: transform 280ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  :deep(.execution-quote-show__stages-panel),
+  :deep(.execution-quote-show__stage-panel) {
+    border: 0;
+  }
+
+  :deep(.execution-quote-show__stages-header) {
+    padding: 1.25rem;
+    background: var(--bg-card);
+  }
+
+  :deep(.execution-quote-show__stages-header) .execution-quote-show__section-title {
+    flex: 1;
+  }
+
+  :deep(.execution-quote-show__stages-header:hover),
+  :deep(.execution-quote-show__stage-accordion-header:hover) {
+    background: var(--PrimaryColor-alpha-4);
+  }
+
+  :deep(.execution-quote-show__stages-content > .p-accordioncontent-content) {
+    padding: 0 1.25rem 1.25rem;
+  }
+
+  :deep(.execution-quote-show__stage-panel) {
+    overflow: hidden;
+    border: 1px solid var(--border-weak);
+    border-radius: var(--radius-md);
+    background: var(--bg-section);
+    transition:
+      border-color 280ms ease,
+      box-shadow 280ms ease;
+  }
+
+  :deep(.execution-quote-show__stage-panel.p-accordionpanel-active) {
+    border-color: var(--PrimaryColor-alpha-30);
+    box-shadow: var(--shadow-sm);
+  }
+
+  :deep(.execution-quote-show__stage-accordion-header) {
+    padding: 1rem;
+    background: var(--bg-section);
+  }
+
+  :deep(.execution-quote-show__stage-content > .p-accordioncontent-content) {
+    display: grid;
+    gap: 1rem;
+    padding: 0 1rem 1rem;
+  }
+
+  .execution-quote-show__stage-header {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .execution-quote-show__stage-header h3,
+  .execution-quote-show__stage-header span {
+    margin: 0;
+  }
+
+  .execution-quote-show__stage-header > div:first-child > span,
+  .execution-quote-show__stage-meta dt,
+  .execution-quote-show__items-table small {
+    color: var(--subtitle-color);
+    font-size: var(--xs-size);
+  }
+
+  .execution-quote-show__stage-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .execution-quote-show__stage-badges span {
+    padding: 0.35rem 0.7rem;
+    border-radius: var(--radius-full);
+    background: var(--PrimaryColor-light);
+    color: var(--PrimaryColor);
+    font-size: var(--xs-size);
+    font-weight: 700;
+  }
+
+  .execution-quote-show__stage-meta {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+
+  .execution-quote-show__stage-meta > div {
+    display: grid;
+    gap: 0.25rem;
+    padding: 0.75rem;
+    border-radius: var(--radius-sm);
+    background: var(--bg-card);
+  }
+
+  .execution-quote-show__items-table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--border-weak);
+    border-radius: var(--radius-sm);
+    background: var(--bg-card);
+  }
+
+  .execution-quote-show__items-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: start;
+  }
+
+  .execution-quote-show__items-table th,
+  .execution-quote-show__items-table td {
+    padding: 0.85rem;
+    border-block-end: 1px solid var(--border-weak);
+    text-align: start;
+    white-space: nowrap;
+  }
+
+  .execution-quote-show__items-table th {
+    background: var(--bg-section);
+    color: var(--subtitle-color);
+    font-size: var(--xs-size);
+  }
+
+  .execution-quote-show__items-table td:first-child {
+    display: grid;
+    gap: 0.25rem;
+    white-space: normal;
+  }
+
+  .execution-quote-show__items-table tbody tr:last-child td {
+    border-block-end: 0;
+  }
+
+  .execution-quote-show__item-total {
+    color: var(--PrimaryColor);
+    font-weight: 800;
+  }
+
+  .execution-quote-show__empty-items {
+    padding: 1rem;
+    border-radius: var(--radius-sm);
+    background: var(--bg-section);
+    color: var(--subtitle-color);
+    text-align: center;
   }
 
   @media (max-width: 640px) {
@@ -505,12 +837,26 @@
 
     .execution-quote-show__grid,
     .execution-quote-show__details,
-    .execution-quote-show__ownership-grid {
+    .execution-quote-show__stage-meta {
       grid-template-columns: 1fr;
+    }
+
+    .execution-quote-show__stage-header {
+      align-items: flex-start;
+      flex-direction: column;
     }
 
     .execution-quote-show__details-wide {
       grid-column: auto;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .execution-quote-show__stages-accordion :deep(.p-collapsible-enter-active),
+    .execution-quote-show__stages-accordion :deep(.p-collapsible-leave-active),
+    .execution-quote-show__stages-accordion :deep(.p-accordionheader-toggle-icon),
+    :deep(.execution-quote-show__stage-panel) {
+      transition: none;
     }
   }
 </style>

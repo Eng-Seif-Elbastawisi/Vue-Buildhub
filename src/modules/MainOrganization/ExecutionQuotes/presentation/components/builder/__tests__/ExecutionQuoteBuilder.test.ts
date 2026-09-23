@@ -27,7 +27,10 @@ vi.mock('@/modules/shared/Stages/presentation/controllers/stage.controller', () 
 }));
 
 const componentStubs = {
-  ExecutionQuoteTypeCards: { template: '<div />' },
+  ExecutionQuoteTypeCards: {
+    props: ['disabled'],
+    template: '<button class="quote-type-options" :disabled="disabled" />',
+  },
   ExecutionQuoteMainStages: {
     props: ['stages'],
     emits: ['open'],
@@ -59,7 +62,7 @@ const componentStubs = {
   ExecutionQuoteTotals: { template: '<div />' },
 };
 
-const mountBuilder = () =>
+const mountBuilder = (stubs: Record<string, unknown> = componentStubs) =>
   mount(ExecutionQuoteBuilder, {
     props: {
       enabled: true,
@@ -68,7 +71,7 @@ const mountBuilder = () =>
     },
     global: {
       mocks: { $t: (key: string) => key },
-      stubs: componentStubs,
+      stubs,
     },
   });
 
@@ -77,6 +80,17 @@ describe('ExecutionQuoteBuilder', () => {
     routeParams.stageId = '1';
     fetchList.mockReset();
     push.mockReset().mockResolvedValue(undefined);
+  });
+
+  it('locks the quote type options on the saved quote stages page', async () => {
+    fetchList.mockResolvedValueOnce(new DataSuccess({ data: [] }));
+
+    const wrapper = mountBuilder({ ...componentStubs, ExecutionQuoteTypeCards: false });
+    await flushPromises();
+
+    const quoteTypeOptions = wrapper.findAll<HTMLButtonElement>('.quote-type-option');
+    expect(quoteTypeOptions).toHaveLength(2);
+    expect(quoteTypeOptions.every((option) => option.element.disabled)).toBe(true);
   });
 
   it('groups selected items into the backend morph contract', async () => {

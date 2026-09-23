@@ -5,7 +5,7 @@ import ExecutionQuoteShowModel from '../execution.quote.show.model';
 describe('ExecutionQuoteShowModel', () => {
   it('maps the execution quote show resource', () => {
     const quote = ExecutionQuoteShowModel.fromJson({
-      id: 37,
+      id: 41,
       organization: { id: 1, name: 'Techlab', address: 'Techlab Headquarters' },
       employee: { id: 1, name: 'Techlab Employee' },
       quote_source: 1,
@@ -31,15 +31,33 @@ describe('ExecutionQuoteShowModel', () => {
         created_at: '2026-07-22 13:29:29',
       },
       quote_type: { id: 1, title: 'Lump_SUM' },
-      price_employee: { id: 92, name: 'fwffefefe' },
+      price_employee: { id: 68, name: 'type test' },
       quote_stages: [
-        { id: 1, items: [{ id: 1 }, { id: 2 }, { id: 3 }] },
+        {
+          id: 5,
+          quote_id: 41,
+          project_id: 207,
+          stage_id: 129,
+          sub_stage_id: 150,
+          items: [
+            {
+              id: 7,
+              item_type: 1,
+              itemable_id: 17,
+              itemable_type: 'Product',
+              itemable: { id: 17, title: 'تيست1' },
+              expected_price: '44444444.00',
+              quantity: 1,
+            },
+          ],
+          created_at: '2026-09-23 12:42:40',
+        },
       ],
       created_at: '2026-09-23 11:56:21',
     });
 
     expect(quote).toMatchObject({
-      id: 37,
+      id: 41,
       organization: { id: 1, name: 'Techlab', address: 'Techlab Headquarters' },
       employee: { id: 1, name: 'Techlab Employee' },
       quoteSource: 1,
@@ -64,9 +82,30 @@ describe('ExecutionQuoteShowModel', () => {
         createdAt: '2026-07-22 13:29:29',
       },
       quoteType: { id: 1, title: 'Lump_SUM' },
-      priceEmployee: { id: 92, name: 'fwffefefe' },
+      priceEmployee: { id: 68, name: 'type test' },
+      quoteStages: [
+        {
+          id: 5,
+          quoteId: 41,
+          projectId: 207,
+          stageId: 129,
+          subStageId: 150,
+          items: [
+            {
+              id: 7,
+              itemType: 1,
+              itemableId: 17,
+              itemableType: 'Product',
+              itemable: { id: 17, title: 'تيست1' },
+              expectedPrice: 44444444,
+              quantity: 1,
+            },
+          ],
+          createdAt: '2026-09-23 12:42:40',
+        },
+      ],
       quoteStagesCount: 1,
-      quoteItemsCount: 3,
+      quoteItemsCount: 1,
       createdAt: '2026-09-23 11:56:21',
     });
   });

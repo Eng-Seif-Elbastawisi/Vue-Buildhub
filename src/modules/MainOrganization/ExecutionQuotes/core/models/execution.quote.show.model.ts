@@ -39,6 +39,31 @@ export interface ExecutionQuoteTypeSummary {
   title?: string;
 }
 
+export interface ExecutionQuoteItemableSummary {
+  id?: number;
+  title?: string;
+}
+
+export interface ExecutionQuoteStageItemSummary {
+  id?: number;
+  itemType?: number;
+  itemableId?: number;
+  itemableType?: string;
+  itemable?: ExecutionQuoteItemableSummary;
+  expectedPrice?: number;
+  quantity?: number;
+}
+
+export interface ExecutionQuoteStageSummary {
+  id?: number;
+  quoteId?: number;
+  projectId?: number;
+  stageId?: number;
+  subStageId?: number;
+  items: ExecutionQuoteStageItemSummary[];
+  createdAt?: string;
+}
+
 const objectValue = (rawRelation: unknown): Record<string, unknown> | undefined =>
   rawRelation && typeof rawRelation === 'object' && !Array.isArray(rawRelation)
     ? (rawRelation as Record<string, unknown>)
@@ -46,6 +71,14 @@ const objectValue = (rawRelation: unknown): Record<string, unknown> | undefined 
 
 const numberValue = (rawNumber: unknown): number | undefined =>
   typeof rawNumber === 'number' ? rawNumber : undefined;
+
+const decimalNumberValue = (rawNumber: unknown): number | undefined => {
+  if (typeof rawNumber === 'number') return Number.isFinite(rawNumber) ? rawNumber : undefined;
+  if (typeof rawNumber !== 'string' || rawNumber.trim() === '') return undefined;
+
+  const parsedNumber = Number(rawNumber);
+  return Number.isFinite(parsedNumber) ? parsedNumber : undefined;
+};
 
 const stringValue = (rawText: unknown): string | undefined =>
   typeof rawText === 'string' ? rawText : undefined;
@@ -134,14 +167,58 @@ const quoteTypeSummary = (rawQuoteType: unknown): ExecutionQuoteTypeSummary | un
   };
 };
 
-const quoteProgress = (rawQuoteStages: unknown) => {
-  const quoteStages = Array.isArray(rawQuoteStages) ? rawQuoteStages : [];
-  const itemsCount = quoteStages.reduce((itemsTotal, rawStage) => {
-    const stage = objectValue(rawStage);
-    return itemsTotal + (Array.isArray(stage?.items) ? stage.items.length : 0);
-  }, 0);
+const itemableSummary = (rawItemable: unknown): ExecutionQuoteItemableSummary | undefined => {
+  const itemable = objectValue(rawItemable);
+  if (!itemable) return undefined;
 
-  return { stagesCount: quoteStages.length, itemsCount };
+  return {
+    id: numberValue(itemable.id),
+    title: stringValue(itemable.title),
+  };
+};
+
+const stageItemSummary = (rawItem: unknown): ExecutionQuoteStageItemSummary | undefined => {
+  const stageItem = objectValue(rawItem);
+  if (!stageItem) return undefined;
+
+  return {
+    id: numberValue(stageItem.id),
+    itemType: numberValue(stageItem.item_type),
+    itemableId: numberValue(stageItem.itemable_id),
+    itemableType: stringValue(stageItem.itemable_type),
+    itemable: itemableSummary(stageItem.itemable),
+    expectedPrice: decimalNumberValue(stageItem.expected_price),
+    quantity: decimalNumberValue(stageItem.quantity),
+  };
+};
+
+const quoteStageSummary = (rawStage: unknown): ExecutionQuoteStageSummary | undefined => {
+  const quoteStage = objectValue(rawStage);
+  if (!quoteStage) return undefined;
+
+  const stageItems = Array.isArray(quoteStage.items)
+    ? quoteStage.items
+        .map(stageItemSummary)
+        .filter((stageItem): stageItem is ExecutionQuoteStageItemSummary => !!stageItem)
+    : [];
+
+  return {
+    id: numberValue(quoteStage.id),
+    quoteId: numberValue(quoteStage.quote_id),
+    projectId: numberValue(quoteStage.project_id),
+    stageId: numberValue(quoteStage.stage_id),
+    subStageId: numberValue(quoteStage.sub_stage_id),
+    items: stageItems,
+    createdAt: stringValue(quoteStage.created_at),
+  };
+};
+
+const quoteStageSummaries = (rawStages: unknown): ExecutionQuoteStageSummary[] => {
+  if (!Array.isArray(rawStages)) return [];
+
+  return rawStages
+    .map(quoteStageSummary)
+    .filter((quoteStage): quoteStage is ExecutionQuoteStageSummary => !!quoteStage);
 };
 
 export default class ExecutionQuoteShowModel {
@@ -153,6 +230,7 @@ export default class ExecutionQuoteShowModel {
   public readonly client?: ExecutionQuoteClientSummary;
   public readonly quoteType?: ExecutionQuoteTypeSummary;
   public readonly priceEmployee?: ExecutionQuoteEmployeeSummary;
+  public readonly quoteStages: ExecutionQuoteStageSummary[];
   public readonly quoteStagesCount: number;
   public readonly quoteItemsCount: number;
   public readonly createdAt?: string;
@@ -166,8 +244,7 @@ export default class ExecutionQuoteShowModel {
     client?: ExecutionQuoteClientSummary;
     quoteType?: ExecutionQuoteTypeSummary;
     priceEmployee?: ExecutionQuoteEmployeeSummary;
-    quoteStagesCount?: number;
-    quoteItemsCount?: number;
+    quoteStages?: ExecutionQuoteStageSummary[];
     createdAt?: string;
   }) {
     this.id = data.id;
@@ -178,15 +255,17 @@ export default class ExecutionQuoteShowModel {
     this.client = data.client;
     this.quoteType = data.quoteType;
     this.priceEmployee = data.priceEmployee;
-    this.quoteStagesCount = data.quoteStagesCount ?? 0;
-    this.quoteItemsCount = data.quoteItemsCount ?? 0;
+    this.quoteStages = data.quoteStages ?? [];
+    this.quoteStagesCount = this.quoteStages.length;
+    this.quoteItemsCount = this.quoteStages.reduce(
+      (itemsTotal, quoteStage) => itemsTotal + quoteStage.items.length,
+      0,
+    );
     this.createdAt = data.createdAt;
     Object.freeze(this);
   }
 
   static fromJson(json: Record<string, unknown>): ExecutionQuoteShowModel {
-    const progress = quoteProgress(json.quote_stages);
-
     return new ExecutionQuoteShowModel({
       id: numberValue(json.id),
       organization: organizationSummary(json.organization),
@@ -196,8 +275,7 @@ export default class ExecutionQuoteShowModel {
       client: clientSummary(json.client),
       quoteType: quoteTypeSummary(json.quote_type),
       priceEmployee: employeeSummary(json.price_employee),
-      quoteStagesCount: progress.stagesCount,
-      quoteItemsCount: progress.itemsCount,
+      quoteStages: quoteStageSummaries(json.quote_stages),
       createdAt: stringValue(json.created_at),
     });
   }
@@ -211,5 +289,6 @@ export default class ExecutionQuoteShowModel {
     client: { id: 1, name: 'Client' },
     quoteType: { id: 1, title: 'Lump_SUM' },
     priceEmployee: { id: 2, name: 'Pricing employee' },
+    quoteStages: [],
   });
 }
