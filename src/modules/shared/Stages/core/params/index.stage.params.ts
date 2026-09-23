@@ -8,12 +8,14 @@ type IndexStageParamsData = {
   parentId?: number | null;
   sortBy?: string;
   sortDirection?: 'asc' | 'desc';
+  status?: boolean;
 };
 
 export default class IndexStageParams extends IndexParams {
   public parentId?: number | null;
   public sortBy?: string;
   public sortDirection?: 'asc' | 'desc';
+  public status?: boolean;
 
   constructor(data?: IndexStageParamsData);
   constructor(
@@ -24,6 +26,7 @@ export default class IndexStageParams extends IndexParams {
     parentId?: number | null,
     sortBy?: string,
     sortDirection?: 'asc' | 'desc',
+    status?: boolean,
   );
 
   constructor(
@@ -34,6 +37,7 @@ export default class IndexStageParams extends IndexParams {
     parentId?: number | null,
     sortBy?: string,
     sortDirection?: 'asc' | 'desc',
+    status?: boolean,
   ) {
     if (typeof dataOrWord === 'object') {
       super(
@@ -46,6 +50,7 @@ export default class IndexStageParams extends IndexParams {
       this.parentId = dataOrWord.parentId;
       this.sortBy = dataOrWord.sortBy;
       this.sortDirection = dataOrWord.sortDirection;
+      this.status = dataOrWord.status;
       return;
     }
 
@@ -53,6 +58,7 @@ export default class IndexStageParams extends IndexParams {
     this.parentId = parentId;
     this.sortBy = sortBy;
     this.sortDirection = sortDirection;
+    this.status = status;
   }
 
   toMap(): Record<string, string | number | number[] | null> {
@@ -64,6 +70,7 @@ export default class IndexStageParams extends IndexParams {
 
     if (this.sortBy) data.sort_by = this.sortBy;
     if (this.sortDirection) data.sort_direction = this.sortDirection;
+    if (this.status !== undefined) data.status = Number(this.status);
 
     return data;
   }
