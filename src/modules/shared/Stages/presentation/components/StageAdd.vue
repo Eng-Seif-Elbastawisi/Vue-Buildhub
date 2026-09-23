@@ -43,10 +43,12 @@ const cancelStageAdd = () => {
 
 
     <div class="form-footer">
-      <button class="btn btn-primary" :class="{ 'btn--loading': loading }" type="button" :disabled="loading"
+      <button
+class="btn btn-primary" :class="{ 'btn--loading': loading }" type="button" :disabled="loading"
         @click="saveStage">
         {{ $t('save') }}
       </button>
+
 
       <ConfirmCancelDialog ref="confirmCancelRef" class="btn btn-secondary" :title="$t('cancel_changes')"
         :message="$t('are_you_sure_you_want_to_leave')" :trigger-label="$t('common.back')"

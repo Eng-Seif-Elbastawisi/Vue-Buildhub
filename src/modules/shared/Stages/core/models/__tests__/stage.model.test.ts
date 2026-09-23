@@ -14,4 +14,9 @@ describe('StageModel', () => {
     expect(stage.children[0]).toBeInstanceOf(StageModel);
     expect('e_c_subject_id' in stage).toBe(false);
   });
+
+  it('maps the shared parent_id relationship for root and child stages', () => {
+    expect(StageModel.fromJson({ id: 1, parent_id: null, children: [] }).parentId).toBeNull();
+    expect(StageModel.fromJson({ id: 2, parent_id: '1', children: [] }).parentId).toBe(1);
+  });
 });

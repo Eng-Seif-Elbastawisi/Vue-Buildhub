@@ -2601,10 +2601,80 @@
     "source_title": "Execution quote source",
     "from_approved_design": "From approved design",
     "quote_data": "Quote data",
+    "quote_type_title": "Quote type",
+    "quote_types": {
+      "lump_sum": {
+        "title": "Lump sum",
+        "description": "A fixed client price for the configured stages."
+      },
+      "supervision": {
+        "title": "Supervision",
+        "description": "A supervision quote with stage-level pricing."
+      }
+    },
+    "main_stages_title": "Main stages",
+    "main_stages_hint": "Choose a main stage to add its required items.",
+    "main_stages_empty": "No main stages are available.",
+    "stage_items_count": "{count} items",
+    "not_started": "Not started",
+    "not_available": "Not available",
+    "stage_details": "Main stage details",
+    "stage_details_hint": "Select a sub stage, item source and add the required items.",
+    "back_to_stages": "Back to stages",
+    "select_sub_stage": "1. Select sub stage",
+    "sub_stages_empty": "No sub stages are available for this main stage.",
+    "what_will_you_add": "2. What will you add?",
+    "select_item_title": "3. Select the item and add it",
+    "ready_to_add": "Ready to add",
+    "select_sub_stage_and_source": "Select a sub stage and source to begin.",
+    "add_item": "Add item",
+    "delete_item": "Delete",
+    "client_stage_price": "Client stage price",
+    "always_visible": "Always visible",
+    "placeholders": {
+      "client_stage_price": "Enter client stage price",
+      "product": "Select a product",
+      "material": "Select a building material",
+      "labor": "Select a labor item",
+      "client": "Select a client",
+      "project": "Select a project",
+      "quote_type": "Select a quote type",
+      "price_employee": "Select a pricing owner",
+      "design_quote": "Select a design quote"
+    },
+    "item_fields": {
+      "product": "Product",
+      "material": "Building material",
+      "labor": "Labor",
+      "quantity": "Quantity",
+      "unit": "Unit",
+      "unit_price": "Unit price"
+    },
+    "item_sources": {
+      "product": {
+        "title": "Products",
+        "description": "Product, category, quantity, unit and price"
+      },
+      "building_material": {
+        "title": "Building materials",
+        "description": "Materials, quantities and prices"
+      },
+      "labor": {
+        "title": "Labor",
+        "description": "Labor or execution item"
+      }
+    },
+    "quote_items_title": "Quote items",
+    "quote_items_empty": "Add items from the three source groups to build this quote.",
+    "expected_margin": "Expected margin",
+    "current_stage_summary": "Current stage cost: {cost} · Expected margin: {margin}",
     "save": "Save execution quote",
     "index_description": "Review execution quotes and their source data.",
     "validation": {
-      "required_data": "Complete the required quote data before saving."
+      "required_data": "Complete the required quote data before saving.",
+      "item_required": "Select a main stage, sub stage, source and item before adding.",
+      "item_values": "Quantity must be greater than zero and unit price cannot be negative.",
+      "items_required": "Add at least one quote item before saving."
     },
     "steps": {
       "data": "Data",
@@ -2639,18 +2709,22 @@
       "design_value": "Design value",
       "area": "Area"
     },
-    "placeholders": {
-      "client": "Select a client",
-      "project": "Select a project",
-      "quote_type": "Select a quote type",
-      "price_employee": "Select a pricing owner",
-      "design_quote": "Select a design quote"
-    },
     "table": {
       "id": "ID",
       "source": "Source",
       "client": "Client",
-      "project": "Project"
+      "project": "Project",
+      "quote_type": "Quote type",
+      "items_count": "Items",
+      "client_total": "Client total",
+      "main_stage": "Main stage",
+      "sub_stage": "Sub stage",
+      "item": "Item",
+      "quantity": "Quantity",
+      "unit": "Unit",
+      "unit_price": "Unit price",
+      "total": "Total",
+      "action": "Action"
     }
   }
 }

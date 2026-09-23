@@ -3,7 +3,7 @@
   import { useRoute, useRouter } from 'vue-router';
 
   import type AddQuoteTypeParams from '../../core/params/add.quote.types.params';
-  import EditQuoteTypeParams from '../../core/params/edit.quote.types.params';
+  import type EditQuoteTypeParams from '../../core/params/edit.quote.types.params';
   import ShowQuoteTypeParams from '../../core/params/show.quote.types.params';
 
   import QuoteTypeController from '../controllers/quote.types.controller';

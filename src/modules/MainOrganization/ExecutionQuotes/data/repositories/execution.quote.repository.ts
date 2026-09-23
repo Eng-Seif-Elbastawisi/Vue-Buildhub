@@ -1,5 +1,8 @@
+import type { DataState } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
 import BaseRepository, { type RepositoryConfig } from '@/base/Domain/Repositories/baseRepository';
+
 import ExecutionQuoteModel from '../../core/models/execution.quote.model';
+import type StoreExecutionQuoteDetailsParams from '../../core/params/store.execution.quote.details.params';
 import ExecutionQuoteApiService from '../api/execution.quote.api-service';
 
 export default class ExecutionQuoteRepository extends BaseRepository<
@@ -46,5 +49,9 @@ export default class ExecutionQuoteRepository extends BaseRepository<
           ExecutionQuoteModel.fromJson(rawItem as Record<string, unknown>),
         )
       : [];
+  }
+
+  async storeDetails(data?: StoreExecutionQuoteDetailsParams): Promise<DataState<void>> {
+    return await this.apiService.storeDetails(data);
   }
 }

@@ -1,4 +1,7 @@
+import type Params from '@/base/Core/Params/params';
 import BaseApiService, { type ApiEndpoints } from '@/base/Data/ApiService/baseApiService';
+
+import type StoreExecutionQuoteDetailsParams from '../../core/params/store.execution.quote.details.params';
 import { ExecutionQuoteApiEndpoints } from './execution.quote.api.endpoints';
 
 export default class ExecutionQuoteApiService extends BaseApiService {
@@ -21,5 +24,12 @@ export default class ExecutionQuoteApiService extends BaseApiService {
       update: this.executionQuoteEndpoints.update,
       delete: this.executionQuoteEndpoints.delete,
     };
+  }
+
+  /**
+   * Same customPost pattern used by Products for non-CRUD actions.
+   */
+  async storeDetails(params?: StoreExecutionQuoteDetailsParams) {
+    return await this.customPost(this.executionQuoteEndpoints.storeDetails, params as Params);
   }
 }
