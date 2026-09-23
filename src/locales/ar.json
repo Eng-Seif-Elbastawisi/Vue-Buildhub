@@ -2600,6 +2600,33 @@
     "save": "حفظ مقايسة التنفيذ",
     "index_description": "راجع مقايسات التنفيذ ومصادر بياناتها.",
     "empty_quotes": "لا توجد مقايسات تنفيذ حتى الآن.",
+    "show": {
+      "title": "تفاصيل مقايسة التنفيذ",
+      "description": "عرض متكامل لبيانات المشروع والعميل والمسؤولين عن المقايسة.",
+      "eyebrow": "مقايسة رقم {id}",
+      "back": "الرجوع للمقايسات",
+      "action": "عرض",
+      "project_fallback": "مقايسة تنفيذ",
+      "created_at": "تاريخ الإنشاء",
+      "project_section": "بيانات المشروع",
+      "project_section_hint": "المشروع المرتبط بمقايسة التنفيذ.",
+      "project_client": "عميل المشروع",
+      "project_date": "تاريخ المشروع",
+      "description_label": "الوصف",
+      "no_description": "لم تتم إضافة وصف للمشروع.",
+      "client_section": "بيانات العميل",
+      "client_section_hint": "بيانات التواصل وحالة حساب العميل.",
+      "phone": "رقم الهاتف",
+      "email": "البريد الإلكتروني",
+      "address": "العنوان",
+      "active": "نشط",
+      "inactive": "غير نشط",
+      "ownership_section": "الملكية والمسؤوليات",
+      "ownership_section_hint": "المنظمة والموظفون المسؤولون عن المقايسة.",
+      "organization": "المنظمة",
+      "created_by": "أنشأها",
+      "client_owner": "مسؤول العميل"
+    },
     "store_details_failed": "تعذر حفظ تفاصيل مقايسة التنفيذ.",
     "validation": {
       "required_data": "أكمل بيانات المقايسة المطلوبة قبل الحفظ.",
@@ -2627,7 +2654,7 @@
       },
       "design_quote": {
         "title": "تنفيذ من مقايسة تصميم",
-        "description": "اختر العميل ثم مقايسة التصميم"
+        "description": "اختر العميل ثم اختر أحد مشروعاته"
       }
     },
     "fields": {
@@ -2647,6 +2674,10 @@
       "client": "العميل",
       "project": "المشروع",
       "quote_type": "نوع المقايسة",
+      "stages_and_items": "المراحل / البنود",
+      "stages_count": "المراحل: {count}",
+      "items_count_value": "البنود: {count}",
+      "created_at": "تاريخ الإنشاء",
       "items_count": "البنود",
       "client_total": "إجمالي العميل",
       "main_stage": "المرحلة الأساسية",

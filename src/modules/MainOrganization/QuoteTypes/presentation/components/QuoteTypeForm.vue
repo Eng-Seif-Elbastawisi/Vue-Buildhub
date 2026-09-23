@@ -18,6 +18,7 @@
   const props = defineProps<{
     quoteType?: QuoteTypeModel;
     loading?: boolean;
+    disabled?: boolean;
   }>();
 
   const emit = defineEmits<{
@@ -135,9 +136,9 @@
           autocapitalize="characters"
           spellcheck="false"
           required
-          :disabled="loading"
-          :readonly="isEdit"
-          :aria-readonly="isEdit"
+          :disabled="loading || disabled"
+          :readonly="isEdit || disabled"
+          :aria-readonly="isEdit || disabled"
           :placeholder="$t('quote_type.type_code_placeholder')"
           @input="updateData"
         />
@@ -155,9 +156,9 @@
           class="configuration-field-input readonly"
           type="text"
           :value="calculationModel"
-          :disabled="loading"
-          readonly
-          aria-readonly="true"
+          :disabled="loading || disabled"
+          :readonly="isEdit || disabled"
+          :aria-readonly="isEdit || disabled"
           :placeholder="$t('quote_type.calculation_model_placeholder')"
         />
         <small>{{ $t('quote_type.calculation_model_hint') }}</small>
@@ -173,6 +174,9 @@
           :model-value="translations"
           type="title"
           required
+          :disabled="loading || disabled"
+          :readonly="isEdit || disabled"
+          :aria-readonly="isEdit || disabled"
           @update:model-value="updateTranslations"
         />
       </div>
@@ -184,6 +188,9 @@
           :languages="['ar', 'en']"
           :model-value="descriptionTranslations"
           type="description"
+          :disabled="loading || disabled"
+          :readonly="isEdit || disabled"
+          :aria-readonly="isEdit || disabled"
           @update:model-value="updateDescriptionTranslations"
         />
       </div>
@@ -192,7 +199,9 @@
         <ToggleSwitch
           v-model="status"
           input-id="quote-type-status"
-          :disabled="loading"
+          :disabled="loading || disabled"
+          :readonly="isEdit || disabled"
+          :aria-readonly="isEdit || disabled"
           @update:model-value="updateData"
         />
 

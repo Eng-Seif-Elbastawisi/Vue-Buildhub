@@ -1,10 +1,8 @@
 <script setup lang="ts">
   import { computed, ref, watch } from 'vue';
-  import { useI18n } from 'vue-i18n';
   import { useRoute, useRouter } from 'vue-router';
 
   import type TitleInterface from '@/base/Data/Models/titleInterface';
-  import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
   import UpdatedCustomInputSelect from '@/shared/FormInputs/UpdatedCustomInputSelect.vue';
   import AppButton from '@/shared/HelpersComponents/AppButton.vue';
 
@@ -14,86 +12,60 @@
   import ProjectController from '@/modules/MainOrganization/Project/presentation/controllers/project.controller';
   import IndexProjectParams from '@/modules/MainOrganization/Project/core/params/index.project.params';
 
-  import ProjectPreviewController from '@/modules/MainOrganization/Project/presentation/controllers/project.preview.controller';
-  import IndexProjectPreviewParams from '@/modules/MainOrganization/Project/core/params/index.project.preview.params';
-  import ShowProjectPreviewParams from '@/modules/MainOrganization/Project/core/params/show.project.preview.params';
-  import type ProjectPreviewShowModel from '@/modules/MainOrganization/Project/core/models/project.preview.show.model';
-
-  import QuoteTypeController from '@/modules/MainOrganization/QuoteTypes/presentation/controllers/quote.types.controller';
-  import IndexQuoteTypeParams from '@/modules/MainOrganization/QuoteTypes/core/params/index.quote.types.params';
-
   import EmployeeController from '@/modules/MainOrganization/employee/presentation/controllers/employee.controller';
   import IndexEmployeeParams from '@/modules/MainOrganization/employee/core/params/index.employee.params';
-
-  import {
-    Status,
-    getStatusNameKey,
-  } from '@/modules/MainOrganization/Project/core/constants/status.enum';
 
   import { QuoteSourceEnum } from '../../core/constants/quote.source.enum';
   import type { ExecutionQuoteType } from '../../core/constants/execution.quote.type.enum';
   import AddExecutionQuoteParams from '../../core/params/add.execution.quote.params';
-  import StoreExecutionQuoteDetailsParams, {
-    type ExecutionQuoteStageRequest,
+  import type {
+    default as StoreExecutionQuoteDetailsParams,
+    ExecutionQuoteStageRequest,
   } from '../../core/params/store.execution.quote.details.params';
   import ExecutionQuoteBuilder from './builder/ExecutionQuoteBuilder.vue';
+  import ExecutionQuoteTypeCards from './builder/ExecutionQuoteTypeCards.vue';
 
   const emit = defineEmits<{
     (event: 'updateData', quoteParams: AddExecutionQuoteParams): void;
-    (event: 'updateDetails', detailsParams: StoreExecutionQuoteDetailsParams | null): void;
+    (event: 'updateDetails', detailsParams: StoreExecutionQuoteDetailsParams[]): void;
   }>();
 
   const props = withDefaults(
     defineProps<{
       loading?: boolean;
       executionQuoteId?: number | null;
+      initialQuoteType?: ExecutionQuoteType | null;
     }>(),
     {
       loading: false,
       executionQuoteId: null,
+      initialQuoteType: null,
     },
   );
 
   const router = useRouter();
   const route = useRoute();
-  const { t } = useI18n();
-
   const clientController = ClientController.getInstance();
   const projectController = ProjectController.getInstance();
-  const projectPreviewController = ProjectPreviewController.getInstance();
-  const quoteTypeController = QuoteTypeController.getInstance();
   const employeeController = EmployeeController.getInstance();
 
   const clientParams = new IndexClientParams('', 1, 100, 0);
-  const quoteTypeParams = new IndexQuoteTypeParams({
-    word: '',
-    page: 1,
-    perPage: 100,
-    withPage: 0,
-  });
   const employeeParams = new IndexEmployeeParams('', 1, 100, 0);
 
   const client = ref<TitleInterface<string | number> | null>(null);
   const project = ref<TitleInterface<string | number> | null>(null);
-  const quoteType = ref<TitleInterface<string | number> | null>(null);
   const priceEmployee = ref<TitleInterface<string | number> | null>(null);
-  const designQuote = ref<TitleInterface<string | number> | null>(null);
 
   const clientId = ref<number | undefined>();
   const projectId = ref<number | undefined>();
-  const quoteTypeId = ref<number | undefined>();
   const priceEmployeeId = ref<number | undefined>();
 
   const selectedQuoteSource = ref<QuoteSourceEnum>(QuoteSourceEnum.EXECUTION_ONLY);
   const selectedExecutionQuoteType = ref<ExecutionQuoteType | null>(null);
   const executionQuoteStages = ref<ExecutionQuoteStageRequest[]>([]);
 
-  const designQuoteDetails = ref<ProjectPreviewShowModel | null>(null);
-  const designQuoteLoading = ref(false);
-  let latestDesignQuoteRequest = 0;
-
   const baseLocked = computed(() => Boolean(props.executionQuoteId));
-  const isStagePage = computed(() => Boolean(route.params.stageId));
+  const isBuilderPage = computed(() => route.name === 'Build Execution Quote');
 
   const toOptionalId = (selection: TitleInterface<string | number> | null): number | undefined => {
     if (selection?.id === undefined || selection.id === null) return undefined;
@@ -102,13 +74,9 @@
   };
 
   const projectParams = computed(() => {
-    void clientId.value;
-    return new IndexProjectParams('', 1, 100, 0);
-  });
-
-  const designQuoteParams = computed(() => {
-    void clientId.value;
-    return new IndexProjectPreviewParams('', 1, 100, 0);
+    const filteredProjectParams = new IndexProjectParams('', 1, 100, 0);
+    filteredProjectParams.clientId = clientId.value;
+    return filteredProjectParams;
   });
 
   const isExecutionOnly = computed(
@@ -119,18 +87,15 @@
     () => selectedQuoteSource.value === QuoteSourceEnum.EXECUTION_FROM_DESIGN_QUOTE,
   );
 
-  const designQuoteSelected = computed(() => designQuote.value !== null);
-
-  const sourceTwoDataComplete = computed(() =>
+  const baseDataComplete = computed(() =>
     isExecutionFromDesignQuote.value
-      ? Boolean(
+      ? Boolean(clientId.value && projectId.value && selectedExecutionQuoteType.value)
+      : Boolean(
           clientId.value &&
           projectId.value &&
-          quoteTypeId.value &&
-          designQuote.value &&
-          designQuoteDetails.value,
-        )
-      : Boolean(clientId.value && projectId.value && quoteTypeId.value && priceEmployeeId.value),
+          selectedExecutionQuoteType.value &&
+          priceEmployeeId.value,
+        ),
   );
 
   const quoteItemsCount = computed(() =>
@@ -150,42 +115,16 @@
     executionQuoteStages.value.reduce((total, stage) => total + (stage.client_price ?? 0), 0),
   );
 
-  const heroTitle = computed(() => {
-    if (isExecutionFromDesignQuote.value) {
-      return (
-        project.value?.title ?? designQuoteDetails.value?.project?.title ?? designQuote.value?.title
-      );
-    }
-    return project.value?.title;
-  });
+  const heroTitle = computed(() => project.value?.title);
 
   const heroSubtitle = computed(() => client.value?.title);
-
-  const inspectionValue = computed(() => {
-    const details = designQuoteDetails.value;
-    if (!details?.preview_date) return '—';
-    return details.preview_time
-      ? `${details.preview_date} - ${details.preview_time}`
-      : details.preview_date;
-  });
-
-  const statusValue = computed(() => {
-    const status = designQuoteDetails.value?.status;
-    if (status === undefined || status === null) return '—';
-    return Object.values(Status).includes(status as Status)
-      ? t(getStatusNameKey(status as Status))
-      : String(status);
-  });
-
-  const designValue = computed(() => designQuoteDetails.value?.design_value ?? '—');
-  const areaValue = computed(() => designQuoteDetails.value?.area ?? '—');
 
   const buildSteps = computed(() => [
     {
       id: 1,
       title: 'execution_quote.steps.data',
       state:
-        baseLocked.value || sourceTwoDataComplete.value
+        baseLocked.value || baseDataComplete.value
           ? 'execution_quote.steps.complete'
           : 'execution_quote.steps.start_here',
       isCurrent: !baseLocked.value,
@@ -223,20 +162,9 @@
     },
   ]);
 
-  const clearDesignQuoteData = () => {
-    latestDesignQuoteRequest += 1;
-    designQuote.value = null;
-    designQuoteDetails.value = null;
-  };
-
   const clearProjectData = () => {
     project.value = null;
     projectId.value = undefined;
-  };
-
-  const clearQuoteTypeData = () => {
-    quoteType.value = null;
-    quoteTypeId.value = undefined;
   };
 
   const clearPriceEmployeeData = () => {
@@ -247,7 +175,7 @@
   const clearBuilderData = () => {
     selectedExecutionQuoteType.value = null;
     executionQuoteStages.value = [];
-    emit('updateDetails', null);
+    emit('updateDetails', []);
   };
 
   /**
@@ -255,60 +183,48 @@
    * No quote_type / stages / items are included here anymore.
    */
   const updateBaseData = () => {
-    const common = {
+    const baseQuoteFields = {
       quoteSource: selectedQuoteSource.value,
       clientId: clientId.value,
       projectId: projectId.value,
-      quoteTypeId: quoteTypeId.value,
+      quoteTypeId: selectedExecutionQuoteType.value ?? undefined,
     };
 
     if (isExecutionFromDesignQuote.value) {
-      emit(
-        'updateData',
-        new AddExecutionQuoteParams({
-          ...common,
-          designQuoteId: toOptionalId(designQuote.value),
-        }),
-      );
+      emit('updateData', new AddExecutionQuoteParams(baseQuoteFields));
       return;
     }
 
     emit(
       'updateData',
       new AddExecutionQuoteParams({
-        ...common,
+        ...baseQuoteFields,
         priceEmployeeId: priceEmployeeId.value,
       }),
     );
   };
 
-  /**
-   * Emits the second request payload only after the first request returned an id.
-   */
-  const updateDetailsData = () => {
-    if (!props.executionQuoteId || !selectedExecutionQuoteType.value) {
-      emit('updateDetails', null);
-      return;
-    }
+  watch(
+    () => props.initialQuoteType,
+    (quoteType) => {
+      if (!quoteType) return;
 
-    emit(
-      'updateDetails',
-      new StoreExecutionQuoteDetailsParams({
-        executionQuoteId: props.executionQuoteId,
-        quoteType: selectedExecutionQuoteType.value,
-        stages: executionQuoteStages.value,
-      }),
-    );
-  };
+      selectedExecutionQuoteType.value = quoteType;
+    },
+    { immediate: true },
+  );
 
   const onExecutionQuoteTypeChange = (value: ExecutionQuoteType | null) => {
     selectedExecutionQuoteType.value = value;
-    updateDetailsData();
+    updateBaseData();
   };
 
   const onStagesChange = (value: ExecutionQuoteStageRequest[]) => {
     executionQuoteStages.value = value;
-    updateDetailsData();
+  };
+
+  const onDetailsChange = (details: StoreExecutionQuoteDetailsParams[]) => {
+    emit('updateDetails', details);
   };
 
   const selectSource = (source: QuoteSourceEnum) => {
@@ -325,8 +241,6 @@
 
     if (selectedClient?.id !== previousClient?.id && !baseLocked.value) {
       clearProjectData();
-      clearBuilderData();
-      if (isExecutionFromDesignQuote.value) clearDesignQuoteData();
     }
 
     updateBaseData();
@@ -334,19 +248,11 @@
 
   watch(project, (selectedProject) => {
     projectId.value = toOptionalId(selectedProject);
-    if (!baseLocked.value) clearBuilderData();
-    updateBaseData();
-  });
-
-  watch(quoteType, (selectedQuoteType) => {
-    quoteTypeId.value = toOptionalId(selectedQuoteType);
-    if (!baseLocked.value) clearBuilderData();
     updateBaseData();
   });
 
   watch(priceEmployee, (selectedPriceEmployee) => {
     priceEmployeeId.value = toOptionalId(selectedPriceEmployee);
-    if (!baseLocked.value) clearBuilderData();
     updateBaseData();
   });
 
@@ -354,62 +260,14 @@
     if (baseLocked.value) return;
 
     clearProjectData();
-    clearQuoteTypeData();
     clearPriceEmployeeData();
-    clearDesignQuoteData();
-    clearBuilderData();
     updateBaseData();
-  });
-
-  watch(designQuote, async (selectedDesignQuote) => {
-    if (baseLocked.value) return;
-
-    const requestId = ++latestDesignQuoteRequest;
-    designQuoteDetails.value = null;
-    clearBuilderData();
-
-    const selectedDesignQuoteId = toOptionalId(selectedDesignQuote);
-    if (!selectedDesignQuoteId) {
-      updateBaseData();
-      return;
-    }
-
-    designQuoteLoading.value = true;
-
-    try {
-      const previewResponse = await projectPreviewController.fetchOne(
-        new ShowProjectPreviewParams({ previewId: selectedDesignQuoteId }),
-      );
-
-      if (
-        requestId !== latestDesignQuoteRequest ||
-        !isExecutionFromDesignQuote.value ||
-        !(previewResponse instanceof DataSuccess) ||
-        !previewResponse.data
-      ) {
-        return;
-      }
-
-      designQuoteDetails.value = previewResponse.data;
-      projectId.value = previewResponse.data.project_id ?? projectId.value;
-      quoteTypeId.value = previewResponse.data.quote_type_id ?? quoteTypeId.value;
-    } finally {
-      if (requestId === latestDesignQuoteRequest) {
-        designQuoteLoading.value = false;
-        updateBaseData();
-      }
-    }
   });
 
   watch(
     () => props.executionQuoteId,
     (executionQuoteId) => {
-      if (!executionQuoteId) {
-        clearBuilderData();
-        return;
-      }
-
-      updateDetailsData();
+      if (!executionQuoteId) clearBuilderData();
     },
   );
 
@@ -421,10 +279,10 @@
     class="execution-quote"
     :class="{
       'execution-quote--loading': loading,
-      'execution-quote--stage-page': isStagePage,
+      'execution-quote--stage-page': isBuilderPage,
     }"
   >
-    <template v-if="!isStagePage">
+    <template v-if="!isBuilderPage">
       <header class="execution-quote__header">
         <div class="execution-quote__heading">
           <span class="execution-quote__brand">
@@ -578,7 +436,7 @@
           </button>
         </div>
 
-        <div v-if="isExecutionOnly" class="quote-data">
+        <div class="quote-data">
           <div class="section-title section-title--subsection">
             <div class="section-title__copy">
               <span class="section-title__number" aria-hidden="true">01</span>
@@ -613,20 +471,7 @@
               />
             </div>
 
-            <div class="quote-data__field">
-              <UpdatedCustomInputSelect
-                id="execution-quote-type"
-                v-model="quoteType"
-                :controller="quoteTypeController"
-                :params="quoteTypeParams"
-                :placeholder="$t('execution_quote.placeholders.quote_type')"
-                :disabled="loading || baseLocked"
-                :label="$t('execution_quote.fields.quote_type')"
-                required
-              />
-            </div>
-
-            <div class="quote-data__field">
+            <div v-if="isExecutionOnly" class="quote-data__field">
               <UpdatedCustomInputSelect
                 id="execution-quote-price-employee"
                 v-model="priceEmployee"
@@ -639,98 +484,27 @@
               />
             </div>
           </div>
-        </div>
 
-        <div v-else class="quote-data quote-data--design">
-          <div class="section-title section-title--subsection">
-            <div class="section-title__copy">
-              <span class="section-title__number" aria-hidden="true">01</span>
-              <h2>{{ $t('execution_quote.quote_data') }}</h2>
-            </div>
-          </div>
-
-          <div class="quote-data__design-grid">
-            <div class="quote-data__field">
-              <UpdatedCustomInputSelect
-                id="execution-quote-client"
-                v-model="client"
-                :controller="clientController"
-                :params="clientParams"
-                :placeholder="$t('execution_quote.placeholders.client')"
-                :disabled="loading || baseLocked"
-                :label="$t('execution_quote.fields.client')"
-                required
-              />
-            </div>
-
-            <div class="quote-data__field">
-              <UpdatedCustomInputSelect
-                id="execution-design-project"
-                v-model="project"
-                :controller="projectController"
-                :params="projectParams"
-                :placeholder="$t('execution_quote.placeholders.project')"
-                :disabled="loading || baseLocked || !clientId"
-                :label="$t('execution_quote.fields.project')"
-                required
-              />
-            </div>
-
-            <div class="quote-data__field">
-              <UpdatedCustomInputSelect
-                id="execution-design-quote-type"
-                v-model="quoteType"
-                :controller="quoteTypeController"
-                :params="quoteTypeParams"
-                :placeholder="$t('execution_quote.placeholders.quote_type')"
-                :disabled="loading || baseLocked"
-                :label="$t('execution_quote.fields.quote_type')"
-                required
-              />
-            </div>
-
-            <div class="quote-data__field">
-              <UpdatedCustomInputSelect
-                id="execution-design-quote"
-                v-model="designQuote"
-                :controller="projectPreviewController"
-                :params="designQuoteParams"
-                :placeholder="$t('execution_quote.placeholders.design_quote')"
-                :disabled="loading || baseLocked || !clientId || !projectId || !quoteTypeId"
-                :label="$t('execution_quote.fields.design_quote')"
-                required
-              />
-            </div>
-          </div>
-
-          <div v-if="designQuoteSelected" class="design-summary" :aria-busy="designQuoteLoading">
-            <article class="design-summary__item">
-              <span>{{ $t('execution_quote.fields.status') }}</span>
-              <strong>{{ statusValue }}</strong>
-            </article>
-            <article class="design-summary__item">
-              <span>{{ $t('execution_quote.fields.inspection') }}</span>
-              <strong>{{ inspectionValue }}</strong>
-            </article>
-            <article class="design-summary__item">
-              <span>{{ $t('execution_quote.fields.design_value') }}</span>
-              <strong>{{ designValue }}</strong>
-            </article>
-            <article class="design-summary__item">
-              <span>{{ $t('execution_quote.fields.area') }}</span>
-              <strong>{{ areaValue }}</strong>
-            </article>
-          </div>
+          <ExecutionQuoteTypeCards
+            v-if="!baseLocked"
+            class="quote-data__type-options"
+            :model-value="selectedExecutionQuoteType"
+            :loading="loading"
+            @update:model-value="onExecutionQuoteTypeChange"
+          />
         </div>
       </section>
     </template>
 
     <ExecutionQuoteBuilder
+      v-if="isBuilderPage"
       :model-value="selectedExecutionQuoteType"
       :enabled="Boolean(executionQuoteId)"
+      :execution-quote-id="executionQuoteId"
       :loading="loading"
       @update:model-value="onExecutionQuoteTypeChange"
       @update:stages="onStagesChange"
+      @update:details="onDetailsChange"
     />
   </section>
 </template>
@@ -755,8 +529,6 @@
   .execution-quote__top-grid,
   .source-options,
   .quote-data__grid,
-  .quote-data__design-grid,
-  .design-summary,
   .quote-hero__totals {
     display: grid;
     gap: 0.75rem;
@@ -1138,8 +910,7 @@
     border-top: 1px solid var(--border-weak);
   }
 
-  .quote-data__grid,
-  .quote-data__design-grid {
+  .quote-data__grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     margin-top: 1.15rem;
     align-items: start;
@@ -1160,6 +931,10 @@
   .quote-data__field:focus-within {
     border-color: var(--PrimaryColor);
     box-shadow: 0 0 0 3px var(--PrimaryColor-alpha-10);
+  }
+
+  .quote-data__type-options {
+    margin-top: 1rem;
   }
 
   .quote-data__field > :deep(.input-label) {
@@ -1184,45 +959,12 @@
     border-color: var(--PrimaryColor-alpha-30);
   }
 
-  .design-summary {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    margin-top: 1rem;
-  }
-
-  .design-summary__item {
-    min-height: 4.5rem;
-    padding: 0.7rem;
-    border: 1px solid var(--border-weak);
-    border-radius: var(--radius-sm);
-    background: var(--bg-section);
-  }
-
-  .design-summary__item span,
-  .design-summary__item strong {
-    display: block;
-  }
-
-  .design-summary__item span {
-    color: var(--subtitle-color);
-    font-size: 0.8rem;
-    font-weight: 700;
-  }
-
-  .design-summary__item strong {
-    margin-top: 0.4rem;
-    color: var(--title-card-color);
-  }
-
   @media (max-width: 1100px) {
     .execution-quote__top-grid {
       grid-template-areas:
         'hero'
         'path';
       grid-template-columns: 1fr;
-    }
-
-    .design-summary {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
 
@@ -1233,8 +975,6 @@
 
     .source-options,
     .quote-data__grid,
-    .quote-data__design-grid,
-    .design-summary,
     .quote-hero__totals {
       grid-template-columns: 1fr;
     }

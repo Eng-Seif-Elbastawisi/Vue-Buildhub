@@ -9,7 +9,7 @@ describe('ExecutionQuoteApiEndpoints', () => {
   it('uses the organization execution quote endpoints', () => {
     const endpoints = new ExecutionQuoteApiEndpoints();
 
-    expect(endpoints.store).toContain('organization/store_execution_quote');
+    expect(endpoints.store).toContain('organization/store_quote');
     expect(endpoints.storeDetails).toContain('organization/store_execution_quote_details');
   });
 });

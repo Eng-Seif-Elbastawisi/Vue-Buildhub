@@ -6,6 +6,7 @@ export default class IndexProjectParams extends IndexParams {
   public dateRemove?: string | null;
   public status?: ConvertStatus[] | null;
   public readonly service_type?: DepartmentTypeEnum[];
+  public clientId?: number;
 
   constructor(
     word: string = '',
@@ -36,6 +37,10 @@ export default class IndexProjectParams extends IndexParams {
 
     if (Array.isArray(this.service_type) && this.service_type.length > 0) {
       data.service_type = this.service_type;
+    }
+
+    if (this.clientId) {
+      data.client_id = this.clientId;
     }
 
     return data;

@@ -14,12 +14,12 @@ import { useUserStore } from '@/stores/user';
 
 import type AddExecutionQuoteParams from '../../core/params/add.execution.quote.params';
 import type StoreExecutionQuoteDetailsParams from '../../core/params/store.execution.quote.details.params';
-import type ExecutionQuoteModel from '../../core/models/execution.quote.model';
+import type ExecutionQuoteShowModel from '../../core/models/execution.quote.show.model';
 import ExecutionQuoteRepository from '../../data/repositories/execution.quote.repository';
 
 export default class ExecutionQuoteController extends BaseController<
-  ExecutionQuoteModel,
-  ExecutionQuoteModel[]
+  ExecutionQuoteShowModel,
+  ExecutionQuoteShowModel[]
 > {
   private static instance: ExecutionQuoteController;
 
@@ -56,7 +56,7 @@ export default class ExecutionQuoteController extends BaseController<
   }
 
   /**
-   * Step 1: save only the base/header data through store_execution_quote.
+   * Step 1: save only the base/header data through store_quote.
    * Important: there is intentionally NO redirect here because the user must
    * continue building the quote after the backend returns the new quote id.
    */
@@ -72,41 +72,44 @@ export default class ExecutionQuoteController extends BaseController<
     return await this.createBase(params, options);
   }
 
-  /**
-   * Step 2: save quote type + stages + items using the same customPost style
-   * used by Products custom actions.
-   */
-  async storeDetails(
-    params: StoreExecutionQuoteDetailsParams,
-    _options?: ApiCallOptions,
-    formKey?: string,
-  ) {
-    const result = await this.repository.storeDetails(params);
+  private async completeDetailsStore(formKey?: string) {
+    this.showSuccessToast('Created successfully');
+    notifyDataMutationSucceeded();
 
-    if (result instanceof DataSuccess) {
-      this.showSuccessToast('Created successfully');
-      notifyDataMutationSucceeded();
+    await router.push(
+      this.userStore.user?.type === 1
+        ? '/mainportal/execution-quotes'
+        : '/organization/execution-quotes',
+    );
 
-      await router.push(
-        this.userStore.user?.type === 1
-          ? '/mainportal/execution-quotes'
-          : '/organization/execution-quotes',
-      );
+    if (formKey) useFormsStore().clearFormData(formKey);
+  }
 
-      if (formKey) {
-        useFormsStore().clearFormData(formKey);
+  async storeDetails(requests: StoreExecutionQuoteDetailsParams[], formKey?: string) {
+    let lastSuccess: DataSuccess<void> | undefined;
+
+    for (const request of requests) {
+      const response = await this.repository.storeDetails(request);
+
+      if (!(response instanceof DataSuccess)) {
+        this.handleErrorResponse(response);
+        return response;
       }
-    } else {
-      this.handleErrorResponse(result);
+
+      lastSuccess = response;
     }
 
-    return result;
+    if (!lastSuccess) return undefined;
+
+    await this.completeDetailsStore(formKey);
+
+    return lastSuccess;
   }
 
   async fetchList(
     params: Params,
     options?: ApiCallOptions,
-  ): Promise<DataState<ExecutionQuoteModel[]>> {
+  ): Promise<DataState<ExecutionQuoteShowModel[]>> {
     return await super.fetchList(params, { ...options, useJson: true });
   }
 }

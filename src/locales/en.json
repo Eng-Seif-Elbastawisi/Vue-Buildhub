@@ -2680,6 +2680,33 @@
     "save": "Save execution quote",
     "index_description": "Review execution quotes and their source data.",
     "empty_quotes": "No execution quotes are available yet.",
+    "show": {
+      "title": "Execution quote details",
+      "description": "A complete view of the project, client and quote ownership.",
+      "eyebrow": "Quote #{id}",
+      "back": "Back to quotes",
+      "action": "Show",
+      "project_fallback": "Execution quote",
+      "created_at": "Created at",
+      "project_section": "Project details",
+      "project_section_hint": "The project linked to this execution quote.",
+      "project_client": "Project client",
+      "project_date": "Project date",
+      "description_label": "Description",
+      "no_description": "No project description was provided.",
+      "client_section": "Client details",
+      "client_section_hint": "Contact information and account status.",
+      "phone": "Phone",
+      "email": "Email",
+      "address": "Address",
+      "active": "Active",
+      "inactive": "Inactive",
+      "ownership_section": "Ownership and responsibility",
+      "ownership_section_hint": "Organization and employees responsible for this quote.",
+      "organization": "Organization",
+      "created_by": "Created by",
+      "client_owner": "Client owner"
+    },
     "store_details_failed": "The execution quote details could not be saved.",
     "validation": {
       "required_data": "Complete the required quote data before saving.",
@@ -2707,7 +2734,7 @@
       },
       "design_quote": {
         "title": "From design quote",
-        "description": "Choose the client, then the design quote."
+        "description": "Choose a client, then select one of their projects."
       }
     },
     "fields": {
@@ -2727,6 +2754,10 @@
       "client": "Client",
       "project": "Project",
       "quote_type": "Quote type",
+      "stages_and_items": "Stages / items",
+      "stages_count": "Stages: {count}",
+      "items_count_value": "Items: {count}",
+      "created_at": "Created at",
       "items_count": "Items",
       "client_total": "Client total",
       "main_stage": "Main stage",

@@ -1,27 +1,118 @@
-import { mount } from '@vue/test-utils';
-import { describe, expect, it, vi } from 'vitest';
+import { flushPromises, mount } from '@vue/test-utils';
+import type * as VueRouterModule from 'vue-router';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+import { DataInitial } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
+
+import ExecutionQuoteApiService from '../../../data/api/execution.quote.api-service';
+import ExecutionQuoteController from '../../controllers/execution.quote.controller';
 import ExecutionQuoteIndex from '../ExecutionQuoteIndex.vue';
 
-vi.mock('vue-router', () => ({
+vi.mock('vue-router', async (importOriginal) => ({
+  ...(await importOriginal<typeof VueRouterModule>()),
   useRouter: () => ({ push: vi.fn() }),
 }));
 
-vi.mock('../../controllers/execution.quote.controller', () => ({
-  default: {
-    getInstance: vi.fn(() => ({
-      listState: { value: {} },
-      fetchList: vi.fn(),
-    })),
+const createIndexResponse = (page: number, projectTitle: string) => ({
+  statusCode: 200,
+  data: {
+    status: true,
+    data: {
+      data: [
+        {
+          id: 37 + page,
+          quote_source: 1,
+          project: { id: 207, title: projectTitle },
+          client: { id: 30, name: 'شارع', phone: '111' },
+          quote_type: { id: 1, title: 'Lump_SUM' },
+          price_employee: { id: 92, name: 'fwffefefe' },
+          quote_stages: [{ id: 1, items: [{ id: 1 }, { id: 2 }, { id: 3 }] }],
+          created_at: '2026-09-23 11:56:21',
+        },
+      ],
+      links: {
+        first: 'https://api.buildhub.techlabeg.com/supervision/organization/fetch_quotes?page=1',
+        last: 'https://api.buildhub.techlabeg.com/supervision/organization/fetch_quotes?page=2',
+        prev:
+          page > 1
+            ? 'https://api.buildhub.techlabeg.com/supervision/organization/fetch_quotes?page=1'
+            : null,
+        next:
+          page < 2
+            ? 'https://api.buildhub.techlabeg.com/supervision/organization/fetch_quotes?page=2'
+            : null,
+      },
+      meta: {
+        current_page: page,
+        from: page,
+        last_page: 2,
+        links: [],
+        path: 'https://api.buildhub.techlabeg.com/supervision/organization/fetch_quotes',
+        per_page: 20,
+        to: page,
+        total: 21,
+      },
+    },
   },
-}));
+});
+
+const mountIndex = () =>
+  mount(ExecutionQuoteIndex, {
+    global: {
+      mocks: {
+        $t: (key: string, params?: { count?: number }) => {
+          if (key === 'execution_quote.sources.execution_only.title') return 'Execution only';
+          if (key === 'execution_quote.quote_types.lump_sum.title') return 'Lump sum';
+          if (key === 'execution_quote.table.stages_count') return `Stages: ${params?.count}`;
+          if (key === 'execution_quote.table.items_count_value') return `Items: ${params?.count}`;
+          return key;
+        },
+      },
+    },
+  });
 
 describe('ExecutionQuoteIndex', () => {
-  it('renders the execution quote list heading', () => {
-    const wrapper = mount(ExecutionQuoteIndex, {
-      global: { mocks: { $t: (key: string) => key } },
-      stubs: { DataStatusBuilder: true },
+  const controller = ExecutionQuoteController.getInstance();
+  const indexRequest = vi.spyOn(ExecutionQuoteApiService.getInstance(), 'index');
+
+  beforeEach(() => {
+    controller.setListState(new DataInitial());
+    indexRequest.mockReset();
+  });
+
+  it('shows the important execution quote fields returned by the index endpoint', async () => {
+    indexRequest.mockResolvedValue(createIndexResponse(1, '007'));
+
+    const wrapper = mountIndex();
+
+    await flushPromises();
+
+    expect(wrapper.text()).toContain('Execution only');
+    expect(wrapper.text()).toContain('007');
+    expect(wrapper.text()).toContain('شارع');
+    expect(wrapper.text()).toContain('111');
+    expect(wrapper.text()).toContain('Lump sum');
+    expect(wrapper.text()).toContain('fwffefefe');
+    expect(wrapper.text()).toContain('Stages: 1');
+    expect(wrapper.text()).toContain('Items: 3');
+  });
+
+  it('loads the selected page from the pagination control', async () => {
+    indexRequest.mockImplementation(async (params) => {
+      const page = Number(params?.toMap().page ?? 1);
+      return createIndexResponse(page, page === 1 ? 'First page project' : 'Second page project');
     });
 
-    expect(wrapper.text()).toContain('execution_quote.title');
+    const wrapper = mountIndex();
+    await flushPromises();
+
+    expect(wrapper.text()).toContain('First page project');
+    expect(wrapper.find('.pagination-wrapper').exists()).toBe(true);
+
+    await wrapper.findAll('.pagination-item')[1].trigger('click');
+    await flushPromises();
+
+    expect(wrapper.text()).toContain('Second page project');
+    expect(wrapper.text()).not.toContain('First page project');
   });
 });

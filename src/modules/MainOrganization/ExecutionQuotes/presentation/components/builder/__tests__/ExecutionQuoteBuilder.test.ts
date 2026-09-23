@@ -6,7 +6,7 @@ import StageModel from '@/modules/shared/Stages/core/models/stage.model';
 
 import { ExecutionQuoteItemSourceEnum } from '../../../../core/constants/execution.quote.item.source.enum';
 import { ExecutionQuoteTypeEnum } from '../../../../core/constants/execution.quote.type.enum';
-import type { ExecutionQuoteStageRequest } from '../../../../core/params/store.execution.quote.details.params';
+import type StoreExecutionQuoteDetailsParams from '../../../../core/params/store.execution.quote.details.params';
 import ExecutionQuoteBuilder from '../ExecutionQuoteBuilder.vue';
 
 const { fetchList, push, routeParams } = vi.hoisted(() => ({
@@ -64,6 +64,7 @@ const mountBuilder = () =>
     props: {
       enabled: true,
       modelValue: ExecutionQuoteTypeEnum.LUMP_SUM,
+      executionQuoteId: 28,
     },
     global: {
       mocks: { $t: (key: string) => key },
@@ -78,7 +79,7 @@ describe('ExecutionQuoteBuilder', () => {
     push.mockReset().mockResolvedValue(undefined);
   });
 
-  it('sends the selected sub-stage as item stage_id', async () => {
+  it('groups selected items into the backend morph contract', async () => {
     fetchList
       .mockResolvedValueOnce(
         new DataSuccess({ data: [new StageModel({ id: 1, title: 'Main', children: [] })] }),
@@ -93,16 +94,25 @@ describe('ExecutionQuoteBuilder', () => {
     await wrapper.get('.select-sub-stage').trigger('click');
     await wrapper.get('.select-source').trigger('click');
     await wrapper.get('.add-item').trigger('click');
+    await wrapper.get('.add-item').trigger('click');
 
-    const stages = wrapper.emitted('update:stages')?.at(-1)?.[0] as ExecutionQuoteStageRequest[];
+    expect(fetchList.mock.calls[1]?.[0].toMap()).toMatchObject({ parent_id: 1 });
 
-    expect(stages[0]?.items[0]).toMatchObject({
-      stage_id: 11,
-      source_type: ExecutionQuoteItemSourceEnum.PRODUCT,
-      source_id: 22,
-      sorting_id: 33,
+    const requests = wrapper
+      .emitted('update:details')
+      ?.at(-1)?.[0] as StoreExecutionQuoteDetailsParams[];
+
+    expect(requests).toHaveLength(1);
+    expect(requests[0]?.toMap()).toEqual({
+      quote_id: 28,
+      stage_id: 1,
+      sub_stage_id: 11,
+      item_type: ExecutionQuoteItemSourceEnum.PRODUCT,
+      items: [
+        { morph_id: 22, expected_price: 5, quantity: 2 },
+        { morph_id: 22, expected_price: 5, quantity: 2 },
+      ],
     });
-    expect(stages[0]?.items[0]).not.toHaveProperty('sub_stage_id');
   });
 
   it('opens a selected main stage on the focused stage route', async () => {
@@ -117,11 +127,9 @@ describe('ExecutionQuoteBuilder', () => {
     await wrapper.get('.open-stage').trigger('click');
 
     expect(push).toHaveBeenCalledWith({
-      name: 'Add Execution Quote',
-      params: {
-        stageView: 'stages',
-        stageId: '4',
-      },
+      name: 'Build Execution Quote',
+      params: { stageId: '4' },
+      query: { id: '28' },
     });
   });
 
@@ -138,11 +146,9 @@ describe('ExecutionQuoteBuilder', () => {
     await wrapper.get('.close-stage').trigger('click');
 
     expect(push).toHaveBeenCalledWith({
-      name: 'Add Execution Quote',
-      params: {
-        stageView: undefined,
-        stageId: undefined,
-      },
+      name: 'Build Execution Quote',
+      params: { stageId: undefined },
+      query: { id: '28' },
     });
   });
 });

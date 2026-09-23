@@ -7,7 +7,12 @@
   import { dialogManager } from '@/base/Presentation/Dialogs/dialog.manager';
   import AppButton from '@/shared/HelpersComponents/AppButton.vue';
 
+  import {
+    ExecutionQuoteTypeEnum,
+    type ExecutionQuoteType,
+  } from '../../core/constants/execution.quote.type.enum';
   import type AddExecutionQuoteParams from '../../core/params/add.execution.quote.params';
+  import ShowExecutionQuoteParams from '../../core/params/show.execution.quote.params';
   import type StoreExecutionQuoteDetailsParams from '../../core/params/store.execution.quote.details.params';
   import ExecutionQuoteController from '../controllers/execution.quote.controller';
   import ExecutionQuoteForm from './ExecutionQuoteForm.vue';
@@ -18,33 +23,30 @@
   const { t } = useI18n();
 
   const baseParams = ref<AddExecutionQuoteParams | null>(null);
-  const detailsParams = ref<StoreExecutionQuoteDetailsParams | null>(null);
-  const executionQuoteId = ref<number | null>(null);
+  const detailsParams = ref<StoreExecutionQuoteDetailsParams[]>([]);
+  const initialQuoteType = ref<ExecutionQuoteType | null>(null);
   const loading = ref(false);
-  const routeStageId = computed(() => route.params.stageId);
+  const isBuilderPage = computed(() => route.name === 'Build Execution Quote');
 
-  watch(
-    [routeStageId, executionQuoteId],
-    ([stageId, quoteId]) => {
-      if (!stageId || quoteId) return;
+  const executionQuoteId = computed<number | null>(() => {
+    if (!isBuilderPage.value) return null;
 
-      dialogManager.toastWarning(t('execution_quote.validation.base_quote_required'));
-      void router.replace({ name: 'Add Execution Quote' });
-    },
-    { immediate: true },
-  );
+    const rawId = Array.isArray(route.query.id) ? route.query.id[0] : route.query.id;
+    const id = Number(rawId);
+    return Number.isInteger(id) && id > 0 ? id : null;
+  });
 
   const resolveCreatedExecutionQuoteId = (responseData: unknown): number | null => {
     if (!responseData || typeof responseData !== 'object') return null;
 
-    const data = responseData as Record<string, unknown>;
-    const directId = Number(data.id);
+    const responseRecord = responseData as Record<string, unknown>;
+    const directId = Number(responseRecord.id);
 
     if (Number.isInteger(directId) && directId > 0) {
       return directId;
     }
 
-    const nestedData = data.data;
+    const nestedData = responseRecord.data;
 
     if (nestedData && typeof nestedData === 'object') {
       const nestedId = Number((nestedData as Record<string, unknown>).id);
@@ -54,8 +56,64 @@
     return null;
   };
 
+  const toExecutionQuoteType = (rawQuoteType: unknown): ExecutionQuoteType | null => {
+    const quoteType = Number(rawQuoteType);
+    return Object.values(ExecutionQuoteTypeEnum).includes(quoteType as ExecutionQuoteType)
+      ? (quoteType as ExecutionQuoteType)
+      : null;
+  };
+
+  const loadStoredQuote = async (quoteId: number) => {
+    loading.value = true;
+
+    try {
+      const response = await controller.fetchOne(
+        new ShowExecutionQuoteParams({ executionQuoteId: quoteId }),
+      );
+
+      if (!(response instanceof DataSuccess) || !response.data) return;
+
+      initialQuoteType.value = toExecutionQuoteType(response.data.quoteType?.id);
+    } finally {
+      loading.value = false;
+    }
+  };
+
+  watch(
+    [isBuilderPage, executionQuoteId],
+    ([builderPage, quoteId]) => {
+      if (!builderPage) {
+        initialQuoteType.value = null;
+        return;
+      }
+
+      if (!quoteId) {
+        dialogManager.toastWarning(t('execution_quote.validation.base_quote_required'));
+        void router.replace({ name: 'Add Execution Quote' });
+        return;
+      }
+
+      void loadStoredQuote(quoteId);
+    },
+    { immediate: true },
+  );
+
+  const storeBaseExecutionQuote = async (
+    params: AddExecutionQuoteParams,
+  ): Promise<number | null> => {
+    const response = await controller.createBase(params);
+    if (!(response instanceof DataSuccess)) return null;
+
+    const quoteId = resolveCreatedExecutionQuoteId(response.data);
+    if (!quoteId) {
+      dialogManager.toastWarning(t('execution_quote.validation.required_data'));
+    }
+
+    return quoteId;
+  };
+
   const saveBaseExecutionQuote = async () => {
-    if (!baseParams.value || executionQuoteId.value) return;
+    if (!baseParams.value || isBuilderPage.value) return;
 
     const validation = baseParams.value.validate();
 
@@ -66,33 +124,30 @@
       return;
     }
 
+    let storedQuoteId: number | null = null;
+
     loading.value = true;
-
     try {
-      const response = await controller.createBase(baseParams.value);
-
-      if (!(response instanceof DataSuccess)) return;
-
-      const id = resolveCreatedExecutionQuoteId(response.data);
-
-      if (!id) {
-        // The second request cannot be linked without the created quote id.
-        dialogManager.toastWarning(t('execution_quote.validation.required_data'));
-        return;
-      }
-
-      executionQuoteId.value = id;
+      storedQuoteId = await storeBaseExecutionQuote(baseParams.value);
     } finally {
       loading.value = false;
     }
+
+    if (!storedQuoteId) return;
+
+    await router.push({
+      name: 'Build Execution Quote',
+      query: { id: String(storedQuoteId) },
+    });
   };
 
   const saveExecutionQuoteDetails = async () => {
-    if (!detailsParams.value || !executionQuoteId.value) return;
+    if (!detailsParams.value.length || !executionQuoteId.value) return;
 
-    const validation = detailsParams.value.validate();
+    const invalidRequest = detailsParams.value.find((params) => !params.validate().isValid);
 
-    if (!validation.isValid) {
+    if (invalidRequest) {
+      const validation = invalidRequest.validate();
       dialogManager.toastWarning(
         validation.errors[0]?.message ?? t('execution_quote.validation.required_data'),
       );
@@ -102,7 +157,7 @@
     loading.value = true;
 
     try {
-      await controller.storeDetails(detailsParams.value, undefined, route.fullPath);
+      await controller.storeDetails(detailsParams.value, route.fullPath);
     } finally {
       loading.value = false;
     }
@@ -114,12 +169,13 @@
     <ExecutionQuoteForm
       :loading="loading"
       :execution-quote-id="executionQuoteId"
+      :initial-quote-type="initialQuoteType"
       @update-data="baseParams = $event"
       @update-details="detailsParams = $event"
     />
 
     <AppButton
-      v-if="!executionQuoteId"
+      v-if="!isBuilderPage"
       class="execution-quote-add__save"
       icon="right"
       :loading="loading"
@@ -135,7 +191,7 @@
       v-else
       class="execution-quote-add__save execution-quote-add__save--details"
       icon="right"
-      :disabled="loading || !detailsParams"
+      :disabled="loading || !detailsParams.length"
       :loading="loading"
       @click="saveExecutionQuoteDetails"
     >
