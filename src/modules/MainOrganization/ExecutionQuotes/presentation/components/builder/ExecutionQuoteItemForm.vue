@@ -32,11 +32,13 @@
       subStageId?: number | string;
       loading?: boolean;
       disabled?: boolean;
+      pricingEnabled?: boolean;
     }>(),
     {
       subStageId: undefined,
       loading: false,
       disabled: false,
+      pricingEnabled: true,
     },
   );
 
@@ -267,7 +269,7 @@
         new TitleInterface<string | number>({
           id: sorting.id,
           title: sorting.title,
-          subtitle: sorting.price,
+          subtitle: props.pricingEnabled ? sorting.price : undefined,
         }),
     ),
   );
@@ -286,8 +288,7 @@
     () =>
       Number.isFinite(quantity.value) &&
       quantity.value > 0 &&
-      Number.isFinite(unitPrice.value) &&
-      unitPrice.value >= 0,
+      (!props.pricingEnabled || (Number.isFinite(unitPrice.value) && unitPrice.value >= 0)),
   );
 
   const isItemReadyToAdd = computed(
@@ -298,12 +299,24 @@
   );
 
   const itemGuidanceKey = computed(() => {
-    if (!hasSelectedSourceItem.value) return 'execution_quote.item_guidance.choose_item';
-    if (sortingRequired.value && !toOptionalId(selectedSorting.value)) {
-      return 'execution_quote.item_guidance.choose_sorting';
+    if (!hasSelectedSourceItem.value) {
+      return props.pricingEnabled
+        ? 'execution_quote.item_guidance.choose_item'
+        : 'execution_quote.item_guidance.choose_item_without_pricing';
     }
-    if (!itemValuesAreValid.value) return 'execution_quote.item_guidance.review_values';
-    return 'execution_quote.item_guidance.ready';
+    if (sortingRequired.value && !toOptionalId(selectedSorting.value)) {
+      return props.pricingEnabled
+        ? 'execution_quote.item_guidance.choose_sorting'
+        : 'execution_quote.item_guidance.choose_sorting_without_pricing';
+    }
+    if (!itemValuesAreValid.value) {
+      return props.pricingEnabled
+        ? 'execution_quote.item_guidance.review_values'
+        : 'execution_quote.item_guidance.review_quantity';
+    }
+    return props.pricingEnabled
+      ? 'execution_quote.item_guidance.ready'
+      : 'execution_quote.item_guidance.ready_without_pricing';
   });
 
   const clearSelectedSource = () => {
@@ -330,17 +343,19 @@
 
   watch(selectedItem, () => {
     selectedSorting.value = null;
-    unitPrice.value = recordPrice.value;
+    unitPrice.value = props.pricingEnabled ? recordPrice.value : 0;
   });
 
   watch(recordPrice, (price) => {
-    if (selectedItem.value && !selectedSortingData.value) {
+    if (props.pricingEnabled && selectedItem.value && !selectedSortingData.value) {
       unitPrice.value = price;
     }
   });
 
   watch(selectedSorting, () => {
-    if (selectedSortingData.value) {
+    if (!props.pricingEnabled) {
+      unitPrice.value = 0;
+    } else if (selectedSortingData.value) {
       unitPrice.value = selectedSortingData.value.price;
     } else if (selectedItem.value) {
       unitPrice.value = recordPrice.value;
@@ -363,8 +378,7 @@
     if (
       !Number.isFinite(quantity.value) ||
       quantity.value <= 0 ||
-      !Number.isFinite(unitPrice.value) ||
-      unitPrice.value < 0
+      (props.pricingEnabled && (!Number.isFinite(unitPrice.value) || unitPrice.value < 0))
     ) {
       dialogManager.toastWarning(t('execution_quote.validation.item_values'));
       return;
@@ -377,7 +391,7 @@
           ? toOptionalId(selectedSorting.value)
           : undefined,
       quantity: Number(quantity.value),
-      unit_price: Number(unitPrice.value),
+      unit_price: props.pricingEnabled ? Number(unitPrice.value) : 0,
       source_title: selectedSourceTitle.value,
       unit_name: unitName.value,
       sorting_title: selectedSortingData.value?.title,
@@ -517,13 +531,17 @@
             v-model.number="quantity"
             class="item-control"
             type="number"
-            min="0.01"
-            step="0.01"
+            min="1"
+            step="1"
             :disabled="isDisabled"
           />
         </label>
 
-        <label class="item-input-field" for="execution-quote-item-unit-price">
+        <label
+          v-if="pricingEnabled"
+          class="item-input-field"
+          for="execution-quote-item-unit-price"
+        >
           <span class="item-field-label">
             {{ $t('execution_quote.item_fields.unit_price') }}
             <FieldHelpIcon

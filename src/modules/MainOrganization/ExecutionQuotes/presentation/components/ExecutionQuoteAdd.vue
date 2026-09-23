@@ -26,6 +26,7 @@
   const detailsParams = ref<StoreExecutionQuoteDetailsParams[]>([]);
   const initialQuoteType = ref<ExecutionQuoteType | null>(null);
   const loading = ref(false);
+  const builderResetKey = ref(0);
   const isBuilderPage = computed(() => route.name === 'Build Execution Quote');
 
   const executionQuoteId = computed<number | null>(() => {
@@ -34,6 +35,14 @@
     const rawId = Array.isArray(route.query.id) ? route.query.id[0] : route.query.id;
     const id = Number(rawId);
     return Number.isInteger(id) && id > 0 ? id : null;
+  });
+
+  const currentStageId = computed<string | undefined>(() => {
+    const rawStageId = Array.isArray(route.params.stageId)
+      ? route.params.stageId[0]
+      : route.params.stageId;
+    const stageId = Number(rawStageId);
+    return Number.isInteger(stageId) && stageId > 0 ? String(stageId) : undefined;
   });
 
   const resolveCreatedExecutionQuoteId = (responseData: unknown): number | null => {
@@ -141,32 +150,52 @@
     });
   };
 
-  const saveExecutionQuoteDetails = async () => {
-    if (!detailsParams.value.length || !executionQuoteId.value) return;
-
+  const detailRequestsAreValid = () => {
     const invalidRequest = detailsParams.value.find((params) => !params.validate().isValid);
+    if (!invalidRequest) return true;
 
-    if (invalidRequest) {
-      const validation = invalidRequest.validate();
-      dialogManager.toastWarning(
-        validation.errors[0]?.message ?? t('execution_quote.validation.required_data'),
-      );
-      return;
-    }
+    const validation = invalidRequest.validate();
+    dialogManager.toastWarning(
+      validation.errors[0]?.message ?? t('execution_quote.validation.required_data'),
+    );
+    return false;
+  };
 
+  const storeDetailRequests = async () => {
     loading.value = true;
 
     try {
-      await controller.storeDetails(detailsParams.value, route.fullPath);
+      const response = await controller.storeDetails(detailsParams.value, route.fullPath);
+      return response instanceof DataSuccess;
     } finally {
       loading.value = false;
     }
+  };
+
+  const continueAtCurrentStage = async (quoteId: number) => {
+    detailsParams.value = [];
+    builderResetKey.value += 1;
+
+    await router.replace({
+      name: 'Build Execution Quote',
+      params: { stageId: currentStageId.value },
+      query: { id: String(quoteId) },
+    });
+  };
+
+  const saveExecutionQuoteDetails = async () => {
+    const quoteId = executionQuoteId.value;
+    if (!detailsParams.value.length || !quoteId || !detailRequestsAreValid()) return;
+
+    const stored = await storeDetailRequests();
+    if (stored) await continueAtCurrentStage(quoteId);
   };
 </script>
 
 <template>
   <div class="execution-quote-add">
     <ExecutionQuoteForm
+      :key="isBuilderPage ? builderResetKey : 0"
       :loading="loading"
       :execution-quote-id="executionQuoteId"
       :initial-quote-type="initialQuoteType"
@@ -187,19 +216,25 @@
       {{ $t('execution_quote.save') }}
     </AppButton>
 
-    <AppButton
-      v-else
-      class="execution-quote-add__save execution-quote-add__save--details"
-      icon="right"
-      :disabled="loading || !detailsParams.length"
-      :loading="loading"
-      @click="saveExecutionQuoteDetails"
-    >
-      <template #icon>
-        <i class="pi pi-save" aria-hidden="true"></i>
-      </template>
-      {{ $t('execution_quote.save') }}
-    </AppButton>
+    <section v-else class="execution-quote-add__action-bar">
+      <div class="execution-quote-add__action-copy">
+        <strong>{{ $t('execution_quote.save_batch_title') }}</strong>
+        <span>{{ $t('execution_quote.save_batch_hint') }}</span>
+      </div>
+
+      <AppButton
+        class="execution-quote-add__save execution-quote-add__save--details"
+        icon="right"
+        :disabled="loading || !detailsParams.length"
+        :loading="loading"
+        @click="saveExecutionQuoteDetails"
+      >
+        <template #icon>
+          <i class="pi pi-save" aria-hidden="true"></i>
+        </template>
+        {{ $t('execution_quote.save_and_continue') }}
+      </AppButton>
+    </section>
 
     <div v-if="controller.errorMessage.value" class="execution-quote-add__error">
       {{ controller.errorMessage.value }}
@@ -228,6 +263,43 @@
     box-shadow: var(--shadow-sm);
   }
 
+  .execution-quote-add__action-bar {
+    display: flex;
+    position: sticky;
+    z-index: 5;
+    bottom: 1rem;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-inline: 1.25rem;
+    padding: 0.85rem 1rem;
+    border: 1px solid var(--PrimaryColor-alpha-20);
+    border-radius: var(--radius-md);
+    background: var(--bg-card);
+    box-shadow: var(--shadow-md);
+  }
+
+  .execution-quote-add__action-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    text-align: start;
+  }
+
+  .execution-quote-add__action-copy strong {
+    color: var(--title-card-color);
+  }
+
+  .execution-quote-add__action-copy span {
+    color: var(--subtitle-color);
+    font-size: var(--xs-size);
+  }
+
+  .execution-quote-add__action-bar .execution-quote-add__save {
+    flex: 0 0 auto;
+    margin-inline: 0;
+  }
+
   .execution-quote-add__error {
     padding: 0.75rem 1rem;
     border: 1px solid var(--danger);
@@ -240,6 +312,17 @@
     .execution-quote-add__save {
       align-self: stretch;
       margin-inline: 0.75rem;
+    }
+
+    .execution-quote-add__action-bar {
+      position: static;
+      align-items: stretch;
+      flex-direction: column;
+      margin-inline: 0.75rem;
+    }
+
+    .execution-quote-add__action-bar .execution-quote-add__save {
+      width: 100%;
     }
   }
 </style>

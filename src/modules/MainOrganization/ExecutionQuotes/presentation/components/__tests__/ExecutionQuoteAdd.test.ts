@@ -136,21 +136,23 @@ describe('ExecutionQuoteAdd', () => {
     );
   });
 
-  it('submits the full stages and items payload from the builder page', async () => {
+  it('saves the current batch and stays on the same main stage for more sub-stages', async () => {
     routeState.name = 'Build Execution Quote';
-    routeState.fullPath = '/organization/execution-quotes/add/stages?id=28';
-    routeState.query.id = '28';
+    routeState.fullPath = '/organization/execution-quotes/add/stages/129?id=48';
+    routeState.params.stageId = '129';
+    routeState.query.id = '48';
     controller.fetchOne.mockResolvedValue(
       new DataSuccess({
         data: new ExecutionQuoteShowModel({
-          id: 28,
+          id: 48,
           quoteType: { id: ExecutionQuoteTypeEnum.LUMP_SUM, title: 'Lump_SUM' },
         }),
       }),
     );
+    controller.storeDetails.mockResolvedValue(new DataSuccess({ data: undefined }));
     const detailsParams = new StoreExecutionQuoteDetailsParams({
-      quoteId: 28,
-      stageId: 4,
+      quoteId: 48,
+      stageId: 129,
       subStageId: 41,
       itemType: ExecutionQuoteItemSourceEnum.PRODUCT,
       items: [{ morphId: 22, expectedPrice: 50, quantity: 2 }],
@@ -164,5 +166,11 @@ describe('ExecutionQuoteAdd', () => {
     await flushPromises();
 
     expect(controller.storeDetails).toHaveBeenCalledWith([detailsParams], routeState.fullPath);
+    expect(replace).toHaveBeenCalledWith({
+      name: 'Build Execution Quote',
+      params: { stageId: '129' },
+      query: { id: '48' },
+    });
+    expect(wrapper.get('.execution-quote-add__save--details').attributes('disabled')).toBeDefined();
   });
 });

@@ -125,4 +125,35 @@ describe('ExecutionQuoteItemForm', () => {
       unit_price: 20,
     });
   });
+
+  it('adds supervision items without displaying or emitting a price', async () => {
+    const wrapper = mount(ExecutionQuoteItemForm, {
+      props: {
+        source: ExecutionQuoteItemSourceEnum.PRODUCT,
+        subStageId: 7,
+        pricingEnabled: false,
+      },
+      global: {
+        mocks: { $t: (key: string) => key },
+        stubs: {
+          UpdatedCustomInputSelect: SelectStub,
+          FieldHelpIcon: true,
+        },
+      },
+    });
+
+    expect(wrapper.find('#execution-quote-item-unit-price').exists()).toBe(false);
+    expect(wrapper.text()).toContain('execution_quote.item_guidance.choose_item_without_pricing');
+
+    await wrapper.get('.choose-product').trigger('click');
+    await wrapper.get('.choose-sorting').trigger('click');
+    await wrapper.get('.add-item-button').trigger('click');
+
+    expect(wrapper.emitted('add')?.[0]?.[0]).toMatchObject({
+      source_id: 10,
+      sorting_id: 5,
+      quantity: 1,
+      unit_price: 0,
+    });
+  });
 });
