@@ -49,9 +49,10 @@ class="btn btn-primary" :class="{ 'btn--loading': loading }" type="button" :disa
         {{ $t('save') }}
       </button>
 
-      <ConfirmCancelDialog
-ref="confirmCancelRef" :title="$t('cancel_changes')"
-        :message="$t('are_you_sure_you_want_to_leave')" @confirm="cancelStageAdd" />
+
+      <ConfirmCancelDialog ref="confirmCancelRef" class="btn btn-secondary" :title="$t('cancel_changes')"
+        :message="$t('are_you_sure_you_want_to_leave')" :trigger-label="$t('common.back')"
+        trigger-class="back-button" @confirm="cancelStageAdd" />
     </div>
 
 
@@ -69,8 +70,17 @@ ref="confirmCancelRef" :title="$t('cancel_changes')"
 }
 
 .form-footer {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 1rem;
+
+  .btn-primary {
+    width: 100%;
+  }
+
+  .back-button {
+    flex-grow: 1;
+  }
 
   @media (max-width: 768px) {
     flex-direction: column;
@@ -86,7 +96,4 @@ ref="confirmCancelRef" :title="$t('cancel_changes')"
   border-radius: 4px;
 }
 
-.btn-primary {
-  width: 100%;
-}
 </style>
