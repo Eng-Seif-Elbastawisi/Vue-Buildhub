@@ -122,10 +122,10 @@
     isExecutionFromDesignQuote.value
       ? Boolean(
           clientId.value &&
-            projectId.value &&
-            quoteTypeId.value &&
-            designQuote.value &&
-            designQuoteDetails.value,
+          projectId.value &&
+          quoteTypeId.value &&
+          designQuote.value &&
+          designQuoteDetails.value,
         )
       : Boolean(clientId.value && projectId.value && quoteTypeId.value && priceEmployeeId.value),
   );
@@ -497,10 +497,16 @@
         </div>
       </div>
 
-      <div class="source-options" role="radiogroup" :aria-label="$t('execution_quote.source_title')">
+      <div
+        class="source-options"
+        role="radiogroup"
+        :aria-label="$t('execution_quote.source_title')"
+      >
         <button
           class="source-option"
-          :class="{ 'source-option--selected': selectedQuoteSource === QuoteSourceEnum.EXECUTION_ONLY }"
+          :class="{
+            'source-option--selected': selectedQuoteSource === QuoteSourceEnum.EXECUTION_ONLY,
+          }"
           type="button"
           role="radio"
           :aria-checked="selectedQuoteSource === QuoteSourceEnum.EXECUTION_ONLY"

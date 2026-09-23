@@ -101,7 +101,8 @@ export default class ExecutionQuoteModel {
               sub_stage_id: (value.sub_stage_id ?? value.subStageId) as number | string,
               source_type: value.source_type as ExecutionQuoteItemRequest['source_type'],
               source_id: (value.source_id ?? value.sourceId) as number | string,
-              sorting_id: (value.sorting_id ?? value.sortingId) as number | string | null | undefined,
+              sorting_id: (value.sorting_id ?? value.sortingId) as
+                number | string | null | undefined,
               quantity: Number(value.quantity ?? 0),
               unit_price: Number(value.unit_price ?? value.unitPrice ?? 0),
             };
