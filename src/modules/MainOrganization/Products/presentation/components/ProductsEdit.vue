@@ -1,6 +1,7 @@
 <script setup lang="ts">
   import { onMounted, ref } from 'vue';
-  import { useRoute } from 'vue-router';
+  import { useRoute, useRouter } from 'vue-router';
+  import ConfirmCancelDialog from '@/base/Presentation/Dialogs/ConfirmCancelDialog.vue';
 
   import type AddProductsParams from '../../core/params/add.products.params.ts';
   import type EditProductsParams from '../../core/params/edit.products.params.ts';
@@ -11,11 +12,13 @@
 
   const controller = ProductsController.getInstance();
   const route = useRoute();
+  const router = useRouter();
 
   const productsId = Number(route.params.products_id);
 
   const params = ref<EditProductsParams | AddProductsParams | null>(null);
   const loading = ref(false);
+  const goBack = () => void router.push({ name: 'Products' });
 
   const saveProducts = async () => {
     if (!params.value) return;
@@ -58,15 +61,24 @@
       @update-data="updateData"
     />
 
-    <button
-      :class="{ 'btn--loading': loading }"
-      class="btn btn-primary"
-      type="button"
-      :disabled="loading || !params"
-      @click="saveProducts"
-    >
-      {{ $t('update') }}
-    </button>
+    <div class="form-actions">
+      <button
+        :class="{ 'btn--loading': loading }"
+        class="btn btn-primary"
+        type="button"
+        :disabled="loading || !params"
+        @click="saveProducts"
+      >
+        {{ $t('update') }}
+      </button>
+      <ConfirmCancelDialog
+        :title="$t('cancel_changes')"
+        :message="$t('are_you_sure_you_want_to_leave')"
+        :trigger-label="$t('common.back')"
+        trigger-class="back-button"
+        @confirm="goBack"
+      />
+    </div>
 
     <div v-if="controller.errorMessage.value" class="error">
       {{ controller.errorMessage.value }}
@@ -91,6 +103,15 @@
   }
 
   .btn-primary {
-    width: 100%;
+    width: 50%;
+  }
+
+  .form-actions {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .form-actions :deep(.back-button) {
+    width: 50%;
   }
 </style>

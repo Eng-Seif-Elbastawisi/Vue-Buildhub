@@ -1,5 +1,8 @@
 import type Params from '@/base/Core/Params/params';
-import type { DataState } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
+import {
+  DataSuccess,
+  type DataState,
+} from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
 import type { ApiCallOptions } from '@/base/Data/ApiService/baseApiService';
 import BaseController, {
   type ControllerConfig,
@@ -80,7 +83,7 @@ export default class ExecutionQuoteController extends BaseController<
   ) {
     const result = await this.repository.storeDetails(params);
 
-    if (result.data?.status === true) {
+    if (result instanceof DataSuccess) {
       this.showSuccessToast('Created successfully');
       notifyDataMutationSucceeded();
 

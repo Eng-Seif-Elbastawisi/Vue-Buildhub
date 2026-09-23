@@ -10,7 +10,7 @@ export const executionQuoteRoutes: RouteRecordRaw[] = [
     },
   },
   {
-    path: 'execution-quotes/add',
+    path: 'execution-quotes/add/:stageView(stages)?/:stageId(\\d+)?',
     name: 'Add Execution Quote',
     component: () => import('@/views/MainOrganization/ExecutionQuotes/AddExecutionQuote.vue'),
     meta: {

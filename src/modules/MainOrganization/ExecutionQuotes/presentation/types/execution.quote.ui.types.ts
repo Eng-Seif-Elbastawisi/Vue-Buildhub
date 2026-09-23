@@ -1,11 +1,15 @@
-import type {
-  ExecutionQuoteItemRequest,
-  ExecutionQuoteStageRequest,
-} from '../../core/params/store.execution.quote.details.params';
+import type { ExecutionQuoteItemSource } from '../../core/constants/execution.quote.item.source.enum';
+import type { ExecutionQuoteStageRequest } from '../../core/params/store.execution.quote.details.params';
 
-export interface ExecutionQuoteItemState extends ExecutionQuoteItemRequest {
+export interface ExecutionQuoteItemState {
   id: string;
   stage_id: number | string;
+  sub_stage_id: number | string;
+  source_type: ExecutionQuoteItemSource;
+  source_id: number | string;
+  sorting_id?: number | string | null;
+  quantity: number;
+  unit_price: number;
   stage_name?: string;
   sub_stage_name?: string;
   source_title?: string;
@@ -13,8 +17,7 @@ export interface ExecutionQuoteItemState extends ExecutionQuoteItemRequest {
   sorting_title?: string;
 }
 
-export interface ExecutionQuoteStageState
-  extends Omit<ExecutionQuoteStageRequest, 'items'> {
+export interface ExecutionQuoteStageState extends Omit<ExecutionQuoteStageRequest, 'items'> {
   stage_name?: string;
   selected_sub_stage_id?: number | string;
   items: ExecutionQuoteItemState[];

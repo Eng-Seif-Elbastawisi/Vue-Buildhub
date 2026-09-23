@@ -1,4 +1,7 @@
 <script setup lang="ts">
+  import AppButton from '@/shared/HelpersComponents/AppButton.vue';
+  import AppTable, { type TableHeader } from '@/shared/HelpersComponents/AppTable.vue';
+
   import { getExecutionQuoteItemSourceTitleKey } from '../../../core/constants/execution.quote.item.source.enum';
   import type { ExecutionQuoteItemState } from '../../types/execution.quote.ui.types';
 
@@ -9,6 +12,18 @@
   const emit = defineEmits<{
     (event: 'remove', item: ExecutionQuoteItemState): void;
   }>();
+
+  const headers: TableHeader[] = [
+    { key: 'stage_name', label: 'execution_quote.table.main_stage' },
+    { key: 'sub_stage_name', label: 'execution_quote.table.sub_stage' },
+    { key: 'source_type', label: 'execution_quote.table.source' },
+    { key: 'source_title', label: 'execution_quote.table.item' },
+    { key: 'quantity', label: 'execution_quote.table.quantity' },
+    { key: 'unit_name', label: 'execution_quote.table.unit' },
+    { key: 'unit_price', label: 'execution_quote.table.unit_price' },
+    { key: 'total', label: 'execution_quote.table.total' },
+    { key: 'action', label: 'execution_quote.table.action' },
+  ];
 </script>
 
 <template>
@@ -18,44 +33,54 @@
       <span class="builder-badge">{{ items.length }}</span>
     </div>
 
-    <div v-if="items.length" class="quote-items-table-wrap">
-      <table class="quote-items-table">
-        <thead>
-          <tr>
-            <th>{{ $t('execution_quote.table.main_stage') }}</th>
-            <th>{{ $t('execution_quote.table.sub_stage') }}</th>
-            <th>{{ $t('execution_quote.table.source') }}</th>
-            <th>{{ $t('execution_quote.table.item') }}</th>
-            <th>{{ $t('execution_quote.table.quantity') }}</th>
-            <th>{{ $t('execution_quote.table.unit') }}</th>
-            <th>{{ $t('execution_quote.table.unit_price') }}</th>
-            <th>{{ $t('execution_quote.table.total') }}</th>
-            <th>{{ $t('execution_quote.table.action') }}</th>
-          </tr>
-        </thead>
+    <div class="quote-items-table-wrap">
+      <AppTable
+        :headers="headers"
+        :items="items"
+        row-key="id"
+        striped
+        hoverable
+        empty-message="execution_quote.quote_items_empty"
+      >
+        <template #cell-stage_name="{ item }">
+          {{ item.stage_name || '—' }}
+        </template>
 
-        <tbody>
-          <tr v-for="item in items" :key="item.id">
-            <td>{{ item.stage_name || '—' }}</td>
-            <td>{{ item.sub_stage_name || '—' }}</td>
-            <td>{{ $t(getExecutionQuoteItemSourceTitleKey(item.source_type)) }}</td>
-            <td>{{ item.source_title || item.source_id }}</td>
-            <td>{{ item.quantity }}</td>
-            <td>{{ item.unit_name || '—' }}</td>
-            <td>{{ item.unit_price }}</td>
-            <td>{{ item.quantity * item.unit_price }}</td>
-            <td>
-              <button type="button" class="delete-item-button" @click="emit('remove', item)">
-                {{ $t('execution_quote.delete_item') }}
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+        <template #cell-sub_stage_name="{ item }">
+          {{ item.sub_stage_name || '—' }}
+        </template>
 
-    <div v-else class="builder-empty">
-      {{ $t('execution_quote.quote_items_empty') }}
+        <template #cell-source_type="{ item }">
+          {{ $t(getExecutionQuoteItemSourceTitleKey(item.source_type)) }}
+        </template>
+
+        <template #cell-source_title="{ item }">
+          {{ item.source_title || item.source_id }}
+        </template>
+
+        <template #cell-unit_name="{ item }">
+          {{ item.unit_name || '—' }}
+        </template>
+
+        <template #cell-total="{ item }">
+          {{ item.quantity * item.unit_price }}
+        </template>
+
+        <template #cell-action="{ item }">
+          <AppButton
+            theme="danger"
+            size="sm"
+            outline
+            icon="right"
+            @click.stop="emit('remove', item)"
+          >
+            <template #icon>
+              <i class="pi pi-trash" aria-hidden="true"></i>
+            </template>
+            {{ $t('execution_quote.delete_item') }}
+          </AppButton>
+        </template>
+      </AppTable>
     </div>
   </section>
 </template>
@@ -93,46 +118,8 @@
     font-weight: 700;
   }
 
-  .builder-empty {
-    margin-top: 0.85rem;
-    padding: 1.2rem;
-    border: 1px dashed var(--border-weak);
-    border-radius: var(--radius-sm);
-    color: var(--subtitle-color);
-    font-size: var(--xs-size);
-    text-align: center;
-  }
-
   .quote-items-table-wrap {
     margin-top: 0.85rem;
     overflow-x: auto;
-  }
-
-  .quote-items-table {
-    width: 100%;
-    min-width: 52rem;
-    border-collapse: collapse;
-  }
-
-  .quote-items-table th,
-  .quote-items-table td {
-    padding: 0.65rem;
-    border-bottom: 1px solid var(--border-weak);
-    text-align: start;
-    white-space: nowrap;
-  }
-
-  .quote-items-table th {
-    background: var(--bg-section);
-    color: var(--title-card-color);
-  }
-
-  .delete-item-button {
-    padding: 0.45rem 0.7rem;
-    border: 1px solid var(--danger);
-    border-radius: var(--radius-sm);
-    background: var(--danger-light);
-    color: var(--danger-dark);
-    cursor: pointer;
   }
 </style>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { onMounted, ref } from 'vue';
-  import { useRoute } from 'vue-router';
+  import { useRoute, useRouter } from 'vue-router';
   import IconAccept from '@/shared/icons/IconAccept.vue';
   import BrandForm from './BrandForm.vue';
   import type AddBrandParams from '../../core/params/add.brand.params.ts';
@@ -10,10 +10,12 @@
 
   const controller = BrandController.getInstance();
   const route = useRoute();
+  const router = useRouter();
   const formKey = route.fullPath;
 
   const params = ref<EditBrandParams | null>(null);
   const loading = ref(false);
+  const goBack = () => void router.push({ name: 'Brand' });
   const brandId = Number(route.params.id);
 
   const saveBrand = async () => {
@@ -77,6 +79,9 @@
           <IconAccept />
         </span>
       </button>
+      <button class="btn btn-secondary back-button" type="button" @click="goBack">
+        {{ $t('common.back') }}
+      </button>
     </div>
 
     <div v-if="controller.errorMessage.value" class="error">
@@ -120,10 +125,17 @@
   }
 
   .actions {
+    display: flex;
+    gap: 1rem;
+
     &.disabled {
       cursor: not-allowed;
       pointer-events: none;
       opacity: 0.7;
+    }
+
+    .btn {
+      width: 50%;
     }
   }
 

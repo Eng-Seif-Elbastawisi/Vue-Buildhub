@@ -50,16 +50,28 @@ describe('LaborModel', () => {
     expect(labor.mappingReady).toBe(false);
   });
 
-  it('does not convert the legacy singular sub-stage relation into a list', () => {
+  it('does not map a missing sub-stage list', () => {
     const labor = LaborModel.fromJson({
       title: 'Manual labor',
       price: 50,
       unit: UnitTypeEnum.bag,
       translations: [],
-      sub_stage: { id: 30, title: 'Legacy sub-stage' },
     });
 
     expect(labor.subStages).toEqual([]);
     expect(labor.subStage).toBeUndefined();
+  });
+
+  it('maps sub_stages returned by the list endpoint', () => {
+    const labor = LaborModel.fromJson({
+      title: 'Manual labor',
+      price: 50,
+      unit: UnitTypeEnum.bag,
+      translations: [],
+      sub_stages: [{ id: 30, title: 'Painting' }],
+    });
+
+    expect(labor.subStages).toMatchObject([{ id: 30, title: 'Painting' }]);
+    expect(labor.subStage).toMatchObject({ id: 30, title: 'Painting' });
   });
 });

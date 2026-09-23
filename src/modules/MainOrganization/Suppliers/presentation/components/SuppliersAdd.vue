@@ -1,16 +1,18 @@
 <script setup lang="ts">
   import { ref } from 'vue';
-  import { useRoute } from 'vue-router';
+  import { useRoute, useRouter } from 'vue-router';
   import SuppliersController from '../controllers/Suppliers.controller.ts';
   import SuppliersForm from './SuppliersForm.vue';
   import type AddSuppliersParams from '../../core/params/add.Suppliers.params.ts';
 
   const controller = SuppliersController.getInstance();
   const route = useRoute();
+  const router = useRouter();
   const formKey = route.fullPath;
 
   const params = ref<AddSuppliersParams | null>(null);
   const loading = ref(false);
+  const goBack = () => void router.push({ name: 'Suppliers' });
 
   const saveDocument = async () => {
     if (!params.value) return;
@@ -50,6 +52,9 @@
           {{ $t('supplier.save') }}
         </span>
       </button>
+      <button class="btn btn-secondary back-button" type="button" @click="goBack">
+        {{ $t('common.back') }}
+      </button>
     </div>
 
     <div v-if="controller.errorMessage.value" class="error">
@@ -67,10 +72,17 @@
   }
 
   .actions {
+    display: flex;
+    gap: 1rem;
+
     &.disabled {
       cursor: not-allowed;
       pointer-events: none;
       opacity: 0.7;
+    }
+
+    .btn {
+      width: 50%;
     }
   }
 

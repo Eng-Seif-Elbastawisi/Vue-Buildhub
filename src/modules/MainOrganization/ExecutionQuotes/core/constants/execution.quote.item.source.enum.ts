@@ -2,9 +2,9 @@ import TitleInterface from '@/base/Data/Models/titleInterface';
 import { translate } from '@/locales/i18n';
 
 export const ExecutionQuoteItemSourceEnum = {
-  PRODUCT: 'product',
-  BUILDING_MATERIAL: 'building_material',
-  LABOR: 'labor',
+  PRODUCT: 1,
+  BUILDING_MATERIAL: 2,
+  LABOR: 3,
 } as const;
 
 export type ExecutionQuoteItemSource =

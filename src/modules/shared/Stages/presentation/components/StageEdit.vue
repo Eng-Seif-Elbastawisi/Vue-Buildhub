@@ -9,9 +9,9 @@
   import StageForm from './StageForm.vue';
 
   const controller = StageController.getInstance();
-  const route = useRouter();
+  const router = useRouter();
 
-  const stageId = Number(route.currentRoute.value.params.id);
+  const stageId = Number(router.currentRoute.value.params.id);
   const params = ref<EditStageParams | null>(null);
   const loading = ref(false);
 
@@ -29,7 +29,7 @@
     loading.value = true;
 
     try {
-      await controller.update(params.value, undefined, route.currentRoute.value.fullPath);
+      await controller.update(params.value, undefined, router.currentRoute.value.fullPath);
     } finally {
       loading.value = false;
     }
@@ -37,7 +37,7 @@
 
   onMounted(async () => {
     if (!stageId || Number.isNaN(stageId)) {
-      console.error('Invalid Stage ID:', route.currentRoute.value.params.stage_id);
+      console.error('Invalid Stage ID:', router.currentRoute.value.params.stage_id);
       return;
     }
 
@@ -54,15 +54,20 @@
   <div class="Stage-crud-page">
     <StageForm :stage="controller.itemData.value!" :loading="loading" @update-data="updateData" />
 
-    <button
-      class="btn btn-primary"
-      :class="{ 'btn--loading': loading }"
-      type="button"
-      :disabled="loading"
-      @click="saveStage"
-    >
-      {{ $t('stage.update') }}
-    </button>
+    <div class="form-actions">
+      <button
+        class="btn btn-primary"
+        :class="{ 'btn--loading': loading }"
+        type="button"
+        :disabled="loading"
+        @click="saveStage"
+      >
+        {{ $t('stage.update') }}
+      </button>
+      <button class="btn btn-secondary back-button" type="button" @click="router.push?.({ name: 'Stages' })">
+        {{ $t('common.back') }}
+      </button>
+    </div>
 
     <div v-if="controller.errorMessage.value" class="error">
       {{ controller.errorMessage.value }}
@@ -87,6 +92,15 @@
   }
 
   .btn-primary {
-    width: 100%;
+    width: 50%;
+  }
+
+  .form-actions {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .back-button {
+    width: 50%;
   }
 </style>

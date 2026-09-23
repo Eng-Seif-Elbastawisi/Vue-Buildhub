@@ -1,4 +1,6 @@
 <script setup lang="ts">
+  import AppButton from '@/shared/HelpersComponents/AppButton.vue';
+
   defineProps<{
     stageTitle?: string;
     quoteTypeTitle?: string;
@@ -13,9 +15,19 @@
 <template>
   <section class="execution-builder-card stage-header">
     <div>
-      <button type="button" class="stage-header__back" @click="emit('back')">
+      <AppButton
+        class="stage-header__back"
+        theme="secondary"
+        size="sm"
+        outline
+        icon="left"
+        @click="emit('back')"
+      >
+        <template #icon>
+          <i class="pi pi-arrow-right" aria-hidden="true"></i>
+        </template>
         {{ $t('execution_quote.back_to_stages') }}
-      </button>
+      </AppButton>
 
       <div class="stage-header__meta">
         <span class="stage-header__badge">{{ $t('execution_quote.stage_details') }}</span>
@@ -42,13 +54,6 @@
 
   .stage-header__back {
     margin-bottom: 0.7rem;
-    padding: 0.45rem 0.75rem;
-    border: 1px solid var(--border-weak);
-    border-radius: var(--radius-sm);
-    background: var(--bg-card);
-    color: var(--PrimaryColor);
-    cursor: pointer;
-    font-weight: 700;
   }
 
   .stage-header__meta {

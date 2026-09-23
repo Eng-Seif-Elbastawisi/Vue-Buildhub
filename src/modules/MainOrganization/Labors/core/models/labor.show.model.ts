@@ -91,13 +91,7 @@ export default class laborShowModel {
 
     const translations = LaborModel.mapTranslations(json.title);
 
-    const subStages = (json.sub_stages ?? []).map(
-      (subStage) =>
-        ({
-          id: subStage.id,
-          title: subStage.title,
-        }) as StageModel,
-    );
+    const subStages = (json.sub_stages ?? []).map((subStage) => StageModel.fromJson(subStage));
 
     return new laborShowModel({
       id: json.id,

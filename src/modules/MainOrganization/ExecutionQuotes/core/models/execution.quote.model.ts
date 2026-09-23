@@ -74,22 +74,22 @@ export default class ExecutionQuoteModel {
     Object.freeze(this);
   }
 
-  static fromJson(json: any): ExecutionQuoteModel {
+  static fromJson(json: Record<string, unknown>): ExecutionQuoteModel {
     const projectRelation =
       json.project && typeof json.project === 'object'
-        ? ProjectModel.fromJson(json.project)
+        ? ProjectModel.fromJson(json.project as Record<string, unknown>)
         : undefined;
     const clientRelation =
       json.client && typeof json.client === 'object'
-        ? ClientModel.fromJson(json.client)
+        ? ClientModel.fromJson(json.client as Record<string, unknown>)
         : undefined;
     const quoteTypeRelation =
       json.quote_type && typeof json.quote_type === 'object'
-        ? QuoteTypeModel.fromJson(json.quote_type)
+        ? QuoteTypeModel.fromJson(json.quote_type as Record<string, unknown>)
         : undefined;
     const priceEmployeeRelation =
       json.price_employee && typeof json.price_employee === 'object'
-        ? EmployeeModel.fromJson(json.price_employee)
+        ? EmployeeModel.fromJson(json.price_employee as Record<string, unknown>)
         : undefined;
 
     const mapItems = (items: unknown): ExecutionQuoteItemRequest[] =>
@@ -98,7 +98,10 @@ export default class ExecutionQuoteModel {
             const value = item as Record<string, unknown>;
 
             return {
-              sub_stage_id: (value.sub_stage_id ?? value.subStageId) as number | string,
+              stage_id: (value.stage_id ??
+                value.stageId ??
+                value.sub_stage_id ??
+                value.subStageId) as number | string,
               source_type: value.source_type as ExecutionQuoteItemRequest['source_type'],
               source_id: (value.source_id ?? value.sourceId) as number | string,
               sorting_id: (value.sorting_id ?? value.sortingId) as
@@ -121,13 +124,12 @@ export default class ExecutionQuoteModel {
       : [];
 
     return new ExecutionQuoteModel({
-      id: json.id,
+      id: json.id as number | undefined,
 
-      quoteSource: json.quote_source,
-      quoteType:
-        typeof json.quote_type === 'string'
-          ? (json.quote_type as ExecutionQuoteType)
-          : (json.execution_quote_type as ExecutionQuoteType | undefined),
+      quoteSource: json.quote_source as QuoteSourceEnum | undefined,
+      quoteType: (quoteTypeRelation
+        ? json.execution_quote_type
+        : (json.quote_type ?? json.execution_quote_type)) as ExecutionQuoteType | undefined,
 
       projectId: projectRelation ?? (json.project_id as number | undefined),
 
@@ -142,8 +144,8 @@ export default class ExecutionQuoteModel {
       internalCost: json.internal_cost === undefined ? undefined : Number(json.internal_cost),
       clientTotal: json.client_total === undefined ? undefined : Number(json.client_total),
       expectedMargin: json.expected_margin === undefined ? undefined : Number(json.expected_margin),
-      code: json.code,
-      status: json.status,
+      code: json.code as string | undefined,
+      status: json.status as string | number | undefined,
     });
   }
 
