@@ -14034,7 +14034,6 @@ body.invoice-payment-dialog-open .p-multiselect-overlay {
   margin-top: var(--xl-size-2);
 }
 .filter-action .btn-cancel {
-  width: 30%;
   padding: 14px;
   background-color: var(--danger-light-alt);
   color: var(--Red);
