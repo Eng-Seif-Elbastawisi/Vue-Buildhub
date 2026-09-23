@@ -224,14 +224,8 @@ onMounted(() => {
 
     <div class="form-fields" :class="{ disabled: loading }">
       <div class="field-group col-span-2">
-        <MultiLangInput
-          field-key="title"
-          :label="$t('material.title')"
-          :languages="['en', 'ar']"
-          :model-value="translations"
-          type="title"
-          @update:model-value="updateTranslations"
-        />
+        <MultiLangInput field-key="title" :label="$t('material.title')" :languages="['en', 'ar']"
+          :model-value="translations" type="title" @update:model-value="updateTranslations" />
       </div>
 
       <div class="field-group">
@@ -240,105 +234,49 @@ onMounted(() => {
             {{ $t('material.price') }}
           </label>
 
-          <FieldHelpIcon
-            :label="$t('material.price')"
-            field-name="price"
-            field-id="material-price"
-          />
+          <FieldHelpIcon :label="$t('material.price')" field-name="price" field-id="material-price" />
         </span>
 
         <div class="input-wrap">
-          <input
-            id="material-price"
-            v-model.number="price"
-            class="field-input"
-            min="0"
-            type="number"
-            :placeholder="$t('material.price_placeholder')"
-            @input="updateData"
-          />
-            <!-- step="0.01" -->
+          <input id="material-price" v-model.number="price" class="field-input" min="0" type="number"
+            :placeholder="$t('material.price_placeholder')" @input="updateData" />
+          <!-- step="1" -->
 
         </div>
       </div>
 
       <div class="field-group">
-        <UpdatedCustomInputSelect
-          id="material-item-type"
-          v-model="itemType"
-          :controller="itemTypeController"
-          :label="$t('item_type')"
-          :params="itemTypeParams"
-          :placeholder="$t('item_type_placeholder')"
-          required
-          @update:model-value="updateData"
-        />
+        <UpdatedCustomInputSelect id="material-item-type" v-model="itemType" :controller="itemTypeController"
+          :label="$t('item_type')" :params="itemTypeParams" :placeholder="$t('item_type_placeholder')" required
+          @update:model-value="updateData" />
       </div>
 
       <div class="field-group">
-        <UpdatedCustomInputSelect
-          id="material-stage"
-          v-model="stage"
-          :controller="stageController"
-          :label="$t('Stage')"
-          :params="stageParams"
-          :placeholder="$t('stage_placeholder')"
-          required
-          @update:model-value="updateData"
-        />
+        <UpdatedCustomInputSelect id="material-stage" v-model="stage" :controller="stageController" :label="$t('Stage')"
+          :params="stageParams" :placeholder="$t('stage_placeholder')" required @update:model-value="updateData" />
       </div>
 
       <div class="field-group">
-        <UpdatedCustomInputSelect
-          id="material-sub-stage"
-          :key="`material-sub-stage-${stage?.id ?? 'none'}`"
-          v-model="subStage"
-          :controller="stageController"
-          :label="$t('sub_stages')"
-          :params="subStageParams"
-          :placeholder="$t('sub_stage_placeholder')"
-          :disabled="!stage?.id"
-          :selection-limit="5"
-          paginated
-          required
-          show-select-all
-          :type="2"
-          @update:model-value="handleSubStageUpdate"
-        />
+        <UpdatedCustomInputSelect id="material-sub-stage" :key="`material-sub-stage-${stage?.id ?? 'none'}`"
+          v-model="subStage" :controller="stageController" :label="$t('sub_stages')" :params="subStageParams"
+          :placeholder="$t('sub_stage_placeholder')" :disabled="!stage?.id" :selection-limit="5" paginated required
+          show-select-all :type="2" @update:model-value="handleSubStageUpdate" />
       </div>
 
       <div class="field-group">
-        <UpdatedCustomInputSelect
-          id="material-brand"
-          v-model="brand"
-          :controller="brandController"
-          :label="$t('material.brand')"
-          :params="brandParams"
-          :placeholder="$t('material.brand_placeholder')"
-          required
-          @update:model-value="updateData"
-        />
+        <UpdatedCustomInputSelect id="material-brand" v-model="brand" :controller="brandController"
+          :label="$t('material.brand')" :params="brandParams" :placeholder="$t('material.brand_placeholder')" required
+          @update:model-value="updateData" />
       </div>
 
       <div class="field-group">
-        <UpdatedCustomInputSelect
-          id="material-measurement"
-          v-model="measurement"
-          :controller="measurementController"
-          :label="$t('Measurement')"
-          :params="measurementParams"
-          :placeholder="$t('measurement.unit_placeholder')"
-          required
-          @update:model-value="updateData"
-        />
+        <UpdatedCustomInputSelect id="material-measurement" v-model="measurement" :controller="measurementController"
+          :label="$t('Measurement')" :params="measurementParams" :placeholder="$t('measurement.unit_placeholder')"
+          required @update:model-value="updateData" />
       </div>
 
-      <StatusToggleField
-        v-model="status"
-        input-id="material-status"
-        :disabled="loading"
-        @update:model-value="updateData"
-      />
+      <StatusToggleField v-model="status" input-id="material-status" :disabled="loading"
+        @update:model-value="updateData" />
     </div>
   </div>
 </template>
