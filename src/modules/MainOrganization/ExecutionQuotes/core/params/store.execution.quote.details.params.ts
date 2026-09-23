@@ -3,7 +3,6 @@ import { ClassValidation } from '@/base/Presentation/Utils/classValidation';
 import { translate } from '@/locales/i18n';
 
 import type { ExecutionQuoteItemSource } from '../constants/execution.quote.item.source.enum';
-import type { ExecutionQuoteType } from '../constants/execution.quote.type.enum';
 
 export interface ExecutionQuoteItemRequest {
   stage_id: number | string;
@@ -20,126 +19,89 @@ export interface ExecutionQuoteStageRequest {
   items: ExecutionQuoteItemRequest[];
 }
 
-/**
- * Second request in the ExecutionQuotes create flow.
- * It is sent only after the base quote has already been created and returned
- * an `execution_quote_id`.
- */
+export interface ExecutionQuoteMorphItemRequest {
+  morphId: number;
+  expectedPrice: number;
+  quantity: number;
+}
+
 export default class StoreExecutionQuoteDetailsParams implements Params {
-  public readonly executionQuoteId: number;
-  public readonly quoteType: ExecutionQuoteType;
-  public readonly stages: ExecutionQuoteStageRequest[];
+  public readonly quoteId: number;
+  public readonly stageId: number;
+  public readonly subStageId: number;
+  public readonly itemType: ExecutionQuoteItemSource;
+  public readonly items: ExecutionQuoteMorphItemRequest[];
 
   public static readonly validation = new ClassValidation().setRules({
-    executionQuoteId: { required: true, labelKey: 'execution_quote_id' },
-    quoteType: { required: true, labelKey: 'execution_quote_type' },
-    stages: {
+    quoteId: { required: true, labelKey: 'quote_id' },
+    stageId: { required: true, labelKey: 'stage_id' },
+    subStageId: { required: true, labelKey: 'sub_stage_id' },
+    itemType: { required: true, labelKey: 'item_type' },
+    items: {
       required: true,
-      labelKey: 'execution_quote_stages',
-      custom: (value) => Array.isArray(value) && value.length > 0,
+      labelKey: 'items',
+      custom: (items) => Array.isArray(items) && items.length > 0,
     },
   });
 
-  constructor(data: {
-    executionQuoteId: number;
-    quoteType: ExecutionQuoteType;
-    stages?: ExecutionQuoteStageRequest[];
+  constructor(params: {
+    quoteId: number;
+    stageId: number;
+    subStageId: number;
+    itemType: ExecutionQuoteItemSource;
+    items: ExecutionQuoteMorphItemRequest[];
   }) {
-    this.executionQuoteId = data.executionQuoteId;
-    this.quoteType = data.quoteType;
-    this.stages = data.stages ?? [];
+    this.quoteId = params.quoteId;
+    this.stageId = params.stageId;
+    this.subStageId = params.subStageId;
+    this.itemType = params.itemType;
+    this.items = params.items;
   }
 
   toMap(): Record<string, unknown> {
     return {
-      execution_quote_id: this.executionQuoteId,
-      quote_type: this.quoteType,
-      stages: this.stages.map((stage) => ({
-        stage_id: stage.stage_id,
-        client_price: stage.client_price,
-        items: stage.items.map((item) => ({
-          stage_id: item.stage_id,
-          source_type: item.source_type,
-          source_id: item.source_id,
-          ...(item.sorting_id !== undefined && item.sorting_id !== null
-            ? { sorting_id: item.sorting_id }
-            : {}),
-          quantity: item.quantity,
-          unit_price: item.unit_price,
-        })),
+      quote_id: this.quoteId,
+      stage_id: this.stageId,
+      sub_stage_id: this.subStageId,
+      item_type: this.itemType,
+      items: this.items.map((morphItem) => ({
+        morph_id: morphItem.morphId,
+        expected_price: morphItem.expectedPrice,
+        quantity: morphItem.quantity,
       })),
     };
   }
 
   validate() {
-    const baseValidation = StoreExecutionQuoteDetailsParams.validation.validate(this);
+    const requestValidation = StoreExecutionQuoteDetailsParams.validation.validate(this);
     const itemErrors: Array<{ field: string; message: string }> = [];
 
-    this.stages.forEach((stage, stageIndex) => {
-      if (!stage.stage_id) {
+    this.items.forEach((morphItem, itemIndex) => {
+      if (!morphItem.morphId) {
         itemErrors.push({
-          field: `stages.${stageIndex}.stage_id`,
+          field: `items.${itemIndex}.morph_id`,
           message: translate('execution_quote.validation.item_required'),
         });
       }
 
-      if (stage.client_price === null || stage.client_price < 0) {
+      if (!(morphItem.quantity > 0) || !(morphItem.expectedPrice >= 0)) {
         itemErrors.push({
-          field: `stages.${stageIndex}.client_price`,
+          field: `items.${itemIndex}.values`,
           message: translate('execution_quote.validation.item_values'),
         });
       }
-
-      stage.items.forEach((item, itemIndex) => {
-        if (!item.stage_id) {
-          itemErrors.push({
-            field: `stages.${stageIndex}.items.${itemIndex}.stage_id`,
-            message: translate('execution_quote.validation.item_required'),
-          });
-        }
-
-        if (!item.source_type || !item.source_id) {
-          itemErrors.push({
-            field: `stages.${stageIndex}.items.${itemIndex}.source`,
-            message: translate('execution_quote.validation.item_required'),
-          });
-        }
-
-        if (!(item.quantity > 0)) {
-          itemErrors.push({
-            field: `stages.${stageIndex}.items.${itemIndex}.quantity`,
-            message: translate('execution_quote.validation.item_values'),
-          });
-        }
-
-        if (!(item.unit_price >= 0)) {
-          itemErrors.push({
-            field: `stages.${stageIndex}.items.${itemIndex}.unit_price`,
-            message: translate('execution_quote.validation.item_values'),
-          });
-        }
-      });
     });
 
-    if (!this.stages.some((stage) => stage.items.length > 0)) {
-      itemErrors.push({
-        field: 'stages.items',
-        message: translate('execution_quote.validation.items_required'),
-      });
-    }
-
     return {
-      isValid: baseValidation.isValid && itemErrors.length === 0,
-      errors: [...baseValidation.errors, ...itemErrors],
+      isValid: requestValidation.isValid && itemErrors.length === 0,
+      errors: [...requestValidation.errors, ...itemErrors],
     };
   }
 
   validateOrThrow() {
     const validation = this.validate();
 
-    if (!validation.isValid) {
-      throw validation;
-    }
+    if (!validation.isValid) throw validation;
 
     return validation;
   }

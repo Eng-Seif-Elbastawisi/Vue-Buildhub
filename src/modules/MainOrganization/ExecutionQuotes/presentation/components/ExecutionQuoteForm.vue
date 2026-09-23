@@ -18,25 +18,28 @@
   import { QuoteSourceEnum } from '../../core/constants/quote.source.enum';
   import type { ExecutionQuoteType } from '../../core/constants/execution.quote.type.enum';
   import AddExecutionQuoteParams from '../../core/params/add.execution.quote.params';
-  import StoreExecutionQuoteDetailsParams, {
-    type ExecutionQuoteStageRequest,
+  import type {
+    default as StoreExecutionQuoteDetailsParams,
+    ExecutionQuoteStageRequest,
   } from '../../core/params/store.execution.quote.details.params';
   import ExecutionQuoteBuilder from './builder/ExecutionQuoteBuilder.vue';
   import ExecutionQuoteTypeCards from './builder/ExecutionQuoteTypeCards.vue';
 
   const emit = defineEmits<{
     (event: 'updateData', quoteParams: AddExecutionQuoteParams): void;
-    (event: 'updateDetails', detailsParams: StoreExecutionQuoteDetailsParams | null): void;
+    (event: 'updateDetails', detailsParams: StoreExecutionQuoteDetailsParams[]): void;
   }>();
 
   const props = withDefaults(
     defineProps<{
       loading?: boolean;
       executionQuoteId?: number | null;
+      initialQuoteType?: ExecutionQuoteType | null;
     }>(),
     {
       loading: false,
       executionQuoteId: null,
+      initialQuoteType: null,
     },
   );
 
@@ -62,7 +65,7 @@
   const executionQuoteStages = ref<ExecutionQuoteStageRequest[]>([]);
 
   const baseLocked = computed(() => Boolean(props.executionQuoteId));
-  const isStagePage = computed(() => Boolean(route.params.stageId));
+  const isBuilderPage = computed(() => route.name === 'Build Execution Quote');
 
   const toOptionalId = (selection: TitleInterface<string | number> | null): number | undefined => {
     if (selection?.id === undefined || selection.id === null) return undefined;
@@ -172,7 +175,7 @@
   const clearBuilderData = () => {
     selectedExecutionQuoteType.value = null;
     executionQuoteStages.value = [];
-    emit('updateDetails', null);
+    emit('updateDetails', []);
   };
 
   /**
@@ -201,34 +204,27 @@
     );
   };
 
-  /**
-   * Emits the second request payload only after the first request returned an id.
-   */
-  const updateDetailsData = () => {
-    if (!props.executionQuoteId || !selectedExecutionQuoteType.value) {
-      emit('updateDetails', null);
-      return;
-    }
+  watch(
+    () => props.initialQuoteType,
+    (quoteType) => {
+      if (!quoteType) return;
 
-    emit(
-      'updateDetails',
-      new StoreExecutionQuoteDetailsParams({
-        executionQuoteId: props.executionQuoteId,
-        quoteType: selectedExecutionQuoteType.value,
-        stages: executionQuoteStages.value,
-      }),
-    );
-  };
+      selectedExecutionQuoteType.value = quoteType;
+    },
+    { immediate: true },
+  );
 
   const onExecutionQuoteTypeChange = (value: ExecutionQuoteType | null) => {
     selectedExecutionQuoteType.value = value;
     updateBaseData();
-    updateDetailsData();
   };
 
   const onStagesChange = (value: ExecutionQuoteStageRequest[]) => {
     executionQuoteStages.value = value;
-    updateDetailsData();
+  };
+
+  const onDetailsChange = (details: StoreExecutionQuoteDetailsParams[]) => {
+    emit('updateDetails', details);
   };
 
   const selectSource = (source: QuoteSourceEnum) => {
@@ -271,12 +267,7 @@
   watch(
     () => props.executionQuoteId,
     (executionQuoteId) => {
-      if (!executionQuoteId) {
-        clearBuilderData();
-        return;
-      }
-
-      updateDetailsData();
+      if (!executionQuoteId) clearBuilderData();
     },
   );
 
@@ -288,10 +279,10 @@
     class="execution-quote"
     :class="{
       'execution-quote--loading': loading,
-      'execution-quote--stage-page': isStagePage,
+      'execution-quote--stage-page': isBuilderPage,
     }"
   >
-    <template v-if="!isStagePage">
+    <template v-if="!isBuilderPage">
       <header class="execution-quote__header">
         <div class="execution-quote__heading">
           <span class="execution-quote__brand">
@@ -506,11 +497,14 @@
     </template>
 
     <ExecutionQuoteBuilder
+      v-if="isBuilderPage"
       :model-value="selectedExecutionQuoteType"
       :enabled="Boolean(executionQuoteId)"
+      :execution-quote-id="executionQuoteId"
       :loading="loading"
       @update:model-value="onExecutionQuoteTypeChange"
       @update:stages="onStagesChange"
+      @update:details="onDetailsChange"
     />
   </section>
 </template>

@@ -5,7 +5,7 @@ import { QuoteSourceEnum } from '../constants/quote.source.enum';
 
 /**
  * Header/base payload only.
- * This request is stored first through `store_execution_quote`.
+ * This request is stored first through `store_quote`.
  * The execution details (quote type + stages + items) are intentionally
  * handled by StoreExecutionQuoteDetailsParams and a separate endpoint.
  */
@@ -15,7 +15,6 @@ export default class AddExecutionQuoteParams implements Params {
   public readonly clientId?: number;
   public readonly quoteTypeId?: number;
   public readonly priceEmployeeId?: number;
-  public readonly designQuoteId?: number;
 
   public static readonly validation = new ClassValidation().setRules({
     quoteSource: { required: true, labelKey: 'quote_source' },
@@ -26,10 +25,6 @@ export default class AddExecutionQuoteParams implements Params {
       required: (record) => record.quoteSource !== QuoteSourceEnum.EXECUTION_FROM_DESIGN_QUOTE,
       labelKey: 'price_employee_id',
     },
-    designQuoteId: {
-      required: (record) => record.quoteSource === QuoteSourceEnum.EXECUTION_FROM_DESIGN_QUOTE,
-      labelKey: 'design_quote_id',
-    },
   });
 
   constructor(paramsData: {
@@ -38,14 +33,12 @@ export default class AddExecutionQuoteParams implements Params {
     clientId?: number;
     quoteTypeId?: number;
     priceEmployeeId?: number;
-    designQuoteId?: number;
   }) {
     this.quoteSource = paramsData.quoteSource;
     this.projectId = paramsData.projectId;
     this.clientId = paramsData.clientId;
     this.quoteTypeId = paramsData.quoteTypeId;
     this.priceEmployeeId = paramsData.priceEmployeeId;
-    this.designQuoteId = paramsData.designQuoteId;
   }
 
   toMap(): Record<string, unknown> {
@@ -56,9 +49,7 @@ export default class AddExecutionQuoteParams implements Params {
       quote_source: this.quoteSource,
     };
 
-    if (this.quoteSource === QuoteSourceEnum.EXECUTION_FROM_DESIGN_QUOTE) {
-      payload.design_quote_id = this.designQuoteId;
-    } else {
+    if (this.quoteSource !== QuoteSourceEnum.EXECUTION_FROM_DESIGN_QUOTE) {
       payload.price_employee_id = this.priceEmployeeId;
     }
 

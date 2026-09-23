@@ -9,15 +9,15 @@ import BaseRepository, { type RepositoryConfig } from '@/base/Domain/Repositorie
 import { translate } from '@/locales/i18n';
 import { HttpStatusCode } from 'axios';
 
-import ExecutionQuoteModel from '../../core/models/execution.quote.model';
+import ExecutionQuoteShowModel from '../../core/models/execution.quote.show.model';
 import type StoreExecutionQuoteDetailsParams from '../../core/params/store.execution.quote.details.params';
 import ExecutionQuoteApiService, {
   type ExecutionQuoteDetailsResponse,
 } from '../api/execution.quote.api-service';
 
 export default class ExecutionQuoteRepository extends BaseRepository<
-  ExecutionQuoteModel,
-  ExecutionQuoteModel[]
+  ExecutionQuoteShowModel,
+  ExecutionQuoteShowModel[]
 > {
   private static instance: ExecutionQuoteRepository;
 
@@ -34,11 +34,11 @@ export default class ExecutionQuoteRepository extends BaseRepository<
   }
 
   protected get mockItem() {
-    return ExecutionQuoteModel.example;
+    return ExecutionQuoteShowModel.example;
   }
 
   protected get mockList() {
-    return [ExecutionQuoteModel.example];
+    return [ExecutionQuoteShowModel.example];
   }
 
   static getInstance(): ExecutionQuoteRepository {
@@ -49,14 +49,14 @@ export default class ExecutionQuoteRepository extends BaseRepository<
     return ExecutionQuoteRepository.instance;
   }
 
-  protected parseItem(rawPayload: unknown): ExecutionQuoteModel {
-    return ExecutionQuoteModel.fromJson(rawPayload as Record<string, unknown>);
+  protected parseItem(rawPayload: unknown): ExecutionQuoteShowModel {
+    return ExecutionQuoteShowModel.fromJson(rawPayload as Record<string, unknown>);
   }
 
-  protected parseList(rawPayload: unknown): ExecutionQuoteModel[] {
+  protected parseList(rawPayload: unknown): ExecutionQuoteShowModel[] {
     return Array.isArray(rawPayload)
       ? rawPayload.map((rawItem) =>
-          ExecutionQuoteModel.fromJson(rawItem as Record<string, unknown>),
+          ExecutionQuoteShowModel.fromJson(rawItem as Record<string, unknown>),
         )
       : [];
   }
