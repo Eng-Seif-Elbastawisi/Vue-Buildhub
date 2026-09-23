@@ -2615,9 +2615,14 @@
       },
       "supervision": {
         "title": "Supervision",
-        "description": "A supervision quote with stage-level pricing."
+        "description": "A supervision quote for items and quantities without pricing."
       }
     },
+    "builder_navigation": "Quote builder navigation",
+    "quote_reference": "Quote #{id}",
+    "all_stages_context": "All main stages",
+    "exit_builder": "Back to all quotes",
+    "exit_confirmation": "You have unsaved items. Are you sure you want to leave the quote builder?",
     "main_stages_title": "Main stages",
     "main_stages_hint": "Choose a main stage to add its required items.",
     "main_stages_empty": "No main stages are available.",
@@ -2626,7 +2631,12 @@
     "not_available": "Not available",
     "stage_details": "Main stage details",
     "stage_details_hint": "Select a sub stage, item source and add the required items.",
-    "back_to_stages": "Back to stages",
+    "back_to_stages": "Back to all stages",
+    "pricing_not_required_short": "Pricing is not required",
+    "supervision_pricing": {
+      "title": "Supervision quote — no pricing required",
+      "description": "Add the required items and quantities. Unit price, client price and financial totals are disabled for supervision quotes."
+    },
     "select_sub_stage": "1. Select sub stage",
     "sub_stages_empty": "No sub stages are available for this main stage.",
     "what_will_you_add": "2. What will you add?",
@@ -2640,9 +2650,13 @@
     "item_guidance": {
       "title": "Next required step",
       "choose_item": "Choose the item you want to add. Its type, unit and suggested price will be filled automatically.",
+      "choose_item_without_pricing": "Choose the item you want to add. Its type and unit will be filled automatically; no price is required.",
       "choose_sorting": "Choose the product sorting to use its configured price.",
+      "choose_sorting_without_pricing": "Choose the product sorting to identify the required product variant.",
       "review_values": "Enter a quantity greater than zero and make sure the unit price is not negative.",
-      "ready": "The item is ready. Review the values, then add it to this stage."
+      "review_quantity": "Enter a quantity greater than zero.",
+      "ready": "The item is ready. Review the values, then add it to this stage.",
+      "ready_without_pricing": "The item is ready. Review its quantity, then add it without pricing."
     },
     "placeholders": {
       "client_stage_price": "Enter client stage price",
@@ -2668,15 +2682,18 @@
     "item_sources": {
       "product": {
         "title": "Products",
-        "description": "Product, category, quantity, unit and price"
+        "description": "Product, category, quantity, unit and price",
+        "description_without_pricing": "Product, category, quantity and unit"
       },
       "building_material": {
         "title": "Building materials",
-        "description": "Materials, quantities and prices"
+        "description": "Materials, quantities and prices",
+        "description_without_pricing": "Materials and quantities"
       },
       "labor": {
         "title": "Labor",
-        "description": "Labor or execution item"
+        "description": "Labor or execution item",
+        "description_without_pricing": "Labor or execution item and quantity"
       }
     },
     "quote_items_title": "Quote items",
@@ -2684,6 +2701,10 @@
     "expected_margin": "Expected margin",
     "current_stage_summary": "Current stage cost: {cost} · Expected margin: {margin}",
     "save": "Save execution quote",
+    "save_and_continue": "Save items and continue",
+    "save_batch_title": "Save this batch of items",
+    "save_batch_hint": "After saving, you will stay in this main stage so you can choose another sub-stage.",
+    "details_saved": "Items saved. You can continue with another sub-stage.",
     "index_description": "Review execution quotes and their source data.",
     "empty_quotes": "No execution quotes are available yet.",
     "show": {

@@ -9,10 +9,15 @@ import { ExecutionQuoteTypeEnum } from '../../../../core/constants/execution.quo
 import type StoreExecutionQuoteDetailsParams from '../../../../core/params/store.execution.quote.details.params';
 import ExecutionQuoteBuilder from '../ExecutionQuoteBuilder.vue';
 
-const { fetchList, push, routeParams } = vi.hoisted(() => ({
+const { confirm, fetchList, push, routeParams } = vi.hoisted(() => ({
+  confirm: vi.fn(),
   fetchList: vi.fn(),
   push: vi.fn().mockResolvedValue(undefined),
   routeParams: { stageId: '1' as string | undefined },
+}));
+
+vi.mock('@/base/Presentation/Dialogs/dialog.manager', () => ({
+  dialogManager: { confirm },
 }));
 
 vi.mock('vue-router', () => ({
@@ -32,7 +37,7 @@ const componentStubs = {
     template: '<button class="quote-type-options" :disabled="disabled" />',
   },
   ExecutionQuoteMainStages: {
-    props: ['stages'],
+    props: ['stages', 'showPricing'],
     emits: ['open'],
     template: '<button class="open-stage" @click="$emit(\'open\', stages[0])" />',
   },
@@ -45,33 +50,45 @@ const componentStubs = {
     template: '<button class="select-sub-stage" @click="$emit(\'update:modelValue\', 11)" />',
   },
   ExecutionQuoteItemSourceCards: {
+    props: ['pricingEnabled'],
     emits: ['update:modelValue'],
     template: `<button class="select-source" @click="$emit('update:modelValue', ${ExecutionQuoteItemSourceEnum.PRODUCT})" />`,
   },
   ExecutionQuoteItemForm: {
+    props: ['pricingEnabled'],
     emits: ['add'],
     template: `
-      <button
-        class="add-item"
-        @click="$emit('add', { source_id: 22, sorting_id: 33, quantity: 2, unit_price: 5 })"
-      />
+      <div class="item-form-stub" :data-pricing-enabled="pricingEnabled">
+        <button
+          class="add-item"
+          @click="$emit('add', { source_id: 22, sorting_id: 33, quantity: 2, unit_price: 5 })"
+        />
+      </div>
     `,
   },
-  ExecutionQuoteClientPrice: { template: '<div />' },
-  ExecutionQuoteItemsTable: { template: '<div />' },
-  ExecutionQuoteTotals: { template: '<div />' },
+  ExecutionQuoteClientPrice: { template: '<div class="client-price-stub" />' },
+  ExecutionQuoteItemsTable: {
+    props: ['showPricing'],
+    template: '<div class="items-table-stub" :data-show-pricing="showPricing" />',
+  },
+  ExecutionQuoteTotals: { template: '<div class="totals-stub" />' },
 };
 
-const mountBuilder = (stubs: Record<string, unknown> = componentStubs) =>
+interface BuilderMountOptions {
+  modelValue?: (typeof ExecutionQuoteTypeEnum)[keyof typeof ExecutionQuoteTypeEnum];
+  stubs?: Record<string, unknown>;
+}
+
+const mountBuilder = (options: BuilderMountOptions = {}) =>
   mount(ExecutionQuoteBuilder, {
     props: {
       enabled: true,
-      modelValue: ExecutionQuoteTypeEnum.LUMP_SUM,
+      modelValue: options.modelValue ?? ExecutionQuoteTypeEnum.LUMP_SUM,
       executionQuoteId: 28,
     },
     global: {
       mocks: { $t: (key: string) => key },
-      stubs,
+      stubs: options.stubs ?? componentStubs,
     },
   });
 
@@ -80,12 +97,15 @@ describe('ExecutionQuoteBuilder', () => {
     routeParams.stageId = '1';
     fetchList.mockReset();
     push.mockReset().mockResolvedValue(undefined);
+    confirm.mockReset();
   });
 
   it('locks the quote type options on the saved quote stages page', async () => {
     fetchList.mockResolvedValueOnce(new DataSuccess({ data: [] }));
 
-    const wrapper = mountBuilder({ ...componentStubs, ExecutionQuoteTypeCards: false });
+    const wrapper = mountBuilder({
+      stubs: { ...componentStubs, ExecutionQuoteTypeCards: false },
+    });
     await flushPromises();
 
     const quoteTypeOptions = wrapper.findAll<HTMLButtonElement>('.quote-type-option');
@@ -164,5 +184,74 @@ describe('ExecutionQuoteBuilder', () => {
       params: { stageId: undefined },
       query: { id: '28' },
     });
+  });
+
+  it('removes pricing controls and sends zero expected price for supervision quotes', async () => {
+    fetchList
+      .mockResolvedValueOnce(
+        new DataSuccess({ data: [new StageModel({ id: 1, title: 'Main', children: [] })] }),
+      )
+      .mockResolvedValueOnce(
+        new DataSuccess({ data: [new StageModel({ id: 11, title: 'Sub', children: [] })] }),
+      );
+
+    const wrapper = mountBuilder({ modelValue: ExecutionQuoteTypeEnum.SUPERVISION });
+
+    await flushPromises();
+    await wrapper.get('.select-sub-stage').trigger('click');
+    await wrapper.get('.select-source').trigger('click');
+    await wrapper.get('.add-item').trigger('click');
+
+    expect(wrapper.find('.pricing-notice').exists()).toBe(true);
+    expect(wrapper.get('.item-form-stub').attributes('data-pricing-enabled')).toBe('false');
+    expect(wrapper.get('.items-table-stub').attributes('data-show-pricing')).toBe('false');
+    expect(wrapper.find('.client-price-stub').exists()).toBe(false);
+    expect(wrapper.find('.totals-stub').exists()).toBe(false);
+
+    const requests = wrapper
+      .emitted('update:details')
+      ?.at(-1)?.[0] as StoreExecutionQuoteDetailsParams[];
+
+    expect(requests[0]?.toMap()).toMatchObject({
+      items: [{ morph_id: 22, expected_price: 0, quantity: 2 }],
+    });
+  });
+
+  it('provides an exit action back to all execution quotes', async () => {
+    fetchList
+      .mockResolvedValueOnce(
+        new DataSuccess({ data: [new StageModel({ id: 1, title: 'Main', children: [] })] }),
+      )
+      .mockResolvedValueOnce(new DataSuccess({ data: [] }));
+
+    const wrapper = mountBuilder();
+    await flushPromises();
+    await wrapper.get('.builder-toolbar__exit').trigger('click');
+
+    expect(push).toHaveBeenCalledWith({ name: 'Execution Quotes' });
+  });
+
+  it('asks for confirmation before leaving with unsaved items', async () => {
+    fetchList
+      .mockResolvedValueOnce(
+        new DataSuccess({ data: [new StageModel({ id: 1, title: 'Main', children: [] })] }),
+      )
+      .mockResolvedValueOnce(
+        new DataSuccess({ data: [new StageModel({ id: 11, title: 'Sub', children: [] })] }),
+      );
+
+    const wrapper = mountBuilder();
+    await flushPromises();
+    await wrapper.get('.select-sub-stage').trigger('click');
+    await wrapper.get('.select-source').trigger('click');
+    await wrapper.get('.add-item').trigger('click');
+    await wrapper.get('.builder-toolbar__exit').trigger('click');
+
+    expect(confirm).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.any(Function),
+      { title: expect.any(String) },
+    );
+    expect(push).not.toHaveBeenCalledWith({ name: 'Execution Quotes' });
   });
 });

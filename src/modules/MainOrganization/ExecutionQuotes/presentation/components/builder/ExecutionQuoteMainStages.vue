@@ -7,8 +7,9 @@
       stages: StageModel[];
       stageStates: Record<string, ExecutionQuoteStageState>;
       loading?: boolean;
+      showPricing?: boolean;
     }>(),
-    { loading: false },
+    { loading: false, showPricing: true },
   );
 
   const emit = defineEmits<{
@@ -63,13 +64,18 @@
           }}
         </small>
 
-        <span class="stage-card__footer">
+        <span v-if="showPricing" class="stage-card__footer">
           <span>{{ $t('execution_quote.client_stage_price') }}</span>
           <b>
             {{
               stageStates[String(stage.id)]?.client_price ?? $t('execution_quote.not_started')
             }}
           </b>
+        </span>
+
+        <span v-else class="stage-card__footer stage-card__footer--informative">
+          <i class="pi pi-info-circle" aria-hidden="true"></i>
+          <span>{{ $t('execution_quote.pricing_not_required_short') }}</span>
         </span>
       </button>
     </div>
@@ -189,6 +195,11 @@
   }
 
   .stage-card__footer b {
+    color: var(--PrimaryColor);
+  }
+
+  .stage-card__footer--informative {
+    justify-content: flex-start;
     color: var(--PrimaryColor);
   }
 

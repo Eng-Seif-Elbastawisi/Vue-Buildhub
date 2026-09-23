@@ -8,9 +8,8 @@ import BaseController, {
   type ControllerConfig,
 } from '@/base/Presentation/Controller/baseController';
 import { notifyDataMutationSucceeded } from '@/base/Presentation/Controller/dataMutationEvent';
-import router from '@/router';
+import { translate } from '@/locales/i18n';
 import { useFormsStore } from '@/stores/formsStore';
-import { useUserStore } from '@/stores/user';
 
 import type AddExecutionQuoteParams from '../../core/params/add.execution.quote.params';
 import type StoreExecutionQuoteDetailsParams from '../../core/params/store.execution.quote.details.params';
@@ -22,10 +21,6 @@ export default class ExecutionQuoteController extends BaseController<
   ExecutionQuoteShowModel[]
 > {
   private static instance: ExecutionQuoteController;
-
-  private get userStore() {
-    return useUserStore();
-  }
 
   protected get repository() {
     return ExecutionQuoteRepository.getInstance();
@@ -72,15 +67,9 @@ export default class ExecutionQuoteController extends BaseController<
     return await this.createBase(params, options);
   }
 
-  private async completeDetailsStore(formKey?: string) {
-    this.showSuccessToast('Created successfully');
+  private completeDetailsStore(formKey?: string) {
+    this.showSuccessToast(translate('execution_quote.details_saved'));
     notifyDataMutationSucceeded();
-
-    await router.push(
-      this.userStore.user?.type === 1
-        ? '/mainportal/execution-quotes'
-        : '/organization/execution-quotes',
-    );
 
     if (formKey) useFormsStore().clearFormData(formKey);
   }
@@ -101,7 +90,7 @@ export default class ExecutionQuoteController extends BaseController<
 
     if (!lastSuccess) return undefined;
 
-    await this.completeDetailsStore(formKey);
+    this.completeDetailsStore(formKey);
 
     return lastSuccess;
   }
