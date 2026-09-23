@@ -47,6 +47,7 @@ describe('sidebarSections', () => {
       'sidebar.crm',
       'sidebar.design_offers',
       'sidebar.design_projects',
+      'sidebar.execution-quotes',
       'sidebar.accounting',
       'sidebar.reports',
       'sidebar.sys_config',
@@ -239,5 +240,43 @@ describe('sidebarSections', () => {
         labelKey: 'sidebar.labor',
       }),
     );
+  });
+
+  it('keeps execution quotes in a dedicated organization section', () => {
+    const executionQuotesSection = sidebarSections.find(
+      (section) => section.key === 'execution-quotes',
+    );
+    const executionQuoteItemsOutsideSection = sidebarSections
+      .filter((section) => section.key !== 'execution-quotes')
+      .flatMap((section) => section.items)
+      .filter((item) => item.path?.startsWith('/execution-quotes'));
+
+    expect(executionQuotesSection).toEqual(
+      expect.objectContaining({
+        labelKey: 'sidebar.execution-quotes',
+        items: [
+          expect.objectContaining({
+            path: '/execution-quotes',
+            labelKey: 'sidebar.execution-quote',
+            roles: ['organization'],
+          }),
+          expect.objectContaining({
+            path: '/execution-quotes/add',
+            labelKey: 'sidebar.add-execution-quote',
+            roles: ['organization'],
+          }),
+        ],
+      }),
+    );
+    expect(executionQuoteItemsOutsideSection).toEqual([]);
+  });
+
+  it('localizes the execution quotes section and actions in Arabic and English', () => {
+    expect(englishMessages['sidebar.execution-quotes']).toBe('Execution Quotes');
+    expect(arabicMessages['sidebar.execution-quotes']).toBe('مقايسات التنفيذ');
+    expect(englishMessages['sidebar.execution-quote']).toBe('Execution Quote');
+    expect(arabicMessages['sidebar.execution-quote']).toBe('مقايسة تنفيذ');
+    expect(englishMessages['sidebar.add-execution-quote']).toBe('Add Execution Quote');
+    expect(arabicMessages['sidebar.add-execution-quote']).toBe('إضافة مقايسة تنفيذ');
   });
 });
