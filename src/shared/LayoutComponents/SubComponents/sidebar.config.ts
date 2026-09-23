@@ -2,6 +2,7 @@ import type { Component } from 'vue';
 import { InvoiceStatusEnum } from '@/modules/MainOrganization/Invoice/core/constant/invoice.status.enum';
 
 import {
+  SidebarAdminIcon,
   SidebarAddRequestIcon,
   SidebarBrandTagIcon,
   SidebarCanceledIcon,
@@ -27,6 +28,7 @@ import {
   SidebarMaterialIcon,
   SidebarMeasurementIcon,
   SidebarOfferIcon,
+  SidebarOrganizationIcon,
   SidebarPaidInvoiceIcon,
   SidebarPlanIcon,
   SidebarProductivityIcon,
@@ -312,7 +314,7 @@ export const sidebarSections: SidebarSectionConfig[] = [
       {
         path: `/offers-projects?service_type=${DepartmentTypeEnum.DESIGN},${DepartmentTypeEnum.BOTH}`,
         labelKey: 'sidebar.supervision_offers',
-        icon: SidebarProjectIcon,
+        icon: SidebarOfferIcon,
         roles: ['organization'],
       },
       {
@@ -352,7 +354,7 @@ export const sidebarSections: SidebarSectionConfig[] = [
       {
         path: `/task-assignment?status=${InsideStatusType.ASSIGN}`,
         labelKey: 'sidebar.task',
-        icon: SidebarProductivityIcon,
+        icon: SidebarRequestIcon,
         roles: ['organization'],
       },
 
@@ -367,16 +369,37 @@ export const sidebarSections: SidebarSectionConfig[] = [
       {
         path: `/task-assignment?status=${InsideStatusType.HOLD}`,
         labelKey: 'sidebar.holding',
-        icon: SidebarFullPackageIcon,
+        icon: SidebarHoldIcon,
         roles: ['organization'],
         // disabled: true,
       },
       {
         path: `/task-assignment?status=${InsideStatusType.REVIEW}`,
         labelKey: 'sidebar.review',
-        icon: SidebarFullPackageIcon,
+        icon: SidebarOfferIcon,
         roles: ['organization'],
         // disabled: true,
+      },
+    ],
+  },
+
+  {
+    key: 'execution-quotes',
+    labelKey: 'sidebar.execution-quotes',
+    icon: SidebarOfferIcon,
+
+    items: [
+      {
+        path: '/execution-quotes',
+        labelKey: 'sidebar.execution-quote',
+        icon: SidebarOfferIcon,
+        roles: ['organization'],
+      },
+      {
+        path: '/execution-quotes/add',
+        labelKey: 'sidebar.add-execution-quote',
+        icon: SidebarOfferIcon,
+        roles: ['organization'],
       },
     ],
   },
@@ -601,7 +624,7 @@ export const sidebarSections: SidebarSectionConfig[] = [
       {
         path: '/item_types',
         labelKey: 'sidebar.item_types',
-        icon: SidebarMeasurementIcon,
+        icon: SidebarProjectTypeIcon,
       },
 
       {
@@ -621,16 +644,6 @@ export const sidebarSections: SidebarSectionConfig[] = [
       {
         path: '/products',
         labelKey: 'sidebar.products',
-        icon: SidebarItemIcon,
-      },
-      {
-        path: '/quote-types',
-        labelKey: 'sidebar.quote-types',
-        icon: SidebarItemIcon,
-      },
-      {
-        path: '/execution-quotes/add',
-        labelKey: 'sidebar.execution-quotes',
         icon: SidebarItemIcon,
       },
       {
@@ -695,18 +708,18 @@ export const sidebarSections: SidebarSectionConfig[] = [
   {
     key: 'organization',
     labelKey: 'sidebar.organization',
-    icon: SidebarSysDataIcon,
+    icon: SidebarOrganizationIcon,
     items: [
       {
         path: '/organization',
         labelKey: 'sidebar.organization',
-        icon: SidebarEmployeeIcon,
+        icon: SidebarOrganizationIcon,
         roles: ['admin'],
       },
       {
         path: '/admins',
         labelKey: 'sidebar.admins',
-        icon: SidebarEmployeeIcon,
+        icon: SidebarAdminIcon,
         roles: ['admin'],
       },
     ],

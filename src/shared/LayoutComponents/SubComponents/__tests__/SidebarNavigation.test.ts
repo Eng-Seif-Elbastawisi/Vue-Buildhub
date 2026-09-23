@@ -138,6 +138,35 @@ describe('SidebarNavigation.vue', () => {
     expect(activeLink.text()).toContain('sidebar.stages');
   });
 
+  it('selects and highlights the execution quotes section for its add route', () => {
+    routerMocks.useRoute.mockReturnValue(
+      reactive({
+        path: '/organization/execution-quotes/add',
+        fullPath: '/organization/execution-quotes/add',
+        params: {},
+        query: {},
+      }),
+    );
+
+    const wrapper = mountSidebar();
+    const activeSection = wrapper.get('.rail-action.active');
+    const activeLinkLabels = wrapper.findAll('a.menu-item.active').map((link) => link.text());
+
+    expect(activeSection.attributes('title')).toBe('sidebar.execution-quotes');
+    expect(activeLinkLabels).toContain('sidebar.add-execution-quote');
+  });
+
+  it('toggles the execution quotes section with the existing collapse behavior', async () => {
+    const wrapper = mountSidebar();
+    const executionQuotesButton = wrapper.get('.rail-action[title="sidebar.execution-quotes"]');
+
+    await executionQuotesButton.trigger('click');
+    expect(wrapper.get('.sidebar-shell').classes()).toContain('is-open');
+
+    await executionQuotesButton.trigger('click');
+    expect(wrapper.get('.sidebar-shell').classes()).not.toContain('is-open');
+  });
+
   it('emits clickItem event when a menu item is clicked', async () => {
     const wrapper = mountSidebar();
 

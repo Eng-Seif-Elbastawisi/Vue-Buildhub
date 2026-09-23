@@ -1,6 +1,7 @@
 <script setup lang="ts">
   import { computed, onMounted, ref } from 'vue';
 
+  import ConfirmCancelDialog from '@/base/Presentation/Dialogs/ConfirmCancelDialog.vue';
   import type { ProductShowStage } from '../../../data/models/products.show.model.ts';
 
   import DeleteProductsStageParams from '../../../core/params/delete.products.stage.params.ts';
@@ -543,36 +544,49 @@
             </div>
 
             <!-- Delete -->
-            <button
-              type="button"
-              class="delete-stage-btn"
+            <ConfirmCancelDialog
+              :title="$t('Products.delete_item_dialog.title')"
+              :message="$t('Products.delete_item_dialog.message')"
+              :confirm-label="$t('confirm')"
+              :cancel-label="$t('cancel')"
+              confirm-theme="danger"
               :disabled="deletingStageId === stage.id"
-              @click="deleteStage(stage, mainStage.originalIndexes[stage.id])"
+              @confirm="deleteStage(stage, mainStage.originalIndexes[stage.id])"
             >
-              <span v-if="deletingStageId === stage.id" class="delete-loading"> ... </span>
+              <template #trigger="{ open }">
+                <button
+                  type="button"
+                  class="delete-stage-btn"
+                  :disabled="deletingStageId === stage.id"
+                  :aria-label="$t('common.delete')"
+                  @click="open"
+                >
+                  <span v-if="deletingStageId === stage.id" class="delete-loading"> ... </span>
 
-              <svg
-                v-else
-                width="15"
-                height="15"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <polyline points="3 6 5 6 21 6" />
+                  <svg
+                    v-else
+                    width="15"
+                    height="15"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <polyline points="3 6 5 6 21 6" />
 
-                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
 
-                <path d="M10 11v6" />
+                    <path d="M10 11v6" />
 
-                <path d="M14 11v6" />
+                    <path d="M14 11v6" />
 
-                <path d="M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" />
-              </svg>
-            </button>
+                    <path d="M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" />
+                  </svg>
+                </button>
+              </template>
+            </ConfirmCancelDialog>
           </div>
         </div>
       </div>

@@ -2357,6 +2357,10 @@
       "title": "حذف المنتج",
       "message": "هل أنت متأكد من رغبتك في حذف هذا المنتج؟"
     },
+    "delete_item_dialog": {
+      "title": "هل تريد المسح؟",
+      "message": "هل أنت متأكد أنك تريد حذف هذا العنصر؟"
+    },
     "delete_success": "تم حذف المنتج بنجاح.",
     "form": {
       "title": "منتج جديد",
@@ -2447,6 +2451,8 @@
   "Are you sure you want to remove this measurement unit?": "هل أنت متأكد من حذف وحدة القياس ؟",
   "sidebar.products": "المنتجات",
   "sidebar.execution-quotes": "مقايسات التنفيذ",
+  "sidebar.execution-quote": "مقايسة تنفيذ",
+  "sidebar.add-execution-quote": "إضافة مقايسة تنفيذ",
   "common.back": "رجوع",
   "Products.stages.one_label": "مرحلة",
   "Products.stages.many_label": "مراحل",
