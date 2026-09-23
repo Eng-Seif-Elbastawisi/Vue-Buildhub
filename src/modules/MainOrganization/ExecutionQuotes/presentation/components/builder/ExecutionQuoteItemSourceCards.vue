@@ -5,12 +5,13 @@
     type ExecutionQuoteItemSource,
   } from '../../../core/constants/execution.quote.item.source.enum';
 
-  withDefaults(
+  const props = withDefaults(
     defineProps<{
       modelValue: ExecutionQuoteItemSource | null;
       disabled?: boolean;
+      pricingEnabled?: boolean;
     }>(),
-    { disabled: false },
+    { disabled: false, pricingEnabled: true },
   );
 
   const emit = defineEmits<{
@@ -38,6 +39,9 @@
       descriptionKey: 'execution_quote.item_sources.labor.description',
     },
   ];
+
+  const descriptionKey = (key: string) =>
+    props.pricingEnabled ? key : `${key}_without_pricing`;
 </script>
 
 <template>
@@ -62,7 +66,7 @@
       >
         <span class="source-card__code">{{ card.code }}</span>
         <strong>{{ $t(getExecutionQuoteItemSourceTitleKey(card.value)) }}</strong>
-        <small>{{ $t(card.descriptionKey) }}</small>
+        <small>{{ $t(descriptionKey(card.descriptionKey)) }}</small>
       </button>
     </div>
   </section>

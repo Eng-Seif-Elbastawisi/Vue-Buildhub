@@ -10,8 +10,9 @@
     defineProps<{
       modelValue: ExecutionQuoteType | null;
       loading?: boolean;
+      disabled?: boolean;
     }>(),
-    { loading: false },
+    { loading: false, disabled: false },
   );
 
   const emit = defineEmits<{
@@ -38,7 +39,7 @@
         class="quote-type-option"
         :class="{ 'quote-type-option--selected': modelValue === type }"
         :aria-pressed="modelValue === type"
-        :disabled="loading"
+        :disabled="loading || disabled"
         @click="emit('update:modelValue', type)"
       >
         <span class="quote-type-option__mark" aria-hidden="true">
@@ -101,6 +102,10 @@
   .quote-type-option:hover {
     border-color: var(--PrimaryColor-alpha-30);
     box-shadow: var(--shadow-sm);
+  }
+
+  .quote-type-option:disabled {
+    cursor: not-allowed;
   }
 
   .quote-type-option--selected {

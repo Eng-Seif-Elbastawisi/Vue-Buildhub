@@ -36,7 +36,7 @@ const cancelQuoteTypeAdd = () => {
 
 <template>
   <div class="QuoteType-crud-page">
-    <QuoteTypeForm :loading="loading" @update-data="params = $event" />
+    <QuoteTypeForm :loading="loading" @update-data="params = $event" :disabled="true" />
 
     <div class="form-footer">
       <button

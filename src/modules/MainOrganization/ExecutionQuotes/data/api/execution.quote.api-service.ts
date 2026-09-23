@@ -35,15 +35,13 @@ export default class ExecutionQuoteApiService extends BaseApiService {
     };
   }
 
-  /**
-   * Same customPost pattern used by Products for non-CRUD actions.
-   */
   async storeDetails(
     params?: StoreExecutionQuoteDetailsParams,
   ): Promise<ApiResponse<ExecutionQuoteDetailsResponse>> {
     return await this.customPost<ExecutionQuoteDetailsResponse>(
       this.executionQuoteEndpoints.storeDetails,
       params as Params,
+      { useJson: true },
     );
   }
 }

@@ -1,53 +1,89 @@
 <script setup lang="ts">
-  import { computed, onMounted } from 'vue';
+  import { computed, onMounted, ref } from 'vue';
+  import { useI18n } from 'vue-i18n';
   import { useRouter } from 'vue-router';
 
   import IndexParams from '@/base/Core/Params/indexParams';
   import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
   import AppButton from '@/shared/HelpersComponents/AppButton.vue';
   import AppTable, { type TableHeader } from '@/shared/HelpersComponents/AppTable.vue';
-  import { QuoteSourceEnum } from '../../core/constants/quote.source.enum';
-  import type ExecutionQuoteModel from '../../core/models/execution.quote.model';
+  import Pagination from '@/shared/HelpersComponents/Pagination.vue';
+  import {
+    ExecutionQuoteTypeEnum,
+    getExecutionQuoteTypeTitleKey,
+    type ExecutionQuoteType,
+  } from '../../core/constants/execution.quote.type.enum';
+  import { getQuoteSourceTitleKey } from '../../core/constants/quote.source.enum';
+  import type ExecutionQuoteShowModel from '../../core/models/execution.quote.show.model';
   import ExecutionQuoteController from '../controllers/execution.quote.controller';
 
   const controller = ExecutionQuoteController.getInstance();
   const router = useRouter();
+  const { locale, t } = useI18n();
   const state = computed(() => controller.listState.value);
+  const perPage = ref(20);
 
-  onMounted(() => {
-    void controller.fetchList(new IndexParams('', 1, 20, 1));
-  });
+  const fetchQuotes = async (page: number = 1) => {
+    await controller.fetchList(new IndexParams('', page, perPage.value, 1));
+  };
+
+  const onPageChange = (page: number) => {
+    void fetchQuotes(page);
+  };
+
+  const onPerPageChange = (count: number) => {
+    perPage.value = count;
+    void fetchQuotes(1);
+  };
+
+  onMounted(() => void fetchQuotes());
 
   const openAdd = () => {
     void router.push({ name: 'Add Execution Quote' });
   };
 
-  const relationTitle = (relation: { title?: string; name?: string } | number | undefined) =>
-    typeof relation === 'object' && relation !== null
-      ? (relation.title ?? relation.name ?? '—')
-      : (relation ?? '—');
+  const openShow = (quote: ExecutionQuoteShowModel) => {
+    if (!quote.id) return;
+
+    void router.push({ name: 'Show Execution Quote', params: { id: String(quote.id) } });
+  };
 
   const headers: TableHeader[] = [
     { key: 'id', label: 'execution_quote.table.id' },
     { key: 'quoteSource', label: 'execution_quote.table.source' },
-    { key: 'client', label: 'execution_quote.table.client' },
     { key: 'project', label: 'execution_quote.table.project' },
+    { key: 'client', label: 'execution_quote.table.client' },
+    { key: 'quoteType', label: 'execution_quote.table.quote_type' },
+    { key: 'priceEmployee', label: 'execution_quote.fields.price_employee' },
+    { key: 'quoteProgress', label: 'execution_quote.table.stages_and_items' },
+    { key: 'createdAt', label: 'execution_quote.table.created_at' },
   ];
 
-  const quoteSourceTitleKey = (source: QuoteSourceEnum | undefined) => {
-    if (source === QuoteSourceEnum.EXECUTION_ONLY) {
-      return 'execution_quote.sources.execution_only.title';
-    }
-
-    if (source === QuoteSourceEnum.EXECUTION_FROM_DESIGN_QUOTE) {
-      return 'execution_quote.sources.design_quote.title';
-    }
-
-    return '';
+  const quoteSourceLabel = (quote: ExecutionQuoteShowModel) => {
+    const titleKey = getQuoteSourceTitleKey(quote.quoteSource);
+    return titleKey ? t(titleKey) : '—';
   };
 
-  const asExecutionQuotes = (quotes: unknown): ExecutionQuoteModel[] =>
-    Array.isArray(quotes) ? (quotes as ExecutionQuoteModel[]) : [];
+  const quoteTypeLabel = (quote: ExecutionQuoteShowModel) => {
+    const quoteType = quote.quoteType?.id as ExecutionQuoteType | undefined;
+    const isKnownType = quoteType && Object.values(ExecutionQuoteTypeEnum).includes(quoteType);
+
+    if (isKnownType) return t(getExecutionQuoteTypeTitleKey(quoteType));
+
+    return quote.quoteType?.title?.replace(/_/g, ' ') ?? '—';
+  };
+
+  const formatDate = (rawDate: string | undefined) => {
+    if (!rawDate) return '—';
+
+    const date = new Date(rawDate.includes(' ') ? rawDate.replace(' ', 'T') : rawDate);
+    if (Number.isNaN(date.getTime())) return rawDate;
+
+    return new Intl.DateTimeFormat(locale.value, { dateStyle: 'medium' }).format(date);
+  };
+
+  const asExecutionQuotes = (quotes: unknown): ExecutionQuoteShowModel[] =>
+    Array.isArray(quotes) ? (quotes as ExecutionQuoteShowModel[]) : [];
 </script>
 
 <template>
@@ -74,23 +110,70 @@
           striped
           hoverable
           empty-message="execution_quote.empty_quotes"
+          @row-click="openShow"
         >
           <template #cell-quoteSource="{ item }">
-            {{
-              quoteSourceTitleKey(item.quoteSource)
-                ? $t(quoteSourceTitleKey(item.quoteSource))
-                : '—'
-            }}
-          </template>
-
-          <template #cell-client="{ item }">
-            {{ relationTitle(item.client) }}
+            <span class="execution-quote-index__badge">
+              {{ quoteSourceLabel(item) }}
+            </span>
           </template>
 
           <template #cell-project="{ item }">
-            {{ relationTitle(item.project) }}
+            <div class="execution-quote-index__primary-cell">
+              <strong>{{ item.project?.title ?? '—' }}</strong>
+              <small>#{{ item.project?.id ?? '—' }}</small>
+            </div>
+          </template>
+
+          <template #cell-client="{ item }">
+            <div class="execution-quote-index__primary-cell">
+              <strong>{{ item.client?.name ?? '—' }}</strong>
+              <small>{{ item.client?.phone ?? '—' }}</small>
+            </div>
+          </template>
+
+          <template #cell-quoteType="{ item }">
+            <span class="execution-quote-index__type">
+              {{ quoteTypeLabel(item) }}
+            </span>
+          </template>
+
+          <template #cell-priceEmployee="{ item }">
+            <div class="execution-quote-index__primary-cell">
+              <strong>{{ item.priceEmployee?.name ?? '—' }}</strong>
+              <small>#{{ item.priceEmployee?.id ?? '—' }}</small>
+            </div>
+          </template>
+
+          <template #cell-quoteProgress="{ item }">
+            <div class="execution-quote-index__progress">
+              <strong>
+                {{ $t('execution_quote.table.stages_count', { count: item.quoteStagesCount }) }}
+              </strong>
+              <small>
+                {{ $t('execution_quote.table.items_count_value', { count: item.quoteItemsCount }) }}
+              </small>
+            </div>
+          </template>
+
+          <template #cell-createdAt="{ item }">
+            <time :datetime="item.createdAt">
+              {{ formatDate(item.createdAt) }}
+            </time>
+          </template>
+
+          <template #actions="{ item }">
+            <AppButton size="sm" theme="secondary" outline @click="openShow(item)">
+              {{ $t('execution_quote.show.action') }}
+            </AppButton>
           </template>
         </AppTable>
+        <Pagination
+          :pagination="controller.pagination.value"
+          show-single-page
+          @change-page="onPageChange"
+          @count-per-page="onPerPageChange"
+        />
       </template>
     </DataStatusBuilder>
   </section>
@@ -118,6 +201,45 @@
 
   .execution-quote-index__header p {
     color: var(--subtitle-color);
+  }
+
+  .execution-quote-index__badge,
+  .execution-quote-index__type {
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    padding: 0.3rem 0.6rem;
+    border-radius: var(--radius-full);
+    font-size: var(--xs-size);
+    font-weight: 700;
+  }
+
+  .execution-quote-index__badge {
+    background: var(--PrimaryColor-light);
+    color: var(--PrimaryColor);
+  }
+
+  .execution-quote-index__type {
+    background: var(--gray-100);
+    color: var(--gray-700);
+  }
+
+  .execution-quote-index__primary-cell,
+  .execution-quote-index__progress {
+    display: grid;
+    gap: 0.2rem;
+  }
+
+  .execution-quote-index__primary-cell strong,
+  .execution-quote-index__progress strong {
+    color: var(--title-card-color);
+  }
+
+  .execution-quote-index__primary-cell small,
+  .execution-quote-index__progress small,
+  .execution-quote-index time {
+    color: var(--subtitle-color);
+    font-size: var(--xs-size);
   }
 
   @media (max-width: 640px) {

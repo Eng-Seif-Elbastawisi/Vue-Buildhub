@@ -2523,8 +2523,13 @@
     "quote_type_title": "نوع المقايسة",
     "quote_types": {
       "lump_sum": { "title": "مقطوعية", "description": "سعر ثابت للمراحل المحددة." },
-      "supervision": { "title": "إشراف", "description": "مقايسة إشراف بتسعير لكل مرحلة." }
+      "supervision": { "title": "إشراف", "description": "مقايسة إشراف للبنود والكميات بدون تسعير." }
     },
+    "builder_navigation": "التنقل داخل بناء المقايسة",
+    "quote_reference": "مقايسة رقم {id}",
+    "all_stages_context": "كل المراحل الأساسية",
+    "exit_builder": "العودة لكل المقايسات",
+    "exit_confirmation": "لديك بنود غير محفوظة. هل تريد الخروج من بناء المقايسة؟",
     "main_stages_title": "المراحل الأساسية",
     "main_stages_hint": "اختر مرحلة أساسية لإضافة البنود المطلوبة.",
     "main_stages_empty": "لا توجد مراحل أساسية متاحة.",
@@ -2533,7 +2538,12 @@
     "not_available": "غير متاح",
     "stage_details": "تفاصيل المرحلة",
     "stage_details_hint": "اختر المرحلة الفرعية ومصدر البند ثم أضف البنود.",
-    "back_to_stages": "الرجوع للمراحل",
+    "back_to_stages": "الرجوع لكل المراحل",
+    "pricing_not_required_short": "التسعير غير مطلوب",
+    "supervision_pricing": {
+      "title": "مقايسة إشراف — بدون تسعير",
+      "description": "أضف البنود والكميات المطلوبة. سعر الوحدة وسعر العميل والإجماليات المالية غير مفعلة في مقايسات الإشراف."
+    },
     "select_sub_stage": "١. اختر المرحلة الفرعية",
     "sub_stages_empty": "لا توجد مراحل فرعية لهذه المرحلة.",
     "what_will_you_add": "٢. ماذا ستضيف؟",
@@ -2547,9 +2557,13 @@
     "item_guidance": {
       "title": "الخطوة المطلوبة التالية",
       "choose_item": "اختر البند الذي تريد إضافته، وسيتم تعبئة النوع والوحدة والسعر المقترح تلقائياً.",
+      "choose_item_without_pricing": "اختر البند الذي تريد إضافته، وسيتم تعبئة النوع والوحدة تلقائياً بدون الحاجة إلى سعر.",
       "choose_sorting": "اختر فرز المنتج لاستخدام السعر المحدد له.",
+      "choose_sorting_without_pricing": "اختر فرز المنتج لتحديد النوع المطلوب بدقة.",
       "review_values": "أدخل كمية أكبر من صفر وتأكد أن سعر الوحدة غير سالب.",
-      "ready": "البند جاهز. راجع القيم ثم أضفه إلى هذه المرحلة."
+      "review_quantity": "أدخل كمية أكبر من صفر.",
+      "ready": "البند جاهز. راجع القيم ثم أضفه إلى هذه المرحلة.",
+      "ready_without_pricing": "البند جاهز. راجع الكمية ثم أضفه بدون تسعير."
     },
     "placeholders": {
       "client_stage_price": "اكتب السعر",
@@ -2573,9 +2587,21 @@
       "unit_price": "سعر الوحدة"
     },
     "item_sources": {
-      "product": { "title": "المنتجات", "description": "منتج وفئة وكمية ووحدة وسعر" },
-      "building_material": { "title": "مواد البناء", "description": "مواد وكميات وأسعار" },
-      "labor": { "title": "المصنعيات", "description": "بند عمالة أو تنفيذ" }
+      "product": {
+        "title": "المنتجات",
+        "description": "منتج وفئة وكمية ووحدة وسعر",
+        "description_without_pricing": "منتج وفئة وكمية ووحدة"
+      },
+      "building_material": {
+        "title": "مواد البناء",
+        "description": "مواد وكميات وأسعار",
+        "description_without_pricing": "مواد وكميات"
+      },
+      "labor": {
+        "title": "المصنعيات",
+        "description": "بند عمالة أو تنفيذ",
+        "description_without_pricing": "بند عمالة أو تنفيذ وكمية"
+      }
     },
     "quote_items_title": "بنود المقايسة",
     "quote_items_empty": "ابدأ بإضافة بنود من مجموعات المصادر الثلاثة لبناء المقايسة.",
@@ -2598,8 +2624,57 @@
     "from_approved_design": "من تصميم معتمد",
     "quote_data": "بيانات المقايسة",
     "save": "حفظ مقايسة التنفيذ",
+    "save_and_continue": "حفظ البنود والمتابعة",
+    "save_batch_title": "حفظ مجموعة البنود الحالية",
+    "save_batch_hint": "بعد الحفظ ستبقى داخل نفس المرحلة الأساسية لتختار مرحلة فرعية أخرى.",
+    "details_saved": "تم حفظ البنود، ويمكنك المتابعة في مرحلة فرعية أخرى.",
     "index_description": "راجع مقايسات التنفيذ ومصادر بياناتها.",
     "empty_quotes": "لا توجد مقايسات تنفيذ حتى الآن.",
+    "show": {
+      "title": "تفاصيل مقايسة التنفيذ",
+      "description": "عرض متكامل لبيانات المشروع والعميل والمسؤولين عن المقايسة.",
+      "eyebrow": "مقايسة رقم {id}",
+      "back": "الرجوع للمقايسات",
+      "action": "عرض",
+      "project_fallback": "مقايسة تنفيذ",
+      "created_at": "تاريخ الإنشاء",
+      "project_section": "بيانات المشروع",
+      "project_section_hint": "المشروع المرتبط بمقايسة التنفيذ.",
+      "project_client": "عميل المشروع",
+      "project_date": "تاريخ المشروع",
+      "description_label": "الوصف",
+      "no_description": "لم تتم إضافة وصف للمشروع.",
+      "client_section": "بيانات العميل",
+      "client_section_hint": "بيانات التواصل وحالة حساب العميل.",
+      "phone": "رقم الهاتف",
+      "email": "البريد الإلكتروني",
+      "address": "العنوان",
+      "active": "نشط",
+      "inactive": "غير نشط",
+      "project_id": "معرف المشروع",
+      "project_created_at": "تاريخ إنشاء المشروع",
+      "client_id": "معرف العميل",
+      "client_type": "نوع العميل",
+      "client_source": "مصدر العميل",
+      "client_created_at": "تاريخ إنشاء العميل",
+      "stages_section": "المراحل والبنود",
+      "stages_section_hint": "{stages} مراحل تحتوي على {items} بنود.",
+      "main_stage": "المرحلة الأساسية",
+      "sub_stage": "المرحلة الفرعية",
+      "stage_record": "سجل المرحلة",
+      "quote_reference": "مرجع المقايسة",
+      "project_reference": "مرجع المشروع",
+      "stage_created_at": "تاريخ إضافة المرحلة",
+      "item": "البند",
+      "item_source": "مصدر البند",
+      "itemable_id": "معرف المصدر",
+      "itemable_type": "موديل المصدر",
+      "expected_price": "سعر الوحدة المتوقع",
+      "quantity": "الكمية",
+      "total": "الإجمالي المتوقع",
+      "no_stage_items": "لم تتم إضافة بنود لهذه المرحلة.",
+      "no_stages": "لم تتم إضافة مراحل لهذه المقايسة."
+    },
     "store_details_failed": "تعذر حفظ تفاصيل مقايسة التنفيذ.",
     "validation": {
       "required_data": "أكمل بيانات المقايسة المطلوبة قبل الحفظ.",
@@ -2627,7 +2702,7 @@
       },
       "design_quote": {
         "title": "تنفيذ من مقايسة تصميم",
-        "description": "اختر العميل ثم مقايسة التصميم"
+        "description": "اختر العميل ثم اختر أحد مشروعاته"
       }
     },
     "fields": {
@@ -2647,6 +2722,10 @@
       "client": "العميل",
       "project": "المشروع",
       "quote_type": "نوع المقايسة",
+      "stages_and_items": "المراحل / البنود",
+      "stages_count": "المراحل: {count}",
+      "items_count_value": "البنود: {count}",
+      "created_at": "تاريخ الإنشاء",
       "items_count": "البنود",
       "client_total": "إجمالي العميل",
       "main_stage": "المرحلة الأساسية",

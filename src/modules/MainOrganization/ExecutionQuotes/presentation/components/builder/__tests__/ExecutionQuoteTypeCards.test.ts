@@ -27,4 +27,18 @@ describe('ExecutionQuoteTypeCards', () => {
 
     expect(wrapper.emitted('update:modelValue')?.[0]?.[0]).toBe(ExecutionQuoteTypeEnum.SUPERVISION);
   });
+
+  it('does not change the selected type when disabled', async () => {
+    const wrapper = mount(ExecutionQuoteTypeCards, {
+      props: { modelValue: ExecutionQuoteTypeEnum.LUMP_SUM, disabled: true },
+      global: { mocks: { $t: (key: string) => key } },
+    });
+
+    const options = wrapper.findAll<HTMLButtonElement>('.quote-type-option');
+    expect(options.every((option) => option.element.disabled)).toBe(true);
+
+    await options[1].trigger('click');
+
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined();
+  });
 });

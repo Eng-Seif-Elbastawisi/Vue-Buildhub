@@ -1,29 +1,48 @@
 <script setup lang="ts">
+  import { computed } from 'vue';
+
   import AppButton from '@/shared/HelpersComponents/AppButton.vue';
   import AppTable, { type TableHeader } from '@/shared/HelpersComponents/AppTable.vue';
 
   import { getExecutionQuoteItemSourceTitleKey } from '../../../core/constants/execution.quote.item.source.enum';
   import type { ExecutionQuoteItemState } from '../../types/execution.quote.ui.types';
 
-  defineProps<{
-    items: ExecutionQuoteItemState[];
-  }>();
+  const props = withDefaults(
+    defineProps<{
+      items: ExecutionQuoteItemState[];
+      showPricing?: boolean;
+    }>(),
+    { showPricing: true },
+  );
 
   const emit = defineEmits<{
     (event: 'remove', item: ExecutionQuoteItemState): void;
   }>();
 
-  const headers: TableHeader[] = [
+  const detailHeaders: TableHeader[] = [
     { key: 'stage_name', label: 'execution_quote.table.main_stage' },
     { key: 'sub_stage_name', label: 'execution_quote.table.sub_stage' },
     { key: 'source_type', label: 'execution_quote.table.source' },
     { key: 'source_title', label: 'execution_quote.table.item' },
     { key: 'quantity', label: 'execution_quote.table.quantity' },
     { key: 'unit_name', label: 'execution_quote.table.unit' },
-    { key: 'unit_price', label: 'execution_quote.table.unit_price' },
-    { key: 'total', label: 'execution_quote.table.total' },
-    { key: 'action', label: 'execution_quote.table.action' },
   ];
+
+  const actionHeader: TableHeader = {
+    key: 'action',
+    label: 'execution_quote.table.action',
+  };
+
+  const headers = computed<TableHeader[]>(() => {
+    if (!props.showPricing) return [...detailHeaders, actionHeader];
+
+    return [
+      ...detailHeaders,
+      { key: 'unit_price', label: 'execution_quote.table.unit_price' },
+      { key: 'total', label: 'execution_quote.table.total' },
+      actionHeader,
+    ];
+  });
 </script>
 
 <template>

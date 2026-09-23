@@ -39,7 +39,7 @@ describe('Pagination', () => {
 
   it('displays results info', () => {
     const wrapper = createWrapper();
-    expect(wrapper.text()).toContain('Show 2 to 3 of');
+    expect(wrapper.text()).toContain('Show 11 to 20 of');
     expect(wrapper.text()).toContain('50');
   });
 
@@ -94,6 +94,23 @@ describe('Pagination', () => {
       pagination: { current: 1, last: 1, next: 1, total: 5, count: 5 },
     });
     expect(wrapper.find('.pagination-wrapper').exists()).toBe(false);
+  });
+
+  it('shows a single page with the API result range when requested', () => {
+    const wrapper = createWrapper({
+      pagination: {
+        currentPage: 1,
+        lastPage: 1,
+        from: 1,
+        to: 13,
+        total: 13,
+        perPage: 20,
+      },
+      showSinglePage: true,
+    });
+
+    expect(wrapper.find('.pagination-wrapper').exists()).toBe(true);
+    expect(wrapper.text()).toContain('Show 1 to 13 of 13');
   });
 
   it('renders per page count options', () => {

@@ -8,9 +8,9 @@ describe('ExecutionQuoteModel', () => {
       quote_source: 1,
       project_id: 10,
       client_id: 5,
+      quote_type: 2,
       quote_type_id: 2,
       price_employee_id: 7,
-      design_quote_id: 44,
     });
 
     expect(model).toMatchObject({
@@ -18,21 +18,25 @@ describe('ExecutionQuoteModel', () => {
       quoteSource: 1,
       projectId: 10,
       clientId: 5,
+      quoteType: 2,
       quoteTypeId: 2,
       priceEmployeeId: 7,
-      designQuoteId: 44,
     });
   });
 
-  it('keeps the execution quote type enum when quote_type is not a relation', () => {
+  it('keeps the execution quote type enum from quote_type', () => {
     const model = ExecutionQuoteModel.fromJson({
       quote_source: 1,
       quote_type: 1,
-      quote_type_id: 2,
     });
 
     expect(model.quoteType).toBe(1);
-    expect(model.quoteTypeId).toBe(2);
+  });
+
+  it('rejects legacy quote type names outside the numeric enum', () => {
+    const model = ExecutionQuoteModel.fromJson({ quote_type: 'supervision' });
+
+    expect(model.quoteType).toBeUndefined();
   });
 
   it('maps sorting_id inside execution quote items', () => {

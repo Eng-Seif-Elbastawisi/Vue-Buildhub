@@ -14,6 +14,7 @@ describe('IndexProjectParams', () => {
       [ConvertStatus.SEND_TO_CLIENT],
       [DepartmentTypeEnum.SUPERVISION],
     );
+    params.clientId = 42;
 
     expect(params.toMap()).toMatchObject({
       word: 'villa',
@@ -23,6 +24,7 @@ describe('IndexProjectParams', () => {
       date_remove: '2026-06-25',
       status: [ConvertStatus.SEND_TO_CLIENT],
       service_type: [DepartmentTypeEnum.SUPERVISION],
+      client_id: 42,
     });
   });
 
@@ -31,15 +33,18 @@ describe('IndexProjectParams', () => {
       page: 1,
       per_page: 10,
       with_pagination: 1,
-      status: [ConvertStatus.PENDING],
+      status: [ConvertStatus.ACCEPT_CLIENT],
     });
 
     expect(new IndexProjectParams('', 1, 10, 1, null, null).toMap()).not.toHaveProperty('status');
     expect(new IndexProjectParams('', 1, 10, 1, null, []).toMap()).not.toHaveProperty('status');
   });
 
-  it('omits service type when it is undefined or empty', () => {
-    expect(new IndexProjectParams().toMap()).not.toHaveProperty('service_type');
+  it('omits optional filters when they are undefined or empty', () => {
+    const defaultParams = new IndexProjectParams().toMap();
+
+    expect(defaultParams).not.toHaveProperty('service_type');
+    expect(defaultParams).not.toHaveProperty('client_id');
     expect(new IndexProjectParams('', 1, 10, 1, null, null, []).toMap()).not.toHaveProperty(
       'service_type',
     );

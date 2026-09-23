@@ -2609,9 +2609,14 @@
       },
       "supervision": {
         "title": "Supervision",
-        "description": "A supervision quote with stage-level pricing."
+        "description": "A supervision quote for items and quantities without pricing."
       }
     },
+    "builder_navigation": "Quote builder navigation",
+    "quote_reference": "Quote #{id}",
+    "all_stages_context": "All main stages",
+    "exit_builder": "Back to all quotes",
+    "exit_confirmation": "You have unsaved items. Are you sure you want to leave the quote builder?",
     "main_stages_title": "Main stages",
     "main_stages_hint": "Choose a main stage to add its required items.",
     "main_stages_empty": "No main stages are available.",
@@ -2620,7 +2625,12 @@
     "not_available": "Not available",
     "stage_details": "Main stage details",
     "stage_details_hint": "Select a sub stage, item source and add the required items.",
-    "back_to_stages": "Back to stages",
+    "back_to_stages": "Back to all stages",
+    "pricing_not_required_short": "Pricing is not required",
+    "supervision_pricing": {
+      "title": "Supervision quote — no pricing required",
+      "description": "Add the required items and quantities. Unit price, client price and financial totals are disabled for supervision quotes."
+    },
     "select_sub_stage": "1. Select sub stage",
     "sub_stages_empty": "No sub stages are available for this main stage.",
     "what_will_you_add": "2. What will you add?",
@@ -2634,9 +2644,13 @@
     "item_guidance": {
       "title": "Next required step",
       "choose_item": "Choose the item you want to add. Its type, unit and suggested price will be filled automatically.",
+      "choose_item_without_pricing": "Choose the item you want to add. Its type and unit will be filled automatically; no price is required.",
       "choose_sorting": "Choose the product sorting to use its configured price.",
+      "choose_sorting_without_pricing": "Choose the product sorting to identify the required product variant.",
       "review_values": "Enter a quantity greater than zero and make sure the unit price is not negative.",
-      "ready": "The item is ready. Review the values, then add it to this stage."
+      "review_quantity": "Enter a quantity greater than zero.",
+      "ready": "The item is ready. Review the values, then add it to this stage.",
+      "ready_without_pricing": "The item is ready. Review its quantity, then add it without pricing."
     },
     "placeholders": {
       "client_stage_price": "Enter client stage price",
@@ -2662,15 +2676,18 @@
     "item_sources": {
       "product": {
         "title": "Products",
-        "description": "Product, category, quantity, unit and price"
+        "description": "Product, category, quantity, unit and price",
+        "description_without_pricing": "Product, category, quantity and unit"
       },
       "building_material": {
         "title": "Building materials",
-        "description": "Materials, quantities and prices"
+        "description": "Materials, quantities and prices",
+        "description_without_pricing": "Materials and quantities"
       },
       "labor": {
         "title": "Labor",
-        "description": "Labor or execution item"
+        "description": "Labor or execution item",
+        "description_without_pricing": "Labor or execution item and quantity"
       }
     },
     "quote_items_title": "Quote items",
@@ -2678,8 +2695,57 @@
     "expected_margin": "Expected margin",
     "current_stage_summary": "Current stage cost: {cost} · Expected margin: {margin}",
     "save": "Save execution quote",
+    "save_and_continue": "Save items and continue",
+    "save_batch_title": "Save this batch of items",
+    "save_batch_hint": "After saving, you will stay in this main stage so you can choose another sub-stage.",
+    "details_saved": "Items saved. You can continue with another sub-stage.",
     "index_description": "Review execution quotes and their source data.",
     "empty_quotes": "No execution quotes are available yet.",
+    "show": {
+      "title": "Execution quote details",
+      "description": "A complete view of the project, client and quote ownership.",
+      "eyebrow": "Quote #{id}",
+      "back": "Back to quotes",
+      "action": "Show",
+      "project_fallback": "Execution quote",
+      "created_at": "Created at",
+      "project_section": "Project details",
+      "project_section_hint": "The project linked to this execution quote.",
+      "project_client": "Project client",
+      "project_date": "Project date",
+      "description_label": "Description",
+      "no_description": "No project description was provided.",
+      "client_section": "Client details",
+      "client_section_hint": "Contact information and account status.",
+      "phone": "Phone",
+      "email": "Email",
+      "address": "Address",
+      "active": "Active",
+      "inactive": "Inactive",
+      "project_id": "Project ID",
+      "project_created_at": "Project created at",
+      "client_id": "Client ID",
+      "client_type": "Client type",
+      "client_source": "Client source",
+      "client_created_at": "Client created at",
+      "stages_section": "Stages and items",
+      "stages_section_hint": "{stages} stages containing {items} items.",
+      "main_stage": "Main stage",
+      "sub_stage": "Sub stage",
+      "stage_record": "Stage record",
+      "quote_reference": "Quote reference",
+      "project_reference": "Project reference",
+      "stage_created_at": "Stage created at",
+      "item": "Item",
+      "item_source": "Item source",
+      "itemable_id": "Source ID",
+      "itemable_type": "Source model",
+      "expected_price": "Expected unit price",
+      "quantity": "Quantity",
+      "total": "Expected total",
+      "no_stage_items": "No items were added to this stage.",
+      "no_stages": "No stages were added to this quote."
+    },
     "store_details_failed": "The execution quote details could not be saved.",
     "validation": {
       "required_data": "Complete the required quote data before saving.",
@@ -2707,7 +2773,7 @@
       },
       "design_quote": {
         "title": "From design quote",
-        "description": "Choose the client, then the design quote."
+        "description": "Choose a client, then select one of their projects."
       }
     },
     "fields": {
@@ -2727,6 +2793,10 @@
       "client": "Client",
       "project": "Project",
       "quote_type": "Quote type",
+      "stages_and_items": "Stages / items",
+      "stages_count": "Stages: {count}",
+      "items_count_value": "Items: {count}",
+      "created_at": "Created at",
       "items_count": "Items",
       "client_total": "Client total",
       "main_stage": "Main stage",
