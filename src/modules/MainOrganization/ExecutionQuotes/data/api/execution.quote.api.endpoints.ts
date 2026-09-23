@@ -9,6 +9,7 @@ export class ExecutionQuoteApiEndpoints extends BaseEndpoints {
   readonly index = this.url('fetch_execution_quotes');
   readonly show = this.url('show_execution_quote');
   readonly store = this.url('store_quote');
+  readonly storeDetails = this.url('store_execution_quote_details');
   readonly update = this.url('update_execution_quote');
   readonly delete = this.url('delete_execution_quote');
 }

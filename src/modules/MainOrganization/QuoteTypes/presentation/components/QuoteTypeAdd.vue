@@ -39,12 +39,14 @@ const cancelQuoteTypeAdd = () => {
     <QuoteTypeForm :loading="loading" @update-data="params = $event" />
 
     <div class="form-footer">
-      <button class="btn btn-primary" :class="{ 'btn--loading': loading }" type="button" :disabled="loading"
+      <button
+class="btn btn-primary" :class="{ 'btn--loading': loading }" type="button" :disabled="loading"
         @click="saveQuoteType">
         {{ $t('common.save') }}
       </button>
 
-      <ConfirmCancelDialog ref="confirmCancelRef" :title="$t('cancel_changes')"
+      <ConfirmCancelDialog
+ref="confirmCancelRef" :title="$t('cancel_changes')"
         :message="$t('are_you_sure_you_want_to_leave')" @confirm="cancelQuoteTypeAdd" />
     </div>
 

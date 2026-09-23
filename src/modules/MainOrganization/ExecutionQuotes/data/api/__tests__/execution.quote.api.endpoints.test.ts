@@ -10,5 +10,6 @@ describe('ExecutionQuoteApiEndpoints', () => {
     const endpoints = new ExecutionQuoteApiEndpoints();
 
     expect(endpoints.store).toContain('organization/store_execution_quote');
+    expect(endpoints.storeDetails).toContain('organization/store_execution_quote_details');
   });
 });

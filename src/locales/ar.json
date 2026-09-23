@@ -2520,6 +2520,67 @@
   },
   "sidebar.quote-types": "نوع المقايسات",
   "execution_quote": {
+    "quote_type_title": "نوع المقايسة",
+    "quote_types": {
+      "lump_sum": { "title": "مقطوعية", "description": "سعر ثابت للمراحل المحددة." },
+      "supervision": { "title": "إشراف", "description": "مقايسة إشراف بتسعير لكل مرحلة." }
+    },
+    "main_stages_title": "المراحل الأساسية",
+    "main_stages_hint": "اختر مرحلة أساسية لإضافة البنود المطلوبة.",
+    "main_stages_empty": "لا توجد مراحل أساسية متاحة.",
+    "stage_items_count": "{count} بنود",
+    "not_started": "لم تبدأ",
+    "not_available": "غير متاح",
+    "stage_details": "تفاصيل المرحلة",
+    "stage_details_hint": "اختر المرحلة الفرعية ومصدر البند ثم أضف البنود.",
+    "back_to_stages": "الرجوع للمراحل",
+    "select_sub_stage": "١. اختر المرحلة الفرعية",
+    "sub_stages_empty": "لا توجد مراحل فرعية لهذه المرحلة.",
+    "what_will_you_add": "٢. ماذا ستضيف؟",
+    "select_item_title": "٣. اختر البند وأضفه",
+    "ready_to_add": "جاهز للإضافة",
+    "select_sub_stage_and_source": "اختر المرحلة الفرعية والمصدر للبدء.",
+    "add_item": "إضافة البند",
+    "delete_item": "حذف",
+    "client_stage_price": "سعر المرحلة للعميل",
+    "always_visible": "ظاهر دائماً",
+    "item_guidance": {
+      "title": "الخطوة المطلوبة التالية",
+      "choose_item": "اختر البند الذي تريد إضافته، وسيتم تعبئة النوع والوحدة والسعر المقترح تلقائياً.",
+      "choose_sorting": "اختر فرز المنتج لاستخدام السعر المحدد له.",
+      "review_values": "أدخل كمية أكبر من صفر وتأكد أن سعر الوحدة غير سالب.",
+      "ready": "البند جاهز. راجع القيم ثم أضفه إلى هذه المرحلة."
+    },
+    "placeholders": {
+      "client_stage_price": "اكتب السعر",
+      "product": "اختر منتجاً",
+      "material": "اختر مادة بناء",
+      "labor": "اختر بند عمالة",
+      "client": "اختر العميل",
+      "project": "اختر المشروع",
+      "quote_type": "اختر نوع المقايسة",
+      "price_employee": "اختر مسؤول التسعير",
+      "design_quote": "اختر مقايسة التصميم"
+    },
+    "item_fields": {
+      "product": "المنتج",
+      "material": "مادة البناء",
+      "labor": "العمالة",
+      "type": "نوع البند",
+      "sorting": "فرز المنتج",
+      "quantity": "الكمية",
+      "unit": "الوحدة",
+      "unit_price": "سعر الوحدة"
+    },
+    "item_sources": {
+      "product": { "title": "المنتجات", "description": "منتج وفئة وكمية ووحدة وسعر" },
+      "building_material": { "title": "مواد البناء", "description": "مواد وكميات وأسعار" },
+      "labor": { "title": "المصنعيات", "description": "بند عمالة أو تنفيذ" }
+    },
+    "quote_items_title": "بنود المقايسة",
+    "quote_items_empty": "ابدأ بإضافة بنود من مجموعات المصادر الثلاثة لبناء المقايسة.",
+    "expected_margin": "الهامش المتوقع",
+    "current_stage_summary": "تكلفة المرحلة: {cost} · الهامش: {margin}",
     "title": "مقايسة تنفيذ",
     "subtitle": "مرحلة التنفيذ",
     "badge": "BuildHub OS",
@@ -2538,8 +2599,14 @@
     "quote_data": "بيانات المقايسة",
     "save": "حفظ مقايسة التنفيذ",
     "index_description": "راجع مقايسات التنفيذ ومصادر بياناتها.",
+    "empty_quotes": "لا توجد مقايسات تنفيذ حتى الآن.",
+    "store_details_failed": "تعذر حفظ تفاصيل مقايسة التنفيذ.",
     "validation": {
-      "required_data": "أكمل بيانات المقايسة المطلوبة قبل الحفظ."
+      "required_data": "أكمل بيانات المقايسة المطلوبة قبل الحفظ.",
+      "base_quote_required": "احفظ بيانات المقايسة قبل فتح المرحلة.",
+      "item_required": "اختر المرحلة والمصدر والبند قبل الإضافة.",
+      "item_values": "يجب أن تكون الكمية أكبر من صفر والسعر غير سالب.",
+      "items_required": "أضف بنداً واحداً على الأقل قبل الحفظ."
     },
     "steps": {
       "data": "بيانات",
@@ -2566,7 +2633,7 @@
     "fields": {
       "client": "العميل",
       "project": "المشروع",
-      "quote_type": "المساحة",
+      "quote_type": "نوع المقايسة",
       "price_employee": "مسؤول التسعير",
       "design_quote": "مقايسة التصميم",
       "status": "الحالة",
@@ -2574,18 +2641,22 @@
       "design_value": "قيمة التصميم",
       "area": "المساحة"
     },
-    "placeholders": {
-      "client": "اختر العميل",
-      "project": "اختر المشروع",
-      "quote_type": "اختر نوع المقايسة",
-      "price_employee": "اختر مسؤول التسعير",
-      "design_quote": "اختر مقايسة التصميم"
-    },
     "table": {
       "id": "المعرف",
       "source": "المصدر",
       "client": "العميل",
-      "project": "المشروع"
+      "project": "المشروع",
+      "quote_type": "نوع المقايسة",
+      "items_count": "البنود",
+      "client_total": "إجمالي العميل",
+      "main_stage": "المرحلة الأساسية",
+      "sub_stage": "المرحلة الفرعية",
+      "item": "البند",
+      "quantity": "الكمية",
+      "unit": "الوحدة",
+      "unit_price": "سعر الوحدة",
+      "total": "الإجمالي",
+      "action": "الإجراء"
     }
   }
 }

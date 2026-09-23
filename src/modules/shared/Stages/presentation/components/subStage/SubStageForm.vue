@@ -97,12 +97,14 @@ onMounted(() => {
 
     <div class="form-fields" :class="{ disabled: loading }">
       <div class="field-group full-row">
-        <MultiLangInput field-key="title" :label="$t('title')" :languages="['ar', 'en']" :model-value="translations"
+        <MultiLangInput
+field-key="title" :label="$t('title')" :languages="['ar', 'en']" :model-value="translations"
           type="title" required @update:model-value="updateTranslations" />
       </div>
 
       <div class="status-toggle-wrapper">
-        <ToggleSwitch v-model="status" input-id="sub-stage-status" :disabled="loading"
+        <ToggleSwitch
+v-model="status" input-id="sub-stage-status" :disabled="loading"
           @update:model-value="updateData" />
         <span class="status-text" :class="{ active: status }">
           {{ status ? $t('active') : $t('inactive') }}

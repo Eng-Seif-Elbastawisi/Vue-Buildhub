@@ -122,16 +122,19 @@ const { user } = useUserStore();
       <div class="toolbar">
         <div class="search-field">
           <span class="search-icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            <svg
+width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
               stroke-linecap="round">
               <circle cx="11" cy="11" r="8" />
               <path d="m21 21-4.35-4.35" />
             </svg>
           </span>
-          <input v-model="word" :placeholder="$t('search_materials')" class="search-input" type="text"
+          <input
+v-model="word" :placeholder="$t('search_materials')" class="search-input" type="text"
             @input="Search" />
         </div>
-        <router-link class="btn btn-primary"
+        <router-link
+class="btn btn-primary"
           :to="user?.type === 1 ? '/admin/material/add' : '/organization/material/add'">
           <IndexAddIcon /> {{ $t('material') }}
         </router-link>
@@ -142,7 +145,8 @@ const { user } = useUserStore();
 
     <DataStatusBuilder :controller="state" :on-retry="async () => await fetchMaterials()">
       <template #success="{ data }">
-        <AppTable :headers="headers" :items="data as MaterialsModel[]" :bulk-delete="deleteSelectedMaterials" selectable
+        <AppTable
+:headers="headers" :items="data as MaterialsModel[]" :bulk-delete="deleteSelectedMaterials" selectable
           show-index hoverable striped>
           <template #cell-title="{ item }">{{ item.title }}</template>
           <template #cell-code="{ item }">{{ item.code }}</template>
@@ -151,25 +155,30 @@ const { user } = useUserStore();
           <template #cell-price="{ item }">{{ item.price }}</template>
           <template #actions="{ item }">
             <div class="row-actions">
-              <ChangeStatusButton :id="item.id!" :key="`${item.id}-${item.status}`" :initial-is-active="item.status"
+              <ChangeStatusButton
+:id="item.id!" :key="`${item.id}-${item.status}`" :initial-is-active="item.status"
                 :type="StatusTypeEnum.MATERIAL" @reload="fetchMaterials" />
 
-              <router-link class="action-btn edit" :to="user?.type === 1
+              <router-link
+class="action-btn edit" :to="user?.type === 1
                 ? `/admin/material/edit/${item.id}`
                 : `/organization/material/edit/${item.id}`
                 " :title="$t('material.edit')">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                <svg
+width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                   stroke-linecap="round" stroke-linejoin="round">
                   <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
                   <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
                 </svg>
               </router-link>
 
-              <DeleteDialog :title="$t('Are you sure you want to remove this Material?')"
+              <DeleteDialog
+:title="$t('Are you sure you want to remove this Material?')"
                 :message="$t('This action cannot be undone.')" :hasbtn="true" @delete="deleteMaterial(item.id!)">
                 <template #btn>
                   <button class="action-btn delete" :title="$t('Delete')">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    <svg
+width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                       stroke-linecap="round" stroke-linejoin="round">
                       <path d="M3 6h18" />
                       <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
@@ -189,7 +198,8 @@ const { user } = useUserStore();
             </div>
           </template>
         </AppTable>
-        <Pagination :pagination="controller.pagination.value" @change-page="onPageChange"
+        <Pagination
+:pagination="controller.pagination.value" @change-page="onPageChange"
           @count-per-page="onPerPageChange" />
       </template>
 
@@ -197,7 +207,8 @@ const { user } = useUserStore();
         <div class="empty-state">
           <h3>{{ $t('material.empty_title') }}</h3>
           <p>{{ $t('material.empty_description') }}</p>
-          <router-link class="btn btn-primary"
+          <router-link
+class="btn btn-primary"
             :to="user?.type === 1 ? '/admin/material/add' : '/organization/material/add'">{{ $t('material.add')
             }}</router-link>
         </div>

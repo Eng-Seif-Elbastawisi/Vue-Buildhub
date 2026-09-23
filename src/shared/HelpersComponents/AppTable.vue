@@ -267,9 +267,11 @@ function onDragEnd() {
 
 <template>
   <div class="app-table-wrapper">
-    <div v-if="bulkDelete && selectedItems.length > 0" class="table-bulk-actions" role="toolbar"
+    <div
+v-if="bulkDelete && selectedItems.length > 0" class="table-bulk-actions" role="toolbar"
       :aria-label="bulkDeleteLabel">
-      <DeleteDialog :title="$t('bulk_delete_title')" :message="$t('bulk_delete_message')"
+      <DeleteDialog
+:title="$t('bulk_delete_title')" :message="$t('bulk_delete_message')"
         :trigger-label="bulkDeleteLabel" trigger-class="btn-add" :disabled="isBulkDeleting"
         @delete="deleteSelectedRows" />
     </div>
@@ -291,7 +293,8 @@ function onDragEnd() {
             <th v-if="reorderable" class="th-drag-handle"></th>
 
             <!-- Data columns -->
-            <th v-for="header in headers" :key="header.key" :style="{
+            <th
+v-for="header in headers" :key="header.key" :style="{
               width: header.width,
               textAlign: header.align || 'left',
             }" :class="{
@@ -315,7 +318,8 @@ function onDragEnd() {
                     {{ sortDirection === 'asc' ? '▲' : '▼' }}
                   </template>
                   <template v-else>
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                    <svg
+width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
                       stroke-linecap="round" stroke-linejoin="round">
                       <path d="M7 15l5 5 5-5M7 9l5-5 5 5" />
                     </svg>
@@ -333,7 +337,8 @@ function onDragEnd() {
         <tbody>
           <slot name="CustomRow"></slot>
           <tr v-if="items.length === 0">
-            <td :colspan="headers.length +
+            <td
+:colspan="headers.length +
               (showIndex ? 1 : 0) +
               (selectable ? 1 : 0) +
               (reorderable ? 1 : 0) +
@@ -343,7 +348,8 @@ function onDragEnd() {
             </td>
           </tr>
 
-          <tr v-for="(item, index) in items" :key="getRowKey(item, index)" :class="{
+          <tr
+v-for="(item, index) in items" :key="getRowKey(item, index)" :class="{
             selected: selectable && isRowSelected(index),
             'is-dragging': draggedIndex === index,
             'drag-over-top': dragOverIndex === index && dragOverPosition === 'top',
@@ -359,11 +365,13 @@ function onDragEnd() {
             <td v-if="showIndex" class="td-index">{{ index + 1 }}</td>
 
             <!-- Drag handle column -->
-            <td v-if="reorderable" class="td-drag-handle" :draggable="reorderable" @click.stop
+            <td
+v-if="reorderable" class="td-drag-handle" :draggable="reorderable" @click.stop
               @dragstart.stop="onDragStart($event, index)">
               <slot name="drag-handle" :item="item" :index="index">
                 <span class="drag-handle-icon" :title="$t('drag_to_reorder') || 'Drag to reorder'">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  <svg
+width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                     stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="9" cy="5" r="1" fill="currentColor" />
                     <circle cx="9" cy="12" r="1" fill="currentColor" />
@@ -377,7 +385,8 @@ function onDragEnd() {
             </td>
 
             <!-- Data cells -->
-            <td v-for="header in headers" :key="header.key" :style="{ textAlign: header.align || 'start' }"
+            <td
+v-for="header in headers" :key="header.key" :style="{ textAlign: header.align || 'start' }"
               class="td-data" @dblclick.stop="copyToClipboard((item as any)?.[header.key])">
               <slot :name="`cell-${header.key}`" :item="item" :index="index" :value="(item as any)[header.key]">
                 {{ (item as any)[header.key] ?? '--' }}

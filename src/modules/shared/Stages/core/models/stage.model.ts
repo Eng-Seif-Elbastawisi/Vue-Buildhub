@@ -1,5 +1,6 @@
 export default class StageModel {
   public readonly id?: number;
+  public readonly parentId?: number | null;
   public readonly title: string;
   public readonly translations: { title: Record<string, string> };
   public readonly children: StageModel[];
@@ -8,6 +9,7 @@ export default class StageModel {
 
   constructor(data: {
     id?: number;
+    parentId?: number | null;
     translations?: { title: Record<string, string> };
     title?: string;
     children: StageModel[];
@@ -15,6 +17,7 @@ export default class StageModel {
     stageChildrenCount?: number;
   }) {
     this.id = data.id;
+    this.parentId = data.parentId;
     this.translations = data.translations ?? {
       title: { en: data.title ?? '' },
     };
@@ -52,6 +55,10 @@ export default class StageModel {
 
     return new StageModel({
       id: json.id,
+      parentId:
+        json.parent_id === null || json.parent_id === undefined
+          ? json.parent_id
+          : Number(json.parent_id),
       title: json.title,
       translations: {
         title: StageModel.mapTranslations(json.title),
