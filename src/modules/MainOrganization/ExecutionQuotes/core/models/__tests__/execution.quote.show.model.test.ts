@@ -26,7 +26,7 @@ describe('ExecutionQuoteShowModel', () => {
         email: '1012@test.com',
         address: 'mansoura',
         type: 1,
-        client_source: null,
+        client_source: { id: 11, title: 'Website' },
         status: 1,
         created_at: '2026-07-22 13:29:29',
       },
@@ -37,8 +37,8 @@ describe('ExecutionQuoteShowModel', () => {
           id: 5,
           quote_id: 41,
           project_id: 207,
-          stage_id: 129,
-          sub_stage_id: 150,
+          stage: { id: 129, title: 'Main stage' },
+          sub_stage: { id: 150, title: 'Sub stage' },
           items: [
             {
               id: 7,
@@ -50,6 +50,7 @@ describe('ExecutionQuoteShowModel', () => {
               quantity: 1,
             },
           ],
+          total_price: '44444444.00',
           created_at: '2026-09-23 12:42:40',
         },
       ],
@@ -77,7 +78,7 @@ describe('ExecutionQuoteShowModel', () => {
         phone: '111',
         email: '1012@test.com',
         address: 'mansoura',
-        clientSource: null,
+        clientSource: { id: 11, title: 'Website' },
         status: 1,
         createdAt: '2026-07-22 13:29:29',
       },
@@ -90,6 +91,8 @@ describe('ExecutionQuoteShowModel', () => {
           projectId: 207,
           stageId: 129,
           subStageId: 150,
+          stage: { id: 129, title: 'Main stage' },
+          subStage: { id: 150, title: 'Sub stage' },
           items: [
             {
               id: 7,
@@ -101,6 +104,7 @@ describe('ExecutionQuoteShowModel', () => {
               quantity: 1,
             },
           ],
+          totalPrice: 44444444,
           createdAt: '2026-09-23 12:42:40',
         },
       ],

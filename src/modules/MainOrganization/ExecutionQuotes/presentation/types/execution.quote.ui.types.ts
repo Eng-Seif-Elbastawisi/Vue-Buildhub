@@ -15,6 +15,7 @@ export interface ExecutionQuoteItemState {
   source_title?: string;
   unit_name?: string;
   sorting_title?: string;
+  persisted?: boolean;
 }
 
 export interface ExecutionQuoteStageState extends Omit<ExecutionQuoteStageRequest, 'items'> {

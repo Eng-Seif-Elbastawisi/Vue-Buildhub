@@ -41,7 +41,7 @@ vi.mock('@/base/Presentation/Dialogs/dialog.manager', () => ({
 vi.mock('../ExecutionQuoteForm.vue', () => ({
   default: {
     name: 'ExecutionQuoteForm',
-    props: ['loading', 'executionQuoteId', 'initialQuoteType'],
+    props: ['loading', 'executionQuoteId', 'initialQuoteType', 'initialQuoteStages'],
     emits: ['updateData', 'updateDetails'],
     template: '<div class="execution-quote-form-stub" />',
   },
@@ -122,6 +122,16 @@ describe('ExecutionQuoteAdd', () => {
         data: new ExecutionQuoteShowModel({
           id: 28,
           quoteType: { id: ExecutionQuoteTypeEnum.SUPERVISION, title: 'Supervision' },
+          quoteStages: [
+            {
+              id: 5,
+              stageId: 1,
+              subStageId: 11,
+              stage: { id: 1, title: 'Main' },
+              subStage: { id: 11, title: 'Sub' },
+              items: [],
+            },
+          ],
         }),
       }),
     );
@@ -134,6 +144,9 @@ describe('ExecutionQuoteAdd', () => {
     expect(wrapper.getComponent({ name: 'ExecutionQuoteForm' }).props('initialQuoteType')).toBe(
       ExecutionQuoteTypeEnum.SUPERVISION,
     );
+    expect(wrapper.getComponent({ name: 'ExecutionQuoteForm' }).props('initialQuoteStages')).toEqual([
+      expect.objectContaining({ stageId: 1, subStageId: 11 }),
+    ]);
   });
 
   it('saves the current batch and stays on the same main stage for more sub-stages', async () => {

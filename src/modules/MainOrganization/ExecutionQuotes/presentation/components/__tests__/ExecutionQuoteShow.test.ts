@@ -49,19 +49,19 @@ describe('ExecutionQuoteShow', () => {
             email: '1012@test.com',
             address: 'mansoura',
             type: 1,
-            client_source: null,
+            client_source: { id: 11, title: 'تست' },
             status: 1,
             created_at: '2026-07-22 13:29:29',
           },
           quote_type: { id: 1, title: 'Lump_SUM' },
-          price_employee: { id: 68, name: 'type test' },
+          price_employee: { id: 92, name: 'fwffefefe' },
           quote_stages: [
             {
               id: 5,
               quote_id: 41,
               project_id: 207,
-              stage_id: 129,
-              sub_stage_id: 150,
+              stage: { id: 129, title: 'منعم' },
+              sub_stage: { id: 150, title: 'sub stage' },
               items: [
                 {
                   id: 7,
@@ -73,6 +73,7 @@ describe('ExecutionQuoteShow', () => {
                   quantity: 1,
                 },
               ],
+              total_price: '44444444.00',
               created_at: '2026-09-23 12:42:40',
             },
           ],
@@ -88,6 +89,7 @@ describe('ExecutionQuoteShow', () => {
             if (key === 'execution_quote.show.title') return 'Execution quote details';
             if (key === 'execution_quote.show.eyebrow') return `Quote #${params?.id}`;
             if (key === 'execution_quote.quote_types.lump_sum.title') return 'Lump sum';
+            if (key === 'INDIVIDUAL') return 'Individual';
             return key;
           },
         },
@@ -102,16 +104,25 @@ describe('ExecutionQuoteShow', () => {
     expect(wrapper.text()).toContain('Techlab');
     expect(wrapper.text()).toContain('007');
     expect(wrapper.text()).toContain('شارع');
-    expect(wrapper.text()).toContain('type test');
+    expect(wrapper.text()).toContain('Individual');
+    expect(wrapper.text()).toContain('تست');
+    expect(wrapper.text()).not.toContain('fwffefefe');
+    expect(wrapper.text()).not.toContain('1012@test.com');
+    expect(wrapper.text()).not.toContain('execution_quote.show.project_id');
+    expect(wrapper.text()).not.toContain('execution_quote.show.email');
     expect(wrapper.text()).toContain('Lump sum');
-    expect(wrapper.text()).toContain('#129');
-    expect(wrapper.text()).toContain('#150');
+    expect(wrapper.text()).toContain('منعم');
+    expect(wrapper.text()).toContain('sub stage');
     expect(wrapper.text()).toContain('تيست1');
     expect(wrapper.text()).toContain('44,444,444');
     expect(wrapper.text()).toContain('#17');
 
+    const stageHeader = wrapper.find('.execution-quote-show__stage-header');
+    expect(stageHeader.text()).toContain('execution_quote.show.stage_total');
+    expect(stageHeader.text()).toContain('44,444,444');
+
     const projectCard = wrapper.findAll('.execution-quote-show__card')[0];
-    expect(projectCard.text()).toContain('type test');
+    expect(projectCard.text()).not.toContain('fwffefefe');
     expect(wrapper.text()).not.toContain('execution_quote.show.ownership_section');
 
     const accordionHeaders = wrapper.findAll('.p-accordionheader');

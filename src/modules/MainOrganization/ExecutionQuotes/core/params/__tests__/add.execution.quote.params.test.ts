@@ -11,6 +11,12 @@ describe('AddExecutionQuoteParams', () => {
       clientId: 5,
       quoteTypeId: 2,
       priceEmployeeId: 7,
+      attachments: [
+        {
+          file: 'data:application/pdf;base64,cXVvdGU=',
+          alt: 'requirements.pdf',
+        },
+      ],
     });
 
     expect(params.toMap()).toEqual({
@@ -19,6 +25,12 @@ describe('AddExecutionQuoteParams', () => {
       quote_type_id: 2,
       price_employee_id: 7,
       quote_source: QuoteSourceEnum.EXECUTION_ONLY,
+      attachments: [
+        {
+          file: 'data:application/pdf;base64,cXVvdGU=',
+          alt: 'requirements.pdf',
+        },
+      ],
     });
 
     expect(params.toMap()).not.toHaveProperty('design_quote_id');
@@ -32,6 +44,7 @@ describe('AddExecutionQuoteParams', () => {
       clientId: 28,
       quoteTypeId: 1,
       priceEmployeeId: 7,
+      attachments: [{ file: 'data:image/png;base64,aW1hZ2U=', alt: 'design.png' }],
     });
 
     expect(params.toMap()).toEqual({
@@ -43,6 +56,7 @@ describe('AddExecutionQuoteParams', () => {
 
     expect(params.toMap()).not.toHaveProperty('price_employee_id');
     expect(params.toMap()).not.toHaveProperty('design_quote_id');
+    expect(params.toMap()).not.toHaveProperty('attachments');
   });
 
   it('reports missing required IDs', () => {

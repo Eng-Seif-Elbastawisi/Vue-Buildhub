@@ -46,7 +46,7 @@ export default class ClientController extends BaseController<ClientShowModel, Cl
   async create(params: Params, options?: ApiCallOptions, formKey?: string) {
     const FormStore = useFormsStore();
 
-    const result = await super.create(params, { ...options, useJson: true });
+    const result = await this.createInline(params, options);
 
     if (result instanceof DataSuccess) {
       router.push({ name: 'Client' });
@@ -54,6 +54,10 @@ export default class ClientController extends BaseController<ClientShowModel, Cl
     }
 
     return result;
+  }
+
+  async createInline(params: Params, options?: ApiCallOptions) {
+    return await super.create(params, { ...options, useJson: true });
   }
 
   async update(params: Params, options?: ApiCallOptions, formKey?: string) {

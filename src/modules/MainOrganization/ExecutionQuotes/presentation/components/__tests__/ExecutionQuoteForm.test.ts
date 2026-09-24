@@ -4,6 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import ExecutionQuoteForm from '../ExecutionQuoteForm.vue';
 import { QuoteSourceEnum } from '../../../core/constants/quote.source.enum';
 import { ExecutionQuoteTypeEnum } from '../../../core/constants/execution.quote.type.enum';
+import type { ExecutionQuoteStageSummary } from '../../../core/models/execution.quote.show.model';
 import AddExecutionQuoteParams from '../../../core/params/add.execution.quote.params';
 
 const { controller, routeState } = vi.hoisted(() => ({
@@ -38,7 +39,7 @@ vi.mock('@/modules/MainOrganization/employee/presentation/controllers/employee.c
 vi.mock('../builder/ExecutionQuoteBuilder.vue', () => ({
   default: {
     name: 'ExecutionQuoteBuilder',
-    props: ['modelValue', 'enabled', 'loading', 'executionQuoteId'],
+    props: ['modelValue', 'enabled', 'loading', 'executionQuoteId', 'initialStages'],
     emits: ['update:modelValue', 'update:stages', 'update:details'],
     template:
       '<button class="execution-quote-builder-stub" @click="$emit(\'update:modelValue\', 2)" />',
@@ -53,11 +54,31 @@ const SelectStub = {
     '<label :for="id">{{ label }}</label><button :id="id" class="select-stub" :data-id="id" @click="$emit(\'update:modelValue\', { id: 9, title: id })" />',
 };
 
-const mountForm = (executionQuoteId?: number) =>
+const FileUploadStub = {
+  name: 'HandleFilesUpload',
+  emits: ['change'],
+  template: '<button class="file-upload-stub" />',
+};
+
+const ClientDialogStub = {
+  name: 'ExecutionQuoteClientDialog',
+  props: ['modelValue'],
+  emits: ['update:modelValue', 'created'],
+  template: '<div class="client-dialog-stub" :data-visible="modelValue" />',
+};
+
+const mountForm = (
+  executionQuoteId?: number,
+  initialQuoteStages: ExecutionQuoteStageSummary[] = [],
+) =>
   mount(ExecutionQuoteForm, {
-    props: { executionQuoteId },
+    props: { executionQuoteId, initialQuoteStages },
     global: {
-      stubs: { UpdatedCustomInputSelect: SelectStub },
+      stubs: {
+        UpdatedCustomInputSelect: SelectStub,
+        HandleFilesUpload: FileUploadStub,
+        ExecutionQuoteClientDialog: ClientDialogStub,
+      },
       mocks: { $t: (key: string) => key },
     },
   });
@@ -95,15 +116,75 @@ describe('ExecutionQuoteForm', () => {
   it('keeps client and project but removes design-quote and quote-type selects', async () => {
     const wrapper = mountForm();
 
+    wrapper.getComponent(FileUploadStub).vm.$emit('change', [
+      {
+        name: 'requirements.pdf',
+        base64: 'data:application/pdf;base64,cXVvdGU=',
+      },
+    ]);
+    await wrapper.vm.$nextTick();
+
     await wrapper.findAll('button[role="radio"]').at(1)?.trigger('click');
 
     expect(wrapper.find('#execution-quote-project').exists()).toBe(true);
     expect(wrapper.find('#execution-design-quote').exists()).toBe(false);
     expect(wrapper.find('#execution-quote-type').exists()).toBe(false);
     expect(wrapper.find('#execution-quote-price-employee').exists()).toBe(false);
+    expect(wrapper.find('.quote-data__attachments').exists()).toBe(false);
+    expect(wrapper.find('.quote-data__add-client').exists()).toBe(false);
 
     const params = wrapper.emitted('updateData')?.at(-1)?.[0] as AddExecutionQuoteParams;
     expect(params.toMap().quote_source).toBe(QuoteSourceEnum.EXECUTION_FROM_DESIGN_QUOTE);
+    expect(params.toMap()).not.toHaveProperty('attachments');
+  });
+
+  it('sends an attachment list before the quote type in execution-only mode', async () => {
+    const wrapper = mountForm();
+    const html = wrapper.html();
+
+    expect(html.indexOf('quote-data__attachments')).toBeLessThan(
+      html.indexOf('quote-data__type-options'),
+    );
+
+    wrapper.getComponent(FileUploadStub).vm.$emit('change', [
+      {
+        name: 'requirements.pdf',
+        base64: 'data:application/pdf;base64,cXVvdGU=',
+      },
+      {
+        name: 'remote.pdf',
+        base64: 'https://example.com/remote.pdf',
+      },
+    ]);
+    await wrapper.vm.$nextTick();
+
+    const params = wrapper.emitted('updateData')?.at(-1)?.[0] as AddExecutionQuoteParams;
+    expect(params.toMap().attachments).toEqual([
+      {
+        file: 'data:application/pdf;base64,cXVvdGU=',
+        alt: 'requirements.pdf',
+      },
+    ]);
+  });
+
+  it('opens the inline client dialog and selects the created client', async () => {
+    const wrapper = mountForm();
+
+    await wrapper.get('.quote-data__add-client').trigger('click');
+    const clientDialog = wrapper.getComponent(ClientDialogStub);
+    expect(clientDialog.props('modelValue')).toBe(true);
+
+    clientDialog.vm.$emit('created', { id: 44, name: 'New client' });
+    await wrapper.vm.$nextTick();
+
+    const clientSelect = wrapper
+      .findAllComponents(SelectStub)
+      .find((select) => select.props('id') === 'execution-quote-client');
+    const params = wrapper.emitted('updateData')?.at(-1)?.[0] as AddExecutionQuoteParams;
+
+    expect(clientSelect?.props('modelValue')).toEqual({ id: 44, title: 'New client' });
+    expect(params.toMap().client_id).toBe(44);
+    expect(clientDialog.props('modelValue')).toBe(false);
   });
 
   it('filters project options by the selected client', async () => {
@@ -135,12 +216,18 @@ describe('ExecutionQuoteForm', () => {
     routeState.name = 'Build Execution Quote';
     routeState.params.stageId = '12';
 
-    const wrapper = mountForm(28);
+    const initialQuoteStages: ExecutionQuoteStageSummary[] = [
+      { id: 5, stageId: 1, subStageId: 11, items: [] },
+    ];
+    const wrapper = mountForm(28, initialQuoteStages);
 
     expect(wrapper.classes()).toContain('execution-quote--stage-page');
     expect(wrapper.find('.execution-quote__header').exists()).toBe(false);
     expect(wrapper.find('.source-section').exists()).toBe(false);
     expect(wrapper.find('.execution-quote-builder-stub').exists()).toBe(true);
+    expect(wrapper.getComponent({ name: 'ExecutionQuoteBuilder' }).props('initialStages')).toEqual(
+      initialQuoteStages,
+    );
   });
 
   it('hides the builder from the initial add page', () => {
