@@ -29,7 +29,6 @@ import type {
 } from '../../core/models/execution.quote.show.model';
 import ShowExecutionQuoteParams from '../../core/params/show.execution.quote.params';
 import ExecutionQuoteController from '../controllers/execution.quote.controller';
-import type TitleInterface from '@/base/Data/Models/titleInterface';
 
 const route = useRoute();
 const controller = ExecutionQuoteController.getInstance();
@@ -139,18 +138,6 @@ const clientTypeLabel = (type: number | undefined) => {
 };
 
 onMounted(fetchQuote);
-
-//
-
- const clientExistOptions = computed<TitleInterface<number>[]>(() => [
-    { id: 0, title: t('Project.client_new') },
-    { id: 1, title: t('Project.client_existing') },
-  ]);
-
-  const getClientExistOption = (value: boolean) => {
-    return clientExistOptions.value.find((option) => option.id === (value ? 1 : 0)) ?? null;
-  };
-    
 </script>
 
 <template>
@@ -158,7 +145,7 @@ onMounted(fetchQuote);
     <header class="execution-quote-show__header">
       <div>
         <span class="execution-quote-show__eyebrow">
-          {{ $t('execution_quote.show.eyebrow') }}
+          {{ $t('execution_quote.show.eyebrow', { id: quoteId }) }}
         </span>
         <h1>{{ $t('execution_quote.show.title') }}</h1>
         <p>{{ $t('execution_quote.show.description') }}</p>
@@ -180,7 +167,7 @@ onMounted(fetchQuote);
               <div class="execution-quote-show__badges">
                 <span>
                   <i class="pi pi-file" aria-hidden="true"></i>
-                  {{ $t('execution_quote.show.eyebrow') }}
+                  {{ $t('execution_quote.show.eyebrow', { id: quote.id }) }}
                 </span>
                 <span> {{ quoteSourceLabel(quote) }} </span>
               </div>
@@ -393,17 +380,17 @@ onMounted(fetchQuote);
                             <tr v-for="quoteItem in stage.items" :key="quoteItem.id ?? quoteItem.itemableId">
                               <td>
                                 <strong>{{ quoteItem.itemable?.title ?? '—' }}</strong>
-                                <!-- <small>
+                                <small>
                                   #{{ quoteItem.id ?? '—' }} ·
                                   {{ $t('execution_quote.show.itemable_id') }} #{{
                                     quoteItem.itemableId ?? '—'
                                   }}
-                                </small> -->
+                                </small>
                               </td>
                               <td>
                                 {{ itemSourceLabel(quoteItem) }}
                               </td>
-                              <td>{{ getClientExistOption(quoteItem.itemableType) }}</td>
+                              <td>{{ quoteItem.itemableType ?? '—' }}</td>
                               <td>{{ formatNumber(quoteItem.expectedPrice) }}</td>
                               <td>{{ formatNumber(quoteItem.quantity) }}</td>
 
