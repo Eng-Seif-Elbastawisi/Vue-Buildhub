@@ -3,6 +3,8 @@ import { computed, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 import type TitleInterface from '@/base/Data/Models/titleInterface';
+import type ClientShowModel from '@/modules/MainOrganization/client/core/models/client.show.model';
+import HandleFilesUpload, { type UploadedFile } from '@/shared/FormInputs/HandleFilesUpload.vue';
 import UpdatedCustomInputSelect from '@/shared/FormInputs/UpdatedCustomInputSelect.vue';
 import AppButton from '@/shared/HelpersComponents/AppButton.vue';
 
@@ -17,13 +19,19 @@ import IndexEmployeeParams from '@/modules/MainOrganization/employee/core/params
 
 import { QuoteSourceEnum } from '../../core/constants/quote.source.enum';
 import type { ExecutionQuoteType } from '../../core/constants/execution.quote.type.enum';
-import AddExecutionQuoteParams from '../../core/params/add.execution.quote.params';
+import type { ExecutionQuoteStageSummary } from '../../core/models/execution.quote.show.model';
+import AddExecutionQuoteParams, {
+  type ExecutionQuoteAttachmentRequest,
+} from '../../core/params/add.execution.quote.params';
 import type {
   default as StoreExecutionQuoteDetailsParams,
   ExecutionQuoteStageRequest,
 } from '../../core/params/store.execution.quote.details.params';
 import ExecutionQuoteBuilder from './builder/ExecutionQuoteBuilder.vue';
 import ExecutionQuoteTypeCards from './builder/ExecutionQuoteTypeCards.vue';
+import ExecutionQuoteClientDialog from './ExecutionQuoteClientDialog.vue';
+import ClientSourceController from '@/modules/shared/ClientSource/presentation/controllers/client.source.controller.ts';
+import IndexClientSourceParams from '@/modules/shared/ClientSource/core/params/index.client.source.params.ts';
 
 const emit = defineEmits<{
   (event: 'updateData', quoteParams: AddExecutionQuoteParams): void;
@@ -35,11 +43,13 @@ const props = withDefaults(
     loading?: boolean;
     executionQuoteId?: number | null;
     initialQuoteType?: ExecutionQuoteType | null;
+    initialQuoteStages?: ExecutionQuoteStageSummary[];
   }>(),
   {
     loading: false,
     executionQuoteId: null,
     initialQuoteType: null,
+    initialQuoteStages: () => [],
   },
 );
 
@@ -49,20 +59,37 @@ const clientController = ClientController.getInstance();
 const projectController = ProjectController.getInstance();
 const employeeController = EmployeeController.getInstance();
 
+const clientSourceController = ClientSourceController.getInstance();
+const indexClientSourceParams = new IndexClientSourceParams('', 1, 100, 0);
+
 const clientParams = new IndexClientParams('', 1, 100, 0);
 const employeeParams = new IndexEmployeeParams('', 1, 100, 0);
 
-const client = ref<TitleInterface<string | number> | null>(null);
+// const client = ref<TitleInterface<string | number> | null>(null);
 const project = ref<TitleInterface<string | number> | null>(null);
 const priceEmployee = ref<TitleInterface<string | number> | null>(null);
-
+const client = ref<TitleInterface<string | number> | null>(null);
 const clientId = ref<number | undefined>();
 const projectId = ref<number | undefined>();
 const priceEmployeeId = ref<number | undefined>();
+//
+
+const selectedClientExist = ref<TitleInterface<number> | null>(null);
+
+const clientExist = ref<boolean | null>(null);
+const selectedClientSource = ref<TitleInterface<number> | null>(null);
+
+const selectedClient = ref<TitleInterface<string | number> | null>(null);
+const clientEmail = ref('');
+const clientAddress = ref('');
+const clientName = ref('');
+const clientPhone = ref('');
 
 const selectedQuoteSource = ref<QuoteSourceEnum>(QuoteSourceEnum.EXECUTION_ONLY);
 const selectedExecutionQuoteType = ref<ExecutionQuoteType | null>(null);
 const executionQuoteStages = ref<ExecutionQuoteStageRequest[]>([]);
+const attachments = ref<ExecutionQuoteAttachmentRequest[]>([]);
+const clientDialogVisible = ref(false);
 
 const baseLocked = computed(() => Boolean(props.executionQuoteId));
 const isBuilderPage = computed(() => route.name === 'Build Execution Quote');
@@ -198,8 +225,35 @@ const updateBaseData = () => {
   emit(
     'updateData',
     new AddExecutionQuoteParams({
-      ...baseQuoteFields,
-      priceEmployeeId: priceEmployeeId.value,
+
+      quoteSource: selectedQuoteSource.value,
+
+      projectId: projectId.value,
+
+      quoteTypeId: selectedExecutionQuoteType.value ?? undefined,
+
+
+      clientExist: clientExist.value ?? undefined,
+
+      clientId: clientId.value,
+
+      clientName: clientName.value,
+
+      clientPhone: clientPhone.value,
+
+      clientEmail: clientEmail.value,
+
+      clientAddress: clientAddress.value,
+
+      clientSourceId: client.value?.id
+        ? Number(client.value.id)
+        : undefined,
+
+
+      attachments: attachments.value.length
+        ? attachments.value
+        : undefined,
+
     }),
   );
 };
@@ -236,6 +290,27 @@ const showQuotes = () => {
   void router.push({ name: 'Execution Quotes' });
 };
 
+const updateAttachments = (uploadedFiles: UploadedFile[]) => {
+  attachments.value = uploadedFiles
+    .filter((uploadedFile) => uploadedFile.base64.startsWith('data:'))
+    .map((uploadedFile) => ({
+      file: uploadedFile.base64,
+      alt: uploadedFile.name,
+    }));
+
+  updateBaseData();
+};
+
+const selectCreatedClient = (createdClient: ClientShowModel) => {
+  if (!createdClient.id) return;
+
+  client.value = {
+    id: createdClient.id,
+    title: createdClient.name ?? `#${createdClient.id}`,
+  };
+  clientDialogVisible.value = false;
+};
+
 watch(client, (selectedClient, previousClient) => {
   clientId.value = toOptionalId(selectedClient);
 
@@ -261,6 +336,8 @@ watch(selectedQuoteSource, () => {
 
   clearProjectData();
   clearPriceEmployeeData();
+  attachments.value = [];
+  clientDialogVisible.value = false;
   updateBaseData();
 });
 
@@ -272,6 +349,86 @@ watch(
 );
 
 updateBaseData();
+
+
+
+
+//New Updates In Client 
+
+const clientExistOptions = computed<TitleInterface<number>[]>(() => [
+  {
+    id: 0,
+    title: 'New',
+  },
+  {
+    id: 1,
+    title: 'Existing',
+  },
+]);
+
+
+
+
+const updateClientExist = (
+  value: TitleInterface<number> | null,
+) => {
+
+  selectedClientExist.value = value;
+
+
+  if (!value) {
+
+    clientExist.value = null;
+
+    selectedClient.value = null;
+
+    clientName.value = '';
+
+    clientPhone.value = '';
+
+    updateBaseData();
+
+    return;
+
+  }
+
+
+  clientExist.value = value.id === 1;
+
+
+  if (clientExist.value) {
+
+    clientName.value = '';
+
+    clientPhone.value = '';
+
+  } else {
+
+    selectedClient.value = null;
+
+  }
+
+
+  updateBaseData();
+
+};
+
+
+const updateClient = (
+  value: TitleInterface<string | number> | null,
+) => {
+
+  selectedClient.value = value;
+
+  updateBaseData();
+
+};
+
+const handleClientSource = (value: TitleInterface<number> | null) => {
+  selectedClientSource.value = value;
+
+  updateBaseData();
+} 
 </script>
 
 <template>
@@ -413,10 +570,87 @@ updateBaseData();
 
           <div class="quote-data__grid">
             <div class="quote-data__field">
-              <UpdatedCustomInputSelect id="execution-quote-client" v-model="client" :controller="clientController"
-                :params="clientParams" :placeholder="$t('execution_quote.placeholders.client')"
-                :disabled="loading || baseLocked" :label="$t('execution_quote.fields.client')" required />
+
+              <UpdatedCustomInputSelect id="client_exist" :model-value="selectedClientExist"
+                :static-options="clientExistOptions" :label="$t('client_type')"
+                :placeholder="$t('client_type_placeholder')" required @update:model="updateClientExist" />
+
             </div>
+
+
+            <div v-if="selectedClientExist && clientExist" class="quote-data__field">
+
+              <UpdatedCustomInputSelect id="client_id" :model-value="selectedClient" :controller="clientController"
+                :params="clientParams" :label="$t('client')" :placeholder="$t('client_placeholder')" required
+                @update:model="updateClient" />
+
+            </div>
+
+
+            <!-- 
+            <template v-if="selectedClientExist && clientExist === false">
+
+              <div class="quote-data__field">
+
+                <input v-model="clientName" class="field-input" :placeholder="$t('client_name')"
+                  @input="updateBaseData" />
+
+              </div>
+
+
+
+              <div class="quote-data__field">
+
+                <input v-model="clientPhone" class="field-input" :placeholder="$t('client_phone')"
+                  @input="updateBaseData" />
+
+              </div>
+
+              <div class="quote-data__field">
+
+                <input v-model="clientAddress" class="field-input" :placeholder="$t('client_address')"
+                  @input="updateBaseData" />
+
+              </div>
+
+              <div class="quote-data__field">
+
+                <input v-model="clientEmail" class="field-input" :placeholder="$t('client_email')"
+                  @input="updateBaseData" />
+
+              </div>
+
+            </template> -->
+
+
+            <template v-if="selectedClientExist && clientExist === false">
+              <div id="client-source-field" class="field-group">
+                <span class="field-help-label-row field-help-label-row--block">
+                  <label class="field-label" for="client_name">{{ $t('client_name') }}</label>
+                  <FieldHelpIcon :label="$t('client_name')" field-name="name" field-id="client_name" />
+                </span>
+
+                <input id="client_name" v-model="clientName" class="field-input"
+                  :placeholder="$t('client_name_placeholder')" @input="updateBaseData" />
+              </div>
+
+              <div class="field-group">
+                <span class="field-help-label-row field-help-label-row--block">
+                  <label class="field-label" for="client_phone">{{ $t('client_phone') }}</label>
+                  <FieldHelpIcon :label="$t('client_phone')" field-name="phone" field-id="client_phone" />
+                </span>
+
+                <input id="client_phone" v-model="clientPhone" class="field-input"
+                  :placeholder="$t('client_phone_placeholder')" @input="updateBaseData" />
+              </div>
+
+              <div class="field-group">
+                <UpdatedCustomInputSelect id="client_source" :model-value="selectedClientSource"
+                  :label="$t('client_source')" :controller="clientSourceController"
+                  :placeholder="$t('client_source_placeholder')" :params="indexClientSourceParams" required
+                  @update:model="handleClientSource" />
+              </div>
+            </template>
 
             <div class="quote-data__field">
               <UpdatedCustomInputSelect id="execution-quote-project" v-model="project" :controller="projectController"
@@ -424,25 +658,73 @@ updateBaseData();
                 :disabled="loading || baseLocked || !clientId" :label="$t('execution_quote.fields.project')" required />
             </div>
 
-            <div v-if="isExecutionOnly" class="quote-data__field">
-              <UpdatedCustomInputSelect id="execution-quote-price-employee" v-model="priceEmployee"
-                :controller="employeeController" :params="employeeParams"
-                :placeholder="$t('execution_quote.placeholders.price_employee')" :disabled="loading || baseLocked"
-                :label="$t('execution_quote.fields.price_employee')" required />
+            <div class="quote-data__field">
+
+              <UpdatedCustomInputSelect id="client_exist" :model-value="selectedClientExist"
+                :static-options="clientExistOptions" :label="$t('client_type')"
+                :placeholder="$t('client_type_placeholder')" required @update:model="updateClientExist" />
+
             </div>
+
+
+            <div v-if="selectedClientExist && clientExist" class="quote-data__field">
+
+              <UpdatedCustomInputSelect id="client_id" :model-value="selectedClient"
+                :controller="clientController" :params="clientParams" :label="$t('client')"
+                :placeholder="$t('client_placeholder')" required @update:model="updateClient" />
+
+            </div>
+
+
+
+            <template v-if="selectedClientExist && clientExist === false">
+
+              <div class="quote-data__field">
+
+                <input v-model="clientName" class="field-input" :placeholder="$t('client_name')"
+                  @input="updateBaseData" />
+
+              </div>
+
+
+
+              <div class="quote-data__field">
+
+                <input v-model="clientPhone" class="field-input" :placeholder="$t('client_phone')"
+                  @input="updateBaseData" />
+
+              </div>
+
+            </template>
           </div>
+
+          <section v-if="isExecutionOnly && !baseLocked" class="quote-data__attachments">
+            <div class="quote-data__attachments-heading">
+              <span aria-hidden="true">
+                <i class="pi pi-paperclip"></i>
+              </span>
+              <div>
+                <h3>{{ $t('execution_quote.attachments.title') }}</h3>
+                <p>{{ $t('execution_quote.attachments.description') }}</p>
+              </div>
+            </div>
+
+            <HandleFilesUpload label="execution_quote.attachments.upload" multiple @change="updateAttachments" />
+          </section>
 
           <ExecutionQuoteTypeCards v-if="!baseLocked" class="quote-data__type-options"
             :model-value="selectedExecutionQuoteType" :loading="loading"
             @update:model-value="onExecutionQuoteTypeChange" />
         </div>
       </section>
+
+      <ExecutionQuoteClientDialog v-model="clientDialogVisible" @created="selectCreatedClient" />
     </template>
 
     <ExecutionQuoteBuilder v-if="isBuilderPage" :model-value="selectedExecutionQuoteType"
       :enabled="Boolean(executionQuoteId)" :execution-quote-id="executionQuoteId" :loading="loading"
-      @update:model-value="onExecutionQuoteTypeChange" @update:stages="onStagesChange"
-      @update:details="onDetailsChange" />
+      :initial-stages="initialQuoteStages" @update:model-value="onExecutionQuoteTypeChange"
+      @update:stages="onStagesChange" @update:details="onDetailsChange" />
   </section>
 </template>
 
@@ -872,6 +1154,55 @@ updateBaseData();
 
 .quote-data__type-options {
   margin-top: 1rem;
+}
+
+.quote-data__add-client {
+  align-self: flex-start;
+  margin-block-start: 0.15rem;
+}
+
+.quote-data__attachments {
+  display: grid;
+  gap: 1rem;
+  margin-block-start: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--border-weak);
+  border-radius: var(--radius-md);
+  background: var(--bg-section);
+}
+
+.quote-data__attachments-heading {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-align: start;
+}
+
+.quote-data__attachments-heading>span {
+  display: grid;
+  flex: 0 0 2.5rem;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: var(--radius-sm);
+  background: var(--PrimaryColor-light);
+  color: var(--PrimaryColor);
+}
+
+.quote-data__attachments-heading h3,
+.quote-data__attachments-heading p {
+  margin: 0;
+}
+
+.quote-data__attachments-heading h3 {
+  color: var(--title-card-color);
+  font-size: var(--md-size);
+}
+
+.quote-data__attachments-heading p {
+  margin-block-start: 0.2rem;
+  color: var(--subtitle-color);
+  font-size: var(--sm-size);
 }
 
 .quote-data__field> :deep(.input-label) {

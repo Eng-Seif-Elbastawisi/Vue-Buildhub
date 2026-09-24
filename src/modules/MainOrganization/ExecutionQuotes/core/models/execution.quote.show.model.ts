@@ -11,6 +11,11 @@ export interface ExecutionQuoteEmployeeSummary {
   name?: string;
 }
 
+export interface ExecutionQuoteTitledResourceSummary {
+  id?: number;
+  title?: string;
+}
+
 export interface ExecutionQuoteProjectSummary {
   id?: number;
   client?: { id?: number; title?: string };
@@ -29,7 +34,7 @@ export interface ExecutionQuoteClientSummary {
   email?: string;
   address?: string;
   type?: number;
-  clientSource?: number | null;
+  clientSource?: ExecutionQuoteTitledResourceSummary | null;
   status?: number;
   createdAt?: string;
 }
@@ -39,17 +44,12 @@ export interface ExecutionQuoteTypeSummary {
   title?: string;
 }
 
-export interface ExecutionQuoteItemableSummary {
-  id?: number;
-  title?: string;
-}
-
 export interface ExecutionQuoteStageItemSummary {
   id?: number;
   itemType?: number;
   itemableId?: number;
   itemableType?: string;
-  itemable?: ExecutionQuoteItemableSummary;
+  itemable?: ExecutionQuoteTitledResourceSummary;
   expectedPrice?: number;
   quantity?: number;
 }
@@ -60,7 +60,10 @@ export interface ExecutionQuoteStageSummary {
   projectId?: number;
   stageId?: number;
   subStageId?: number;
+  stage?: ExecutionQuoteTitledResourceSummary;
+  subStage?: ExecutionQuoteTitledResourceSummary;
   items: ExecutionQuoteStageItemSummary[];
+  totalPrice?: number;
   createdAt?: string;
 }
 
@@ -114,6 +117,18 @@ const employeeSummary = (rawEmployee: unknown): ExecutionQuoteEmployeeSummary | 
   };
 };
 
+const titledResourceSummary = (
+  rawResource: unknown,
+): ExecutionQuoteTitledResourceSummary | undefined => {
+  const resource = objectValue(rawResource);
+  if (!resource) return undefined;
+
+  return {
+    id: numberValue(resource.id),
+    title: stringValue(resource.title),
+  };
+};
+
 const projectClientSummary = (rawClient: unknown) => {
   const client = objectValue(rawClient);
   if (!client) return undefined;
@@ -151,7 +166,8 @@ const clientSummary = (rawClient: unknown): ExecutionQuoteClientSummary | undefi
     email: stringValue(client.email),
     address: stringValue(client.address),
     type: numberValue(client.type),
-    clientSource: client.client_source === null ? null : numberValue(client.client_source),
+    clientSource:
+      client.client_source === null ? null : titledResourceSummary(client.client_source),
     status: numberValue(client.status),
     createdAt: stringValue(client.created_at),
   };
@@ -167,16 +183,6 @@ const quoteTypeSummary = (rawQuoteType: unknown): ExecutionQuoteTypeSummary | un
   };
 };
 
-const itemableSummary = (rawItemable: unknown): ExecutionQuoteItemableSummary | undefined => {
-  const itemable = objectValue(rawItemable);
-  if (!itemable) return undefined;
-
-  return {
-    id: numberValue(itemable.id),
-    title: stringValue(itemable.title),
-  };
-};
-
 const stageItemSummary = (rawItem: unknown): ExecutionQuoteStageItemSummary | undefined => {
   const stageItem = objectValue(rawItem);
   if (!stageItem) return undefined;
@@ -186,7 +192,7 @@ const stageItemSummary = (rawItem: unknown): ExecutionQuoteStageItemSummary | un
     itemType: numberValue(stageItem.item_type),
     itemableId: numberValue(stageItem.itemable_id),
     itemableType: stringValue(stageItem.itemable_type),
-    itemable: itemableSummary(stageItem.itemable),
+    itemable: titledResourceSummary(stageItem.itemable),
     expectedPrice: decimalNumberValue(stageItem.expected_price),
     quantity: decimalNumberValue(stageItem.quantity),
   };
@@ -195,6 +201,9 @@ const stageItemSummary = (rawItem: unknown): ExecutionQuoteStageItemSummary | un
 const quoteStageSummary = (rawStage: unknown): ExecutionQuoteStageSummary | undefined => {
   const quoteStage = objectValue(rawStage);
   if (!quoteStage) return undefined;
+
+  const stage = titledResourceSummary(quoteStage.stage);
+  const subStage = titledResourceSummary(quoteStage.sub_stage);
 
   const stageItems = Array.isArray(quoteStage.items)
     ? quoteStage.items
@@ -206,9 +215,12 @@ const quoteStageSummary = (rawStage: unknown): ExecutionQuoteStageSummary | unde
     id: numberValue(quoteStage.id),
     quoteId: numberValue(quoteStage.quote_id),
     projectId: numberValue(quoteStage.project_id),
-    stageId: numberValue(quoteStage.stage_id),
-    subStageId: numberValue(quoteStage.sub_stage_id),
+    stageId: stage?.id ?? numberValue(quoteStage.stage_id),
+    subStageId: subStage?.id ?? numberValue(quoteStage.sub_stage_id),
+    stage,
+    subStage,
     items: stageItems,
+    totalPrice: decimalNumberValue(quoteStage.total_price),
     createdAt: stringValue(quoteStage.created_at),
   };
 };

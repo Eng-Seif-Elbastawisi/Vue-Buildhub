@@ -6,6 +6,7 @@ import StageModel from '@/modules/shared/Stages/core/models/stage.model';
 
 import { ExecutionQuoteItemSourceEnum } from '../../../../core/constants/execution.quote.item.source.enum';
 import { ExecutionQuoteTypeEnum } from '../../../../core/constants/execution.quote.type.enum';
+import type { ExecutionQuoteStageSummary } from '../../../../core/models/execution.quote.show.model';
 import type StoreExecutionQuoteDetailsParams from '../../../../core/params/store.execution.quote.details.params';
 import ExecutionQuoteBuilder from '../ExecutionQuoteBuilder.vue';
 
@@ -68,14 +69,17 @@ const componentStubs = {
   },
   ExecutionQuoteClientPrice: { template: '<div class="client-price-stub" />' },
   ExecutionQuoteItemsTable: {
-    props: ['showPricing'],
-    template: '<div class="items-table-stub" :data-show-pricing="showPricing" />',
+    name: 'ExecutionQuoteItemsTable',
+    props: ['items', 'showPricing'],
+    template:
+      '<div class="items-table-stub" :data-items-count="items.length" :data-show-pricing="showPricing" />',
   },
   ExecutionQuoteTotals: { template: '<div class="totals-stub" />' },
 };
 
 interface BuilderMountOptions {
   modelValue?: (typeof ExecutionQuoteTypeEnum)[keyof typeof ExecutionQuoteTypeEnum];
+  initialStages?: ExecutionQuoteStageSummary[];
   stubs?: Record<string, unknown>;
 }
 
@@ -85,6 +89,7 @@ const mountBuilder = (options: BuilderMountOptions = {}) =>
       enabled: true,
       modelValue: options.modelValue ?? ExecutionQuoteTypeEnum.LUMP_SUM,
       executionQuoteId: 28,
+      initialStages: options.initialStages ?? [],
     },
     global: {
       mocks: { $t: (key: string) => key },
@@ -146,6 +151,64 @@ describe('ExecutionQuoteBuilder', () => {
         { morph_id: 22, expected_price: 5, quantity: 2 },
         { morph_id: 22, expected_price: 5, quantity: 2 },
       ],
+    });
+  });
+
+  it('shows stored quote items without submitting them again', async () => {
+    fetchList
+      .mockResolvedValueOnce(
+        new DataSuccess({ data: [new StageModel({ id: 1, title: 'Main', children: [] })] }),
+      )
+      .mockResolvedValueOnce(
+        new DataSuccess({ data: [new StageModel({ id: 11, title: 'Sub', children: [] })] }),
+      );
+
+    const wrapper = mountBuilder({
+      initialStages: [
+        {
+          id: 5,
+          stageId: 1,
+          subStageId: 11,
+          stage: { id: 1, title: 'Main' },
+          subStage: { id: 11, title: 'Sub' },
+          items: [
+            {
+              id: 7,
+              itemType: ExecutionQuoteItemSourceEnum.PRODUCT,
+              itemableId: 17,
+              itemable: { id: 17, title: 'Stored product' },
+              expectedPrice: 25,
+              quantity: 2,
+            },
+          ],
+        },
+      ],
+    });
+
+    await flushPromises();
+
+    const displayedItems = wrapper.getComponent({ name: 'ExecutionQuoteItemsTable' }).props(
+      'items',
+    );
+    expect(displayedItems).toEqual([
+      expect.objectContaining({
+        source_id: 17,
+        source_title: 'Stored product',
+        stage_name: 'Main',
+        sub_stage_name: 'Sub',
+        persisted: true,
+      }),
+    ]);
+    expect(wrapper.emitted('update:details')?.at(-1)?.[0]).toEqual([]);
+
+    await wrapper.get('.select-source').trigger('click');
+    await wrapper.get('.add-item').trigger('click');
+
+    const requests = wrapper
+      .emitted('update:details')
+      ?.at(-1)?.[0] as StoreExecutionQuoteDetailsParams[];
+    expect(requests[0]?.toMap()).toMatchObject({
+      items: [{ morph_id: 22, expected_price: 5, quantity: 2 }],
     });
   });
 

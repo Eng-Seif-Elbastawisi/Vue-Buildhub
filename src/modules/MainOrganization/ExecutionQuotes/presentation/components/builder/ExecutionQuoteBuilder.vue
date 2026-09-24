@@ -15,7 +15,14 @@ import {
   getExecutionQuoteTypeTitleKey,
   type ExecutionQuoteType,
 } from '../../../core/constants/execution.quote.type.enum';
-import type { ExecutionQuoteItemSource } from '../../../core/constants/execution.quote.item.source.enum';
+import {
+  ExecutionQuoteItemSourceEnum,
+  type ExecutionQuoteItemSource,
+} from '../../../core/constants/execution.quote.item.source.enum';
+import type {
+  ExecutionQuoteStageItemSummary,
+  ExecutionQuoteStageSummary,
+} from '../../../core/models/execution.quote.show.model';
 import StoreExecutionQuoteDetailsParams, {
   type ExecutionQuoteMorphItemRequest,
   type ExecutionQuoteStageRequest,
@@ -41,9 +48,10 @@ const props = withDefaults(
     modelValue: ExecutionQuoteType | null;
     enabled: boolean;
     executionQuoteId: number | null;
+    initialStages?: ExecutionQuoteStageSummary[];
     loading?: boolean;
   }>(),
-  { loading: false },
+  { initialStages: () => [], loading: false },
 );
 
 const emit = defineEmits<{
@@ -133,6 +141,58 @@ const getOrCreateStageState = (stage: StageModel): ExecutionQuoteStageState => {
   return state;
 };
 
+const itemSourceValue = (rawSource: number | undefined): ExecutionQuoteItemSource | undefined =>
+  Object.values(ExecutionQuoteItemSourceEnum).includes(rawSource as ExecutionQuoteItemSource)
+    ? (rawSource as ExecutionQuoteItemSource)
+    : undefined;
+
+const persistedItemState = (
+  quoteStage: ExecutionQuoteStageSummary,
+  quoteItem: ExecutionQuoteStageItemSummary,
+  itemIndex: number,
+): ExecutionQuoteItemState | undefined => {
+  const sourceType = itemSourceValue(quoteItem.itemType);
+  const sourceId = quoteItem.itemableId ?? quoteItem.itemable?.id;
+  if (!quoteStage.stageId || !quoteStage.subStageId || !sourceType || !sourceId) return undefined;
+
+  return {
+    id: `persisted-${quoteStage.id ?? quoteStage.stageId}-${quoteItem.id ?? itemIndex}`,
+    stage_id: quoteStage.stageId,
+    stage_name: quoteStage.stage?.title,
+    sub_stage_id: quoteStage.subStageId,
+    sub_stage_name: quoteStage.subStage?.title,
+    source_type: sourceType,
+    source_id: sourceId,
+    source_title: quoteItem.itemable?.title,
+    quantity: quoteItem.quantity ?? 0,
+    unit_price: quoteItem.expectedPrice ?? 0,
+    persisted: true,
+  };
+};
+
+const persistedStageState = (
+  quoteStage: ExecutionQuoteStageSummary,
+  existingState?: ExecutionQuoteStageState,
+): ExecutionQuoteStageState | undefined => {
+  if (!quoteStage.stageId) return undefined;
+
+  const stageState = existingState ?? {
+    stage_id: quoteStage.stageId,
+    stage_name: quoteStage.stage?.title,
+    client_price: null,
+    items: [],
+  };
+  const persistedItems = quoteStage.items
+    .map((quoteItem, itemIndex) => persistedItemState(quoteStage, quoteItem, itemIndex))
+    .filter((quoteItem): quoteItem is ExecutionQuoteItemState => !!quoteItem);
+
+  return {
+    ...stageState,
+    items: [...stageState.items, ...persistedItems],
+    selected_sub_stage_id: stageState.selected_sub_stage_id ?? quoteStage.subStageId,
+  };
+};
+
 const emittedStages = (): ExecutionQuoteStageRequest[] =>
   Object.values(stageStates.value)
     .filter((stage) => stage.items.length > 0 || stage.client_price !== null)
@@ -162,7 +222,7 @@ const groupedStoreItems = (): StoreRequestGroup[] => {
   const requestGroups = new Map<string, StoreRequestGroup>();
 
   Object.values(stageStates.value).forEach((stage) => {
-    stage.items.forEach((quoteItem) => {
+    stage.items.filter((quoteItem) => !quoteItem.persisted).forEach((quoteItem) => {
       const requestKey = `${stage.stage_id}:${quoteItem.sub_stage_id}:${quoteItem.source_type}`;
       const requestGroup = requestGroups.get(requestKey) ?? {
         stageId: Number(stage.stage_id),
@@ -199,6 +259,19 @@ const storeRequests = (): StoreExecutionQuoteDetailsParams[] => {
 const emitDetails = () => {
   emit('update:stages', emittedStages());
   emit('update:details', storeRequests());
+};
+
+const hydrateStoredStages = (quoteStages: ExecutionQuoteStageSummary[]) => {
+  const hydratedStates = quoteStages.reduce<Record<string, ExecutionQuoteStageState>>(
+    (states, quoteStage) => {
+      const stageState = persistedStageState(quoteStage, states[String(quoteStage.stageId)]);
+      return stageState ? { ...states, [String(stageState.stage_id)]: stageState } : states;
+    },
+    {},
+  );
+
+  stageStates.value = hydratedStates;
+  emitDetails();
 };
 
 const resetBuilder = () => {
@@ -333,6 +406,8 @@ const addItem = (draft: ExecutionQuoteItemDraft) => {
 };
 
 const removeItem = (item: ExecutionQuoteItemState) => {
+  if (item.persisted) return;
+
   const state = stageStates.value[String(item.stage_id)];
   if (!state) return;
 
@@ -360,6 +435,12 @@ const exitBuilder = () => {
     title: t('execution_quote.exit_builder'),
   });
 };
+
+watch(
+  () => props.initialStages,
+  (quoteStages) => hydrateStoredStages(quoteStages),
+  { immediate: true },
+);
 
 watch(
   () => props.enabled,

@@ -87,6 +87,7 @@
 
         <template #cell-action="{ item }">
           <AppButton
+            v-if="!item.persisted"
             theme="danger"
             size="sm"
             outline
@@ -98,6 +99,7 @@
             </template>
             {{ $t('execution_quote.delete_item') }}
           </AppButton>
+          <span v-else>—</span>
         </template>
       </AppTable>
     </div>

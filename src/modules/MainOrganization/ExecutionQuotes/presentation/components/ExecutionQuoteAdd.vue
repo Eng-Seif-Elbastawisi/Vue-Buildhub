@@ -12,6 +12,7 @@
     type ExecutionQuoteType,
   } from '../../core/constants/execution.quote.type.enum';
   import type AddExecutionQuoteParams from '../../core/params/add.execution.quote.params';
+  import type { ExecutionQuoteStageSummary } from '../../core/models/execution.quote.show.model';
   import ShowExecutionQuoteParams from '../../core/params/show.execution.quote.params';
   import type StoreExecutionQuoteDetailsParams from '../../core/params/store.execution.quote.details.params';
   import ExecutionQuoteController from '../controllers/execution.quote.controller';
@@ -25,6 +26,7 @@
   const baseParams = ref<AddExecutionQuoteParams | null>(null);
   const detailsParams = ref<StoreExecutionQuoteDetailsParams[]>([]);
   const initialQuoteType = ref<ExecutionQuoteType | null>(null);
+  const initialQuoteStages = ref<ExecutionQuoteStageSummary[]>([]);
   const loading = ref(false);
   const builderResetKey = ref(0);
   const isBuilderPage = computed(() => route.name === 'Build Execution Quote');
@@ -83,6 +85,7 @@
       if (!(response instanceof DataSuccess) || !response.data) return;
 
       initialQuoteType.value = toExecutionQuoteType(response.data.quoteType?.id);
+      initialQuoteStages.value = response.data.quoteStages;
     } finally {
       loading.value = false;
     }
@@ -93,6 +96,7 @@
     ([builderPage, quoteId]) => {
       if (!builderPage) {
         initialQuoteType.value = null;
+        initialQuoteStages.value = [];
         return;
       }
 
@@ -174,6 +178,7 @@
 
   const continueAtCurrentStage = async (quoteId: number) => {
     detailsParams.value = [];
+    await loadStoredQuote(quoteId);
     builderResetKey.value += 1;
 
     await router.replace({
@@ -199,6 +204,7 @@
       :loading="loading"
       :execution-quote-id="executionQuoteId"
       :initial-quote-type="initialQuoteType"
+      :initial-quote-stages="initialQuoteStages"
       @update-data="baseParams = $event"
       @update-details="detailsParams = $event"
     />

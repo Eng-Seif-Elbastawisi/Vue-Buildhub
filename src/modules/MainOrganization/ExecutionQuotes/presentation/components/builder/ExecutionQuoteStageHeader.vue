@@ -54,6 +54,8 @@
 
   .stage-header__back {
     margin-bottom: 0.7rem;
+    width: fit-content;
+    margin-inline-start: auto;
   }
 
   .stage-header__meta {

@@ -2607,6 +2607,19 @@
     "source_title": "Execution quote source",
     "from_approved_design": "From approved design",
     "quote_data": "Quote data",
+    "add_client": "Add new client",
+    "attachments": {
+      "title": "Attachments",
+      "description": "Upload the files related to this execution quote.",
+      "upload": "Upload attachments"
+    },
+    "client_dialog": {
+      "title": "Add new client",
+      "description": "Create a client without leaving the execution quote.",
+      "save": "Save client",
+      "cancel": "Cancel",
+      "required_data": "Complete the required client data before saving."
+    },
     "quote_type_title": "Quote type",
     "quote_types": {
       "lump_sum": {
@@ -2724,11 +2737,9 @@
       "client_section": "Client details",
       "client_section_hint": "Contact information and account status.",
       "phone": "Phone",
-      "email": "Email",
       "address": "Address",
       "active": "Active",
       "inactive": "Inactive",
-      "project_id": "Project ID",
       "project_created_at": "Project created at",
       "client_id": "Client ID",
       "client_type": "Client type",
@@ -2742,6 +2753,7 @@
       "quote_reference": "Quote reference",
       "project_reference": "Project reference",
       "stage_created_at": "Stage created at",
+      "stage_total": "Stage total",
       "item": "Item",
       "item_source": "Item source",
       "itemable_id": "Source ID",

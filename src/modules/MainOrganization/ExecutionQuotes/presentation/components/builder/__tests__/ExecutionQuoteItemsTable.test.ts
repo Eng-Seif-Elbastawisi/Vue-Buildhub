@@ -46,4 +46,15 @@ describe('ExecutionQuoteItemsTable', () => {
     expect(headerKeys).not.toContain('unit_price');
     expect(headerKeys).not.toContain('total');
   });
+
+  it('does not offer local removal for an item already stored by the API', () => {
+    const wrapper = mount(ExecutionQuoteItemsTable, {
+      props: { items: [{ ...quoteItem, persisted: true }] },
+      global: {
+        mocks: { $t: (key: string) => key },
+      },
+    });
+
+    expect(wrapper.find('.app-btn').exists()).toBe(false);
+  });
 });
