@@ -54,6 +54,15 @@ export interface ExecutionQuoteStageItemSummary {
   quantity?: number;
 }
 
+export interface ExecutionQuoteAttachmentSummary {
+  id?: number;
+  file?: string;
+  fileSize?: string;
+  alt?: string | null;
+  link?: string | null;
+  createdAt?: string;
+}
+
 export interface ExecutionQuoteStageSummary {
   id?: number;
   quoteId?: number;
@@ -233,6 +242,30 @@ const quoteStageSummaries = (rawStages: unknown): ExecutionQuoteStageSummary[] =
     .filter((quoteStage): quoteStage is ExecutionQuoteStageSummary => !!quoteStage);
 };
 
+const attachmentSummary = (
+  rawAttachment: unknown,
+): ExecutionQuoteAttachmentSummary | undefined => {
+  const attachment = objectValue(rawAttachment);
+  if (!attachment) return undefined;
+
+  return {
+    id: numberValue(attachment.id),
+    file: stringValue(attachment.file),
+    fileSize: stringValue(attachment.file_size),
+    alt: nullableStringValue(attachment.alt),
+    link: nullableStringValue(attachment.link),
+    createdAt: stringValue(attachment.created_at),
+  };
+};
+
+const attachmentSummaries = (rawAttachments: unknown): ExecutionQuoteAttachmentSummary[] => {
+  if (!Array.isArray(rawAttachments)) return [];
+
+  return rawAttachments
+    .map(attachmentSummary)
+    .filter((attachment): attachment is ExecutionQuoteAttachmentSummary => !!attachment);
+};
+
 export default class ExecutionQuoteShowModel {
   public readonly id?: number;
   public readonly organization?: ExecutionQuoteOrganizationSummary;
@@ -245,6 +278,7 @@ export default class ExecutionQuoteShowModel {
   public readonly quoteStages: ExecutionQuoteStageSummary[];
   public readonly quoteStagesCount: number;
   public readonly quoteItemsCount: number;
+  public readonly attachments: ExecutionQuoteAttachmentSummary[];
   public readonly createdAt?: string;
 
   constructor(data: {
@@ -257,6 +291,7 @@ export default class ExecutionQuoteShowModel {
     quoteType?: ExecutionQuoteTypeSummary;
     priceEmployee?: ExecutionQuoteEmployeeSummary;
     quoteStages?: ExecutionQuoteStageSummary[];
+    attachments?: ExecutionQuoteAttachmentSummary[];
     createdAt?: string;
   }) {
     this.id = data.id;
@@ -273,6 +308,7 @@ export default class ExecutionQuoteShowModel {
       (itemsTotal, quoteStage) => itemsTotal + quoteStage.items.length,
       0,
     );
+    this.attachments = data.attachments ?? [];
     this.createdAt = data.createdAt;
     Object.freeze(this);
   }
@@ -288,6 +324,7 @@ export default class ExecutionQuoteShowModel {
       quoteType: quoteTypeSummary(json.quote_type),
       priceEmployee: employeeSummary(json.price_employee),
       quoteStages: quoteStageSummaries(json.quote_stages),
+      attachments: attachmentSummaries(json.attachments),
       createdAt: stringValue(json.created_at),
     });
   }
@@ -302,5 +339,6 @@ export default class ExecutionQuoteShowModel {
     quoteType: { id: 1, title: 'Lump_SUM' },
     priceEmployee: { id: 2, name: 'Pricing employee' },
     quoteStages: [],
+    attachments: [],
   });
 }
