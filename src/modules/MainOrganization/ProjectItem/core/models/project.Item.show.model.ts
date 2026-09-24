@@ -3,7 +3,7 @@ import { ProjectItemPriceEnum } from '../constant/project.item.Price.enum';
 import type OrganizationShowModel from '@/modules/shared/Organization/core/models/organization.show.model';
 import OrganizationEmployeeModel from '@/modules/shared/Organization/core/models/employee.model';
 import ItemShowModel from '@/modules/shared/Item/core/models/Item.show.model';
-import {  ProjectFloorShowModel } from '@/modules/MainOrganization/ProjectFloor';
+import { ProjectFloorShowModel } from '@/modules/MainOrganization/ProjectFloor';
 import ProjectAttachmentModel from '@/modules/MainOrganization/Project/core/models/project.show.attachment';
 import type ProjectHistoryModel from './project.history.model';
 import ProjectSimpleModel from './project.simple.model';
@@ -11,7 +11,7 @@ import type { InsideStatusType } from '@/modules/MainOrganization/TaskAssignment
 import type { TaskDurationType } from '@/modules/MainOrganization/TaskAssignment/core/constants/taskDurationType.enum';
 import TitleModel from '@/base/Core/Models/titleModel';
 
-export default class ProjectItemShowModel { 
+export default class ProjectItemShowModel {
   public readonly id?: number;
   public readonly price?: number;
   public readonly quantity?: number;
@@ -31,13 +31,15 @@ export default class ProjectItemShowModel {
   public readonly final_price?: number;
   public readonly attachments?: ProjectAttachmentModel[];
   public readonly assigned_employees?: OrganizationEmployeeModel[];
-  public readonly histories?:  ProjectHistoryModel[];
+  public readonly histories?: ProjectHistoryModel[];
   public readonly department?: TitleInterface<string>;
   public readonly inside_status?: InsideStatusType;
   public readonly duration?: number;
   public readonly duration_type?: TaskDurationType;
   public readonly reviewer?: TitleModel;
-
+  public readonly site_description?: string | null;
+  public readonly technical_general_notes?: string | null;
+  public readonly inspection_recommendations?: string | null;
 
   constructor(data: {
     id?: number;
@@ -65,6 +67,9 @@ export default class ProjectItemShowModel {
     duration?: number;
     duration_type?: TaskDurationType;
     reviewer?: TitleModel;
+    site_description?: string | null;
+    technical_general_notes?: string | null;
+    inspection_recommendations?: string | null;
   }) {
     this.id = data.id;
     this.price = data.price;
@@ -91,6 +96,9 @@ export default class ProjectItemShowModel {
     this.duration = data.duration;
     this.duration_type = data.duration_type;
     this.reviewer = data.reviewer;
+    this.site_description = data.site_description;
+    this.technical_general_notes = data.technical_general_notes;
+    this.inspection_recommendations = data.inspection_recommendations;
     this.project_floor = data.project_floor;
 
     Object.freeze(this);
@@ -99,31 +107,62 @@ export default class ProjectItemShowModel {
   static fromJson(json: Record<string, unknown>): ProjectItemShowModel {
     if (!json) throw new Error('Invalid ProjectItemShowModel data');
 
-   return new ProjectItemShowModel({
-  id: json.id as number | undefined,
-  price: json.price as number | undefined,
-  quantity: json.quantity as number | undefined,
-  item_id: new TitleInterface({id: json.item_id as number,title: json.item_id_title as string,}),
-  pricing_method: json.pricing_method as ProjectItemPriceEnum | undefined,
-  project_floor_id: json.project_floor_id as number | undefined,
-  uuid: json.uuid as string | undefined,
-  has_attached: json.has_attached as boolean | undefined,
-  is_assign_employee: json.is_assign_employee as boolean | undefined,
+    return new ProjectItemShowModel({
+      id: json.id as number | undefined,
+      price: json.price as number | undefined,
+      quantity: json.quantity as number | undefined,
+      item_id: new TitleInterface({
+        id: json.item_id as number,
+        title: json.item_id_title as string,
+      }),
+      pricing_method: json.pricing_method as ProjectItemPriceEnum | undefined,
+      project_floor_id: json.project_floor_id as number | undefined,
+      uuid: json.uuid as string | undefined,
+      has_attached: json.has_attached as boolean | undefined,
+      is_assign_employee: json.is_assign_employee as boolean | undefined,
 
-  employee: json.employee   ? OrganizationEmployeeModel.fromJson( json.employee as Record<string, unknown> ) : undefined,
-  project: json.project ? ProjectSimpleModel.fromJson( json.project as Record<string, unknown> ) : undefined,
-  item: json.item ? ItemShowModel.fromJson( json.item as Record<string, unknown> ) : undefined,
-  project_floor: json.project_floor ? ProjectFloorShowModel.fromJson( json.project_floor as Record<string, unknown> ) : undefined,
-  final_price: json.final_price as number | undefined,
-  attachments: (json.attachments as Record<string, unknown>[] | undefined)?.map((item) => ProjectAttachmentModel.fromJson(item)),
-  assigned_employees: (  json.assigned_employees as Record<string, unknown>[] | undefined )?.map((item) => OrganizationEmployeeModel.fromJson(item)),
-  histories: json.histories as ProjectHistoryModel[] | undefined,
-  department: json.department ? new TitleInterface({ id: json.department?.id as number, title: json.department?.title as string  }) : undefined,
-  inside_status: json.inside_status as InsideStatusType | undefined,
-  duration: json.duration as number | undefined,
-  duration_type: json.duration_type as TaskDurationType | undefined,
-  reviewer: json.reviewer ?  TitleModel.fromMap(json.reviewer) : undefined,
-});
+      employee: json.employee
+        ? OrganizationEmployeeModel.fromJson(json.employee as Record<string, unknown>)
+        : undefined,
+      project: json.project
+        ? ProjectSimpleModel.fromJson(json.project as Record<string, unknown>)
+        : undefined,
+      item: json.item ? ItemShowModel.fromJson(json.item as Record<string, unknown>) : undefined,
+      project_floor: json.project_floor
+        ? ProjectFloorShowModel.fromJson(json.project_floor as Record<string, unknown>)
+        : undefined,
+      final_price: json.final_price as number | undefined,
+      attachments: (json.attachments as Record<string, unknown>[] | undefined)?.map((item) =>
+        ProjectAttachmentModel.fromJson(item),
+      ),
+      assigned_employees: (json.assigned_employees as Record<string, unknown>[] | undefined)?.map(
+        (item) => OrganizationEmployeeModel.fromJson(item),
+      ),
+      histories: json.histories as ProjectHistoryModel[] | undefined,
+      department: json.department
+        ? new TitleInterface({
+            id: json.department?.id as number,
+            title: json.department?.title as string,
+          })
+        : undefined,
+      inside_status: json.inside_status as InsideStatusType | undefined,
+      duration: json.duration as number | undefined,
+      duration_type: json.duration_type as TaskDurationType | undefined,
+      reviewer: json.reviewer ? TitleModel.fromMap(json.reviewer) : undefined,
+      site_description:
+        typeof json.site_description === 'string' || json.site_description === null
+          ? json.site_description
+          : undefined,
+      technical_general_notes:
+        typeof json.technical_general_notes === 'string' || json.technical_general_notes === null
+          ? json.technical_general_notes
+          : undefined,
+      inspection_recommendations:
+        typeof json.inspection_recommendations === 'string' ||
+        json.inspection_recommendations === null
+          ? json.inspection_recommendations
+          : undefined,
+    });
   }
 
   static example: ProjectItemShowModel = new ProjectItemShowModel({
@@ -133,5 +172,8 @@ export default class ProjectItemShowModel {
     item_id: new TitleInterface({ id: 1, title: 'Item 1' }),
     pricing_method: ProjectItemPriceEnum.GENERAL_ITEM,
     project_floor_id: 1,
+    site_description: 'Existing site description',
+    technical_general_notes: 'Existing technical notes',
+    inspection_recommendations: 'Existing inspection recommendations',
   });
 }

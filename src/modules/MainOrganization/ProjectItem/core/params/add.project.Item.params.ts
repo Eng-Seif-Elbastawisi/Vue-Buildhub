@@ -20,6 +20,9 @@ export interface ProjectItemPayload {
 export default class AddProjectItemParams implements Params {
   public project_id: number = 0;
   public department_id?: number;
+  public site_description: string;
+  public technical_general_notes: string;
+  public inspection_recommendations: string;
   public items: ProjectItemPayload[] = [];
 
   public static readonly validation = new ClassValidation().setRules({
@@ -28,9 +31,19 @@ export default class AddProjectItemParams implements Params {
     items: { required: true },
   });
 
-  constructor(data: { project_id?: number; department_id?: number; items?: ProjectItemPayload[] }) {
+  constructor(data: {
+    project_id?: number;
+    department_id?: number;
+    site_description?: string;
+    technical_general_notes?: string;
+    inspection_recommendations?: string;
+    items?: ProjectItemPayload[];
+  }) {
     this.project_id = data.project_id ?? 0;
     this.department_id = data.department_id;
+    this.site_description = data.site_description ?? '';
+    this.technical_general_notes = data.technical_general_notes ?? '';
+    this.inspection_recommendations = data.inspection_recommendations ?? '';
     this.items = data.items ?? [];
   }
 
@@ -38,6 +51,9 @@ export default class AddProjectItemParams implements Params {
     return {
       project_id: this.project_id,
       department_id: this.department_id,
+      site_description: this.site_description,
+      technical_general_notes: this.technical_general_notes,
+      inspection_recommendations: this.inspection_recommendations,
       items: this.items.map((item) => {
         const map: Record<string, unknown> = {
           item_id: item.item_id,
