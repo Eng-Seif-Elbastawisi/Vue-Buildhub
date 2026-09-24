@@ -29,6 +29,9 @@ vi.mock('vue-router', () => ({
 vi.mock('@/modules/MainOrganization/client/presentation/controllers/client.controller', () => ({
   default: { getInstance: vi.fn(controller) },
 }));
+vi.mock('@/modules/shared/ClientSource/presentation/controllers/client.source.controller', () => ({
+  default: { getInstance: vi.fn(controller) },
+}));
 vi.mock('@/modules/MainOrganization/Project/presentation/controllers/project.controller', () => ({
   default: { getInstance: vi.fn(controller) },
 }));
@@ -60,11 +63,10 @@ const FileUploadStub = {
   template: '<button class="file-upload-stub" />',
 };
 
-const ClientDialogStub = {
-  name: 'ExecutionQuoteClientDialog',
-  props: ['modelValue'],
-  emits: ['update:modelValue', 'created'],
-  template: '<div class="client-dialog-stub" :data-visible="modelValue" />',
+const FieldHelpIconStub = {
+  name: 'FieldHelpIcon',
+  props: ['label', 'fieldName', 'fieldId'],
+  template: '<span class="field-help-stub" />',
 };
 
 const mountForm = (
@@ -77,7 +79,7 @@ const mountForm = (
       stubs: {
         UpdatedCustomInputSelect: SelectStub,
         HandleFilesUpload: FileUploadStub,
-        ExecutionQuoteClientDialog: ClientDialogStub,
+        FieldHelpIcon: FieldHelpIconStub,
       },
       mocks: { $t: (key: string) => key },
     },
@@ -89,67 +91,84 @@ describe('ExecutionQuoteForm', () => {
     routeState.params.stageId = undefined;
   });
 
-  it('starts in execution-only mode and emits integer source params', () => {
+  it('starts in execution-only mode and emits base payload', () => {
     const wrapper = mountForm();
     const params = wrapper.emitted('updateData')?.at(-1)?.[0] as AddExecutionQuoteParams;
 
+    expect(wrapper.find('#client_exist').exists()).toBe(true);
     expect(wrapper.find('#execution-quote-project').exists()).toBe(true);
-    expect(wrapper.find('#execution-quote-type').exists()).toBe(false);
-    expect(wrapper.find('#execution-design-quote').exists()).toBe(false);
     expect(params).toBeInstanceOf(AddExecutionQuoteParams);
     expect(params.toMap().quote_source).toBe(QuoteSourceEnum.EXECUTION_ONLY);
   });
 
-  it('keeps every execution-only select and its label in one field container', () => {
+  it('shows existing client dropdown when client_exist is 1', async () => {
     const wrapper = mountForm();
-    const selectFields = wrapper.findAll('.quote-data__field');
+    const clientExistSelect = wrapper
+      .findAllComponents(SelectStub)
+      .find((s) => s.props('id') === 'client_exist');
 
-    expect(selectFields).toHaveLength(3);
-    expect(selectFields.every((field) => field.find('.select-stub').exists())).toBe(true);
-    expect(selectFields.map((field) => field.get('label').text())).toEqual([
-      'execution_quote.fields.client',
-      'execution_quote.fields.project',
-      'execution_quote.fields.price_employee',
-    ]);
-  });
-
-  it('keeps client and project but removes design-quote and quote-type selects', async () => {
-    const wrapper = mountForm();
-
-    wrapper.getComponent(FileUploadStub).vm.$emit('change', [
-      {
-        name: 'requirements.pdf',
-        base64: 'data:application/pdf;base64,cXVvdGU=',
-      },
-    ]);
+    clientExistSelect?.vm.$emit('update:modelValue', { id: 1, title: 'Existing' });
     await wrapper.vm.$nextTick();
 
-    await wrapper.findAll('button[role="radio"]').at(1)?.trigger('click');
+    expect(wrapper.find('#execution-quote-client').exists()).toBe(true);
+    expect(wrapper.find('#client_name').exists()).toBe(false);
 
-    expect(wrapper.find('#execution-quote-project').exists()).toBe(true);
-    expect(wrapper.find('#execution-design-quote').exists()).toBe(false);
-    expect(wrapper.find('#execution-quote-type').exists()).toBe(false);
-    expect(wrapper.find('#execution-quote-price-employee').exists()).toBe(false);
-    expect(wrapper.find('.quote-data__attachments').exists()).toBe(false);
-    expect(wrapper.find('.quote-data__add-client').exists()).toBe(false);
+    const clientSelect = wrapper
+      .findAllComponents(SelectStub)
+      .find((s) => s.props('id') === 'execution-quote-client');
+    clientSelect?.vm.$emit('update:modelValue', { id: 40, title: 'Acme Corp' });
+    await wrapper.vm.$nextTick();
 
     const params = wrapper.emitted('updateData')?.at(-1)?.[0] as AddExecutionQuoteParams;
-    expect(params.toMap().quote_source).toBe(QuoteSourceEnum.EXECUTION_FROM_DESIGN_QUOTE);
-    expect(params.toMap()).not.toHaveProperty('attachments');
+    expect(params.toMap().client_exist).toBe(true);
+    expect(params.toMap().client_id).toBe(40);
   });
 
-  it('sends an attachment list before the quote type in execution-only mode', async () => {
+  it('shows new client inputs when client_exist is 0', async () => {
     const wrapper = mountForm();
-    const html = wrapper.html();
+    const clientExistSelect = wrapper
+      .findAllComponents(SelectStub)
+      .find((s) => s.props('id') === 'client_exist');
 
-    expect(html.indexOf('quote-data__attachments')).toBeLessThan(
-      html.indexOf('quote-data__type-options'),
-    );
+    clientExistSelect?.vm.$emit('update:modelValue', { id: 0, title: 'New' });
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.find('#execution-quote-client').exists()).toBe(false);
+    expect(wrapper.find('#client_name').exists()).toBe(true);
+    expect(wrapper.find('#client_phone').exists()).toBe(true);
+    expect(wrapper.find('#client_email').exists()).toBe(true);
+    expect(wrapper.find('#client_address').exists()).toBe(true);
+    expect(wrapper.find('#client_source').exists()).toBe(true);
+
+    await wrapper.find('#client_name').setValue('Ahmed Elmsery');
+    await wrapper.find('#client_phone').setValue('0132295378');
+    await wrapper.find('#client_email').setValue('ahmed@gmail.com');
+    await wrapper.find('#client_address').setValue('Cairo');
+
+    const clientSourceSelect = wrapper
+      .findAllComponents(SelectStub)
+      .find((s) => s.props('id') === 'client_source');
+    clientSourceSelect?.vm.$emit('update:modelValue', { id: 2, title: 'Social Media' });
+    await wrapper.vm.$nextTick();
+
+    const params = wrapper.emitted('updateData')?.at(-1)?.[0] as AddExecutionQuoteParams;
+    expect(params.toMap()).toMatchObject({
+      client_exist: false,
+      client_name: 'Ahmed Elmsery',
+      client_phone: '0132295378',
+      client_email: 'ahmed@gmail.com',
+      client_address: 'Cairo',
+      client_source_id: 2,
+    });
+  });
+
+  it('sends attachments with payload when files are uploaded', async () => {
+    const wrapper = mountForm();
 
     wrapper.getComponent(FileUploadStub).vm.$emit('change', [
       {
-        name: 'requirements.pdf',
-        base64: 'data:application/pdf;base64,cXVvdGU=',
+        name: 'Project Front View',
+        base64: 'data:image/png;base64,iCC',
       },
       {
         name: 'remote.pdf',
@@ -161,45 +180,36 @@ describe('ExecutionQuoteForm', () => {
     const params = wrapper.emitted('updateData')?.at(-1)?.[0] as AddExecutionQuoteParams;
     expect(params.toMap().attachments).toEqual([
       {
-        file: 'data:application/pdf;base64,cXVvdGU=',
-        alt: 'requirements.pdf',
+        file: 'data:image/png;base64,iCC',
+        alt: 'Project Front View',
+        link: null,
       },
     ]);
   });
 
-  it('opens the inline client dialog and selects the created client', async () => {
+  it('filters project options by the selected existing client', async () => {
     const wrapper = mountForm();
+    const clientExistSelect = wrapper
+      .findAllComponents(SelectStub)
+      .find((s) => s.props('id') === 'client_exist');
 
-    await wrapper.get('.quote-data__add-client').trigger('click');
-    const clientDialog = wrapper.getComponent(ClientDialogStub);
-    expect(clientDialog.props('modelValue')).toBe(true);
-
-    clientDialog.vm.$emit('created', { id: 44, name: 'New client' });
+    clientExistSelect?.vm.$emit('update:modelValue', { id: 1, title: 'Existing' });
     await wrapper.vm.$nextTick();
 
     const clientSelect = wrapper
       .findAllComponents(SelectStub)
-      .find((select) => select.props('id') === 'execution-quote-client');
-    const params = wrapper.emitted('updateData')?.at(-1)?.[0] as AddExecutionQuoteParams;
-
-    expect(clientSelect?.props('modelValue')).toEqual({ id: 44, title: 'New client' });
-    expect(params.toMap().client_id).toBe(44);
-    expect(clientDialog.props('modelValue')).toBe(false);
-  });
-
-  it('filters project options by the selected client', async () => {
-    const wrapper = mountForm();
-
-    await wrapper.find('#execution-quote-client').trigger('click');
+      .find((s) => s.props('id') === 'execution-quote-client');
+    clientSelect?.vm.$emit('update:modelValue', { id: 9, title: 'Client 9' });
+    await wrapper.vm.$nextTick();
 
     const projectSelect = wrapper
       .findAllComponents(SelectStub)
-      .find((select) => select.props('id') === 'execution-quote-project');
+      .find((s) => s.props('id') === 'execution-quote-project');
 
     expect(projectSelect?.props('params').toMap()).toMatchObject({ client_id: 9 });
   });
 
-  it('takes quote_type only from the quote-type options', async () => {
+  it('takes quote_type from the quote-type options', async () => {
     const wrapper = mountForm();
     const quoteTypeOptions = wrapper.findAll('.quote-type-option');
 
@@ -209,7 +219,6 @@ describe('ExecutionQuoteForm', () => {
     const base = wrapper.emitted('updateData')?.at(-1)?.[0] as AddExecutionQuoteParams;
 
     expect(base.toMap().quote_type_id).toBe(ExecutionQuoteTypeEnum.SUPERVISION);
-    expect(base.toMap()).not.toHaveProperty('quote_type');
   });
 
   it('shows only the focused builder on a stage route', () => {

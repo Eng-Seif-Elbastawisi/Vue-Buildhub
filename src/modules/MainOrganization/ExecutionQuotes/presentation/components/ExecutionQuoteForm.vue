@@ -1,15 +1,19 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 
 import type TitleInterface from '@/base/Data/Models/titleInterface';
-import type ClientShowModel from '@/modules/MainOrganization/client/core/models/client.show.model';
+import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
 import HandleFilesUpload, { type UploadedFile } from '@/shared/FormInputs/HandleFilesUpload.vue';
 import UpdatedCustomInputSelect from '@/shared/FormInputs/UpdatedCustomInputSelect.vue';
 import AppButton from '@/shared/HelpersComponents/AppButton.vue';
 
 import ClientController from '@/modules/MainOrganization/client/presentation/controllers/client.controller';
 import IndexClientParams from '@/modules/MainOrganization/client/core/params/index.client.params';
+
+import ClientSourceController from '@/modules/shared/ClientSource/presentation/controllers/client.source.controller';
+import IndexClientSourceParams from '@/modules/shared/ClientSource/core/params/index.client.source.params';
 
 import ProjectController from '@/modules/MainOrganization/Project/presentation/controllers/project.controller';
 import IndexProjectParams from '@/modules/MainOrganization/Project/core/params/index.project.params';
@@ -21,7 +25,7 @@ import { QuoteSourceEnum } from '../../core/constants/quote.source.enum';
 import type { ExecutionQuoteType } from '../../core/constants/execution.quote.type.enum';
 import type { ExecutionQuoteStageSummary } from '../../core/models/execution.quote.show.model';
 import AddExecutionQuoteParams, {
-  type ExecutionQuoteAttachmentRequest,
+  type ExecutionQuoteAttachmentParams,
 } from '../../core/params/add.execution.quote.params';
 import type {
   default as StoreExecutionQuoteDetailsParams,
@@ -29,9 +33,6 @@ import type {
 } from '../../core/params/store.execution.quote.details.params';
 import ExecutionQuoteBuilder from './builder/ExecutionQuoteBuilder.vue';
 import ExecutionQuoteTypeCards from './builder/ExecutionQuoteTypeCards.vue';
-import ExecutionQuoteClientDialog from './ExecutionQuoteClientDialog.vue';
-import ClientSourceController from '@/modules/shared/ClientSource/presentation/controllers/client.source.controller.ts';
-import IndexClientSourceParams from '@/modules/shared/ClientSource/core/params/index.client.source.params.ts';
 
 const emit = defineEmits<{
   (event: 'updateData', quoteParams: AddExecutionQuoteParams): void;
@@ -53,43 +54,52 @@ const props = withDefaults(
   },
 );
 
+const { t } = useI18n();
 const router = useRouter();
 const route = useRoute();
+
 const clientController = ClientController.getInstance();
-const projectController = ProjectController.getInstance();
-const employeeController = EmployeeController.getInstance();
+const clientParams = new IndexClientParams('', 1, 100, 0);
 
 const clientSourceController = ClientSourceController.getInstance();
 const indexClientSourceParams = new IndexClientSourceParams('', 1, 100, 0);
 
-const clientParams = new IndexClientParams('', 1, 100, 0);
+const projectController = ProjectController.getInstance();
+
+const employeeController = EmployeeController.getInstance();
 const employeeParams = new IndexEmployeeParams('', 1, 100, 0);
 
-// const client = ref<TitleInterface<string | number> | null>(null);
-const project = ref<TitleInterface<string | number> | null>(null);
-const priceEmployee = ref<TitleInterface<string | number> | null>(null);
-const client = ref<TitleInterface<string | number> | null>(null);
-const clientId = ref<number | undefined>();
-const projectId = ref<number | undefined>();
-const priceEmployeeId = ref<number | undefined>();
-//
+const clientExistOptions = computed<TitleInterface<number>[]>(() => [
+  { id: 0, title: t('Project.client_new') },
+  { id: 1, title: t('Project.client_existing') },
+]);
 
 const selectedClientExist = ref<TitleInterface<number> | null>(null);
+const client_exist = ref<boolean | null>(null);
 
-const clientExist = ref<boolean | null>(null);
+const client = ref<TitleInterface<string | number> | null>(null);
+const clientId = ref<number | undefined>();
+
+const client_name = ref<string>('');
+const client_phone = ref<string>('');
+const client_email = ref<string>('');
+const client_address = ref<string>('');
 const selectedClientSource = ref<TitleInterface<number> | null>(null);
+const client_source_id = ref<number | undefined>();
 
-const selectedClient = ref<TitleInterface<string | number> | null>(null);
-const clientEmail = ref('');
-const clientAddress = ref('');
-const clientName = ref('');
-const clientPhone = ref('');
+const project = ref<TitleInterface<string | number> | null>(null);
+const projectId = ref<number | undefined>();
+
+const priceEmployee = ref<TitleInterface<string | number> | null>(null);
+const priceEmployeeId = ref<number | undefined>();
+
+const attachments = ref<ExecutionQuoteAttachmentParams[]>([]);
+const existingAttachmentFiles = ref<string[]>([]);
+const attachmentFiles = computed(() => existingAttachmentFiles.value);
 
 const selectedQuoteSource = ref<QuoteSourceEnum>(QuoteSourceEnum.EXECUTION_ONLY);
 const selectedExecutionQuoteType = ref<ExecutionQuoteType | null>(null);
 const executionQuoteStages = ref<ExecutionQuoteStageRequest[]>([]);
-const attachments = ref<ExecutionQuoteAttachmentRequest[]>([]);
-const clientDialogVisible = ref(false);
 
 const baseLocked = computed(() => Boolean(props.executionQuoteId));
 const isBuilderPage = computed(() => route.name === 'Build Execution Quote');
@@ -102,7 +112,9 @@ const toOptionalId = (selection: TitleInterface<string | number> | null): number
 
 const projectParams = computed(() => {
   const filteredProjectParams = new IndexProjectParams('', 1, 100, 0);
-  filteredProjectParams.clientId = clientId.value;
+  if (clientId.value) {
+    filteredProjectParams.clientId = clientId.value;
+  }
   return filteredProjectParams;
 });
 
@@ -114,16 +126,31 @@ const isExecutionFromDesignQuote = computed(
   () => selectedQuoteSource.value === QuoteSourceEnum.EXECUTION_FROM_DESIGN_QUOTE,
 );
 
-const baseDataComplete = computed(() =>
-  isExecutionFromDesignQuote.value
-    ? Boolean(clientId.value && projectId.value && selectedExecutionQuoteType.value)
-    : Boolean(
-      clientId.value &&
-      projectId.value &&
-      selectedExecutionQuoteType.value &&
-      priceEmployeeId.value,
-    ),
-);
+const isClientDataValid = computed(() => {
+  if (client_exist.value === true) {
+    return Boolean(clientId.value);
+  }
+  if (client_exist.value === false) {
+    return Boolean(
+      client_name.value.trim() &&
+      client_phone.value.trim() &&
+      client_source_id.value,
+    );
+  }
+  return false;
+});
+
+const baseDataComplete = computed(() => {
+  const baseReady = Boolean(
+    isClientDataValid.value &&
+    projectId.value &&
+    selectedExecutionQuoteType.value,
+  );
+
+  return isExecutionFromDesignQuote.value
+    ? baseReady
+    : Boolean(baseReady && priceEmployeeId.value);
+});
 
 const quoteItemsCount = computed(() =>
   executionQuoteStages.value.reduce((count, stage) => count + stage.items.length, 0),
@@ -144,7 +171,15 @@ const clientTotal = computed(() =>
 
 const heroTitle = computed(() => project.value?.title);
 
-const heroSubtitle = computed(() => client.value?.title);
+const heroSubtitle = computed(() => {
+  if (client_exist.value === true) {
+    return (client.value?.title as string) || undefined;
+  }
+  if (client_exist.value === false) {
+    return client_name.value || undefined;
+  }
+  return undefined;
+});
 
 const buildSteps = computed(() => [
   {
@@ -207,14 +242,21 @@ const clearBuilderData = () => {
 
 /**
  * Emits ONLY the first request payload.
- * No quote_type / stages / items are included here anymore.
+ * Stages / items are handled in the builder step.
  */
 const updateBaseData = () => {
   const baseQuoteFields = {
     quoteSource: selectedQuoteSource.value,
-    clientId: clientId.value,
     projectId: projectId.value,
     quoteTypeId: selectedExecutionQuoteType.value ?? undefined,
+    clientExist: client_exist.value !== null ? client_exist.value : undefined,
+    clientId: client_exist.value === true ? clientId.value : undefined,
+    clientName: client_exist.value === false ? client_name.value : undefined,
+    clientPhone: client_exist.value === false ? client_phone.value : undefined,
+    clientEmail: client_exist.value === false ? client_email.value : undefined,
+    clientAddress: client_exist.value === false ? client_address.value : undefined,
+    clientSourceId: client_exist.value === false ? client_source_id.value : undefined,
+    attachments: attachments.value.length ? attachments.value : undefined,
   };
 
   if (isExecutionFromDesignQuote.value) {
@@ -225,37 +267,85 @@ const updateBaseData = () => {
   emit(
     'updateData',
     new AddExecutionQuoteParams({
-
-      quoteSource: selectedQuoteSource.value,
-
-      projectId: projectId.value,
-
-      quoteTypeId: selectedExecutionQuoteType.value ?? undefined,
-
-
-      clientExist: clientExist.value ?? undefined,
-
-      clientId: clientId.value,
-
-      clientName: clientName.value,
-
-      clientPhone: clientPhone.value,
-
-      clientEmail: clientEmail.value,
-
-      clientAddress: clientAddress.value,
-
-      clientSourceId: client.value?.id
-        ? Number(client.value.id)
-        : undefined,
-
-
-      attachments: attachments.value.length
-        ? attachments.value
-        : undefined,
-
+      ...baseQuoteFields,
+      priceEmployeeId: priceEmployeeId.value,
     }),
   );
+};
+
+const updateClientExist = (value: TitleInterface<number> | null) => {
+  selectedClientExist.value = value;
+
+  if (!value) {
+    client_exist.value = null;
+    client.value = null;
+    clientId.value = undefined;
+    client_name.value = '';
+    client_phone.value = '';
+    client_email.value = '';
+    client_address.value = '';
+    selectedClientSource.value = null;
+    client_source_id.value = undefined;
+    updateBaseData();
+    return;
+  }
+
+  client_exist.value = value.id === 1;
+
+  if (client_exist.value) {
+    client_name.value = '';
+    client_phone.value = '';
+    client_email.value = '';
+    client_address.value = '';
+    selectedClientSource.value = null;
+    client_source_id.value = undefined;
+  } else {
+    client.value = null;
+    clientId.value = undefined;
+  }
+
+  updateBaseData();
+};
+
+const updateClient = (value: TitleInterface<string | number> | null) => {
+  client.value = value;
+  clientId.value = toOptionalId(value);
+
+  if (!baseLocked.value) {
+    clearProjectData();
+  }
+
+  updateBaseData();
+};
+
+const updateClientSource = (value: TitleInterface<number> | null) => {
+  selectedClientSource.value = value;
+  client_source_id.value = toOptionalId(value);
+  updateBaseData();
+};
+
+const updateProject = (value: TitleInterface<string | number> | null) => {
+  project.value = value;
+  projectId.value = toOptionalId(value);
+  updateBaseData();
+};
+
+const updatePriceEmployee = (value: TitleInterface<string | number> | null) => {
+  priceEmployee.value = value;
+  priceEmployeeId.value = toOptionalId(value);
+  updateBaseData();
+};
+
+const updateAttachments = (files: UploadedFile[]) => {
+  attachments.value = files
+    .filter((file) => file.base64 && file.base64.startsWith('data:'))
+    .map((file) => ({
+      file: file.base64,
+      alt: file.name || null,
+      link: null,
+    }));
+
+  updateBaseData();
 };
 
 watch(
@@ -290,54 +380,11 @@ const showQuotes = () => {
   void router.push({ name: 'Execution Quotes' });
 };
 
-const updateAttachments = (uploadedFiles: UploadedFile[]) => {
-  attachments.value = uploadedFiles
-    .filter((uploadedFile) => uploadedFile.base64.startsWith('data:'))
-    .map((uploadedFile) => ({
-      file: uploadedFile.base64,
-      alt: uploadedFile.name,
-    }));
-
-  updateBaseData();
-};
-
-const selectCreatedClient = (createdClient: ClientShowModel) => {
-  if (!createdClient.id) return;
-
-  client.value = {
-    id: createdClient.id,
-    title: createdClient.name ?? `#${createdClient.id}`,
-  };
-  clientDialogVisible.value = false;
-};
-
-watch(client, (selectedClient, previousClient) => {
-  clientId.value = toOptionalId(selectedClient);
-
-  if (selectedClient?.id !== previousClient?.id && !baseLocked.value) {
-    clearProjectData();
-  }
-
-  updateBaseData();
-});
-
-watch(project, (selectedProject) => {
-  projectId.value = toOptionalId(selectedProject);
-  updateBaseData();
-});
-
-watch(priceEmployee, (selectedPriceEmployee) => {
-  priceEmployeeId.value = toOptionalId(selectedPriceEmployee);
-  updateBaseData();
-});
-
 watch(selectedQuoteSource, () => {
   if (baseLocked.value) return;
 
   clearProjectData();
   clearPriceEmployeeData();
-  attachments.value = [];
-  clientDialogVisible.value = false;
   updateBaseData();
 });
 
@@ -349,86 +396,6 @@ watch(
 );
 
 updateBaseData();
-
-
-
-
-//New Updates In Client 
-
-const clientExistOptions = computed<TitleInterface<number>[]>(() => [
-  {
-    id: 0,
-    title: 'New',
-  },
-  {
-    id: 1,
-    title: 'Existing',
-  },
-]);
-
-
-
-
-const updateClientExist = (
-  value: TitleInterface<number> | null,
-) => {
-
-  selectedClientExist.value = value;
-
-
-  if (!value) {
-
-    clientExist.value = null;
-
-    selectedClient.value = null;
-
-    clientName.value = '';
-
-    clientPhone.value = '';
-
-    updateBaseData();
-
-    return;
-
-  }
-
-
-  clientExist.value = value.id === 1;
-
-
-  if (clientExist.value) {
-
-    clientName.value = '';
-
-    clientPhone.value = '';
-
-  } else {
-
-    selectedClient.value = null;
-
-  }
-
-
-  updateBaseData();
-
-};
-
-
-const updateClient = (
-  value: TitleInterface<string | number> | null,
-) => {
-
-  selectedClient.value = value;
-
-  updateBaseData();
-
-};
-
-const handleClientSource = (value: TitleInterface<number> | null) => {
-  selectedClientSource.value = value;
-
-  updateBaseData();
-} 
 </script>
 
 <template>
@@ -569,161 +536,109 @@ const handleClientSource = (value: TitleInterface<number> | null) => {
           </div>
 
           <div class="quote-data__grid">
-            <div class="quote-data__field">
-
-              <UpdatedCustomInputSelect id="client_exist" :model-value="selectedClientExist"
-                :static-options="clientExistOptions" :label="$t('client_type')"
-                :placeholder="$t('client_type_placeholder')" required @update:model="updateClientExist" />
-
+            <div id="client-type-field" class="field-group quote-data__field">
+              <UpdatedCustomInputSelect id="client_exist" :model-value="selectedClientExist" :label="$t('client_type')"
+                :static-options="clientExistOptions" :placeholder="$t('Project.client_exist_placeholder')"
+                :disabled="loading || baseLocked" required @update:model-value="updateClientExist" />
             </div>
 
-
-            <div v-if="selectedClientExist && clientExist" class="quote-data__field">
-
-              <UpdatedCustomInputSelect id="client_id" :model-value="selectedClient" :controller="clientController"
-                :params="clientParams" :label="$t('client')" :placeholder="$t('client_placeholder')" required
-                @update:model="updateClient" />
-
+            <div v-if="selectedClientExist && client_exist" id="client-field" class="field-group quote-data__field">
+              <UpdatedCustomInputSelect id="execution-quote-client" :model-value="client" :label="$t('client_id')"
+                :controller="clientController" :placeholder="$t('client_id_placeholder')" :params="clientParams"
+                :disabled="loading || baseLocked" required @update:model-value="updateClient" />
             </div>
 
-
-            <!-- 
-            <template v-if="selectedClientExist && clientExist === false">
-
-              <div class="quote-data__field">
-
-                <input v-model="clientName" class="field-input" :placeholder="$t('client_name')"
-                  @input="updateBaseData" />
-
-              </div>
-
-
-
-              <div class="quote-data__field">
-
-                <input v-model="clientPhone" class="field-input" :placeholder="$t('client_phone')"
-                  @input="updateBaseData" />
-
-              </div>
-
-              <div class="quote-data__field">
-
-                <input v-model="clientAddress" class="field-input" :placeholder="$t('client_address')"
-                  @input="updateBaseData" />
-
-              </div>
-
-              <div class="quote-data__field">
-
-                <input v-model="clientEmail" class="field-input" :placeholder="$t('client_email')"
-                  @input="updateBaseData" />
-
-              </div>
-
-            </template> -->
-
-
-            <template v-if="selectedClientExist && clientExist === false">
-              <div id="client-source-field" class="field-group">
+            <template v-if="selectedClientExist && client_exist === false">
+              <div id="client-name-field" class="field-group quote-data__field">
                 <span class="field-help-label-row field-help-label-row--block">
-                  <label class="field-label" for="client_name">{{ $t('client_name') }}</label>
+                  <label class="field-label" for="client_name">
+                    <span class="required-indicator" aria-hidden="true">*</span>
+                    {{ $t('client_name') }}
+                  </label>
                   <FieldHelpIcon :label="$t('client_name')" field-name="name" field-id="client_name" />
                 </span>
 
-                <input id="client_name" v-model="clientName" class="field-input"
-                  :placeholder="$t('client_name_placeholder')" @input="updateBaseData" />
+                <input id="client_name" v-model="client_name" class="field-input"
+                  :placeholder="$t('client_name_placeholder')" :disabled="loading || baseLocked"
+                  @input="updateBaseData" />
               </div>
 
-              <div class="field-group">
+              <div id="client-phone-field" class="field-group quote-data__field">
                 <span class="field-help-label-row field-help-label-row--block">
-                  <label class="field-label" for="client_phone">{{ $t('client_phone') }}</label>
+                  <label class="field-label" for="client_phone">
+                    <span class="required-indicator" aria-hidden="true">*</span>
+                    {{ $t('client_phone') }}
+                  </label>
                   <FieldHelpIcon :label="$t('client_phone')" field-name="phone" field-id="client_phone" />
                 </span>
 
-                <input id="client_phone" v-model="clientPhone" class="field-input"
-                  :placeholder="$t('client_phone_placeholder')" @input="updateBaseData" />
+                <input id="client_phone" v-model="client_phone" class="field-input"
+                  :placeholder="$t('client_phone_placeholder')" :disabled="loading || baseLocked"
+                  @input="updateBaseData" />
               </div>
 
-              <div class="field-group">
+              <div id="client-email-field" class="field-group quote-data__field">
+                <span class="field-help-label-row field-help-label-row--block">
+                  <label class="field-label" for="client_email">{{ $t('client.email') }}</label>
+                  <FieldHelpIcon :label="$t('client.email')" field-name="email" field-id="client_email" />
+                </span>
+
+                <input id="client_email" v-model="client_email" type="email" class="field-input"
+                  :placeholder="$t('client.email_placeholder')" :disabled="loading || baseLocked"
+                  @input="updateBaseData" />
+              </div>
+
+              <div id="client-address-field" class="field-group quote-data__field">
+                <span class="field-help-label-row field-help-label-row--block">
+                  <label class="field-label" for="client_address">{{ $t('client.address') }}</label>
+                  <FieldHelpIcon :label="$t('client.address')" field-name="address" field-id="client_address" />
+                </span>
+
+                <input id="client_address" v-model="client_address" class="field-input"
+                  :placeholder="$t('client.address_placeholder')" :disabled="loading || baseLocked"
+                  @input="updateBaseData" />
+              </div>
+
+              <div id="client-source-field" class="field-group quote-data__field">
                 <UpdatedCustomInputSelect id="client_source" :model-value="selectedClientSource"
                   :label="$t('client_source')" :controller="clientSourceController"
-                  :placeholder="$t('client_source_placeholder')" :params="indexClientSourceParams" required
-                  @update:model="handleClientSource" />
+                  :placeholder="$t('client_source_placeholder')" :params="indexClientSourceParams"
+                  :disabled="loading || baseLocked" required @update:model-value="updateClientSource" />
               </div>
             </template>
 
-            <div class="quote-data__field">
-              <UpdatedCustomInputSelect id="execution-quote-project" v-model="project" :controller="projectController"
-                :params="projectParams" :placeholder="$t('execution_quote.placeholders.project')"
-                :disabled="loading || baseLocked || !clientId" :label="$t('execution_quote.fields.project')" required />
+            <div class="field-group quote-data__field">
+              <UpdatedCustomInputSelect id="execution-quote-project" :model-value="project"
+                :controller="projectController" :params="projectParams"
+                :placeholder="$t('execution_quote.placeholders.project')"
+                :disabled="loading || baseLocked || (client_exist === true && !clientId)"
+                :label="$t('execution_quote.fields.project')" required @update:model-value="updateProject" />
             </div>
 
-            <div class="quote-data__field">
-
-              <UpdatedCustomInputSelect id="client_exist" :model-value="selectedClientExist"
-                :static-options="clientExistOptions" :label="$t('client_type')"
-                :placeholder="$t('client_type_placeholder')" required @update:model="updateClientExist" />
-
+            <div v-if="isExecutionOnly" class="field-group quote-data__field">
+              <UpdatedCustomInputSelect id="execution-quote-price-employee" :model-value="priceEmployee"
+                :controller="employeeController" :params="employeeParams"
+                :placeholder="$t('execution_quote.placeholders.price_employee')" :disabled="loading || baseLocked"
+                :label="$t('execution_quote.fields.price_employee')" required
+                @update:model-value="updatePriceEmployee" />
             </div>
 
-
-            <div v-if="selectedClientExist && clientExist" class="quote-data__field">
-
-              <UpdatedCustomInputSelect id="client_id" :model-value="selectedClient"
-                :controller="clientController" :params="clientParams" :label="$t('client')"
-                :placeholder="$t('client_placeholder')" required @update:model="updateClient" />
-
+            <div class="field-group quote-data__field quote-data__attachments col-span-2">
+              <HandleFilesUpload id="attachments" :label="$t('attachments')" :file="attachmentFiles" :multiple="true"
+                @change="updateAttachments" />
             </div>
-
-
-
-            <template v-if="selectedClientExist && clientExist === false">
-
-              <div class="quote-data__field">
-
-                <input v-model="clientName" class="field-input" :placeholder="$t('client_name')"
-                  @input="updateBaseData" />
-
-              </div>
-
-
-
-              <div class="quote-data__field">
-
-                <input v-model="clientPhone" class="field-input" :placeholder="$t('client_phone')"
-                  @input="updateBaseData" />
-
-              </div>
-
-            </template>
           </div>
-
-          <section v-if="isExecutionOnly && !baseLocked" class="quote-data__attachments">
-            <div class="quote-data__attachments-heading">
-              <span aria-hidden="true">
-                <i class="pi pi-paperclip"></i>
-              </span>
-              <div>
-                <h3>{{ $t('execution_quote.attachments.title') }}</h3>
-                <p>{{ $t('execution_quote.attachments.description') }}</p>
-              </div>
-            </div>
-
-            <HandleFilesUpload label="execution_quote.attachments.upload" multiple @change="updateAttachments" />
-          </section>
 
           <ExecutionQuoteTypeCards v-if="!baseLocked" class="quote-data__type-options"
             :model-value="selectedExecutionQuoteType" :loading="loading"
             @update:model-value="onExecutionQuoteTypeChange" />
         </div>
       </section>
-
-      <ExecutionQuoteClientDialog v-model="clientDialogVisible" @created="selectCreatedClient" />
     </template>
 
     <ExecutionQuoteBuilder v-if="isBuilderPage" :model-value="selectedExecutionQuoteType"
-      :enabled="Boolean(executionQuoteId)" :execution-quote-id="executionQuoteId" :loading="loading"
-      :initial-stages="initialQuoteStages" @update:model-value="onExecutionQuoteTypeChange"
+      :enabled="Boolean(executionQuoteId)" :execution-quote-id="executionQuoteId"
+      :initial-stages="props.initialQuoteStages" :loading="loading" @update:model-value="onExecutionQuoteTypeChange"
       @update:stages="onStagesChange" @update:details="onDetailsChange" />
   </section>
 </template>
@@ -804,10 +719,6 @@ const handleClientSource = (value: TitleInterface<number> | null) => {
 .execution-quote__brand,
 .quote-hero__badge {
   gap: 0.4rem;
-}
-
-.execution-quote__brand,
-.quote-hero__badge {
   background: var(--btn-easy);
   color: var(--PrimaryColor);
 }
@@ -848,126 +759,6 @@ const handleClientSource = (value: TitleInterface<number> | null) => {
 
 .quote-hero {
   grid-area: hero;
-}
-
-.build-path {
-  grid-area: path;
-  padding: 1.15rem;
-  background: linear-gradient(145deg, var(--bg-card), var(--PrimaryColor-alpha-4));
-}
-
-.build-path__heading,
-.section-title {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-}
-
-.section-title__copy {
-  display: flex;
-  align-items: center;
-  gap: 0.7rem;
-}
-
-.section-title__icon,
-.section-title__number {
-  display: grid;
-  flex: 0 0 auto;
-  place-items: center;
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: var(--radius-sm);
-  background: var(--PrimaryColor-light);
-  color: var(--PrimaryColor);
-  font-weight: 800;
-}
-
-.section-title__number {
-  width: auto;
-  min-width: 2.5rem;
-  padding-inline: 0.45rem;
-  font-size: 0.75rem;
-}
-
-.build-path__heading h2,
-.section-title h2 {
-  font-size: 1.15rem;
-}
-
-.build-path__heading span,
-.section-title__badge {
-  background: var(--PrimaryColor-light);
-  color: var(--PrimaryColor);
-}
-
-.build-path__steps {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.5rem;
-  margin: 1rem 0 0;
-  padding: 0;
-  list-style: none;
-}
-
-.build-path__step {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.35rem;
-  min-height: 4.9rem;
-  padding: 0.7rem;
-  border: 1px solid var(--border-weak);
-  border-radius: var(--radius-sm);
-  background: var(--bg-card);
-  color: var(--subtitle-color);
-}
-
-.build-path__step strong,
-.build-path__step small {
-  display: block;
-}
-
-.build-path__step strong {
-  color: var(--title-card-color);
-  font-size: 0.8rem;
-}
-
-.build-path__step small {
-  font-size: 0.7rem;
-}
-
-.build-path__number {
-  display: grid;
-  flex: 0 0 auto;
-  place-items: center;
-  width: 1.8rem;
-  height: 1.8rem;
-  border-radius: var(--radius-full);
-  background: var(--gray-900);
-  color: var(--white);
-  font-weight: 700;
-}
-
-.build-path__step--current {
-  border-color: var(--PrimaryColor);
-  background: var(--btn-easy);
-}
-
-.build-path__step--current .build-path__number {
-  background: var(--PrimaryColor);
-}
-
-.build-path__step--complete {
-  border-color: var(--PrimaryColor-alpha-30);
-  background: var(--PrimaryColor-alpha-4);
-}
-
-.build-path__step--complete .build-path__number {
-  background: var(--PrimaryColor);
-}
-
-.quote-hero {
   position: relative;
   display: flex;
   flex-direction: column;
@@ -1040,6 +831,92 @@ const handleClientSource = (value: TitleInterface<number> | null) => {
   font-weight: 800;
 }
 
+.build-path {
+  grid-area: path;
+  padding: 1.25rem;
+}
+
+.build-path__heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.build-path__heading h2,
+.section-title h2 {
+  font-size: 1.15rem;
+}
+
+.build-path__heading span {
+  background: var(--btn-easy);
+  color: var(--PrimaryColor);
+}
+
+.build-path__steps {
+  display: grid;
+  gap: 0.65rem;
+  margin: 1.1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.build-path__step {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid var(--border-weak);
+  border-radius: var(--radius-sm);
+  background: var(--bg-section);
+  transition: var(--transition-fast);
+}
+
+.build-path__step span {
+  display: flex;
+  flex-direction: column;
+}
+
+.build-path__step strong {
+  font-size: 0.92rem;
+}
+
+.build-path__step small {
+  color: var(--subtitle-color);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.build-path__number {
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: var(--radius-full);
+  background: var(--border-weak);
+  color: var(--white);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.build-path__step--current {
+  border-color: var(--PrimaryColor);
+  background: var(--btn-easy);
+
+  .build-path__number {
+    background: var(--PrimaryColor);
+  }
+}
+
+.build-path__step--complete {
+  border-color: var(--PrimaryColor-alpha-30);
+  background: var(--PrimaryColor-alpha-4);
+
+  .build-path__number {
+    background: var(--PrimaryColor);
+  }
+}
+
 .execution-quote__card {
   padding: 1.35rem;
 }
@@ -1050,75 +927,87 @@ const handleClientSource = (value: TitleInterface<number> | null) => {
 }
 
 .source-option {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
+  position: relative;
+  display: flex;
   align-items: center;
-  gap: 0.75rem;
-  min-height: 6rem;
-  padding: 1rem;
+  gap: 1rem;
+  padding: 1rem 1.1rem;
   border: 1px solid var(--border-weak);
-  border-radius: var(--radius-sm);
-  background: var(--bg-card);
-  color: var(--title-card-color);
+  border-radius: var(--radius-md);
+  background: var(--bg-section);
   cursor: pointer;
   text-align: start;
   transition: var(--transition-fast);
 }
 
 .source-option:hover:not(:disabled) {
-  transform: translateY(-1px);
   border-color: var(--PrimaryColor-alpha-30);
-  box-shadow: var(--shadow-sm);
-}
-
-.source-option:disabled {
-  cursor: not-allowed;
-  opacity: 0.7;
+  transform: translateY(-1px);
 }
 
 .source-option--selected {
   border-color: var(--PrimaryColor);
-  background: var(--PrimaryColor-alpha-4);
-  box-shadow: inset 0 -3px 0 var(--PrimaryColor);
+  background: var(--btn-easy);
+  box-shadow: 0 0 0 2px var(--PrimaryColor-alpha-20);
 }
 
 .source-option__icon {
-  display: grid;
-  place-items: center;
-  width: 2.25rem;
-  height: 2.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.6rem;
+  height: 2.6rem;
   border-radius: var(--radius-sm);
-  background: var(--gray-100);
-  color: var(--gray-600);
-  font-size: 1rem;
+  background: var(--bg-card);
+  color: var(--PrimaryColor);
+  font-size: 1.2rem;
 }
 
-.source-option--selected .source-option__icon {
-  background: var(--PrimaryColor);
-  color: var(--white);
+.source-option__content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
 }
 
-.source-option__content strong,
+.source-option__content strong {
+  font-size: 0.98rem;
+}
+
 .source-option__content small {
-  display: block;
-}
-
-.source-option__content small {
-  margin-top: 0.25rem;
   color: var(--subtitle-color);
-  line-height: 1.5;
+  font-size: 0.8rem;
+  font-weight: 700;
 }
 
 .source-option__code {
-  padding: 0.3rem 0.5rem;
-  border-radius: var(--radius-full);
-  background: var(--gray-100);
-  color: var(--gray-600);
-  font-size: 0.7rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: var(--radius-xs);
+  background: var(--PrimaryColor-alpha-10);
+  color: var(--PrimaryColor);
+  font-size: 0.72rem;
   font-weight: 800;
 }
 
-.source-option--selected .source-option__code {
+.section-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.section-title__copy {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.section-title__icon,
+.section-title__number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--radius-sm);
   background: var(--PrimaryColor-light);
   color: var(--PrimaryColor);
 }
@@ -1135,6 +1024,44 @@ const handleClientSource = (value: TitleInterface<number> | null) => {
   align-items: start;
 }
 
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.field-label {
+  font-family: 'Medium';
+  font-size: var(--sm-size);
+  color: var(--gray-6);
+}
+
+.required-indicator {
+  color: var(--danger);
+}
+
+.field-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid var(--border-weak);
+  border-radius: var(--radius-sm);
+  background: var(--bg-section);
+  outline: none;
+  transition: all 0.25s ease;
+  font-family: 'Medium';
+  font-weight: 400;
+  font-size: var(--sm-size);
+  color: var(--bread-crumb-color-span);
+
+  &:focus {
+    border-color: var(--PrimaryColor);
+  }
+}
+
+.col-span-2 {
+  grid-column: span 2;
+}
+
 .quote-data__field {
   display: flex;
   min-width: 0;
@@ -1145,64 +1072,15 @@ const handleClientSource = (value: TitleInterface<number> | null) => {
   border-radius: var(--radius-md);
   background: var(--bg-card);
   transition: var(--transition-fast);
-}
 
-.quote-data__field:focus-within {
-  border-color: var(--PrimaryColor);
-  box-shadow: 0 0 0 3px var(--PrimaryColor-alpha-10);
+  &:focus-within {
+    border-color: var(--PrimaryColor);
+    box-shadow: 0 0 0 3px var(--PrimaryColor-alpha-10);
+  }
 }
 
 .quote-data__type-options {
   margin-top: 1rem;
-}
-
-.quote-data__add-client {
-  align-self: flex-start;
-  margin-block-start: 0.15rem;
-}
-
-.quote-data__attachments {
-  display: grid;
-  gap: 1rem;
-  margin-block-start: 1rem;
-  padding: 1rem;
-  border: 1px solid var(--border-weak);
-  border-radius: var(--radius-md);
-  background: var(--bg-section);
-}
-
-.quote-data__attachments-heading {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  text-align: start;
-}
-
-.quote-data__attachments-heading>span {
-  display: grid;
-  flex: 0 0 2.5rem;
-  place-items: center;
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: var(--radius-sm);
-  background: var(--PrimaryColor-light);
-  color: var(--PrimaryColor);
-}
-
-.quote-data__attachments-heading h3,
-.quote-data__attachments-heading p {
-  margin: 0;
-}
-
-.quote-data__attachments-heading h3 {
-  color: var(--title-card-color);
-  font-size: var(--md-size);
-}
-
-.quote-data__attachments-heading p {
-  margin-block-start: 0.2rem;
-  color: var(--subtitle-color);
-  font-size: var(--sm-size);
 }
 
 .quote-data__field> :deep(.input-label) {
@@ -1245,6 +1123,10 @@ const handleClientSource = (value: TitleInterface<number> | null) => {
   .quote-data__grid,
   .quote-hero__totals {
     grid-template-columns: 1fr;
+  }
+
+  .col-span-2 {
+    grid-column: span 1;
   }
 
   .execution-quote__header {
