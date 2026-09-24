@@ -99,6 +99,27 @@ describe('ItemForm', () => {
     });
   });
 
+  it('provides department params before a stage is selected', () => {
+    const wrapper = mount(ItemForm, {
+      global: {
+        mocks: { $t: (key: string) => key },
+        stubs: { MultiLangInput: MultiLangInputStub, UpdatedCustomInputSelect: SelectStub },
+      },
+    });
+
+    const departmentParams = JSON.parse(
+      wrapper.find('.item-department').attributes('data-params') ?? '{}',
+    );
+
+    expect(departmentParams).toMatchObject({
+      with_pagination: 0,
+      page: 1,
+      per_page: 100,
+      type: 2,
+    });
+    expect(departmentParams).not.toHaveProperty('stage_id');
+  });
+
   it.each(filterScenarios)(
     'filters $filteredClass options after selecting $selectClass',
     async ({ selectClass, filteredClass, expectedParams }) => {

@@ -5,6 +5,9 @@ import AddProjectItemParams from '../add.project.Item.params';
 const payload = {
   project_id: 4,
   department_id: 7,
+  site_description: 'Existing site',
+  technical_general_notes: 'Check the structure',
+  inspection_recommendations: 'Inspect before installation',
   items: [
     {
       price: 150,
@@ -27,6 +30,9 @@ describe('AddProjectItemParams', () => {
     const params = new AddProjectItemParams({
       project_id: 4,
       department_id: 7,
+      site_description: '',
+      technical_general_notes: '',
+      inspection_recommendations: '',
       items: [
         {
           price: 150,
@@ -49,6 +55,9 @@ describe('AddProjectItemParams', () => {
     expect(params.toMap()).toEqual({
       project_id: 4,
       department_id: 7,
+      site_description: '',
+      technical_general_notes: '',
+      inspection_recommendations: '',
       items: [
         {
           item_id: 9,

@@ -86,8 +86,18 @@ describe('ProjectItemForm', () => {
     await wrapper.find('.department_id').trigger('click');
     await wrapper.find('.project-item-item').trigger('click');
     await wrapper.find('.project-item-pricing-method').trigger('click');
-    await wrapper.find<HTMLInputElement>('.field-input[step="1"]').setValue('250');
-    await wrapper.find<HTMLInputElement>('.field-input[step="1"]').setValue('3');
+    const [quantityInput, priceInput] = wrapper.findAll<HTMLInputElement>('.field-input[step="1"]');
+    await quantityInput.setValue('3');
+    await priceInput.setValue('250');
+    await wrapper
+      .find<HTMLTextAreaElement>('#project-item-site-description')
+      .setValue('Existing site');
+    await wrapper
+      .find<HTMLTextAreaElement>('#project-item-technical-general-notes')
+      .setValue('Check the structure');
+    await wrapper
+      .find<HTMLTextAreaElement>('#project-item-inspection-recommendations')
+      .setValue('Inspect before installation');
     await wrapper.find('.add-btn').trigger('click');
 
     const emissions = wrapper.emitted('updateData') as unknown[][];
@@ -96,6 +106,9 @@ describe('ProjectItemForm', () => {
     expect(params.toMap()).toEqual({
       project_id: 4,
       department_id: 7,
+      site_description: 'Existing site',
+      technical_general_notes: 'Check the structure',
+      inspection_recommendations: 'Inspect before installation',
       items: [
         {
           item_id: 9,
@@ -147,8 +160,9 @@ describe('ProjectItemForm', () => {
     await wrapper.find('.project-item-item').trigger('click');
     await wrapper.find('.project-item-pricing-method').trigger('click');
     await wrapper.find('.space_id').trigger('click');
-    await wrapper.find<HTMLInputElement>('.field-input[step="1"]').setValue('250');
-    await wrapper.find<HTMLInputElement>('.field-input[step="1"]').setValue('3');
+    const [quantityInput, priceInput] = wrapper.findAll<HTMLInputElement>('.field-input[step="1"]');
+    await quantityInput.setValue('3');
+    await priceInput.setValue('250');
     await wrapper.find('.add-btn').trigger('click');
 
     const row = wrapper.find('.local-table-row');
@@ -161,6 +175,9 @@ describe('ProjectItemForm', () => {
     expect(params.toMap()).toEqual({
       project_id: 4,
       department_id: 7,
+      site_description: '',
+      technical_general_notes: '',
+      inspection_recommendations: '',
       items: [
         {
           item_id: 9,
@@ -186,6 +203,29 @@ describe('ProjectItemForm', () => {
       String(ProjectItemShowModel.example.price),
     );
     expect(wrapper.find('.add-panel.disabled').exists()).toBe(true);
-    expect(wrapper.emitted('updateData')?.[0]?.[0]).toBeInstanceOf(AddProjectItemParams);
+    expect(wrapper.find<HTMLTextAreaElement>('#project-item-site-description').element.value).toBe(
+      ProjectItemShowModel.example.site_description,
+    );
+    expect(
+      wrapper.find<HTMLTextAreaElement>('#project-item-technical-general-notes').element.value,
+    ).toBe(ProjectItemShowModel.example.technical_general_notes);
+    expect(
+      wrapper.find<HTMLTextAreaElement>('#project-item-inspection-recommendations').element.value,
+    ).toBe(ProjectItemShowModel.example.inspection_recommendations);
+    const emittedParams = wrapper.emitted('updateData')?.at(-1)?.[0] as AddProjectItemParams;
+    expect(emittedParams).toBeInstanceOf(AddProjectItemParams);
+    expect(emittedParams.toMap()).toMatchObject({
+      site_description: ProjectItemShowModel.example.site_description,
+      technical_general_notes: ProjectItemShowModel.example.technical_general_notes,
+      inspection_recommendations: ProjectItemShowModel.example.inspection_recommendations,
+      items: [
+        {
+          item_id: ProjectItemShowModel.example.item_id?.id,
+          price: ProjectItemShowModel.example.price,
+          quantity: ProjectItemShowModel.example.quantity,
+          pricing_method: ProjectItemShowModel.example.pricing_method,
+        },
+      ],
+    });
   });
 });

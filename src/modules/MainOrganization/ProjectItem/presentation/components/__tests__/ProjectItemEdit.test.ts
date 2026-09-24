@@ -42,6 +42,9 @@ vi.mock('vue-router', () => ({
 
 const addParams = new AddProjectItemParams({
   project_id: 4,
+  site_description: 'Existing site',
+  technical_general_notes: 'Check the structure',
+  inspection_recommendations: 'Inspect before installation',
   items: [
     {
       price: 150,
@@ -104,6 +107,9 @@ describe('ProjectItemEdit', () => {
       project_floor_id: 2,
       price: 150,
       quantity: 3,
+      site_description: 'Existing site',
+      technical_general_notes: 'Check the structure',
+      inspection_recommendations: 'Inspect before installation',
     });
   });
 

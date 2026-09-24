@@ -10,6 +10,9 @@ const itemJson = {
   item_id_title: 'Concrete',
   pricing_method: ProjectItemPriceEnum.SPACE_RELATED,
   project_floor_id: 2,
+  site_description: 'Existing site',
+  technical_general_notes: 'Check the structure',
+  inspection_recommendations: 'Inspect before installation',
 };
 
 describe('ProjectItemShowModel', () => {
@@ -22,6 +25,9 @@ describe('ProjectItemShowModel', () => {
       quantity: 3,
       pricing_method: ProjectItemPriceEnum.SPACE_RELATED,
       project_floor_id: 2,
+      site_description: 'Existing site',
+      technical_general_notes: 'Check the structure',
+      inspection_recommendations: 'Inspect before installation',
     });
     expect(model.item_id).toMatchObject({ id: 9, title: 'Concrete' });
     expect(Object.isFrozen(model)).toBe(true);

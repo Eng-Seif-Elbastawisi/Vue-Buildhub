@@ -10,6 +10,9 @@ export default class EditProjectItemParams implements Params {
   public item_id?: number;
   public pricing_method?: ProjectItemPriceEnum;
   public project_floor_id?: number;
+  public site_description: string;
+  public technical_general_notes: string;
+  public inspection_recommendations: string;
 
   public static readonly validation = new ClassValidation().setRules({
     // project_item_id: { required: true },
@@ -27,6 +30,9 @@ export default class EditProjectItemParams implements Params {
     item_id?: number;
     pricing_method?: ProjectItemPriceEnum;
     project_floor_id?: number;
+    site_description?: string;
+    technical_general_notes?: string;
+    inspection_recommendations?: string;
   }) {
     this.project_item_id = data.project_item_id;
     this.price = data.price;
@@ -34,6 +40,9 @@ export default class EditProjectItemParams implements Params {
     this.item_id = data.item_id;
     this.pricing_method = data.pricing_method;
     this.project_floor_id = data.project_floor_id;
+    this.site_description = data.site_description ?? '';
+    this.technical_general_notes = data.technical_general_notes ?? '';
+    this.inspection_recommendations = data.inspection_recommendations ?? '';
   }
 
   toMap(): Record<string, unknown> {
@@ -44,6 +53,9 @@ export default class EditProjectItemParams implements Params {
       item_id: this.item_id,
       pricing_method: this.pricing_method,
       project_floor_id: this.project_floor_id,
+      site_description: this.site_description,
+      technical_general_notes: this.technical_general_notes,
+      inspection_recommendations: this.inspection_recommendations,
     };
   }
 

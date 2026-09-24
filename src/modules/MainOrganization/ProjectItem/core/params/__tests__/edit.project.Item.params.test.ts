@@ -9,6 +9,9 @@ const payload = {
   item_id: 9,
   pricing_method: ProjectItemPriceEnum.SPACE_RELATED,
   project_floor_id: 2,
+  site_description: 'Existing site',
+  technical_general_notes: 'Check the structure',
+  inspection_recommendations: 'Inspect before installation',
 };
 
 describe('EditProjectItemParams', () => {

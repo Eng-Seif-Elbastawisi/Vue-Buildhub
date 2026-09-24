@@ -29,6 +29,9 @@
       project_floor_id: item.project_floor_id,
       price: item.price,
       quantity: item.quantity,
+      site_description: data.site_description,
+      technical_general_notes: data.technical_general_notes,
+      inspection_recommendations: data.inspection_recommendations,
     });
   };
 

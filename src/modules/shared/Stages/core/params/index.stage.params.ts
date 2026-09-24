@@ -6,6 +6,7 @@ type IndexStageParamsData = {
   perPage?: number;
   withPage?: number;
   parentId?: number | null;
+  departmentId?: number;
   sortBy?: string;
   sortDirection?: 'asc' | 'desc';
   status?: boolean;
@@ -13,6 +14,7 @@ type IndexStageParamsData = {
 
 export default class IndexStageParams extends IndexParams {
   public parentId?: number | null;
+  public departmentId?: number;
   public sortBy?: string;
   public sortDirection?: 'asc' | 'desc';
   public status?: boolean;
@@ -48,6 +50,7 @@ export default class IndexStageParams extends IndexParams {
       );
 
       this.parentId = dataOrWord.parentId;
+      this.departmentId = dataOrWord.departmentId;
       this.sortBy = dataOrWord.sortBy;
       this.sortDirection = dataOrWord.sortDirection;
       this.status = dataOrWord.status;
@@ -66,6 +69,10 @@ export default class IndexStageParams extends IndexParams {
 
     if (this.parentId !== undefined) {
       data.parent_id = this.parentId;
+    }
+
+    if (this.departmentId !== undefined) {
+      data.department_id = this.departmentId;
     }
 
     if (this.sortBy) data.sort_by = this.sortBy;
