@@ -5,7 +5,7 @@ import { DepartmentTypeEnum } from '@/modules/shared/Department/core/constants/T
 import { ItemServiceTypeEnum } from '@/modules/shared/Item/core/constant/item.service.type.enum';
 import arabicMessages from '@/locales/ar.json';
 import englishMessages from '@/locales/en.json';
-import { sidebarSections } from '../sidebar.config';
+import { getSidebarSectionsWithCounts, sidebarSections } from '../sidebar.config';
 
 describe('sidebarSections', () => {
   it('keeps sidebar sections configurable with items', () => {
@@ -230,14 +230,27 @@ describe('sidebarSections', () => {
     );
   });
 
-  it('includes the labor destination in the sidebar', () => {
-    const laborItem = sidebarSections
-      .flatMap((section) => section.items)
-      .find((item) => item.path === '/labor');
+  it('maps product and labor backend counts to their existing sidebar badges', () => {
+    const items = getSidebarSectionsWithCounts({
+      products_count: 17,
+      labors_count: '9',
+    }).flatMap((section) => section.items);
+    const productItem = items.find((item) => item.path === '/products');
+    const laborItem = items.find((item) => item.path === '/labor');
+
+    expect(productItem).toEqual(
+      expect.objectContaining({
+        labelKey: 'sidebar.products',
+        countKey: 'products_count',
+        badge: '17',
+      }),
+    );
 
     expect(laborItem).toEqual(
       expect.objectContaining({
         labelKey: 'sidebar.labor',
+        countKey: 'labors_count',
+        badge: '9',
       }),
     );
   });
