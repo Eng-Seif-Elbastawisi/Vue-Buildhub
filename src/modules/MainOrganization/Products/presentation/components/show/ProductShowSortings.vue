@@ -1,221 +1,217 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+  import { computed, ref } from 'vue';
+  import { useI18n } from 'vue-i18n';
 
-import ConfirmCancelDialog from '@/base/Presentation/Dialogs/ConfirmCancelDialog.vue';
-import type { ProductShowSorting } from '../../../core/models/products.show.model.ts';
+  import ConfirmCancelDialog from '@/base/Presentation/Dialogs/ConfirmCancelDialog.vue';
+  import type ProductShowSortingModel from '../../../core/models/ProductShowSortingModel';
 
-import DeleteProductsSortingParams from '../../../core/params/delete.products.sorting.params.ts';
-import StoreProductsSortingParams from '../../../core/params/store.products.sorting.params.ts';
+  import DeleteProductsSortingParams from '../../../core/params/delete.products.sorting.params.ts';
+  import StoreProductsSortingParams from '../../../core/params/store.products.sorting.params.ts';
 
-import ProductsController from '../../controllers/products.controller.ts';
-import { useI18n } from 'vue-i18n';
-const { t } = useI18n();
+  import ProductsController from '../../controllers/products.controller.ts';
+  const { t } = useI18n();
 
-// ======================================================
-// Props
-// ======================================================
+  // ======================================================
+  // Props
+  // ======================================================
 
-const props = defineProps<{
-  productId: number;
-  sortings: ProductShowSorting[];
-}>();
+  const props = defineProps<{
+    productId: number;
+    sortings: ProductShowSortingModel[];
+  }>();
 
-// ======================================================
-// Controller
-// ======================================================
+  // ======================================================
+  // Controller
+  // ======================================================
 
-const productsController = ProductsController.getInstance();
+  const productsController = ProductsController.getInstance();
 
-// ======================================================
-// State
-// ======================================================
-
-const deletingSortingId = ref<number | undefined>();
-
-const showSortingDialog = ref(false);
-
-const storingSorting = ref(false);
-
-const sortingPrice = ref<number | null>(null);
-
-/**
- * Sortings جديدة لسه مش محفوظة
- */
-const newSortings = ref<ProductShowSorting[]>([]);
-
-// ======================================================
-// Computed
-// ======================================================
-
-const displayedSortings = computed(() => [...(props.sortings ?? []), ...newSortings.value]);
-
-// ======================================================
-// Helpers
-// ======================================================
-
-const getSortingTitle = (index: number): string => {
-  return `${t('Products.form.sorting')} ${index + 1}`;
-};
-
-const formatPrice = (price?: number | string) => {
-  if (price == null || price === '') {
-    return '—';
+  interface MutationResponse {
+    data?: {
+      status?: boolean;
+    } | null;
   }
 
-  return new Intl.NumberFormat('ar-EG').format(Number(price));
-};
+  const mutationSucceeded = (result: unknown) =>
+    (result as MutationResponse | null)?.data?.status === true;
 
-// ======================================================
-// Open Dialog
-// ======================================================
+  // ======================================================
+  // State
+  // ======================================================
 
-const openSortingDialog = () => {
-  sortingPrice.value = null;
+  const deletingSortingId = ref<number | undefined>();
 
-  showSortingDialog.value = true;
-};
+  const showSortingDialog = ref(false);
 
-// ======================================================
-// Close Dialog
-// ======================================================
+  const storingSorting = ref(false);
 
-const closeSortingDialog = () => {
-  if (storingSorting.value) {
-    return;
-  }
-
-  showSortingDialog.value = false;
-
-  sortingPrice.value = null;
-};
-
-// ======================================================
-// Append Sorting
-// ======================================================
-
-const appendSorting = () => {
-  if (sortingPrice.value == null || sortingPrice.value < 0) {
-    return;
-  }
+  const sortingPrice = ref<number | null>(null);
 
   /**
-   * الرقم بيتحدد حسب عدد الـ sortings الموجودة
-   *
-   * مثال:
-   * الموجود 2
-   * الجديد => فرز 3
+   * Sortings جديدة لسه مش محفوظة
    */
-  const title = getSortingTitle(displayedSortings.value.length);
+  const newSortings = ref<ProductShowSortingModel[]>([]);
 
-  /**
-   * Append محلي فقط
-   * لا يوجد API request هنا
-   */
-  newSortings.value.push({
-    title,
-    price: Number(sortingPrice.value),
-  });
+  // ======================================================
+  // Computed
+  // ======================================================
 
-  closeSortingDialog();
-};
+  const displayedSortings = computed(() => [...(props.sortings ?? []), ...newSortings.value]);
 
-// ======================================================
-// Save Sortings
-// ======================================================
+  // ======================================================
+  // Helpers
+  // ======================================================
 
-const saveSortings = async () => {
-  console.log('SAVE CLICKED');
-  console.log('productId:', props.productId);
-  console.log('newSortings:', newSortings.value);
+  const getSortingTitle = (index: number): string => {
+    return `${t('Products.form.sorting')} ${index + 1}`;
+  };
 
-  if (!props.productId) {
-    console.log('STOP: productId is missing');
-    return;
-  }
+  const formatPrice = (price?: number | string) => {
+    if (price == null || price === '') {
+      return '—';
+    }
 
-  if (newSortings.value.length === 0) {
-    console.log('STOP: no new sortings');
-    return;
-  }
+    return new Intl.NumberFormat('ar-EG').format(Number(price));
+  };
 
-  try {
-    storingSorting.value = true;
+  // ======================================================
+  // Open Dialog
+  // ======================================================
 
-    const startIndex = props.sortings?.length ?? 0;
+  const openSortingDialog = () => {
+    sortingPrice.value = null;
 
-    for (let index = 0; index < newSortings.value.length; index++) {
-      const sorting = newSortings.value[index];
+    showSortingDialog.value = true;
+  };
 
-      const title = getSortingTitle(startIndex + index);
+  // ======================================================
+  // Close Dialog
+  // ======================================================
 
-      const params = new StoreProductsSortingParams({
-        productId: props.productId,
-        title,
-        price: Number(sorting.price),
-      });
+  const closeSortingDialog = () => {
+    if (storingSorting.value) {
+      return;
+    }
 
-      console.log('SAVE PARAMS:', params);
-      console.log('SAVE MAP:', params.toMap());
+    showSortingDialog.value = false;
 
-      const result = await productsController.storeProductSorting(params);
+    sortingPrice.value = null;
+  };
 
-      console.log('SAVE RESULT:', result);
-      console.log('SAVE STATUS:', result?.data?.status);
+  // ======================================================
+  // Append Sorting
+  // ======================================================
 
-      if (result?.data?.status !== true) {
-        console.log('SAVE FAILED');
-        return;
+  const appendSorting = () => {
+    if (sortingPrice.value == null || sortingPrice.value < 0) {
+      return;
+    }
+
+    /**
+     * الرقم بيتحدد حسب عدد الـ sortings الموجودة
+     *
+     * مثال:
+     * الموجود 2
+     * الجديد => فرز 3
+     */
+    const title = getSortingTitle(displayedSortings.value.length);
+
+    /**
+     * Append محلي فقط
+     * لا يوجد API request هنا
+     */
+    newSortings.value.push({
+      title,
+      price: Number(sortingPrice.value),
+    });
+
+    closeSortingDialog();
+  };
+
+  // ======================================================
+  // Save Sortings
+  // ======================================================
+
+  const saveSortings = async () => {
+    if (!props.productId) {
+      return;
+    }
+
+    if (newSortings.value.length === 0) {
+      return;
+    }
+
+    try {
+      storingSorting.value = true;
+
+      const startIndex = props.sortings?.length ?? 0;
+
+      for (let index = 0; index < newSortings.value.length; index++) {
+        const sorting = newSortings.value[index];
+
+        if (!sorting) continue;
+
+        const title = getSortingTitle(startIndex + index);
+
+        const params = new StoreProductsSortingParams({
+          productId: props.productId,
+          title,
+          price: Number(sorting.price),
+        });
+
+        const result = await productsController.storeProductSorting(params);
+
+        if (!mutationSucceeded(result)) {
+          return;
+        }
       }
-    }
 
-    console.log('ALL SORTINGS SAVED');
+      newSortings.value = [];
 
-    newSortings.value = [];
-
-    window.location.reload();
-  } finally {
-    storingSorting.value = false;
-  }
-};
-
-// ======================================================
-// Delete Sorting
-// ======================================================
-
-const deleteSorting = async (sorting: ProductShowSorting, index: number) => {
-  /**
-   * Sorting جديد ولسه مش محفوظ
-   * نحذفه من الـ append المحلي فقط
-   */
-  if (!sorting.id) {
-    const newIndex = index - props.sortings.length;
-
-    if (newIndex >= 0) {
-      newSortings.value.splice(newIndex, 1);
-    }
-
-    return;
-  }
-
-  /**
-   * Sorting موجود بالفعل في الـ API
-   */
-  try {
-    deletingSortingId.value = sorting.id;
-
-    const result = await productsController.deleteProductSorting(
-      new DeleteProductsSortingParams({
-        productSortingId: sorting.id,
-      }),
-    );
-
-    if (result?.data?.status === true) {
       window.location.reload();
+    } finally {
+      storingSorting.value = false;
     }
-  } finally {
-    deletingSortingId.value = undefined;
-  }
-};
+  };
+
+  // ======================================================
+  // Delete Sorting
+  // ======================================================
+
+  const deleteSorting = async (sorting: ProductShowSortingModel, index: number) => {
+    /**
+     * Sorting جديد ولسه مش محفوظ
+     * نحذفه من الـ append المحلي فقط
+     */
+    if (!sorting.id) {
+      const newIndex = index - props.sortings.length;
+
+      if (newIndex >= 0) {
+        newSortings.value.splice(newIndex, 1);
+      }
+
+      return;
+    }
+
+    /**
+     * Sorting موجود بالفعل في الـ API
+     */
+    try {
+      deletingSortingId.value = sorting.id;
+
+      const result = await productsController.deleteProductSorting(
+        new DeleteProductsSortingParams({
+          productSortingId: sorting.id,
+        }),
+      );
+
+      if (mutationSucceeded(result)) {
+        window.location.reload();
+      }
+    } finally {
+      deletingSortingId.value = undefined;
+    }
+  };
 </script>
 
 <template>
@@ -226,13 +222,23 @@ const deleteSorting = async (sorting: ProductShowSorting, index: number) => {
 
     <div class="card-header">
       <div class="card-title-wrap">
-        <span class="num">
-          {{ $t('Products.form.sorting_number') }}
+        <span class="section-icon" aria-hidden="true">
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="m12 2 9 5-9 5-9-5 9-5Z" />
+            <path d="m3 12 9 5 9-5M3 17l9 5 9-5" />
+          </svg>
         </span>
 
         <div>
           <h3>
-            {{ $t('Products.form.image_and_sorting') }}
+            {{ $t('Products.show.sortings_title') }}
           </h3>
 
           <p>
@@ -247,8 +253,16 @@ const deleteSorting = async (sorting: ProductShowSorting, index: number) => {
         </span>
 
         <button type="button" class="add-sorting-btn" @click="openSortingDialog">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round">
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
             <line x1="12" y1="5" x2="12" y2="19" />
 
             <line x1="5" y1="12" x2="19" y2="12" />
@@ -265,27 +279,33 @@ const deleteSorting = async (sorting: ProductShowSorting, index: number) => {
     <!-- Sortings -->
     <!-- ================================================== -->
 
-    <div v-if="displayedSortings.length" class="sortings-grid">
-      <div v-for="(sorting, index) in displayedSortings" :key="sorting.id ?? `new-${index}`" class="sorting-item">
-        <div class="sorting-left">
-          <span class="sorting-num">
-            {{ String(index + 1).padStart(2, '0') }}
-          </span>
+    <div v-if="displayedSortings.length" class="sortings-table">
+      <div class="sorting-table-head" aria-hidden="true">
+        <span>{{ $t('Products.show.sorting_number') }}</span>
+        <span>{{ $t('Products.show.sorting_name') }}</span>
+        <span>{{ $t('price') }}</span>
+        <span>{{ $t('Products.show.actions') }}</span>
+      </div>
 
-          <span class="sorting-title">
-            {{ getSortingTitle(index) }}
-          </span>
+      <div
+        v-for="(sorting, index) in displayedSortings"
+        :key="sorting.id ?? `new-${index}`"
+        class="sorting-item"
+      >
+        <span class="sorting-num" :data-label="$t('Products.show.sorting_number')">
+          {{ String(index + 1).padStart(2, '0') }}
+        </span>
+
+        <span class="sorting-title" :data-label="$t('Products.show.sorting_name')">
+          {{ sorting.title || getSortingTitle(index) }}
+        </span>
+
+        <div class="sorting-price" :data-label="$t('price')">
+          {{ formatPrice(sorting.price) }}
+          <small>{{ $t('Products.form.currency') }}</small>
         </div>
 
-        <div class="sorting-actions">
-          <div class="sorting-price">
-            {{ formatPrice(sorting.price) }}
-
-            <small>
-              {{ $t('Products.form.currency') }}
-            </small>
-          </div>
-
+        <div class="sorting-actions" :data-label="$t('Products.show.actions')">
           <ConfirmCancelDialog
             :title="$t('Products.delete_item_dialog.title')"
             :message="$t('Products.delete_item_dialog.message')"
@@ -309,24 +329,17 @@ const deleteSorting = async (sorting: ProductShowSorting, index: number) => {
 
                 <svg
                   v-else
-                  width="18"
-                  height="18"
+                  width="17"
+                  height="17"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
                   stroke-width="2"
                   stroke-linecap="round"
                   stroke-linejoin="round"
+                  aria-hidden="true"
                 >
-                  <polyline points="3 6 5 6 21 6" />
-
-                  <path
-                    d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
-                  />
-
-                  <line x1="10" y1="11" x2="10" y2="17" />
-
-                  <line x1="14" y1="11" x2="14" y2="17" />
+                  <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v5M14 11v5" />
                 </svg>
               </button>
             </template>
@@ -340,7 +353,18 @@ const deleteSorting = async (sorting: ProductShowSorting, index: number) => {
     <!-- ================================================== -->
 
     <div v-else class="empty-box">
-      <span>≡</span>
+      <svg
+        width="28"
+        height="28"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.6"
+        aria-hidden="true"
+      >
+        <path d="m12 2 9 5-9 5-9-5 9-5Z" />
+        <path d="m3 12 9 5 9-5M3 17l9 5 9-5" />
+      </svg>
 
       <p>
         {{ $t('Products.show.no_sortings') }}
@@ -383,7 +407,12 @@ const deleteSorting = async (sorting: ProductShowSorting, index: number) => {
               </p>
             </div>
 
-            <button type="button" class="close-btn" :aria-label="$t('common.close')" @click="closeSortingDialog">
+            <button
+              type="button"
+              class="close-btn"
+              :aria-label="$t('common.close')"
+              @click="closeSortingDialog"
+            >
               ×
             </button>
           </div>
@@ -415,8 +444,15 @@ const deleteSorting = async (sorting: ProductShowSorting, index: number) => {
               </label>
 
               <div class="price-input-wrap">
-                <input v-model.number="sortingPrice" type="number" min="0" step="1" class="form-input price-input"
-                  :placeholder="$t('Products.form.sorting_price_placeholder')" @keyup.enter="appendSorting" />
+                <input
+                  v-model.number="sortingPrice"
+                  type="number"
+                  min="0"
+                  step="1"
+                  class="form-input price-input"
+                  :placeholder="$t('Products.form.sorting_price_placeholder')"
+                  @keyup.enter="appendSorting"
+                />
 
                 <span class="currency">
                   {{ $t('Products.form.currency') }}
@@ -432,8 +468,12 @@ const deleteSorting = async (sorting: ProductShowSorting, index: number) => {
               {{ $t('common.cancel') }}
             </button>
 
-            <button type="button" class="save-btn" :disabled="sortingPrice == null || sortingPrice < 0"
-              @click="appendSorting">
+            <button
+              type="button"
+              class="save-btn"
+              :disabled="sortingPrice == null || sortingPrice < 0"
+              @click="appendSorting"
+            >
               {{ $t('common.add') }}
             </button>
           </div>
@@ -443,397 +483,436 @@ const deleteSorting = async (sorting: ProductShowSorting, index: number) => {
   </section>
 </template>
 
-<style scoped>
-.card {
-  background: #fff;
-  border: 1px solid #e5e7eb;
-  border-radius: 16px;
-  overflow: hidden;
-}
+<style scoped lang="scss">
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-weak);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+  }
 
-.card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 20px 24px;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-.card-title-wrap {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-.num {
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 10px;
-  background: #f3f4f6;
-  color: #374151;
-  font-size: 14px;
-  font-weight: 700;
-}
-
-.card-title-wrap h3 {
-  margin: 0 0 4px;
-  font-size: 18px;
-  font-weight: 700;
-  color: #111827;
-}
-
-.card-title-wrap p {
-  margin: 0;
-  color: #6b7280;
-  font-size: 13px;
-}
-
-.header-actions {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.count {
-  min-width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 8px;
-  border-radius: 8px;
-  background: #f3f4f6;
-  color: #374151;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.add-sorting-btn {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  padding: 9px 14px;
-  border: 0;
-  border-radius: 8px;
-  background: #111827;
-  color: #fff;
-  cursor: pointer;
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.add-sorting-btn:hover {
-  opacity: 0.9;
-}
-
-.sortings-grid {
-  padding: 8px 24px;
-}
-
-.sorting-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 16px 0;
-  border-bottom: 1px solid #f0f1f3;
-}
-
-.sorting-item:last-child {
-  border-bottom: 0;
-}
-
-.sorting-left {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  min-width: 0;
-}
-
-.sorting-num {
-  min-width: 34px;
-  color: #9ca3af;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.sorting-title {
-  color: #1f2937;
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.sorting-actions {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-}
-
-.sorting-price {
-  color: #111827;
-  font-size: 14px;
-  font-weight: 700;
-  white-space: nowrap;
-}
-
-.sorting-price small {
-  margin-inline-start: 4px;
-  color: #6b7280;
-  font-size: 11px;
-  font-weight: 500;
-}
-
-.delete-sorting-btn {
-  width: 34px;
-  height: 34px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 0;
-  border-radius: 8px;
-  background: #fef2f2;
-  color: #dc2626;
-  cursor: pointer;
-}
-
-.delete-sorting-btn:hover {
-  background: #fee2e2;
-}
-
-.delete-sorting-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.delete-loading {
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.empty-box {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  min-height: 150px;
-  color: #9ca3af;
-}
-
-.empty-box span {
-  font-size: 28px;
-}
-
-.empty-box p {
-  margin: 0;
-  font-size: 13px;
-}
-
-.sorting-save-footer {
-  display: flex;
-  justify-content: flex-end;
-  padding: 16px 24px;
-  border-top: 1px solid #e5e7eb;
-}
-
-.save-btn {
-  min-width: 110px;
-  padding: 10px 18px;
-  border: 0;
-  border-radius: 8px;
-  background: #111827;
-  color: #fff;
-  cursor: pointer;
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.save-btn:hover {
-  opacity: 0.9;
-}
-
-.save-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-/* ======================================================
-   Dialog
-   ====================================================== */
-
-.dialog-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  background: rgb(0 0 0 / 45%);
-}
-
-.sorting-dialog {
-  width: 100%;
-  max-width: 500px;
-  overflow: hidden;
-  border-radius: 16px;
-  background: #fff;
-  box-shadow: 0 20px 50px rgb(0 0 0 / 15%);
-}
-
-.dialog-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 22px 24px;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-.dialog-header h3 {
-  margin: 0 0 6px;
-  color: #111827;
-  font-size: 18px;
-  font-weight: 700;
-}
-
-.dialog-header p {
-  margin: 0;
-  color: #6b7280;
-  font-size: 13px;
-}
-
-.close-btn {
-  width: 32px;
-  height: 32px;
-  border: 0;
-  border-radius: 8px;
-  background: #f3f4f6;
-  color: #4b5563;
-  cursor: pointer;
-  font-size: 22px;
-  line-height: 1;
-}
-
-.close-btn:hover {
-  background: #e5e7eb;
-}
-
-.sorting-form {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-  padding: 24px;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.form-group label {
-  color: #374151;
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.form-group label span {
-  color: #dc2626;
-}
-
-.fixed-sorting-title {
-  width: 100%;
-  box-sizing: border-box;
-  padding: 11px 13px;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-  background: #f9fafb;
-  color: #374151;
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.form-input {
-  width: 100%;
-  box-sizing: border-box;
-  padding: 11px 13px;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-  outline: none;
-  color: #111827;
-  background: #fff;
-  font-size: 13px;
-}
-
-.form-input:focus {
-  border-color: #111827;
-}
-
-.price-input-wrap {
-  position: relative;
-}
-
-.price-input {
-  padding-inline-end: 65px;
-}
-
-.currency {
-  position: absolute;
-  top: 50%;
-  inset-inline-end: 13px;
-  transform: translateY(-50%);
-  color: #6b7280;
-  font-size: 12px;
-  pointer-events: none;
-}
-
-.dialog-footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  padding: 16px 24px;
-  border-top: 1px solid #e5e7eb;
-}
-
-.cancel-btn {
-  padding: 10px 18px;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-  background: #fff;
-  color: #374151;
-  cursor: pointer;
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.cancel-btn:hover {
-  background: #f9fafb;
-}
-
-@media (max-width: 640px) {
   .card-header {
-    align-items: flex-start;
-    flex-direction: column;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 1.15rem;
+    border-bottom: 1px solid var(--border-weak);
+  }
+
+  .card-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+  }
+
+  .section-icon {
+    width: 2.4rem;
+    height: 2.4rem;
+    flex: 0 0 2.4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-sm);
+    background: var(--PrimaryColor-light);
+    color: var(--PrimaryColor);
+  }
+
+  .card-title-wrap h3 {
+    margin: 0 0 4px;
+    font-size: var(--md-size);
+    font-weight: 800;
+    color: var(--title-color);
+  }
+
+  .card-title-wrap p {
+    margin: 0;
+    color: var(--subtitle-color);
+    font-size: var(--xs-size);
   }
 
   .header-actions {
-    width: 100%;
-    justify-content: space-between;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .count {
+    min-width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 8px;
+    border-radius: var(--radius-full);
+    background: var(--gray-100);
+    color: var(--gray-600);
+    font-size: var(--xs-size);
+    font-weight: 700;
+  }
+
+  .add-sorting-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.55rem 0.8rem;
+    border: 1px solid var(--PrimaryColor);
+    border-radius: var(--radius-sm);
+    background: var(--PrimaryColor);
+    color: var(--standard-white);
+    cursor: pointer;
+    font-size: var(--xs-size);
+    font-weight: 700;
+  }
+
+  .add-sorting-btn:hover {
+    background: var(--PrimaryColor-hover);
+    border-color: var(--PrimaryColor-hover);
+  }
+
+  .sortings-table {
+    overflow-x: auto;
+    margin: 1rem 1.15rem;
+    border: 1px solid var(--border-weak);
+    border-radius: var(--radius-sm);
+  }
+
+  .sorting-table-head,
+  .sorting-item {
+    display: grid;
+    grid-template-columns: 5rem minmax(12rem, 1fr) minmax(8rem, 0.45fr) 5rem;
+    align-items: center;
+    gap: 0.75rem;
+    min-width: 36rem;
+  }
+
+  .sorting-table-head {
+    padding: 0.7rem 0.85rem;
+    color: var(--gray-600);
+    background: var(--gray-50);
+    border-bottom: 1px solid var(--border-weak);
+    font-size: var(--xs-size);
+    font-weight: 700;
   }
 
   .sorting-item {
-    align-items: flex-start;
+    padding: 0.75rem 0.85rem;
+    border-bottom: 1px solid var(--border-weak);
+  }
+
+  .sorting-item:last-child {
+    border-bottom: 0;
+  }
+
+  .sorting-num {
+    color: var(--gray-400);
+    font-size: var(--xs-size);
+    font-weight: 700;
+  }
+
+  .sorting-title {
+    overflow: hidden;
+    color: var(--title-card-color);
+    font-size: var(--sm-size);
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .sorting-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
+
+  .sorting-price {
+    color: var(--title-card-color);
+    font-size: var(--sm-size);
+    font-weight: 800;
+    white-space: nowrap;
+  }
+
+  .sorting-price small {
+    margin-inline-start: 4px;
+    color: var(--PrimaryColor);
+    font-size: var(--xs-size-2);
+    font-weight: 500;
+  }
+
+  .delete-sorting-btn {
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border-weak);
+    border-radius: var(--radius-sm);
+    background: var(--bg-card);
+    color: var(--danger);
+    cursor: pointer;
+  }
+
+  .delete-sorting-btn:hover {
+    background: var(--danger-light);
+    border-color: var(--danger);
+  }
+
+  .delete-sorting-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .delete-loading {
+    font-size: var(--xs-size-2);
+    font-weight: 700;
+  }
+
+  .empty-box {
+    display: flex;
     flex-direction: column;
-    align-items: flex-end;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 150px;
+    color: var(--gray-400);
+  }
+
+  .empty-box p {
+    margin: 0;
+    font-size: var(--xs-size);
+  }
+
+  .sorting-save-footer {
+    display: flex;
+    justify-content: flex-end;
+    padding: 1rem 1.15rem;
+    border-top: 1px solid var(--border-weak);
+  }
+
+  .save-btn {
+    min-width: 110px;
+    padding: 10px 18px;
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: var(--PrimaryColor);
+    color: var(--standard-white);
+    cursor: pointer;
+    font-size: var(--xs-size);
+    font-weight: 600;
+  }
+
+  .save-btn:hover {
+    opacity: 0.9;
+  }
+
+  .save-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* ======================================================
+   Dialog
+   ====================================================== */
+
+  .dialog-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: var(--gray-800-alpha-80);
+  }
+
+  .sorting-dialog {
+    width: 100%;
+    max-width: 500px;
+    overflow: hidden;
+    border-radius: var(--radius-lg);
+    background: var(--bg-card);
+    border: 1px solid var(--border-weak);
+    box-shadow: var(--shadow-xl);
+  }
+
+  .dialog-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 22px 24px;
+    border-bottom: 1px solid var(--border-weak);
+  }
+
+  .dialog-header h3 {
+    margin: 0 0 6px;
+    color: var(--title-color);
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  .dialog-header p {
+    margin: 0;
+    color: var(--subtitle-color);
+    font-size: 13px;
+  }
+
+  .close-btn {
+    width: 32px;
+    height: 32px;
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: var(--gray-100);
+    color: var(--gray-600);
+    cursor: pointer;
+    font-size: 22px;
+    line-height: 1;
+  }
+
+  .close-btn:hover {
+    background: var(--gray-200);
+  }
+
+  .sorting-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    padding: 24px;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
     gap: 8px;
   }
-}
+
+  .form-group label {
+    color: var(--gray-700);
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .form-group label span {
+    color: var(--danger);
+  }
+
+  .fixed-sorting-title {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 11px 13px;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    background: var(--gray-50);
+    color: var(--gray-700);
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .form-input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 11px 13px;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    outline: none;
+    color: var(--title-card-color);
+    background: var(--bg-card);
+    font-size: 13px;
+  }
+
+  .form-input:focus {
+    border-color: var(--PrimaryColor);
+    box-shadow: 0 0 0 3px var(--PrimaryColor-alpha-15);
+  }
+
+  .price-input-wrap {
+    position: relative;
+  }
+
+  .price-input {
+    padding-inline-end: 65px;
+  }
+
+  .currency {
+    position: absolute;
+    top: 50%;
+    inset-inline-end: 13px;
+    transform: translateY(-50%);
+    color: var(--subtitle-color);
+    font-size: 12px;
+    pointer-events: none;
+  }
+
+  .dialog-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 16px 24px;
+    border-top: 1px solid var(--border-weak);
+  }
+
+  .cancel-btn {
+    padding: 10px 18px;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    background: var(--bg-card);
+    color: var(--gray-700);
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .cancel-btn:hover {
+    background: var(--gray-50);
+  }
+
+  @media (max-width: 640px) {
+    .card-header {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .header-actions {
+      width: 100%;
+      justify-content: space-between;
+    }
+
+    .sorting-item {
+      min-width: 0;
+      grid-template-columns: 1fr auto;
+      gap: 0.5rem 1rem;
+    }
+
+    .sorting-table-head {
+      display: none;
+    }
+
+    .sorting-num,
+    .sorting-title,
+    .sorting-price,
+    .sorting-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+
+      &::before {
+        content: attr(data-label);
+        color: var(--gray-500);
+        font-size: var(--xs-size-2);
+        font-weight: 500;
+      }
+    }
+
+    .sorting-title,
+    .sorting-price {
+      grid-column: 1 / -1;
+    }
+
+    .sorting-actions {
+      grid-column: 1 / -1;
+      justify-content: flex-end;
+    }
+  }
 </style>

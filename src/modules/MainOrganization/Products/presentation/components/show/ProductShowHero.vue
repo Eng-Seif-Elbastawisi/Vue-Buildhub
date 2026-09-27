@@ -1,91 +1,181 @@
 <script setup lang="ts">
+  import { computed, ref, watch } from 'vue';
   import { useI18n } from 'vue-i18n';
+
   import type ProductsShowModel from '../../../core/models/products.show.model';
 
-  defineProps<{
+  const props = defineProps<{
     product: ProductsShowModel;
     title?: string;
   }>();
+
   const { locale } = useI18n();
 
-  const formatPrice = (price?: number | string) => {
-    if (price == null || price === '') {
-      return '—';
-    }
+  const galleryImages = computed(() => {
+    const images = [
+      props.product.image,
+      ...props.product.attachments
+        .filter((attachment) => attachment.type === 1)
+        .map((attachment) => attachment.file),
+    ].filter((image): image is string => Boolean(image));
 
-    return new Intl.NumberFormat('ar-EG').format(Number(price));
+    return [...new Set(images)];
+  });
+
+  const activeImage = ref('');
+
+  watch(
+    galleryImages,
+    (images) => {
+      if (!images.includes(activeImage.value)) {
+        activeImage.value = images[0] ?? '';
+      }
+    },
+    { immediate: true },
+  );
+
+  const productTitle = computed(
+    () =>
+      props.title ||
+      props.product.translations?.title?.ar ||
+      props.product.translations?.title?.en ||
+      '—',
+  );
+
+  const formatPrice = (price?: number | string) => {
+    if (price == null || price === '') return '—';
+
+    return new Intl.NumberFormat(locale.value === 'ar' ? 'ar-EG' : 'en-EG').format(Number(price));
   };
 </script>
 
 <template>
   <section class="hero-card">
-    <div class="hero-image">
-      <img
-        v-if="product.image"
-        :src="product.image"
-        :alt="product.translations?.title?.ar || product.translations?.title?.en || ''"
-      />
+    <div class="gallery-panel">
+      <div class="main-image">
+        <img v-if="activeImage" :src="activeImage" :alt="productTitle" />
 
-      <div v-else class="placeholder">
-        <svg
-          width="48"
-          height="48"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1.5"
-        >
-          <path
-            d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"
-          />
+        <div v-else class="image-placeholder">
+          <svg
+            width="48"
+            height="48"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            aria-hidden="true"
+          >
+            <path
+              d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"
+            />
+            <path d="m3.3 7 8.7 5 8.7-5M12 22V12" />
+          </svg>
+          <span>{{ $t('Products.show.no_image') }}</span>
+        </div>
 
-          <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
-
-          <line x1="12" y1="22.08" x2="12" y2="12" />
-        </svg>
-
-        <span>
-          {{ $t('Products.show.no_image') }}
+        <span v-if="galleryImages.length" class="image-count">
+          {{ galleryImages.length }} {{ $t('Products.show.images') }}
         </span>
+      </div>
+
+      <div v-if="galleryImages.length > 1" class="thumbnails" role="list">
+        <button
+          v-for="(image, index) in galleryImages"
+          :key="image"
+          type="button"
+          class="thumbnail"
+          :class="{ active: activeImage === image }"
+          :aria-label="$t('Products.show.select_image', { number: index + 1 })"
+          :aria-pressed="activeImage === image"
+          @click="activeImage = image"
+        >
+          <img :src="image" :alt="`${productTitle} ${index + 1}`" />
+        </button>
       </div>
     </div>
 
     <div class="hero-info">
-      <h2 class="product-name">
-        {{ title }}
-      </h2>
-      <div class="price-row">
-        <span class="price">
-          {{ formatPrice(product.expectedPrice) }}
+      <div class="hero-meta">
+        <span class="status-pill" :class="product.isActive ? 'is-active' : 'is-inactive'">
+          <span class="status-dot" aria-hidden="true"></span>
+          {{ product.isActive ? $t('Products.form.active') : $t('Products.form.inactive') }}
         </span>
 
-        <span class="currency">
-          {{ $t('Products.form.currency') }}
+        <span class="product-code">#{{ product.code || '—' }}</span>
+      </div>
 
-          {{ product.measurementUnit?.title }}
-        </span>
+      <div>
+        <h2 class="product-name">{{ productTitle }}</h2>
+        <p class="product-type">{{ product.itemType?.title || '—' }}</p>
       </div>
 
       <div class="chips">
-        <div class="chip">
-          <span class="chip-label">
-            {{ $t('item_type') }}
-          </span>
+        <span v-if="product.itemType?.title" class="chip">{{ product.itemType.title }}</span>
+        <span v-if="product.measurementUnit?.title" class="chip chip--muted">
+          {{ product.measurementUnit.title }}
+        </span>
+      </div>
 
-          <span class="chip-value">
-            {{ product.itemType?.title || '—' }}
-          </span>
-        </div>
+      <p class="description">
+        {{ product.description || $t('Products.show.no_description') }}
+      </p>
 
-        <div class="chip">
-          <span class="chip-label">
-            {{ $t('measurement') }}
+      <div class="quick-metrics">
+        <article class="metric metric--price">
+          <span class="metric-icon" aria-hidden="true">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M20 12V7H9L4 12l5 5h11v-5Z" />
+              <circle cx="16" cy="10" r="1" />
+            </svg>
           </span>
+          <span class="metric-label">{{ $t('price') }}</span>
+          <strong>
+            {{ formatPrice(product.expectedPrice) }}
+            <small v-if="product.expectedPrice != null">{{ $t('Products.form.currency') }}</small>
+          </strong>
+        </article>
 
-          <span class="chip-value">
-            {{ product.measurementUnit?.title || '—' }}
+        <article class="metric">
+          <span class="metric-icon" aria-hidden="true">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="m12 2 9 5-9 5-9-5 9-5Z" />
+              <path d="m3 12 9 5 9-5M3 17l9 5 9-5" />
+            </svg>
           </span>
-        </div>
+          <span class="metric-label">{{ $t('item_type') }}</span>
+          <strong>{{ product.itemType?.title || '—' }}</strong>
+        </article>
+
+        <article class="metric">
+          <span class="metric-icon" aria-hidden="true">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M3 6h18M6 3v6M10 4v4M14 4v4M18 3v6M5 10v10h14V10" />
+            </svg>
+          </span>
+          <span class="metric-label">{{ $t('measurement') }}</span>
+          <strong>{{ product.measurementUnit?.title || '—' }}</strong>
+        </article>
       </div>
     </div>
   </section>
@@ -94,142 +184,243 @@
 <style scoped lang="scss">
   .hero-card {
     display: grid;
-
-    grid-template-columns:
-      280px
-      minmax(0, 1fr);
-
-    gap: 1.75rem;
-
-    margin-bottom: 1.5rem;
-
-    padding: 1.5rem;
-
-    background: white;
-
-    border: 1px solid #e2e8f0;
-
-    border-radius: 1.1rem;
-
-    box-shadow: 0 1px 3px rgb(0 0 0 / 0.04);
+    grid-template-columns: minmax(18rem, 0.82fr) minmax(0, 1.4fr);
+    gap: 1.5rem;
+    padding: 1rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border-weak);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
   }
 
-  .hero-image {
-    aspect-ratio: 1;
+  .gallery-panel {
+    min-width: 0;
+  }
 
+  .main-image {
+    position: relative;
+    display: grid;
     overflow: hidden;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    border-radius: 0.85rem;
-
-    background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+    aspect-ratio: 4 / 3;
+    background: var(--gray-100);
+    border-radius: var(--radius-md);
+    place-items: center;
 
     img {
       width: 100%;
       height: 100%;
-
       object-fit: cover;
     }
   }
 
-  .placeholder {
+  .image-placeholder {
     display: flex;
-
-    flex-direction: column;
-
     align-items: center;
+    flex-direction: column;
+    gap: 0.65rem;
+    color: var(--gray-400);
+    font-size: var(--sm-size);
+  }
 
-    gap: 0.6rem;
+  .image-count {
+    position: absolute;
+    inset-block-end: 0.65rem;
+    inset-inline-end: 0.65rem;
+    padding: 0.3rem 0.55rem;
+    color: var(--gray-700);
+    background: var(--bg-card);
+    border: 1px solid var(--border-weak);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-sm);
+    font-size: var(--xs-size-2);
+    font-weight: 700;
+  }
 
-    color: #94a3b8;
+  .thumbnails {
+    display: flex;
+    gap: 0.55rem;
+    margin-top: 0.65rem;
+    overflow-x: auto;
+  }
 
-    font-size: 0.85rem;
+  .thumbnail {
+    width: 3.75rem;
+    height: 3.25rem;
+    overflow: hidden;
+    flex: 0 0 auto;
+    padding: 0;
+    background: var(--gray-100);
+    border: 2px solid transparent;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+
+    &.active,
+    &:focus-visible {
+      outline: none;
+      border-color: var(--PrimaryColor);
+    }
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
   }
 
   .hero-info {
     display: flex;
-
+    min-width: 0;
     flex-direction: column;
-
     justify-content: center;
+    gap: 0.9rem;
+    padding: 0.35rem 0.5rem;
+  }
 
-    gap: 1rem;
+  .hero-meta,
+  .chips {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .hero-meta {
+    justify-content: space-between;
+  }
+
+  .status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.3rem 0.65rem;
+    border-radius: var(--radius-full);
+    font-size: var(--xs-size);
+    font-weight: 700;
+
+    &.is-active {
+      color: var(--success-dark);
+      background: var(--success-light);
+    }
+
+    &.is-inactive {
+      color: var(--danger-dark);
+      background: var(--danger-light);
+    }
+  }
+
+  .status-dot {
+    width: 0.4rem;
+    height: 0.4rem;
+    background: currentColor;
+    border-radius: var(--radius-full);
+  }
+
+  .product-code {
+    color: var(--gray-500);
+    font-size: var(--xs-size);
+    font-weight: 700;
+    direction: ltr;
   }
 
   .product-name {
     margin: 0;
-
-    font-size: 1.5rem;
-
+    color: var(--title-color);
+    font-size: clamp(1.35rem, 2vw, 1.8rem);
     font-weight: 800;
-
-    color: #0f172a;
-
-    line-height: 1.35;
+    line-height: 1.4;
   }
 
-  .price-row {
-    display: flex;
-
-    align-items: baseline;
-
-    gap: 0.5rem;
-
-    .price {
-      font-size: 1.75rem;
-
-      font-weight: 800;
-
-      color: #0f766e;
-    }
-
-    .currency {
-      font-size: 0.9rem;
-
-      color: #64748b;
-    }
-  }
-
-  .chips {
-    display: flex;
-
-    flex-wrap: wrap;
-
-    gap: 0.75rem;
+  .product-type {
+    margin: 0.25rem 0 0;
+    color: var(--subtitle-color);
+    font-size: var(--sm-size);
   }
 
   .chip {
-    display: flex;
+    padding: 0.3rem 0.65rem;
+    color: var(--info-dark);
+    background: var(--info-light);
+    border-radius: var(--radius-full);
+    font-size: var(--xs-size);
+    font-weight: 600;
 
-    flex-direction: column;
+    &--muted {
+      color: var(--gray-600);
+      background: var(--gray-100);
+    }
+  }
 
-    gap: 0.15rem;
+  .description {
+    display: -webkit-box;
+    overflow: hidden;
+    margin: 0;
+    color: var(--gray-600);
+    font-size: var(--sm-size);
+    line-height: 1.8;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+  }
 
-    padding: 0.55rem 0.9rem;
+  .quick-metrics {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.65rem;
+    margin-top: 0.15rem;
+  }
 
-    background: #f8fafc;
+  .metric {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 0.2rem 0.55rem;
+    min-width: 0;
+    padding: 0.75rem;
+    background: var(--gray-50);
+    border: 1px solid var(--border-weak);
+    border-radius: var(--radius-sm);
 
-    border: 1px solid #e2e8f0;
-
-    border-radius: 0.65rem;
-
-    .chip-label {
-      font-size: 0.7rem;
-
-      color: #64748b;
+    &--price .metric-icon {
+      color: var(--PrimaryColor);
+      background: var(--PrimaryColor-light);
     }
 
-    .chip-value {
-      font-size: 0.9rem;
+    strong {
+      overflow: hidden;
+      color: var(--title-card-color);
+      font-size: var(--sm-size);
+      font-weight: 800;
+      text-overflow: ellipsis;
+      white-space: nowrap;
 
-      font-weight: 600;
+      small {
+        color: var(--PrimaryColor);
+        font-size: var(--xs-size-2);
+      }
+    }
+  }
 
-      color: #0f172a;
+  .metric-icon {
+    display: grid;
+    grid-row: 1 / span 2;
+    width: 2.25rem;
+    height: 2.25rem;
+    color: var(--info-dark);
+    background: var(--info-light);
+    border-radius: var(--radius-sm);
+    place-items: center;
+  }
+
+  .metric-label {
+    color: var(--gray-500);
+    font-size: var(--xs-size-2);
+  }
+
+  @media (max-width: 980px) {
+    .hero-card {
+      grid-template-columns: minmax(15rem, 0.8fr) minmax(0, 1.2fr);
+    }
+
+    .quick-metrics {
+      grid-template-columns: 1fr;
     }
   }
 
@@ -238,10 +429,14 @@
       grid-template-columns: 1fr;
     }
 
-    .hero-image {
-      max-width: 260px;
+    .quick-metrics {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
 
-      margin: auto;
+  @media (max-width: 520px) {
+    .quick-metrics {
+      grid-template-columns: 1fr;
     }
   }
 </style>

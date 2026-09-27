@@ -1,4 +1,7 @@
 <script setup lang="ts">
+  import { useI18n } from 'vue-i18n';
+
+  import type AttachmentModel from '../../../core/models/attachment.model';
   import type ProductsShowModel from '../../../core/models/products.show.model';
 
   defineProps<{
@@ -6,255 +9,428 @@
     title?: string;
   }>();
 
-  const formatPrice = (price?: number | string) => {
-    if (price == null || price === '') {
-      return '—';
-    }
+  const { locale } = useI18n();
 
-    return new Intl.NumberFormat('ar-EG').format(Number(price));
+  const formatPrice = (price?: number | string) => {
+    if (price == null || price === '') return '—';
+
+    return new Intl.NumberFormat(locale.value === 'ar' ? 'ar-EG' : 'en-EG').format(Number(price));
+  };
+
+  const getFileName = (attachment: AttachmentModel) => {
+    const cleanPath = attachment.file.split('?')[0] ?? '';
+    const pathParts = cleanPath.split('/').filter(Boolean);
+    const fileName = pathParts[pathParts.length - 1];
+
+    return fileName ? decodeURIComponent(fileName) : '—';
+  };
+
+  const getFileType = (attachment: AttachmentModel) => {
+    const fileName = getFileName(attachment);
+    const fileNameParts = fileName.split('.');
+    const extension = fileName.includes('.') ? fileNameParts[fileNameParts.length - 1] : undefined;
+
+    return extension?.toUpperCase() || '—';
   };
 </script>
 
 <template>
-  <section class="card">
-    <div class="card-header">
-      <div class="card-title-wrap">
-        <span class="num"> 01 </span>
-
+  <div class="information-grid">
+    <section class="section-card">
+      <header class="section-header">
+        <span class="section-icon" aria-hidden="true">
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M4 4h16v16H4zM8 8h8M8 12h8M8 16h5" />
+          </svg>
+        </span>
         <div>
-          <h3>
-            {{ $t('Products.form.product_data') }}
-          </h3>
-
-          <p>
-            {{ $t('Products.show.subtitle') }}
-          </p>
+          <h3>{{ $t('Products.form.product_data') }}</h3>
+          <p>{{ $t('Products.show.product_data_hint') }}</p>
         </div>
+      </header>
+
+      <dl class="data-list">
+        <div class="data-row">
+          <dt>{{ $t('Products.form.product_name') }}</dt>
+          <dd>{{ title || '—' }}</dd>
+        </div>
+
+        <div class="data-row">
+          <dt>{{ $t('item_type') }}</dt>
+          <dd>{{ product.itemType?.title || '—' }}</dd>
+        </div>
+
+        <div class="data-row">
+          <dt>{{ $t('Products.show.product_code') }}</dt>
+          <dd class="code-value">#{{ product.code || '—' }}</dd>
+        </div>
+
+        <div class="data-row">
+          <dt>{{ $t('measurement') }}</dt>
+          <dd>{{ product.measurementUnit?.title || '—' }}</dd>
+        </div>
+
+        <div class="data-row">
+          <dt>{{ $t('Products.form.expected_price') }}</dt>
+          <dd class="price-value">
+            {{ formatPrice(product.expectedPrice) }}
+            <small v-if="product.expectedPrice != null">{{ $t('Products.form.currency') }}</small>
+          </dd>
+        </div>
+
+        <div class="data-row">
+          <dt>{{ $t('Products.form.status') }}</dt>
+          <dd>
+            <span class="status-pill" :class="product.isActive ? 'is-active' : 'is-inactive'">
+              <span class="status-dot" aria-hidden="true"></span>
+              {{ product.isActive ? $t('Products.form.active') : $t('Products.form.inactive') }}
+            </span>
+          </dd>
+        </div>
+      </dl>
+    </section>
+
+    <section class="section-card">
+      <header class="section-header">
+        <span class="section-icon" aria-hidden="true">
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M14 2H6a2 2 0 0 0-2 2v16h16V8z" />
+            <path d="M14 2v6h6M8 13h8M8 17h6" />
+          </svg>
+        </span>
+        <div>
+          <h3>{{ $t('Products.show.attachments_title') }}</h3>
+          <p>{{ $t('Products.show.attachments_hint') }}</p>
+        </div>
+        <span class="count-badge">{{ product.attachments.length }}</span>
+      </header>
+
+      <div v-if="product.attachments.length" class="attachments-list">
+        <article
+          v-for="attachment in product.attachments"
+          :key="attachment.id ?? attachment.file"
+          class="attachment-row"
+        >
+          <span class="file-icon" aria-hidden="true">
+            <svg
+              width="19"
+              height="19"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M14 2H6a2 2 0 0 0-2 2v16h16V8z" />
+              <path d="M14 2v6h6" />
+            </svg>
+          </span>
+
+          <div class="file-copy">
+            <strong :title="getFileName(attachment)">{{ getFileName(attachment) }}</strong>
+            <span>{{ getFileType(attachment) }}</span>
+          </div>
+
+          <a
+            class="download-btn"
+            :href="attachment.file"
+            target="_blank"
+            rel="noopener noreferrer"
+            download
+            :title="$t('Products.show.download_attachment')"
+            :aria-label="$t('Products.show.download_attachment')"
+          >
+            <svg
+              width="17"
+              height="17"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M12 3v12m0 0 4-4m-4 4-4-4M5 21h14" />
+            </svg>
+          </a>
+        </article>
       </div>
-    </div>
 
-    <div class="info-grid">
-      <div class="info-item full">
-        <span class="label">
-          {{ $t('Products.form.product_name') }}
-        </span>
-
-        <span class="value">
-          {{ title }}
-        </span>
+      <div v-else class="empty-attachments">
+        <svg
+          width="28"
+          height="28"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.6"
+          aria-hidden="true"
+        >
+          <path d="M14 2H6a2 2 0 0 0-2 2v16h16V8zM14 2v6h6" />
+        </svg>
+        <span>{{ $t('Products.show.no_attachments') }}</span>
       </div>
-
-      <div class="info-item">
-        <span class="label">
-          {{ $t('item_type') }}
-        </span>
-
-        <span class="value"> {{ product.itemType?.title || '—' }} </span>
-      </div>
-
-      <div class="info-item">
-        <span class="label">
-          {{ $t('measurement') }}
-        </span>
-
-        <span class="value"> {{ product.measurementUnit?.title || '—' }} </span>
-      </div>
-
-      <div class="info-item">
-        <span class="label">
-          {{ $t('Products.form.expected_price') }}
-        </span>
-
-        <span class="value price">
-          {{ formatPrice(product.expectedPrice) }}
-        </span>
-      </div>
-
-      <!-- <div class="info-item">
-        <span class="label">
-          {{ $t('Products.form.status') }}
-        </span>
-
-        <span class="status-pill" :class="product.isActive ? 'active' : 'inactive'">
-          <span class="dot"></span>
-
-          {{ product.isActive ? $t('Products.form.active') : $t('Products.form.inactive') }}
-        </span>
-      </div> -->
-    </div>
-  </section>
+    </section>
+  </div>
 </template>
 
 <style scoped lang="scss">
-  .card {
-    padding: 1.35rem;
-
-    background: white;
-
-    border: 1px solid #e2e8f0;
-
-    border-radius: 1rem;
-
-    box-shadow: 0 1px 3px rgb(0 0 0 / 0.04);
+  .information-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
   }
 
-  .card-header {
-    display: flex;
-
-    justify-content: space-between;
-
-    align-items: flex-start;
-
-    margin-bottom: 1.25rem;
+  .section-card {
+    min-width: 0;
+    padding: 1.15rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border-weak);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
   }
 
-  .card-title-wrap {
+  .section-header {
     display: flex;
-
     align-items: center;
-
-    gap: 0.75rem;
-
-    .num {
-      width: 34px;
-      height: 34px;
-
-      display: flex;
-
-      align-items: center;
-
-      justify-content: center;
-
-      border-radius: 0.5rem;
-
-      background: #fff7ed;
-
-      color: #b45309;
-
-      font-size: 0.75rem;
-
-      font-weight: 800;
-    }
+    gap: 0.7rem;
+    margin-bottom: 1rem;
 
     h3 {
       margin: 0;
-
-      font-size: 1.05rem;
-
-      font-weight: 700;
-
-      color: #0f172a;
+      color: var(--title-color);
+      font-size: var(--md-size);
+      font-weight: 800;
     }
 
     p {
       margin: 0.15rem 0 0;
-
-      font-size: 0.8rem;
-
-      color: #64748b;
+      color: var(--subtitle-color);
+      font-size: var(--xs-size);
     }
   }
 
-  .info-grid {
+  .section-icon {
     display: grid;
-
-    grid-template-columns:
-      1fr
-      1fr;
-
-    gap: 0.75rem;
+    flex: 0 0 2.4rem;
+    width: 2.4rem;
+    height: 2.4rem;
+    color: var(--PrimaryColor);
+    background: var(--PrimaryColor-light);
+    border-radius: var(--radius-sm);
+    place-items: center;
   }
 
-  .info-item {
-    display: flex;
-
-    flex-direction: column;
-
-    gap: 0.25rem;
-
-    padding: 0.85rem 1rem;
-
-    background: #f8fafc;
-
-    border: 1px solid #e2e8f0;
-
-    border-radius: 0.7rem;
-
-    &.full {
-      grid-column: 1 / -1;
-    }
-  }
-
-  .label {
-    font-size: 0.75rem;
-
-    color: #64748b;
-  }
-
-  .value {
-    font-size: 0.95rem;
-
+  .count-badge {
+    display: grid;
+    min-width: 1.75rem;
+    height: 1.75rem;
+    margin-inline-start: auto;
+    padding-inline: 0.45rem;
+    color: var(--gray-600);
+    background: var(--gray-100);
+    border-radius: var(--radius-full);
+    font-size: var(--xs-size);
     font-weight: 700;
+    place-items: center;
+  }
 
-    color: #0f172a;
+  .data-list {
+    overflow: hidden;
+    margin: 0;
+    border: 1px solid var(--border-weak);
+    border-radius: var(--radius-sm);
+  }
 
-    &.price {
-      color: #0f766e;
+  .data-row {
+    display: grid;
+    grid-template-columns: minmax(8rem, 0.8fr) minmax(0, 1.2fr);
+    min-height: 2.75rem;
+    border-bottom: 1px solid var(--border-weak);
+
+    &:last-child {
+      border-bottom: 0;
+    }
+
+    &:nth-child(even) {
+      background: var(--gray-50);
+    }
+
+    dt,
+    dd {
+      display: flex;
+      align-items: center;
+      margin: 0;
+      padding: 0.65rem 0.75rem;
+      font-size: var(--sm-size);
+    }
+
+    dt {
+      color: var(--gray-500);
+      border-inline-end: 1px solid var(--border-weak);
+    }
+
+    dd {
+      min-width: 0;
+      color: var(--title-card-color);
+      font-weight: 700;
     }
   }
 
-  .sub-value {
-    font-size: 0.8rem;
+  .code-value {
+    direction: ltr;
+  }
 
-    color: #94a3b8;
+  .data-row .price-value {
+    color: var(--PrimaryColor);
+
+    small {
+      margin-inline-start: 0.25rem;
+      font-size: var(--xs-size-2);
+    }
   }
 
   .status-pill {
     display: inline-flex;
-
     align-items: center;
-
     gap: 0.35rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: var(--radius-full);
+    font-size: var(--xs-size);
+    font-weight: 700;
 
-    width: fit-content;
-
-    padding: 0.25rem 0.65rem;
-
-    border-radius: 999px;
-
-    font-size: 0.75rem;
-
-    font-weight: 600;
-
-    .dot {
-      width: 6px;
-      height: 6px;
-
-      border-radius: 50%;
-
-      background: currentColor;
+    &.is-active {
+      color: var(--success-dark);
+      background: var(--success-light);
     }
 
-    &.active {
-      background: #d1fae5;
-
-      color: #065f46;
-    }
-
-    &.inactive {
-      background: #fee2e2;
-
-      color: #991b1b;
+    &.is-inactive {
+      color: var(--danger-dark);
+      background: var(--danger-light);
     }
   }
 
-  @media (max-width: 600px) {
-    .info-grid {
-      grid-template-columns: 1fr;
+  .status-dot {
+    width: 0.4rem;
+    height: 0.4rem;
+    background: currentColor;
+    border-radius: var(--radius-full);
+  }
+
+  .attachments-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+  }
+
+  .attachment-row {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    min-width: 0;
+    padding: 0.7rem;
+    background: var(--gray-50);
+    border: 1px solid var(--border-weak);
+    border-radius: var(--radius-sm);
+  }
+
+  .file-icon {
+    display: grid;
+    flex: 0 0 2.25rem;
+    width: 2.25rem;
+    height: 2.25rem;
+    color: var(--danger);
+    background: var(--danger-light);
+    border-radius: var(--radius-sm);
+    place-items: center;
+  }
+
+  .file-copy {
+    display: flex;
+    min-width: 0;
+    flex: 1;
+    flex-direction: column;
+    gap: 0.1rem;
+
+    strong {
+      overflow: hidden;
+      color: var(--title-card-color);
+      font-size: var(--sm-size);
+      font-weight: 700;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
-    .info-item.full {
-      grid-column: auto;
+    span {
+      color: var(--gray-500);
+      font-size: var(--xs-size-2);
+    }
+  }
+
+  .download-btn {
+    display: grid;
+    flex: 0 0 2.25rem;
+    width: 2.25rem;
+    height: 2.25rem;
+    color: var(--gray-600);
+    background: var(--bg-card);
+    border: 1px solid var(--border-weak);
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    transition: var(--transition-fast);
+    place-items: center;
+
+    &:hover,
+    &:focus-visible {
+      outline: none;
+      color: var(--PrimaryColor);
+      border-color: var(--PrimaryColor);
+    }
+  }
+
+  .empty-attachments {
+    display: flex;
+    min-height: 11rem;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 0.5rem;
+    color: var(--gray-400);
+    background: var(--gray-50);
+    border: 1px dashed var(--border-strong);
+    border-radius: var(--radius-sm);
+    font-size: var(--sm-size);
+  }
+
+  @media (max-width: 900px) {
+    .information-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 520px) {
+    .data-row {
+      grid-template-columns: 1fr;
+
+      dt {
+        padding-bottom: 0.15rem;
+        border-inline-end: 0;
+      }
+
+      dd {
+        padding-top: 0.15rem;
+      }
     }
   }
 </style>
