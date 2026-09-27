@@ -2,19 +2,22 @@
   import { computed, onMounted, ref } from 'vue';
 
   import ConfirmCancelDialog from '@/base/Presentation/Dialogs/ConfirmCancelDialog.vue';
-  import type { ProductShowStage } from '../../../data/models/products.show.model.ts';
-
-  import DeleteProductsStageParams from '../../../core/params/delete.products.stage.params.ts';
-  import StoreProductsStageParams from '../../../core/params/store.products.stage.params.ts';
-
-  import ProductsController from '../../controllers/products.controller.ts';
-
   import StageController from '@/modules/shared/Stages/presentation/controllers/stage.controller';
+  import type StageModel from '@/modules/shared/Stages/core/models/stage.model';
   import IndexStageParams from '@/modules/shared/Stages/core/params/index.stage.params';
 
-  // ======================================================
-  // Types
-  // ======================================================
+  import DeleteProductsStageParams from '../../../core/params/delete.products.stage.params';
+  import StoreProductsStageParams from '../../../core/params/store.products.stage.params';
+  import ProductsController from '../../controllers/products.controller';
+
+  interface StageSource {
+    id?: number;
+    parentId?: number | null;
+    parent_id?: number | null;
+    title?: unknown;
+    translations?: { title?: Record<string, string> };
+    name?: string;
+  }
 
   interface AvailableStage {
     id: number;
@@ -27,409 +30,278 @@
     subStages: AvailableStage[];
   }
 
-  // ======================================================
-  // Props
-  // ======================================================
-
   const props = defineProps<{
     productId: number;
-    stages: ProductShowStage[];
+    stages: StageModel[];
     stageIds: number[];
   }>();
 
-  // ======================================================
-  // Controllers
-  // ======================================================
-
   const productsController = ProductsController.getInstance();
-
   const stageController = StageController.getInstance();
 
-  // ======================================================
-  // State
-  // ======================================================
+  interface MutationResponse {
+    data?: {
+      status?: boolean;
+    } | null;
+  }
+
+  const mutationSucceeded = (result: unknown) =>
+    (result as MutationResponse | null)?.data?.status === true;
 
   const deletingStageId = ref<number | undefined>();
-
   const showStageDialog = ref(false);
-
   const selectedStageIds = ref<number[]>([]);
-
   const storingStages = ref(false);
-
   const availableStages = ref<AvailableStage[]>([]);
-
   const stagesLoading = ref(false);
+  const locallyRemovedStageIndexes = ref<number[]>([]);
 
-  // ======================================================
-  // Extract Title
-  // ======================================================
+  const getPreferredTranslation = (translations?: Record<string, string>) =>
+    translations?.ar || translations?.en || Object.values(translations ?? {})[0] || '';
 
-  const extractTitle = (item: any): string => {
-    if (!item) {
-      return '';
+  const extractTitle = (stage: StageSource): string => {
+    if (typeof stage.title === 'string') return stage.title;
+
+    if (Array.isArray(stage.title)) {
+      const translations = stage.title as Array<{ locale?: string; title?: string }>;
+      const localizedTitles = Object.fromEntries(
+        translations.map((translation) => [translation.locale, translation.title]),
+      ) as Record<string, string>;
+
+      return getPreferredTranslation(localizedTitles) || translations[0]?.title || '';
     }
 
-    if (typeof item.title === 'string') {
-      return item.title;
+    if (stage.title && typeof stage.title === 'object') {
+      return getPreferredTranslation(stage.title as Record<string, string>);
     }
 
-    if (Array.isArray(item.title)) {
-      const en = item.title.find((translation: any) => translation.locale === 'en')?.title;
-
-      const ar = item.title.find((translation: any) => translation.locale === 'ar')?.title;
-
-      return en || ar || item.title[0]?.title || '';
-    }
-
-    if (item.title && typeof item.title === 'object') {
-      return (item.title.ar || item.title.en || Object.values(item.title)[0] || '') as string;
-    }
-
-    if (item.translations?.title) {
-      const translations = item.translations.title;
-
-      return (translations.ar || translations.en || Object.values(translations)[0] || '') as string;
-    }
-
-    return item.name ?? '';
+    return getPreferredTranslation(stage.translations?.title) || stage.name || '';
   };
 
-  // ======================================================
-  // Group Main Stages + Sub Stages
-  // ======================================================
+  const getParentId = (stage: StageSource) => stage.parentId ?? stage.parent_id ?? null;
 
-  const groupedStages = computed<GroupedStage[]>(() => {
-    const mainStages = availableStages.value.filter((stage) => stage.isMain);
+  const groupedStages = computed<GroupedStage[]>(() =>
+    availableStages.value
+      .filter((stage) => stage.isMain)
+      .map((mainStage) => ({
+        ...mainStage,
+        subStages: availableStages.value.filter(
+          (stage) => !stage.isMain && stage.parentId === mainStage.id,
+        ),
+      })),
+  );
 
-    return mainStages.map((mainStage) => ({
-      ...mainStage,
+  const stageRows = computed(() =>
+    props.stages.flatMap((stage, index) => {
+      if (locallyRemovedStageIndexes.value.includes(index)) return [];
 
-      subStages: availableStages.value.filter(
-        (stage) => !stage.isMain && stage.parentId === mainStage.id,
-      ),
-    }));
-  });
+      const stageSource = stage as StageModel & StageSource;
+      const group = groupedStages.value.find((mainStage) =>
+        mainStage.subStages.some((subStage) => subStage.id === stage.id),
+      );
+      const availableStage = group?.subStages.find((subStage) => subStage.id === stage.id);
 
-  // ======================================================
-  // Group Current Product Stages
-  // ======================================================
+      return [
+        {
+          stage,
+          index,
+          title: availableStage?.title || extractTitle(stageSource) || '—',
+          groupTitle: group?.title || '—',
+        },
+      ];
+    }),
+  );
 
-  const groupedCurrentStages = computed(() => {
-    const currentStageIds = new Set(props.stages?.map((stage) => stage.id) ?? []);
+  const fetchStageList = async (parentId: number | null, perPage: number) => {
+    const stageState = await stageController.fetchList(
+      new IndexStageParams({
+        word: '',
+        page: 1,
+        perPage,
+        withPage: 0,
+        parentId,
+      }),
+    );
 
-    return groupedStages.value
-      .map((mainStage) => {
-        const currentSubStages = mainStage.subStages.filter((stage) =>
-          currentStageIds.has(stage.id),
-        );
+    return (Array.isArray(stageState.data) ? stageState.data : []) as StageSource[];
+  };
 
-        const originalIndexes: Record<number, number> = {};
+  const fetchSubStagesForMainStage = async (mainStage: StageSource) => {
+    if (!mainStage.id) return [];
 
-        currentSubStages.forEach((stage) => {
-          const index = props.stages.findIndex((item) => item.id === stage.id);
+    try {
+      const subStages = await fetchStageList(mainStage.id, 100);
 
-          originalIndexes[stage.id] = index;
-        });
+      return subStages.map((stage) => ({ ...stage, parentId: mainStage.id }));
+    } catch {
+      return [];
+    }
+  };
 
-        return {
-          ...mainStage,
-          subStages: currentSubStages,
-          originalIndexes,
-        };
-      })
-      .filter((mainStage) => mainStage.subStages.length > 0);
-  });
+  const mapAvailableStages = (stages: StageSource[], isMain: boolean): AvailableStage[] =>
+    stages
+      .filter((stage): stage is StageSource & { id: number } => stage.id != null)
+      .map((stage) => ({
+        id: stage.id,
+        title: extractTitle(stage),
+        parentId: isMain ? null : getParentId(stage),
+        isMain,
+      }));
 
-  // ======================================================
-  // Fetch All Stages
-  // ======================================================
+  const resolveSubStages = async (mainStages: StageSource[], listedSubStages: StageSource[]) => {
+    if (!mainStages.length || listedSubStages.length) return listedSubStages;
+
+    return (await Promise.all(mainStages.map(fetchSubStagesForMainStage))).flat();
+  };
 
   const fetchAvailableStages = async () => {
+    stagesLoading.value = true;
+
     try {
-      stagesLoading.value = true;
+      const allStages = await fetchStageList(null, 1000);
+      const mainStages = allStages.filter((stage) => getParentId(stage) == null);
+      const listedSubStages = allStages.filter((stage) => getParentId(stage) != null);
+      const subStages = await resolveSubStages(mainStages, listedSubStages);
 
-      const result = await stageController.fetchList(
-        new IndexStageParams({
-          word: '',
-          page: 1,
-          perPage: 1000,
-          withPage: 0,
-          parentId: null,
-        }),
-      );
-
-      const allStages = Array.isArray(result?.data) ? result.data : [];
-
-      // ==================================================
-      // Main Stages
-      // ==================================================
-
-      const mainStages = allStages.filter((stage: any) => !stage.parent_id);
-
-      // ==================================================
-      // Sub Stages
-      // ==================================================
-
-      let subStages = allStages.filter((stage: any) => stage.parent_id);
-
-      if (mainStages.length > 0 && subStages.length === 0) {
-        const subResults = await Promise.all(
-          mainStages.map((stage: any) =>
-            stageController
-              .fetchList(
-                new IndexStageParams({
-                  word: '',
-                  page: 1,
-                  perPage: 100,
-                  withPage: 0,
-                  parentId: stage.id,
-                }),
-              )
-              .then((response) => ({
-                parentId: stage.id,
-
-                data: Array.isArray(response?.data) ? response.data : [],
-              }))
-              .catch(() => ({
-                parentId: stage.id,
-
-                data: [],
-              })),
-          ),
-        );
-
-        subStages = subResults.flatMap((response) =>
-          response.data.map((stage: any) => ({
-            ...stage,
-
-            parent_id: response.parentId,
-          })),
-        );
-      }
-
-      // ==================================================
-      // Map Main Stages
-      // ==================================================
-
-      const mappedMainStages: AvailableStage[] = mainStages.map((stage: any) => ({
-        id: stage.id,
-
-        title: extractTitle(stage),
-
-        parentId: null,
-
-        isMain: true,
-      }));
-
-      // ==================================================
-      // Map Sub Stages
-      // ==================================================
-
-      const mappedSubStages: AvailableStage[] = subStages.map((stage: any) => ({
-        id: stage.id,
-
-        title: extractTitle(stage),
-
-        parentId: stage.parent_id ?? null,
-
-        isMain: false,
-      }));
-
-      availableStages.value = [...mappedMainStages, ...mappedSubStages];
+      availableStages.value = [
+        ...mapAvailableStages(mainStages, true),
+        ...mapAvailableStages(subStages, false),
+      ];
     } catch (error) {
       console.error('Failed to fetch available stages:', error);
-
       availableStages.value = [];
     } finally {
       stagesLoading.value = false;
     }
   };
 
-  // ======================================================
-  // Open Dialog
-  // ======================================================
-
   const openStageDialog = async () => {
-    if (!availableStages.value.length) {
-      await fetchAvailableStages();
-    }
+    if (!availableStages.value.length) await fetchAvailableStages();
 
     selectedStageIds.value = [...(props.stageIds ?? [])];
-
     showStageDialog.value = true;
   };
 
-  // ======================================================
-  // Close Dialog
-  // ======================================================
-
   const closeStageDialog = () => {
-    if (storingStages.value) {
-      return;
-    }
+    if (storingStages.value) return;
 
     showStageDialog.value = false;
-
     selectedStageIds.value = [];
   };
 
-  // ======================================================
-  // Toggle Stage
-  // ======================================================
-
   const toggleStage = (stageId: number) => {
-    const index = selectedStageIds.value.indexOf(stageId);
+    selectedStageIds.value = selectedStageIds.value.includes(stageId)
+      ? selectedStageIds.value.filter((id) => id !== stageId)
+      : [...selectedStageIds.value, stageId];
+  };
 
-    if (index !== -1) {
-      selectedStageIds.value.splice(index, 1);
-    } else {
-      selectedStageIds.value.push(stageId);
+  const isStageSelected = (stageId: number) => selectedStageIds.value.includes(stageId);
+
+  const deleteRemovedStages = async (stageIds: number[]) => {
+    for (const stageId of stageIds) {
+      const deletionState = await productsController.deleteProductStage(
+        new DeleteProductsStageParams({
+          productId: props.productId,
+          stageIds: [stageId],
+        }),
+      );
+
+      if (!mutationSucceeded(deletionState)) return false;
     }
+
+    return true;
   };
 
-  // ======================================================
-  // Check Selected
-  // ======================================================
+  const storeNewStages = async (stageIds: number[]) => {
+    if (!stageIds.length) return true;
 
-  const isStageSelected = (stageId: number) => {
-    return selectedStageIds.value.includes(stageId);
+    const storageState = await productsController.storeProductStage(
+      new StoreProductsStageParams({
+        productId: props.productId,
+        stageIds,
+      }),
+    );
+
+    return mutationSucceeded(storageState);
   };
-
-  // ======================================================
-  // Store / Delete Stages
-  // ======================================================
 
   const storeStages = async () => {
-    if (!props.productId) {
-      return;
-    }
+    if (!props.productId) return;
 
     const currentStageIds = [...(props.stageIds ?? [])];
-
     const newStageIds = selectedStageIds.value.filter((id) => !currentStageIds.includes(id));
-
     const removedStageIds = currentStageIds.filter((id) => !selectedStageIds.value.includes(id));
 
-    if (newStageIds.length === 0 && removedStageIds.length === 0) {
+    if (!newStageIds.length && !removedStageIds.length) {
       closeStageDialog();
       return;
     }
 
+    storingStages.value = true;
+
     try {
-      storingStages.value = true;
+      const removedStagesDeleted = await deleteRemovedStages(removedStageIds);
 
-      // ==================================================
-      // Delete Removed Stages
-      // ==================================================
-
-      for (const stageId of removedStageIds) {
-        const deleteResult = await productsController.deleteProductStage(
-          new DeleteProductsStageParams({
-            productId: props.productId,
-
-            stageIds: [stageId],
-          }),
-        );
-
-        if (deleteResult?.data?.status !== true) {
-          return;
-        }
-      }
-
-      // ==================================================
-      // Store New Stages
-      // ==================================================
-
-      if (newStageIds.length > 0) {
-        const storeResult = await productsController.storeProductStage(
-          new StoreProductsStageParams({
-            productId: props.productId,
-
-            stageIds: [...newStageIds],
-          }),
-        );
-
-        if (storeResult?.data?.status !== true) {
-          return;
-        }
-      }
+      if (!removedStagesDeleted || !(await storeNewStages(newStageIds))) return;
 
       showStageDialog.value = false;
-
       selectedStageIds.value = [];
-
       window.location.reload();
     } finally {
       storingStages.value = false;
     }
   };
 
-  // ======================================================
-  // Delete Current Stage
-  // ======================================================
-
-  const deleteStage = async (stage: ProductShowStage, index: number) => {
+  const deleteStage = async (stage: StageModel, index: number) => {
     if (!stage.id) {
-      props.stages.splice(index, 1);
-
+      locallyRemovedStageIndexes.value = [...locallyRemovedStageIndexes.value, index];
       return;
     }
 
-    try {
-      deletingStageId.value = stage.id;
+    deletingStageId.value = stage.id;
 
+    try {
       const result = await productsController.deleteProductStage(
         new DeleteProductsStageParams({
           productId: props.productId,
-
           stageIds: [stage.id],
         }),
       );
 
-      if (result?.data?.status === true) {
-        window.location.reload();
-      }
+      if (mutationSucceeded(result)) window.location.reload();
     } finally {
       deletingStageId.value = undefined;
     }
   };
 
-  // ======================================================
-  // Mounted
-  // ======================================================
-
-  onMounted(() => {
-    fetchAvailableStages();
-  });
+  onMounted(fetchAvailableStages);
 </script>
 
 <template>
-  <section class="card full-width">
-    <!-- ================================================== -->
-    <!-- Header -->
-    <!-- ================================================== -->
-
-    <div class="card-header">
-      <div class="card-title-wrap">
-        <span class="num"> 03 </span>
-
+  <section class="stages-card">
+    <header class="section-header">
+      <div class="section-title">
+        <span class="section-icon" aria-hidden="true">
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="m12 2 9 5-9 5-9-5 9-5Z" />
+            <path d="m3 12 9 5 9-5M3 17l9 5 9-5" />
+          </svg>
+        </span>
         <div>
-          <h3>
-            {{ $t('Products.form.stages_title') }}
-          </h3>
-
-          <p>
-            {{ $t('Products.form.stages_hint') }}
-          </p>
+          <h3>{{ $t('Products.form.stages_title') }}</h3>
+          <p>{{ $t('Products.form.stages_hint') }}</p>
         </div>
       </div>
 
-      <div class="header-actions">
-        <span class="count">
-          {{ props.stages?.length || props.stageIds?.length || 0 }}
-        </span>
-
+      <div class="section-actions">
+        <span class="count-badge">{{ props.stages.length || props.stageIds.length }}</span>
         <button type="button" class="add-stage-btn" @click="openStageDialog">
           <svg
             width="16"
@@ -438,276 +310,162 @@
             fill="none"
             stroke="currentColor"
             stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            aria-hidden="true"
           >
-            <line x1="12" y1="5" x2="12" y2="19" />
-
-            <line x1="5" y1="12" x2="19" y2="12" />
+            <path d="M12 5v14M5 12h14" />
           </svg>
-
-          <span>
-            {{ $t('common.add') }}
-          </span>
+          {{ $t('Products.show.add_stage') }}
         </button>
       </div>
-    </div>
+    </header>
 
-    <!-- ================================================== -->
-    <!-- Current Stages - New Design -->
-    <!-- ================================================== -->
+    <div v-if="stageRows.length" class="stages-table">
+      <div class="stage-table-head" aria-hidden="true">
+        <span>{{ $t('Products.show.stage_number') }}</span>
+        <span>{{ $t('Products.show.stage_name') }}</span>
+        <span>{{ $t('Products.stages.main') }}</span>
+        <span>{{ $t('Products.show.actions') }}</span>
+      </div>
 
-    <div v-if="groupedCurrentStages.length" class="current-stages-wrapper">
-      <div
-        v-for="mainStage in groupedCurrentStages"
-        :key="mainStage.id"
-        class="current-stage-section"
-      >
-        <!-- ================================================== -->
-        <!-- Main Stage Header -->
-        <!-- ================================================== -->
-
-        <div class="current-main-header">
-          <div class="main-stage-line"></div>
-
-          <div class="main-stage-content">
-            <div class="main-stage-badge">
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path d="M12 2v20" />
-
-                <path d="M2 12h20" />
-              </svg>
-            </div>
-
-            <div class="main-stage-text">
-              <span class="main-stage-label">
-                {{ $t('Products.stages.main') }}
-              </span>
-
-              <h4>
-                {{ mainStage.title }}
-              </h4>
-            </div>
-
-            <span class="sub-stage-count">
-              {{ mainStage.subStages.length }}
-
-              {{
-                mainStage.subStages.length === 1
-                  ? $t('Products.stages.one_label')
-                  : $t('Products.stages.many_label')
-              }}
-            </span>
-          </div>
-        </div>
-
-        <!-- ================================================== -->
-        <!-- Sub Stages -->
-        <!-- ================================================== -->
-
-        <div class="current-sub-list">
-          <div
-            v-for="(stage, index) in mainStage.subStages"
-            :key="stage.id"
-            class="current-sub-item"
+      <div v-for="(row, rowIndex) in stageRows" :key="row.stage.id ?? rowIndex" class="stage-row">
+        <span class="stage-number" :data-label="$t('Products.show.stage_number')">
+          {{ String(rowIndex + 1).padStart(2, '0') }}
+        </span>
+        <strong class="stage-name" :data-label="$t('Products.show.stage_name')">
+          {{ row.title }}
+        </strong>
+        <span class="stage-group" :data-label="$t('Products.stages.main')">
+          {{ row.groupTitle }}
+        </span>
+        <div class="stage-actions" :data-label="$t('Products.show.actions')">
+          <ConfirmCancelDialog
+            :title="$t('Products.delete_item_dialog.title')"
+            :message="$t('Products.delete_item_dialog.message')"
+            :confirm-label="$t('confirm')"
+            :cancel-label="$t('cancel')"
+            confirm-theme="danger"
+            :disabled="deletingStageId === row.stage.id"
+            @confirm="deleteStage(row.stage, row.index)"
           >
-            <!-- Number -->
-            <div class="sub-index">
-              {{ String(index + 1).padStart(2, '0') }}
-            </div>
-
-            <!-- Connector -->
-            <div class="sub-connector"></div>
-
-            <!-- Content -->
-            <div class="sub-content">
-              <span class="sub-label">
-                {{ $t('Products.stages.sub') }}
-              </span>
-
-              <strong>
-                {{ stage.title }}
-              </strong>
-
-              <!-- <span class="sub-id">
-                {{ $t('Products.stages.id', { id: stage.id }) }}
-              </span> -->
-            </div>
-
-            <!-- Delete -->
-            <ConfirmCancelDialog
-              :title="$t('Products.delete_item_dialog.title')"
-              :message="$t('Products.delete_item_dialog.message')"
-              :confirm-label="$t('confirm')"
-              :cancel-label="$t('cancel')"
-              confirm-theme="danger"
-              :disabled="deletingStageId === stage.id"
-              @confirm="deleteStage(stage, mainStage.originalIndexes[stage.id])"
-            >
-              <template #trigger="{ open }">
-                <button
-                  type="button"
-                  class="delete-stage-btn"
-                  :disabled="deletingStageId === stage.id"
-                  :aria-label="$t('common.delete')"
-                  @click="open"
+            <template #trigger="{ open }">
+              <button
+                type="button"
+                class="delete-stage-btn"
+                :disabled="deletingStageId === row.stage.id"
+                :aria-label="$t('common.delete')"
+                @click="open"
+              >
+                <span v-if="deletingStageId === row.stage.id">…</span>
+                <svg
+                  v-else
+                  width="17"
+                  height="17"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  aria-hidden="true"
                 >
-                  <span v-if="deletingStageId === stage.id" class="delete-loading"> ... </span>
-
-                  <svg
-                    v-else
-                    width="15"
-                    height="15"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  >
-                    <polyline points="3 6 5 6 21 6" />
-
-                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
-
-                    <path d="M10 11v6" />
-
-                    <path d="M14 11v6" />
-
-                    <path d="M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" />
-                  </svg>
-                </button>
-              </template>
-            </ConfirmCancelDialog>
-          </div>
+                  <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v5M14 11v5" />
+                </svg>
+              </button>
+            </template>
+          </ConfirmCancelDialog>
         </div>
       </div>
     </div>
 
-    <!-- ================================================== -->
-    <!-- Fallback -->
-    <!-- ================================================== -->
-
-    <div v-else-if="stageIds?.length" class="stages-grid">
-      <div v-for="(id, index) in stageIds" :key="id" class="stage-card">
-        <div class="stage-top">
-          <span class="stage-num">
-            {{ String(index + 1).padStart(2, '0') }}
-          </span>
-
-          <span class="check"> ✓ </span>
-        </div>
-
-        <h4>
-          {{ $t('Products.stages.item') }}
-
-          #{{ id }}
-        </h4>
-
-        <span class="stage-id"> #{{ id }} </span>
+    <div v-else-if="stageIds.length" class="stages-table">
+      <div class="stage-table-head stage-table-head--fallback" aria-hidden="true">
+        <span>{{ $t('Products.show.stage_number') }}</span>
+        <span>{{ $t('Products.show.stage_name') }}</span>
+      </div>
+      <div v-for="(id, index) in stageIds" :key="id" class="stage-row stage-row--fallback">
+        <span class="stage-number">{{ String(index + 1).padStart(2, '0') }}</span>
+        <strong class="stage-name">{{ $t('Products.stages.item') }} #{{ id }}</strong>
       </div>
     </div>
-
-    <!-- ================================================== -->
-    <!-- Empty -->
-    <!-- ================================================== -->
 
     <div v-else class="empty-box">
-      <span> ◌ </span>
-
-      <p>
-        {{ $t('Products.show.no_stages') }}
-      </p>
+      <svg
+        width="30"
+        height="30"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.6"
+        aria-hidden="true"
+      >
+        <path d="m12 2 9 5-9 5-9-5 9-5Z" />
+        <path d="m3 12 9 5 9-5M3 17l9 5 9-5" />
+      </svg>
+      <p>{{ $t('Products.show.no_stages') }}</p>
     </div>
-
-    <!-- ================================================== -->
-    <!-- Dialog -->
-    <!-- ================================================== -->
 
     <Teleport to="body">
       <div v-if="showStageDialog" class="dialog-overlay" @click.self="closeStageDialog">
-        <div class="stage-dialog">
-          <!-- ================================================== -->
-          <!-- Dialog Header -->
-          <!-- ================================================== -->
-
-          <div class="dialog-header">
+        <div
+          class="stage-dialog"
+          role="dialog"
+          aria-modal="true"
+          :aria-label="$t('Products.form.stages_title')"
+        >
+          <header class="dialog-header">
             <div>
-              <h3>
-                {{ $t('Products.form.stages_title') }}
-              </h3>
-
-              <p>
-                {{ $t('Products.form.stages_hint') }}
-              </p>
+              <h3>{{ $t('Products.form.stages_title') }}</h3>
+              <p>{{ $t('Products.form.stages_hint') }}</p>
             </div>
-
             <button
               type="button"
               class="close-btn"
               :disabled="storingStages"
+              :aria-label="$t('common.close')"
               @click="closeStageDialog"
             >
               ×
             </button>
+          </header>
+
+          <div v-if="stagesLoading" class="dialog-state">
+            <span>{{ $t('Products.form.stages_loading') }}</span>
           </div>
-
-          <!-- ================================================== -->
-          <!-- Loading -->
-          <!-- ================================================== -->
-
-          <div v-if="stagesLoading" class="dialog-loading">
-            <span> ... </span>
-
-            <p>
-              {{ $t('Products.form.stages_loading') }}
-            </p>
-          </div>
-
-          <!-- ================================================== -->
-          <!-- Grouped Stages -->
-          <!-- ================================================== -->
 
           <div v-else-if="groupedStages.length" class="available-stages">
-            <div v-for="mainStage in groupedStages" :key="mainStage.id" class="stage-group">
-              <!-- Main Stage -->
-
-              <div class="main-stage-header">
-                <div class="main-stage-icon">#</div>
-
-                <div class="main-stage-info">
-                  <strong>
-                    {{ mainStage.title }}
-                  </strong>
-
-                  <small>
-                    {{ $t('Products.stages.main') }}
-                  </small>
+            <section
+              v-for="mainStage in groupedStages"
+              :key="mainStage.id"
+              class="stage-group-card"
+            >
+              <header class="main-stage-header">
+                <span class="main-stage-icon" aria-hidden="true">
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path d="m12 2 9 5-9 5-9-5 9-5Z" />
+                  </svg>
+                </span>
+                <div>
+                  <strong>{{ mainStage.title }}</strong>
+                  <small>{{ $t('Products.stages.main') }}</small>
                 </div>
-              </div>
-
-              <!-- Sub Stages -->
+              </header>
 
               <div v-if="mainStage.subStages.length" class="sub-stages">
                 <button
                   v-for="stage in mainStage.subStages"
                   :key="stage.id"
                   type="button"
-                  class="available-stage sub-stage"
-                  :class="{
-                    selected: isStageSelected(stage.id),
-                  }"
+                  class="available-stage"
+                  :class="{ selected: isStageSelected(stage.id) }"
+                  :aria-pressed="isStageSelected(stage.id)"
                   @click="toggleStage(stage.id)"
                 >
-                  <span class="stage-checkbox">
+                  <span class="stage-checkbox" aria-hidden="true">
                     <svg
                       v-if="isStageSelected(stage.id)"
                       width="14"
@@ -716,52 +474,26 @@
                       fill="none"
                       stroke="currentColor"
                       stroke-width="3"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
                     >
-                      <polyline points="20 6 9 17 4 12" />
+                      <path d="m20 6-11 11-5-5" />
                     </svg>
                   </span>
-
-                  <span class="available-stage-info">
-                    <strong>
-                      {{ stage.title }}
-                    </strong>
-
-                    <small> #{{ stage.id }} </small>
-                  </span>
+                  <span>{{ stage.title }}</span>
                 </button>
               </div>
 
-              <div v-else class="no-sub-stages">
-                {{ $t('Products.show.no_sub_stages') }}
-              </div>
-            </div>
+              <p v-else class="no-sub-stages">{{ $t('Products.show.no_sub_stages') }}</p>
+            </section>
           </div>
 
-          <!-- ================================================== -->
-          <!-- Dialog Empty -->
-          <!-- ================================================== -->
-
-          <div v-else class="dialog-empty">
-            <span> ◌ </span>
-
-            <p>
-              {{ $t('Products.show.no_available_stages') }}
-            </p>
+          <div v-else class="dialog-state">
+            <span>{{ $t('Products.show.no_available_stages') }}</span>
           </div>
 
-          <!-- ================================================== -->
-          <!-- Footer -->
-          <!-- ================================================== -->
-
-          <div class="dialog-footer">
+          <footer class="dialog-footer">
             <span class="selected-count">
-              {{ selectedStageIds.length }}
-
-              {{ $t('Products.form.selected') }}
+              {{ selectedStageIds.length }} {{ $t('Products.form.selected') }}
             </span>
-
             <div class="dialog-actions">
               <button
                 type="button"
@@ -771,21 +503,16 @@
               >
                 {{ $t('common.cancel') }}
               </button>
-
               <button
                 type="button"
                 class="save-btn"
-                :disabled="storingStages || (!selectedStageIds.length && !props.stageIds?.length)"
+                :disabled="storingStages || (!selectedStageIds.length && !props.stageIds.length)"
                 @click="storeStages"
               >
-                <span v-if="storingStages"> ... </span>
-
-                <span v-else>
-                  {{ $t('common.save') }}
-                </span>
+                {{ storingStages ? $t('common.loading') : $t('common.save') }}
               </button>
             </div>
-          </div>
+          </footer>
         </div>
       </div>
     </Teleport>
@@ -793,326 +520,99 @@
 </template>
 
 <style scoped lang="scss">
-  /* ======================================================
-   Card
-   ====================================================== */
-
-  .card {
-    grid-column: 1 / -1;
-    padding: 1.35rem;
-    background: white;
-    border: 1px solid #e2e8f0;
-    border-radius: 1rem;
-    box-shadow: 0 1px 3px rgb(0 0 0 / 0.04);
+  .stages-card {
+    overflow: hidden;
+    background: var(--bg-card);
+    border: 1px solid var(--border-weak);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
   }
 
-  /* ======================================================
-   Header
-   ====================================================== */
-
-  .card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 1.35rem;
-  }
-
-  .card-title-wrap {
+  .section-header {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 1.15rem;
+    border-bottom: 1px solid var(--border-weak);
+  }
 
-    .num {
-      width: 34px;
-      height: 34px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 0.5rem;
-      background: #fff7ed;
-      color: #b45309;
-      font-size: 0.75rem;
-      font-weight: 800;
-    }
+  .section-title,
+  .section-actions,
+  .main-stage-header,
+  .dialog-actions {
+    display: flex;
+    align-items: center;
+  }
+
+  .section-title {
+    gap: 0.7rem;
 
     h3 {
       margin: 0;
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: #0f172a;
+      color: var(--title-color);
+      font-size: var(--md-size);
+      font-weight: 800;
     }
 
     p {
       margin: 0.15rem 0 0;
-      font-size: 0.8rem;
-      color: #64748b;
+      color: var(--subtitle-color);
+      font-size: var(--xs-size);
     }
   }
 
-  .header-actions {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+  .section-icon,
+  .main-stage-icon {
+    display: grid;
+    color: var(--PrimaryColor);
+    background: var(--PrimaryColor-light);
+    border-radius: var(--radius-sm);
+    place-items: center;
   }
 
-  .count {
-    min-width: 28px;
-    height: 28px;
-    padding: 0 0.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 999px;
-    background: #f1f5f9;
-    border: 1px solid #e2e8f0;
-    font-size: 0.75rem;
+  .section-icon {
+    width: 2.4rem;
+    height: 2.4rem;
+    flex: 0 0 2.4rem;
+  }
+
+  .section-actions {
+    gap: 0.55rem;
+  }
+
+  .count-badge {
+    display: grid;
+    min-width: 1.75rem;
+    height: 1.75rem;
+    padding-inline: 0.45rem;
+    color: var(--gray-600);
+    background: var(--gray-100);
+    border-radius: var(--radius-full);
+    font-size: var(--xs-size);
     font-weight: 700;
-    color: #64748b;
+    place-items: center;
   }
 
-  .add-stage-btn {
-    min-height: 34px;
-    display: flex;
+  .add-stage-btn,
+  .save-btn {
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 0.4rem;
-    padding: 0 0.75rem;
-    border: 1px solid #0f766e;
-    border-radius: 0.5rem;
-    background: #0f766e;
-    color: white;
-    font-size: 0.8rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: 0.15s;
-
-    &:hover {
-      background: #115e59;
-      border-color: #115e59;
-    }
-  }
-
-  /* ======================================================
-   NEW OUTSIDE STAGES DESIGN
-   ====================================================== */
-
-  .current-stages-wrapper {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
-
-  .current-stage-section {
-    position: relative;
-  }
-
-  /* ======================================================
-   Main Stage
-   ====================================================== */
-
-  .current-main-header {
-    position: relative;
-    display: flex;
-    align-items: center;
-    margin-bottom: 0.75rem;
-  }
-
-  .main-stage-line {
-    width: 4px;
-    height: 42px;
-    flex-shrink: 0;
-    border-radius: 999px;
-    background: #f59e0b;
-  }
-
-  .main-stage-content {
-    width: 100%;
-    min-width: 0;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.65rem 0.85rem;
-    border-bottom: 1px solid #e2e8f0;
-  }
-
-  .main-stage-badge {
-    width: 34px;
-    height: 34px;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 0.6rem;
-    background: #fff7ed;
-    color: #d97706;
-    border: 1px solid #fed7aa;
-  }
-
-  .main-stage-text {
-    min-width: 0;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 0.05rem;
-
-    .main-stage-label {
-      font-size: 0.65rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      color: #f59e0b;
-    }
-
-    h4 {
-      margin: 0;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: #1e293b;
-    }
-  }
-
-  .sub-stage-count {
-    flex-shrink: 0;
-    padding: 0.3rem 0.6rem;
-    border-radius: 999px;
-    background: #f1f5f9;
-    color: #64748b;
-    font-size: 0.68rem;
+    min-height: 2.25rem;
+    padding: 0.45rem 0.8rem;
+    color: var(--standard-white);
+    background: var(--PrimaryColor);
+    border: 1px solid var(--PrimaryColor);
+    border-radius: var(--radius-sm);
+    font-size: var(--xs-size);
     font-weight: 700;
-  }
-
-  /* ======================================================
-   Sub Stages List
-   ====================================================== */
-
-  .current-sub-list {
-    position: relative;
-    margin-inline-start: 1.2rem;
-    padding-inline-start: 1.25rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.55rem;
-  }
-
-  .current-sub-list::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    inset-inline-start: 0.3rem;
-    width: 1px;
-    background: #e2e8f0;
-  }
-
-  .current-sub-item {
-    position: relative;
-    min-height: 60px;
-    display: flex;
-    align-items: center;
-    gap: 0.7rem;
-    padding: 0.65rem 0.75rem;
-    border: 1px solid #e5e7eb;
-    border-radius: 0.7rem;
-    background: #fff;
-    transition:
-      border-color 0.15s ease,
-      box-shadow 0.15s ease,
-      transform 0.15s ease;
-
-    &:hover {
-      border-color: #cbd5e1;
-      box-shadow: 0 4px 12px rgb(15 23 42 / 0.05);
-      transform: translateX(2px);
-    }
-  }
-
-  .sub-index {
-    width: 30px;
-    height: 30px;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 0.5rem;
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    color: #64748b;
-    font-size: 0.65rem;
-    font-weight: 800;
-  }
-
-  .sub-connector {
-    position: absolute;
-    width: 12px;
-    height: 1px;
-    inset-inline-start: -1.25rem;
-    background: #e2e8f0;
-  }
-
-  .sub-content {
-    min-width: 0;
-    flex: 1;
-    display: flex;
-    align-items: center;
-    gap: 0.55rem;
-
-    .sub-label {
-      display: none;
-      font-size: 0.62rem;
-      font-weight: 700;
-      color: #94a3b8;
-      text-transform: uppercase;
-    }
-
-    strong {
-      min-width: 0;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: #334155;
-    }
-
-    .sub-id {
-      flex-shrink: 0;
-      padding: 0.2rem 0.45rem;
-      border-radius: 0.35rem;
-      background: #f8fafc;
-      color: #94a3b8;
-      font-size: 0.62rem;
-      font-weight: 600;
-    }
-  }
-
-  /* ======================================================
-   Delete
-   ====================================================== */
-
-  .delete-stage-btn {
-    width: 30px;
-    height: 30px;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid #fecaca;
-    border-radius: 0.45rem;
-    background: #fff;
-    color: #ef4444;
     cursor: pointer;
-    transition:
-      background 0.15s,
-      border-color 0.15s,
-      color 0.15s;
 
     &:hover:not(:disabled) {
-      background: #fef2f2;
-      border-color: #fca5a5;
-      color: #dc2626;
+      background: var(--PrimaryColor-hover);
+      border-color: var(--PrimaryColor-hover);
     }
 
     &:disabled {
@@ -1121,216 +621,194 @@
     }
   }
 
-  .delete-loading {
-    font-size: 0.65rem;
-    font-weight: 800;
-    letter-spacing: 1px;
+  .stages-table {
+    overflow-x: auto;
+    margin: 1rem 1.15rem;
+    border: 1px solid var(--border-weak);
+    border-radius: var(--radius-sm);
   }
 
-  /* ======================================================
-   Fallback
-   ====================================================== */
-
-  .stages-grid {
+  .stage-table-head,
+  .stage-row {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    grid-template-columns: 5rem minmax(12rem, 1fr) minmax(10rem, 0.65fr) 5rem;
+    align-items: center;
     gap: 0.75rem;
+    min-width: 40rem;
   }
 
-  .stage-card {
-    padding: 1rem;
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    border-radius: 0.75rem;
-    transition: 0.15s;
+  .stage-table-head {
+    padding: 0.7rem 0.85rem;
+    color: var(--gray-600);
+    background: var(--gray-50);
+    border-bottom: 1px solid var(--border-weak);
+    font-size: var(--xs-size);
+    font-weight: 700;
+  }
 
-    &:hover {
-      border-color: #0f766e;
-      background: #f0fdfa;
-    }
+  .stage-row {
+    padding: 0.75rem 0.85rem;
+    border-bottom: 1px solid var(--border-weak);
 
-    .stage-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 0.65rem;
-    }
-
-    .stage-num {
-      width: 26px;
-      height: 26px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 50%;
-      background: white;
-      border: 1px solid #e2e8f0;
-      font-size: 0.7rem;
-      font-weight: 800;
-      color: #0f766e;
-    }
-
-    .check {
-      width: 22px;
-      height: 22px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 50%;
-      background: #d1fae5;
-      color: #065f46;
-      font-size: 0.7rem;
-      font-weight: 800;
-    }
-
-    h4 {
-      margin: 0 0 0.25rem;
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: #0f172a;
-    }
-
-    .stage-id {
-      font-size: 0.7rem;
-      color: #94a3b8;
+    &:last-child {
+      border-bottom: 0;
     }
   }
 
-  /* ======================================================
-   Empty
-   ====================================================== */
-
-  .empty-box {
-    min-height: 120px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    background: #f8fafc;
-    border: 1px dashed #e2e8f0;
-    border-radius: 0.75rem;
-    color: #94a3b8;
-    font-size: 0.9rem;
-
-    p {
-      margin: 0;
-    }
+  .stage-table-head--fallback,
+  .stage-row--fallback {
+    grid-template-columns: 5rem minmax(12rem, 1fr);
   }
 
-  /* ======================================================
-   Dialog
-   ====================================================== */
-
-  .dialog-overlay {
-    position: fixed;
-    inset: 0;
-    z-index: 9999;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 1rem;
-    background: rgb(15 23 42 / 0.45);
+  .stage-number {
+    color: var(--gray-400);
+    font-size: var(--xs-size);
+    font-weight: 700;
   }
 
-  .stage-dialog {
-    width: min(600px, 100%);
-    max-height: 85vh;
-    display: flex;
-    flex-direction: column;
-    background: white;
-    border: 1px solid #e2e8f0;
-    border-radius: 1rem;
-    box-shadow:
-      0 20px 40px rgb(15 23 42 / 0.15),
-      0 4px 12px rgb(15 23 42 / 0.08);
+  .stage-name {
     overflow: hidden;
+    color: var(--title-card-color);
+    font-size: var(--sm-size);
+    font-weight: 700;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
-  .dialog-header {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 1rem;
-    padding: 1.25rem;
-    border-bottom: 1px solid #e2e8f0;
-
-    h3 {
-      margin: 0;
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: #0f172a;
-    }
-
-    p {
-      margin: 0.25rem 0 0;
-      font-size: 0.8rem;
-      color: #64748b;
-    }
+  .stage-group {
+    overflow: hidden;
+    color: var(--gray-600);
+    font-size: var(--sm-size);
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
-  .close-btn {
-    width: 32px;
-    height: 32px;
+  .stage-actions {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    border: 1px solid #e2e8f0;
-    border-radius: 0.5rem;
-    background: white;
-    color: #64748b;
-    font-size: 1.35rem;
-    line-height: 1;
+    justify-content: flex-end;
+  }
+
+  .delete-stage-btn {
+    display: grid;
+    width: 2.15rem;
+    height: 2.15rem;
+    padding: 0;
+    color: var(--danger);
+    background: var(--bg-card);
+    border: 1px solid var(--border-weak);
+    border-radius: var(--radius-sm);
     cursor: pointer;
+    place-items: center;
 
     &:hover:not(:disabled) {
-      background: #f8fafc;
-      color: #0f172a;
+      background: var(--danger-light);
+      border-color: var(--danger);
     }
 
     &:disabled {
-      opacity: 0.5;
+      opacity: 0.55;
       cursor: not-allowed;
     }
   }
 
-  .dialog-loading {
-    min-height: 220px;
+  .empty-box,
+  .dialog-state {
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
+    flex-direction: column;
     gap: 0.5rem;
-    color: #64748b;
+    color: var(--gray-400);
+    font-size: var(--sm-size);
+  }
 
-    span {
-      font-weight: 700;
-      letter-spacing: 2px;
-    }
+  .empty-box {
+    min-height: 9rem;
+    margin: 1rem 1.15rem;
+    background: var(--gray-50);
+    border: 1px dashed var(--border-strong);
+    border-radius: var(--radius-sm);
 
     p {
       margin: 0;
-      font-size: 0.85rem;
     }
   }
 
-  /* ======================================================
-   Dialog Groups
-   ====================================================== */
+  .dialog-overlay {
+    position: fixed;
+    z-index: 9999;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    background: var(--gray-800-alpha-80);
+  }
+
+  .stage-dialog {
+    display: flex;
+    width: min(38rem, 100%);
+    max-height: 85vh;
+    overflow: hidden;
+    flex-direction: column;
+    background: var(--bg-card);
+    border: 1px solid var(--border-weak);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xl);
+  }
+
+  .dialog-header,
+  .dialog-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 1.15rem;
+  }
+
+  .dialog-header {
+    border-bottom: 1px solid var(--border-weak);
+
+    h3 {
+      margin: 0;
+      color: var(--title-color);
+      font-size: var(--md-size);
+      font-weight: 800;
+    }
+
+    p {
+      margin: 0.2rem 0 0;
+      color: var(--subtitle-color);
+      font-size: var(--xs-size);
+    }
+  }
+
+  .close-btn {
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+    color: var(--gray-600);
+    background: var(--gray-100);
+    border: 0;
+    border-radius: var(--radius-sm);
+    font-size: var(--md-size-2);
+    cursor: pointer;
+  }
+
+  .dialog-state {
+    min-height: 13rem;
+  }
 
   .available-stages {
-    max-height: 400px;
     overflow-y: auto;
     padding: 1rem;
   }
 
-  .stage-group {
-    margin-bottom: 1rem;
-    border: 1px solid #e2e8f0;
-    border-radius: 0.75rem;
-    background: #f8fafc;
+  .stage-group-card {
     overflow: hidden;
+    margin-bottom: 0.75rem;
+    border: 1px solid var(--border-weak);
+    border-radius: var(--radius-sm);
 
     &:last-child {
       margin-bottom: 0;
@@ -1338,277 +816,180 @@
   }
 
   .main-stage-header {
-    display: flex;
-    align-items: center;
-    gap: 0.7rem;
-    padding: 0.85rem 1rem;
-    background: #fff7ed;
-    border-bottom: 1px solid #fed7aa;
+    gap: 0.65rem;
+    padding: 0.75rem;
+    background: var(--PrimaryColor-light);
+    border-bottom: 1px solid var(--border-weak);
+
+    strong,
+    small {
+      display: block;
+    }
+
+    strong {
+      color: var(--title-card-color);
+      font-size: var(--sm-size);
+    }
+
+    small {
+      margin-top: 0.1rem;
+      color: var(--subtitle-color);
+      font-size: var(--xs-size-2);
+    }
   }
 
   .main-stage-icon {
-    width: 30px;
-    height: 30px;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 0.5rem;
-    background: #f59e0b;
-    color: white;
-    font-size: 0.75rem;
-    font-weight: 800;
-  }
-
-  .main-stage-info {
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.15rem;
-
-    strong {
-      font-size: 0.9rem;
-      font-weight: 700;
-      color: #92400e;
-    }
-
-    small {
-      font-size: 0.7rem;
-      color: #b45309;
-    }
+    width: 2rem;
+    height: 2rem;
   }
 
   .sub-stages {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0.5rem;
     padding: 0.75rem;
-    background: white;
   }
 
   .available-stage {
-    width: 100%;
     display: flex;
     align-items: center;
-    gap: 0.7rem;
-    padding: 0.75rem;
-    border: 1px solid #e2e8f0;
-    border-radius: 0.6rem;
-    background: white;
+    gap: 0.55rem;
+    min-width: 0;
+    padding: 0.65rem;
+    color: var(--gray-700);
+    background: var(--bg-card);
+    border: 1px solid var(--border-weak);
+    border-radius: var(--radius-sm);
+    font-size: var(--xs-size);
+    font-weight: 600;
     text-align: start;
     cursor: pointer;
-    transition:
-      border-color 0.15s,
-      background 0.15s;
 
-    &:hover {
-      border-color: #99f6e4;
-      background: #f0fdfa;
-    }
-
+    &:hover,
     &.selected {
-      border-color: #0f766e;
-      background: #f0fdfa;
+      color: var(--PrimaryColor);
+      background: var(--PrimaryColor-light);
+      border-color: var(--PrimaryColor);
     }
-  }
-
-  .sub-stage {
-    margin-inline-start: 1rem;
-    width: calc(100% - 1rem);
   }
 
   .stage-checkbox {
-    width: 22px;
-    height: 22px;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid #cbd5e1;
-    border-radius: 0.4rem;
-    color: white;
-    background: white;
+    display: grid;
+    flex: 0 0 1.25rem;
+    width: 1.25rem;
+    height: 1.25rem;
+    color: var(--standard-white);
+    background: var(--bg-card);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-xs);
+    place-items: center;
 
     .selected & {
-      border-color: #0f766e;
-      background: #0f766e;
-    }
-  }
-
-  .available-stage-info {
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.15rem;
-
-    strong {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: #334155;
-    }
-
-    small {
-      font-size: 0.7rem;
-      color: #94a3b8;
+      background: var(--PrimaryColor);
+      border-color: var(--PrimaryColor);
     }
   }
 
   .no-sub-stages {
+    margin: 0;
     padding: 1rem;
+    color: var(--gray-400);
+    font-size: var(--xs-size);
     text-align: center;
-    font-size: 0.8rem;
-    color: #94a3b8;
-    background: white;
   }
-
-  .dialog-empty {
-    min-height: 180px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    color: #94a3b8;
-    font-size: 0.9rem;
-
-    p {
-      margin: 0;
-    }
-  }
-
-  /* ======================================================
-   Dialog Footer
-   ====================================================== */
 
   .dialog-footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    padding: 1rem 1.25rem;
-    border-top: 1px solid #e2e8f0;
-    background: #f8fafc;
+    background: var(--gray-50);
+    border-top: 1px solid var(--border-weak);
   }
 
   .selected-count {
-    font-size: 0.8rem;
+    color: var(--gray-600);
+    font-size: var(--xs-size);
     font-weight: 600;
-    color: #64748b;
   }
 
   .dialog-actions {
-    display: flex;
-    align-items: center;
     gap: 0.5rem;
   }
 
-  .cancel-btn,
-  .save-btn {
-    min-width: 80px;
-    min-height: 36px;
-    padding: 0 1rem;
-    border-radius: 0.5rem;
-    font-size: 0.8rem;
-    font-weight: 600;
+  .cancel-btn {
+    min-height: 2.25rem;
+    padding: 0.45rem 0.9rem;
+    color: var(--gray-700);
+    background: var(--bg-card);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    font-size: var(--xs-size);
+    font-weight: 700;
     cursor: pointer;
   }
 
-  .cancel-btn {
-    border: 1px solid #cbd5e1;
-    background: white;
-    color: #475569;
-
-    &:hover:not(:disabled) {
-      background: #f8fafc;
-    }
-
-    &:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-  }
-
-  .save-btn {
-    border: 1px solid #0f766e;
-    background: #0f766e;
-    color: white;
-
-    &:hover:not(:disabled) {
-      background: #115e59;
-      border-color: #115e59;
-    }
-
-    &:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-  }
-
-  /* ======================================================
-   Responsive
-   ====================================================== */
-
-  @media (max-width: 600px) {
-    .card {
-      padding: 1rem;
-    }
-
-    .card-header {
-      gap: 1rem;
-    }
-
-    .card-title-wrap {
+  @media (max-width: 700px) {
+    .section-header {
       align-items: flex-start;
-
-      p {
-        display: none;
-      }
+      flex-direction: column;
     }
 
-    .header-actions {
-      flex-shrink: 0;
+    .section-actions {
+      width: 100%;
+      justify-content: space-between;
     }
 
-    .add-stage-btn span {
+    .stage-table-head {
       display: none;
     }
 
-    .current-sub-list {
-      margin-inline-start: 0.5rem;
-      padding-inline-start: 1rem;
+    .stage-row {
+      min-width: 0;
+      grid-template-columns: 1fr auto;
+      gap: 0.5rem 1rem;
     }
 
-    .sub-content {
-      flex-wrap: wrap;
-      gap: 0.25rem 0.5rem;
+    .stage-number,
+    .stage-name,
+    .stage-group,
+    .stage-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
 
-      strong {
-        width: 100%;
+      &::before {
+        content: attr(data-label);
+        color: var(--gray-500);
+        font-size: var(--xs-size-2);
+        font-weight: 500;
       }
-
-      .sub-id {
-        order: 2;
-      }
     }
 
-    .sub-stage-count {
-      display: none;
+    .stage-name,
+    .stage-group,
+    .stage-actions {
+      grid-column: 1 / -1;
     }
 
-    .current-sub-item {
-      padding: 0.6rem;
+    .stage-actions {
+      justify-content: flex-end;
     }
 
+    .stage-row--fallback {
+      grid-template-columns: 1fr;
+    }
+
+    .sub-stages {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 520px) {
     .dialog-footer {
       align-items: stretch;
       flex-direction: column;
     }
 
-    .dialog-actions {
-      justify-content: flex-end;
+    .dialog-actions > * {
+      flex: 1;
     }
   }
 </style>
