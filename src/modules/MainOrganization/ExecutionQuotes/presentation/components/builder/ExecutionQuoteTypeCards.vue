@@ -161,10 +161,16 @@
     transition: var(--transition-fast);
   }
 
-  .quote-type-option:hover {
+  .quote-type-option:hover:not(:disabled) {
     border-color: var(--PrimaryColor-alpha-50);
     box-shadow: var(--shadow-md);
     transform: translateY(-2px);
+  }
+
+  .quote-type-option:focus-visible {
+    border-color: var(--PrimaryColor);
+    outline: 3px solid var(--PrimaryColor-alpha-20);
+    outline-offset: 2px;
   }
 
   .quote-type-option:disabled {
@@ -236,6 +242,17 @@
 
     .builder-section-title__decor {
       display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .quote-type-option,
+    .quote-type-option__check {
+      transition: none;
+    }
+
+    .quote-type-option:hover:not(:disabled) {
+      transform: none;
     }
   }
 </style>

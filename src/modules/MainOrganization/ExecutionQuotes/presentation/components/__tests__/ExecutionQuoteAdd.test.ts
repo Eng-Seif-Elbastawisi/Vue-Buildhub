@@ -169,6 +169,7 @@ describe('ExecutionQuoteAdd', () => {
       stageId: 129,
       subStageId: 41,
       itemType: ExecutionQuoteItemSourceEnum.PRODUCT,
+      clientPrice: 1800,
       items: [{ morphId: 22, expectedPrice: 50, quantity: 2, unit: 9 }],
     });
     const wrapper = mountAdd();

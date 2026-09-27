@@ -3,6 +3,7 @@ import type * as VueRouterModule from 'vue-router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { DataInitial } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
+import UpdatedCustomInputSelect from '@/shared/FormInputs/UpdatedCustomInputSelect.vue';
 
 import ExecutionQuoteApiService from '../../../data/api/execution.quote.api-service';
 import ExecutionQuoteController from '../../controllers/execution.quote.controller';
@@ -68,6 +69,9 @@ const mountIndex = () =>
           return key;
         },
       },
+      stubs: {
+        UpdatedCustomInputSelect: true,
+      },
     },
   });
 
@@ -117,5 +121,48 @@ describe('ExecutionQuoteIndex', () => {
 
     expect(wrapper.text()).toContain('Second page project');
     expect(wrapper.text()).not.toContain('First page project');
+  });
+
+  it('applies and clears the supported API filters', async () => {
+    indexRequest.mockResolvedValue(createIndexResponse(1, 'Filtered project'));
+
+    const wrapper = mountIndex();
+    await flushPromises();
+
+    const filters = wrapper.findAllComponents(UpdatedCustomInputSelect);
+    expect(filters).toHaveLength(4);
+
+    const selectFilter = (index: number, id: number, title: string) => {
+      const filter = filters[index];
+      if (!filter) throw new Error(`Missing execution quote filter at index ${index}`);
+
+      filter.vm.$emit('update:modelValue', { id, title });
+    };
+
+    selectFilter(0, 1, 'Execution only');
+    selectFilter(1, 241, 'Project 241');
+    selectFilter(2, 46, 'Quote customer');
+    selectFilter(3, 2, 'Supervision');
+    await flushPromises();
+
+    await wrapper.find('.execution-quote-index__filter-apply').trigger('click');
+    await flushPromises();
+
+    expect(indexRequest.mock.calls.at(-1)?.[0]?.toMap()).toMatchObject({
+      quote_source: 1,
+      project_id: 241,
+      client_id: 46,
+      quote_type_id: 2,
+      page: 1,
+    });
+
+    await wrapper.find('.execution-quote-index__filter-clear').trigger('click');
+    await flushPromises();
+
+    expect(indexRequest.mock.calls.at(-1)?.[0]?.toMap()).toEqual({
+      with_pagination: 1,
+      page: 1,
+      per_page: 20,
+    });
   });
 });

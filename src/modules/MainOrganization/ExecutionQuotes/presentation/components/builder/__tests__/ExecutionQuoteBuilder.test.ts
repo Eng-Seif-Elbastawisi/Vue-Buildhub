@@ -73,7 +73,18 @@ const componentStubs = {
       </div>
     `,
   },
-  ExecutionQuoteClientPrice: { template: '<div class="client-price-stub" />' },
+  ExecutionQuoteClientPrice: {
+    name: 'ExecutionQuoteClientPrice',
+    props: ['modelValue'],
+    emits: ['update:modelValue'],
+    template: `
+      <button
+        class="client-price-stub"
+        :data-client-price="modelValue"
+        @click="$emit('update:modelValue', 4200)"
+      />
+    `,
+  },
   ExecutionQuoteItemsTable: {
     name: 'ExecutionQuoteItemsTable',
     props: ['items', 'showPricing'],
@@ -133,7 +144,7 @@ describe('ExecutionQuoteBuilder', () => {
     expect(quoteTypeOptions.every((option) => option.element.disabled)).toBe(true);
   });
 
-  it('groups selected items into the backend morph contract', async () => {
+  it('sends the client stage price with grouped quote items', async () => {
     fetchList
       .mockResolvedValueOnce(
         new DataSuccess({ data: [new StageModel({ id: 1, title: 'Main', children: [] })] }),
@@ -149,6 +160,7 @@ describe('ExecutionQuoteBuilder', () => {
     await wrapper.get('.select-source').trigger('click');
     await wrapper.get('.add-item').trigger('click');
     await wrapper.get('.add-item').trigger('click');
+    await wrapper.get('.client-price-stub').trigger('click');
 
     expect(fetchList.mock.calls[1]?.[0].toMap()).toMatchObject({ parent_id: 1, status: 1 });
     expect(fetchList.mock.calls[0]?.[0].toMap()).toMatchObject({ parent_id: null, status: 1 });
@@ -163,6 +175,7 @@ describe('ExecutionQuoteBuilder', () => {
       stage_id: 1,
       sub_stage_id: 11,
       item_type: ExecutionQuoteItemSourceEnum.PRODUCT,
+      client_price: 4200,
       items: [
         { morph_id: 22, expected_price: 5, quantity: 2, unit: 9 },
         { morph_id: 22, expected_price: 5, quantity: 2, unit: 9 },
@@ -227,7 +240,7 @@ describe('ExecutionQuoteBuilder', () => {
     expect(wrapper.emitted('update:details')?.at(-1)?.[0]).toEqual([]);
   });
 
-  it('shows stored quote items without submitting them again', async () => {
+  it('hydrates stored quote items and client price without resubmitting them', async () => {
     fetchList
       .mockResolvedValueOnce(
         new DataSuccess({ data: [new StageModel({ id: 1, title: 'Main', children: [] })] }),
@@ -237,6 +250,7 @@ describe('ExecutionQuoteBuilder', () => {
       );
 
     const wrapper = mountBuilder({
+      stubs: { ...componentStubs, ExecutionQuoteClientPrice: false },
       initialStages: [
         {
           id: 5,
@@ -244,12 +258,15 @@ describe('ExecutionQuoteBuilder', () => {
           subStageId: 11,
           stage: { id: 1, title: 'Main' },
           subStage: { id: 11, title: 'Sub' },
+          clientPrice: 3500,
           items: [
             {
               id: 7,
               itemType: ExecutionQuoteItemSourceEnum.PRODUCT,
               itemableId: 17,
               itemable: { id: 17, title: 'Stored product' },
+              unitId: 9,
+              measurementUnit: { id: 9, title: 'Piece' },
               expectedPrice: 25,
               quantity: 2,
             },
@@ -269,10 +286,14 @@ describe('ExecutionQuoteBuilder', () => {
         source_title: 'Stored product',
         stage_name: 'Main',
         sub_stage_name: 'Sub',
+        quantity: 2,
+        unit_id: 9,
+        unit_name: 'Piece',
         persisted: true,
       }),
     ]);
     expect(wrapper.emitted('update:details')?.at(-1)?.[0]).toEqual([]);
+    expect(wrapper.get<HTMLInputElement>('.client-price input').element.value).toBe('3500');
 
     await wrapper.get('.select-source').trigger('click');
     await wrapper.get('.add-item').trigger('click');

@@ -69,6 +69,7 @@ describe('ExecutionQuoteShow', () => {
           },
           quote_type: { id: 1, title: 'Lump_SUM' },
           price_employee: { id: 92, name: 'fwffefefe' },
+          total_quote_price: '123456.78',
           attachments: [
             {
               id: 9,
@@ -92,6 +93,7 @@ describe('ExecutionQuoteShow', () => {
                   itemable_id: 17,
                   itemable_type: 'Product',
                   itemable: { id: 17, title: 'تيست1' },
+                  measurement_unit: { id: 165, title: 'كيلومتر مربع' },
                   expected_price: '44444444.00',
                   quantity: 1,
                 },
@@ -112,6 +114,8 @@ describe('ExecutionQuoteShow', () => {
           $t: (key: string) => {
             if (key === 'execution_quote.show.title') return 'Execution quote details';
             if (key === 'execution_quote.show.eyebrow') return 'Execution quote';
+            if (key === 'execution_quote.show.total_quote_price') return 'Total quote price';
+            if (key === 'execution_quote.fields.price_employee') return 'Pricing owner';
             if (key === 'execution_quote.quote_types.lump_sum.title') return 'Lump sum';
             if (key === 'INDIVIDUAL') return 'Individual';
             return key;
@@ -130,7 +134,7 @@ describe('ExecutionQuoteShow', () => {
     expect(wrapper.text()).toContain('شارع');
     expect(wrapper.text()).toContain('Individual');
     expect(wrapper.text()).toContain('تست');
-    expect(wrapper.text()).not.toContain('fwffefefe');
+    expect(wrapper.text()).toContain('fwffefefe');
     expect(wrapper.text()).not.toContain('1012@test.com');
     expect(wrapper.text()).not.toContain('execution_quote.show.project_id');
     expect(wrapper.text()).not.toContain('execution_quote.show.email');
@@ -140,17 +144,25 @@ describe('ExecutionQuoteShow', () => {
     expect(wrapper.text()).toContain('منعم');
     expect(wrapper.text()).toContain('sub stage');
     expect(wrapper.text()).toContain('تيست1');
+    expect(wrapper.text()).toContain('كيلومتر مربع');
     expect(wrapper.text()).toContain('52,000,000');
     expect(wrapper.text()).toContain('44,444,444');
     expect(wrapper.text()).not.toContain('#41');
     expect(wrapper.text()).not.toContain('#17');
+
+    const quoteItemCells = wrapper.get('.execution-quote-show__items-table tbody tr').findAll('td');
+    expect(quoteItemCells[4]?.text()).toBe('1');
+    expect(quoteItemCells[5]?.text()).toBe('كيلومتر مربع');
 
     const stageHeader = wrapper.find('.execution-quote-show__stage-header');
     expect(stageHeader.text()).toContain('execution_quote.show.stage_total');
     expect(stageHeader.text()).toContain('44,444,444');
 
     const projectCard = wrapper.findAll('.execution-quote-show__card')[0];
-    expect(projectCard.text()).not.toContain('fwffefefe');
+    expect(projectCard.text()).toContain('Total quote price');
+    expect(projectCard.text()).toContain('123,456.78');
+    expect(projectCard.text()).toContain('Pricing owner');
+    expect(projectCard.text()).toContain('fwffefefe');
     expect(wrapper.text()).not.toContain('execution_quote.show.ownership_section');
 
     const accordionHeaders = wrapper.findAll('.p-accordionheader');
@@ -160,5 +172,37 @@ describe('ExecutionQuoteShow', () => {
     await accordionHeaders[0].trigger('click');
 
     expect(accordionHeaders[0].attributes('aria-expanded')).toBe('false');
+  });
+
+  it('hides the pricing owner when the show response does not include one', async () => {
+    showRequest.mockResolvedValue({
+      statusCode: 200,
+      data: {
+        status: true,
+        data: {
+          id: 42,
+          quote_source: 1,
+          project: { title: 'Ownerless quote' },
+          client: { name: 'Client' },
+          quote_type: { id: 1, title: 'Lump_SUM' },
+          quote_stages: [],
+          attachments: [],
+        },
+      },
+    });
+
+    const wrapper = mount(ExecutionQuoteShow, {
+      global: {
+        mocks: {
+          $t: (key: string) =>
+            key === 'execution_quote.fields.price_employee' ? 'Pricing owner' : key,
+        },
+        stubs: { RouterLink: { template: '<a><slot /></a>' } },
+      },
+    });
+
+    await flushPromises();
+
+    expect(wrapper.text()).not.toContain('Pricing owner');
   });
 });

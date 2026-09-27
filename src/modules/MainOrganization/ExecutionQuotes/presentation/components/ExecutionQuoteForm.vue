@@ -823,6 +823,7 @@
     gap: 1.5rem;
     padding: 0.25rem 0.25rem 0.6rem;
     border-bottom: 1px solid var(--border-weak);
+    animation: execution-quote-form-enter 340ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
   }
 
   .execution-quote__heading {
@@ -919,6 +920,7 @@
     grid-template-columns: minmax(0, 1.45fr) minmax(20rem, 0.8fr);
     gap: 1rem;
     align-items: stretch;
+    animation: execution-quote-form-enter 400ms 60ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
   }
 
   .build-path,
@@ -927,6 +929,17 @@
     border-radius: var(--radius-lg);
     background: var(--bg-card);
     box-shadow: var(--shadow-sm);
+    transition:
+      border-color var(--transition-fast),
+      box-shadow var(--transition-fast);
+  }
+
+  .build-path:hover,
+  .build-path:focus-within,
+  .execution-quote__card:hover,
+  .execution-quote__card:focus-within {
+    border-color: var(--PrimaryColor-alpha-30);
+    box-shadow: var(--shadow-md);
   }
 
   .quote-hero {
@@ -943,6 +956,11 @@
     box-shadow: var(--shadow-lg);
     color: var(--white);
     isolation: isolate;
+    transition: box-shadow var(--transition-fast);
+  }
+
+  .quote-hero:hover {
+    box-shadow: var(--shadow-xl);
   }
 
   .quote-hero::before,
@@ -989,6 +1007,14 @@
     color: var(--white-alpha-15);
     font-size: 6rem;
     line-height: 1;
+    transition:
+      opacity 420ms ease,
+      transform 420ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .quote-hero:hover .quote-hero__watermark {
+    opacity: 0.85;
+    transform: translateY(-0.2rem) scale(1.035);
   }
 
   .quote-hero__copy {
@@ -1166,6 +1192,18 @@
     overflow: hidden;
   }
 
+  .source-section {
+    animation: execution-quote-form-enter 420ms 120ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+
+  .quote-data {
+    animation: execution-quote-form-enter 420ms 180ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+
+  .quote-data__type-options {
+    animation: execution-quote-form-enter 420ms 240ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+
   .execution-quote__card::before {
     position: absolute;
     inset-block: 1.25rem;
@@ -1207,6 +1245,10 @@
     transform: translateY(-2px);
   }
 
+  .source-option:hover:not(:disabled) .source-option__icon {
+    transform: translateY(-1px) scale(1.04);
+  }
+
   .source-option:disabled {
     cursor: not-allowed;
   }
@@ -1227,6 +1269,7 @@
     background: var(--bg-card);
     color: var(--PrimaryColor);
     font-size: 1.15rem;
+    transition: transform var(--transition-fast);
   }
 
   .source-option__content {
@@ -1380,6 +1423,10 @@
     background: var(--bg-section);
     transition: var(--transition-fast);
 
+    &:hover {
+      border-color: var(--PrimaryColor-alpha-30);
+    }
+
     &:focus-within {
       border-color: var(--PrimaryColor-alpha-50);
       background: var(--bg-card);
@@ -1416,6 +1463,18 @@
   .quote-data__field :deep(.p-select:not(.p-disabled):hover),
   .quote-data__field :deep(.p-multiselect:not(.p-disabled):hover) {
     border-color: var(--PrimaryColor-alpha-50);
+  }
+
+  @keyframes execution-quote-form-enter {
+    from {
+      opacity: 0;
+      transform: translateY(0.75rem);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   @media (max-width: 1100px) {
@@ -1493,6 +1552,32 @@
 
     .source-option__code {
       display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .execution-quote__header,
+    .execution-quote__top-grid,
+    .source-section,
+    .quote-data,
+    .quote-data__type-options {
+      animation: none;
+    }
+
+    .quote-hero,
+    .quote-hero__watermark,
+    .build-path,
+    .execution-quote__card,
+    .source-option,
+    .source-option__icon,
+    .quote-data__field {
+      transition: none;
+    }
+
+    .quote-hero:hover .quote-hero__watermark,
+    .source-option:hover:not(:disabled),
+    .source-option:hover:not(:disabled) .source-option__icon {
+      transform: none;
     }
   }
 </style>

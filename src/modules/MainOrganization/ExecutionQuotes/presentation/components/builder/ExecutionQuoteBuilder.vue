@@ -166,6 +166,7 @@
       quantity: quoteItem.quantity ?? 0,
       unit_price: quoteItem.expectedPrice ?? 0,
       unit_id: quoteItem.unitId ?? 0,
+      unit_name: quoteItem.measurementUnit?.title,
       persisted: true,
     };
   };
@@ -188,6 +189,7 @@
 
     return {
       ...stageState,
+      client_price: stageState.client_price ?? quoteStage.clientPrice ?? null,
       items: [...stageState.items, ...persistedItems],
       selected_sub_stage_id: stageState.selected_sub_stage_id ?? quoteStage.subStageId,
     };
@@ -215,6 +217,7 @@
     stageId: number;
     subStageId: number;
     itemType: ExecutionQuoteItemSource;
+    clientPrice: number | null;
     items: ExecutionQuoteMorphItemRequest[];
   }
 
@@ -230,6 +233,7 @@
             stageId: Number(stage.stage_id),
             subStageId: Number(quoteItem.sub_stage_id),
             itemType: quoteItem.source_type,
+            clientPrice: stage.client_price,
             items: [],
           };
 
@@ -499,7 +503,7 @@
   const updateClientPrice = (value: number | null) => {
     if (!currentStageState.value || !pricingEnabled.value) return;
     currentStageState.value.client_price = value;
-    emit('update:stages', emittedStages());
+    emitDetails();
   };
 
   const navigateToQuoteList = async () => {
@@ -696,6 +700,16 @@
     border-radius: var(--radius-md);
     background: var(--bg-card);
     box-shadow: var(--shadow-sm);
+    transition:
+      border-color var(--transition-fast),
+      box-shadow var(--transition-fast);
+    animation: execution-quote-builder-enter 320ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+
+  .builder-toolbar:hover,
+  .builder-toolbar:focus-within {
+    border-color: var(--PrimaryColor-alpha-30);
+    box-shadow: var(--shadow-md);
   }
 
   .builder-toolbar__context {
@@ -726,6 +740,7 @@
     border-radius: var(--radius-md);
     background: var(--info-light);
     color: var(--title-card-color);
+    animation: execution-quote-builder-enter 360ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
   }
 
   .pricing-notice__icon {
@@ -744,6 +759,57 @@
     line-height: 1.6;
   }
 
+  .execution-quote-builder > :deep(.execution-builder-card) {
+    transition:
+      border-color var(--transition-fast),
+      box-shadow var(--transition-fast);
+    animation: execution-quote-builder-enter 380ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+
+  .execution-quote-builder > :deep(.execution-builder-card:hover),
+  .execution-quote-builder > :deep(.execution-builder-card:focus-within) {
+    border-color: var(--PrimaryColor-alpha-30);
+    box-shadow: var(--shadow-md);
+  }
+
+  .execution-quote-builder :deep(.stage-card:hover),
+  .execution-quote-builder :deep(.sub-stage-card:hover),
+  .execution-quote-builder :deep(.source-card:hover:not(:disabled)) {
+    border-color: var(--PrimaryColor);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+  }
+
+  .execution-quote-builder :deep(.stage-card:focus-visible),
+  .execution-quote-builder :deep(.sub-stage-card:focus-visible),
+  .execution-quote-builder :deep(.source-card:focus-visible) {
+    border-color: var(--PrimaryColor);
+    outline: 3px solid var(--PrimaryColor-alpha-20);
+    outline-offset: 2px;
+  }
+
+  .execution-quote-builder :deep(.stage-card),
+  .execution-quote-builder :deep(.sub-stage-card),
+  .execution-quote-builder :deep(.source-card) {
+    transition:
+      border-color var(--transition-fast),
+      background-color var(--transition-fast),
+      box-shadow var(--transition-fast),
+      transform var(--transition-fast);
+  }
+
+  @keyframes execution-quote-builder-enter {
+    from {
+      opacity: 0;
+      transform: translateY(0.7rem);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
   @media (max-width: 640px) {
     .builder-toolbar {
       align-items: stretch;
@@ -752,6 +818,28 @@
 
     .builder-toolbar__exit {
       width: 100%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .builder-toolbar,
+    .pricing-notice,
+    .execution-quote-builder > :deep(.execution-builder-card) {
+      animation: none;
+    }
+
+    .builder-toolbar,
+    .execution-quote-builder > :deep(.execution-builder-card),
+    .execution-quote-builder :deep(.stage-card),
+    .execution-quote-builder :deep(.sub-stage-card),
+    .execution-quote-builder :deep(.source-card) {
+      transition: none;
+    }
+
+    .execution-quote-builder :deep(.stage-card:hover),
+    .execution-quote-builder :deep(.sub-stage-card:hover),
+    .execution-quote-builder :deep(.source-card:hover:not(:disabled)) {
+      transform: none;
     }
   }
 </style>
