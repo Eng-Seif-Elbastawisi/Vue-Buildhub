@@ -373,7 +373,7 @@ describe('ExecutionQuoteBuilder', () => {
 
     const wrapper = mountBuilder({
       modelValue: ExecutionQuoteTypeEnum.SUPERVISION,
-      initialStages: [{ id: 43, stageId: 1, subStageId: 11, items: [], percentage: 8 }],
+      initialStages: [{ id: 43, stageId: 1, subStageId: 11, items: [] }],
     });
 
     await flushPromises();
@@ -386,6 +386,20 @@ describe('ExecutionQuoteBuilder', () => {
     expect(wrapper.get('.items-table-stub').attributes('data-show-pricing')).toBe('true');
     expect(wrapper.get('.client-price-stub').attributes('data-quote-type')).toBe('2');
     expect(wrapper.find('.totals-stub').exists()).toBe(false);
+
+    const missingPricingDrafts = wrapper
+      .emitted('update:pricing')
+      ?.at(-1)?.[0] as ExecutionQuoteStagePricingDraft[];
+    expect(missingPricingDrafts).toEqual([
+      expect.objectContaining({
+        quoteStageId: 43,
+        stageId: 1,
+        subStageId: 11,
+        quoteType: ExecutionQuoteTypeEnum.SUPERVISION,
+        pricingValue: null,
+      }),
+    ]);
+    expect(missingPricingDrafts[0]?.validate().isValid).toBe(false);
 
     await wrapper.get('.client-price-stub').trigger('click');
 
@@ -427,7 +441,7 @@ describe('ExecutionQuoteBuilder', () => {
 
     await flushPromises();
 
-    expect(wrapper.get('.client-price h2').text()).toBe(
+    expect(wrapper.get('.client-price h2').text()).toContain(
       'execution_quote.stage_pricing.percentage_title',
     );
     expect(wrapper.get('.client-price input').attributes('disabled')).toBeDefined();

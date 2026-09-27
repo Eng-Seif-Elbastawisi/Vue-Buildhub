@@ -27,7 +27,10 @@
     type ExecutionQuoteMorphItemRequest,
     type ExecutionQuoteStageRequest,
   } from '../../../core/params/store.execution.quote.details.params';
-  import { ExecutionQuoteStagePricingDraft } from '../../../core/params/set.execution.quote.stage.pricing.params';
+  import {
+    ExecutionQuoteStagePricingDraft,
+    executionQuoteStagePricingValueIsValid,
+  } from '../../../core/params/set.execution.quote.stage.pricing.params';
   import type {
     ExecutionQuoteItemDraft,
     ExecutionQuoteItemState,
@@ -296,10 +299,7 @@
   const pricingDraftForStage = (
     pricingKey: string,
     quoteType: ExecutionQuoteType,
-  ): ExecutionQuoteStagePricingDraft | undefined => {
-    const pricingValue = stagePricingValues.value[pricingKey];
-    if (pricingValue === null || pricingValue === undefined) return undefined;
-
+  ): ExecutionQuoteStagePricingDraft => {
     const [stageId, subStageId] = pricingKey.split(':').map(Number);
     const quoteStageId = props.initialStages.find(
       (quoteStage) => quoteStage.stageId === stageId && quoteStage.subStageId === subStageId,
@@ -310,17 +310,35 @@
       stageId,
       subStageId,
       quoteType,
-      pricingValue,
+      pricingValue: stagePricingValues.value[pricingKey] ?? null,
     });
   };
+
+  const requiredPricingStageKeys = (quoteType: ExecutionQuoteType) =>
+    groupedStoreItems()
+      .filter(({ stageId, subStageId }) => {
+        const storedStage = props.initialStages.find(
+          (quoteStage) => quoteStage.stageId === stageId && quoteStage.subStageId === subStageId,
+        );
+        const storedPricingValue =
+          quoteType === ExecutionQuoteTypeEnum.SUPERVISION
+            ? storedStage?.percentage
+            : storedStage?.clientPrice;
+
+        return !executionQuoteStagePricingValueIsValid(quoteType, storedPricingValue);
+      })
+      .map(({ stageId, subStageId }) => stagePricingKey(stageId, subStageId));
 
   const stagePricingDrafts = (): ExecutionQuoteStagePricingDraft[] => {
     const quoteType = props.modelValue;
     if (!quoteType) return [];
 
-    return [...dirtyPricingStageKeys.value]
-      .map((pricingKey) => pricingDraftForStage(pricingKey, quoteType))
-      .filter((pricingDraft): pricingDraft is ExecutionQuoteStagePricingDraft => !!pricingDraft);
+    const pricingKeys = new Set([
+      ...dirtyPricingStageKeys.value,
+      ...requiredPricingStageKeys(quoteType),
+    ]);
+
+    return [...pricingKeys].map((pricingKey) => pricingDraftForStage(pricingKey, quoteType));
   };
 
   const emitDetails = () => {
@@ -507,6 +525,7 @@
 
     stageState.items.push(item);
     emitDetails();
+    emitPricing();
   };
 
   const updateItem = (draft: ExecutionQuoteItemDraft) => {
@@ -530,6 +549,7 @@
     };
     editingItem.value = null;
     emitDetails();
+    emitPricing();
   };
 
   const submitItem = (draft: ExecutionQuoteItemDraft) => {
@@ -582,6 +602,7 @@
     if (editingItem.value?.id === item.id) editingItem.value = null;
     state.items = state.items.filter((candidate) => candidate.id !== item.id);
     emitDetails();
+    emitPricing();
   };
 
   const updateStagePricing = (pricingValue: number | null) => {

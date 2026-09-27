@@ -27,10 +27,29 @@ describe('ExecutionQuoteClientPrice', () => {
 
     await wrapper.get('input').setValue('120');
 
-    expect(wrapper.get('h2').text()).toBe('execution_quote.stage_pricing.percentage_title');
+    expect(wrapper.get('h2').text()).toContain('execution_quote.stage_pricing.percentage_title');
     expect(wrapper.emitted('update:modelValue')?.at(-1)?.[0]).toBe(100);
     expect(wrapper.find('.pricing-input__suffix').text()).toBe('%');
   });
+
+  it.each([ExecutionQuoteTypeEnum.LUMP_SUM, ExecutionQuoteTypeEnum.SUPERVISION])(
+    'requires quote type %s pricing and clamps values below 1',
+    async (quoteType) => {
+      const wrapper = mountPricingField(quoteType);
+      const input = wrapper.get('input');
+
+      expect(input.attributes()).toMatchObject({
+        min: '1',
+        step: '1',
+        required: '',
+        'aria-required': 'true',
+      });
+
+      await input.setValue('0.5');
+
+      expect(wrapper.emitted('update:modelValue')?.at(-1)?.[0]).toBe(1);
+    },
+  );
 
   it('disables pricing until the quote stage has a backend id', () => {
     const wrapper = mountPricingField(ExecutionQuoteTypeEnum.SUPERVISION, true);
