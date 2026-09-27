@@ -2328,6 +2328,9 @@
   "This action cannot be undone.": "لا يمكن التراجع عن هذا الإجراء.",
   "Delete": "حذف",
   "Products": {
+    "page_title": "المنتجات",
+    "page_subtitle": "تصفح وإدارة جميع المنتجات الخاصة بك",
+    "breadcrumb_label": "مسار التنقل",
     "library_title": "مكتبة المنتجات",
     "library_subtitle": "إدارة المنتجات وربطها بالمراحل",
     "badge": "BuildHub OS",
@@ -2396,6 +2399,26 @@
     },
     "show": {
       "subtitle": "المعلومات الأساسية",
+      "details_title": "تفاصيل المنتج",
+      "uncategorized": "غير مصنف",
+      "images": "صور",
+      "select_image": "عرض صورة المنتج رقم {number}",
+      "no_description": "لا يوجد وصف متاح لهذا المنتج.",
+      "product_data_hint": "المعلومات الأساسية المسجلة للمنتج",
+      "product_code": "كود المنتج",
+      "attachments_title": "الصورة والمرفقات",
+      "attachments_hint": "الملفات المرتبطة بهذا المنتج",
+      "download_attachment": "تنزيل المرفق",
+      "no_attachments": "لا توجد مرفقات لهذا المنتج",
+      "sortings_title": "فرز المنتج",
+      "sorting_number": "رقم الفرز",
+      "sorting_name": "اسم الفرز",
+      "stage_number": "رقم المرحلة",
+      "stage_name": "اسم المرحلة",
+      "actions": "الإجراءات",
+      "add_stage": "إضافة مرحلة",
+      "additional_description": "الوصف الإضافي",
+      "description_hint": "تفاصيل وملاحظات إضافية عن المنتج",
       "no_data": "لا توجد بيانات للمنتج",
       "no_image": "لا توجد صورة",
       "no_sortings": "لا يوجد فرز",
@@ -2529,8 +2552,14 @@
     "quote_type_title": "نوع المقايسة",
     "quote_type_hint": "اختر طريقة تسعير المقايسة وإدارتها.",
     "quote_types": {
-      "lump_sum": { "title": "مقطوعية", "description": "سعر ثابت للمراحل المحددة." },
-      "supervision": { "title": "إشراف", "description": "مقايسة إشراف للبنود والكميات بدون تسعير." }
+      "lump_sum": {
+        "title": "مقطوعية",
+        "description": "سعر ثابت للمراحل المحددة."
+      },
+      "supervision": {
+        "title": "إشراف",
+        "description": "مقايسة إشراف للبنود والكميات بدون تسعير."
+      }
     },
     "builder_navigation": "التنقل داخل بناء المقايسة",
     "quote_reference": "مقايسة رقم {id}",

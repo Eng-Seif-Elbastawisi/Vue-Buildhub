@@ -51,19 +51,24 @@ const mountIndex = () =>
       stubs: {
         DataStatusBuilder: {
           template:
-            '<div><slot name="success" :data="[{ id: 6, title: \'Door\', isActive: true }]" /></div>',
+            "<div><slot name=\"success\" :data=\"[{ id: 6, title: 'Door', code: 'P-006', image: '/door.jpg', itemTypeTitle: 'Concrete', measurementUnitTitle: 'kg', expectedPrice: 1200, status: true, isActive: true, stageIds: [11, 12], sortings: [{ id: 1, title: 'Grade 1', price: 1200 }] }]\" /></div>",
         },
         ChangeStatusButton: {
           props: ['id', 'type', 'initialIsActive'],
-          template: '<div class="change-status" />',
+          template: '<button type="button" aria-label="status control" />',
         },
-        DeleteDialog: true,
+        ConfirmCancelDialog: {
+          template: '<div><slot name="trigger" :open="() => {}" /></div>',
+        },
         Pagination: {
           emits: ['change-page'],
           template: '<button class="next-page" @click="$emit(\'change-page\', 2)" />',
         },
         IndexAddIcon: true,
-        RouterLink: true,
+        RouterLink: {
+          props: ['to'],
+          template: '<a :href="to"><slot /></a>',
+        },
       },
     },
   });
@@ -96,11 +101,26 @@ describe('ProductsIndex', () => {
     toastSuccess.mockReset();
   });
 
-  it('renders the product status action in each product card', async () => {
+  it('renders the existing product fields and actions in a compact list row', async () => {
     const wrapper = mountIndex();
     await flushPromises();
 
-    expect(wrapper.get('.change-status').exists()).toBe(true);
+    const productTable = wrapper.get('[role="table"]');
+
+    expect(productTable.findAll('[role="columnheader"]')).toHaveLength(5);
+    expect(productTable.get('img[alt="Door"]').attributes('src')).toBe('/door.jpg');
+    expect(productTable.text()).toContain('Door');
+    expect(productTable.text()).toContain('#P-006');
+    expect(productTable.text()).toContain('Concrete');
+    expect(productTable.text()).toContain('kg');
+    expect(productTable.text()).toContain('Products.tags.stage');
+    expect(productTable.text()).toContain('Products.tags.sorting');
+    expect(productTable.text()).toContain('Products.form.currency');
+    expect(productTable.text()).toContain('Products.form.active');
+    expect(productTable.findAll('a[href="/organization/products/show/6"]')).toHaveLength(2);
+    expect(productTable.get('a[href="/organization/products/edit/6"]').exists()).toBe(true);
+    expect(productTable.get('button[aria-label="status control"]').exists()).toBe(true);
+    expect(productTable.get('button[aria-label="common.delete"]').exists()).toBe(true);
   });
 
   it('restores stage filters and preserves them across pagination and search', async () => {
@@ -154,7 +174,7 @@ describe('ProductsIndex', () => {
         .map((input) => input.element.checked),
     ).toEqual([true, true]);
     expect(wrapper.get('.stage-filter-button').classes()).toContain('active');
-    expect(wrapper.get('.stage-filter-button').text()).toContain('(2)');
+    expect(wrapper.get('.active-filter-count').text()).toBe('2');
 
     await wrapper.get('.stage-filter-apply').trigger('click');
 
@@ -204,9 +224,9 @@ describe('ProductsIndex', () => {
             template: '<div><slot name="success" :data="[{ id: 6, title: \'Door\' }]" /></div>',
           },
           ChangeStatusButton: true,
-          DeleteDialog: {
-            emits: ['delete'],
-            template: '<button class="delete-dialog" @click="$emit(\'delete\')" />',
+          ConfirmCancelDialog: {
+            emits: ['confirm'],
+            template: '<button class="delete-dialog" @click="$emit(\'confirm\')" />',
           },
           Pagination: true,
           IndexAddIcon: true,

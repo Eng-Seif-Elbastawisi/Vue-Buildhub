@@ -1,8 +1,13 @@
 <script setup lang="ts">
   import { computed, onMounted, ref } from 'vue';
+  import { useI18n } from 'vue-i18n';
 
   import { useRoute, useRouter } from 'vue-router';
 
+  import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
+  import { dialogManager } from '@/base/Presentation/Dialogs/dialog.manager';
+
+  import DeleteProductsParams from '../../core/params/delete.products.params.ts';
   import ShowProductsParams from '../../core/params/show.products.params.ts';
   import ProductsController from '../controllers/products.controller.ts';
 
@@ -17,10 +22,12 @@
 
   const route = useRoute();
   const router = useRouter();
+  const { t } = useI18n();
 
   const productsId = Number(route.params.products_id);
 
   const loading = ref(false);
+  const deleting = ref(false);
 
   const product = computed(() => controller.itemData.value ?? undefined);
 
@@ -46,6 +53,27 @@
   const goEdit = () => {
     router.push(`/organization/products/edit/${productsId}`);
   };
+
+  const deleteProduct = async () => {
+    if (deleting.value) return;
+
+    deleting.value = true;
+
+    try {
+      const deletionState = await controller.delete(
+        new DeleteProductsParams({
+          productsId,
+        }),
+      );
+
+      if (!(deletionState instanceof DataSuccess)) return;
+
+      dialogManager.toastSuccess(deletionState.message || t('Products.delete_success'));
+      await router.push('/organization/products');
+    } finally {
+      deleting.value = false;
+    }
+  };
 </script>
 
 <template>
@@ -61,25 +89,23 @@
 
     <!-- Product -->
     <template v-else-if="product">
-      <!-- Header -->
       <ProductShowHeader
         :product="product"
-        :products-id="productsId"
+        :deleting="deleting"
         @back="goBack"
         @edit="goEdit"
+        @delete="deleteProduct"
       />
 
-      <!-- Hero -->
       <ProductShowHero :product="product" :title="product.title" />
 
-      <!-- Content -->
-      <div class="content-grid">
+      <div class="content-stack">
         <ProductShowInfo :product="product" :title="product.title" />
 
-        <ProductShowSortings :product-id="product.id" :sortings="product.sortings" />
+        <ProductShowSortings :product-id="productsId" :sortings="product.sortings" />
 
         <ProductShowStages
-          :product-id="product.id"
+          :product-id="productsId"
           :stages="product.stages"
           :stage-ids="product.stageIds"
         />
@@ -88,9 +114,22 @@
       </div>
     </template>
 
-    <!-- Error / Empty -->
     <div v-else class="state-box">
-      <div class="empty-icon">📦</div>
+      <svg
+        class="empty-icon"
+        width="38"
+        height="38"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.6"
+        aria-hidden="true"
+      >
+        <path
+          d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"
+        />
+        <path d="m3.3 7 8.7 5 8.7-5M12 22V12" />
+      </svg>
 
       <h3>
         {{ $t('Products.show.no_data') }}
@@ -105,68 +144,56 @@
 
 <style scoped lang="scss">
   .show-page {
-    min-height: 100vh;
-
-    padding: 1.5rem 1.75rem 2.5rem;
-
-    background: #f8fafc;
+    display: flex;
+    min-height: 100%;
+    flex-direction: column;
+    gap: 1rem;
+    padding: clamp(1rem, 2vw, 1.75rem);
+    background: var(--bg-section);
+    border-radius: var(--radius-xl);
   }
 
-  .content-grid {
-    display: grid;
-
-    grid-template-columns:
-      minmax(0, 1fr)
-      minmax(0, 1fr);
-
-    gap: 1.25rem;
+  .content-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
   }
 
   .state-box {
     min-height: 60vh;
-
     display: flex;
     flex-direction: column;
-
     align-items: center;
     justify-content: center;
-
     gap: 0.75rem;
-
-    color: #64748b;
+    color: var(--subtitle-color);
 
     .spinner {
       width: 36px;
       height: 36px;
-
-      border: 3px solid #e2e8f0;
-      border-top-color: #b45309;
-
+      border: 3px solid var(--border-weak);
+      border-top-color: var(--PrimaryColor);
       border-radius: 50%;
-
       animation: spin 0.8s linear infinite;
     }
 
     .empty-icon {
-      font-size: 2.5rem;
+      box-sizing: content-box;
+      padding: 0.85rem;
+      color: var(--PrimaryColor);
+      background: var(--PrimaryColor-light);
+      border-radius: var(--radius-md);
     }
 
     h3 {
       margin: 0;
-
-      color: #0f172a;
+      color: var(--title-color);
     }
   }
 
   @keyframes spin {
     to {
       transform: rotate(360deg);
-    }
-  }
-
-  @media (max-width: 1000px) {
-    .content-grid {
-      grid-template-columns: 1fr;
     }
   }
 

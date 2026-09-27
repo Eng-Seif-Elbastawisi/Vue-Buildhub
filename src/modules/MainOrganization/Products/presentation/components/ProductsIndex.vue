@@ -9,7 +9,7 @@
   import Pagination from '@/shared/HelpersComponents/Pagination.vue';
   import { debounce } from '@/base/Presentation/Utils/debouced';
   import IndexAddIcon from '@/shared/icons/IndexAddIcon.vue';
-  import DeleteDialog from '@/base/Presentation/Dialogs/MainDialogs/DeleteDialog.vue';
+  import ConfirmCancelDialog from '@/base/Presentation/Dialogs/ConfirmCancelDialog.vue';
   import ChangeStatusButton from '@/modules/MainOrganization/ChangeStatus/presentation/components/ChangeStatusButton.vue';
   import { StatusTypeEnum } from '@/modules/MainOrganization/ChangeStatus/core/constant/change_status.type.enum';
   import StageController from '@/modules/shared/Stages/presentation/controllers/stage.controller';
@@ -60,9 +60,9 @@
   const stats = computed(() => {
     return [
       {
-        label: 'no_sorting',
-        value: statsData.value?.hasNotSortingCount ?? 0,
-        tone: 'neutral',
+        label: 'all_products',
+        value: statsData.value?.productsCount ?? 0,
+        tone: 'primary',
       },
       {
         label: 'has_sorting',
@@ -70,9 +70,9 @@
         tone: 'success',
       },
       {
-        label: 'all_products',
-        value: statsData.value?.productsCount ?? 0,
-        tone: 'primary',
+        label: 'no_sorting',
+        value: statsData.value?.hasNotSortingCount ?? 0,
+        tone: 'neutral',
       },
     ];
   });
@@ -112,6 +112,10 @@
         stageIds: selectedStageIds.value,
       }),
     );
+
+  const retryProducts = async (): Promise<void> => {
+    await fetchProducts();
+  };
 
   const updateFilterQuery = (page: number) => {
     void router.push({
@@ -304,33 +308,30 @@
 <template>
   <div class="products-library">
     <header class="page-header">
-      <div class="header-content">
-        <div class="header-icon" aria-hidden="true">
-          <svg
-            width="26"
-            height="26"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.8"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path
-              d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"
-            />
-            <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
-            <line x1="12" y1="22.08" x2="12" y2="12" />
-          </svg>
-        </div>
+      <div class="header-copy">
+        <nav class="breadcrumb" :aria-label="$t('Products.breadcrumb_label')">
+          <router-link to="/">{{ $t('home') }}</router-link>
+          <span aria-hidden="true">/</span>
+          <span aria-current="page">{{ $t('Products.page_title') }}</span>
+        </nav>
 
-        <div class="header-copy">
-          <span class="badge">{{ $t('Products.badge') }}</span>
-
-          <h1 class="title">{{ $t('Products.library_title') }}</h1>
-          <p class="subtitle">{{ $t('Products.library_subtitle') }}</p>
-        </div>
+        <h1 class="title">{{ $t('Products.page_title') }}</h1>
+        <p class="subtitle">{{ $t('Products.page_subtitle') }}</p>
       </div>
+
+      <svg
+        class="header-watermark"
+        width="150"
+        height="110"
+        viewBox="0 0 150 110"
+        fill="none"
+        aria-hidden="true"
+      >
+        <path d="M18 101V39l37-18v80M55 101V9l47 18v74M102 101V48l30 13v40" />
+        <path
+          d="M31 48h11M31 61h11M31 74h11M68 32h12M68 47h12M68 62h12M68 77h12M113 65h8M113 78h8"
+        />
+      </svg>
 
       <router-link class="btn-add" to="/organization/products/add">
         <IndexAddIcon />
@@ -401,7 +402,7 @@
       </article>
     </div>
 
-    <div class="toolbar">
+    <section class="toolbar" :aria-label="$t('Products.search_placeholder')">
       <div class="search-box">
         <label class="sr-only" for="product-search">
           {{ $t('Products.search_placeholder') }}
@@ -430,7 +431,7 @@
         />
       </div>
 
-      <div class="toolbar-right">
+      <div class="toolbar-actions">
         <div ref="stageFilterRef" class="stage-filter">
           <button
             type="button"
@@ -441,26 +442,42 @@
             aria-controls="products-stage-filter"
             @click="isStageFilterOpen = !isStageFilterOpen"
           >
+            <span class="filter-button-icon" aria-hidden="true">
+              <svg
+                width="17"
+                height="17"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M4 5h16" />
+                <path d="M7 12h10" />
+                <path d="M10 19h4" />
+              </svg>
+            </span>
+
+            <span>{{ $t('Products.filter_by_stage') }}</span>
+
+            <span v-if="selectedStageIds.length" class="active-filter-count">
+              {{ selectedStageIds.length }}
+            </span>
+
             <svg
-              width="18"
-              height="18"
+              class="filter-chevron"
+              :class="{ open: isStageFilterOpen }"
+              width="15"
+              height="15"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
               stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+              aria-hidden="true"
             >
-              <path d="M4 5h16" />
-              <path d="M7 12h10" />
-              <path d="M10 19h4" />
+              <path d="m6 9 6 6 6-6" />
             </svg>
-
-            <span>
-              {{ $t('Products.filter_by_stage') }}
-
-              <span v-if="selectedStageIds.length"> ({{ selectedStageIds.length }}) </span>
-            </span>
           </button>
 
           <div
@@ -470,6 +487,28 @@
             role="dialog"
             :aria-label="$t('Products.filter_by_stage')"
           >
+            <header class="filter-popover-header">
+              <span class="filter-panel-icon" aria-hidden="true">
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M4 5h16M7 12h10M10 19h4" />
+                </svg>
+              </span>
+
+              <div>
+                <strong>{{ $t('Products.filter_by_stage') }}</strong>
+                <span v-if="selectedStageIds.length">
+                  {{ selectedStageIds.length }} {{ $t('Products.form.selected') }}
+                </span>
+              </div>
+            </header>
+
             <div class="stage-filter-content">
               <div v-if="stagesLoading" class="stage-filter-state">
                 {{ $t('Products.form.stages_loading') }}
@@ -529,69 +568,74 @@
           </div>
         </div>
       </div>
-    </div>
+    </section>
 
-    <DataStatusBuilder :controller="state" :on-retry="async () => await fetchProducts()">
+    <DataStatusBuilder :controller="state" :on-retry="retryProducts">
       <template #success="{ data }">
-        <div class="products-grid">
-          <article
-            v-for="product in data as ProductsModel[]"
-            :key="product.id"
-            class="product-card"
-          >
-            <div class="card-image">
-              <img
-                v-if="product.image"
-                :src="product.image"
-                :alt="product.title"
-                class="img"
-                loading="lazy"
-              />
+        <div class="products-table" role="table" :aria-label="$t('Products.page_title')">
+          <div class="product-table-head" role="row">
+            <span role="columnheader">{{ $t('Products.form.product_name') }}</span>
+            <span role="columnheader">{{ $t('Products.form.product_data') }}</span>
+            <span role="columnheader">{{ $t('price') }}</span>
+            <span role="columnheader">{{ $t('Products.form.status') }}</span>
+            <span role="columnheader">{{ $t('Products.show.actions') }}</span>
+          </div>
 
-              <div v-else class="placeholder">
-                <svg
-                  width="32"
-                  height="32"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.5"
-                >
-                  <path
-                    d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"
+          <div class="product-table-body" role="rowgroup">
+            <article
+              v-for="product in data as ProductsModel[]"
+              :key="product.id"
+              class="product-row"
+              role="row"
+            >
+              <div
+                class="product-cell product-summary"
+                role="cell"
+                :data-label="$t('Products.form.product_name')"
+              >
+                <div class="product-thumbnail">
+                  <img
+                    v-if="product.image"
+                    :src="product.image"
+                    :alt="product.title"
+                    loading="lazy"
                   />
 
-                  <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+                  <svg
+                    v-else
+                    width="25"
+                    height="25"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"
+                    />
+                    <path d="m3.3 7 8.7 5 8.7-5M12 22V12" />
+                  </svg>
+                </div>
 
-                  <line x1="12" y1="22.08" x2="12" y2="12" />
-                </svg>
-
-                <span>{{ $t('Products.show.no_image') }}</span>
-              </div>
-
-              <span v-if="product.itemTypeTitle" class="type-badge">
-                {{ product.itemTypeTitle }}
-              </span>
-            </div>
-
-            <div class="card-body">
-              <div class="card-top">
-                <h3 class="product-title">
-                  <router-link :to="`/organization/products/show/${product.id}`">
-                    {{ product.title }}
+                <div class="product-primary-copy">
+                  <router-link
+                    class="product-title"
+                    :to="`/organization/products/show/${product.id}`"
+                  >
+                    {{ product.title || '—' }}
                   </router-link>
-                </h3>
-                
-
-                <div class="price">
-                  <strong>{{ formatPrice(product.expectedPrice) }}</strong>
-                  <span>{{ $t('Products.form.currency') }}</span>
+                  <span v-if="product.code" class="product-code">#{{ product.code }}</span>
                 </div>
               </div>
 
-              <div class="tags">
-                <span v-if="product.sortings?.length" class="tag tag-sorting">
-                  {{ $t('Products.tags.sorting') }}
+              <div
+                class="product-cell product-meta"
+                role="cell"
+                :data-label="$t('Products.form.product_data')"
+              >
+                <span class="tag tag-category">
+                  {{ product.itemTypeTitle || $t('Products.show.uncategorized') }}
                 </span>
 
                 <span v-if="getStageCount(product)" class="tag tag-stage">
@@ -601,96 +645,117 @@
                 <span v-if="product.measurementUnitTitle" class="tag tag-unit">
                   {{ product.measurementUnitTitle }}
                 </span>
+
+                <span v-if="product.sortings?.length" class="tag tag-sorting">
+                  {{ $t('Products.tags.sorting') }}
+                </span>
               </div>
-            </div>
 
-            <div class="card-actions">
-              <ChangeStatusButton
-                :id="product.id!"
-                :key="`${product.id}-${product.isActive}`"
-                :initial-is-active="product.status"
-                :type="StatusTypeEnum.PRODUCT"
-                @reload="reloadProducts"
-              />
+              <div class="product-cell product-price" role="cell" :data-label="$t('price')">
+                <strong>{{ formatPrice(product.expectedPrice) }}</strong>
+                <span>{{ $t('Products.form.currency') }}</span>
+              </div>
 
-              <router-link
-                class="action-btn edit"
-                :to="`/organization/products/edit/${product.id}`"
-                :title="$t('common.edit')"
-                :aria-label="$t('common.edit')"
+              <div
+                class="product-cell product-status"
+                role="cell"
+                :data-label="$t('Products.form.status')"
               >
-                <svg
-                  width="15"
-                  height="15"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
+                <span class="status-badge" :class="product.status ? 'is-active' : 'is-inactive'">
+                  <span class="status-dot" aria-hidden="true"></span>
+                  {{ product.status ? $t('Products.form.active') : $t('Products.form.inactive') }}
+                </span>
+              </div>
+
+              <div
+                class="product-cell product-actions"
+                role="cell"
+                :data-label="$t('Products.show.actions')"
+              >
+                <router-link
+                  class="action-btn show"
+                  :to="`/organization/products/show/${product.id}`"
+                  :title="$t('show')"
+                  :aria-label="$t('show')"
                 >
-                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-
-                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                </svg>
-              </router-link>
-
-              <router-link
-                class="action-btn show"
-                :to="`/organization/products/show/${product.id}`"
-                :title="$t('show')"
-                :aria-label="$t('show')"
-              >
-                <svg
-                  width="15"
-                  height="15"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-
-                  <circle cx="12" cy="12" r="3" />
-                </svg>
-              </router-link>
-
-              <DeleteDialog
-                :title="$t('Products.delete_dialog.title')"
-                :message="$t('Products.delete_dialog.message')"
-                :hasbtn="true"
-                @delete="deleteProduct(product.id!)"
-              >
-                <template #btn>
-                  <button
-                    class="action-btn delete"
-                    type="button"
-                    :title="$t('common.delete')"
-                    :aria-label="$t('common.delete')"
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    aria-hidden="true"
                   >
-                    <svg
-                      width="15"
-                      height="15"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
+                    <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z" />
+                    <circle cx="12" cy="12" r="2.5" />
+                  </svg>
+                </router-link>
+
+                <router-link
+                  class="action-btn edit"
+                  :to="`/organization/products/edit/${product.id}`"
+                  :title="$t('common.edit')"
+                  :aria-label="$t('common.edit')"
+                >
+                  <svg
+                    width="15"
+                    height="15"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    aria-hidden="true"
+                  >
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                    <path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5Z" />
+                  </svg>
+                </router-link>
+
+                <div class="status-action">
+                  <span class="sr-only">{{ $t('Products.form.status') }}</span>
+                  <ChangeStatusButton
+                    :id="product.id!"
+                    :key="`${product.id}-${product.isActive}`"
+                    :initial-is-active="product.status"
+                    :type="StatusTypeEnum.PRODUCT"
+                    @reload="reloadProducts"
+                  />
+                </div>
+<!-- 
+                <ConfirmCancelDialog
+                  :title="$t('Products.delete_dialog.title')"
+                  :message="$t('Products.delete_dialog.message')"
+                  :confirm-label="$t('confirm')"
+                  :cancel-label="$t('cancel')"
+                  confirm-theme="danger"
+                  @confirm="deleteProduct(product.id!)"
+                >
+                  <template #trigger="{ open }">
+                    <button
+                      class="action-btn delete"
+                      type="button"
+                      :title="$t('common.delete')"
+                      :aria-label="$t('common.delete')"
+                      @click="open"
                     >
-                      <path d="M3 6h18" />
-
-                      <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
-
-                      <path d="M8 6V4c0-1 1-1 2-1h4c1 0 2 1 2 2v2" />
-                    </svg>
-                  </button>
-                </template>
-              </DeleteDialog>
-            </div>
-          </article>
+                      <svg
+                        width="15"
+                        height="15"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        aria-hidden="true"
+                      >
+                        <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v5M14 11v5" />
+                      </svg>
+                    </button>
+                  </template>
+                </ConfirmCancelDialog> -->
+              </div>
+            </article>
+          </div>
         </div>
 
         <Pagination
@@ -702,7 +767,21 @@
 
       <template #empty>
         <div class="empty-state">
-          <div class="empty-icon">📦</div>
+          <svg
+            class="empty-icon"
+            width="34"
+            height="34"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.6"
+            aria-hidden="true"
+          >
+            <path
+              d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"
+            />
+            <path d="m3.3 7 8.7 5 8.7-5M12 22V12" />
+          </svg>
 
           <h3>
             {{ $t('Products.empty_title') }}
@@ -721,17 +800,20 @@
       </template>
 
       <template #loader>
-        <div class="products-grid">
-          <div v-for="i in 8" :key="i" class="product-card skeleton">
-            <div class="card-image skeleton-box"></div>
-
-            <div class="card-body">
-              <div class="skeleton-line w-70"></div>
-
-              <div class="skeleton-line w-40"></div>
-
-              <div class="skeleton-line w-50"></div>
+        <div class="products-table product-list-skeleton" aria-hidden="true">
+          <div v-for="i in 6" :key="i" class="skeleton-row">
+            <div class="skeleton-product">
+              <span class="skeleton-thumbnail skeleton-box"></span>
+              <span class="skeleton-copy">
+                <span class="skeleton-line skeleton-line--title"></span>
+                <span class="skeleton-line skeleton-line--code"></span>
+              </span>
             </div>
+
+            <span class="skeleton-line skeleton-line--meta"></span>
+            <span class="skeleton-line skeleton-line--price"></span>
+            <span class="skeleton-line skeleton-line--status"></span>
+            <span class="skeleton-line skeleton-line--actions"></span>
           </div>
         </div>
       </template>
@@ -750,65 +832,78 @@
   }
 
   .page-header {
+    position: relative;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 1rem;
-    padding: 1.25rem 1.5rem;
+    gap: 1.5rem;
+    min-height: 8.5rem;
+    overflow: hidden;
+    padding: 1.35rem 1.5rem;
     background: var(--bg-card);
     border: 1px solid var(--border-weak);
-    border-radius: var(--radius-xl);
+    border-radius: var(--radius-lg);
     box-shadow: var(--shadow-sm);
 
     .title {
-      margin: 0;
+      margin: 0.45rem 0 0;
       color: var(--title-color);
-      font-size: clamp(var(--lg-size), 2vw, var(--xl-size-2));
-      font-weight: 700;
+      font-size: clamp(1.45rem, 2vw, 1.9rem);
+      font-weight: 800;
+      line-height: 1.25;
     }
 
     .subtitle {
-      margin-top: var(--xs-size-4);
+      margin: 0.35rem 0 0;
       color: var(--subtitle-color);
       font-size: var(--sm-size);
     }
+  }
 
-    .badge {
-      display: inline-flex;
-      margin-bottom: 0.3rem;
-      padding: var(--xs-size-5) var(--xs-size-3);
+  .header-copy {
+    position: relative;
+    z-index: 1;
+    min-width: 0;
+  }
+
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    color: var(--gray-400);
+    font-size: var(--xs-size);
+
+    a {
+      color: var(--gray-500);
+      text-decoration: none;
+
+      &:hover {
+        color: var(--PrimaryColor);
+      }
+    }
+
+    [aria-current='page'] {
       color: var(--PrimaryColor);
-      background: var(--PrimaryColor-light);
-      border-radius: var(--radius-full);
-      font-size: var(--xs-size);
       font-weight: 600;
     }
   }
 
-  .header-content {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    min-width: 0;
-  }
-
-  .header-icon {
-    display: grid;
-    flex: 0 0 3.5rem;
-    width: 3.5rem;
-    height: 3.5rem;
-    color: var(--standard-white);
-    background: var(--PrimaryColor);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-md);
-    place-items: center;
-  }
-
-  .header-copy {
-    min-width: 0;
+  .header-watermark {
+    position: absolute;
+    inset-block-end: -0.8rem;
+    inset-inline-end: 11rem;
+    color: var(--PrimaryColor);
+    opacity: 0.09;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 2;
+    pointer-events: none;
   }
 
   .btn-add {
+    position: relative;
+    z-index: 1;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -817,7 +912,7 @@
     padding: var(--sm-size) var(--md-size);
     color: var(--standard-white);
     background: var(--PrimaryColor);
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-sm);
     font-size: var(--sm-size);
     font-weight: 700;
     text-decoration: none;
@@ -827,6 +922,11 @@
       background: var(--PrimaryColor-hover);
       box-shadow: var(--shadow-md);
       transform: translateY(-1px);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--PrimaryColor);
+      outline-offset: 3px;
     }
   }
 
@@ -841,11 +941,11 @@
     align-items: center;
     gap: 0.9rem;
     min-width: 0;
-    padding: 1rem 1.1rem;
+    padding: 0.9rem 1rem;
     background: var(--bg-card);
     border: 1px solid var(--border-weak);
-    border-inline-start: 0.25rem solid var(--gray-400);
-    border-radius: var(--radius-lg);
+    border-inline-start: 0.2rem solid var(--gray-400);
+    border-radius: var(--radius-md);
     box-shadow: var(--shadow-sm);
 
     &--success {
@@ -900,22 +1000,25 @@
   .toolbar {
     display: flex;
     align-items: center;
-    padding: 0.85rem;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.8rem;
     background: var(--bg-card);
     border: 1px solid var(--border-weak);
-    border-radius: var(--radius-lg);
+    border-radius: var(--radius-md);
     box-shadow: var(--shadow-sm);
   }
 
-  .toolbar-right {
+  .toolbar-actions {
     display: flex;
     align-items: center;
-    gap: var(--xs-size-3);
+    flex-shrink: 0;
   }
 
   .search-box {
     position: relative;
-    width: min(100%, 30rem);
+    width: min(100%, 34rem);
+    flex: 1;
 
     .search-icon {
       position: absolute;
@@ -928,13 +1031,13 @@
 
     input {
       width: 100%;
-      min-height: 2.75rem;
+      min-height: 2.65rem;
       padding-block: 0.65rem;
       padding-inline: 2.75rem 1rem;
       color: var(--Title-input-Color);
-      background: var(--bg-card);
+      background: var(--gray-50);
       border: 1px solid var(--input-border-color);
-      border-radius: var(--radius-md);
+      border-radius: var(--radius-sm);
       font-size: var(--sm-size);
       transition:
         border-color var(--transition-fast),
@@ -973,9 +1076,9 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: var(--xs-size-4);
-    min-height: 40px;
-    padding: var(--xs-size) var(--md-size);
+    gap: 0.5rem;
+    min-height: 2.65rem;
+    padding: 0.45rem 0.75rem;
     border: 1px solid var(--input-border-color);
     border-radius: var(--radius-sm);
     background: var(--bg-card);
@@ -999,23 +1102,90 @@
     }
   }
 
+  .filter-button-icon,
+  .filter-panel-icon {
+    display: grid !important;
+    color: var(--PrimaryColor);
+    background: var(--PrimaryColor-light);
+    border-radius: var(--radius-xs);
+    place-items: center;
+  }
+
+  .filter-button-icon {
+    width: 1.8rem;
+    height: 1.8rem;
+  }
+
+  .active-filter-count {
+    display: grid;
+    min-width: 1.35rem;
+    height: 1.35rem;
+    padding-inline: 0.3rem;
+    color: var(--standard-white);
+    background: var(--PrimaryColor);
+    border-radius: var(--radius-full);
+    font-size: var(--xs-size-2);
+    place-items: center;
+  }
+
+  .filter-chevron {
+    color: var(--gray-400);
+    transition: transform var(--transition-fast);
+
+    &.open {
+      transform: rotate(180deg);
+    }
+  }
+
   .stage-filter-popover {
     position: absolute;
     z-index: 20;
-    inset-block-start: calc(100% + var(--xs-size-4));
+    inset-block-start: calc(100% + 0.55rem);
     inset-inline-end: 0;
-    width: min(360px, calc(100vw - 2rem));
+    width: min(28rem, calc(100vw - 2rem));
     overflow: hidden;
     border: 1px solid var(--border-weak);
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-lg);
     background: var(--bg-card);
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .filter-popover-header {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.85rem 1rem;
+    background: var(--gray-50);
+    border-bottom: 1px solid var(--border-weak);
+
+    strong,
+    span {
+      display: block;
+    }
+
+    strong {
+      color: var(--title-card-color);
+      font-size: var(--sm-size);
+      font-weight: 800;
+    }
+
+    div > span {
+      margin-top: 0.1rem;
+      color: var(--subtitle-color);
+      font-size: var(--xs-size-2);
+    }
+  }
+
+  .filter-panel-icon {
+    flex: 0 0 2.1rem;
+    width: 2.1rem;
+    height: 2.1rem;
   }
 
   .stage-filter-content {
-    max-height: 360px;
+    max-height: 22rem;
     overflow-y: auto;
-    padding: var(--sm-size);
+    padding: 0.85rem;
   }
 
   .stage-filter-state {
@@ -1026,19 +1196,15 @@
   }
 
   .stage-filter-groups {
-    display: flex;
-    flex-direction: column;
-    gap: var(--sm-size);
+    display: grid;
+    gap: 0.65rem;
   }
 
   .stage-filter-group {
-    padding-bottom: var(--sm-size);
-    border-bottom: 1px solid var(--border-weak);
-
-    &:last-child {
-      padding-bottom: 0;
-      border-bottom: 0;
-    }
+    overflow: hidden;
+    background: var(--bg-card);
+    border: 1px solid var(--border-weak);
+    border-radius: var(--radius-sm);
   }
 
   .stage-filter-group-button {
@@ -1047,10 +1213,11 @@
     justify-content: space-between;
     gap: var(--xs-size-4);
     width: 100%;
-    padding: var(--xs-size-3) var(--xs-size);
+    min-height: 2.5rem;
+    padding: 0.55rem 0.7rem;
     border: 0;
-    border-radius: var(--radius-xs);
-    background: transparent;
+    border-radius: 0;
+    background: var(--gray-50);
     color: var(--title-card-color);
     font-size: var(--sm-size);
     font-weight: 700;
@@ -1083,23 +1250,35 @@
   }
 
   .stage-filter-options {
-    display: flex;
-    flex-direction: column;
-    gap: var(--xs-size-4);
-    padding: var(--xs-size-4) var(--xs-size);
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.35rem;
+    padding: 0.55rem;
   }
 
   .stage-filter-option {
     display: flex;
     align-items: center;
     gap: var(--xs-size-3);
+    min-width: 0;
+    padding: 0.45rem 0.5rem;
     color: var(--gray-700);
+    background: var(--bg-card);
+    border: 1px solid transparent;
+    border-radius: var(--radius-xs);
     font-size: var(--sm-size);
     cursor: pointer;
 
+    &:hover {
+      color: var(--PrimaryColor);
+      background: var(--PrimaryColor-light);
+      border-color: var(--PrimaryColor-alpha-30);
+    }
+
     input {
-      width: 16px;
-      height: 16px;
+      flex: 0 0 1rem;
+      width: 1rem;
+      height: 1rem;
       margin: 0;
       accent-color: var(--PrimaryColor);
       cursor: pointer;
@@ -1109,17 +1288,19 @@
   .stage-filter-actions {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: var(--xs-size-3);
-    padding: var(--sm-size);
+    gap: 0.5rem;
+    padding: 0.75rem 0.85rem;
     border-top: 1px solid var(--border-weak);
     background: var(--bg-section);
 
     button {
-      padding: var(--xs-size) var(--sm-size);
-      border-radius: var(--radius-xs);
+      min-height: 2.35rem;
+      padding: 0.5rem 0.75rem;
+      border-radius: var(--radius-sm);
       font-size: var(--sm-size);
       font-weight: 600;
       cursor: pointer;
+      transition: var(--transition-fast);
 
       &:disabled {
         opacity: 0.55;
@@ -1132,208 +1313,258 @@
     border: 1px solid var(--PrimaryColor);
     background: var(--PrimaryColor);
     color: var(--standard-white);
+
+    &:hover:not(:disabled) {
+      background: var(--PrimaryColor-hover);
+      border-color: var(--PrimaryColor-hover);
+    }
   }
 
   .stage-filter-clear {
     border: 1px solid var(--border-weak);
     background: var(--bg-card);
     color: var(--gray-700);
+
+    &:hover {
+      background: var(--gray-100);
+      border-color: var(--border-strong);
+    }
   }
 
-  /* ========== Grid ========== */
-  .products-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
-    gap: 1rem;
-  }
-
-  .product-card {
-    display: flex;
+  .products-table {
     overflow: hidden;
-    min-width: 0;
-    flex-direction: column;
     background: var(--bg-card);
     border: 1px solid var(--border-weak);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-sm);
-    transition:
-      box-shadow var(--transition-fast),
-      transform var(--transition-fast),
-      border-color var(--transition-fast);
+  }
+
+  .product-table-head,
+  .product-row,
+  .skeleton-row {
+    display: grid;
+    grid-template-columns:
+      minmax(16rem, 1.35fr)
+      minmax(16rem, 1.2fr)
+      minmax(7.5rem, 0.55fr)
+      minmax(7.5rem, 0.55fr)
+      minmax(15rem, 1fr);
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .product-table-head {
+    min-height: 3.2rem;
+    padding-inline: 1rem;
+    color: var(--gray-600);
+    background: var(--gray-50);
+    border-bottom: 1px solid var(--border-weak);
+    font-size: var(--xs-size);
+    font-weight: 700;
+  }
+
+  .product-table-body {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .product-row {
+    min-height: 5.5rem;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border-weak);
+    transition: background var(--transition-fast);
+
+    &:last-child {
+      border-bottom: 0;
+    }
 
     &:hover {
-      border-color: var(--PrimaryColor-alpha-30);
-      box-shadow: var(--shadow-lg);
-      transform: translateY(-2px);
+      background: var(--gray-50);
     }
   }
 
-  .card-image {
-    display: flex;
-    position: relative;
-    align-items: center;
-    justify-content: center;
-    height: 11rem;
-    overflow: hidden;
-    background: linear-gradient(135deg, var(--gray-50) 0%, var(--gray-100) 100%);
+  .product-cell {
+    min-width: 0;
+  }
 
-    .img {
+  .product-summary {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .product-thumbnail {
+    display: grid;
+    overflow: hidden;
+    flex: 0 0 3.75rem;
+    width: 3.75rem;
+    height: 3.75rem;
+    color: var(--gray-300);
+    background: var(--gray-100);
+    border: 1px solid var(--border-weak);
+    border-radius: var(--radius-sm);
+    place-items: center;
+
+    img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      transition: transform var(--transition-slow);
-    }
-
-    .placeholder {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.5rem;
-      color: var(--gray-300);
-      font-size: var(--xs-size);
-    }
-
-    .type-badge {
-      position: absolute;
-      inset-inline-start: 0.75rem;
-      bottom: 0.75rem;
-      max-width: calc(100% - 1.5rem);
-      overflow: hidden;
-      padding: 0.3rem 0.65rem;
-      color: var(--title-card-color);
-      background: var(--bg-card);
-      border: 1px solid var(--border-weak);
-      border-radius: var(--radius-full);
-      box-shadow: var(--shadow-sm);
-      font-size: var(--xs-size);
-      font-weight: 600;
-      text-overflow: ellipsis;
-      white-space: nowrap;
     }
   }
 
-  .product-card:hover .card-image .img {
-    transform: scale(1.03);
-  }
-
-  .card-body {
-    flex: 1;
-    padding: 1rem;
-  }
-
-  .card-top {
+  .product-primary-copy {
     display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 0.75rem;
-    margin-bottom: 0.85rem;
+    min-width: 0;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
 
-    .product-title {
-      min-width: 0;
-      margin: 0;
-      font-size: var(--md-size);
-      font-weight: 700;
-      line-height: 1.35;
+  .product-title {
+    overflow: hidden;
+    color: var(--title-card-color);
+    font-size: var(--sm-size);
+    font-weight: 800;
+    line-height: 1.4;
+    text-decoration: none;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 
-      a {
-        display: -webkit-box;
-        overflow: hidden;
-        color: var(--title-card-color);
-        text-decoration: none;
-        -webkit-box-orient: vertical;
-        -webkit-line-clamp: 2;
-
-        &:hover {
-          color: var(--PrimaryColor);
-        }
-      }
+    &:hover {
+      color: var(--PrimaryColor);
     }
 
-    .price {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      white-space: nowrap;
-
-      strong {
-        color: var(--PrimaryColor);
-        font-size: var(--md-size);
-      }
-
-      span {
-        color: var(--subtitle-color);
-        font-size: var(--xs-size-2);
-      }
+    &:focus-visible {
+      outline: 2px solid var(--PrimaryColor);
+      outline-offset: 2px;
     }
   }
 
-  .tags {
+  .product-code {
+    color: var(--gray-500);
+    font-size: var(--xs-size-2);
+    font-weight: 700;
+    direction: ltr;
+    text-align: start;
+  }
+
+  .product-meta {
     display: flex;
+    align-items: center;
     flex-wrap: wrap;
-    gap: 0.4rem;
-    min-height: 1.6rem;
+    gap: 0.35rem;
   }
 
   .tag {
-    font-size: var(--xs-size-2);
-    padding: var(--xs-size-5) var(--xs-size-3);
+    max-width: 100%;
+    overflow: hidden;
+    padding: 0.28rem 0.55rem;
     border-radius: var(--radius-full);
-    font-weight: 500;
+    font-size: var(--xs-size-2);
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .tag-category,
+  .tag-stage {
+    color: var(--info-dark);
+    background: var(--info-light);
   }
 
   .tag-sorting {
-    background: var(--PrimaryColor-light);
     color: var(--PrimaryColor);
-  }
-
-  .tag-stage {
-    background: var(--info-light);
-    color: var(--info-dark);
+    background: var(--PrimaryColor-light);
   }
 
   .tag-unit {
-    background: var(--gray-100);
     color: var(--gray-600);
+    background: var(--gray-100);
   }
 
-  .card-actions {
+  .product-price {
+    display: flex;
+    align-items: baseline;
+    gap: 0.25rem;
+    white-space: nowrap;
+
+    strong {
+      color: var(--title-color);
+      font-size: var(--sm-size);
+      font-weight: 800;
+    }
+
+    span {
+      color: var(--subtitle-color);
+      font-size: var(--xs-size-2);
+      font-weight: 600;
+    }
+  }
+
+  .product-status {
     display: flex;
     align-items: center;
-    gap: var(--xs-size-4);
-    padding: 0.75rem 1rem;
-    border-top: 1px solid var(--gray-100);
-    background: var(--bg-section);
+  }
+
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.32rem 0.6rem;
+    border-radius: var(--radius-full);
+    font-size: var(--xs-size-2);
+    font-weight: 700;
+    white-space: nowrap;
+
+    &.is-active {
+      color: var(--success-dark);
+      background: var(--success-light);
+    }
+
+    &.is-inactive {
+      color: var(--danger-dark);
+      background: var(--danger-light);
+    }
+  }
+
+  .status-dot {
+    width: 0.4rem;
+    height: 0.4rem;
+    background: currentColor;
+    border-radius: var(--radius-full);
+  }
+
+  .product-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.35rem;
   }
 
   .action-btn {
-    flex: 1;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    height: 2.25rem;
-    color: var(--gray-600);
+    gap: 0.35rem;
+    min-height: 2.25rem;
+    padding: 0.4rem 0.65rem;
+    color: var(--gray-700);
     background: var(--bg-card);
     border: 1px solid var(--border-weak);
     border-radius: var(--radius-sm);
-    cursor: pointer;
-    font-size: var(--xs-size);
-    font-weight: 600;
-    transition: var(--transition-fast);
+    font-size: var(--xs-size-2);
+    font-weight: 700;
     text-decoration: none;
+    cursor: pointer;
+    transition: var(--transition-fast);
 
     svg {
       flex-shrink: 0;
     }
 
-    &.show {
-      color: var(--info-dark);
-      background: var(--info-light);
-
-      &:hover {
-        background: var(--info);
-        color: var(--standard-white);
-        box-shadow: var(--shadow-md);
-      }
+    &.show:hover {
+      color: var(--PrimaryColor);
+      background: var(--PrimaryColor-light);
+      border-color: var(--PrimaryColor);
     }
 
     &.edit {
@@ -1343,19 +1574,19 @@
 
       &:hover {
         background: var(--PrimaryColor-hover);
-        box-shadow: var(--shadow-md);
+        border-color: var(--PrimaryColor-hover);
       }
     }
 
     &.delete {
-      color: var(--gray-500);
-      background: var(--gray-100);
+      width: 2.25rem;
+      padding: 0;
+      color: var(--danger);
 
       &:hover {
-        background: var(--danger);
         color: var(--standard-white);
+        background: var(--danger);
         border-color: var(--danger);
-        box-shadow: var(--shadow-md);
       }
     }
 
@@ -1363,6 +1594,16 @@
       outline: 2px solid var(--PrimaryColor);
       outline-offset: 2px;
     }
+  }
+
+  .status-action {
+    display: grid;
+    width: 2.8rem;
+    min-height: 2.25rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border-weak);
+    border-radius: var(--radius-sm);
+    place-items: center;
   }
 
   .empty-state {
@@ -1377,7 +1618,11 @@
     text-align: center;
 
     .empty-icon {
-      font-size: var(--xl-size-2);
+      box-sizing: content-box;
+      padding: 0.75rem;
+      color: var(--PrimaryColor);
+      background: var(--PrimaryColor-light);
+      border-radius: var(--radius-md);
     }
 
     h3 {
@@ -1391,37 +1636,82 @@
     }
   }
 
-  .skeleton {
+  .product-list-skeleton {
     pointer-events: none;
+  }
 
-    .skeleton-box,
-    .skeleton-line {
-      background: linear-gradient(
-        90deg,
-        var(--gray-100) 25%,
-        var(--gray-200) 50%,
-        var(--gray-100) 75%
-      );
-      background-size: 200% 100%;
-      animation: shimmer 1.4s infinite;
+  .skeleton-row {
+    min-height: 5.5rem;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border-weak);
+
+    &:last-child {
+      border-bottom: 0;
+    }
+  }
+
+  .skeleton-product,
+  .skeleton-copy {
+    display: flex;
+  }
+
+  .skeleton-product {
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .skeleton-copy {
+    width: min(10rem, 60%);
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+
+  .skeleton-box,
+  .skeleton-line {
+    display: block;
+    background: linear-gradient(
+      90deg,
+      var(--gray-100) 25%,
+      var(--gray-200) 50%,
+      var(--gray-100) 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.4s infinite;
+  }
+
+  .skeleton-thumbnail {
+    flex: 0 0 3.75rem;
+    width: 3.75rem;
+    height: 3.75rem;
+    border-radius: var(--radius-sm);
+  }
+
+  .skeleton-line {
+    width: 75%;
+    height: 0.75rem;
+    border-radius: var(--radius-xs);
+
+    &--title {
+      width: 100%;
     }
 
-    .skeleton-line {
-      height: 12px;
-      border-radius: var(--radius-xs);
-      margin-bottom: var(--xs-size-4);
+    &--code {
+      width: 45%;
+      height: 0.6rem;
+    }
 
-      &.w-70 {
-        width: 70%;
-      }
+    &--meta {
+      width: 70%;
+    }
 
-      &.w-40 {
-        width: 40%;
-      }
+    &--price,
+    &--status {
+      width: 65%;
+    }
 
-      &.w-50 {
-        width: 50%;
-      }
+    &--actions {
+      width: 90%;
+      height: 2.2rem;
     }
   }
 
@@ -1435,9 +1725,72 @@
     }
   }
 
+  @media (max-width: 1120px) {
+    .product-table-head {
+      display: none;
+    }
+
+    .product-table-body {
+      gap: 0.75rem;
+      padding: 0.75rem;
+      background: var(--gray-50);
+    }
+
+    .product-row,
+    .skeleton-row {
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 0.7rem 1.5rem;
+      min-height: 0;
+      padding: 0.9rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border-weak);
+      border-radius: var(--radius-sm);
+    }
+
+    .product-summary,
+    .product-meta,
+    .product-actions,
+    .skeleton-product,
+    .skeleton-line--meta,
+    .skeleton-line--actions {
+      grid-column: 1 / -1;
+    }
+
+    .product-price,
+    .product-status,
+    .product-actions {
+      &::before {
+        content: attr(data-label);
+        color: var(--gray-500);
+        font-size: var(--xs-size-2);
+        font-weight: 600;
+      }
+    }
+
+    .product-price,
+    .product-status {
+      justify-content: space-between;
+      gap: 0.75rem;
+    }
+
+    .product-actions {
+      justify-content: flex-start;
+      padding-top: 0.7rem;
+      border-top: 1px solid var(--border-weak);
+
+      &::before {
+        margin-inline-end: auto;
+      }
+    }
+  }
+
   @media (max-width: 900px) {
     .stats-grid {
       grid-template-columns: repeat(2, 1fr);
+    }
+
+    .header-watermark {
+      inset-inline-end: 8rem;
     }
   }
 
@@ -1453,10 +1806,8 @@
       padding: 1rem;
     }
 
-    .header-icon {
-      flex-basis: 3rem;
-      width: 3rem;
-      height: 3rem;
+    .header-watermark {
+      display: none;
     }
 
     .btn-add {
@@ -1472,7 +1823,9 @@
       align-items: stretch;
     }
 
-    .toolbar-right {
+    .toolbar-actions,
+    .stage-filter,
+    .stage-filter-button {
       width: 100%;
     }
 
@@ -1484,18 +1837,61 @@
 
     .stage-filter-popover {
       inset-inline-end: 0;
+      width: 100%;
+    }
+  }
+
+  @media (max-width: 520px) {
+    .stage-filter-options,
+    .product-row,
+    .skeleton-row {
+      grid-template-columns: 1fr;
+    }
+
+    .product-summary,
+    .product-meta,
+    .product-price,
+    .product-status,
+    .product-actions,
+    .skeleton-product,
+    .skeleton-line--meta,
+    .skeleton-line--price,
+    .skeleton-line--status,
+    .skeleton-line--actions {
+      grid-column: 1;
+    }
+
+    .product-thumbnail {
+      flex-basis: 3.25rem;
+      width: 3.25rem;
+      height: 3.25rem;
+    }
+
+    .product-price,
+    .product-status {
+      min-height: 2rem;
+    }
+
+    .product-actions {
+      flex-wrap: wrap;
+
+      .show,
+      .edit {
+        flex: 1;
+      }
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .product-card,
-    .card-image .img,
+    .product-row,
+    .action-btn,
+    .filter-chevron,
     .btn-add {
       transition: none;
     }
 
-    .skeleton .skeleton-box,
-    .skeleton .skeleton-line {
+    .skeleton-box,
+    .skeleton-line {
       animation: none;
     }
   }
