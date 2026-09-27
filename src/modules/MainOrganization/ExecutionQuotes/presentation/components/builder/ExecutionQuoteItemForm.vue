@@ -15,6 +15,7 @@
   import MaterialController from '@/modules/shared/Materials/presentation/controllers/materials.controller';
   import IndexMaterialParams from '@/modules/shared/Materials/core/params/index.materials.params';
   import type MaterialsModel from '@/modules/shared/Materials/core/models/materials.model';
+  import { UnitTypeEnum } from '@/modules/shared/Materials/core/constant/unit.type.enum';
 
   import LaborController from '@/modules/MainOrganization/Labors/presentation/controllers/labor.controller';
   import IndexLaborParams from '@/modules/MainOrganization/Labors/core/params/index.labor.params';
@@ -24,7 +25,10 @@
     ExecutionQuoteItemSourceEnum,
     type ExecutionQuoteItemSource,
   } from '../../../core/constants/execution.quote.item.source.enum';
-  import type { ExecutionQuoteItemDraft } from '../../types/execution.quote.ui.types';
+  import type {
+    ExecutionQuoteItemDraft,
+    ExecutionQuoteItemState,
+  } from '../../types/execution.quote.ui.types';
 
   const props = withDefaults(
     defineProps<{
@@ -33,17 +37,20 @@
       loading?: boolean;
       disabled?: boolean;
       pricingEnabled?: boolean;
+      editingItem?: ExecutionQuoteItemState | null;
     }>(),
     {
       subStageId: undefined,
       loading: false,
       disabled: false,
       pricingEnabled: true,
+      editingItem: null,
     },
   );
 
   const emit = defineEmits<{
     (event: 'add', item: ExecutionQuoteItemDraft): void;
+    (event: 'cancel-edit'): void;
   }>();
 
   const { t } = useI18n();
@@ -58,7 +65,11 @@
     status: true,
   });
 
-  const materialParams = new IndexMaterialParams('', 1, 100, 0);
+  const materialParams = new IndexMaterialParams({
+    perPage: 100,
+    withPage: 0,
+    status: true,
+  });
 
   const laborParams = new IndexLaborParams({
     perPage: 100,
@@ -75,6 +86,7 @@
   const unitPrice = ref(0);
 
   const isDisabled = computed(() => props.loading || props.disabled);
+  const isEditing = computed(() => Boolean(props.editingItem));
 
   type UnknownRecord = Record<string, unknown>;
 
@@ -160,6 +172,10 @@
     return null;
   });
 
+  const editingSourceMatchesSelection = computed(
+    () => Number(props.editingItem?.source_id) === toOptionalId(selectedItem.value),
+  );
+
   const selectedRecord = computed<ProductsModel | MaterialsModel | LaborModel | undefined>(() => {
     const sourceId = toOptionalId(selectedItem.value);
     if (!sourceId || !props.source) return undefined;
@@ -200,19 +216,45 @@
     ]),
   );
 
+  const unitTranslationKey = (rawUnit: unknown): string | undefined => {
+    const unitType = Object.entries(UnitTypeEnum).find(([, unitId]) => unitId === Number(rawUnit));
+    return unitType ? `material.units.${unitType[0]}` : undefined;
+  };
+
+  const unitId = computed(() => {
+    const selectedUnitId = getFirstNumber(selectedRecordData.value, [
+      ['measurement_unit', 'id'],
+      ['measurementUnit', 'id'],
+      ['measurement_unit_id'],
+      ['measurementUnitId'],
+    ]);
+
+    return (
+      selectedUnitId ||
+      (editingSourceMatchesSelection.value ? props.editingItem?.unit_id : undefined)
+    );
+  });
+
   /**
    * The three APIs use `measurement_unit`.
    */
-  const unitName = computed(() =>
-    getFirstText(selectedRecordData.value, [
+  const unitName = computed(() => {
+    const selectedUnitName = getFirstText(selectedRecordData.value, [
       ['measurement_unit', 'title'],
       ['measurementUnit', 'title'],
       ['measurement_unit_title'],
       ['measurementUnitTitle'],
       ['unit', 'title'],
       ['unitTitle'],
-    ]),
-  );
+    ]);
+    const translatedUnitKey = unitTranslationKey(selectedRecordData.value?.unit);
+
+    return (
+      selectedUnitName ||
+      (translatedUnitKey ? t(translatedUnitKey) : '') ||
+      (editingSourceMatchesSelection.value ? props.editingItem?.unit_name : '')
+    );
+  });
 
   /**
    * Products => expected_price
@@ -234,7 +276,11 @@
     const record = selectedRecordData.value;
     if (!record) return false;
 
-    return Boolean(record.has_sorting ?? record.hasSorting);
+    return Boolean(
+      record.has_sorting ??
+      record.hasSorting ??
+      (Array.isArray(record.sortings) && record.sortings.length > 0),
+    );
   });
 
   const productSortings = computed<ProductSortingOption[]>(() => {
@@ -288,6 +334,7 @@
     () =>
       Number.isFinite(quantity.value) &&
       quantity.value > 0 &&
+      Boolean(unitId.value) &&
       (!props.pricingEnabled || (Number.isFinite(unitPrice.value) && unitPrice.value >= 0)),
   );
 
@@ -336,23 +383,67 @@
     clearEntryValues();
   };
 
+  const selectionFromEditingItem = (
+    editingItem: ExecutionQuoteItemState,
+  ): TitleInterface<string | number> =>
+    new TitleInterface<string | number>({
+      id: editingItem.source_id,
+      title: editingItem.source_title || String(editingItem.source_id),
+    });
+
+  const hydrateEditingItem = (editingItem: ExecutionQuoteItemState) => {
+    const selection = selectionFromEditingItem(editingItem);
+
+    if (editingItem.source_type === ExecutionQuoteItemSourceEnum.PRODUCT) {
+      selectedProduct.value = selection;
+    } else if (editingItem.source_type === ExecutionQuoteItemSourceEnum.BUILDING_MATERIAL) {
+      selectedMaterial.value = selection;
+    } else {
+      selectedLabor.value = selection;
+    }
+
+    selectedSorting.value = editingItem.sorting_id
+      ? new TitleInterface<string | number>({
+          id: editingItem.sorting_id,
+          title: editingItem.sorting_title || String(editingItem.sorting_id),
+        })
+      : null;
+    quantity.value = editingItem.quantity;
+    unitPrice.value = editingItem.unit_price;
+  };
+
   watch(
-    () => props.source,
-    () => clear(),
+    [() => props.source, () => props.editingItem],
+    ([source, editingItem]) => {
+      clear();
+      if (editingItem && editingItem.source_type === source) hydrateEditingItem(editingItem);
+    },
+    { immediate: true },
   );
 
   watch(selectedItem, () => {
+    if (editingSourceMatchesSelection.value) return;
+
     selectedSorting.value = null;
     unitPrice.value = props.pricingEnabled ? recordPrice.value : 0;
   });
 
   watch(recordPrice, (price) => {
+    if (editingSourceMatchesSelection.value) return;
+
     if (props.pricingEnabled && selectedItem.value && !selectedSortingData.value) {
       unitPrice.value = price;
     }
   });
 
   watch(selectedSorting, () => {
+    if (
+      props.editingItem?.sorting_id &&
+      Number(props.editingItem.sorting_id) === toOptionalId(selectedSorting.value)
+    ) {
+      return;
+    }
+
     if (!props.pricingEnabled) {
       unitPrice.value = 0;
     } else if (selectedSortingData.value) {
@@ -364,8 +455,9 @@
 
   const add = () => {
     const sourceId = toOptionalId(selectedItem.value);
+    const selectedUnitId = unitId.value;
 
-    if (!props.source || !props.subStageId || !sourceId) {
+    if (!props.source || !props.subStageId || !sourceId || !selectedUnitId) {
       dialogManager.toastWarning(t('execution_quote.validation.item_required'));
       return;
     }
@@ -392,9 +484,10 @@
           : undefined,
       quantity: Number(quantity.value),
       unit_price: props.pricingEnabled ? Number(unitPrice.value) : 0,
+      unit_id: selectedUnitId,
       source_title: selectedSourceTitle.value,
       unit_name: unitName.value,
-      sorting_title: selectedSortingData.value?.title,
+      sorting_title: selectedSortingData.value?.title ?? selectedSorting.value?.title,
     });
 
     clear();
@@ -404,10 +497,14 @@
 <template>
   <section class="execution-quote__card workflow-section">
     <div class="section-title">
-      <h2>{{ $t('execution_quote.select_item_title') }}</h2>
+      <h2>
+        {{
+          $t(isEditing ? 'execution_quote.edit_item_title' : 'execution_quote.select_item_title')
+        }}
+      </h2>
 
       <span v-if="isItemReadyToAdd" class="section-title__badge">
-        {{ $t('execution_quote.ready_to_add') }}
+        {{ $t(isEditing ? 'execution_quote.editing_item' : 'execution_quote.ready_to_add') }}
       </span>
     </div>
 
@@ -537,11 +634,7 @@
           />
         </label>
 
-        <label
-          v-if="pricingEnabled"
-          class="item-input-field"
-          for="execution-quote-item-unit-price"
-        >
+        <label v-if="pricingEnabled" class="item-input-field" for="execution-quote-item-unit-price">
           <span class="item-field-label">
             {{ $t('execution_quote.item_fields.unit_price') }}
             <FieldHelpIcon
@@ -560,22 +653,34 @@
           />
         </label>
 
-        <AppButton
-          class="add-item-button"
-          icon="right"
-          :disabled="
-            isDisabled ||
-            !hasSelectedSourceItem ||
-            !itemValuesAreValid ||
-            (sortingRequired && !toOptionalId(selectedSorting))
-          "
-          @click="add"
-        >
-          <template #icon>
-            <i class="pi pi-plus" aria-hidden="true"></i>
-          </template>
-          {{ $t('execution_quote.add_item') }}
-        </AppButton>
+        <div class="item-form__actions">
+          <AppButton
+            v-if="isEditing"
+            class="cancel-edit-button"
+            theme="secondary"
+            outline
+            @click="emit('cancel-edit')"
+          >
+            {{ $t('execution_quote.cancel_edit') }}
+          </AppButton>
+
+          <AppButton
+            class="add-item-button"
+            icon="right"
+            :disabled="
+              isDisabled ||
+              !hasSelectedSourceItem ||
+              !itemValuesAreValid ||
+              (sortingRequired && !toOptionalId(selectedSorting))
+            "
+            @click="add"
+          >
+            <template #icon>
+              <i :class="isEditing ? 'pi pi-check' : 'pi pi-plus'" aria-hidden="true"></i>
+            </template>
+            {{ $t(isEditing ? 'execution_quote.update_item' : 'execution_quote.add_item') }}
+          </AppButton>
+        </div>
       </div>
     </div>
   </section>
@@ -744,9 +849,15 @@
   }
 
   .add-item-button {
-    align-self: end;
     min-height: 2.65rem;
     white-space: nowrap;
+  }
+
+  .item-form__actions {
+    display: flex;
+    align-items: center;
+    align-self: end;
+    gap: 0.5rem;
   }
 
   @media (max-width: 1200px) {
@@ -769,8 +880,15 @@
       grid-template-columns: 1fr;
     }
 
-    .add-item-button {
+    .item-form__actions,
+    .add-item-button,
+    .cancel-edit-button {
       width: 100%;
+    }
+
+    .item-form__actions {
+      align-items: stretch;
+      flex-direction: column-reverse;
     }
   }
 </style>

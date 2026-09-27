@@ -52,6 +52,7 @@ export interface ExecutionQuoteStageItemSummary {
   itemable?: ExecutionQuoteTitledResourceSummary;
   expectedPrice?: number;
   quantity?: number;
+  unitId?: number;
 }
 
 export interface ExecutionQuoteAttachmentSummary {
@@ -72,6 +73,7 @@ export interface ExecutionQuoteStageSummary {
   stage?: ExecutionQuoteTitledResourceSummary;
   subStage?: ExecutionQuoteTitledResourceSummary;
   items: ExecutionQuoteStageItemSummary[];
+  clientPrice?: number;
   totalPrice?: number;
   createdAt?: string;
 }
@@ -204,6 +206,7 @@ const stageItemSummary = (rawItem: unknown): ExecutionQuoteStageItemSummary | un
     itemable: titledResourceSummary(stageItem.itemable),
     expectedPrice: decimalNumberValue(stageItem.expected_price),
     quantity: decimalNumberValue(stageItem.quantity),
+    unitId: decimalNumberValue(stageItem.unit),
   };
 };
 
@@ -229,6 +232,7 @@ const quoteStageSummary = (rawStage: unknown): ExecutionQuoteStageSummary | unde
     stage,
     subStage,
     items: stageItems,
+    clientPrice: decimalNumberValue(quoteStage.client_price),
     totalPrice: decimalNumberValue(quoteStage.total_price),
     createdAt: stringValue(quoteStage.created_at),
   };
@@ -242,9 +246,7 @@ const quoteStageSummaries = (rawStages: unknown): ExecutionQuoteStageSummary[] =
     .filter((quoteStage): quoteStage is ExecutionQuoteStageSummary => !!quoteStage);
 };
 
-const attachmentSummary = (
-  rawAttachment: unknown,
-): ExecutionQuoteAttachmentSummary | undefined => {
+const attachmentSummary = (rawAttachment: unknown): ExecutionQuoteAttachmentSummary | undefined => {
   const attachment = objectValue(rawAttachment);
   if (!attachment) return undefined;
 

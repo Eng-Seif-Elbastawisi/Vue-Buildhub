@@ -9,6 +9,7 @@ describe('QuoteTypeModel', () => {
       description: 'Fixed total quote',
       type_code: 'LUMP_SUM',
       calculation_model: { code: 'FIXED_TOTAL' },
+      quote_type_children_count: 3,
       status: 1,
     });
 
@@ -16,6 +17,7 @@ describe('QuoteTypeModel', () => {
       id: 4,
       typeCode: 'LUMP_SUM',
       calculationModel: 'FIXED_TOTAL',
+      quoteTypeChildrenCount: 3,
       status: true,
     });
     expect(Object.isFrozen(quoteType)).toBe(true);

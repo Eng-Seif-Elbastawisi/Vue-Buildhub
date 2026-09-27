@@ -56,13 +56,19 @@ const componentStubs = {
     template: `<button class="select-source" @click="$emit('update:modelValue', ${ExecutionQuoteItemSourceEnum.PRODUCT})" />`,
   },
   ExecutionQuoteItemForm: {
-    props: ['pricingEnabled'],
-    emits: ['add'],
+    props: ['pricingEnabled', 'editingItem'],
+    emits: ['add', 'cancel-edit'],
     template: `
-      <div class="item-form-stub" :data-pricing-enabled="pricingEnabled">
+      <div
+        class="item-form-stub"
+        :data-pricing-enabled="pricingEnabled"
+        :data-editing-item="editingItem?.id"
+      >
         <button
           class="add-item"
-          @click="$emit('add', { source_id: 22, sorting_id: 33, quantity: 2, unit_price: 5 })"
+          @click="$emit('add', editingItem
+            ? { source_id: 44, sorting_id: 55, quantity: 3, unit_price: 7, unit_id: 12, unit_name: 'Box' }
+            : { source_id: 22, sorting_id: 33, quantity: 2, unit_price: 5, unit_id: 9, unit_name: 'Piece' })"
         />
       </div>
     `,
@@ -71,8 +77,17 @@ const componentStubs = {
   ExecutionQuoteItemsTable: {
     name: 'ExecutionQuoteItemsTable',
     props: ['items', 'showPricing'],
-    template:
-      '<div class="items-table-stub" :data-items-count="items.length" :data-show-pricing="showPricing" />',
+    emits: ['edit', 'remove'],
+    template: `
+      <div
+        class="items-table-stub"
+        :data-items-count="items.length"
+        :data-show-pricing="showPricing"
+      >
+        <button v-if="items.length" class="edit-first-item" @click="$emit('edit', items[0])" />
+        <button v-if="items.length" class="remove-first-item" @click="$emit('remove', items[0])" />
+      </div>
+    `,
   },
   ExecutionQuoteTotals: { template: '<div class="totals-stub" />' },
 };
@@ -135,7 +150,8 @@ describe('ExecutionQuoteBuilder', () => {
     await wrapper.get('.add-item').trigger('click');
     await wrapper.get('.add-item').trigger('click');
 
-    expect(fetchList.mock.calls[1]?.[0].toMap()).toMatchObject({ parent_id: 1 });
+    expect(fetchList.mock.calls[1]?.[0].toMap()).toMatchObject({ parent_id: 1, status: 1 });
+    expect(fetchList.mock.calls[0]?.[0].toMap()).toMatchObject({ parent_id: null, status: 1 });
 
     const requests = wrapper
       .emitted('update:details')
@@ -148,10 +164,67 @@ describe('ExecutionQuoteBuilder', () => {
       sub_stage_id: 11,
       item_type: ExecutionQuoteItemSourceEnum.PRODUCT,
       items: [
-        { morph_id: 22, expected_price: 5, quantity: 2 },
-        { morph_id: 22, expected_price: 5, quantity: 2 },
+        { morph_id: 22, expected_price: 5, quantity: 2, unit: 9 },
+        { morph_id: 22, expected_price: 5, quantity: 2, unit: 9 },
       ],
     });
+  });
+
+  it('edits a local item in place before it is sent', async () => {
+    fetchList
+      .mockResolvedValueOnce(
+        new DataSuccess({ data: [new StageModel({ id: 1, title: 'Main', children: [] })] }),
+      )
+      .mockResolvedValueOnce(
+        new DataSuccess({ data: [new StageModel({ id: 11, title: 'Sub', children: [] })] }),
+      );
+
+    const wrapper = mountBuilder();
+
+    await flushPromises();
+    await wrapper.get('.select-sub-stage').trigger('click');
+    await wrapper.get('.select-source').trigger('click');
+    await wrapper.get('.add-item').trigger('click');
+    await wrapper.get('.edit-first-item').trigger('click');
+    await wrapper.get('.select-sub-stage').trigger('click');
+
+    expect(wrapper.get('.item-form-stub').attributes('data-editing-item')).toBeTruthy();
+
+    await wrapper.get('.add-item').trigger('click');
+
+    const displayedItems = wrapper
+      .getComponent({ name: 'ExecutionQuoteItemsTable' })
+      .props('items') as Array<{ source_id: number; quantity: number; unit_price: number }>;
+    expect(displayedItems).toHaveLength(1);
+    expect(displayedItems[0]).toMatchObject({ source_id: 44, quantity: 3, unit_price: 7 });
+
+    const requests = wrapper
+      .emitted('update:details')
+      ?.at(-1)?.[0] as StoreExecutionQuoteDetailsParams[];
+    expect(requests[0]?.toMap()).toMatchObject({
+      items: [{ morph_id: 44, expected_price: 7, quantity: 3, unit: 12 }],
+    });
+  });
+
+  it('removes a local item before it is sent', async () => {
+    fetchList
+      .mockResolvedValueOnce(
+        new DataSuccess({ data: [new StageModel({ id: 1, title: 'Main', children: [] })] }),
+      )
+      .mockResolvedValueOnce(
+        new DataSuccess({ data: [new StageModel({ id: 11, title: 'Sub', children: [] })] }),
+      );
+
+    const wrapper = mountBuilder();
+
+    await flushPromises();
+    await wrapper.get('.select-sub-stage').trigger('click');
+    await wrapper.get('.select-source').trigger('click');
+    await wrapper.get('.add-item').trigger('click');
+    await wrapper.get('.remove-first-item').trigger('click');
+
+    expect(wrapper.get('.items-table-stub').attributes('data-items-count')).toBe('0');
+    expect(wrapper.emitted('update:details')?.at(-1)?.[0]).toEqual([]);
   });
 
   it('shows stored quote items without submitting them again', async () => {
@@ -187,9 +260,9 @@ describe('ExecutionQuoteBuilder', () => {
 
     await flushPromises();
 
-    const displayedItems = wrapper.getComponent({ name: 'ExecutionQuoteItemsTable' }).props(
-      'items',
-    );
+    const displayedItems = wrapper
+      .getComponent({ name: 'ExecutionQuoteItemsTable' })
+      .props('items');
     expect(displayedItems).toEqual([
       expect.objectContaining({
         source_id: 17,
@@ -208,7 +281,7 @@ describe('ExecutionQuoteBuilder', () => {
       .emitted('update:details')
       ?.at(-1)?.[0] as StoreExecutionQuoteDetailsParams[];
     expect(requests[0]?.toMap()).toMatchObject({
-      items: [{ morph_id: 22, expected_price: 5, quantity: 2 }],
+      items: [{ morph_id: 22, expected_price: 5, quantity: 2, unit: 9 }],
     });
   });
 
@@ -276,7 +349,7 @@ describe('ExecutionQuoteBuilder', () => {
       ?.at(-1)?.[0] as StoreExecutionQuoteDetailsParams[];
 
     expect(requests[0]?.toMap()).toMatchObject({
-      items: [{ morph_id: 22, expected_price: 0, quantity: 2 }],
+      items: [{ morph_id: 22, expected_price: 0, quantity: 2, unit: 9 }],
     });
   });
 
@@ -310,11 +383,9 @@ describe('ExecutionQuoteBuilder', () => {
     await wrapper.get('.add-item').trigger('click');
     await wrapper.get('.builder-toolbar__exit').trigger('click');
 
-    expect(confirm).toHaveBeenCalledWith(
-      expect.any(String),
-      expect.any(Function),
-      { title: expect.any(String) },
-    );
+    expect(confirm).toHaveBeenCalledWith(expect.any(String), expect.any(Function), {
+      title: expect.any(String),
+    });
     expect(push).not.toHaveBeenCalledWith({ name: 'Execution Quotes' });
   });
 });

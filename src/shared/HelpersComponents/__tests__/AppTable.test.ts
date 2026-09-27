@@ -233,6 +233,7 @@ describe('AppTable', () => {
       effectAllowed: '',
       dropEffect: '',
       setData: vi.fn(),
+      setDragImage: vi.fn(),
       getData: vi.fn(),
     };
 
@@ -258,5 +259,61 @@ describe('AppTable', () => {
     expect(payload.movedItem).toEqual(mockItems[0]);
     expect(payload.items[0]).toEqual(mockItems[1]);
     expect(payload.items[1]).toEqual(mockItems[0]);
+  });
+
+  it('keeps the full row together and inserts it at the indicated edge while dragging', async () => {
+    const items = [...mockItems, { id: 3, name: 'Sam', email: 'sam@test.com' }];
+    const wrapper = createWrapper({ items, reorderable: true });
+    const rows = wrapper.findAll('tbody tr');
+    const dragHandles = wrapper.findAll('.td-drag-handle');
+    const setDragImage = vi.fn();
+    const dataTransfer = {
+      effectAllowed: '',
+      dropEffect: '',
+      setData: vi.fn(),
+      setDragImage,
+      getData: vi.fn(),
+    };
+    let runDragOverFrame: FrameRequestCallback = () => undefined;
+    const animationFrame = vi
+      .spyOn(window, 'requestAnimationFrame')
+      .mockImplementation((callback) => {
+        runDragOverFrame = callback;
+        return 1;
+      });
+
+    vi.spyOn(rows[2].element, 'getBoundingClientRect').mockReturnValue({
+      top: 100,
+      bottom: 140,
+      left: 0,
+      right: 600,
+      width: 600,
+      height: 40,
+      x: 0,
+      y: 100,
+      toJSON: () => ({}),
+    });
+
+    await dragHandles[0].trigger('dragstart', { clientX: 10, clientY: 10, dataTransfer });
+    await rows[2].trigger('dragover', { clientY: 105, dataTransfer });
+    runDragOverFrame(0);
+    await wrapper.vm.$nextTick();
+
+    expect(setDragImage.mock.calls[0]?.[0]).toBe(rows[0].element);
+    expect(rows[0].classes()).toContain('is-dragging');
+    expect(rows[2].classes()).toContain('drag-over-top');
+
+    await rows[2].trigger('drop', { clientY: 105, dataTransfer });
+    animationFrame.mockRestore();
+
+    const payload = wrapper.emitted('reorder')?.[0]?.[0] as {
+      items: TestItem[];
+      fromIndex: number;
+      toIndex: number;
+    };
+    expect(payload.fromIndex).toBe(0);
+    expect(payload.toIndex).toBe(1);
+    expect(payload.items.map((item) => item.id)).toEqual([2, 1, 3]);
+    expect(rows.every((row) => !row.classes().includes('is-dragging'))).toBe(true);
   });
 });

@@ -10,6 +10,7 @@ export interface ExecutionQuoteItemState {
   sorting_id?: number | string | null;
   quantity: number;
   unit_price: number;
+  unit_id: number;
   stage_name?: string;
   sub_stage_name?: string;
   source_title?: string;
@@ -29,6 +30,7 @@ export interface ExecutionQuoteItemDraft {
   sorting_id?: number | string | null;
   quantity: number;
   unit_price: number;
+  unit_id: number;
   source_title?: string;
   unit_name?: string;
   sorting_title?: string;

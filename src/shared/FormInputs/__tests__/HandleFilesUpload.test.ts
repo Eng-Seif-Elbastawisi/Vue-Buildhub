@@ -39,6 +39,15 @@ describe('HandleFilesUpload', () => {
     expect(input.element.multiple).toBe(true);
   });
 
+  it('marks the uploader as required when requested', () => {
+    const wrapper = createWrapper({ required: true });
+    const input = wrapper.get('input[type="file"]');
+
+    expect(input.attributes('required')).toBeDefined();
+    expect(input.attributes('aria-required')).toBe('true');
+    expect(wrapper.get('.upload-label__required').text()).toBe('*');
+  });
+
   it('shows default upload text when max files not reached', () => {
     const wrapper = createWrapper();
     expect(wrapper.find('.upload-text').text()).toBe('Click to upload');

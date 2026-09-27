@@ -95,6 +95,9 @@ describe('ExecutionQuoteIndex', () => {
     expect(wrapper.text()).toContain('fwffefefe');
     expect(wrapper.text()).toContain('Stages: 1');
     expect(wrapper.text()).toContain('Items: 3');
+    expect(wrapper.text()).not.toContain('execution_quote.table.id');
+    expect(wrapper.text()).not.toContain('#207');
+    expect(wrapper.text()).not.toContain('#92');
   });
 
   it('loads the selected page from the pagination control', async () => {

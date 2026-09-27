@@ -13,6 +13,7 @@ describe('execution quote UI types', () => {
       source_id: 10,
       quantity: 2,
       unit_price: 25,
+      unit_id: 9,
     };
 
     expect(item.sub_stage_id).toBe(7);

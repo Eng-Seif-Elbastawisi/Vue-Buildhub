@@ -16,6 +16,7 @@
   );
 
   const emit = defineEmits<{
+    (event: 'edit', item: ExecutionQuoteItemState): void;
     (event: 'remove', item: ExecutionQuoteItemState): void;
   }>();
 
@@ -86,19 +87,35 @@
         </template>
 
         <template #cell-action="{ item }">
-          <AppButton
-            v-if="!item.persisted"
-            theme="danger"
-            size="sm"
-            outline
-            icon="right"
-            @click.stop="emit('remove', item)"
-          >
-            <template #icon>
-              <i class="pi pi-trash" aria-hidden="true"></i>
-            </template>
-            {{ $t('execution_quote.delete_item') }}
-          </AppButton>
+          <div v-if="!item.persisted" class="quote-item-actions">
+            <AppButton
+              class="quote-item-actions__edit"
+              theme="secondary"
+              size="sm"
+              outline
+              icon="right"
+              @click.stop="emit('edit', item)"
+            >
+              <template #icon>
+                <i class="pi pi-pencil" aria-hidden="true"></i>
+              </template>
+              {{ $t('edit') }}
+            </AppButton>
+
+            <AppButton
+              class="quote-item-actions__delete"
+              theme="danger"
+              size="sm"
+              outline
+              icon="right"
+              @click.stop="emit('remove', item)"
+            >
+              <template #icon>
+                <i class="pi pi-trash" aria-hidden="true"></i>
+              </template>
+              {{ $t('execution_quote.delete_item') }}
+            </AppButton>
+          </div>
           <span v-else>—</span>
         </template>
       </AppTable>
@@ -142,5 +159,12 @@
   .quote-items-table-wrap {
     margin-top: 0.85rem;
     overflow-x: auto;
+  }
+
+  .quote-item-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    white-space: nowrap;
   }
 </style>

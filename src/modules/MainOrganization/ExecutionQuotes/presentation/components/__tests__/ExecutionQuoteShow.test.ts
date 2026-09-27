@@ -22,6 +22,20 @@ describe('ExecutionQuoteShow', () => {
     showRequest.mockReset();
   });
 
+  it('shows the quote-shaped skeleton before the quote loads', () => {
+    showRequest.mockImplementation(() => new Promise<never>(() => undefined));
+
+    const wrapper = mount(ExecutionQuoteShow, {
+      global: {
+        mocks: { $t: (key: string) => key },
+        stubs: { RouterLink: { template: '<a><slot /></a>' } },
+      },
+    });
+
+    expect(wrapper.text()).toContain('execution_quote.show.title');
+    expect(wrapper.get('[role="status"]').attributes('aria-busy')).toBe('true');
+  });
+
   it('shows the quote returned by the show endpoint', async () => {
     showRequest.mockResolvedValue({
       statusCode: 200,
@@ -55,6 +69,15 @@ describe('ExecutionQuoteShow', () => {
           },
           quote_type: { id: 1, title: 'Lump_SUM' },
           price_employee: { id: 92, name: 'fwffefefe' },
+          attachments: [
+            {
+              id: 9,
+              file: 'https://cdn.example.com/site-plan.png',
+              file_size: '2 MB',
+              alt: 'Site plan',
+              created_at: '2026-09-23 12:42:35',
+            },
+          ],
           quote_stages: [
             {
               id: 5,
@@ -73,6 +96,7 @@ describe('ExecutionQuoteShow', () => {
                   quantity: 1,
                 },
               ],
+              client_price: '52000000.00',
               total_price: '44444444.00',
               created_at: '2026-09-23 12:42:40',
             },
@@ -85,9 +109,9 @@ describe('ExecutionQuoteShow', () => {
     const wrapper = mount(ExecutionQuoteShow, {
       global: {
         mocks: {
-          $t: (key: string, params?: { id?: number }) => {
+          $t: (key: string) => {
             if (key === 'execution_quote.show.title') return 'Execution quote details';
-            if (key === 'execution_quote.show.eyebrow') return `Quote #${params?.id}`;
+            if (key === 'execution_quote.show.eyebrow') return 'Execution quote';
             if (key === 'execution_quote.quote_types.lump_sum.title') return 'Lump sum';
             if (key === 'INDIVIDUAL') return 'Individual';
             return key;
@@ -100,7 +124,7 @@ describe('ExecutionQuoteShow', () => {
     await flushPromises();
 
     expect(wrapper.text()).toContain('Execution quote details');
-    expect(wrapper.text()).toContain('Quote #41');
+    expect(wrapper.text()).toContain('Execution quote');
     expect(wrapper.text()).toContain('Techlab');
     expect(wrapper.text()).toContain('007');
     expect(wrapper.text()).toContain('شارع');
@@ -111,11 +135,15 @@ describe('ExecutionQuoteShow', () => {
     expect(wrapper.text()).not.toContain('execution_quote.show.project_id');
     expect(wrapper.text()).not.toContain('execution_quote.show.email');
     expect(wrapper.text()).toContain('Lump sum');
+    expect(wrapper.text()).toContain('Site plan');
+    expect(wrapper.findAll('.quote-attachments__card')).toHaveLength(1);
     expect(wrapper.text()).toContain('منعم');
     expect(wrapper.text()).toContain('sub stage');
     expect(wrapper.text()).toContain('تيست1');
+    expect(wrapper.text()).toContain('52,000,000');
     expect(wrapper.text()).toContain('44,444,444');
-    expect(wrapper.text()).toContain('#17');
+    expect(wrapper.text()).not.toContain('#41');
+    expect(wrapper.text()).not.toContain('#17');
 
     const stageHeader = wrapper.find('.execution-quote-show__stage-header');
     expect(stageHeader.text()).toContain('execution_quote.show.stage_total');

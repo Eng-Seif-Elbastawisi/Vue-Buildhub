@@ -49,7 +49,6 @@
   };
 
   const headers: TableHeader[] = [
-    { key: 'id', label: 'execution_quote.table.id' },
     { key: 'quoteSource', label: 'execution_quote.table.source' },
     { key: 'project', label: 'execution_quote.table.project' },
     { key: 'client', label: 'execution_quote.table.client' },
@@ -121,7 +120,6 @@
           <template #cell-project="{ item }">
             <div class="execution-quote-index__primary-cell">
               <strong>{{ item.project?.title ?? '—' }}</strong>
-              <small>#{{ item.project?.id ?? '—' }}</small>
             </div>
           </template>
 
@@ -141,7 +139,6 @@
           <template #cell-priceEmployee="{ item }">
             <div class="execution-quote-index__primary-cell">
               <strong>{{ item.priceEmployee?.name ?? '—' }}</strong>
-              <small>#{{ item.priceEmployee?.id ?? '—' }}</small>
             </div>
           </template>
 

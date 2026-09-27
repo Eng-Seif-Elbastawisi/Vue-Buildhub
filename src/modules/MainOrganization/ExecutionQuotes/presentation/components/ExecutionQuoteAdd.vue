@@ -209,18 +209,29 @@
       @update-details="detailsParams = $event"
     />
 
-    <AppButton
-      v-if="!isBuilderPage"
-      class="execution-quote-add__save"
-      icon="right"
-      :loading="loading"
-      @click="saveBaseExecutionQuote"
-    >
-      <template #icon>
-        <i class="pi pi-save" aria-hidden="true"></i>
-      </template>
-      {{ $t('execution_quote.save') }}
-    </AppButton>
+    <section v-if="!isBuilderPage" class="execution-quote-add__setup-dock">
+      <div class="execution-quote-add__action-copy">
+        <span class="execution-quote-add__action-icon" aria-hidden="true">
+          <i class="pi pi-arrow-right"></i>
+        </span>
+        <span>
+          <strong>{{ $t('execution_quote.setup_ready_title') }}</strong>
+          <small>{{ $t('execution_quote.setup_ready_hint') }}</small>
+        </span>
+      </div>
+
+      <AppButton
+        class="execution-quote-add__save"
+        icon="right"
+        :loading="loading"
+        @click="saveBaseExecutionQuote"
+      >
+        <template #icon>
+          <i class="pi pi-save" aria-hidden="true"></i>
+        </template>
+        {{ $t('execution_quote.save') }}
+      </AppButton>
+    </section>
 
     <section v-else class="execution-quote-add__action-bar">
       <div class="execution-quote-add__action-copy">
@@ -264,7 +275,7 @@
     gap: 0.5rem;
     min-width: 12rem;
     min-height: 3rem;
-    margin-inline: 1.25rem;
+    margin-inline: 0;
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-sm);
   }
@@ -285,20 +296,72 @@
     box-shadow: var(--shadow-md);
   }
 
+  .execution-quote-add__setup-dock {
+    display: flex;
+    position: sticky;
+    z-index: 5;
+    bottom: 1rem;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    max-width: calc(96rem - 3rem);
+    width: calc(100% - 3rem);
+    margin-inline: auto;
+    padding: 0.85rem 0.9rem;
+    border: 1px solid var(--border-weak);
+    border-radius: var(--radius-lg);
+    background: var(--gray-900-alpha-95);
+    box-shadow: var(--shadow-xl);
+    color: var(--white);
+    backdrop-filter: blur(10px);
+  }
+
   .execution-quote-add__action-copy {
     display: flex;
-    flex-direction: column;
-    gap: 0.2rem;
+    align-items: center;
+    gap: 0.75rem;
     text-align: start;
   }
 
-  .execution-quote-add__action-copy strong {
+  .execution-quote-add__action-copy > span:last-child {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .execution-quote-add__action-bar .execution-quote-add__action-copy {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .execution-quote-add__action-icon {
+    display: grid;
+    width: 2.4rem;
+    height: 2.4rem;
+    flex: 0 0 auto;
+    place-items: center;
+    border-radius: 0.75rem 0.75rem 0.25rem;
+    background: var(--PrimaryColor);
+    color: var(--white);
+  }
+
+  .execution-quote-add__action-bar .execution-quote-add__action-copy strong {
     color: var(--title-card-color);
   }
 
-  .execution-quote-add__action-copy span {
+  .execution-quote-add__action-copy small,
+  .execution-quote-add__action-bar .execution-quote-add__action-copy span {
     color: var(--subtitle-color);
     font-size: var(--xs-size);
+  }
+
+  .execution-quote-add__setup-dock .execution-quote-add__action-copy small {
+    color: var(--gray-300);
+  }
+
+  :global([dir='rtl'] .execution-quote-add__action-icon i) {
+    transform: scaleX(-1);
   }
 
   .execution-quote-add__action-bar .execution-quote-add__save {
@@ -317,9 +380,9 @@
   @media (max-width: 700px) {
     .execution-quote-add__save {
       align-self: stretch;
-      margin-inline: 0.75rem;
     }
 
+    .execution-quote-add__setup-dock,
     .execution-quote-add__action-bar {
       position: static;
       align-items: stretch;
@@ -327,6 +390,11 @@
       margin-inline: 0.75rem;
     }
 
+    .execution-quote-add__setup-dock {
+      width: calc(100% - 1.5rem);
+    }
+
+    .execution-quote-add__setup-dock .execution-quote-add__save,
     .execution-quote-add__action-bar .execution-quote-add__save {
       width: 100%;
     }

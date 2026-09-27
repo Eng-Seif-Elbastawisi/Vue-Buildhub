@@ -15,4 +15,13 @@ describe('IndexMaterialParams', () => {
       unit: UnitTypeEnum.bag,
     });
   });
+
+  it('maps the active-only filter', () => {
+    expect(new IndexMaterialParams({ perPage: 100, withPage: 0, status: true }).toMap()).toEqual({
+      with_pagination: 0,
+      page: 1,
+      per_page: 100,
+      status: 1,
+    });
+  });
 });

@@ -32,6 +32,16 @@ describe('ExecutionQuoteShowModel', () => {
       },
       quote_type: { id: 1, title: 'Lump_SUM' },
       price_employee: { id: 68, name: 'type test' },
+      attachments: [
+        {
+          id: 9,
+          file: 'https://cdn.example.com/site-plan.png',
+          file_size: '2 MB',
+          alt: 'Site plan',
+          link: null,
+          created_at: '2026-09-23 12:42:35',
+        },
+      ],
       quote_stages: [
         {
           id: 5,
@@ -48,8 +58,10 @@ describe('ExecutionQuoteShowModel', () => {
               itemable: { id: 17, title: 'تيست1' },
               expected_price: '44444444.00',
               quantity: 1,
+              unit: 9,
             },
           ],
+          client_price: '52000000.00',
           total_price: '44444444.00',
           created_at: '2026-09-23 12:42:40',
         },
@@ -84,6 +96,16 @@ describe('ExecutionQuoteShowModel', () => {
       },
       quoteType: { id: 1, title: 'Lump_SUM' },
       priceEmployee: { id: 68, name: 'type test' },
+      attachments: [
+        {
+          id: 9,
+          file: 'https://cdn.example.com/site-plan.png',
+          fileSize: '2 MB',
+          alt: 'Site plan',
+          link: null,
+          createdAt: '2026-09-23 12:42:35',
+        },
+      ],
       quoteStages: [
         {
           id: 5,
@@ -102,8 +124,10 @@ describe('ExecutionQuoteShowModel', () => {
               itemable: { id: 17, title: 'تيست1' },
               expectedPrice: 44444444,
               quantity: 1,
+              unitId: 9,
             },
           ],
+          clientPrice: 52000000,
           totalPrice: 44444444,
           createdAt: '2026-09-23 12:42:40',
         },

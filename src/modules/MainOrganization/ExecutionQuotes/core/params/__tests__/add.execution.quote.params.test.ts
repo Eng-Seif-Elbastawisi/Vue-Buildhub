@@ -118,6 +118,22 @@ describe('AddExecutionQuoteParams', () => {
     expect(params.validate().isValid).toBe(false);
   });
 
+  it('requires at least one attachment before storing the base quote', () => {
+    const params = new AddExecutionQuoteParams({
+      quoteSource: QuoteSourceEnum.EXECUTION_ONLY,
+      clientExist: true,
+      clientId: 5,
+      projectId: 10,
+      quoteTypeId: 1,
+      priceEmployeeId: 7,
+      attachments: [],
+    });
+
+    expect(params.validate().errors).toEqual(
+      expect.arrayContaining([expect.objectContaining({ field: 'attachments' })]),
+    );
+  });
+
   it('requires the quote type selected before the base request', () => {
     const params = new AddExecutionQuoteParams({
       quoteSource: QuoteSourceEnum.EXECUTION_ONLY,
@@ -139,6 +155,7 @@ describe('AddExecutionQuoteParams', () => {
       clientId: 5,
       projectId: 10,
       quoteTypeId: 2,
+      attachments: [{ file: 'data:image/png;base64,aW1hZ2U=' }],
     });
 
     const invalid = new AddExecutionQuoteParams({
@@ -147,6 +164,7 @@ describe('AddExecutionQuoteParams', () => {
       clientId: 5,
       projectId: undefined,
       quoteTypeId: 2,
+      attachments: [{ file: 'data:image/png;base64,aW1hZ2U=' }],
     });
 
     expect(valid.validate().isValid).toBe(true);
@@ -172,4 +190,3 @@ describe('AddExecutionQuoteParams', () => {
     );
   });
 });
-

@@ -29,26 +29,39 @@ body {
   @include flex(row, flex-start, stretch);
   // gap: var(--xl-size-2);
   width: 100%;
+  min-width: 0;
   font-family: var(--font-family);
   background-color: var(--bg-main);
+
+  @media (max-width: 1023px) {
+    display: block;
+    overflow-x: hidden;
+  }
 
   .sidebar-container {
     padding: 26px;
 
-    @media (max-width: 768px) {
-      display: none;
+    @media (max-width: 1023px) {
+      display: none !important;
     }
   }
 
   .content-wrapper {
     // flex: 1;
     width: 95%;
+    min-width: 0;
     margin-inline: auto;
-    padding-left: 1rem;
+    padding-inline-start: 1rem;
 
     @include flex-column();
     // gap: var(--md-size);
     overflow: hidden;
+
+    @media (max-width: 1023px) {
+      width: 100%;
+      margin-inline: 0;
+      padding-inline: 0;
+    }
 
     // @media (max-width: 1200px) {
     //   width: 70%;
@@ -77,6 +90,8 @@ body {
   }
 
   .main-content {
+    width: 100%;
+    min-width: 0;
     background-color: var(--bg-main);
     overflow: hidden;
     z-index: 999;
@@ -84,7 +99,7 @@ body {
     min-height: 82vh;
     padding: 0 40px;
 
-    @media (max-width: 768px) {
+    @media (max-width: 1023px) {
       padding: 14px;
     }
   }

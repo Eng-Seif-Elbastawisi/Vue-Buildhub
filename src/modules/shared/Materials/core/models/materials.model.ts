@@ -1,4 +1,5 @@
 import ItemTypesModel from '@/modules/MainOrganization/ItemTypes/core/models/item.types.model';
+import MeasurementModel from '@/modules/shared/measurement/core/models/measurement.model';
 import StageModel from '@/modules/shared/Stages/core/models/stage.model';
 import { UnitTypeEnum } from '../constant/unit.type.enum';
 
@@ -11,6 +12,7 @@ export default class MaterialsModel {
   public readonly translations: { title: Record<string, string> };
   public readonly status: boolean;
   public readonly itemType?: ItemTypesModel;
+  public readonly measurementUnit?: MeasurementModel;
   public readonly stage?: StageModel;
   public readonly subStage?: StageModel;
   public readonly subStages: StageModel[];
@@ -24,6 +26,7 @@ export default class MaterialsModel {
     price: number;
     brandId?: number;
     itemType?: ItemTypesModel;
+    measurementUnit?: MeasurementModel;
     stage?: StageModel;
     subStage?: StageModel;
     subStages?: StageModel[];
@@ -37,6 +40,7 @@ export default class MaterialsModel {
     this.brandId = data.brandId;
     this.title = data.title;
     this.itemType = data.itemType;
+    this.measurementUnit = data.measurementUnit;
     this.stage = data.stage;
     this.subStages = data.subStages ?? [];
     this.subStage = data.subStage ?? this.subStages[0];
@@ -74,6 +78,9 @@ export default class MaterialsModel {
       price: Number(json.price),
       brandId: (json.brandId ?? json.brand_id) as number | undefined,
       itemType: ItemTypesModel.fromJson(json.item_type ?? {}),
+      measurementUnit: json.measurement_unit
+        ? MeasurementModel.fromJson(json.measurement_unit)
+        : undefined,
       stage: StageModel.fromJson(json.stage ?? {}),
       subStage: subStages[0],
       subStages,
@@ -91,6 +98,7 @@ export default class MaterialsModel {
     status: true,
     brandId: 10,
     itemType: ItemTypesModel.example,
+    measurementUnit: MeasurementModel.example,
     stage: StageModel.example,
     subStages: [StageModel.example],
     code: '100',
