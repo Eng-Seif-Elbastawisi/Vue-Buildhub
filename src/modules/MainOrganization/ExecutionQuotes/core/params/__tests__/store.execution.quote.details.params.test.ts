@@ -10,6 +10,7 @@ describe('StoreExecutionQuoteDetailsParams', () => {
       stageId: 82,
       subStageId: 85,
       itemType: ExecutionQuoteItemSourceEnum.PRODUCT,
+      clientPrice: 4200,
       items: [
         { morphId: 25, expectedPrice: 500, quantity: 3, unit: 5 },
         { morphId: 30, expectedPrice: 750, quantity: 2, unit: 6 },
@@ -22,6 +23,7 @@ describe('StoreExecutionQuoteDetailsParams', () => {
       stage_id: 82,
       sub_stage_id: 85,
       item_type: 1,
+      client_price: 4200,
       items: [
         { morph_id: 25, expected_price: 500, quantity: 3, unit: 5 },
         { morph_id: 30, expected_price: 750, quantity: 2, unit: 6 },
@@ -37,10 +39,27 @@ describe('StoreExecutionQuoteDetailsParams', () => {
       stageId: 82,
       subStageId: 85,
       itemType: ExecutionQuoteItemSourceEnum.PRODUCT,
+      clientPrice: null,
       items: [],
     });
 
     expect(params.validate().isValid).toBe(false);
+  });
+
+  it.each([-1, Number.NaN])('rejects invalid client stage price %s', (clientPrice) => {
+    const params = new StoreExecutionQuoteDetailsParams({
+      quoteId: 1,
+      stageId: 82,
+      subStageId: 85,
+      itemType: ExecutionQuoteItemSourceEnum.PRODUCT,
+      clientPrice,
+      items: [{ morphId: 25, expectedPrice: 500, quantity: 3, unit: 5 }],
+    });
+
+    expect(params.validate()).toMatchObject({
+      isValid: false,
+      errors: [expect.objectContaining({ field: 'client_price' })],
+    });
   });
 
   it('rejects an item without a measurement unit CRUD id', () => {
@@ -49,6 +68,7 @@ describe('StoreExecutionQuoteDetailsParams', () => {
       stageId: 82,
       subStageId: 85,
       itemType: ExecutionQuoteItemSourceEnum.PRODUCT,
+      clientPrice: null,
       items: [{ morphId: 25, expectedPrice: 500, quantity: 3, unit: 0 }],
     });
 

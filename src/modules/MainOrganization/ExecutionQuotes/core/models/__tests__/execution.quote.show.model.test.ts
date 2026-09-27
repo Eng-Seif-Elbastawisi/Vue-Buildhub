@@ -32,6 +32,7 @@ describe('ExecutionQuoteShowModel', () => {
       },
       quote_type: { id: 1, title: 'Lump_SUM' },
       price_employee: { id: 68, name: 'type test' },
+      total_quote_price: '123456.78',
       attachments: [
         {
           id: 9,
@@ -58,7 +59,7 @@ describe('ExecutionQuoteShowModel', () => {
               itemable: { id: 17, title: 'تيست1' },
               expected_price: '44444444.00',
               quantity: 1,
-              unit: 9,
+              measurement_unit: { id: 165, title: 'Square kilometer' },
             },
           ],
           client_price: '52000000.00',
@@ -96,6 +97,7 @@ describe('ExecutionQuoteShowModel', () => {
       },
       quoteType: { id: 1, title: 'Lump_SUM' },
       priceEmployee: { id: 68, name: 'type test' },
+      totalQuotePrice: 123456.78,
       attachments: [
         {
           id: 9,
@@ -124,7 +126,8 @@ describe('ExecutionQuoteShowModel', () => {
               itemable: { id: 17, title: 'تيست1' },
               expectedPrice: 44444444,
               quantity: 1,
-              unitId: 9,
+              unitId: 165,
+              measurementUnit: { id: 165, title: 'Square kilometer' },
             },
           ],
           clientPrice: 52000000,

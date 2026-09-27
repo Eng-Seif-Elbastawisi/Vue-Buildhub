@@ -43,7 +43,7 @@
           </div>
 
           <div class="execution-quote-show-skeleton__fields">
-            <article v-for="fieldIndex in 5" :key="fieldIndex">
+            <article v-for="fieldIndex in 6" :key="fieldIndex">
               <Skeleton width="45%" height="0.65rem" />
               <Skeleton width="72%" height="0.95rem" />
             </article>
@@ -105,7 +105,7 @@
               class="execution-quote-show-skeleton__table-row"
             >
               <Skeleton
-                v-for="tableCellIndex in 6"
+                v-for="tableCellIndex in 7"
                 :key="tableCellIndex"
                 :width="tableCellIndex === 1 ? '75%' : '58%'"
                 :height="tableRowIndex === 1 ? '0.7rem' : '0.9rem'"
@@ -270,7 +270,7 @@
 
   .execution-quote-show-skeleton__table-row {
     display: grid;
-    grid-template-columns: 1.4fr repeat(5, minmax(5rem, 1fr));
+    grid-template-columns: 1.4fr repeat(6, minmax(5rem, 1fr));
     gap: 0.75rem;
     align-items: center;
     min-width: 48rem;

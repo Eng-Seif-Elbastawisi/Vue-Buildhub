@@ -16,6 +16,7 @@ const quoteItem = {
   quantity: 2,
   unit_price: 10,
   unit_id: 9,
+  unit_name: 'Piece',
 };
 
 describe('ExecutionQuoteItemsTable', () => {
@@ -29,6 +30,10 @@ describe('ExecutionQuoteItemsTable', () => {
 
     expect(wrapper.findComponent(AppTable).exists()).toBe(true);
     expect(wrapper.text()).toContain('execution_quote.table.main_stage');
+
+    const itemCells = wrapper.get('tbody tr').findAll('td');
+    expect(itemCells[4]?.text()).toBe('2');
+    expect(itemCells[5]?.text()).toBe('Piece');
 
     await wrapper.get('.quote-item-actions__edit').trigger('click');
     expect(wrapper.emitted('edit')?.[0]?.[0]).toEqual(quoteItem);

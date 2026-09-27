@@ -278,6 +278,14 @@
     margin-inline: 0;
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-sm);
+    transition:
+      box-shadow var(--transition-fast),
+      transform var(--transition-fast);
+  }
+
+  .execution-quote-add__save:hover:not(:disabled) {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-1px);
   }
 
   .execution-quote-add__action-bar {
@@ -294,6 +302,10 @@
     border-radius: var(--radius-md);
     background: var(--bg-card);
     box-shadow: var(--shadow-md);
+    transition:
+      border-color var(--transition-fast),
+      box-shadow var(--transition-fast);
+    animation: execution-quote-actions-enter 360ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
   }
 
   .execution-quote-add__setup-dock {
@@ -314,6 +326,22 @@
     box-shadow: var(--shadow-xl);
     color: var(--white);
     backdrop-filter: blur(10px);
+    transition:
+      border-color var(--transition-fast),
+      box-shadow var(--transition-fast);
+    animation: execution-quote-actions-enter 360ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+
+  .execution-quote-add__action-bar:hover,
+  .execution-quote-add__action-bar:focus-within {
+    border-color: var(--PrimaryColor-alpha-30);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .execution-quote-add__setup-dock:hover,
+  .execution-quote-add__setup-dock:focus-within {
+    border-color: var(--PrimaryColor-alpha-50);
+    box-shadow: var(--shadow-xl);
   }
 
   .execution-quote-add__action-copy {
@@ -375,6 +403,19 @@
     border-radius: var(--radius-sm);
     background: var(--danger-light);
     color: var(--danger-dark);
+    animation: execution-quote-actions-enter 240ms ease-out both;
+  }
+
+  @keyframes execution-quote-actions-enter {
+    from {
+      opacity: 0;
+      transform: translateY(0.75rem);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   @media (max-width: 700px) {
@@ -397,6 +438,20 @@
     .execution-quote-add__setup-dock .execution-quote-add__save,
     .execution-quote-add__action-bar .execution-quote-add__save {
       width: 100%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .execution-quote-add__save,
+    .execution-quote-add__action-bar,
+    .execution-quote-add__setup-dock,
+    .execution-quote-add__error {
+      animation: none;
+      transition: none;
+    }
+
+    .execution-quote-add__save:hover:not(:disabled) {
+      transform: none;
     }
   }
 </style>

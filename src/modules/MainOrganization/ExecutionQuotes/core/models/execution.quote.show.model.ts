@@ -53,6 +53,7 @@ export interface ExecutionQuoteStageItemSummary {
   expectedPrice?: number;
   quantity?: number;
   unitId?: number;
+  measurementUnit?: ExecutionQuoteTitledResourceSummary;
 }
 
 export interface ExecutionQuoteAttachmentSummary {
@@ -198,6 +199,8 @@ const stageItemSummary = (rawItem: unknown): ExecutionQuoteStageItemSummary | un
   const stageItem = objectValue(rawItem);
   if (!stageItem) return undefined;
 
+  const measurementUnit = titledResourceSummary(stageItem.measurement_unit);
+
   return {
     id: numberValue(stageItem.id),
     itemType: numberValue(stageItem.item_type),
@@ -206,7 +209,8 @@ const stageItemSummary = (rawItem: unknown): ExecutionQuoteStageItemSummary | un
     itemable: titledResourceSummary(stageItem.itemable),
     expectedPrice: decimalNumberValue(stageItem.expected_price),
     quantity: decimalNumberValue(stageItem.quantity),
-    unitId: decimalNumberValue(stageItem.unit),
+    unitId: measurementUnit?.id ?? decimalNumberValue(stageItem.unit),
+    measurementUnit,
   };
 };
 
@@ -281,6 +285,7 @@ export default class ExecutionQuoteShowModel {
   public readonly quoteStagesCount: number;
   public readonly quoteItemsCount: number;
   public readonly attachments: ExecutionQuoteAttachmentSummary[];
+  public readonly totalQuotePrice?: number;
   public readonly createdAt?: string;
 
   constructor(data: {
@@ -294,6 +299,7 @@ export default class ExecutionQuoteShowModel {
     priceEmployee?: ExecutionQuoteEmployeeSummary;
     quoteStages?: ExecutionQuoteStageSummary[];
     attachments?: ExecutionQuoteAttachmentSummary[];
+    totalQuotePrice?: number;
     createdAt?: string;
   }) {
     this.id = data.id;
@@ -311,6 +317,7 @@ export default class ExecutionQuoteShowModel {
       0,
     );
     this.attachments = data.attachments ?? [];
+    this.totalQuotePrice = data.totalQuotePrice;
     this.createdAt = data.createdAt;
     Object.freeze(this);
   }
@@ -327,6 +334,7 @@ export default class ExecutionQuoteShowModel {
       priceEmployee: employeeSummary(json.price_employee),
       quoteStages: quoteStageSummaries(json.quote_stages),
       attachments: attachmentSummaries(json.attachments),
+      totalQuotePrice: decimalNumberValue(json.total_quote_price),
       createdAt: stringValue(json.created_at),
     });
   }

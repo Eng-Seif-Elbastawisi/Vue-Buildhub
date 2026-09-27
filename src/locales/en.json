@@ -2730,6 +2730,20 @@
     "details_saved": "Items saved. You can continue with another sub-stage.",
     "index_description": "Review execution quotes and their source data.",
     "empty_quotes": "No execution quotes are available yet.",
+    "filters": {
+      "title": "Quote filters",
+      "active_count": "{count} active filters",
+      "source": "Quote source",
+      "source_placeholder": "All quote sources",
+      "project": "Project",
+      "project_placeholder": "All projects",
+      "client": "Client",
+      "client_placeholder": "All clients",
+      "quote_type": "Quote type",
+      "quote_type_placeholder": "All quote types",
+      "apply": "Apply filters",
+      "clear": "Clear all"
+    },
     "show": {
       "title": "Execution quote details",
       "description": "A complete view of the project, client and quote ownership.",
@@ -2751,6 +2765,7 @@
       "active": "Active",
       "inactive": "Inactive",
       "project_created_at": "Project created at",
+      "total_quote_price": "Total quote price",
       "client_id": "Client ID",
       "client_type": "Client type",
       "client_source": "Client source",
@@ -2791,6 +2806,7 @@
     "validation": {
       "required_data": "Complete the required quote data before saving.",
       "base_quote_required": "Save the quote data before opening a stage.",
+      "client_price": "Client stage price must be zero or greater.",
       "item_required": "Select a main stage, sub stage, source and item before adding.",
       "item_values": "Quantity must be greater than zero and unit price cannot be negative.",
       "items_required": "Add at least one quote item before saving."
@@ -2829,6 +2845,9 @@
       "area": "Area"
     },
     "table": {
+      "title": "Execution quote records",
+      "description": "Open any row to review its full quote details.",
+      "results_count": "{count} visible results",
       "id": "ID",
       "source": "Source",
       "client": "Client",
