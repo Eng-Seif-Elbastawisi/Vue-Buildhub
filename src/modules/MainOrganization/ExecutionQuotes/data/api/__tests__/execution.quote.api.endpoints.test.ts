@@ -10,6 +10,7 @@ describe('ExecutionQuoteApiEndpoints', () => {
     const endpoints = new ExecutionQuoteApiEndpoints();
 
     expect(endpoints.store).toContain('organization/store_quote');
-    expect(endpoints.storeDetails).toContain('organization/store_execution_quote_details');
+    expect(endpoints.storeDetails).toContain('organization/store_quote_stage');
+    expect(endpoints.setStagePricing).toContain('organization/set_quote_stage_client_price');
   });
 });

@@ -31,7 +31,6 @@ export default class StoreExecutionQuoteDetailsParams implements Params {
   public readonly stageId: number;
   public readonly subStageId: number;
   public readonly itemType: ExecutionQuoteItemSource;
-  public readonly clientPrice: number | null;
   public readonly items: ExecutionQuoteMorphItemRequest[];
 
   public static readonly validation = new ClassValidation().setRules({
@@ -51,14 +50,12 @@ export default class StoreExecutionQuoteDetailsParams implements Params {
     stageId: number;
     subStageId: number;
     itemType: ExecutionQuoteItemSource;
-    clientPrice: number | null;
     items: ExecutionQuoteMorphItemRequest[];
   }) {
     this.quoteId = params.quoteId;
     this.stageId = params.stageId;
     this.subStageId = params.subStageId;
     this.itemType = params.itemType;
-    this.clientPrice = params.clientPrice;
     this.items = params.items;
   }
 
@@ -68,7 +65,6 @@ export default class StoreExecutionQuoteDetailsParams implements Params {
       stage_id: this.stageId,
       sub_stage_id: this.subStageId,
       item_type: this.itemType,
-      client_price: this.clientPrice,
       items: this.items.map((morphItem) => ({
         morph_id: morphItem.morphId,
         expected_price: morphItem.expectedPrice,
@@ -81,13 +77,6 @@ export default class StoreExecutionQuoteDetailsParams implements Params {
   validate() {
     const requestValidation = StoreExecutionQuoteDetailsParams.validation.validate(this);
     const itemErrors: Array<{ field: string; message: string }> = [];
-
-    if (this.clientPrice !== null && (!Number.isFinite(this.clientPrice) || this.clientPrice < 0)) {
-      itemErrors.push({
-        field: 'client_price',
-        message: translate('execution_quote.validation.client_price'),
-      });
-    }
 
     this.items.forEach((morphItem, itemIndex) => {
       if (!morphItem.morphId) {

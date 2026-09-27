@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { QuoteSourceEnum } from '../../constants/quote.source.enum';
+import { ExecutionQuoteTypeEnum } from '../../constants/execution.quote.type.enum';
 import AddExecutionQuoteParams from '../add.execution.quote.params';
 
 describe('AddExecutionQuoteParams', () => {
@@ -10,7 +11,7 @@ describe('AddExecutionQuoteParams', () => {
       projectId: 10,
       clientExist: true,
       clientId: 5,
-      quoteTypeId: 2,
+      quoteType: ExecutionQuoteTypeEnum.SUPERVISION,
       priceEmployeeId: 7,
       attachments: [
         {
@@ -25,7 +26,7 @@ describe('AddExecutionQuoteParams', () => {
       client_exist: true,
       client_id: 5,
       project_id: 10,
-      quote_type_id: 2,
+      quote_type: ExecutionQuoteTypeEnum.SUPERVISION,
       price_employee_id: 7,
       quote_source: QuoteSourceEnum.EXECUTION_ONLY,
       attachments: [
@@ -51,7 +52,7 @@ describe('AddExecutionQuoteParams', () => {
       clientSourceId: 2,
       quoteSource: QuoteSourceEnum.EXECUTION_ONLY,
       projectId: 237,
-      quoteTypeId: 1,
+      quoteType: ExecutionQuoteTypeEnum.LUMP_SUM,
       priceEmployeeId: 12,
       attachments: [
         {
@@ -71,7 +72,7 @@ describe('AddExecutionQuoteParams', () => {
       client_source_id: 2,
       quote_source: QuoteSourceEnum.EXECUTION_ONLY,
       project_id: 237,
-      quote_type_id: 1,
+      quote_type: ExecutionQuoteTypeEnum.LUMP_SUM,
       price_employee_id: 12,
       attachments: [
         {
@@ -89,7 +90,7 @@ describe('AddExecutionQuoteParams', () => {
       projectId: 15,
       clientExist: true,
       clientId: 28,
-      quoteTypeId: 1,
+      quoteType: ExecutionQuoteTypeEnum.LUMP_SUM,
       priceEmployeeId: 7,
       attachments: [{ file: 'data:image/png;base64,aW1hZ2U=', alt: 'design.png', link: null }],
     });
@@ -98,7 +99,7 @@ describe('AddExecutionQuoteParams', () => {
       client_exist: true,
       client_id: 28,
       project_id: 15,
-      quote_type_id: 1,
+      quote_type: ExecutionQuoteTypeEnum.LUMP_SUM,
       quote_source: QuoteSourceEnum.EXECUTION_FROM_DESIGN_QUOTE,
       attachments: [
         {
@@ -124,7 +125,7 @@ describe('AddExecutionQuoteParams', () => {
       clientExist: true,
       clientId: 5,
       projectId: 10,
-      quoteTypeId: 1,
+      quoteType: ExecutionQuoteTypeEnum.LUMP_SUM,
       priceEmployeeId: 7,
       attachments: [],
     });
@@ -144,7 +145,7 @@ describe('AddExecutionQuoteParams', () => {
     });
 
     expect(params.validate().errors).toEqual(
-      expect.arrayContaining([expect.objectContaining({ field: 'quoteTypeId' })]),
+      expect.arrayContaining([expect.objectContaining({ field: 'quoteType' })]),
     );
   });
 
@@ -154,7 +155,7 @@ describe('AddExecutionQuoteParams', () => {
       clientExist: true,
       clientId: 5,
       projectId: 10,
-      quoteTypeId: 2,
+      quoteType: ExecutionQuoteTypeEnum.SUPERVISION,
       attachments: [{ file: 'data:image/png;base64,aW1hZ2U=' }],
     });
 
@@ -163,7 +164,7 @@ describe('AddExecutionQuoteParams', () => {
       clientExist: true,
       clientId: 5,
       projectId: undefined,
-      quoteTypeId: 2,
+      quoteType: ExecutionQuoteTypeEnum.SUPERVISION,
       attachments: [{ file: 'data:image/png;base64,aW1hZ2U=' }],
     });
 
@@ -179,7 +180,7 @@ describe('AddExecutionQuoteParams', () => {
       clientPhone: '',
       clientSourceId: undefined,
       projectId: 10,
-      quoteTypeId: 1,
+      quoteType: ExecutionQuoteTypeEnum.LUMP_SUM,
       priceEmployeeId: 5,
     });
 

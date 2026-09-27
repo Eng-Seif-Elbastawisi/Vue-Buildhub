@@ -75,6 +75,7 @@ export interface ExecutionQuoteStageSummary {
   subStage?: ExecutionQuoteTitledResourceSummary;
   items: ExecutionQuoteStageItemSummary[];
   clientPrice?: number;
+  percentage?: number;
   totalPrice?: number;
   createdAt?: string;
 }
@@ -185,13 +186,25 @@ const clientSummary = (rawClient: unknown): ExecutionQuoteClientSummary | undefi
   };
 };
 
-const quoteTypeSummary = (rawQuoteType: unknown): ExecutionQuoteTypeSummary | undefined => {
+const quoteTypeSummary = (
+  rawQuoteType: unknown,
+  rawQuoteTypeId?: unknown,
+): ExecutionQuoteTypeSummary | undefined => {
   const quoteType = objectValue(rawQuoteType);
-  if (!quoteType) return undefined;
+  if (quoteType) {
+    return {
+      id: decimalNumberValue(quoteType.id),
+      title: stringValue(quoteType.title),
+    };
+  }
+
+  const quoteTypeId = decimalNumberValue(rawQuoteType) ?? decimalNumberValue(rawQuoteTypeId);
+  const quoteTypeTitle = stringValue(rawQuoteType);
+  if (!quoteTypeId && !quoteTypeTitle) return undefined;
 
   return {
-    id: numberValue(quoteType.id),
-    title: stringValue(quoteType.title),
+    id: quoteTypeId,
+    title: quoteTypeTitle,
   };
 };
 
@@ -237,6 +250,7 @@ const quoteStageSummary = (rawStage: unknown): ExecutionQuoteStageSummary | unde
     subStage,
     items: stageItems,
     clientPrice: decimalNumberValue(quoteStage.client_price),
+    percentage: decimalNumberValue(quoteStage.percentage),
     totalPrice: decimalNumberValue(quoteStage.total_price),
     createdAt: stringValue(quoteStage.created_at),
   };
@@ -286,6 +300,7 @@ export default class ExecutionQuoteShowModel {
   public readonly quoteItemsCount: number;
   public readonly attachments: ExecutionQuoteAttachmentSummary[];
   public readonly totalQuotePrice?: number;
+  public readonly clientQuotePrice?: number;
   public readonly createdAt?: string;
 
   constructor(data: {
@@ -300,6 +315,7 @@ export default class ExecutionQuoteShowModel {
     quoteStages?: ExecutionQuoteStageSummary[];
     attachments?: ExecutionQuoteAttachmentSummary[];
     totalQuotePrice?: number;
+    clientQuotePrice?: number;
     createdAt?: string;
   }) {
     this.id = data.id;
@@ -318,6 +334,7 @@ export default class ExecutionQuoteShowModel {
     );
     this.attachments = data.attachments ?? [];
     this.totalQuotePrice = data.totalQuotePrice;
+    this.clientQuotePrice = data.clientQuotePrice;
     this.createdAt = data.createdAt;
     Object.freeze(this);
   }
@@ -330,11 +347,12 @@ export default class ExecutionQuoteShowModel {
       quoteSource: quoteSourceValue(json.quote_source),
       project: projectSummary(json.project),
       client: clientSummary(json.client),
-      quoteType: quoteTypeSummary(json.quote_type),
+      quoteType: quoteTypeSummary(json.quote_type, json.quote_type_id),
       priceEmployee: employeeSummary(json.price_employee),
       quoteStages: quoteStageSummaries(json.quote_stages),
       attachments: attachmentSummaries(json.attachments),
       totalQuotePrice: decimalNumberValue(json.total_quote_price),
+      clientQuotePrice: decimalNumberValue(json.client_quote_price),
       createdAt: stringValue(json.created_at),
     });
   }

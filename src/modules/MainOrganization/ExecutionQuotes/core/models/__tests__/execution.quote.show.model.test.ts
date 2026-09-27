@@ -3,6 +3,15 @@ import { describe, expect, it } from 'vitest';
 import ExecutionQuoteShowModel from '../execution.quote.show.model';
 
 describe('ExecutionQuoteShowModel', () => {
+  it.each([
+    [{ quote_type: 2 }, 2],
+    [{ quote_type_id: '1' }, 1],
+  ])('maps the quote type used by execution quote tables', (rawQuoteType, expectedTypeId) => {
+    const model = ExecutionQuoteShowModel.fromJson(rawQuoteType);
+
+    expect(model.quoteType?.id).toBe(expectedTypeId);
+  });
+
   it('maps the execution quote show resource', () => {
     const quote = ExecutionQuoteShowModel.fromJson({
       id: 41,
@@ -33,6 +42,7 @@ describe('ExecutionQuoteShowModel', () => {
       quote_type: { id: 1, title: 'Lump_SUM' },
       price_employee: { id: 68, name: 'type test' },
       total_quote_price: '123456.78',
+      client_quote_price: '150000.00',
       attachments: [
         {
           id: 9,
@@ -63,6 +73,7 @@ describe('ExecutionQuoteShowModel', () => {
             },
           ],
           client_price: '52000000.00',
+          percentage: '10.00',
           total_price: '44444444.00',
           created_at: '2026-09-23 12:42:40',
         },
@@ -98,6 +109,7 @@ describe('ExecutionQuoteShowModel', () => {
       quoteType: { id: 1, title: 'Lump_SUM' },
       priceEmployee: { id: 68, name: 'type test' },
       totalQuotePrice: 123456.78,
+      clientQuotePrice: 150000,
       attachments: [
         {
           id: 9,
@@ -131,6 +143,7 @@ describe('ExecutionQuoteShowModel', () => {
             },
           ],
           clientPrice: 52000000,
+          percentage: 10,
           totalPrice: 44444444,
           createdAt: '2026-09-23 12:42:40',
         },

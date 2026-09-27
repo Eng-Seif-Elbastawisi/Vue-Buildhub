@@ -225,7 +225,7 @@ describe('ExecutionQuoteForm', () => {
 
     const base = wrapper.emitted('updateData')?.at(-1)?.[0] as AddExecutionQuoteParams;
 
-    expect(base.toMap().quote_type_id).toBe(ExecutionQuoteTypeEnum.SUPERVISION);
+    expect(base.toMap().quote_type).toBe(ExecutionQuoteTypeEnum.SUPERVISION);
   });
 
   it('shows only the focused builder on a stage route', () => {
