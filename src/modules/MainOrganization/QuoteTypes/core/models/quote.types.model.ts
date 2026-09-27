@@ -7,6 +7,7 @@ export default class QuoteTypeModel {
   public readonly description?: string;
   public readonly typeCode?: string;
   public readonly calculationModel?: string;
+  public readonly quoteTypeChildrenCount: number;
   public readonly status: boolean;
 
   public readonly translations: {
@@ -24,11 +25,13 @@ export default class QuoteTypeModel {
     description?: string;
     typeCode?: string;
     calculationModel?: string;
+    quoteTypeChildrenCount?: number;
     status?: boolean;
   }) {
     this.id = data.id;
     this.typeCode = data.typeCode;
     this.calculationModel = data.calculationModel;
+    this.quoteTypeChildrenCount = data.quoteTypeChildrenCount ?? 0;
     this.status = data.status ?? false;
 
     this.translations = {
@@ -175,6 +178,8 @@ export default class QuoteTypeModel {
       calculationModel: QuoteTypeModel.mapCalculationModel(
         json.calculationModel ?? json.calculation_model,
       ),
+
+      quoteTypeChildrenCount: Number(json.quote_type_children_count ?? 0),
 
       status: json.status === true || Number(json.status) === 1,
 

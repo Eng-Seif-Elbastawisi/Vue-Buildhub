@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import ItemTypesModel from '@/modules/MainOrganization/ItemTypes/core/models/item.types.model';
+import MeasurementModel from '@/modules/shared/measurement/core/models/measurement.model';
 import StageModel from '@/modules/shared/Stages/core/models/stage.model';
 import { UnitTypeEnum } from '../../constant/unit.type.enum';
 import MaterialsModel from '../materials.model';
@@ -12,6 +13,12 @@ describe('MaterialsModel', () => {
       item_type: {
         id: 12,
         title: 'Finishing',
+        status: 1,
+      },
+      measurement_unit: {
+        id: 2,
+        title: 'Bag',
+        symbol: 'bag',
         status: 1,
       },
       stage: {
@@ -41,6 +48,10 @@ describe('MaterialsModel', () => {
         title: 'Finishing',
         status: true,
       },
+      measurementUnit: {
+        id: 2,
+        title: 'Bag',
+      },
       stage: {
         id: 20,
         title: 'Preparation',
@@ -55,6 +66,7 @@ describe('MaterialsModel', () => {
       status: true,
     });
     expect(model.itemType).toBeInstanceOf(ItemTypesModel);
+    expect(model.measurementUnit).toBeInstanceOf(MeasurementModel);
     expect(model.stage).toBeInstanceOf(StageModel);
     expect(model.subStage).toBeInstanceOf(StageModel);
   });

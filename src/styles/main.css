@@ -2991,6 +2991,7 @@ html[dir='rtl'] .input-search .icon-remove {
   inset: 0;
   background: transparent;
   border-radius: var(--radius-sm);
+  pointer-events: none;
   transition: background 0.2s ease;
 }
 .app-table-wrapper .app-table tbody tr td.td-data:hover::before {

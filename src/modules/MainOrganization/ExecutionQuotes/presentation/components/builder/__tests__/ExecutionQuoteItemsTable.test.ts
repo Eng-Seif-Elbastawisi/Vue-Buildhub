@@ -2,6 +2,7 @@ import { mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
 
 import AppTable from '@/shared/HelpersComponents/AppTable.vue';
+import ar from '@/locales/ar.json';
 
 import { ExecutionQuoteItemSourceEnum } from '../../../../core/constants/execution.quote.item.source.enum';
 import ExecutionQuoteItemsTable from '../ExecutionQuoteItemsTable.vue';
@@ -14,10 +15,11 @@ const quoteItem = {
   source_id: 3,
   quantity: 2,
   unit_price: 10,
+  unit_id: 9,
 };
 
 describe('ExecutionQuoteItemsTable', () => {
-  it('uses the shared table and emits removal from the shared action button', async () => {
+  it('uses the shared table and exposes edit and delete before submission', async () => {
     const wrapper = mount(ExecutionQuoteItemsTable, {
       props: { items: [quoteItem] },
       global: {
@@ -28,7 +30,10 @@ describe('ExecutionQuoteItemsTable', () => {
     expect(wrapper.findComponent(AppTable).exists()).toBe(true);
     expect(wrapper.text()).toContain('execution_quote.table.main_stage');
 
-    await wrapper.get('.app-btn').trigger('click');
+    await wrapper.get('.quote-item-actions__edit').trigger('click');
+    expect(wrapper.emitted('edit')?.[0]?.[0]).toEqual(quoteItem);
+
+    await wrapper.get('.quote-item-actions__delete').trigger('click');
     expect(wrapper.emitted('remove')?.[0]?.[0]).toEqual(quoteItem);
   });
 
@@ -56,5 +61,18 @@ describe('ExecutionQuoteItemsTable', () => {
     });
 
     expect(wrapper.find('.app-btn').exists()).toBe(false);
+  });
+
+  it('renders the edit action in Arabic', () => {
+    const wrapper = mount(ExecutionQuoteItemsTable, {
+      props: { items: [quoteItem] },
+      global: {
+        mocks: {
+          $t: (key: keyof typeof ar) => ar[key] ?? key,
+        },
+      },
+    });
+
+    expect(wrapper.get('.quote-item-actions__edit').text()).toContain('تعديل');
   });
 });

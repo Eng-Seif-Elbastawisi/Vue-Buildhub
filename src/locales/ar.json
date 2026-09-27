@@ -2527,6 +2527,7 @@
   "sidebar.quote-types": "نوع المقايسات",
   "execution_quote": {
     "quote_type_title": "نوع المقايسة",
+    "quote_type_hint": "اختر طريقة تسعير المقايسة وإدارتها.",
     "quote_types": {
       "lump_sum": { "title": "مقطوعية", "description": "سعر ثابت للمراحل المحددة." },
       "supervision": { "title": "إشراف", "description": "مقايسة إشراف للبنود والكميات بدون تسعير." }
@@ -2554,9 +2555,13 @@
     "sub_stages_empty": "لا توجد مراحل فرعية لهذه المرحلة.",
     "what_will_you_add": "٢. ماذا ستضيف؟",
     "select_item_title": "٣. اختر البند وأضفه",
+    "edit_item_title": "تعديل بند المقايسة",
     "ready_to_add": "جاهز للإضافة",
+    "editing_item": "جاري التعديل",
     "select_sub_stage_and_source": "اختر المرحلة الفرعية والمصدر للبدء.",
     "add_item": "إضافة البند",
+    "update_item": "حفظ التعديل",
+    "cancel_edit": "إلغاء التعديل",
     "delete_item": "حذف",
     "client_stage_price": "سعر المرحلة للعميل",
     "always_visible": "ظاهر دائماً",
@@ -2616,6 +2621,7 @@
     "title": "مقايسة تنفيذ",
     "subtitle": "مرحلة التنفيذ",
     "badge": "BuildHub OS",
+    "workspace": "استوديو مقايسات BuildHub",
     "new_quote": "مقايسة جديدة",
     "view_quotes": "عرض المقايسات",
     "new_draft": "مسودة جديدة",
@@ -2627,8 +2633,10 @@
     "build_path": "مسار بناء المقايسة",
     "four_steps": "٤ خطوات",
     "source_title": "مصدر مقايسة التنفيذ",
+    "source_hint": "حدد نقطة البداية المناسبة لمقايسة التنفيذ.",
     "from_approved_design": "من تصميم معتمد",
     "quote_data": "بيانات المقايسة",
+    "quote_data_hint": "اربط العميل والمشروع ومسؤول التسعير والملفات الداعمة.",
     "add_client": "إضافة عميل جديد",
     "attachments": {
       "title": "المرفقات",
@@ -2643,6 +2651,8 @@
       "required_data": "أكمل بيانات العميل المطلوبة قبل الحفظ."
     },
     "save": "حفظ مقايسة التنفيذ",
+    "setup_ready_title": "جاهز لبناء المقايسة",
+    "setup_ready_hint": "احفظ هذه البيانات لفتح المراحل والبنود.",
     "save_and_continue": "حفظ البنود والمتابعة",
     "save_batch_title": "حفظ مجموعة البنود الحالية",
     "save_batch_hint": "بعد الحفظ ستبقى داخل نفس المرحلة الأساسية لتختار مرحلة فرعية أخرى.",
@@ -2652,7 +2662,7 @@
     "show": {
       "title": "تفاصيل مقايسة التنفيذ",
       "description": "عرض متكامل لبيانات المشروع والعميل والمسؤولين عن المقايسة.",
-      "eyebrow": "مقايسة رقم {id}",
+      "eyebrow": "مقايسة تنفيذ",
       "back": "الرجوع للمقايسات",
       "action": "عرض",
       "project_fallback": "مقايسة تنفيذ",
@@ -2674,6 +2684,19 @@
       "client_type": "نوع العميل",
       "client_source": "مصدر العميل",
       "client_created_at": "تاريخ إنشاء العميل",
+      "attachments_section": "مرفقات المقايسة",
+      "attachments_section_hint": "الملفات الداعمة التي تم رفعها مع مقايسة التنفيذ.",
+      "attachments_count": "{count} ملفات",
+      "attachment_number": "مرفق رقم {number}",
+      "file_type": "ملف",
+      "preview_attachment": "معاينة {name}",
+      "attachment_preview_hint": "راجع الملف المرفوع دون مغادرة صفحة المقايسة.",
+      "preview_unavailable": "المعاينة غير متاحة",
+      "preview_unavailable_hint": "افتح الملف الأصلي لعرضه باستخدام تطبيق متوافق.",
+      "close_preview": "إغلاق",
+      "open_original": "فتح الملف الأصلي",
+      "no_attachments": "لا توجد مرفقات",
+      "no_attachments_hint": "لم يتم رفع ملفات داعمة مع هذه المقايسة.",
       "stages_section": "المراحل والبنود",
       "stages_section_hint": "{stages} مراحل تحتوي على {items} بنود.",
       "main_stage": "المرحلة الأساسية",
@@ -2716,11 +2739,11 @@
     "sources": {
       "execution_only": {
         "title": "تنفيذ فقط",
-        "description": "طلب تنفيذ مباشر ببيانات فاضية."
+        "description": "ابدأ مقايسة تنفيذ مستقلة وحدد سياق المشروع من البداية."
       },
       "design_quote": {
         "title": "تنفيذ من مقايسة تصميم",
-        "description": "اختر العميل ثم اختر أحد مشروعاته"
+        "description": "انقل سياق العميل والمشروع من مقايسة تصميم معتمدة."
       }
     },
     "fields": {

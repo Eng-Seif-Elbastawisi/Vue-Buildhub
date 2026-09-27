@@ -59,6 +59,7 @@ const SelectStub = {
 
 const FileUploadStub = {
   name: 'HandleFilesUpload',
+  props: { required: Boolean },
   emits: ['change'],
   template: '<button class="file-upload-stub" />',
 };
@@ -185,6 +186,12 @@ describe('ExecutionQuoteForm', () => {
         link: null,
       },
     ]);
+  });
+
+  it('marks attachments as required', () => {
+    const wrapper = mountForm();
+
+    expect(wrapper.getComponent(FileUploadStub).props('required')).toBe(true);
   });
 
   it('filters project options by the selected existing client', async () => {

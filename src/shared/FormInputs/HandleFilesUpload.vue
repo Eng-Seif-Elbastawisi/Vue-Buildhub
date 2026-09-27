@@ -28,6 +28,7 @@
     helpText?: string;
     helpExamples?: string[];
     showHelp?: boolean;
+    required?: boolean;
   }
 
   const props = withDefaults(defineProps<Props>(), {
@@ -64,6 +65,7 @@
     helpText: '',
     helpExamples: () => [],
     showHelp: true,
+    required: false,
   });
 
   const emit = defineEmits<{
@@ -247,7 +249,10 @@
 <template>
   <div class="file-upload-wrapper">
     <span class="field-help-label-row">
-      <label class="upload-label">{{ $t(label) }}</label>
+      <label class="upload-label" :for="inputId">
+        {{ $t(label) }}
+        <span v-if="required" class="upload-label__required" aria-hidden="true">*</span>
+      </label>
 
       <FieldHelpIcon
         :label="$t(label)"
@@ -275,6 +280,8 @@
         :accept="accept"
         :disabled="isMaxReached"
         :multiple="multiple"
+        :required="required"
+        :aria-required="required || undefined"
         hidden
         @change="handleFileUpload"
       />
@@ -287,6 +294,8 @@
         :accept="accept"
         :disabled="isMaxReached"
         :multiple="multiple"
+        :required="required"
+        :aria-required="required || undefined"
         hidden
         @change="handleFileUpload"
       />
@@ -341,6 +350,10 @@
     color: var(--gray-5);
     font-size: 16px;
     font-weight: 600;
+  }
+
+  .upload-label__required {
+    color: var(--danger);
   }
 
   .upload-area {

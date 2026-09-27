@@ -45,6 +45,7 @@ export default class AddExecutionQuoteParams implements Params {
         QuoteSourceEnum.EXECUTION_FROM_DESIGN_QUOTE,
       labelKey: 'price_employee_id',
     },
+    attachments: { required: true, labelKey: 'attachments' },
   });
 
   constructor(paramsData: {

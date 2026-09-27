@@ -2935,6 +2935,7 @@ html[dir=rtl] .input-search .icon-remove {
   inset: 0;
   background: transparent;
   border-radius: var(--radius-sm);
+  pointer-events: none;
   transition: background 0.2s ease;
 }
 .app-table-wrapper .app-table tbody tr td.td-data:hover::before {
@@ -3348,27 +3349,42 @@ body::-webkit-scrollbar-thumb:hover {
   justify-content: stretch;
   align-items: stretch;
   width: 100%;
+  min-width: 0;
   font-family: var(--font-family);
   background-color: var(--bg-main);
+}
+@media (max-width: 1023px) {
+  .content {
+    display: block;
+    overflow-x: hidden;
+  }
 }
 .content .sidebar-container {
   padding: 26px;
 }
-@media (max-width: 768px) {
+@media (max-width: 1023px) {
   .content .sidebar-container {
-    display: none;
+    display: none !important;
   }
 }
 .content .content-wrapper {
   width: 95%;
+  min-width: 0;
   margin-inline: auto;
-  padding-left: 1rem;
+  padding-inline-start: 1rem;
   display: flex;
   flex-direction: column;
   flex-wrap: nowrap;
   justify-content: flex-start;
   align-items: stretch;
   overflow: hidden;
+}
+@media (max-width: 1023px) {
+  .content .content-wrapper {
+    width: 100%;
+    margin-inline: 0;
+    padding-inline: 0;
+  }
 }
 .content .p-accordioncontent-content {
   margin-inline: 19px;
@@ -3377,6 +3393,8 @@ body::-webkit-scrollbar-thumb:hover {
   margin-inline: 19px;
 }
 .content .main-content {
+  width: 100%;
+  min-width: 0;
   background-color: var(--bg-main);
   overflow: hidden;
   z-index: 999;
@@ -3384,7 +3402,7 @@ body::-webkit-scrollbar-thumb:hover {
   min-height: 82vh;
   padding: 0 40px;
 }
-@media (max-width: 768px) {
+@media (max-width: 1023px) {
   .content .main-content {
     padding: 14px;
   }

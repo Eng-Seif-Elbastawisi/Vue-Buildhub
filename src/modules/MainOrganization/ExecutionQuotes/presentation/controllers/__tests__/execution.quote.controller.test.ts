@@ -35,7 +35,7 @@ describe('ExecutionQuoteController', () => {
       stageId: 129,
       subStageId: 150,
       itemType: ExecutionQuoteItemSourceEnum.PRODUCT,
-      items: [{ morphId: 17, expectedPrice: 0, quantity: 1 }],
+      items: [{ morphId: 17, expectedPrice: 0, quantity: 1, unit: 9 }],
     });
     storeDetails.mockResolvedValue(new DataSuccess({ data: undefined }));
 

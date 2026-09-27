@@ -2594,6 +2594,7 @@
     "title": "Execution Quote",
     "subtitle": "Execution phase",
     "badge": "BuildHub OS",
+    "workspace": "BuildHub quote studio",
     "new_quote": "New quote",
     "view_quotes": "View quotes",
     "new_draft": "New draft",
@@ -2605,8 +2606,10 @@
     "build_path": "Quote build path",
     "four_steps": "4 steps",
     "source_title": "Execution quote source",
+    "source_hint": "Choose the starting point for this execution quote.",
     "from_approved_design": "From approved design",
     "quote_data": "Quote data",
+    "quote_data_hint": "Connect the client, project, pricing owner and supporting files.",
     "add_client": "Add new client",
     "attachments": {
       "title": "Attachments",
@@ -2621,6 +2624,7 @@
       "required_data": "Complete the required client data before saving."
     },
     "quote_type_title": "Quote type",
+    "quote_type_hint": "Choose how this quote will be priced and managed.",
     "quote_types": {
       "lump_sum": {
         "title": "Lump sum",
@@ -2654,9 +2658,13 @@
     "sub_stages_empty": "No sub stages are available for this main stage.",
     "what_will_you_add": "2. What will you add?",
     "select_item_title": "3. Select the item and add it",
+    "edit_item_title": "Edit quote item",
     "ready_to_add": "Ready to add",
+    "editing_item": "Editing",
     "select_sub_stage_and_source": "Select a sub stage and source to begin.",
     "add_item": "Add item",
+    "update_item": "Save changes",
+    "cancel_edit": "Cancel editing",
     "delete_item": "Delete",
     "client_stage_price": "Client stage price",
     "always_visible": "Always visible",
@@ -2714,6 +2722,8 @@
     "expected_margin": "Expected margin",
     "current_stage_summary": "Current stage cost: {cost} · Expected margin: {margin}",
     "save": "Save execution quote",
+    "setup_ready_title": "Ready to build the quote",
+    "setup_ready_hint": "Save this setup to unlock stages and line items.",
     "save_and_continue": "Save items and continue",
     "save_batch_title": "Save this batch of items",
     "save_batch_hint": "After saving, you will stay in this main stage so you can choose another sub-stage.",
@@ -2723,7 +2733,7 @@
     "show": {
       "title": "Execution quote details",
       "description": "A complete view of the project, client and quote ownership.",
-      "eyebrow": "Quote #{id}",
+      "eyebrow": "Execution quote",
       "back": "Back to quotes",
       "action": "Show",
       "project_fallback": "Execution quote",
@@ -2745,6 +2755,19 @@
       "client_type": "Client type",
       "client_source": "Client source",
       "client_created_at": "Client created at",
+      "attachments_section": "Quote attachments",
+      "attachments_section_hint": "Supporting files uploaded with this execution quote.",
+      "attachments_count": "{count} files",
+      "attachment_number": "Attachment {number}",
+      "file_type": "File",
+      "preview_attachment": "Preview {name}",
+      "attachment_preview_hint": "Review the uploaded file without leaving the quote.",
+      "preview_unavailable": "Preview is not available",
+      "preview_unavailable_hint": "Open the original file to view it in a compatible application.",
+      "close_preview": "Close",
+      "open_original": "Open original",
+      "no_attachments": "No attachments",
+      "no_attachments_hint": "No supporting files were uploaded with this quote.",
       "stages_section": "Stages and items",
       "stages_section_hint": "{stages} stages containing {items} items.",
       "main_stage": "Main stage",
@@ -2787,11 +2810,11 @@
     "sources": {
       "execution_only": {
         "title": "Execution only",
-        "description": "A direct execution request with empty project data."
+        "description": "Start a standalone execution quote and define its project context."
       },
       "design_quote": {
         "title": "From design quote",
-        "description": "Choose a client, then select one of their projects."
+        "description": "Carry the client and project context forward from an approved design quote."
       }
     },
     "fields": {

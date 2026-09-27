@@ -11,9 +11,9 @@ describe('StoreExecutionQuoteDetailsParams', () => {
       subStageId: 85,
       itemType: ExecutionQuoteItemSourceEnum.PRODUCT,
       items: [
-        { morphId: 25, expectedPrice: 500, quantity: 3 },
-        { morphId: 30, expectedPrice: 750, quantity: 2 },
-        { morphId: 35, expectedPrice: 250, quantity: 5 },
+        { morphId: 25, expectedPrice: 500, quantity: 3, unit: 5 },
+        { morphId: 30, expectedPrice: 750, quantity: 2, unit: 6 },
+        { morphId: 35, expectedPrice: 250, quantity: 5, unit: 7 },
       ],
     });
 
@@ -23,9 +23,9 @@ describe('StoreExecutionQuoteDetailsParams', () => {
       sub_stage_id: 85,
       item_type: 1,
       items: [
-        { morph_id: 25, expected_price: 500, quantity: 3 },
-        { morph_id: 30, expected_price: 750, quantity: 2 },
-        { morph_id: 35, expected_price: 250, quantity: 5 },
+        { morph_id: 25, expected_price: 500, quantity: 3, unit: 5 },
+        { morph_id: 30, expected_price: 750, quantity: 2, unit: 6 },
+        { morph_id: 35, expected_price: 250, quantity: 5, unit: 7 },
       ],
     });
     expect(params.validate().isValid).toBe(true);
@@ -41,5 +41,20 @@ describe('StoreExecutionQuoteDetailsParams', () => {
     });
 
     expect(params.validate().isValid).toBe(false);
+  });
+
+  it('rejects an item without a measurement unit CRUD id', () => {
+    const params = new StoreExecutionQuoteDetailsParams({
+      quoteId: 1,
+      stageId: 82,
+      subStageId: 85,
+      itemType: ExecutionQuoteItemSourceEnum.PRODUCT,
+      items: [{ morphId: 25, expectedPrice: 500, quantity: 3, unit: 0 }],
+    });
+
+    expect(params.validate()).toMatchObject({
+      isValid: false,
+      errors: [expect.objectContaining({ field: 'items.0.unit' })],
+    });
   });
 });

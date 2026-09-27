@@ -89,6 +89,7 @@ describe('ExecutionQuoteAdd', () => {
       projectId: 2,
       quoteTypeId: ExecutionQuoteTypeEnum.LUMP_SUM,
       priceEmployeeId: 3,
+      attachments: [{ file: 'data:application/pdf;base64,cXVvdGU=' }],
     });
 
     wrapper.getComponent({ name: 'ExecutionQuoteForm' }).vm.$emit('updateData', baseParams);
@@ -144,9 +145,9 @@ describe('ExecutionQuoteAdd', () => {
     expect(wrapper.getComponent({ name: 'ExecutionQuoteForm' }).props('initialQuoteType')).toBe(
       ExecutionQuoteTypeEnum.SUPERVISION,
     );
-    expect(wrapper.getComponent({ name: 'ExecutionQuoteForm' }).props('initialQuoteStages')).toEqual([
-      expect.objectContaining({ stageId: 1, subStageId: 11 }),
-    ]);
+    expect(
+      wrapper.getComponent({ name: 'ExecutionQuoteForm' }).props('initialQuoteStages'),
+    ).toEqual([expect.objectContaining({ stageId: 1, subStageId: 11 })]);
   });
 
   it('saves the current batch and stays on the same main stage for more sub-stages', async () => {
@@ -168,7 +169,7 @@ describe('ExecutionQuoteAdd', () => {
       stageId: 129,
       subStageId: 41,
       itemType: ExecutionQuoteItemSourceEnum.PRODUCT,
-      items: [{ morphId: 22, expectedPrice: 50, quantity: 2 }],
+      items: [{ morphId: 22, expectedPrice: 50, quantity: 2, unit: 9 }],
     });
     const wrapper = mountAdd();
     await flushPromises();

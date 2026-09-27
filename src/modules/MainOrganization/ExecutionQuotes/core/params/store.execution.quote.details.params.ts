@@ -23,6 +23,7 @@ export interface ExecutionQuoteMorphItemRequest {
   morphId: number;
   expectedPrice: number;
   quantity: number;
+  unit: number;
 }
 
 export default class StoreExecutionQuoteDetailsParams implements Params {
@@ -68,6 +69,7 @@ export default class StoreExecutionQuoteDetailsParams implements Params {
         morph_id: morphItem.morphId,
         expected_price: morphItem.expectedPrice,
         quantity: morphItem.quantity,
+        unit: morphItem.unit,
       })),
     };
   }
@@ -80,6 +82,13 @@ export default class StoreExecutionQuoteDetailsParams implements Params {
       if (!morphItem.morphId) {
         itemErrors.push({
           field: `items.${itemIndex}.morph_id`,
+          message: translate('execution_quote.validation.item_required'),
+        });
+      }
+
+      if (!Number.isInteger(morphItem.unit) || morphItem.unit <= 0) {
+        itemErrors.push({
+          field: `items.${itemIndex}.unit`,
           message: translate('execution_quote.validation.item_required'),
         });
       }
