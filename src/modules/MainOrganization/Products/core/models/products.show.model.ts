@@ -27,6 +27,7 @@ interface ApiProductsShowResponse {
   sortings?: Record<string, unknown>[];
   attachments?: Record<string, unknown>[];
   image?: string;
+  code?: string;
   is_active?: boolean | number | string | null;
   isActive?: boolean;
 }
@@ -55,6 +56,10 @@ export default class ProductsShowModel {
 
   public readonly image?: string;
 
+  public readonly code?: string;
+
+  public readonly attachments: AttachmentModel[];
+
   constructor(data: {
     id?: number;
 
@@ -75,6 +80,8 @@ export default class ProductsShowModel {
     sortings?: ProductShowSortingModel[];
 
     image?: string;
+    code?: string;
+    attachments?: AttachmentModel[];
     title?: string;
     description?: string;
   }) {
@@ -97,6 +104,8 @@ export default class ProductsShowModel {
     this.sortings = data.sortings ?? [];
 
     this.image = data.image;
+    this.code = data.code;
+    this.attachments = data.attachments ?? [];
     this.title = data.title;
     this.description = data.description;
 
@@ -189,9 +198,9 @@ export default class ProductsShowModel {
       ? data.attachments.map((attachment) => AttachmentModel.fromJson(attachment))
       : [];
 
-    const firstAttachment = attachments[0];
+    const imageAttachment = attachments.find((attachment) => attachment.type === 1);
 
-    const image = firstAttachment?.file ?? data.image ?? '';
+    const image = imageAttachment?.file ?? data.image ?? '';
 
     // =====================================================
     // Active
@@ -234,6 +243,8 @@ export default class ProductsShowModel {
       sortings,
 
       image,
+      code: data.code,
+      attachments,
     });
   }
 }

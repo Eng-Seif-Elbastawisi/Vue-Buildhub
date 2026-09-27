@@ -1,77 +1,150 @@
 <script setup lang="ts">
-const props = defineProps<{
-  modelValue: number | null;
-}>();
+  import { computed } from 'vue';
 
-const emit = defineEmits<{
-  (event: 'update:modelValue', value: number | null): void;
-}>();
+  import {
+    ExecutionQuoteTypeEnum,
+    type ExecutionQuoteType,
+  } from '../../../core/constants/execution.quote.type.enum';
 
-const onInput = (event: Event) => {
-  const raw = (event.target as HTMLInputElement).value;
-  if (raw === '') {
-    emit('update:modelValue', null);
-    return;
-  }
+  const props = withDefaults(
+    defineProps<{
+      modelValue: number | null;
+      quoteType: ExecutionQuoteType;
+      disabled?: boolean;
+    }>(),
+    { disabled: false },
+  );
 
-  const value = Number(raw);
-  emit('update:modelValue', Number.isFinite(value) ? Math.max(value, 0) : props.modelValue);
-};
+  const emit = defineEmits<{
+    (event: 'update:modelValue', value: number | null): void;
+  }>();
+
+  const isSupervision = computed(() => props.quoteType === ExecutionQuoteTypeEnum.SUPERVISION);
+  const titleKey = computed(() =>
+    isSupervision.value
+      ? 'execution_quote.stage_pricing.percentage_title'
+      : 'execution_quote.client_stage_price',
+  );
+  const placeholderKey = computed(() =>
+    isSupervision.value
+      ? 'execution_quote.stage_pricing.percentage_placeholder'
+      : 'execution_quote.placeholders.client_stage_price',
+  );
+  const badgeKey = computed(() =>
+    isSupervision.value
+      ? 'execution_quote.stage_pricing.percentage_badge'
+      : 'execution_quote.stage_pricing.price_badge',
+  );
+
+  const onInput = (event: Event) => {
+    const raw = (event.target as HTMLInputElement).value;
+    if (raw === '') {
+      emit('update:modelValue', null);
+      return;
+    }
+
+    const numericValue = Number(raw);
+    if (!Number.isFinite(numericValue)) {
+      emit('update:modelValue', props.modelValue);
+      return;
+    }
+
+    const nonNegativeValue = Math.max(numericValue, 0);
+    emit(
+      'update:modelValue',
+      isSupervision.value ? Math.min(nonNegativeValue, 100) : nonNegativeValue,
+    );
+  };
 </script>
 
 <template>
   <section class="execution-builder-card client-price">
     <div class="builder-section-title">
-      <h2>{{ $t('execution_quote.client_stage_price') }}</h2>
-      <span class="builder-badge">{{ $t('execution_quote.always_visible') }}</span>
+      <h2>{{ $t(titleKey) }}</h2>
+      <span class="builder-badge">{{ $t(badgeKey) }}</span>
     </div>
 
-    <input :value="modelValue ?? ''" type="number" min="0" step="1"
-      :placeholder="$t('execution_quote.placeholders.client_stage_price')" @input="onInput" />
+    <div class="pricing-input">
+      <input
+        :value="modelValue ?? ''"
+        type="number"
+        min="0"
+        :max="isSupervision ? 100 : undefined"
+        :step="isSupervision ? 0.01 : 1"
+        :disabled="disabled"
+        :aria-label="$t(titleKey)"
+        :placeholder="$t(placeholderKey)"
+        @input="onInput"
+      />
+      <span class="pricing-input__suffix">
+        {{ isSupervision ? '%' : $t('execution_quote.table.currency_egp') }}
+      </span>
+    </div>
   </section>
 </template>
 
 <style scoped lang="scss">
-.execution-builder-card {
-  padding: 1.1rem;
-  border: 1px solid var(--border-weak);
-  border-radius: var(--radius-md);
-  background: var(--bg-card);
-  box-shadow: var(--shadow-sm);
-}
+  .execution-builder-card {
+    padding: 1.1rem;
+    border: 1px solid var(--border-weak);
+    border-radius: var(--radius-md);
+    background: var(--bg-card);
+    box-shadow: var(--shadow-sm);
+  }
 
-.builder-section-title {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-}
+  .builder-section-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
 
-.builder-section-title h2 {
-  margin: 0;
-  color: var(--title-card-color);
-  font-size: 1.15rem;
-}
+  .builder-section-title h2 {
+    margin: 0;
+    color: var(--title-card-color);
+    font-size: 1.15rem;
+  }
 
-.builder-badge {
-  display: inline-flex;
-  width: fit-content;
-  padding: 0.25rem 0.55rem;
-  border-radius: var(--radius-full);
-  background: var(--PrimaryColor-light);
-  color: var(--PrimaryColor);
-  font-size: var(--xs-size);
-  font-weight: 700;
-}
+  .builder-badge {
+    display: inline-flex;
+    width: fit-content;
+    padding: 0.25rem 0.55rem;
+    border-radius: var(--radius-full);
+    background: var(--PrimaryColor-light);
+    color: var(--PrimaryColor);
+    font-size: var(--xs-size);
+    font-weight: 700;
+  }
 
-.client-price input {
-  width: 100%;
-  min-height: 2.8rem;
-  margin-top: 0.85rem;
-  padding: 0.55rem 0.7rem;
-  border: 1px solid var(--input-border-color);
-  border-radius: var(--radius-sm);
-  background: var(--bg-card);
-  color: var(--Title-input-Color);
-}
+  .pricing-input {
+    position: relative;
+    margin-top: 0.85rem;
+  }
+
+  .pricing-input input {
+    width: 100%;
+    min-height: 2.8rem;
+    padding-block: 0.55rem;
+    padding-inline: 0.7rem 3.5rem;
+    border: 1px solid var(--input-border-color);
+    border-radius: var(--radius-sm);
+    background: var(--bg-card);
+    color: var(--Title-input-Color);
+  }
+
+  .pricing-input input:disabled {
+    cursor: not-allowed;
+    opacity: 0.65;
+  }
+
+  .pricing-input__suffix {
+    position: absolute;
+    top: 50%;
+    inset-inline-end: 0.75rem;
+    color: var(--subtitle-color);
+    font-size: var(--xs-size);
+    font-weight: 700;
+    pointer-events: none;
+    transform: translateY(-50%);
+  }
 </style>

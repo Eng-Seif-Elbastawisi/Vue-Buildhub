@@ -11,6 +11,7 @@ import { HttpStatusCode } from 'axios';
 
 import ExecutionQuoteShowModel from '../../core/models/execution.quote.show.model';
 import type StoreExecutionQuoteDetailsParams from '../../core/params/store.execution.quote.details.params';
+import type SetExecutionQuoteStagePricingParams from '../../core/params/set.execution.quote.stage.pricing.params';
 import ExecutionQuoteApiService, {
   type ExecutionQuoteDetailsResponse,
 } from '../api/execution.quote.api-service';
@@ -64,13 +65,22 @@ export default class ExecutionQuoteRepository extends BaseRepository<
   async storeDetails(data?: StoreExecutionQuoteDetailsParams): Promise<DataState<void>> {
     try {
       const response = await this.apiService.storeDetails(data);
-      return this.parseStoreDetailsResponse(response);
+      return this.parseMutationResponse(response);
     } catch (error) {
       return this.handleError<void>(error);
     }
   }
 
-  private parseStoreDetailsResponse(
+  async setStagePricing(data?: SetExecutionQuoteStagePricingParams): Promise<DataState<void>> {
+    try {
+      const response = await this.apiService.setStagePricing(data);
+      return this.parseMutationResponse(response);
+    } catch (error) {
+      return this.handleError<void>(error);
+    }
+  }
+
+  private parseMutationResponse(
     response: ApiResponse<ExecutionQuoteDetailsResponse>,
   ): DataState<void> {
     const isSuccess =

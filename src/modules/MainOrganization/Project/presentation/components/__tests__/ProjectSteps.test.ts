@@ -12,10 +12,11 @@ describe('ProjectSteps.vue', () => {
 
     const steps = wrapper.findAll('.project-steps__item');
 
-    expect(steps).toHaveLength(4);
+    expect(steps).toHaveLength(3);
     expect(steps[0].classes()).toContain('completed');
     expect(steps[1].classes()).toContain('active');
     expect(steps[2].classes()).not.toContain('completed');
-    expect(steps[3].classes()).not.toContain('completed');
+    expect(steps[1].attributes('aria-current')).toBe('step');
+    expect(steps[0].attributes('aria-current')).toBeUndefined();
   });
 });

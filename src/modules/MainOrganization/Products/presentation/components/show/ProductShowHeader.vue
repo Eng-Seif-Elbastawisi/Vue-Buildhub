@@ -1,72 +1,39 @@
 <script setup lang="ts">
-import type ProductsShowModel from '../../../data/models/products.show.model.ts';
+  import ConfirmCancelDialog from '@/base/Presentation/Dialogs/ConfirmCancelDialog.vue';
 
-defineProps<{
-  product: ProductsShowModel;
-  productsId: number;
-}>();
+  import type ProductsShowModel from '../../../core/models/products.show.model';
 
-const emit = defineEmits<{
-  back: [];
-  edit: [];
-}>();
+  defineProps<{
+    product: ProductsShowModel;
+    deleting?: boolean;
+  }>();
+
+  const emit = defineEmits<{
+    back: [];
+    edit: [];
+    delete: [];
+  }>();
 </script>
 
 <template>
   <header class="page-header">
-    <div class="header-right">
-      <div class="breadcrumb">
-        <span>
-          {{ $t('Products.badge') }}
-        </span>
+    <div class="header-copy">
+      <nav class="breadcrumb" :aria-label="$t('Products.breadcrumb_label')">
+        <router-link to="/">{{ $t('home') }}</router-link>
+        <span aria-hidden="true">/</span>
+        <router-link to="/organization/products">{{ $t('Products.page_title') }}</router-link>
+        <span aria-hidden="true">/</span>
+        <span aria-current="page">{{ $t('Products.show.details_title') }}</span>
+      </nav>
 
-        <span class="sep">
-          /
-        </span>
-
-        <span>
-          {{ $t('Products.show.subtitle') }}
-        </span>
-      </div>
-
-      <h1 class="title">
-        {{
-          product.translations?.title?.ar ||
-          product.translations?.title?.en ||
-          '—'
-        }}
-      </h1>
-
-      <div class="meta">
-        <span class="id">
-          #{{ product.id ?? productsId }}
-        </span>
-
-        <span
-          class="status"
-          :class="
-            product.isActive
-              ? 'active'
-              : 'inactive'
-          "
-        >
-          <span class="dot"></span>
-
-          {{
-            product.isActive
-              ? $t('Products.form.active')
-              : $t('Products.form.inactive')
-          }}
-        </span>
+      <div class="heading-row">
+        <h1>{{ $t('Products.show.details_title') }}</h1>
+        <span class="product-code">#{{ product.code || '—' }}</span>
       </div>
     </div>
 
     <div class="header-actions">
-      <button
-        class="btn btn-ghost"
-        type="button"
-        @click="emit('back')"
-      >
+      <button class="header-btn header-btn--ghost" type="button" @click="emit('back')">
         <svg
           width="16"
           height="16"
@@ -74,211 +41,217 @@ const emit = defineEmits<{
           fill="none"
           stroke="currentColor"
           stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
         >
           <path d="M19 12H5" />
-          <path d="M12 19l-7-7 7-7" />
+          <path d="m12 19-7-7 7-7" />
         </svg>
-
-        {{ $t('common.back') }}
+        {{ $t('Products.form.back') }}
       </button>
 
-      <button
-        class="btn btn-primary"
-        type="button"
-        @click="emit('edit')"
-      >
+      <button class="header-btn header-btn--primary" type="button" @click="emit('edit')">
         <svg
-          width="15"
-          height="15"
+          width="16"
+          height="16"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
           stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
         >
-          <path
-            d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"
-          />
-
-          <path
-            d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"
-          />
+          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+          <path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
         </svg>
-
         {{ $t('common.edit') }}
       </button>
+
+      <ConfirmCancelDialog
+        :title="$t('Products.delete_dialog.title')"
+        :message="$t('Products.delete_dialog.message')"
+        :confirm-label="$t('confirm')"
+        :cancel-label="$t('cancel')"
+        confirm-theme="danger"
+        :disabled="deleting"
+        @confirm="emit('delete')"
+      >
+        <template #trigger="{ open }">
+          <button
+            class="header-btn header-btn--danger"
+            type="button"
+            :disabled="deleting"
+            @click="open"
+          >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v5M14 11v5" />
+            </svg>
+            {{ deleting ? $t('common.loading') : $t('common.delete') }}
+          </button>
+        </template>
+      </ConfirmCancelDialog>
     </div>
   </header>
 </template>
 
 <style scoped lang="scss">
-.page-header {
-  display: flex;
-
-  justify-content: space-between;
-  align-items: flex-start;
-
-  gap: 1.5rem;
-
-  margin-bottom: 1.5rem;
-}
-
-.header-right {
-  min-width: 0;
-}
-
-.breadcrumb {
-  display: flex;
-  align-items: center;
-
-  gap: 0.4rem;
-
-  margin-bottom: 0.35rem;
-
-  font-size: 0.8rem;
-
-  color: #64748b;
-
-  .sep {
-    opacity: 0.5;
-  }
-}
-
-.title {
-  margin: 0;
-
-  font-size: clamp(
-    1.4rem,
-    2.2vw,
-    1.75rem
-  );
-
-  font-weight: 800;
-
-  color: #0f172a;
-
-  line-height: 1.3;
-}
-
-.meta {
-  display: flex;
-
-  align-items: center;
-
-  gap: 0.75rem;
-
-  margin-top: 0.5rem;
-}
-
-.id {
-  font-size: 0.8rem;
-
-  color: #64748b;
-}
-
-.status {
-  display: inline-flex;
-
-  align-items: center;
-
-  gap: 0.35rem;
-
-  padding: 0.2rem 0.65rem;
-
-  border-radius: 999px;
-
-  font-size: 0.75rem;
-
-  font-weight: 600;
-
-  .dot {
-    width: 6px;
-    height: 6px;
-
-    border-radius: 50%;
-
-    background: currentColor;
-  }
-
-  &.active {
-    background: #d1fae5;
-    color: #065f46;
-  }
-
-  &.inactive {
-    background: #fee2e2;
-    color: #991b1b;
-  }
-}
-
-.header-actions {
-  display: flex;
-
-  gap: 0.6rem;
-
-  flex-shrink: 0;
-}
-
-.btn {
-  display: inline-flex;
-
-  align-items: center;
-
-  justify-content: center;
-
-  gap: 0.4rem;
-
-  height: 40px;
-
-  padding: 0 1.1rem;
-
-  border-radius: 0.6rem;
-
-  font-size: 0.875rem;
-
-  font-weight: 600;
-
-  cursor: pointer;
-
-  transition: 0.15s;
-
-  &.btn-ghost {
-    background: white;
-
-    color: #475569;
-
-    border: 1px solid #e2e8f0;
-
-    &:hover {
-      background: #f8fafc;
-
-      border-color: #cbd5e1;
-    }
-  }
-
-  &.btn-primary {
-    background: #b45309;
-
-    color: white;
-
-    border: 0;
-
-    &:hover {
-      background: #92400e;
-    }
-  }
-}
-
-@media (max-width: 700px) {
   .page-header {
-    flex-direction: column;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    min-width: 0;
+    padding-block: 0.1rem 0.35rem;
+  }
+
+  .header-copy {
+    min-width: 0;
+  }
+
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    color: var(--gray-400);
+    font-size: var(--xs-size);
+
+    a {
+      color: var(--gray-500);
+      text-decoration: none;
+
+      &:hover {
+        color: var(--PrimaryColor);
+      }
+    }
+
+    [aria-current='page'] {
+      color: var(--PrimaryColor);
+      font-weight: 600;
+    }
+  }
+
+  .heading-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 0.45rem;
+
+    h1 {
+      margin: 0;
+      color: var(--title-color);
+      font-size: clamp(1.35rem, 2vw, 1.8rem);
+      font-weight: 800;
+      line-height: 1.3;
+    }
+  }
+
+  .product-code {
+    padding: 0.3rem 0.55rem;
+    color: var(--gray-600);
+    background: var(--gray-100);
+    border: 1px solid var(--border-weak);
+    border-radius: var(--radius-sm);
+    font-size: var(--xs-size);
+    font-weight: 700;
+    direction: ltr;
   }
 
   .header-actions {
-    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    flex-shrink: 0;
+  }
 
-    .btn {
-      flex: 1;
+  .header-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    min-height: 2.5rem;
+    padding: 0.55rem 0.9rem;
+    border-radius: var(--radius-sm);
+    font-size: var(--sm-size);
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition-fast);
+
+    &:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--PrimaryColor);
+      outline-offset: 2px;
+    }
+
+    &--ghost {
+      color: var(--gray-700);
+      background: var(--bg-card);
+      border: 1px solid var(--border-weak);
+
+      &:hover {
+        border-color: var(--border-strong);
+        background: var(--gray-50);
+      }
+    }
+
+    &--primary {
+      color: var(--standard-white);
+      background: var(--PrimaryColor);
+      border: 1px solid var(--PrimaryColor);
+
+      &:hover {
+        background: var(--PrimaryColor-hover);
+        border-color: var(--PrimaryColor-hover);
+      }
+    }
+
+    &--danger {
+      color: var(--danger);
+      background: var(--bg-card);
+      border: 1px solid var(--danger);
+
+      &:hover:not(:disabled) {
+        color: var(--standard-white);
+        background: var(--danger);
+      }
     }
   }
-}
+
+  @media (max-width: 760px) {
+    .page-header {
+      align-items: stretch;
+      flex-direction: column;
+    }
+
+    .header-actions {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .header-btn {
+      width: 100%;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .header-actions {
+      grid-template-columns: 1fr;
+    }
+  }
 </style>

@@ -22,6 +22,7 @@ export interface ExecutionQuoteItemState {
 export interface ExecutionQuoteStageState extends Omit<ExecutionQuoteStageRequest, 'items'> {
   stage_name?: string;
   selected_sub_stage_id?: number | string;
+  percentage?: number | null;
   items: ExecutionQuoteItemState[];
 }
 

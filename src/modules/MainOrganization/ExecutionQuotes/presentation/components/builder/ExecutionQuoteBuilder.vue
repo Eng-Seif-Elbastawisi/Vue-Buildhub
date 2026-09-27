@@ -27,6 +27,7 @@
     type ExecutionQuoteMorphItemRequest,
     type ExecutionQuoteStageRequest,
   } from '../../../core/params/store.execution.quote.details.params';
+  import { ExecutionQuoteStagePricingDraft } from '../../../core/params/set.execution.quote.stage.pricing.params';
   import type {
     ExecutionQuoteItemDraft,
     ExecutionQuoteItemState,
@@ -58,6 +59,7 @@
     (event: 'update:modelValue', value: ExecutionQuoteType | null): void;
     (event: 'update:stages', value: ExecutionQuoteStageRequest[]): void;
     (event: 'update:details', value: StoreExecutionQuoteDetailsParams[]): void;
+    (event: 'update:pricing', value: ExecutionQuoteStagePricingDraft[]): void;
   }>();
 
   const router = useRouter();
@@ -72,6 +74,8 @@
   const selectedSubStageId = ref<number | string | undefined>();
   const selectedItemSource = ref<ExecutionQuoteItemSource | null>(null);
   const editingItem = ref<ExecutionQuoteItemState | null>(null);
+  const stagePricingValues = ref<Record<string, number | null>>({});
+  const dirtyPricingStageKeys = ref<Set<string>>(new Set());
   const mainStagesLoading = ref(false);
   const subStagesLoading = ref(false);
 
@@ -89,6 +93,30 @@
   const currentStageState = computed(() => {
     if (!selectedMainStageId.value) return undefined;
     return stageStates.value[String(selectedMainStageId.value)];
+  });
+
+  const currentPersistedQuoteStage = computed(() => {
+    const stageId = Number(selectedMainStageId.value);
+    const subStageId = Number(selectedSubStageId.value);
+    if (!stageId || !subStageId) return undefined;
+
+    return props.initialStages.find(
+      (quoteStage) =>
+        quoteStage.id && quoteStage.stageId === stageId && quoteStage.subStageId === subStageId,
+    );
+  });
+
+  const stagePricingKey = (stageId: number, subStageId: number) => `${stageId}:${subStageId}`;
+
+  const currentStagePricingKey = computed(() => {
+    const stageId = Number(selectedMainStageId.value);
+    const subStageId = Number(selectedSubStageId.value);
+    return stageId && subStageId ? stagePricingKey(stageId, subStageId) : undefined;
+  });
+
+  const currentStagePricingValue = computed(() => {
+    const pricingKey = currentStagePricingKey.value;
+    return pricingKey ? (stagePricingValues.value[pricingKey] ?? null) : null;
   });
 
   const currentStageItems = computed(() => currentStageState.value?.items ?? []);
@@ -121,7 +149,10 @@
     props.modelValue ? t(getExecutionQuoteTypeTitleKey(props.modelValue)) : '',
   );
 
-  const pricingEnabled = computed(() => props.modelValue !== ExecutionQuoteTypeEnum.SUPERVISION);
+  const itemPricingEnabled = true;
+  const stageClientPricingEnabled = computed(
+    () => props.modelValue !== ExecutionQuoteTypeEnum.SUPERVISION,
+  );
 
   const getOrCreateStageState = (stage: StageModel): ExecutionQuoteStageState => {
     const id = Number(stage.id);
@@ -190,6 +221,7 @@
     return {
       ...stageState,
       client_price: stageState.client_price ?? quoteStage.clientPrice ?? null,
+      percentage: stageState.percentage ?? quoteStage.percentage ?? null,
       items: [...stageState.items, ...persistedItems],
       selected_sub_stage_id: stageState.selected_sub_stage_id ?? quoteStage.subStageId,
     };
@@ -217,7 +249,6 @@
     stageId: number;
     subStageId: number;
     itemType: ExecutionQuoteItemSource;
-    clientPrice: number | null;
     items: ExecutionQuoteMorphItemRequest[];
   }
 
@@ -233,7 +264,6 @@
             stageId: Number(stage.stage_id),
             subStageId: Number(quoteItem.sub_stage_id),
             itemType: quoteItem.source_type,
-            clientPrice: stage.client_price,
             items: [],
           };
 
@@ -263,10 +293,58 @@
     );
   };
 
+  const pricingDraftForStage = (
+    pricingKey: string,
+    quoteType: ExecutionQuoteType,
+  ): ExecutionQuoteStagePricingDraft | undefined => {
+    const pricingValue = stagePricingValues.value[pricingKey];
+    if (pricingValue === null || pricingValue === undefined) return undefined;
+
+    const [stageId, subStageId] = pricingKey.split(':').map(Number);
+    const quoteStageId = props.initialStages.find(
+      (quoteStage) => quoteStage.stageId === stageId && quoteStage.subStageId === subStageId,
+    )?.id;
+
+    return new ExecutionQuoteStagePricingDraft({
+      quoteStageId,
+      stageId,
+      subStageId,
+      quoteType,
+      pricingValue,
+    });
+  };
+
+  const stagePricingDrafts = (): ExecutionQuoteStagePricingDraft[] => {
+    const quoteType = props.modelValue;
+    if (!quoteType) return [];
+
+    return [...dirtyPricingStageKeys.value]
+      .map((pricingKey) => pricingDraftForStage(pricingKey, quoteType))
+      .filter((pricingDraft): pricingDraft is ExecutionQuoteStagePricingDraft => !!pricingDraft);
+  };
+
   const emitDetails = () => {
     emit('update:stages', emittedStages());
     emit('update:details', storeRequests());
   };
+
+  const emitPricing = () => {
+    emit('update:pricing', stagePricingDrafts());
+  };
+
+  const hydratedStagePricingValues = (
+    quoteStages: ExecutionQuoteStageSummary[],
+  ): Record<string, number | null> =>
+    Object.fromEntries(
+      quoteStages.flatMap((quoteStage) => {
+        if (!quoteStage.stageId || !quoteStage.subStageId) return [];
+        const pricingValue =
+          props.modelValue === ExecutionQuoteTypeEnum.SUPERVISION
+            ? (quoteStage.percentage ?? null)
+            : (quoteStage.clientPrice ?? null);
+        return [[stagePricingKey(quoteStage.stageId, quoteStage.subStageId), pricingValue]];
+      }),
+    );
 
   const hydrateStoredStages = (quoteStages: ExecutionQuoteStageSummary[]) => {
     const hydratedStates = quoteStages.reduce<Record<string, ExecutionQuoteStageState>>(
@@ -278,7 +356,10 @@
     );
 
     stageStates.value = hydratedStates;
+    stagePricingValues.value = hydratedStagePricingValues(quoteStages);
+    dirtyPricingStageKeys.value = new Set();
     emitDetails();
+    emitPricing();
   };
 
   const resetBuilder = () => {
@@ -289,8 +370,11 @@
     selectedSubStageId.value = undefined;
     selectedItemSource.value = null;
     editingItem.value = null;
+    stagePricingValues.value = {};
+    dirtyPricingStageKeys.value = new Set();
     emit('update:stages', []);
     emit('update:details', []);
+    emit('update:pricing', []);
   };
 
   const fetchMainStages = async () => {
@@ -417,7 +501,7 @@
       unit_name: draft.unit_name,
       sorting_title: draft.sorting_title,
       quantity: draft.quantity,
-      unit_price: pricingEnabled.value ? draft.unit_price : 0,
+      unit_price: draft.unit_price,
       unit_id: draft.unit_id,
     };
 
@@ -441,7 +525,7 @@
       unit_name: draft.unit_name,
       sorting_title: draft.sorting_title,
       quantity: draft.quantity,
-      unit_price: pricingEnabled.value ? draft.unit_price : 0,
+      unit_price: draft.unit_price,
       unit_id: draft.unit_id,
     };
     editingItem.value = null;
@@ -500,10 +584,24 @@
     emitDetails();
   };
 
-  const updateClientPrice = (value: number | null) => {
-    if (!currentStageState.value || !pricingEnabled.value) return;
-    currentStageState.value.client_price = value;
+  const updateStagePricing = (pricingValue: number | null) => {
+    const pricingKey = currentStagePricingKey.value;
+    const quoteType = props.modelValue;
+    if (!pricingKey || !quoteType) return;
+
+    stagePricingValues.value[pricingKey] = pricingValue;
+    dirtyPricingStageKeys.value = new Set(dirtyPricingStageKeys.value).add(pricingKey);
+
+    if (currentStageState.value) {
+      if (quoteType === ExecutionQuoteTypeEnum.LUMP_SUM) {
+        currentStageState.value.client_price = pricingValue;
+      } else {
+        currentStageState.value.percentage = pricingValue;
+      }
+    }
+
     emitDetails();
+    emitPricing();
   };
 
   const navigateToQuoteList = async () => {
@@ -604,7 +702,7 @@
         :stages="mainStages"
         :stage-states="stageStates"
         :loading="mainStagesLoading"
-        :show-pricing="pricingEnabled"
+        :show-pricing="stageClientPricingEnabled"
         @open="openMainStage"
       />
 
@@ -616,7 +714,12 @@
           @back="closeMainStage"
         />
 
-        <aside v-if="!pricingEnabled" class="pricing-notice" role="status" aria-live="polite">
+        <aside
+          v-if="!stageClientPricingEnabled"
+          class="pricing-notice"
+          role="status"
+          aria-live="polite"
+        >
           <span class="pricing-notice__icon" aria-hidden="true">
             <i class="pi pi-info-circle"></i>
           </span>
@@ -637,35 +740,50 @@
         <ExecutionQuoteItemSourceCards
           v-model="selectedItemSource"
           :disabled="loading || !selectedSubStageId || Boolean(editingItem)"
-          :pricing-enabled="pricingEnabled"
+          :pricing-enabled="itemPricingEnabled"
         />
 
         <ExecutionQuoteItemForm
           :source="selectedItemSource"
           :sub-stage-id="selectedSubStageId"
           :loading="loading"
-          :pricing-enabled="pricingEnabled"
+          :pricing-enabled="itemPricingEnabled"
           :editing-item="editingItem"
           @add="submitItem"
           @cancel-edit="cancelItemEdit"
         />
 
         <ExecutionQuoteClientPrice
-          v-if="pricingEnabled"
-          :model-value="currentStageState?.client_price ?? null"
-          @update:model-value="updateClientPrice"
+          :model-value="currentStagePricingValue"
+          :quote-type="modelValue"
+          :disabled="!selectedSubStageId"
+          @update:model-value="updateStagePricing"
         />
+
+        <aside
+          v-if="selectedSubStageId && !currentPersistedQuoteStage?.id"
+          class="pricing-notice pricing-notice--pending"
+          role="status"
+        >
+          <span class="pricing-notice__icon" aria-hidden="true">
+            <i class="pi pi-clock"></i>
+          </span>
+          <div>
+            <strong>{{ $t('execution_quote.stage_pricing.pending_title') }}</strong>
+            <p>{{ $t('execution_quote.stage_pricing.pending_description') }}</p>
+          </div>
+        </aside>
       </template>
 
       <ExecutionQuoteItemsTable
         :items="quoteItems"
-        :show-pricing="pricingEnabled"
+        :show-pricing="itemPricingEnabled"
         @edit="editItem"
         @remove="removeItem"
       />
 
       <ExecutionQuoteTotals
-        v-if="pricingEnabled"
+        v-if="stageClientPricingEnabled"
         :internal-cost="internalCost"
         :items-count="quoteItems.length"
         :client-total="clientTotal"
@@ -757,6 +875,10 @@
   .pricing-notice p {
     margin: 0.2rem 0 0;
     line-height: 1.6;
+  }
+
+  .pricing-notice--pending {
+    border-style: dashed;
   }
 
   .execution-quote-builder > :deep(.execution-builder-card) {

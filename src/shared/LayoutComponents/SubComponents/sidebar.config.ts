@@ -110,6 +110,8 @@ export interface SidebarCountsPayload {
   invoices_count?: SidebarCountValue;
   invoice_payments_count?: SidebarCountValue;
   term_count?: SidebarCountValue;
+  labors_count?: SidebarCountValue;
+  products_count?: SidebarCountValue;
 
   organization?: {
     id: number;
@@ -149,7 +151,9 @@ export type SidebarRootCountKey =
   | 'suppliers_count'
   | 'invoices_count'
   | 'invoice_payments_count'
-  | 'term_count';
+  | 'term_count'
+  | 'labors_count'
+  | 'products_count';
 
 export type SidebarLocationCountKey =
   | 'locations.countries_count'
@@ -645,6 +649,7 @@ export const sidebarSections: SidebarSectionConfig[] = [
         path: '/products',
         labelKey: 'sidebar.products',
         icon: SidebarItemIcon,
+        countKey: 'products_count',
       },
       {
         path: '/suppliers',
@@ -665,6 +670,7 @@ export const sidebarSections: SidebarSectionConfig[] = [
         path: '/labor',
         labelKey: 'sidebar.labor',
         icon: SidebarEmployeeIcon,
+        countKey: 'labors_count',
       },
 
       {
