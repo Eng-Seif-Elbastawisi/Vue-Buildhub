@@ -7,6 +7,7 @@ import {
 import { translate } from '@/locales/i18n';
 
 import { QuoteSourceEnum } from '../constants/quote.source.enum';
+import type { ExecutionQuoteType } from '../constants/execution.quote.type.enum';
 
 export interface ExecutionQuoteAttachmentParams {
   file: string;
@@ -15,15 +16,13 @@ export interface ExecutionQuoteAttachmentParams {
 }
 
 /**
- * Header/base payload only.
- * This request is stored first through `store_quote`.
- * The execution details (quote type + stages + items) are intentionally
- * handled by StoreExecutionQuoteDetailsParams and a separate endpoint.
+ * Stores the quote header and enum-backed quote type through `store_quote`.
+ * Stages and items are handled by StoreExecutionQuoteDetailsParams.
  */
 export default class AddExecutionQuoteParams implements Params {
   public readonly quoteSource?: number;
   public readonly projectId?: number;
-  public readonly quoteTypeId?: number;
+  public readonly quoteType?: ExecutionQuoteType;
   public readonly priceEmployeeId?: number;
 
   public readonly clientExist?: boolean;
@@ -38,7 +37,7 @@ export default class AddExecutionQuoteParams implements Params {
   public static readonly validation = new ClassValidation().setRules({
     quoteSource: { required: true, labelKey: 'quote_source' },
     projectId: { required: true, labelKey: 'project_id' },
-    quoteTypeId: { required: true, labelKey: 'quote_type_id' },
+    quoteType: { required: true, labelKey: 'quote_type' },
     priceEmployeeId: {
       required: (record) =>
         (record as AddExecutionQuoteParams).quoteSource !==
@@ -51,7 +50,7 @@ export default class AddExecutionQuoteParams implements Params {
   constructor(paramsData: {
     quoteSource?: number;
     projectId?: number;
-    quoteTypeId?: number;
+    quoteType?: ExecutionQuoteType;
     priceEmployeeId?: number;
     clientExist?: boolean;
     clientId?: number;
@@ -64,7 +63,7 @@ export default class AddExecutionQuoteParams implements Params {
   }) {
     this.quoteSource = paramsData.quoteSource;
     this.projectId = paramsData.projectId;
-    this.quoteTypeId = paramsData.quoteTypeId;
+    this.quoteType = paramsData.quoteType;
     this.priceEmployeeId = paramsData.priceEmployeeId;
     this.clientExist = paramsData.clientExist;
     this.clientId = paramsData.clientId;
@@ -79,7 +78,7 @@ export default class AddExecutionQuoteParams implements Params {
   toMap(): Record<string, unknown> {
     const payload: Record<string, unknown> = {
       project_id: this.projectId,
-      quote_type_id: this.quoteTypeId,
+      quote_type: this.quoteType,
       quote_source: this.quoteSource,
     };
 

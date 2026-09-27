@@ -27,6 +27,7 @@
   import AddExecutionQuoteParams, {
     type ExecutionQuoteAttachmentParams,
   } from '../../core/params/add.execution.quote.params';
+  import type { ExecutionQuoteStagePricingDraft } from '../../core/params/set.execution.quote.stage.pricing.params';
   import type {
     default as StoreExecutionQuoteDetailsParams,
     ExecutionQuoteStageRequest,
@@ -37,6 +38,7 @@
   const emit = defineEmits<{
     (event: 'updateData', quoteParams: AddExecutionQuoteParams): void;
     (event: 'updateDetails', detailsParams: StoreExecutionQuoteDetailsParams[]): void;
+    (event: 'updatePricing', pricingDrafts: ExecutionQuoteStagePricingDraft[]): void;
   }>();
 
   const props = withDefaults(
@@ -247,7 +249,7 @@
     const baseQuoteFields = {
       quoteSource: selectedQuoteSource.value,
       projectId: projectId.value,
-      quoteTypeId: selectedExecutionQuoteType.value ?? undefined,
+      quoteType: selectedExecutionQuoteType.value ?? undefined,
       clientExist: client_exist.value !== null ? client_exist.value : undefined,
       clientId: client_exist.value === true ? clientId.value : undefined,
       clientName: client_exist.value === false ? client_name.value : undefined,
@@ -368,6 +370,10 @@
 
   const onDetailsChange = (details: StoreExecutionQuoteDetailsParams[]) => {
     emit('updateDetails', details);
+  };
+
+  const onPricingChange = (pricingDrafts: ExecutionQuoteStagePricingDraft[]) => {
+    emit('updatePricing', pricingDrafts);
   };
 
   const selectSource = (source: QuoteSourceEnum) => {
@@ -782,6 +788,7 @@
       @update:model-value="onExecutionQuoteTypeChange"
       @update:stages="onStagesChange"
       @update:details="onDetailsChange"
+      @update:pricing="onPricingChange"
     />
   </section>
 </template>

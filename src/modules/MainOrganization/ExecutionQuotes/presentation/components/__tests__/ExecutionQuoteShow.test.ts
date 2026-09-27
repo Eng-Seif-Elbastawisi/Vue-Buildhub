@@ -70,6 +70,7 @@ describe('ExecutionQuoteShow', () => {
           quote_type: { id: 1, title: 'Lump_SUM' },
           price_employee: { id: 92, name: 'fwffefefe' },
           total_quote_price: '123456.78',
+          client_quote_price: '150000.00',
           attachments: [
             {
               id: 9,
@@ -115,7 +116,10 @@ describe('ExecutionQuoteShow', () => {
             if (key === 'execution_quote.show.title') return 'Execution quote details';
             if (key === 'execution_quote.show.eyebrow') return 'Execution quote';
             if (key === 'execution_quote.show.total_quote_price') return 'Total quote price';
+            if (key === 'execution_quote.show.client_quote_price') return 'Client quote price';
+            if (key === 'execution_quote.show.financial_summary') return 'Financial summary';
             if (key === 'execution_quote.fields.price_employee') return 'Pricing owner';
+            if (key === 'execution_quote.table.currency_egp') return 'EGP';
             if (key === 'execution_quote.quote_types.lump_sum.title') return 'Lump sum';
             if (key === 'INDIVIDUAL') return 'Individual';
             return key;
@@ -159,8 +163,11 @@ describe('ExecutionQuoteShow', () => {
     expect(stageHeader.text()).toContain('44,444,444');
 
     const projectCard = wrapper.findAll('.execution-quote-show__card')[0];
+    expect(projectCard.text()).toContain('Financial summary');
     expect(projectCard.text()).toContain('Total quote price');
     expect(projectCard.text()).toContain('123,456.78');
+    expect(projectCard.text()).toContain('Client quote price');
+    expect(projectCard.text()).toContain('150,000');
     expect(projectCard.text()).toContain('Pricing owner');
     expect(projectCard.text()).toContain('fwffefefe');
     expect(wrapper.text()).not.toContain('execution_quote.show.ownership_section');

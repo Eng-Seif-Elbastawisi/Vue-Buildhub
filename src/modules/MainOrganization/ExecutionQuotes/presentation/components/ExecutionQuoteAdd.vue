@@ -14,6 +14,7 @@
   import type AddExecutionQuoteParams from '../../core/params/add.execution.quote.params';
   import type { ExecutionQuoteStageSummary } from '../../core/models/execution.quote.show.model';
   import ShowExecutionQuoteParams from '../../core/params/show.execution.quote.params';
+  import type { ExecutionQuoteStagePricingDraft } from '../../core/params/set.execution.quote.stage.pricing.params';
   import type StoreExecutionQuoteDetailsParams from '../../core/params/store.execution.quote.details.params';
   import ExecutionQuoteController from '../controllers/execution.quote.controller';
   import ExecutionQuoteForm from './ExecutionQuoteForm.vue';
@@ -25,11 +26,17 @@
 
   const baseParams = ref<AddExecutionQuoteParams | null>(null);
   const detailsParams = ref<StoreExecutionQuoteDetailsParams[]>([]);
+  const pricingDrafts = ref<ExecutionQuoteStagePricingDraft[]>([]);
   const initialQuoteType = ref<ExecutionQuoteType | null>(null);
   const initialQuoteStages = ref<ExecutionQuoteStageSummary[]>([]);
   const loading = ref(false);
   const builderResetKey = ref(0);
   const isBuilderPage = computed(() => route.name === 'Build Execution Quote');
+  const hasSavableBuilderChanges = computed(
+    () =>
+      detailsParams.value.length > 0 ||
+      pricingDrafts.value.some((pricingDraft) => Boolean(pricingDraft.quoteStageId)),
+  );
 
   const executionQuoteId = computed<number | null>(() => {
     if (!isBuilderPage.value) return null;
@@ -154,8 +161,9 @@
     });
   };
 
-  const detailRequestsAreValid = () => {
-    const invalidRequest = detailsParams.value.find((params) => !params.validate().isValid);
+  const builderRequestsAreValid = () => {
+    const requests = [...detailsParams.value, ...pricingDrafts.value];
+    const invalidRequest = requests.find((request) => !request.validate().isValid);
     if (!invalidRequest) return true;
 
     const validation = invalidRequest.validate();
@@ -165,11 +173,16 @@
     return false;
   };
 
-  const storeDetailRequests = async () => {
+  const storeBuilderRequests = async (quoteId: number) => {
     loading.value = true;
 
     try {
-      const response = await controller.storeDetails(detailsParams.value, route.fullPath);
+      const response = await controller.storeBuilderChanges(
+        detailsParams.value,
+        pricingDrafts.value,
+        quoteId,
+        route.fullPath,
+      );
       return response instanceof DataSuccess;
     } finally {
       loading.value = false;
@@ -178,6 +191,7 @@
 
   const continueAtCurrentStage = async (quoteId: number) => {
     detailsParams.value = [];
+    pricingDrafts.value = [];
     await loadStoredQuote(quoteId);
     builderResetKey.value += 1;
 
@@ -190,9 +204,9 @@
 
   const saveExecutionQuoteDetails = async () => {
     const quoteId = executionQuoteId.value;
-    if (!detailsParams.value.length || !quoteId || !detailRequestsAreValid()) return;
+    if (!hasSavableBuilderChanges.value || !quoteId || !builderRequestsAreValid()) return;
 
-    const stored = await storeDetailRequests();
+    const stored = await storeBuilderRequests(quoteId);
     if (stored) await continueAtCurrentStage(quoteId);
   };
 </script>
@@ -207,6 +221,7 @@
       :initial-quote-stages="initialQuoteStages"
       @update-data="baseParams = $event"
       @update-details="detailsParams = $event"
+      @update-pricing="pricingDrafts = $event"
     />
 
     <section v-if="!isBuilderPage" class="execution-quote-add__setup-dock">
@@ -242,7 +257,7 @@
       <AppButton
         class="execution-quote-add__save execution-quote-add__save--details"
         icon="right"
-        :disabled="loading || !detailsParams.length"
+        :disabled="loading || !hasSavableBuilderChanges"
         :loading="loading"
         @click="saveExecutionQuoteDetails"
       >

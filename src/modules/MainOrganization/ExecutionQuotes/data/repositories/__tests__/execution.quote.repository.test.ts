@@ -8,18 +8,20 @@ import IndexParams from '@/base/Core/Params/indexParams';
 
 import ExecutionQuoteRepository from '../execution.quote.repository';
 
-const { index, storeDetails } = vi.hoisted(() => ({
+const { index, setStagePricing, storeDetails } = vi.hoisted(() => ({
   index: vi.fn(),
+  setStagePricing: vi.fn(),
   storeDetails: vi.fn(),
 }));
 
 vi.mock('../../api/execution.quote.api-service', () => ({
-  default: { getInstance: () => ({ index, storeDetails }) },
+  default: { getInstance: () => ({ index, setStagePricing, storeDetails }) },
 }));
 
 describe('ExecutionQuoteRepository', () => {
   beforeEach(() => {
     index.mockReset();
+    setStagePricing.mockReset();
     storeDetails.mockReset();
   });
 
@@ -90,5 +92,17 @@ describe('ExecutionQuoteRepository', () => {
 
     expect(response).toBeInstanceOf(DataFailed);
     expect(response.error?.title).toBe('Rejected');
+  });
+
+  it('maps a successful stage-pricing response to DataSuccess', async () => {
+    setStagePricing.mockResolvedValue({
+      statusCode: 200,
+      data: { status: true, message: 'Pricing saved' },
+    });
+
+    const response = await ExecutionQuoteRepository.getInstance().setStagePricing();
+
+    expect(response).toBeInstanceOf(DataSuccess);
+    expect(response.message).toBe('Pricing saved');
   });
 });
