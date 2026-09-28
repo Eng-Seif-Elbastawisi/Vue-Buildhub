@@ -3,11 +3,15 @@
   import AccordionContent from 'primevue/accordioncontent';
   import AccordionHeader from 'primevue/accordionheader';
   import AccordionPanel from 'primevue/accordionpanel';
+  import Dialog from 'primevue/dialog';
   import { computed, onMounted, ref } from 'vue';
   import { useI18n } from 'vue-i18n';
   import { useRoute } from 'vue-router';
 
   import { ClientTypeEnum } from '@/modules/MainOrganization/client/core/constant/client.type.enum';
+  import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
+  import ConfirmCancelDialog from '@/base/Presentation/Dialogs/ConfirmCancelDialog.vue';
+  import { dialogManager } from '@/base/Presentation/Dialogs/dialog.manager';
   import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
   import AppButton from '@/shared/HelpersComponents/AppButton.vue';
 
@@ -27,10 +31,18 @@
     ExecutionQuoteStageItemSummary,
     ExecutionQuoteStageSummary,
   } from '../../core/models/execution.quote.show.model';
+  import DeleteExecutionQuoteItemParams from '../../core/params/delete.execution.quote.item.params';
   import ShowExecutionQuoteParams from '../../core/params/show.execution.quote.params';
+  import UpdateExecutionQuoteItemParams from '../../core/params/update.execution.quote.item.params';
   import ExecutionQuoteController from '../controllers/execution.quote.controller';
+  import type {
+    ExecutionQuoteItemDraft,
+    ExecutionQuoteItemState,
+  } from '../types/execution.quote.ui.types';
   import ExecutionQuoteAttachments from './ExecutionQuoteAttachments.vue';
   import ExecutionQuoteShowSkeleton from './ExecutionQuoteShowSkeleton.vue';
+  import ExecutionQuoteItemForm from './builder/ExecutionQuoteItemForm.vue';
+  import ExecutionQuoteItemSourceCards from './builder/ExecutionQuoteItemSourceCards.vue';
 
   const route = useRoute();
   const controller = ExecutionQuoteController.getInstance();
@@ -40,6 +52,88 @@
   const quoteId = computed(() => Number(route.params.id));
   const activeShowSection = ref('stages');
   const activeQuoteStages = ref<string[]>(['0']);
+  const selectedQuoteItem = ref<ExecutionQuoteStageItemSummary | null>(null);
+  const selectedQuoteStage = ref<ExecutionQuoteStageSummary | null>(null);
+  const showEditDialog = ref(false);
+  const showDeleteDialog = ref(false);
+  const editItemSource = ref<ExecutionQuoteItemSource | null>(null);
+  const editingQuoteItemId = ref<number>();
+  const deletingQuoteItemId = ref<number>();
+
+  interface QuoteItemEditValues {
+    itemId: number;
+    source: ExecutionQuoteItemSource;
+    sourceId: number;
+    unitId: number;
+    expectedPrice: number;
+    quantity: number;
+    sourceTitle?: string;
+    unitName?: string;
+  }
+
+  const quoteItemSource = (
+    quoteItem: ExecutionQuoteStageItemSummary,
+  ): ExecutionQuoteItemSource | null => {
+    const itemSource = quoteItem.itemType as ExecutionQuoteItemSource | undefined;
+    return itemSource && Object.values(ExecutionQuoteItemSourceEnum).includes(itemSource)
+      ? itemSource
+      : null;
+  };
+
+  const quoteItemEditValues = (
+    quoteItem: ExecutionQuoteStageItemSummary,
+  ): QuoteItemEditValues | null => {
+    const source = quoteItemSource(quoteItem);
+    const sourceId = quoteItem.itemableId ?? quoteItem.itemable?.id;
+    const unitId = quoteItem.unitId ?? quoteItem.measurementUnit?.id;
+    if (
+      !quoteItem.id ||
+      !source ||
+      !sourceId ||
+      !unitId ||
+      quoteItem.expectedPrice === undefined ||
+      quoteItem.quantity === undefined
+    ) {
+      return null;
+    }
+
+    return {
+      itemId: quoteItem.id,
+      source,
+      sourceId,
+      unitId,
+      expectedPrice: quoteItem.expectedPrice,
+      quantity: quoteItem.quantity,
+      sourceTitle: quoteItem.itemable?.title,
+      unitName: quoteItem.measurementUnit?.title,
+    };
+  };
+
+  const toEditItemState = (
+    editValues: QuoteItemEditValues,
+    quoteStage: ExecutionQuoteStageSummary,
+  ): ExecutionQuoteItemState => ({
+    id: String(editValues.itemId),
+    stage_id: quoteStage.stageId ?? quoteStage.id ?? 0,
+    sub_stage_id: quoteStage.subStageId ?? quoteStage.id ?? 0,
+    source_type: editValues.source,
+    source_id: editValues.sourceId,
+    quantity: editValues.quantity,
+    unit_price: editValues.expectedPrice,
+    unit_id: editValues.unitId,
+    source_title: editValues.sourceTitle,
+    unit_name: editValues.unitName,
+    persisted: true,
+  });
+
+  const editItemState = computed<ExecutionQuoteItemState | null>(() => {
+    const quoteStage = selectedQuoteStage.value;
+    const editValues = selectedQuoteItem.value
+      ? quoteItemEditValues(selectedQuoteItem.value)
+      : null;
+
+    return quoteStage && editValues ? toEditItemState(editValues, quoteStage) : null;
+  });
 
   const fetchQuote = async () => {
     if (!Number.isInteger(quoteId.value) || quoteId.value <= 0) return;
@@ -134,6 +228,122 @@
       default:
         return '—';
     }
+  };
+
+  const clearSelectedQuoteItem = () => {
+    selectedQuoteItem.value = null;
+    selectedQuoteStage.value = null;
+    editItemSource.value = null;
+  };
+
+  const openEditDialog = (
+    quoteItem: ExecutionQuoteStageItemSummary,
+    quoteStage: ExecutionQuoteStageSummary,
+  ) => {
+    if (!quoteItem.id) return;
+
+    selectedQuoteItem.value = quoteItem;
+    selectedQuoteStage.value = quoteStage;
+    editItemSource.value = quoteItemSource(quoteItem);
+    showEditDialog.value = true;
+  };
+
+  const updateEditDialogVisibility = (visible: boolean) => {
+    if (editingQuoteItemId.value !== undefined) return;
+
+    showEditDialog.value = visible;
+    if (!visible) clearSelectedQuoteItem();
+  };
+
+  const quoteItemUpdateParams = (draft: ExecutionQuoteItemDraft) => {
+    const quoteItemId = selectedQuoteItem.value?.id;
+    const itemType = editItemSource.value;
+    const morphId = Number(draft.source_id);
+    const unit = Number(draft.unit_id);
+    if (!quoteItemId || !itemType || !Number.isInteger(morphId) || !Number.isInteger(unit)) {
+      return undefined;
+    }
+
+    return new UpdateExecutionQuoteItemParams({
+      quoteItemId,
+      itemType,
+      morphId,
+      expectedPrice: draft.unit_price,
+      quantity: draft.quantity,
+      unit,
+    });
+  };
+
+  const updateQuoteItem = async (params: UpdateExecutionQuoteItemParams) => {
+    editingQuoteItemId.value = params.quoteItemId;
+    try {
+      const response = await controller.updateExecutionQuoteItem(params);
+      if (!(response instanceof DataSuccess)) return;
+
+      showEditDialog.value = false;
+      clearSelectedQuoteItem();
+      await fetchQuote();
+    } finally {
+      editingQuoteItemId.value = undefined;
+    }
+  };
+
+  const submitQuoteItemUpdate = async (draft: ExecutionQuoteItemDraft) => {
+    if (editingQuoteItemId.value !== undefined) return;
+
+    const params = quoteItemUpdateParams(draft);
+    if (!params) {
+      dialogManager.toastWarning(t('execution_quote.validation.item_values'));
+      return;
+    }
+
+    const validation = params.validate();
+    if (!validation.isValid) {
+      dialogManager.toastWarning(
+        validation.errors[0]?.message ?? t('execution_quote.validation.item_values'),
+      );
+      return;
+    }
+
+    await updateQuoteItem(params);
+  };
+
+  const openDeleteDialog = (quoteItem: ExecutionQuoteStageItemSummary) => {
+    if (!quoteItem.id || deletingQuoteItemId.value !== undefined) return;
+
+    selectedQuoteItem.value = quoteItem;
+    showDeleteDialog.value = true;
+  };
+
+  const deleteQuoteItem = async (params: DeleteExecutionQuoteItemParams) => {
+    deletingQuoteItemId.value = params.quoteItemId;
+    try {
+      const response = await controller.deleteExecutionQuoteItem(params);
+      if (!(response instanceof DataSuccess)) return;
+
+      showDeleteDialog.value = false;
+      clearSelectedQuoteItem();
+      await fetchQuote();
+    } finally {
+      deletingQuoteItemId.value = undefined;
+    }
+  };
+
+  const deleteSelectedQuoteItem = async () => {
+    const quoteItemId = selectedQuoteItem.value?.id;
+    if (!quoteItemId || deletingQuoteItemId.value !== undefined) return;
+
+    const params = new DeleteExecutionQuoteItemParams({ quoteItemId });
+    if (!params.validate().isValid) return;
+
+    await deleteQuoteItem(params);
+  };
+
+  const cancelDeleteQuoteItem = () => {
+    if (deletingQuoteItemId.value !== undefined) return;
+
+    showDeleteDialog.value = false;
+    clearSelectedQuoteItem();
   };
 
   onMounted(fetchQuote);
@@ -427,6 +637,7 @@
                               <th scope="col">{{ $t('execution_quote.show.quantity') }}</th>
                               <th scope="col">{{ $t('execution_quote.item_fields.unit') }}</th>
                               <th scope="col">{{ $t('execution_quote.show.total') }}</th>
+                              <th scope="col">{{ $t('execution_quote.show.actions') }}</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -448,6 +659,51 @@
                               <td class="execution-quote-show__item-total">
                                 {{ formatNumber(itemTotal(quoteItem)) }}
                               </td>
+                              <td>
+                                <div class="execution-quote-show__item-actions">
+                                  <AppButton
+                                    class="execution-quote-show__item-action execution-quote-show__item-action--edit"
+                                    size="sm"
+                                    theme="secondary"
+                                    outline
+                                    icon-only
+                                    :disabled="
+                                      !quoteItem.id ||
+                                      editingQuoteItemId !== undefined ||
+                                      deletingQuoteItemId !== undefined
+                                    "
+                                    :title="$t('common.edit')"
+                                    :aria-label="$t('common.edit')"
+                                    @click.stop="openEditDialog(quoteItem, stage)"
+                                  >
+                                    <template #icon>
+                                      <i class="pi pi-pencil" aria-hidden="true"></i>
+                                    </template>
+                                  </AppButton>
+
+                                  <AppButton
+                                    class="execution-quote-show__item-action execution-quote-show__item-action--delete"
+                                    size="sm"
+                                    theme="danger"
+                                    outline
+                                    icon-only
+                                    :loading="deletingQuoteItemId === quoteItem.id"
+                                    :disabled="
+                                      !quoteItem.id ||
+                                      editingQuoteItemId !== undefined ||
+                                      (deletingQuoteItemId !== undefined &&
+                                        deletingQuoteItemId !== quoteItem.id)
+                                    "
+                                    :title="$t('common.delete')"
+                                    :aria-label="$t('common.delete')"
+                                    @click.stop="openDeleteDialog(quoteItem)"
+                                  >
+                                    <template #icon>
+                                      <i class="pi pi-trash" aria-hidden="true"></i>
+                                    </template>
+                                  </AppButton>
+                                </div>
+                              </td>
                             </tr>
                           </tbody>
                         </table>
@@ -463,6 +719,61 @@
                 <p v-else class="execution-quote-show__empty-items">
                   {{ $t('execution_quote.show.no_stages') }}
                 </p>
+
+                <Dialog
+                  :visible="showEditDialog"
+                  modal
+                  append-to="body"
+                  class="execution-quote-show__edit-dialog"
+                  :closable="editingQuoteItemId === undefined"
+                  :dismissable-mask="editingQuoteItemId === undefined"
+                  :draggable="false"
+                  @update:visible="updateEditDialogVisibility"
+                >
+                  <template #header>
+                    <div class="execution-quote-show__edit-dialog-header">
+                      <span aria-hidden="true">
+                        <i class="pi pi-pencil"></i>
+                      </span>
+                      <h2>{{ $t('execution_quote.show.edit_item_title') }}</h2>
+                    </div>
+                  </template>
+
+                  <div class="execution-quote-show__edit-form">
+                    <div class="execution-quote-show__itemable-type">
+                      <span>{{ $t('execution_quote.show.itemable_type') }}</span>
+                      <strong>{{ selectedQuoteItem?.itemableType ?? '—' }}</strong>
+                    </div>
+
+                    <ExecutionQuoteItemSourceCards
+                      v-model="editItemSource"
+                      :disabled="editingQuoteItemId !== undefined"
+                    />
+
+                    <ExecutionQuoteItemForm
+                      :source="editItemSource"
+                      :sub-stage-id="selectedQuoteStage?.subStageId ?? selectedQuoteStage?.id"
+                      :editing-item="editItemState"
+                      :loading="editingQuoteItemId !== undefined"
+                      :clear-after-submit="false"
+                      @add="submitQuoteItemUpdate"
+                      @cancel-edit="updateEditDialogVisibility(false)"
+                    />
+                  </div>
+                </Dialog>
+
+                <ConfirmCancelDialog
+                  v-model="showDeleteDialog"
+                  :hasbtn="false"
+                  :title="$t('execution_quote.show.delete_item_title')"
+                  :message="$t('execution_quote.show.delete_item_message')"
+                  :confirm-label="$t('confirm')"
+                  :cancel-label="$t('common.cancel')"
+                  confirm-theme="danger"
+                  :disabled="deletingQuoteItemId !== undefined"
+                  @confirm="deleteSelectedQuoteItem"
+                  @cancel="cancelDeleteQuoteItem"
+                />
               </AccordionContent>
             </AccordionPanel>
           </Accordion>
@@ -1072,6 +1383,65 @@
   .execution-quote-show__item-total {
     color: var(--PrimaryColor);
     font-weight: 800;
+  }
+
+  .execution-quote-show__item-actions,
+  .execution-quote-show__edit-dialog-header {
+    display: flex;
+    align-items: center;
+  }
+
+  .execution-quote-show__item-actions {
+    gap: 0.4rem;
+  }
+
+  .execution-quote-show__item-action {
+    flex: 0 0 auto;
+  }
+
+  :deep(.execution-quote-show__edit-dialog) {
+    width: min(64rem, calc(100vw - 2rem));
+  }
+
+  .execution-quote-show__edit-dialog-header {
+    gap: 0.75rem;
+  }
+
+  .execution-quote-show__edit-dialog-header > span {
+    display: grid;
+    flex: 0 0 2.5rem;
+    width: 2.5rem;
+    height: 2.5rem;
+    place-items: center;
+    border-radius: var(--radius-sm);
+    background: var(--PrimaryColor-light);
+    color: var(--PrimaryColor);
+  }
+
+  .execution-quote-show__edit-dialog-header h2 {
+    margin: 0;
+    color: var(--title-card-color);
+    font-size: 1.1rem;
+  }
+
+  .execution-quote-show__edit-form {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .execution-quote-show__itemable-type {
+    display: grid;
+    gap: 0.45rem;
+    padding: 0.9rem;
+    border: 1px solid var(--border-weak);
+    border-radius: var(--radius-sm);
+    background: var(--bg-section);
+    color: var(--title-card-color);
+  }
+
+  .execution-quote-show__itemable-type span {
+    color: var(--subtitle-color);
+    font-size: var(--xs-size);
   }
 
   .execution-quote-show__empty-items {

@@ -236,6 +236,7 @@ describe('ExecutionQuoteItemForm', () => {
       props: {
         source: ExecutionQuoteItemSourceEnum.PRODUCT,
         subStageId: 7,
+        clearAfterSubmit: false,
         editingItem: {
           id: 'item-1',
           stage_id: 1,
@@ -275,5 +276,6 @@ describe('ExecutionQuoteItemForm', () => {
       unit_name: 'Box',
       sorting_title: 'Premium',
     });
+    expect(wrapper.get<HTMLInputElement>('#execution-quote-item-quantity').element.value).toBe('6');
   });
 });

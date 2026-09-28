@@ -6,20 +6,30 @@ import {
 } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
 import IndexParams from '@/base/Core/Params/indexParams';
 
+import DeleteExecutionQuoteItemParams from '../../../core/params/delete.execution.quote.item.params';
 import ExecutionQuoteRepository from '../execution.quote.repository';
 
-const { index, setStagePricing, storeDetails } = vi.hoisted(() => ({
+const { deleteExecutionQuoteItem, index, setStagePricing, storeDetails } = vi.hoisted(() => ({
+  deleteExecutionQuoteItem: vi.fn(),
   index: vi.fn(),
   setStagePricing: vi.fn(),
   storeDetails: vi.fn(),
 }));
 
 vi.mock('../../api/execution.quote.api-service', () => ({
-  default: { getInstance: () => ({ index, setStagePricing, storeDetails }) },
+  default: {
+    getInstance: () => ({
+      deleteExecutionQuoteItem,
+      index,
+      setStagePricing,
+      storeDetails,
+    }),
+  },
 }));
 
 describe('ExecutionQuoteRepository', () => {
   beforeEach(() => {
+    deleteExecutionQuoteItem.mockReset();
     index.mockReset();
     setStagePricing.mockReset();
     storeDetails.mockReset();
@@ -104,5 +114,15 @@ describe('ExecutionQuoteRepository', () => {
 
     expect(response).toBeInstanceOf(DataSuccess);
     expect(response.message).toBe('Pricing saved');
+  });
+
+  it('accepts a no-content item deletion response', async () => {
+    deleteExecutionQuoteItem.mockResolvedValue({ statusCode: 204, data: undefined });
+
+    const response = await ExecutionQuoteRepository.getInstance().deleteExecutionQuoteItem(
+      new DeleteExecutionQuoteItemParams({ quoteItemId: 15 }),
+    );
+
+    expect(response).toBeInstanceOf(DataSuccess);
   });
 });

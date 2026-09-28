@@ -1,7 +1,9 @@
 import { flushPromises, mount } from '@vue/test-utils';
+import type { AxiosResponse } from 'axios';
 import type * as VueRouterModule from 'vue-router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import NetworkService from '@/base/Core/NetworkStructure/networking/networkService';
 import { DataInitial } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
 
 import ExecutionQuoteApiService from '../../../data/api/execution.quote.api-service';
@@ -13,12 +15,70 @@ vi.mock('vue-router', async (importOriginal) => ({
   useRoute: () => ({ params: { id: '41' } }),
 }));
 
+const itemQuoteResponse = () => ({
+  statusCode: 200,
+  data: {
+    status: true,
+    data: {
+      id: 41,
+      quote_source: 1,
+      project: { id: 207, title: 'Project' },
+      client: { id: 30, name: 'Client' },
+      quote_type: { id: 1, title: 'Lump_SUM' },
+      attachments: [],
+      quote_stages: [
+        {
+          id: 5,
+          stage: { id: 129, title: 'Main stage' },
+          sub_stage: { id: 150, title: 'Sub stage' },
+          items: [
+            {
+              id: 7,
+              item_type: 1,
+              itemable_id: 17,
+              itemable_type: 'Product',
+              itemable: { id: 17, title: 'Item' },
+              measurement_unit: { id: 165, title: 'Square meter' },
+              expected_price: 100,
+              quantity: 2,
+            },
+          ],
+        },
+      ],
+    },
+  },
+});
+
+const mutationDialogStubs = {
+  RouterLink: { template: '<a><slot /></a>' },
+  Dialog: {
+    props: ['visible'],
+    template:
+      '<section v-if="visible" class="dialog-stub"><slot name="header" /><slot /><slot name="footer" /></section>',
+  },
+  ConfirmCancelDialog: {
+    props: ['modelValue'],
+    emits: ['confirm', 'cancel', 'update:modelValue'],
+    template:
+      '<div v-if="modelValue"><button class="delete-confirm" @click="$emit(\'confirm\')">Confirm</button></div>',
+  },
+  UpdatedCustomInputSelect: {
+    props: ['id', 'label', 'modelValue'],
+    emits: ['update:modelValue'],
+    template:
+      '<div class="select-stub" :data-id="id"><span>{{ label }}</span><strong>{{ modelValue?.title }}</strong></div>',
+  },
+  FieldHelpIcon: true,
+};
+
 describe('ExecutionQuoteShow', () => {
   const controller = ExecutionQuoteController.getInstance();
   const showRequest = vi.spyOn(ExecutionQuoteApiService.getInstance(), 'show');
+  const postRequest = vi.spyOn(NetworkService.instance, 'post');
 
   beforeEach(() => {
     controller.setItemState(new DataInitial());
+    postRequest.mockReset();
     showRequest.mockReset();
   });
 
@@ -155,6 +215,12 @@ describe('ExecutionQuoteShow', () => {
     expect(wrapper.text()).not.toContain('#17');
 
     const quoteItemCells = wrapper.get('.execution-quote-show__items-table tbody tr').findAll('td');
+    const quoteItemHeaders = wrapper
+      .get('.execution-quote-show__items-table thead tr')
+      .findAll('th');
+    expect(quoteItemHeaders).toHaveLength(8);
+    expect(quoteItemHeaders.at(-1)?.text()).toBe('execution_quote.show.actions');
+    expect(quoteItemCells).toHaveLength(8);
     expect(quoteItemCells[4]?.text()).toBe('1');
     expect(quoteItemCells[5]?.text()).toBe('كيلومتر مربع');
 
@@ -211,5 +277,93 @@ describe('ExecutionQuoteShow', () => {
     await flushPromises();
 
     expect(wrapper.text()).not.toContain('Pricing owner');
+  });
+
+  it('updates the full quote item row through edit_quote_item, then refreshes', async () => {
+    showRequest.mockResolvedValue(itemQuoteResponse());
+    postRequest.mockResolvedValue({
+      status: 200,
+      data: { status: true },
+      headers: {},
+    } as AxiosResponse);
+
+    const wrapper = mount(ExecutionQuoteShow, {
+      global: {
+        mocks: { $t: (key: string) => key },
+        stubs: mutationDialogStubs,
+      },
+    });
+    await flushPromises();
+
+    await wrapper.get('.execution-quote-show__item-action--edit').trigger('click');
+
+    expect(wrapper.get('.execution-quote-show__itemable-type').text()).toContain('Product');
+    const sourceCards = wrapper.findAll('.source-card');
+    expect(sourceCards).toHaveLength(3);
+    expect(wrapper.get('[data-id="execution-quote-product"]').text()).toContain('Item');
+
+    await sourceCards[1].trigger('click');
+    expect(wrapper.find('[data-id="execution-quote-product"]').exists()).toBe(false);
+    expect(wrapper.find('[data-id="execution-quote-material"]').exists()).toBe(true);
+
+    await sourceCards[0].trigger('click');
+
+    const expectedPriceInput = wrapper.get<HTMLInputElement>('#execution-quote-item-unit-price');
+    const quantityInput = wrapper.get<HTMLInputElement>('#execution-quote-item-quantity');
+    expect(expectedPriceInput.element.value).toBe('100');
+    expect(quantityInput.element.value).toBe('2');
+
+    await expectedPriceInput.setValue('125.5');
+    await quantityInput.setValue('3');
+    await wrapper.get('.add-item-button').trigger('click');
+    await flushPromises();
+
+    expect(postRequest).toHaveBeenCalledWith(
+      expect.objectContaining({
+        url: expect.stringMatching(/\/(?:organization|mainportal)\/edit_quote_item$/),
+        data: {
+          quote_item_id: 7,
+          item_type: 1,
+          morph_id: 17,
+          expected_price: 125.5,
+          quantity: 3,
+          unit: 165,
+        },
+      }),
+      expect.any(Object),
+    );
+    expect(showRequest).toHaveBeenCalledTimes(2);
+  });
+
+  it('deletes only after confirmation, then refreshes the quote', async () => {
+    showRequest.mockResolvedValue(itemQuoteResponse());
+    postRequest.mockResolvedValue({
+      status: 200,
+      data: { status: true },
+      headers: {},
+    } as AxiosResponse);
+
+    const wrapper = mount(ExecutionQuoteShow, {
+      global: {
+        mocks: { $t: (key: string) => key },
+        stubs: mutationDialogStubs,
+      },
+    });
+    await flushPromises();
+
+    await wrapper.get('.execution-quote-show__item-action--delete').trigger('click');
+    expect(postRequest).not.toHaveBeenCalled();
+
+    await wrapper.get('.delete-confirm').trigger('click');
+    await flushPromises();
+
+    expect(postRequest).toHaveBeenCalledWith(
+      expect.objectContaining({
+        url: expect.stringMatching(/\/(?:organization|mainportal)\/delete_quote_item$/),
+        data: { quote_item_id: 7 },
+      }),
+      expect.any(Object),
+    );
+    expect(showRequest).toHaveBeenCalledTimes(2);
   });
 });
