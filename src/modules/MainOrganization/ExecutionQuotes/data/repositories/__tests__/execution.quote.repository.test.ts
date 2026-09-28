@@ -9,14 +9,14 @@ import IndexParams from '@/base/Core/Params/indexParams';
 import DeleteExecutionQuoteItemParams from '../../../core/params/delete.execution.quote.item.params';
 import ExecutionQuoteRepository from '../execution.quote.repository';
 
-const { deleteExecutionQuoteItem, index, setStagePricing, storeDetails } = vi.hoisted(() => ({
-  deleteExecutionQuoteItem: vi.fn(),
-const { index, setStagePricing, setSupervisionPricing, storeDetails } = vi.hoisted(() => ({
-  index: vi.fn(),
-  setStagePricing: vi.fn(),
-  setSupervisionPricing: vi.fn(),
-  storeDetails: vi.fn(),
-}));
+const { deleteExecutionQuoteItem, index, setStagePricing, setSupervisionPricing, storeDetails } =
+  vi.hoisted(() => ({
+    deleteExecutionQuoteItem: vi.fn(),
+    index: vi.fn(),
+    setStagePricing: vi.fn(),
+    setSupervisionPricing: vi.fn(),
+    storeDetails: vi.fn(),
+  }));
 
 vi.mock('../../api/execution.quote.api-service', () => ({
   default: {
@@ -24,9 +24,9 @@ vi.mock('../../api/execution.quote.api-service', () => ({
       deleteExecutionQuoteItem,
       index,
       setStagePricing,
+      setSupervisionPricing,
       storeDetails,
     }),
-    getInstance: () => ({ index, setStagePricing, setSupervisionPricing, storeDetails }),
   },
 }));
 
@@ -128,6 +128,8 @@ describe('ExecutionQuoteRepository', () => {
     );
 
     expect(response).toBeInstanceOf(DataSuccess);
+  });
+
   it('maps a successful supervision-pricing response to DataSuccess', async () => {
     setSupervisionPricing.mockResolvedValue({
       statusCode: 200,
