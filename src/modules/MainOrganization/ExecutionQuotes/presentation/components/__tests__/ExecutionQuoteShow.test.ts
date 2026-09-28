@@ -397,9 +397,9 @@ describe('ExecutionQuoteShow', () => {
 
     expect(postRequest).toHaveBeenCalledWith(
       expect.objectContaining({
-        url: expect.stringMatching(/\/(?:organization|mainportal)\/edit_quote_item$/),
+        url: expect.stringMatching(/\/(?:organization|mainportal)\/update_quote_stage_item$/),
         data: {
-          quote_item_id: 7,
+          quote_stage_item_id: 7,
           item_type: 1,
           morph_id: 17,
           expected_price: 125.5,
@@ -436,8 +436,8 @@ describe('ExecutionQuoteShow', () => {
 
     expect(postRequest).toHaveBeenCalledWith(
       expect.objectContaining({
-        url: expect.stringMatching(/\/(?:organization|mainportal)\/delete_quote_item$/),
-        data: { quote_item_id: 7 },
+        url: expect.stringMatching(/\/(?:organization|mainportal)\/delete_quote_stage_item$/),
+        data: { quote_stage_item_id: 7 },
       }),
       expect.any(Object),
     );
