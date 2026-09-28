@@ -55,7 +55,7 @@ export default class EditQuoteTypeParams implements Params {
 
   toMap(): Record<string, unknown> {
     const map: Record<string, unknown> = {
-      quote_type_id: this.id,
+      quote_type: this.id,
       translations: this.translations?.toMap(),
       code: this.typeCode,
     };

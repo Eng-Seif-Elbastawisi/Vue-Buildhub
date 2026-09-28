@@ -8,7 +8,7 @@ describe('ExecutionQuoteModel', () => {
       quote_source: 1,
       project_id: 10,
       client_id: 5,
-      quote_type_id: 2,
+      quote_type: 2,
       price_employee_id: 7,
     });
 
@@ -26,7 +26,7 @@ describe('ExecutionQuoteModel', () => {
     const model = ExecutionQuoteModel.fromJson({
       quote_source: 1,
       quote_type: 'lump_sum',
-      quote_type_id: 2,
+      quote_type: 2,
     });
 
     expect(model.quoteType).toBe('lump_sum');

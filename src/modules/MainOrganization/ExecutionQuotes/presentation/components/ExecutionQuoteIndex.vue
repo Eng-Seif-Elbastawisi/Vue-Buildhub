@@ -141,6 +141,26 @@ const openShow = (quote: ExecutionQuoteShowModel) => {
   void router.push({ name: 'Show Execution Quote', params: { id: String(quote.id) } });
 };
 
+const openAddStage = (quote: ExecutionQuoteShowModel) => {
+  if (!quote.id) return;
+
+  void router.push({
+    name: 'Build Execution Quote',
+    query: { id: String(quote.id) },
+  });
+};
+
+const openAddItem = (quote: ExecutionQuoteShowModel) => {
+  if (!quote.id) return;
+
+  const existingStageId = quote.quoteStages.find((quoteStage) => quoteStage.stageId)?.stageId;
+  void router.push({
+    name: 'Build Execution Quote',
+    ...(existingStageId ? { params: { stageId: String(existingStageId) } } : {}),
+    query: { id: String(quote.id) },
+  });
+};
+
 const headers: TableHeader[] = [
   { key: 'quoteSource', label: 'execution_quote.table.source' },
   { key: 'project', label: 'execution_quote.table.project' },
@@ -329,7 +349,6 @@ const asExecutionQuotes = (quotes: unknown): ExecutionQuoteShowModel[] =>
                 <div class="execution-quote-index__primary-cell">
                   <strong>{{ item.client?.name ?? '—' }}</strong>
                   <small>{{ item.client?.phone ?? '—' }}</small>
-                  <!--
                   <span
                     v-if="item.client?.status !== undefined"
                     class="execution-quote-index__client-status"
@@ -339,7 +358,7 @@ const asExecutionQuotes = (quotes: unknown): ExecutionQuoteShowModel[] =>
                   >
                     <span aria-hidden="true"></span>
                     {{ clientStatusLabel(item.client.status) }}
-                  </span>-->
+                  </span>
                 </div>
               </div>
             </template>
@@ -409,13 +428,47 @@ const asExecutionQuotes = (quotes: unknown): ExecutionQuoteShowModel[] =>
             </template>
 
             <template #actions="{ item }">
-              <AppButton class="execution-quote-index__view-button" size="sm" theme="secondary" icon="right" outline
-                @click="openShow(item)">
-                <template #icon>
-                  <i class="pi pi-eye" aria-hidden="true"></i>
-                </template>
-                {{ $t('execution_quote.show.action') }}
-              </AppButton>
+              <div class="execution-quote-index__row-actions">
+                <AppButton
+                  class="execution-quote-index__add-item-button"
+                  size="sm"
+                  icon="right"
+                  @click="openAddItem(item)"
+                >
+                  <template #icon>
+                    <i class="pi pi-list" aria-hidden="true"></i>
+                  </template>
+                  {{ $t('execution_quote.table.add_item') }}
+                </AppButton>
+
+                <AppButton
+                  class="execution-quote-index__add-stage-button"
+                  size="sm"
+                  theme="secondary"
+                  icon="right"
+                  outline
+                  @click="openAddStage(item)"
+                >
+                  <template #icon>
+                    <i class="pi pi-sitemap" aria-hidden="true"></i>
+                  </template>
+                  {{ $t('execution_quote.table.add_stage') }}
+                </AppButton>
+
+                <AppButton
+                  class="execution-quote-index__view-button"
+                  size="sm"
+                  theme="secondary"
+                  icon="right"
+                  ghost
+                  @click="openShow(item)"
+                >
+                  <template #icon>
+                    <i class="pi pi-eye" aria-hidden="true"></i>
+                  </template>
+                  {{ $t('execution_quote.show.action') }}
+                </AppButton>
+              </div>
             </template>
           </AppTable>
         </section>
@@ -767,7 +820,7 @@ const asExecutionQuotes = (quotes: unknown): ExecutionQuoteShowModel[] =>
 }
 
 .execution-quote-index :deep(.app-table) {
-  min-width: 78rem;
+  min-width: 94rem;
 }
 
 .execution-quote-index :deep(.app-table thead th) {
@@ -812,7 +865,14 @@ const asExecutionQuotes = (quotes: unknown): ExecutionQuoteShowModel[] =>
   transform: translateY(-1px);
 }
 
-.execution-quote-index__view-button {
+.execution-quote-index__row-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.execution-quote-index__row-actions :deep(.app-btn) {
+  min-height: 2.25rem;
   white-space: nowrap;
 }
 
@@ -872,7 +932,6 @@ const asExecutionQuotes = (quotes: unknown): ExecutionQuoteShowModel[] =>
 }
 
 @media (prefers-reduced-motion: reduce) {
-
   .execution-quote-index__header,
   .execution-quote-index__filters,
   .execution-quote-index__table-card,

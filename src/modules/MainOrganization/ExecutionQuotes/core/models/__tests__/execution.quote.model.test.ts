@@ -9,7 +9,7 @@ describe('ExecutionQuoteModel', () => {
       project_id: 10,
       client_id: 5,
       quote_type: 2,
-      quote_type_id: 2,
+      quote_type: 2,
       price_employee_id: 7,
     });
 

@@ -4,15 +4,15 @@ import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/da
 
 import { ExecutionQuoteItemSourceEnum } from '../../../core/constants/execution.quote.item.source.enum';
 import { ExecutionQuoteTypeEnum } from '../../../core/constants/execution.quote.type.enum';
-import ExecutionQuoteShowModel from '../../../core/models/execution.quote.show.model';
 import { ExecutionQuoteStagePricingDraft } from '../../../core/params/set.execution.quote.stage.pricing.params';
+import SetExecutionQuoteSupervisionPricingParams from '../../../core/params/set.execution.quote.supervision.pricing.params';
 import StoreExecutionQuoteDetailsParams from '../../../core/params/store.execution.quote.details.params';
 import ExecutionQuoteController from '../execution.quote.controller';
 
-const { clearFormData, setStagePricing, show, storeDetails } = vi.hoisted(() => ({
+const { clearFormData, setStagePricing, setSupervisionPricing, storeDetails } = vi.hoisted(() => ({
   clearFormData: vi.fn(),
   setStagePricing: vi.fn(),
-  show: vi.fn(),
+  setSupervisionPricing: vi.fn(),
   storeDetails: vi.fn(),
 }));
 
@@ -21,14 +21,16 @@ vi.mock('@/stores/formsStore', () => ({
 }));
 
 vi.mock('../../../data/repositories/execution.quote.repository', () => ({
-  default: { getInstance: () => ({ setStagePricing, show, storeDetails }) },
+  default: {
+    getInstance: () => ({ setStagePricing, setSupervisionPricing, storeDetails }),
+  },
 }));
 
 describe('ExecutionQuoteController', () => {
   beforeEach(() => {
     clearFormData.mockReset();
     setStagePricing.mockReset();
-    show.mockReset();
+    setSupervisionPricing.mockReset();
     storeDetails.mockReset();
   });
 
@@ -50,12 +52,13 @@ describe('ExecutionQuoteController', () => {
     storeDetails.mockResolvedValue(new DataSuccess({ data: undefined }));
     setStagePricing.mockResolvedValue(new DataSuccess({ data: undefined }));
 
-    const response = await ExecutionQuoteController.getInstance().storeBuilderChanges(
-      [itemRequest],
-      [pricingDraft],
-      94,
-      'quote-builder',
-    );
+    const response = await ExecutionQuoteController.getInstance().storeBuilderChanges({
+      detailRequests: [itemRequest],
+      pricingDrafts: [pricingDraft],
+      supervisionPricing: null,
+      quoteId: 94,
+      formKey: 'quote-builder',
+    });
 
     expect(response).toBeInstanceOf(DataSuccess);
     expect(storeDetails).toHaveBeenCalledWith(itemRequest);
@@ -67,44 +70,28 @@ describe('ExecutionQuoteController', () => {
     expect(clearFormData).toHaveBeenCalledWith('quote-builder');
   });
 
-  it('creates a new stage before resolving and saving its supervision percentage', async () => {
-    const itemRequest = new StoreExecutionQuoteDetailsParams({
+  it('saves supervision pricing against the quote without resolving a stage', async () => {
+    const supervisionPricing = new SetExecutionQuoteSupervisionPricingParams({
       quoteId: 94,
-      stageId: 129,
-      subStageId: 150,
-      itemType: ExecutionQuoteItemSourceEnum.PRODUCT,
-      items: [{ morphId: 17, expectedPrice: 0, quantity: 1, unit: 9 }],
+      percentage: 10,
     });
-    const pricingDraft = new ExecutionQuoteStagePricingDraft({
-      stageId: 129,
-      subStageId: 150,
-      quoteType: ExecutionQuoteTypeEnum.SUPERVISION,
-      pricingValue: 10,
-    });
-    storeDetails.mockResolvedValue(new DataSuccess({ data: undefined }));
-    show.mockResolvedValue(
-      new DataSuccess({
-        data: new ExecutionQuoteShowModel({
-          id: 94,
-          quoteStages: [{ id: 43, stageId: 129, subStageId: 150, items: [] }],
-        }),
-      }),
-    );
-    setStagePricing.mockResolvedValue(new DataSuccess({ data: undefined }));
+    setSupervisionPricing.mockResolvedValue(new DataSuccess({ data: undefined }));
 
-    const response = await ExecutionQuoteController.getInstance().storeBuilderChanges(
-      [itemRequest],
-      [pricingDraft],
-      94,
-      'quote-builder',
-    );
+    const response = await ExecutionQuoteController.getInstance().storeBuilderChanges({
+      detailRequests: [],
+      pricingDrafts: [],
+      supervisionPricing,
+      quoteId: 94,
+      formKey: 'quote-builder',
+    });
 
     expect(response).toBeInstanceOf(DataSuccess);
-    expect(setStagePricing.mock.calls[0]?.[0].toMap()).toEqual({
-      quote_stage_id: 43,
+    expect(setSupervisionPricing.mock.calls[0]?.[0].toMap()).toEqual({
+      quote_id: 94,
       quote_type: ExecutionQuoteTypeEnum.SUPERVISION,
       percentage: 10,
     });
+    expect(setStagePricing).not.toHaveBeenCalled();
     expect(clearFormData).toHaveBeenCalledWith('quote-builder');
   });
 

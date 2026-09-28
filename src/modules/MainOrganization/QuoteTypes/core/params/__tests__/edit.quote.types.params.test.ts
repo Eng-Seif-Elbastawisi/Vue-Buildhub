@@ -14,7 +14,7 @@ describe('EditQuoteTypeParams', () => {
     });
 
     expect(params.toMap()).toMatchObject({
-      quote_type_id: 4,
+      quote_type: 4,
       code: 'SUPERVISION',
     });
     expect(params.validate().isValid).toBe(true);

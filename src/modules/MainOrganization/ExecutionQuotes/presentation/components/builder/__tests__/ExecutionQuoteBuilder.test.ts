@@ -74,18 +74,17 @@ const componentStubs = {
       </div>
     `,
   },
-  ExecutionQuoteClientPrice: {
-    name: 'ExecutionQuoteClientPrice',
-    props: ['modelValue', 'quoteType', 'disabled'],
+  ExecutionQuoteStageClientPrice: {
+    name: 'ExecutionQuoteStageClientPrice',
+    props: ['modelValue', 'disabled'],
     emits: ['update:modelValue'],
     template: `
       <button
         class="client-price-stub"
         :data-client-price="modelValue"
-        :data-quote-type="quoteType"
         :data-disabled="disabled"
         :disabled="disabled"
-        @click="$emit('update:modelValue', quoteType === 2 ? 10 : 4200)"
+        @click="$emit('update:modelValue', 4200)"
       />
     `,
   },
@@ -108,7 +107,7 @@ const componentStubs = {
 };
 
 interface BuilderMountOptions {
-  modelValue?: (typeof ExecutionQuoteTypeEnum)[keyof typeof ExecutionQuoteTypeEnum];
+  modelValue?: (typeof ExecutionQuoteTypeEnum)[keyof typeof ExecutionQuoteTypeEnum] | null;
   initialStages?: ExecutionQuoteStageSummary[];
   stubs?: Record<string, unknown>;
 }
@@ -117,7 +116,8 @@ const mountBuilder = (options: BuilderMountOptions = {}) =>
   mount(ExecutionQuoteBuilder, {
     props: {
       enabled: true,
-      modelValue: options.modelValue ?? ExecutionQuoteTypeEnum.LUMP_SUM,
+      modelValue:
+        options.modelValue === undefined ? ExecutionQuoteTypeEnum.LUMP_SUM : options.modelValue,
       executionQuoteId: 28,
       initialStages: options.initialStages ?? [],
     },
@@ -148,6 +148,39 @@ describe('ExecutionQuoteBuilder', () => {
     expect(quoteTypeOptions.every((option) => option.element.disabled)).toBe(true);
   });
 
+  it('hydrates items without a sub-stage and activates a direct stage route', async () => {
+    routeParams.stageId = '152';
+    fetchList.mockResolvedValue(new DataSuccess({ data: [] }));
+    const wrapper = mountBuilder({ modelValue: null });
+
+    await wrapper.setProps({
+      modelValue: ExecutionQuoteTypeEnum.SUPERVISION,
+      initialStages: [
+        {
+          id: 43,
+          stageId: 152,
+          stage: { id: 152, title: 'Electrical stage' },
+          items: [
+            {
+              id: 118,
+              itemType: ExecutionQuoteItemSourceEnum.BUILDING_MATERIAL,
+              itemableId: 39,
+              itemable: { id: 39, title: 'Cable' },
+              quantity: 1,
+              expectedPrice: 1000,
+              unitId: 165,
+              measurementUnit: { id: 165, title: 'Square kilometer' },
+            },
+          ],
+        },
+      ],
+    });
+    await flushPromises();
+
+    expect(wrapper.find('.close-stage').exists()).toBe(true);
+    expect(wrapper.get('.items-table-stub').attributes('data-items-count')).toBe('1');
+  });
+
   it('sends lump-sum stage pricing separately from grouped quote items', async () => {
     fetchList
       .mockResolvedValueOnce(
@@ -166,6 +199,9 @@ describe('ExecutionQuoteBuilder', () => {
     await wrapper.get('.select-source').trigger('click');
     await wrapper.get('.add-item').trigger('click');
     await wrapper.get('.add-item').trigger('click');
+
+    expect(wrapper.get('.client-price-stub').attributes('data-client-price')).toBe('20');
+
     await wrapper.get('.client-price-stub').trigger('click');
 
     expect(fetchList.mock.calls[1]?.[0].toMap()).toMatchObject({ parent_id: 1, status: 1 });
@@ -269,7 +305,7 @@ describe('ExecutionQuoteBuilder', () => {
       );
 
     const wrapper = mountBuilder({
-      stubs: { ...componentStubs, ExecutionQuoteClientPrice: false },
+      stubs: { ...componentStubs, ExecutionQuoteStageClientPrice: false },
       initialStages: [
         {
           id: 5,
@@ -317,12 +353,51 @@ describe('ExecutionQuoteBuilder', () => {
     await wrapper.get('.select-source').trigger('click');
     await wrapper.get('.add-item').trigger('click');
 
+    expect(wrapper.get<HTMLInputElement>('.client-price input').element.value).toBe('3500');
+
     const requests = wrapper
       .emitted('update:details')
       ?.at(-1)?.[0] as StoreExecutionQuoteDetailsParams[];
     expect(requests[0]?.toMap()).toMatchObject({
       items: [{ morph_id: 22, expected_price: 5, quantity: 2, unit: 9 }],
     });
+  });
+
+  it('defaults a missing stored client price to the stage items total', async () => {
+    fetchList
+      .mockResolvedValueOnce(
+        new DataSuccess({ data: [new StageModel({ id: 1, title: 'Main', children: [] })] }),
+      )
+      .mockResolvedValueOnce(
+        new DataSuccess({ data: [new StageModel({ id: 11, title: 'Sub', children: [] })] }),
+      );
+
+    const wrapper = mountBuilder({
+      initialStages: [
+        {
+          id: 5,
+          stageId: 1,
+          subStageId: 11,
+          items: [
+            {
+              id: 7,
+              itemType: ExecutionQuoteItemSourceEnum.PRODUCT,
+              itemableId: 17,
+              quantity: 2,
+              expectedPrice: 25,
+              unitId: 9,
+            },
+          ],
+        },
+      ],
+    });
+
+    await flushPromises();
+
+    expect(wrapper.get('.client-price-stub').attributes('data-client-price')).toBe('50');
+    expect(wrapper.emitted('update:pricing')?.at(-1)?.[0]).toEqual([
+      expect.objectContaining({ quoteStageId: 5, pricingValue: 50 }),
+    ]);
   });
 
   it('opens a selected main stage on the focused stage route', async () => {
@@ -362,7 +437,7 @@ describe('ExecutionQuoteBuilder', () => {
     });
   });
 
-  it('sends item prices and a percentage for supervision quotes', async () => {
+  it('keeps supervision item entry separate from stage client pricing', async () => {
     fetchList
       .mockResolvedValueOnce(
         new DataSuccess({ data: [new StageModel({ id: 1, title: 'Main', children: [] })] }),
@@ -381,27 +456,12 @@ describe('ExecutionQuoteBuilder', () => {
     await wrapper.get('.select-source').trigger('click');
     await wrapper.get('.add-item').trigger('click');
 
-    expect(wrapper.find('.pricing-notice').exists()).toBe(true);
     expect(wrapper.get('.item-form-stub').attributes('data-pricing-enabled')).toBe('true');
     expect(wrapper.get('.items-table-stub').attributes('data-show-pricing')).toBe('true');
-    expect(wrapper.get('.client-price-stub').attributes('data-quote-type')).toBe('2');
+    expect(wrapper.find('.client-price-stub').exists()).toBe(false);
     expect(wrapper.find('.totals-stub').exists()).toBe(false);
 
-    const missingPricingDrafts = wrapper
-      .emitted('update:pricing')
-      ?.at(-1)?.[0] as ExecutionQuoteStagePricingDraft[];
-    expect(missingPricingDrafts).toEqual([
-      expect.objectContaining({
-        quoteStageId: 43,
-        stageId: 1,
-        subStageId: 11,
-        quoteType: ExecutionQuoteTypeEnum.SUPERVISION,
-        pricingValue: null,
-      }),
-    ]);
-    expect(missingPricingDrafts[0]?.validate().isValid).toBe(false);
-
-    await wrapper.get('.client-price-stub').trigger('click');
+    expect(wrapper.emitted('update:pricing')?.at(-1)?.[0]).toEqual([]);
 
     const requests = wrapper
       .emitted('update:details')
@@ -410,61 +470,6 @@ describe('ExecutionQuoteBuilder', () => {
     expect(requests[0]?.toMap()).toMatchObject({
       items: [{ morph_id: 22, expected_price: 5, quantity: 2, unit: 9 }],
     });
-
-    const pricingDrafts = wrapper
-      .emitted('update:pricing')
-      ?.at(-1)?.[0] as ExecutionQuoteStagePricingDraft[];
-    expect(pricingDrafts).toEqual([
-      expect.objectContaining({
-        quoteStageId: 43,
-        stageId: 1,
-        subStageId: 11,
-        quoteType: ExecutionQuoteTypeEnum.SUPERVISION,
-        pricingValue: 10,
-      }),
-    ]);
-  });
-
-  it('enables a percentage draft after selecting a new supervision sub-stage', async () => {
-    fetchList
-      .mockResolvedValueOnce(
-        new DataSuccess({ data: [new StageModel({ id: 1, title: 'Main', children: [] })] }),
-      )
-      .mockResolvedValueOnce(
-        new DataSuccess({ data: [new StageModel({ id: 11, title: 'Sub', children: [] })] }),
-      );
-
-    const wrapper = mountBuilder({
-      modelValue: ExecutionQuoteTypeEnum.SUPERVISION,
-      stubs: { ...componentStubs, ExecutionQuoteClientPrice: false },
-    });
-
-    await flushPromises();
-
-    expect(wrapper.get('.client-price h2').text()).toContain(
-      'execution_quote.stage_pricing.percentage_title',
-    );
-    expect(wrapper.get('.client-price input').attributes('disabled')).toBeDefined();
-
-    await wrapper.get('.select-sub-stage').trigger('click');
-
-    expect(wrapper.get('.client-price input').attributes('disabled')).toBeUndefined();
-    expect(wrapper.find('.pricing-notice--pending').exists()).toBe(true);
-
-    await wrapper.get('.client-price input').setValue('10');
-
-    const pricingDrafts = wrapper
-      .emitted('update:pricing')
-      ?.at(-1)?.[0] as ExecutionQuoteStagePricingDraft[];
-    expect(pricingDrafts).toEqual([
-      expect.objectContaining({
-        quoteStageId: undefined,
-        stageId: 1,
-        subStageId: 11,
-        quoteType: ExecutionQuoteTypeEnum.SUPERVISION,
-        pricingValue: 10,
-      }),
-    ]);
   });
 
   it('leaves without confirmation when all quote items are already saved', async () => {

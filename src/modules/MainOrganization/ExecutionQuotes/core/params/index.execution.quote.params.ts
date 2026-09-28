@@ -32,7 +32,7 @@ export default class IndexExecutionQuoteParams extends IndexParams {
     if (this.quoteSource) query.quote_source = this.quoteSource;
     if (this.projectId) query.project_id = this.projectId;
     if (this.clientId) query.client_id = this.clientId;
-    if (this.quoteTypeId) query.quote_type_id = this.quoteTypeId;
+    if (this.quoteTypeId) query.quote_type = this.quoteTypeId;
 
     return query;
   }

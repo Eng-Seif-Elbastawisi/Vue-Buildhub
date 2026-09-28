@@ -9,9 +9,11 @@ import ExecutionQuoteApiService from '../../../data/api/execution.quote.api-serv
 import ExecutionQuoteController from '../../controllers/execution.quote.controller';
 import ExecutionQuoteIndex from '../ExecutionQuoteIndex.vue';
 
+const { push } = vi.hoisted(() => ({ push: vi.fn() }));
+
 vi.mock('vue-router', async (importOriginal) => ({
   ...(await importOriginal<typeof VueRouterModule>()),
-  useRouter: () => ({ push: vi.fn() }),
+  useRouter: () => ({ push }),
 }));
 
 const createIndexResponse = (page: number, projectTitle: string, quoteType = 1) => ({
@@ -27,7 +29,13 @@ const createIndexResponse = (page: number, projectTitle: string, quoteType = 1) 
           client: { id: 30, name: 'شارع', phone: '111', status: 1 },
           quote_type: quoteType,
           price_employee: { id: 92, name: 'fwffefefe' },
-          quote_stages: [{ id: 1, items: [{ id: 1 }, { id: 2 }, { id: 3 }] }],
+          quote_stages: [
+            {
+              id: 1,
+              stage: { id: 129, title: 'Main stage' },
+              items: [{ id: 1 }, { id: 2 }, { id: 3 }],
+            },
+          ],
           total_quote_price: '5200.00',
           created_at: '2026-09-23 11:56:21',
         },
@@ -85,6 +93,7 @@ describe('ExecutionQuoteIndex', () => {
   beforeEach(() => {
     controller.setListState(new DataInitial());
     indexRequest.mockReset();
+    push.mockReset();
   });
 
   it('shows the important execution quote fields returned by the index endpoint', async () => {
@@ -142,6 +151,26 @@ describe('ExecutionQuoteIndex', () => {
     );
   });
 
+  it('opens the stage selector and direct item entry from the row actions', async () => {
+    indexRequest.mockResolvedValue(createIndexResponse(1, 'Action project'));
+
+    const wrapper = mountIndex();
+    await flushPromises();
+
+    await wrapper.get('.execution-quote-index__add-stage-button').trigger('click');
+    expect(push).toHaveBeenLastCalledWith({
+      name: 'Build Execution Quote',
+      query: { id: '38' },
+    });
+
+    await wrapper.get('.execution-quote-index__add-item-button').trigger('click');
+    expect(push).toHaveBeenLastCalledWith({
+      name: 'Build Execution Quote',
+      params: { stageId: '129' },
+      query: { id: '38' },
+    });
+  });
+
   it('applies and clears the supported API filters', async () => {
     indexRequest.mockResolvedValue(createIndexResponse(1, 'Filtered project'));
 
@@ -171,7 +200,7 @@ describe('ExecutionQuoteIndex', () => {
       quote_source: 1,
       project_id: 241,
       client_id: 46,
-      quote_type_id: 2,
+      quote_type: 2,
       page: 1,
     });
 

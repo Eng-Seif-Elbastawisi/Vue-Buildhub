@@ -32,7 +32,7 @@ export default class AddExecutionQuoteParams implements Params {
   public static readonly validation = new ClassValidation().setRules({
     clientId: { required: true, labelKey: 'client_id' },
     projectId: { required: true, labelKey: 'project_id' },
-    quoteTypeId: { required: true, labelKey: 'quote_type_id' },
+    quoteTypeId: { required: true, labelKey: 'quote_type' },
     priceEmployeeId: {
       required: (record) => record.quoteSource !== QuoteSourceEnum.EXECUTION_FROM_DESIGN_QUOTE,
       labelKey: 'price_employee_id',
@@ -70,7 +70,7 @@ export default class AddExecutionQuoteParams implements Params {
     const payload: Record<string, unknown> = {
       client_id: this.clientId,
       project_id: this.projectId,
-      quote_type_id: this.quoteTypeId,
+      quote_type: this.quoteTypeId,
       quote_source: this.quoteSource,
     };
 

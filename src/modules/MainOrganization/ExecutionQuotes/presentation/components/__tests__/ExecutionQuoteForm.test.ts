@@ -6,6 +6,7 @@ import { QuoteSourceEnum } from '../../../core/constants/quote.source.enum';
 import { ExecutionQuoteTypeEnum } from '../../../core/constants/execution.quote.type.enum';
 import type { ExecutionQuoteStageSummary } from '../../../core/models/execution.quote.show.model';
 import AddExecutionQuoteParams from '../../../core/params/add.execution.quote.params';
+import type SetExecutionQuoteSupervisionPricingParams from '../../../core/params/set.execution.quote.supervision.pricing.params';
 
 const { controller, routeState } = vi.hoisted(() => ({
   controller: () => ({
@@ -43,11 +44,28 @@ vi.mock('../builder/ExecutionQuoteBuilder.vue', () => ({
   default: {
     name: 'ExecutionQuoteBuilder',
     props: ['modelValue', 'enabled', 'loading', 'executionQuoteId', 'initialStages'],
-    emits: ['update:modelValue', 'update:stages', 'update:details'],
+    emits: ['update:modelValue', 'update:stages', 'update:details', 'update:pricing'],
     template:
       '<button class="execution-quote-builder-stub" @click="$emit(\'update:modelValue\', 2)" />',
   },
 }));
+
+const SupervisionPricingStub = {
+  name: 'ExecutionQuoteSupervisionPricing',
+  props: ['modelValue', 'internalCost', 'supervisionFee', 'clientTotal', 'disabled'],
+  emits: ['update:modelValue'],
+  template: `
+    <button
+      class="supervision-pricing-stub"
+      :data-percentage="modelValue"
+      :data-internal-cost="internalCost"
+      :data-supervision-fee="supervisionFee"
+      :data-client-total="clientTotal"
+      :disabled="disabled"
+      @click="$emit('update:modelValue', 12)"
+    />
+  `,
+};
 
 const SelectStub = {
   name: 'UpdatedCustomInputSelect',
@@ -73,14 +91,24 @@ const FieldHelpIconStub = {
 const mountForm = (
   executionQuoteId?: number,
   initialQuoteStages: ExecutionQuoteStageSummary[] = [],
+  initialQuoteType?: (typeof ExecutionQuoteTypeEnum)[keyof typeof ExecutionQuoteTypeEnum],
 ) =>
   mount(ExecutionQuoteForm, {
-    props: { executionQuoteId, initialQuoteStages },
+    props: {
+      executionQuoteId,
+      initialQuoteStages,
+      initialQuoteType,
+      initialSupervisionPercentage: 10,
+      initialTotalQuotePrice: 1000,
+      initialSupervisionFee: 100,
+      initialClientQuotePrice: 1100,
+    },
     global: {
       stubs: {
         UpdatedCustomInputSelect: SelectStub,
         HandleFilesUpload: FileUploadStub,
         FieldHelpIcon: FieldHelpIconStub,
+        ExecutionQuoteSupervisionPricing: SupervisionPricingStub,
       },
       mocks: { $t: (key: string) => key },
     },
@@ -235,7 +263,7 @@ describe('ExecutionQuoteForm', () => {
     const initialQuoteStages: ExecutionQuoteStageSummary[] = [
       { id: 5, stageId: 1, subStageId: 11, items: [] },
     ];
-    const wrapper = mountForm(28, initialQuoteStages);
+    const wrapper = mountForm(28, initialQuoteStages, ExecutionQuoteTypeEnum.SUPERVISION);
 
     expect(wrapper.classes()).toContain('execution-quote--stage-page');
     expect(wrapper.find('.execution-quote__header').exists()).toBe(false);
@@ -244,6 +272,56 @@ describe('ExecutionQuoteForm', () => {
     expect(wrapper.getComponent({ name: 'ExecutionQuoteBuilder' }).props('initialStages')).toEqual(
       initialQuoteStages,
     );
+    const supervisionPricing = wrapper.getComponent(SupervisionPricingStub);
+    expect(supervisionPricing.props()).toMatchObject({
+      modelValue: 10,
+      internalCost: 1000,
+      supervisionFee: 100,
+      clientTotal: 1100,
+      disabled: true,
+    });
+  });
+
+  it('renders quote-wide supervision pricing outside the stage builder', async () => {
+    routeState.name = 'Build Execution Quote';
+    routeState.params.stageId = '12';
+
+    const wrapper = mountForm(28, [], ExecutionQuoteTypeEnum.SUPERVISION);
+    const builder = wrapper.get('.execution-quote-builder-stub');
+    const supervisionPricing = wrapper.get('.supervision-pricing-stub');
+
+    expect(builder.element.parentElement).toBe(wrapper.element);
+    expect(supervisionPricing.element.parentElement).toBe(wrapper.element);
+    expect(builder.element.nextElementSibling).toBe(supervisionPricing.element);
+    expect(supervisionPricing.attributes('disabled')).toBeDefined();
+
+    wrapper.getComponent({ name: 'ExecutionQuoteBuilder' }).vm.$emit('update:stages', [
+      {
+        stage_id: 1,
+        client_price: null,
+        items: [
+          {
+            stage_id: 11,
+            source_type: 1,
+            source_id: 17,
+            quantity: 1,
+            unit_price: 1000,
+          },
+        ],
+      },
+    ]);
+    await wrapper.vm.$nextTick();
+
+    expect(supervisionPricing.attributes('disabled')).toBeUndefined();
+    await supervisionPricing.trigger('click');
+
+    const pricing = wrapper.emitted('updateSupervisionPricing')?.at(-1)?.[0] as
+      SetExecutionQuoteSupervisionPricingParams | undefined;
+    expect(pricing?.toMap()).toEqual({
+      quote_id: 28,
+      quote_type: ExecutionQuoteTypeEnum.SUPERVISION,
+      percentage: 12,
+    });
   });
 
   it('hides the builder from the initial add page', () => {

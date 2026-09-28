@@ -11,8 +11,10 @@ import ExecutionQuoteRepository from '../execution.quote.repository';
 
 const { deleteExecutionQuoteItem, index, setStagePricing, storeDetails } = vi.hoisted(() => ({
   deleteExecutionQuoteItem: vi.fn(),
+const { index, setStagePricing, setSupervisionPricing, storeDetails } = vi.hoisted(() => ({
   index: vi.fn(),
   setStagePricing: vi.fn(),
+  setSupervisionPricing: vi.fn(),
   storeDetails: vi.fn(),
 }));
 
@@ -24,6 +26,7 @@ vi.mock('../../api/execution.quote.api-service', () => ({
       setStagePricing,
       storeDetails,
     }),
+    getInstance: () => ({ index, setStagePricing, setSupervisionPricing, storeDetails }),
   },
 }));
 
@@ -32,6 +35,7 @@ describe('ExecutionQuoteRepository', () => {
     deleteExecutionQuoteItem.mockReset();
     index.mockReset();
     setStagePricing.mockReset();
+    setSupervisionPricing.mockReset();
     storeDetails.mockReset();
   });
 
@@ -124,5 +128,15 @@ describe('ExecutionQuoteRepository', () => {
     );
 
     expect(response).toBeInstanceOf(DataSuccess);
+  it('maps a successful supervision-pricing response to DataSuccess', async () => {
+    setSupervisionPricing.mockResolvedValue({
+      statusCode: 200,
+      data: { status: true, message: 'Supervision pricing saved' },
+    });
+
+    const response = await ExecutionQuoteRepository.getInstance().setSupervisionPricing();
+
+    expect(response).toBeInstanceOf(DataSuccess);
+    expect(response.message).toBe('Supervision pricing saved');
   });
 });

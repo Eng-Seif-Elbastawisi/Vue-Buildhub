@@ -5,11 +5,126 @@ import ExecutionQuoteShowModel from '../execution.quote.show.model';
 describe('ExecutionQuoteShowModel', () => {
   it.each([
     [{ quote_type: 2 }, 2],
-    [{ quote_type_id: '1' }, 1],
+    [{ quote_type: '1' }, 1],
+    [{ quote_type_id: '2' }, 2],
   ])('maps the quote type used by execution quote tables', (rawQuoteType, expectedTypeId) => {
     const model = ExecutionQuoteShowModel.fromJson(rawQuoteType);
 
     expect(model.quoteType?.id).toBe(expectedTypeId);
+  });
+
+  it('maps quote-wide supervision totals from the backend response', () => {
+    const model = ExecutionQuoteShowModel.fromJson({
+      percentage: '10.00',
+      supervision_fee: '100.00',
+      total_client_price: '1100.00',
+    });
+
+    expect(model).toMatchObject({
+      supervisionPercentage: 10,
+      supervisionFee: 100,
+      clientQuotePrice: 1100,
+    });
+  });
+
+  it('keeps quote items when the backend serializes identifiers as numeric strings', () => {
+    const model = ExecutionQuoteShowModel.fromJson({
+      quote_stages: [
+        {
+          id: '43',
+          stage: { id: '152', title: 'Electrical stage' },
+          sub_stage: { id: '153', title: 'Electrical setup' },
+          items: [
+            {
+              id: '118',
+              item_type: '2',
+              itemable_id: '39',
+              itemable: { id: '39', title: 'Material' },
+              measurement_unit: { id: '165', title: 'Square kilometer' },
+              expected_price: '1000.00',
+              quantity: '1',
+            },
+          ],
+        },
+      ],
+    });
+
+    expect(model.quoteStages[0]).toMatchObject({
+      id: 43,
+      stageId: 152,
+      subStageId: 153,
+      items: [
+        expect.objectContaining({
+          id: 118,
+          itemType: 2,
+          itemableId: 39,
+          unitId: 165,
+        }),
+      ],
+    });
+  });
+
+  it('maps items from the nested quote-stage response used after saving a stage', () => {
+    const model = ExecutionQuoteShowModel.fromJson({
+      quote_type: 2,
+      supervision_type: 1,
+      supervision_value: '50.00',
+      supervision_price: '409.50',
+      total_quote_price: 819,
+      client_quote_price: 0,
+      quote_stages: [
+        {
+          id: 94,
+          quote_id: 132,
+          project_id: 101,
+          stage: { id: 129, title: 'Main stage' },
+          sub_stages: [
+            {
+              id: 2,
+              sub_stage: { id: 150, title: 'Sub stage' },
+              items: [
+                {
+                  id: 176,
+                  item_type: 2,
+                  itemable_id: 39,
+                  itemable: { id: 39, title: 'Material' },
+                  measurement_unit: { id: 165, title: 'Square kilometer' },
+                  expected_price: '819.00',
+                  quantity: 1,
+                },
+              ],
+            },
+          ],
+          total_price: '819.00',
+          client_price: null,
+        },
+      ],
+    });
+
+    expect(model).toMatchObject({
+      supervisionPercentage: 50,
+      supervisionFee: 409.5,
+      totalQuotePrice: 819,
+      clientQuotePrice: 0,
+      quoteStagesCount: 1,
+      quoteItemsCount: 1,
+      quoteStages: [
+        expect.objectContaining({
+          id: 94,
+          stageId: 129,
+          subStageId: 150,
+          items: [
+            expect.objectContaining({
+              id: 176,
+              itemableId: 39,
+              unitId: 165,
+              expectedPrice: 819,
+              quantity: 1,
+            }),
+          ],
+        }),
+      ],
+    });
   });
 
   it('maps the execution quote show resource', () => {

@@ -19,9 +19,18 @@ import ShowExecutionQuoteParams from '../../core/params/show.execution.quote.par
 import type StoreExecutionQuoteDetailsParams from '../../core/params/store.execution.quote.details.params';
 import type SetExecutionQuoteStagePricingParams from '../../core/params/set.execution.quote.stage.pricing.params';
 import type { ExecutionQuoteStagePricingDraft } from '../../core/params/set.execution.quote.stage.pricing.params';
-import type UpdateExecutionQuoteItemParams from '../../core/params/update.execution.quote.item.params';
+import type SetExecutionQuoteSupervisionPricingParams from '../../core/params/set.execution.quote.supervision.pricing.params';
 import type ExecutionQuoteShowModel from '../../core/models/execution.quote.show.model';
 import ExecutionQuoteRepository from '../../data/repositories/execution.quote.repository';
+import type UpdateExecutionQuoteItemParams from '../../core/params/update.execution.quote.item.params';
+
+export interface StoreExecutionQuoteBuilderChangesRequest {
+  detailRequests: StoreExecutionQuoteDetailsParams[];
+  pricingDrafts: ExecutionQuoteStagePricingDraft[];
+  supervisionPricing: SetExecutionQuoteSupervisionPricingParams | null;
+  quoteId: number;
+  formKey?: string;
+}
 
 export default class ExecutionQuoteController extends BaseController<
   ExecutionQuoteShowModel,
@@ -201,12 +210,13 @@ export default class ExecutionQuoteController extends BaseController<
       : this.pricingResolutionFailure();
   }
 
-  async storeBuilderChanges(
-    detailRequests: StoreExecutionQuoteDetailsParams[],
-    pricingDrafts: ExecutionQuoteStagePricingDraft[],
-    quoteId: number,
-    formKey?: string,
-  ) {
+  async storeBuilderChanges({
+    detailRequests,
+    pricingDrafts,
+    supervisionPricing,
+    quoteId,
+    formKey,
+  }: StoreExecutionQuoteBuilderChangesRequest) {
     const detailsResponse = await this.storeRequestBatch(detailRequests, (request) =>
       this.repository.storeDetails(request),
     );
@@ -223,7 +233,15 @@ export default class ExecutionQuoteController extends BaseController<
     );
     if (pricingResponse && !(pricingResponse instanceof DataSuccess)) return pricingResponse;
 
-    const response = pricingResponse ?? detailsResponse;
+    const supervisionResponse = supervisionPricing
+      ? await this.repository.setSupervisionPricing(supervisionPricing)
+      : undefined;
+    if (supervisionResponse && !(supervisionResponse instanceof DataSuccess)) {
+      this.handleErrorResponse(supervisionResponse);
+      return supervisionResponse;
+    }
+
+    const response = supervisionResponse ?? pricingResponse ?? detailsResponse;
     if (!(response instanceof DataSuccess)) return undefined;
 
     this.completeDetailsStore(formKey);
