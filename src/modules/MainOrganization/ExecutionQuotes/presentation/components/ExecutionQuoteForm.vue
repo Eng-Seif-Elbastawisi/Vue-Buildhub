@@ -59,7 +59,6 @@
       initialSupervisionPercentage?: number | null;
       initialTotalQuotePrice?: number;
       initialSupervisionFee?: number;
-      initialClientQuotePrice?: number;
     }>(),
     {
       loading: false,
@@ -69,7 +68,6 @@
       initialSupervisionPercentage: null,
       initialTotalQuotePrice: undefined,
       initialSupervisionFee: undefined,
-      initialClientQuotePrice: undefined,
     },
   );
 
@@ -841,12 +839,15 @@
     />
 
     <ExecutionQuoteSupervisionPricing
-      v-if="isBuilderPage && selectedExecutionQuoteType === ExecutionQuoteTypeEnum.SUPERVISION"
+      v-if="
+        isBuilderPage &&
+        !route.params.stageId &&
+        selectedExecutionQuoteType === ExecutionQuoteTypeEnum.SUPERVISION
+      "
       class="execution-quote__supervision-pricing"
       :model-value="supervisionPercentage"
       :internal-cost="props.initialTotalQuotePrice"
-      :supervision-fee="props.initialSupervisionFee"
-      :client-total="props.initialClientQuotePrice"
+      :client-total="props.initialSupervisionFee"
       :disabled="loading || quoteItemsCount === 0"
       @update:model-value="updateSupervisionPricing"
     />

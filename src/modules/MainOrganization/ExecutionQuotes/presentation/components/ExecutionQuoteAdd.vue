@@ -35,7 +35,6 @@
   const initialSupervisionPercentage = ref<number | null>(null);
   const initialTotalQuotePrice = ref<number | undefined>();
   const initialSupervisionFee = ref<number | undefined>();
-  const initialClientQuotePrice = ref<number | undefined>();
   const loading = ref(false);
   const builderResetKey = ref(0);
   const isBuilderPage = computed(() => route.name === 'Build Execution Quote');
@@ -105,7 +104,6 @@
       initialSupervisionPercentage.value = response.data.supervisionPercentage ?? null;
       initialTotalQuotePrice.value = response.data.totalQuotePrice;
       initialSupervisionFee.value = response.data.supervisionFee;
-      initialClientQuotePrice.value = response.data.clientQuotePrice;
       supervisionPricing.value = null;
       supervisionPricingTouched.value = false;
     } finally {
@@ -122,7 +120,6 @@
         initialSupervisionPercentage.value = null;
         initialTotalQuotePrice.value = undefined;
         initialSupervisionFee.value = undefined;
-        initialClientQuotePrice.value = undefined;
         supervisionPricing.value = null;
         supervisionPricingTouched.value = false;
         return;
@@ -185,6 +182,7 @@
   const builderRequestsAreValid = () => {
     const requiresSupervisionPercentage =
       initialQuoteType.value === ExecutionQuoteTypeEnum.SUPERVISION &&
+      !currentStageId.value &&
       supervisionPricingTouched.value &&
       !supervisionPricing.value;
 
@@ -265,7 +263,6 @@
       :initial-supervision-percentage="initialSupervisionPercentage"
       :initial-total-quote-price="initialTotalQuotePrice"
       :initial-supervision-fee="initialSupervisionFee"
-      :initial-client-quote-price="initialClientQuotePrice"
       @update-data="baseParams = $event"
       @update-details="detailsParams = $event"
       @update-pricing="pricingDrafts = $event"

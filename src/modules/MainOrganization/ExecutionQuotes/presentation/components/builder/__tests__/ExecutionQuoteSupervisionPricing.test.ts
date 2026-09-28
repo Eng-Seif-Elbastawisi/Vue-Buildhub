@@ -8,26 +8,24 @@ const mountPricing = (modelValue: number | null = null) =>
     props: {
       modelValue,
       internalCost: 819,
-      supervisionFee: 409.5,
-      clientTotal: 0,
+      clientTotal: 409.5,
     },
     global: { mocks: { $t: (key: string) => key } },
   });
 
 describe('ExecutionQuoteSupervisionPricing', () => {
-  it('shows backend pricing and emits the percentage without recalculating totals', async () => {
+  it('shows the supervision fee as the expected client total without a separate fee card', async () => {
     const wrapper = mountPricing(50);
 
     const summaryValues = wrapper.findAll('.supervision-pricing__summary dd');
     expect(summaryValues[0].text()).toBe('819');
-    expect(summaryValues[1].text()).toBe('409.5');
-    expect(summaryValues[2].text()).toContain('0');
+    expect(summaryValues[1].text()).toContain('409.5');
+    expect(wrapper.text()).not.toContain('execution_quote.supervision_pricing.fee');
 
     await wrapper.get('input').setValue('60');
 
     expect(wrapper.emitted('update:modelValue')?.at(-1)?.[0]).toBe(60);
-    expect(summaryValues[1].text()).toBe('409.5');
-    expect(summaryValues[2].text()).toContain('0');
+    expect(summaryValues[1].text()).toContain('409.5');
   });
 
   it('requires a percentage from one to one hundred', async () => {
