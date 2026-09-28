@@ -2691,7 +2691,8 @@
     },
     "stage_pricing": {
       "percentage_title": "Supervision percentage",
-      "percentage_placeholder": "Enter a percentage from 0 to 100",
+      "percentage_placeholder": "Enter a percentage from 1 to 100",
+      "minimum_hint": "Required · minimum value is 1",
       "percentage_badge": "Percentage",
       "price_badge": "Fixed price",
       "pending_title": "Pricing will be saved with the stage",
@@ -2853,8 +2854,8 @@
     "validation": {
       "required_data": "Complete the required quote data before saving.",
       "base_quote_required": "Save the quote data before opening a stage.",
-      "client_price": "Client stage price must be zero or greater.",
-      "percentage": "Supervision percentage must be between 0 and 100.",
+      "client_price": "Client stage price is required and must be 1 or greater.",
+      "percentage": "Supervision percentage is required and must be between 1 and 100.",
       "item_required": "Select a main stage, sub stage, source and item before adding.",
       "item_values": "Quantity must be greater than zero and unit price cannot be negative.",
       "items_required": "Add at least one quote item before saving."

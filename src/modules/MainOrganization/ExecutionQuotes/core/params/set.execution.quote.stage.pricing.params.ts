@@ -7,6 +7,9 @@ import {
   type ExecutionQuoteType,
 } from '../constants/execution.quote.type.enum';
 
+export const EXECUTION_QUOTE_STAGE_PRICING_MINIMUM = 1;
+export const EXECUTION_QUOTE_STAGE_PERCENTAGE_MAXIMUM = 100;
+
 const pricingValidationError = (quoteType: ExecutionQuoteType) => ({
   field: quoteType === ExecutionQuoteTypeEnum.SUPERVISION ? 'percentage' : 'client_price',
   message: translate(
@@ -16,17 +19,22 @@ const pricingValidationError = (quoteType: ExecutionQuoteType) => ({
   ),
 });
 
-const pricingValueIsValid = (quoteType: ExecutionQuoteType, pricingValue: number) =>
+export const executionQuoteStagePricingValueIsValid = (
+  quoteType: ExecutionQuoteType,
+  pricingValue: unknown,
+): pricingValue is number =>
+  typeof pricingValue === 'number' &&
   Number.isFinite(pricingValue) &&
-  pricingValue >= 0 &&
-  (quoteType !== ExecutionQuoteTypeEnum.SUPERVISION || pricingValue <= 100);
+  pricingValue >= EXECUTION_QUOTE_STAGE_PRICING_MINIMUM &&
+  (quoteType !== ExecutionQuoteTypeEnum.SUPERVISION ||
+    pricingValue <= EXECUTION_QUOTE_STAGE_PERCENTAGE_MAXIMUM);
 
 export class ExecutionQuoteStagePricingDraft {
   public readonly quoteStageId?: number;
   public readonly stageId: number;
   public readonly subStageId: number;
   public readonly quoteType: ExecutionQuoteType;
-  public readonly pricingValue: number;
+  public readonly pricingValue: number | null;
 
   public static readonly validation = new ClassValidation().setRules({
     stageId: { required: true, labelKey: 'stage_id' },
@@ -39,7 +47,7 @@ export class ExecutionQuoteStagePricingDraft {
     stageId: number;
     subStageId: number;
     quoteType: ExecutionQuoteType;
-    pricingValue: number;
+    pricingValue: number | null;
   }) {
     this.quoteStageId = params.quoteStageId;
     this.stageId = params.stageId;
@@ -49,6 +57,10 @@ export class ExecutionQuoteStagePricingDraft {
   }
 
   toRequest(quoteStageId: number): SetExecutionQuoteStagePricingParams {
+    if (!executionQuoteStagePricingValueIsValid(this.quoteType, this.pricingValue)) {
+      throw this.validate();
+    }
+
     return new SetExecutionQuoteStagePricingParams({
       quoteStageId,
       quoteType: this.quoteType,
@@ -58,7 +70,9 @@ export class ExecutionQuoteStagePricingDraft {
 
   validate() {
     const draftValidation = ExecutionQuoteStagePricingDraft.validation.validate(this);
-    if (pricingValueIsValid(this.quoteType, this.pricingValue)) return draftValidation;
+    if (executionQuoteStagePricingValueIsValid(this.quoteType, this.pricingValue)) {
+      return draftValidation;
+    }
 
     return {
       isValid: false,
@@ -104,7 +118,9 @@ export default class SetExecutionQuoteStagePricingParams implements Params {
 
   validate() {
     const requestValidation = SetExecutionQuoteStagePricingParams.validation.validate(this);
-    if (pricingValueIsValid(this.quoteType, this.pricingValue)) return requestValidation;
+    if (executionQuoteStagePricingValueIsValid(this.quoteType, this.pricingValue)) {
+      return requestValidation;
+    }
 
     return {
       isValid: false,

@@ -5,6 +5,10 @@
     ExecutionQuoteTypeEnum,
     type ExecutionQuoteType,
   } from '../../../core/constants/execution.quote.type.enum';
+  import {
+    EXECUTION_QUOTE_STAGE_PERCENTAGE_MAXIMUM,
+    EXECUTION_QUOTE_STAGE_PRICING_MINIMUM,
+  } from '../../../core/params/set.execution.quote.stage.pricing.params';
 
   const props = withDefaults(
     defineProps<{
@@ -49,10 +53,12 @@
       return;
     }
 
-    const nonNegativeValue = Math.max(numericValue, 0);
+    const minimumValue = Math.max(numericValue, EXECUTION_QUOTE_STAGE_PRICING_MINIMUM);
     emit(
       'update:modelValue',
-      isSupervision.value ? Math.min(nonNegativeValue, 100) : nonNegativeValue,
+      isSupervision.value
+        ? Math.min(minimumValue, EXECUTION_QUOTE_STAGE_PERCENTAGE_MAXIMUM)
+        : minimumValue,
     );
   };
 </script>
@@ -60,7 +66,10 @@
 <template>
   <section class="execution-builder-card client-price">
     <div class="builder-section-title">
-      <h2>{{ $t(titleKey) }}</h2>
+      <h2>
+        {{ $t(titleKey) }}
+        <span class="required-indicator" aria-hidden="true">*</span>
+      </h2>
       <span class="builder-badge">{{ $t(badgeKey) }}</span>
     </div>
 
@@ -68,10 +77,12 @@
       <input
         :value="modelValue ?? ''"
         type="number"
-        min="0"
-        :max="isSupervision ? 100 : undefined"
-        :step="isSupervision ? 0.01 : 1"
+        :min="EXECUTION_QUOTE_STAGE_PRICING_MINIMUM"
+        :max="isSupervision ? EXECUTION_QUOTE_STAGE_PERCENTAGE_MAXIMUM : undefined"
+        step="1"
+        required
         :disabled="disabled"
+        :aria-required="!disabled"
         :aria-label="$t(titleKey)"
         :placeholder="$t(placeholderKey)"
         @input="onInput"
@@ -80,6 +91,9 @@
         {{ isSupervision ? '%' : $t('execution_quote.table.currency_egp') }}
       </span>
     </div>
+    <small class="pricing-input__hint">
+      {{ $t('execution_quote.stage_pricing.minimum_hint') }}
+    </small>
   </section>
 </template>
 
@@ -103,6 +117,10 @@
     margin: 0;
     color: var(--title-card-color);
     font-size: 1.15rem;
+  }
+
+  .required-indicator {
+    color: var(--danger);
   }
 
   .builder-badge {
@@ -146,5 +164,12 @@
     font-weight: 700;
     pointer-events: none;
     transform: translateY(-50%);
+  }
+
+  .pricing-input__hint {
+    display: block;
+    margin-block-start: 0.4rem;
+    color: var(--subtitle-color);
+    font-size: var(--xs-size);
   }
 </style>
