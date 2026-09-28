@@ -52,14 +52,13 @@ vi.mock('../builder/ExecutionQuoteBuilder.vue', () => ({
 
 const SupervisionPricingStub = {
   name: 'ExecutionQuoteSupervisionPricing',
-  props: ['modelValue', 'internalCost', 'supervisionFee', 'clientTotal', 'disabled'],
+  props: ['modelValue', 'internalCost', 'clientTotal', 'disabled'],
   emits: ['update:modelValue'],
   template: `
     <button
       class="supervision-pricing-stub"
       :data-percentage="modelValue"
       :data-internal-cost="internalCost"
-      :data-supervision-fee="supervisionFee"
       :data-client-total="clientTotal"
       :disabled="disabled"
       @click="$emit('update:modelValue', 12)"
@@ -101,7 +100,6 @@ const mountForm = (
       initialSupervisionPercentage: 10,
       initialTotalQuotePrice: 1000,
       initialSupervisionFee: 100,
-      initialClientQuotePrice: 1100,
     },
     global: {
       stubs: {
@@ -272,19 +270,12 @@ describe('ExecutionQuoteForm', () => {
     expect(wrapper.getComponent({ name: 'ExecutionQuoteBuilder' }).props('initialStages')).toEqual(
       initialQuoteStages,
     );
-    const supervisionPricing = wrapper.getComponent(SupervisionPricingStub);
-    expect(supervisionPricing.props()).toMatchObject({
-      modelValue: 10,
-      internalCost: 1000,
-      supervisionFee: 100,
-      clientTotal: 1100,
-      disabled: true,
-    });
+    expect(wrapper.find('.supervision-pricing-stub').exists()).toBe(false);
   });
 
-  it('renders quote-wide supervision pricing outside the stage builder', async () => {
+  it('renders quote-wide supervision pricing only on the stage overview', async () => {
     routeState.name = 'Build Execution Quote';
-    routeState.params.stageId = '12';
+    routeState.params.stageId = undefined;
 
     const wrapper = mountForm(28, [], ExecutionQuoteTypeEnum.SUPERVISION);
     const builder = wrapper.get('.execution-quote-builder-stub');
@@ -294,6 +285,12 @@ describe('ExecutionQuoteForm', () => {
     expect(supervisionPricing.element.parentElement).toBe(wrapper.element);
     expect(builder.element.nextElementSibling).toBe(supervisionPricing.element);
     expect(supervisionPricing.attributes('disabled')).toBeDefined();
+    expect(wrapper.getComponent(SupervisionPricingStub).props()).toMatchObject({
+      modelValue: 10,
+      internalCost: 1000,
+      clientTotal: 100,
+      disabled: true,
+    });
 
     wrapper.getComponent({ name: 'ExecutionQuoteBuilder' }).vm.$emit('update:stages', [
       {

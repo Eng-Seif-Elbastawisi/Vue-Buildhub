@@ -10,13 +10,11 @@
     defineProps<{
       modelValue: number | null;
       internalCost?: number;
-      supervisionFee?: number;
       clientTotal?: number;
       disabled?: boolean;
     }>(),
     {
       internalCost: undefined,
-      supervisionFee: undefined,
       clientTotal: undefined,
       disabled: false,
     },
@@ -122,10 +120,6 @@
         <div>
           <dt>{{ $t('execution_quote.supervision_pricing.internal_total') }}</dt>
           <dd>{{ formatBackendPrice(internalCost) }}</dd>
-        </div>
-        <div>
-          <dt>{{ $t('execution_quote.supervision_pricing.fee') }}</dt>
-          <dd>{{ formatBackendPrice(supervisionFee) }}</dd>
         </div>
         <div class="supervision-pricing__total">
           <dt>{{ $t('execution_quote.supervision_pricing.client_total') }}</dt>
