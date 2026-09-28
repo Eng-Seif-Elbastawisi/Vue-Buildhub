@@ -21,7 +21,7 @@ export default class DeleteQuoteTypeParams implements Params {
 
   toMap(): { [p: string]: any } {
     const map: { [key: string]: any } = {
-      quote_type_id: this.id,
+      quote_type: this.id,
     };
 
     return map;

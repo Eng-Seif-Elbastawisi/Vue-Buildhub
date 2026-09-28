@@ -21,7 +21,7 @@ export default class ChangeQuoteTypeOrderParams implements Params {
 
   toMap(): { [p: string]: any } {
     return {
-      quote_type_id: this.quoteTypeId,
+      quote_type: this.quoteTypeId,
       order: this.order,
     };
   }

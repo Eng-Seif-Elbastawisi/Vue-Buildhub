@@ -7,7 +7,7 @@
   import { dialogManager } from '@/base/Presentation/Dialogs/dialog.manager';
   import StageController from '@/modules/shared/Stages/presentation/controllers/stage.controller';
   import IndexStageParams from '@/modules/shared/Stages/core/params/index.stage.params';
-  import type StageModel from '@/modules/shared/Stages/core/models/stage.model';
+  import StageModel from '@/modules/shared/Stages/core/models/stage.model';
   import AppButton from '@/shared/HelpersComponents/AppButton.vue';
 
   import {
@@ -28,6 +28,7 @@
     type ExecutionQuoteStageRequest,
   } from '../../../core/params/store.execution.quote.details.params';
   import {
+    EXECUTION_QUOTE_STAGE_PRICING_MINIMUM,
     ExecutionQuoteStagePricingDraft,
     executionQuoteStagePricingValueIsValid,
   } from '../../../core/params/set.execution.quote.stage.pricing.params';
@@ -43,7 +44,7 @@
   import ExecutionQuoteSubStages from './ExecutionQuoteSubStages.vue';
   import ExecutionQuoteItemSourceCards from './ExecutionQuoteItemSourceCards.vue';
   import ExecutionQuoteItemForm from './ExecutionQuoteItemForm.vue';
-  import ExecutionQuoteClientPrice from './ExecutionQuoteClientPrice.vue';
+  import ExecutionQuoteStageClientPrice from './ExecutionQuoteStageClientPrice.vue';
   import ExecutionQuoteItemsTable from './ExecutionQuoteItemsTable.vue';
   import ExecutionQuoteTotals from './ExecutionQuoteTotals.vue';
 
@@ -55,7 +56,10 @@
       initialStages?: ExecutionQuoteStageSummary[];
       loading?: boolean;
     }>(),
-    { initialStages: () => [], loading: false },
+    {
+      initialStages: () => [],
+      loading: false,
+    },
   );
 
   const emit = defineEmits<{
@@ -79,6 +83,7 @@
   const editingItem = ref<ExecutionQuoteItemState | null>(null);
   const stagePricingValues = ref<Record<string, number | null>>({});
   const dirtyPricingStageKeys = ref<Set<string>>(new Set());
+  const automaticPricingStageKeys = ref<Set<string>>(new Set());
   const mainStagesLoading = ref(false);
   const subStagesLoading = ref(false);
 
@@ -151,6 +156,71 @@
     () => (currentStageState.value?.client_price ?? 0) - currentStageInternalCost.value,
   );
 
+  const subStageItemsTotal = (stageId: number, subStageId: number) =>
+    (stageStates.value[String(stageId)]?.items ?? [])
+      .filter((quoteItem) => Number(quoteItem.sub_stage_id) === subStageId)
+      .reduce((total, quoteItem) => total + quoteItem.quantity * quoteItem.unit_price, 0);
+
+  const syncStageClientPriceTotal = (stageId: number) => {
+    const stageState = stageStates.value[String(stageId)];
+    if (!stageState) return;
+
+    const stagePricePrefix = `${stageId}:`;
+    const stagePrices = Object.entries(stagePricingValues.value)
+      .filter(
+        ([pricingKey, pricingValue]) => pricingKey.startsWith(stagePricePrefix) && pricingValue,
+      )
+      .map(([, pricingValue]) => pricingValue as number);
+
+    stageState.client_price = stagePrices.length
+      ? stagePrices.reduce((total, pricingValue) => total + pricingValue, 0)
+      : null;
+  };
+
+  const clearAutomaticClientPrice = (stageId: number, pricingKey: string) => {
+    delete stagePricingValues.value[pricingKey];
+    automaticPricingStageKeys.value = new Set(
+      [...automaticPricingStageKeys.value].filter((key) => key !== pricingKey),
+    );
+    dirtyPricingStageKeys.value = new Set(
+      [...dirtyPricingStageKeys.value].filter((key) => key !== pricingKey),
+    );
+    syncStageClientPriceTotal(stageId);
+  };
+
+  const setAutomaticClientPrice = (stageId: number, subStageId: number, pricingKey: string) => {
+    stagePricingValues.value[pricingKey] = Math.max(
+      subStageItemsTotal(stageId, subStageId),
+      EXECUTION_QUOTE_STAGE_PRICING_MINIMUM,
+    );
+    automaticPricingStageKeys.value = new Set(automaticPricingStageKeys.value).add(pricingKey);
+    dirtyPricingStageKeys.value = new Set(dirtyPricingStageKeys.value).add(pricingKey);
+    syncStageClientPriceTotal(stageId);
+  };
+
+  const syncAutomaticClientPrice = (stageId: number, subStageId: number) => {
+    if (props.modelValue !== ExecutionQuoteTypeEnum.LUMP_SUM) return;
+
+    const pricingKey = stagePricingKey(stageId, subStageId);
+    const pricingValue = stagePricingValues.value[pricingKey];
+    const canApplyDefault =
+      automaticPricingStageKeys.value.has(pricingKey) ||
+      !executionQuoteStagePricingValueIsValid(ExecutionQuoteTypeEnum.LUMP_SUM, pricingValue);
+    if (!canApplyDefault) return;
+
+    const stageItems = stageStates.value[String(stageId)]?.items.filter(
+      (quoteItem) => Number(quoteItem.sub_stage_id) === subStageId,
+    );
+    if (!stageItems?.length) {
+      if (automaticPricingStageKeys.value.has(pricingKey)) {
+        clearAutomaticClientPrice(stageId, pricingKey);
+      }
+      return;
+    }
+
+    setAutomaticClientPrice(stageId, subStageId, pricingKey);
+  };
+
   const quoteTypeTitle = computed(() =>
     props.modelValue ? t(getExecutionQuoteTypeTitleKey(props.modelValue)) : '',
   );
@@ -177,6 +247,17 @@
     return state;
   };
 
+  const storedMainStage = (stageId: number): StageModel | undefined => {
+    const quoteStage = props.initialStages.find((candidate) => candidate.stageId === stageId);
+    if (!quoteStage) return undefined;
+
+    return new StageModel({
+      id: stageId,
+      title: quoteStage.stage?.title,
+      children: [],
+    });
+  };
+
   const itemSourceValue = (rawSource: number | undefined): ExecutionQuoteItemSource | undefined =>
     Object.values(ExecutionQuoteItemSourceEnum).includes(rawSource as ExecutionQuoteItemSource)
       ? (rawSource as ExecutionQuoteItemSource)
@@ -189,7 +270,7 @@
   ): ExecutionQuoteItemState | undefined => {
     const sourceType = itemSourceValue(quoteItem.itemType);
     const sourceId = quoteItem.itemableId ?? quoteItem.itemable?.id;
-    if (!quoteStage.stageId || !quoteStage.subStageId || !sourceType || !sourceId) return undefined;
+    if (!quoteStage.stageId || !sourceType || !sourceId) return undefined;
 
     return {
       id: `persisted-${quoteStage.id ?? quoteStage.stageId}-${quoteItem.id ?? itemIndex}`,
@@ -241,7 +322,7 @@
         client_price: stage.client_price,
         items: stage.items.map(
           ({ sub_stage_id, source_type, source_id, sorting_id, quantity, unit_price }) => ({
-            stage_id: sub_stage_id,
+            stage_id: sub_stage_id ?? stage.stage_id,
             source_type,
             source_id,
             ...(sorting_id !== undefined && sorting_id !== null ? { sorting_id } : {}),
@@ -263,7 +344,10 @@
 
     Object.values(stageStates.value).forEach((stage) => {
       stage.items
-        .filter((quoteItem) => !quoteItem.persisted)
+        .filter(
+          (quoteItem): quoteItem is ExecutionQuoteItemState & { sub_stage_id: number | string } =>
+            !quoteItem.persisted && quoteItem.sub_stage_id !== undefined,
+        )
         .forEach((quoteItem) => {
           const requestKey = `${stage.stage_id}:${quoteItem.sub_stage_id}:${quoteItem.source_type}`;
           const requestGroup = requestGroups.get(requestKey) ?? {
@@ -299,10 +383,7 @@
     );
   };
 
-  const pricingDraftForStage = (
-    pricingKey: string,
-    quoteType: ExecutionQuoteType,
-  ): ExecutionQuoteStagePricingDraft => {
+  const pricingDraftForStage = (pricingKey: string): ExecutionQuoteStagePricingDraft => {
     const [stageId, subStageId] = pricingKey.split(':').map(Number);
     const quoteStageId = props.initialStages.find(
       (quoteStage) => quoteStage.stageId === stageId && quoteStage.subStageId === subStageId,
@@ -312,36 +393,33 @@
       quoteStageId,
       stageId,
       subStageId,
-      quoteType,
+      quoteType: ExecutionQuoteTypeEnum.LUMP_SUM,
       pricingValue: stagePricingValues.value[pricingKey] ?? null,
     });
   };
 
-  const requiredPricingStageKeys = (quoteType: ExecutionQuoteType) =>
+  const requiredPricingStageKeys = () =>
     groupedStoreItems()
       .filter(({ stageId, subStageId }) => {
         const storedStage = props.initialStages.find(
           (quoteStage) => quoteStage.stageId === stageId && quoteStage.subStageId === subStageId,
         );
-        const storedPricingValue =
-          quoteType === ExecutionQuoteTypeEnum.SUPERVISION
-            ? storedStage?.percentage
-            : storedStage?.clientPrice;
+        const storedPricingValue = storedStage?.clientPrice;
 
-        return !executionQuoteStagePricingValueIsValid(quoteType, storedPricingValue);
+        return !executionQuoteStagePricingValueIsValid(
+          ExecutionQuoteTypeEnum.LUMP_SUM,
+          storedPricingValue,
+        );
       })
       .map(({ stageId, subStageId }) => stagePricingKey(stageId, subStageId));
 
   const stagePricingDrafts = (): ExecutionQuoteStagePricingDraft[] => {
     const quoteType = props.modelValue;
-    if (!quoteType) return [];
+    if (quoteType !== ExecutionQuoteTypeEnum.LUMP_SUM) return [];
 
-    const pricingKeys = new Set([
-      ...dirtyPricingStageKeys.value,
-      ...requiredPricingStageKeys(quoteType),
-    ]);
+    const pricingKeys = new Set([...dirtyPricingStageKeys.value, ...requiredPricingStageKeys()]);
 
-    return [...pricingKeys].map((pricingKey) => pricingDraftForStage(pricingKey, quoteType));
+    return [...pricingKeys].map(pricingDraftForStage);
   };
 
   const emitDetails = () => {
@@ -359,10 +437,7 @@
     Object.fromEntries(
       quoteStages.flatMap((quoteStage) => {
         if (!quoteStage.stageId || !quoteStage.subStageId) return [];
-        const pricingValue =
-          props.modelValue === ExecutionQuoteTypeEnum.SUPERVISION
-            ? (quoteStage.percentage ?? null)
-            : (quoteStage.clientPrice ?? null);
+        const pricingValue = quoteStage.clientPrice ?? null;
         return [[stagePricingKey(quoteStage.stageId, quoteStage.subStageId), pricingValue]];
       }),
     );
@@ -379,6 +454,12 @@
     stageStates.value = hydratedStates;
     stagePricingValues.value = hydratedStagePricingValues(quoteStages);
     dirtyPricingStageKeys.value = new Set();
+    automaticPricingStageKeys.value = new Set();
+
+    quoteStages.forEach((quoteStage) => {
+      if (!quoteStage.stageId || !quoteStage.subStageId) return;
+      syncAutomaticClientPrice(quoteStage.stageId, quoteStage.subStageId);
+    });
     emitDetails();
     emitPricing();
   };
@@ -393,6 +474,7 @@
     editingItem.value = null;
     stagePricingValues.value = {};
     dirtyPricingStageKeys.value = new Set();
+    automaticPricingStageKeys.value = new Set();
     emit('update:stages', []);
     emit('update:details', []);
     emit('update:pricing', []);
@@ -450,7 +532,12 @@
 
     if (!mainStages.value.length) await fetchMainStages();
 
-    const stage = mainStages.value.find((candidate) => candidate.id === stageId);
+    let stage = mainStages.value.find((candidate) => candidate.id === stageId);
+    if (!stage) {
+      stage = storedMainStage(stageId);
+      if (stage) mainStages.value = [...mainStages.value, stage];
+    }
+
     if (!stage) {
       clearActiveStage();
       return;
@@ -527,6 +614,7 @@
     };
 
     stageState.items.push(item);
+    syncAutomaticClientPrice(stage.id, Number(subStage.id));
     emitDetails();
     emitPricing();
   };
@@ -550,6 +638,7 @@
       unit_price: draft.unit_price,
       unit_id: draft.unit_id,
     };
+    syncAutomaticClientPrice(Number(itemToUpdate.stage_id), Number(itemToUpdate.sub_stage_id));
     editingItem.value = null;
     emitDetails();
     emitPricing();
@@ -604,6 +693,7 @@
 
     if (editingItem.value?.id === item.id) editingItem.value = null;
     state.items = state.items.filter((candidate) => candidate.id !== item.id);
+    syncAutomaticClientPrice(Number(item.stage_id), Number(item.sub_stage_id));
     emitDetails();
     emitPricing();
   };
@@ -611,18 +701,15 @@
   const updateStagePricing = (pricingValue: number | null) => {
     const pricingKey = currentStagePricingKey.value;
     const quoteType = props.modelValue;
-    if (!pricingKey || !quoteType) return;
+    if (!pricingKey || quoteType !== ExecutionQuoteTypeEnum.LUMP_SUM) return;
 
     stagePricingValues.value[pricingKey] = pricingValue;
+    automaticPricingStageKeys.value = new Set(
+      [...automaticPricingStageKeys.value].filter((key) => key !== pricingKey),
+    );
     dirtyPricingStageKeys.value = new Set(dirtyPricingStageKeys.value).add(pricingKey);
 
-    if (currentStageState.value) {
-      if (quoteType === ExecutionQuoteTypeEnum.LUMP_SUM) {
-        currentStageState.value.client_price = pricingValue;
-      } else {
-        currentStageState.value.percentage = pricingValue;
-      }
-    }
+    if (currentStageState.value) syncStageClientPriceTotal(Number(selectedMainStageId.value));
 
     emitDetails();
     emitPricing();
@@ -675,6 +762,7 @@
       }
 
       await fetchMainStages();
+      await activateStageFromRoute(route.params.stageId);
     },
   );
 
@@ -738,21 +826,6 @@
           @back="closeMainStage"
         />
 
-        <aside
-          v-if="!stageClientPricingEnabled"
-          class="pricing-notice"
-          role="status"
-          aria-live="polite"
-        >
-          <span class="pricing-notice__icon" aria-hidden="true">
-            <i class="pi pi-info-circle"></i>
-          </span>
-          <div>
-            <strong>{{ $t('execution_quote.supervision_pricing.title') }}</strong>
-            <p>{{ $t('execution_quote.supervision_pricing.description') }}</p>
-          </div>
-        </aside>
-
         <ExecutionQuoteSubStages
           :model-value="selectedSubStageId"
           :stages="subStages"
@@ -777,15 +850,15 @@
           @cancel-edit="cancelItemEdit"
         />
 
-        <ExecutionQuoteClientPrice
+        <ExecutionQuoteStageClientPrice
+          v-if="stageClientPricingEnabled"
           :model-value="currentStagePricingValue"
-          :quote-type="modelValue"
           :disabled="!selectedSubStageId"
           @update:model-value="updateStagePricing"
         />
 
         <aside
-          v-if="selectedSubStageId && !currentPersistedQuoteStage?.id"
+          v-if="stageClientPricingEnabled && selectedSubStageId && !currentPersistedQuoteStage?.id"
           class="pricing-notice pricing-notice--pending"
           role="status"
         >

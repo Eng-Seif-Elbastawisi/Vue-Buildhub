@@ -54,12 +54,12 @@ describe('ProjectPreviewShowModel', () => {
     const model = ProjectPreviewShowModel.fromJson({
       id: 12,
       project_id: 10,
-      quote_type_id: 2,
+      quote_type: 2,
       design_value: '5000.00',
       area: 320,
     });
 
-    expect(model.quote_type_id).toBe(2);
+    expect(model.quote_type).toBe(2);
     expect(model.design_value).toBe('5000.00');
     expect(model.area).toBe(320);
   });

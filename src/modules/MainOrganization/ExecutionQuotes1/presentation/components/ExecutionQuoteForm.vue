@@ -875,7 +875,7 @@ watch(designQuote, async (selectedDesignQuote) => {
 
     designQuoteDetails.value = previewResponse.data;
     projectId.value = previewResponse.data.project_id ?? projectId.value;
-    quoteTypeId.value = previewResponse.data.quote_type_id ?? quoteTypeId.value;
+    quoteTypeId.value = previewResponse.data.quote_type ?? quoteTypeId.value;
   } finally {
     if (requestId === latestDesignQuoteRequest) {
       designQuoteLoading.value = false;
@@ -1290,7 +1290,7 @@ updateData();
             <span class="stage-card__topline">
               <span class="stage-card__status">{{
                 stage.status ? $t('active') : $t('inactive')
-              }}</span>
+                }}</span>
               <span class="stage-card__count">{{ stage.stageChildrenCount }}</span>
             </span>
             <strong>{{ stage.title }}</strong>
@@ -1349,7 +1349,7 @@ updateData();
             <h2>{{ $t('execution_quote.what_will_you_add') }}</h2>
             <span v-if="selectedItemSource" class="section-title__badge">{{
               getSourceLabel(selectedItemSource)
-            }}</span>
+              }}</span>
           </div>
 
           <div class="item-source-grid">
@@ -1368,7 +1368,7 @@ updateData();
             <h2>{{ $t('execution_quote.select_item_title') }}</h2>
             <span v-if="selectedItemSource" class="section-title__badge">{{
               $t('execution_quote.ready_to_add')
-            }}</span>
+              }}</span>
           </div>
 
           <div v-if="!selectedItemSource || !selectedSubStageId" class="stage-empty">
@@ -1392,13 +1392,13 @@ updateData();
               <label class="quote-field">
                 <span class="quote-field__label">{{
                   $t('execution_quote.item_fields.quantity')
-                }}</span>
+                  }}</span>
                 <input v-model.number="itemQuantity" type="number" min="0.01" step="1" />
               </label>
               <label class="quote-field">
                 <span class="quote-field__label">{{
                   $t('execution_quote.item_fields.unit_price')
-                }}</span>
+                  }}</span>
                 <input v-model.number="itemUnitPrice" type="number" min="0" step="1" />
               </label>
               <div class="item-form__unit">
