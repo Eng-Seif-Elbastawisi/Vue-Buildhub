@@ -52,7 +52,6 @@ vi.mock('../ExecutionQuoteForm.vue', () => ({
       'initialSupervisionPercentage',
       'initialTotalQuotePrice',
       'initialSupervisionFee',
-      'initialClientQuotePrice',
     ],
     emits: ['updateData', 'updateDetails', 'updatePricing', 'updateSupervisionPricing'],
     template: '<div class="execution-quote-form-stub" />',
@@ -168,9 +167,6 @@ describe('ExecutionQuoteAdd', () => {
     expect(
       wrapper.getComponent({ name: 'ExecutionQuoteForm' }).props('initialSupervisionPercentage'),
     ).toBe(10);
-    expect(
-      wrapper.getComponent({ name: 'ExecutionQuoteForm' }).props('initialClientQuotePrice'),
-    ).toBe(2200);
     expect(
       wrapper.getComponent({ name: 'ExecutionQuoteForm' }).props('initialTotalQuotePrice'),
     ).toBe(2000);
@@ -310,6 +306,7 @@ describe('ExecutionQuoteAdd', () => {
     const wrapper = mountAdd();
     await flushPromises();
 
+    wrapper.getComponent({ name: 'ExecutionQuoteForm' }).vm.$emit('updateSupervisionPricing', null);
     wrapper.getComponent({ name: 'ExecutionQuoteForm' }).vm.$emit('updateDetails', [detailsParams]);
     await wrapper.vm.$nextTick();
     await wrapper.get('.execution-quote-add__save--details').trigger('click');

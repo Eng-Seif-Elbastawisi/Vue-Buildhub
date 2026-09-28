@@ -79,7 +79,6 @@ export default class ExecutionQuoteApiService extends BaseApiService {
     );
   }
 
-
   async setSupervisionPricing(
     params?: SetExecutionQuoteSupervisionPricingParams,
   ): Promise<ApiResponse<ExecutionQuoteDetailsResponse>> {
