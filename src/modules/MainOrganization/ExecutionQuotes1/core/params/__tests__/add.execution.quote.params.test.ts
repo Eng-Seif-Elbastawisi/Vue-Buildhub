@@ -18,7 +18,7 @@ describe('AddExecutionQuoteParams', () => {
     expect(params.toMap()).toEqual({
       client_id: 5,
       project_id: 10,
-      quote_type_id: 2,
+      quote_type: 2,
       price_employee_id: 7,
       quote_source: 1,
     });
@@ -36,7 +36,7 @@ describe('AddExecutionQuoteParams', () => {
     expect(params.toMap()).toEqual({
       client_id: 28,
       project_id: 15,
-      quote_type_id: 3,
+      quote_type: 3,
       quote_source: QuoteSourceEnum.EXECUTION_FROM_DESIGN_QUOTE,
     });
 

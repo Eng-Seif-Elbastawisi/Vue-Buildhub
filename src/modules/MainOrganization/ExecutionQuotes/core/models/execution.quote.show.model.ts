@@ -85,10 +85,7 @@ const objectValue = (rawRelation: unknown): Record<string, unknown> | undefined 
     ? (rawRelation as Record<string, unknown>)
     : undefined;
 
-const numberValue = (rawNumber: unknown): number | undefined =>
-  typeof rawNumber === 'number' ? rawNumber : undefined;
-
-const decimalNumberValue = (rawNumber: unknown): number | undefined => {
+const numberValue = (rawNumber: unknown): number | undefined => {
   if (typeof rawNumber === 'number') return Number.isFinite(rawNumber) ? rawNumber : undefined;
   if (typeof rawNumber !== 'string' || rawNumber.trim() === '') return undefined;
 
@@ -193,12 +190,12 @@ const quoteTypeSummary = (
   const quoteType = objectValue(rawQuoteType);
   if (quoteType) {
     return {
-      id: decimalNumberValue(quoteType.id),
+      id: numberValue(quoteType.id),
       title: stringValue(quoteType.title),
     };
   }
 
-  const quoteTypeId = decimalNumberValue(rawQuoteType) ?? decimalNumberValue(rawQuoteTypeId);
+  const quoteTypeId = numberValue(rawQuoteType) ?? numberValue(rawQuoteTypeId);
   const quoteTypeTitle = stringValue(rawQuoteType);
   if (!quoteTypeId && !quoteTypeTitle) return undefined;
 
@@ -220,48 +217,77 @@ const stageItemSummary = (rawItem: unknown): ExecutionQuoteStageItemSummary | un
     itemableId: numberValue(stageItem.itemable_id),
     itemableType: stringValue(stageItem.itemable_type),
     itemable: titledResourceSummary(stageItem.itemable),
-    expectedPrice: decimalNumberValue(stageItem.expected_price),
-    quantity: decimalNumberValue(stageItem.quantity),
-    unitId: measurementUnit?.id ?? decimalNumberValue(stageItem.unit),
+    expectedPrice: numberValue(stageItem.expected_price),
+    quantity: numberValue(stageItem.quantity),
+    unitId: measurementUnit?.id ?? numberValue(stageItem.unit),
     measurementUnit,
   };
 };
 
-const quoteStageSummary = (rawStage: unknown): ExecutionQuoteStageSummary | undefined => {
-  const quoteStage = objectValue(rawStage);
-  if (!quoteStage) return undefined;
-
-  const stage = titledResourceSummary(quoteStage.stage);
-  const subStage = titledResourceSummary(quoteStage.sub_stage);
-
-  const stageItems = Array.isArray(quoteStage.items)
-    ? quoteStage.items
+const stageItemSummaries = (rawItems: unknown): ExecutionQuoteStageItemSummary[] =>
+  Array.isArray(rawItems)
+    ? rawItems
         .map(stageItemSummary)
         .filter((stageItem): stageItem is ExecutionQuoteStageItemSummary => !!stageItem)
     : [];
+
+const quoteStageGroupSummary = (
+  quoteStage: Record<string, unknown>,
+  subStageGroup?: Record<string, unknown>,
+) => {
+  const subStage = titledResourceSummary(subStageGroup?.sub_stage ?? quoteStage.sub_stage);
+
+  return {
+    subStage,
+    subStageId:
+      subStage?.id ??
+      numberValue(subStageGroup?.sub_stage_id) ??
+      numberValue(quoteStage.sub_stage_id),
+    items: stageItemSummaries(subStageGroup?.items ?? quoteStage.items),
+    clientPrice: numberValue(subStageGroup?.client_price ?? quoteStage.client_price),
+    percentage: numberValue(subStageGroup?.percentage ?? quoteStage.percentage),
+    totalPrice: numberValue(subStageGroup ? subStageGroup.total_price : quoteStage.total_price),
+    createdAt: stringValue(subStageGroup?.created_at ?? quoteStage.created_at),
+  };
+};
+
+const quoteStageSummary = (
+  rawStage: unknown,
+  rawSubStageGroup?: unknown,
+): ExecutionQuoteStageSummary | undefined => {
+  const quoteStage = objectValue(rawStage);
+  if (!quoteStage) return undefined;
+
+  const subStageGroup = objectValue(rawSubStageGroup);
+  const stage = titledResourceSummary(quoteStage.stage);
+  const groupSummary = quoteStageGroupSummary(quoteStage, subStageGroup);
 
   return {
     id: numberValue(quoteStage.id),
     quoteId: numberValue(quoteStage.quote_id),
     projectId: numberValue(quoteStage.project_id),
     stageId: stage?.id ?? numberValue(quoteStage.stage_id),
-    subStageId: subStage?.id ?? numberValue(quoteStage.sub_stage_id),
     stage,
-    subStage,
-    items: stageItems,
-    clientPrice: decimalNumberValue(quoteStage.client_price),
-    percentage: decimalNumberValue(quoteStage.percentage),
-    totalPrice: decimalNumberValue(quoteStage.total_price),
-    createdAt: stringValue(quoteStage.created_at),
+    ...groupSummary,
   };
 };
 
 const quoteStageSummaries = (rawStages: unknown): ExecutionQuoteStageSummary[] => {
   if (!Array.isArray(rawStages)) return [];
 
-  return rawStages
-    .map(quoteStageSummary)
-    .filter((quoteStage): quoteStage is ExecutionQuoteStageSummary => !!quoteStage);
+  return rawStages.flatMap((rawStage) => {
+    const quoteStage = objectValue(rawStage);
+    if (!quoteStage) return [];
+
+    const subStageGroups = Array.isArray(quoteStage.sub_stages) ? quoteStage.sub_stages : [];
+    const summaries = subStageGroups.length
+      ? subStageGroups.map((subStageGroup) => quoteStageSummary(rawStage, subStageGroup))
+      : [quoteStageSummary(rawStage)];
+
+    return summaries.filter(
+      (stageSummary): stageSummary is ExecutionQuoteStageSummary => !!stageSummary,
+    );
+  });
 };
 
 const attachmentSummary = (rawAttachment: unknown): ExecutionQuoteAttachmentSummary | undefined => {
@@ -301,6 +327,8 @@ export default class ExecutionQuoteShowModel {
   public readonly attachments: ExecutionQuoteAttachmentSummary[];
   public readonly totalQuotePrice?: number;
   public readonly clientQuotePrice?: number;
+  public readonly supervisionPercentage?: number;
+  public readonly supervisionFee?: number;
   public readonly createdAt?: string;
 
   constructor(data: {
@@ -316,6 +344,8 @@ export default class ExecutionQuoteShowModel {
     attachments?: ExecutionQuoteAttachmentSummary[];
     totalQuotePrice?: number;
     clientQuotePrice?: number;
+    supervisionPercentage?: number;
+    supervisionFee?: number;
     createdAt?: string;
   }) {
     this.id = data.id;
@@ -327,7 +357,12 @@ export default class ExecutionQuoteShowModel {
     this.quoteType = data.quoteType;
     this.priceEmployee = data.priceEmployee;
     this.quoteStages = data.quoteStages ?? [];
-    this.quoteStagesCount = this.quoteStages.length;
+    const mainStageIds = new Set(
+      this.quoteStages
+        .map((quoteStage) => quoteStage.stageId)
+        .filter((stageId): stageId is number => stageId !== undefined),
+    );
+    this.quoteStagesCount = mainStageIds.size || this.quoteStages.length;
     this.quoteItemsCount = this.quoteStages.reduce(
       (itemsTotal, quoteStage) => itemsTotal + quoteStage.items.length,
       0,
@@ -335,6 +370,8 @@ export default class ExecutionQuoteShowModel {
     this.attachments = data.attachments ?? [];
     this.totalQuotePrice = data.totalQuotePrice;
     this.clientQuotePrice = data.clientQuotePrice;
+    this.supervisionPercentage = data.supervisionPercentage;
+    this.supervisionFee = data.supervisionFee;
     this.createdAt = data.createdAt;
     Object.freeze(this);
   }
@@ -351,8 +388,12 @@ export default class ExecutionQuoteShowModel {
       priceEmployee: employeeSummary(json.price_employee),
       quoteStages: quoteStageSummaries(json.quote_stages),
       attachments: attachmentSummaries(json.attachments),
-      totalQuotePrice: decimalNumberValue(json.total_quote_price),
-      clientQuotePrice: decimalNumberValue(json.client_quote_price),
+      totalQuotePrice: numberValue(json.total_quote_price),
+      clientQuotePrice: numberValue(json.client_quote_price ?? json.total_client_price),
+      supervisionPercentage: numberValue(
+        json.supervision_value ?? json.supervision_percentage ?? json.percentage,
+      ),
+      supervisionFee: numberValue(json.supervision_price ?? json.supervision_fee),
       createdAt: stringValue(json.created_at),
     });
   }

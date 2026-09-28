@@ -8,6 +8,12 @@ import ExecutionQuoteApiService from '../../../data/api/execution.quote.api-serv
 import ExecutionQuoteController from '../../controllers/execution.quote.controller';
 import ExecutionQuoteShow from '../ExecutionQuoteShow.vue';
 
+const routerLinkStub = {
+  props: ['to'],
+  template:
+    '<a :data-route-name="to.name" :data-quote-id="to.query?.id" :data-stage-id="to.params?.stageId"><slot /></a>',
+};
+
 vi.mock('vue-router', async (importOriginal) => ({
   ...(await importOriginal<typeof VueRouterModule>()),
   useRoute: () => ({ params: { id: '41' } }),
@@ -28,7 +34,7 @@ describe('ExecutionQuoteShow', () => {
     const wrapper = mount(ExecutionQuoteShow, {
       global: {
         mocks: { $t: (key: string) => key },
-        stubs: { RouterLink: { template: '<a><slot /></a>' } },
+        stubs: { RouterLink: routerLinkStub },
       },
     });
 
@@ -125,7 +131,7 @@ describe('ExecutionQuoteShow', () => {
             return key;
           },
         },
-        stubs: { RouterLink: { template: '<a><slot /></a>' } },
+        stubs: { RouterLink: routerLinkStub },
       },
     });
 
@@ -154,6 +160,20 @@ describe('ExecutionQuoteShow', () => {
     expect(wrapper.text()).not.toContain('#41');
     expect(wrapper.text()).not.toContain('#17');
 
+    const addItemsButton = wrapper.get('.execution-quote-show__add-items');
+    expect(addItemsButton.attributes('data-route-name')).toBe('Build Execution Quote');
+    expect(addItemsButton.attributes('data-quote-id')).toBe('41');
+
+    const addStageButton = wrapper.get('.execution-quote-show__add-stage-button');
+    expect(addStageButton.attributes('data-route-name')).toBe('Build Execution Quote');
+    expect(addStageButton.attributes('data-quote-id')).toBe('41');
+    expect(addStageButton.attributes('data-stage-id')).toBeUndefined();
+
+    const addItemButton = wrapper.get('.execution-quote-show__add-item-button');
+    expect(addItemButton.attributes('data-route-name')).toBe('Build Execution Quote');
+    expect(addItemButton.attributes('data-quote-id')).toBe('41');
+    expect(addItemButton.attributes('data-stage-id')).toBe('129');
+
     const quoteItemCells = wrapper.get('.execution-quote-show__items-table tbody tr').findAll('td');
     expect(quoteItemCells[4]?.text()).toBe('1');
     expect(quoteItemCells[5]?.text()).toBe('كيلومتر مربع');
@@ -168,6 +188,8 @@ describe('ExecutionQuoteShow', () => {
     expect(projectCard.text()).toContain('123,456.78');
     expect(projectCard.text()).toContain('Client quote price');
     expect(projectCard.text()).toContain('150,000');
+    expect(projectCard.text()).not.toContain('execution_quote.show.supervision_percentage');
+    expect(projectCard.text()).not.toContain('execution_quote.show.supervision_price');
     expect(projectCard.text()).toContain('Pricing owner');
     expect(projectCard.text()).toContain('fwffefefe');
     expect(wrapper.text()).not.toContain('execution_quote.show.ownership_section');
@@ -175,10 +197,65 @@ describe('ExecutionQuoteShow', () => {
     const accordionHeaders = wrapper.findAll('.p-accordionheader');
     expect(accordionHeaders).toHaveLength(2);
     expect(accordionHeaders[0].attributes('aria-expanded')).toBe('true');
+    expect(accordionHeaders[1].attributes('aria-expanded')).toBe('true');
+    expect(
+      accordionHeaders[1].get('.execution-quote-show__accordion-toggle .pi-chevron-up').exists(),
+    ).toBe(true);
+
+    await accordionHeaders[1].trigger('click');
+
+    expect(accordionHeaders[1].attributes('aria-expanded')).toBe('false');
+    expect(
+      accordionHeaders[1].get('.execution-quote-show__accordion-toggle .pi-chevron-down').exists(),
+    ).toBe(true);
 
     await accordionHeaders[0].trigger('click');
 
     expect(accordionHeaders[0].attributes('aria-expanded')).toBe('false');
+  });
+
+  it('shows backend supervision percentage and price instead of lump-sum client price', async () => {
+    showRequest.mockResolvedValue({
+      statusCode: 200,
+      data: {
+        status: true,
+        data: {
+          id: 135,
+          quote_source: 1,
+          project: { title: 'Supervision project' },
+          client: { name: 'Omar ali' },
+          quote_type: 2,
+          supervision_value: '50.00',
+          supervision_price: '1500.00',
+          total_quote_price: 1000,
+          client_quote_price: 0,
+          quote_stages: [],
+          attachments: [],
+        },
+      },
+    });
+
+    const wrapper = mount(ExecutionQuoteShow, {
+      global: {
+        mocks: {
+          $t: (key: string) => key,
+        },
+        stubs: { RouterLink: routerLinkStub },
+      },
+    });
+
+    await flushPromises();
+
+    const financialSummary = wrapper.get('.execution-quote-show__finance');
+    const financeValues = financialSummary.findAll('.execution-quote-show__finance-value');
+    expect(financialSummary.text()).toContain('execution_quote.show.total_quote_price');
+    expect(financialSummary.text()).toContain('execution_quote.show.supervision_percentage');
+    expect(financialSummary.text()).toContain('execution_quote.show.supervision_price');
+    expect(financialSummary.text()).not.toContain('execution_quote.show.client_quote_price');
+    expect(financeValues).toHaveLength(3);
+    expect(financeValues[0].get('dd strong').text()).toBe('1,000');
+    expect(financeValues[1].get('dd strong').text()).toBe('50');
+    expect(financeValues[2].get('dd strong').text()).toBe('1,500');
   });
 
   it('hides the pricing owner when the show response does not include one', async () => {
@@ -204,7 +281,7 @@ describe('ExecutionQuoteShow', () => {
           $t: (key: string) =>
             key === 'execution_quote.fields.price_employee' ? 'Pricing owner' : key,
         },
-        stubs: { RouterLink: { template: '<a><slot /></a>' } },
+        stubs: { RouterLink: routerLinkStub },
       },
     });
 

@@ -22,23 +22,32 @@
   import IndexEmployeeParams from '@/modules/MainOrganization/employee/core/params/index.employee.params';
 
   import { QuoteSourceEnum } from '../../core/constants/quote.source.enum';
-  import type { ExecutionQuoteType } from '../../core/constants/execution.quote.type.enum';
+  import {
+    ExecutionQuoteTypeEnum,
+    type ExecutionQuoteType,
+  } from '../../core/constants/execution.quote.type.enum';
   import type { ExecutionQuoteStageSummary } from '../../core/models/execution.quote.show.model';
   import AddExecutionQuoteParams, {
     type ExecutionQuoteAttachmentParams,
   } from '../../core/params/add.execution.quote.params';
   import type { ExecutionQuoteStagePricingDraft } from '../../core/params/set.execution.quote.stage.pricing.params';
+  import SetExecutionQuoteSupervisionPricingParams from '../../core/params/set.execution.quote.supervision.pricing.params';
   import type {
     default as StoreExecutionQuoteDetailsParams,
     ExecutionQuoteStageRequest,
   } from '../../core/params/store.execution.quote.details.params';
   import ExecutionQuoteBuilder from './builder/ExecutionQuoteBuilder.vue';
+  import ExecutionQuoteSupervisionPricing from './builder/ExecutionQuoteSupervisionPricing.vue';
   import ExecutionQuoteTypeCards from './builder/ExecutionQuoteTypeCards.vue';
 
   const emit = defineEmits<{
     (event: 'updateData', quoteParams: AddExecutionQuoteParams): void;
     (event: 'updateDetails', detailsParams: StoreExecutionQuoteDetailsParams[]): void;
     (event: 'updatePricing', pricingDrafts: ExecutionQuoteStagePricingDraft[]): void;
+    (
+      event: 'updateSupervisionPricing',
+      pricing: SetExecutionQuoteSupervisionPricingParams | null,
+    ): void;
   }>();
 
   const props = withDefaults(
@@ -47,12 +56,20 @@
       executionQuoteId?: number | null;
       initialQuoteType?: ExecutionQuoteType | null;
       initialQuoteStages?: ExecutionQuoteStageSummary[];
+      initialSupervisionPercentage?: number | null;
+      initialTotalQuotePrice?: number;
+      initialSupervisionFee?: number;
+      initialClientQuotePrice?: number;
     }>(),
     {
       loading: false,
       executionQuoteId: null,
       initialQuoteType: null,
       initialQuoteStages: () => [],
+      initialSupervisionPercentage: null,
+      initialTotalQuotePrice: undefined,
+      initialSupervisionFee: undefined,
+      initialClientQuotePrice: undefined,
     },
   );
 
@@ -102,6 +119,7 @@
   const selectedQuoteSource = ref<QuoteSourceEnum>(QuoteSourceEnum.EXECUTION_ONLY);
   const selectedExecutionQuoteType = ref<ExecutionQuoteType | null>(null);
   const executionQuoteStages = ref<ExecutionQuoteStageRequest[]>([]);
+  const supervisionPercentage = ref<number | null>(props.initialSupervisionPercentage);
 
   const baseLocked = computed(() => Boolean(props.executionQuoteId));
   const isBuilderPage = computed(() => route.name === 'Build Execution Quote');
@@ -238,7 +256,9 @@
   const clearBuilderData = () => {
     selectedExecutionQuoteType.value = null;
     executionQuoteStages.value = [];
+    supervisionPercentage.value = null;
     emit('updateDetails', []);
+    emit('updateSupervisionPricing', null);
   };
 
   /**
@@ -359,6 +379,14 @@
     { immediate: true },
   );
 
+  watch(
+    () => props.initialSupervisionPercentage,
+    (percentage) => {
+      supervisionPercentage.value = percentage;
+    },
+    { immediate: true },
+  );
+
   const onExecutionQuoteTypeChange = (value: ExecutionQuoteType | null) => {
     selectedExecutionQuoteType.value = value;
     updateBaseData();
@@ -374,6 +402,27 @@
 
   const onPricingChange = (pricingDrafts: ExecutionQuoteStagePricingDraft[]) => {
     emit('updatePricing', pricingDrafts);
+  };
+
+  const updateSupervisionPricing = (percentage: number | null) => {
+    supervisionPercentage.value = percentage;
+
+    if (
+      selectedExecutionQuoteType.value !== ExecutionQuoteTypeEnum.SUPERVISION ||
+      !props.executionQuoteId ||
+      percentage === null
+    ) {
+      emit('updateSupervisionPricing', null);
+      return;
+    }
+
+    emit(
+      'updateSupervisionPricing',
+      new SetExecutionQuoteSupervisionPricingParams({
+        quoteId: props.executionQuoteId,
+        percentage,
+      }),
+    );
   };
 
   const selectSource = (source: QuoteSourceEnum) => {
@@ -789,6 +838,17 @@
       @update:stages="onStagesChange"
       @update:details="onDetailsChange"
       @update:pricing="onPricingChange"
+    />
+
+    <ExecutionQuoteSupervisionPricing
+      v-if="isBuilderPage && selectedExecutionQuoteType === ExecutionQuoteTypeEnum.SUPERVISION"
+      class="execution-quote__supervision-pricing"
+      :model-value="supervisionPercentage"
+      :internal-cost="props.initialTotalQuotePrice"
+      :supervision-fee="props.initialSupervisionFee"
+      :client-total="props.initialClientQuotePrice"
+      :disabled="loading || quoteItemsCount === 0"
+      @update:model-value="updateSupervisionPricing"
     />
   </section>
 </template>

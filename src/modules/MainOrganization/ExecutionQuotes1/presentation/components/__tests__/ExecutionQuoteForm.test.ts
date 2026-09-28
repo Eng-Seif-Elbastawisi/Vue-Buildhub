@@ -13,7 +13,7 @@ const { controller } = vi.hoisted(() => ({
     fetchAsOptions: vi.fn().mockResolvedValue([]),
     fetchOne: vi.fn().mockResolvedValue(
       new DataSuccess({
-        data: new ProjectPreviewShowModel({ project_id: 20, quote_type_id: 15 }),
+        data: new ProjectPreviewShowModel({ project_id: 20, quote_type: 15 }),
       }),
     ),
     isListFailed: vi.fn().mockReturnValue(false),
@@ -100,7 +100,7 @@ describe('ExecutionQuoteForm', () => {
     expect(params.toMap()).toEqual({
       client_id: 9,
       project_id: 20,
-      quote_type_id: 15,
+      quote_type: 15,
       quote_source: QuoteSourceEnum.EXECUTION_FROM_DESIGN_QUOTE,
     });
   });

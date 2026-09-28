@@ -6,6 +6,7 @@ import BaseApiService, {
 
 import type StoreExecutionQuoteDetailsParams from '../../core/params/store.execution.quote.details.params';
 import type SetExecutionQuoteStagePricingParams from '../../core/params/set.execution.quote.stage.pricing.params';
+import type SetExecutionQuoteSupervisionPricingParams from '../../core/params/set.execution.quote.supervision.pricing.params';
 import { ExecutionQuoteApiEndpoints } from './execution.quote.api.endpoints';
 
 export interface ExecutionQuoteDetailsResponse {
@@ -51,6 +52,16 @@ export default class ExecutionQuoteApiService extends BaseApiService {
   ): Promise<ApiResponse<ExecutionQuoteDetailsResponse>> {
     return await this.customPost<ExecutionQuoteDetailsResponse>(
       this.executionQuoteEndpoints.setStagePricing,
+      params as Params,
+      { useJson: true },
+    );
+  }
+
+  async setSupervisionPricing(
+    params?: SetExecutionQuoteSupervisionPricingParams,
+  ): Promise<ApiResponse<ExecutionQuoteDetailsResponse>> {
+    return await this.customPost<ExecutionQuoteDetailsResponse>(
+      this.executionQuoteEndpoints.setSupervisionPricing,
       params as Params,
       { useJson: true },
     );

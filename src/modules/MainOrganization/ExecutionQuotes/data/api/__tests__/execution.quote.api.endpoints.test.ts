@@ -12,5 +12,8 @@ describe('ExecutionQuoteApiEndpoints', () => {
     expect(endpoints.store).toContain('organization/store_quote');
     expect(endpoints.storeDetails).toContain('organization/store_quote_stage');
     expect(endpoints.setStagePricing).toContain('organization/set_quote_stage_client_price');
+    expect(endpoints.setSupervisionPricing).toContain(
+      'organization/set_quote_supervision_percentage',
+    );
   });
 });

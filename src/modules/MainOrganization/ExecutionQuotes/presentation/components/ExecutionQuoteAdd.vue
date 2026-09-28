@@ -15,6 +15,7 @@
   import type { ExecutionQuoteStageSummary } from '../../core/models/execution.quote.show.model';
   import ShowExecutionQuoteParams from '../../core/params/show.execution.quote.params';
   import type { ExecutionQuoteStagePricingDraft } from '../../core/params/set.execution.quote.stage.pricing.params';
+  import type SetExecutionQuoteSupervisionPricingParams from '../../core/params/set.execution.quote.supervision.pricing.params';
   import type StoreExecutionQuoteDetailsParams from '../../core/params/store.execution.quote.details.params';
   import ExecutionQuoteController from '../controllers/execution.quote.controller';
   import ExecutionQuoteForm from './ExecutionQuoteForm.vue';
@@ -27,15 +28,23 @@
   const baseParams = ref<AddExecutionQuoteParams | null>(null);
   const detailsParams = ref<StoreExecutionQuoteDetailsParams[]>([]);
   const pricingDrafts = ref<ExecutionQuoteStagePricingDraft[]>([]);
+  const supervisionPricing = ref<SetExecutionQuoteSupervisionPricingParams | null>(null);
+  const supervisionPricingTouched = ref(false);
   const initialQuoteType = ref<ExecutionQuoteType | null>(null);
   const initialQuoteStages = ref<ExecutionQuoteStageSummary[]>([]);
+  const initialSupervisionPercentage = ref<number | null>(null);
+  const initialTotalQuotePrice = ref<number | undefined>();
+  const initialSupervisionFee = ref<number | undefined>();
+  const initialClientQuotePrice = ref<number | undefined>();
   const loading = ref(false);
   const builderResetKey = ref(0);
   const isBuilderPage = computed(() => route.name === 'Build Execution Quote');
   const hasSavableBuilderChanges = computed(
     () =>
       detailsParams.value.length > 0 ||
-      pricingDrafts.value.some((pricingDraft) => Boolean(pricingDraft.quoteStageId)),
+      pricingDrafts.value.some((pricingDraft) => Boolean(pricingDraft.quoteStageId)) ||
+      Boolean(supervisionPricing.value) ||
+      supervisionPricingTouched.value,
   );
 
   const executionQuoteId = computed<number | null>(() => {
@@ -93,6 +102,12 @@
 
       initialQuoteType.value = toExecutionQuoteType(response.data.quoteType?.id);
       initialQuoteStages.value = response.data.quoteStages;
+      initialSupervisionPercentage.value = response.data.supervisionPercentage ?? null;
+      initialTotalQuotePrice.value = response.data.totalQuotePrice;
+      initialSupervisionFee.value = response.data.supervisionFee;
+      initialClientQuotePrice.value = response.data.clientQuotePrice;
+      supervisionPricing.value = null;
+      supervisionPricingTouched.value = false;
     } finally {
       loading.value = false;
     }
@@ -104,6 +119,12 @@
       if (!builderPage) {
         initialQuoteType.value = null;
         initialQuoteStages.value = [];
+        initialSupervisionPercentage.value = null;
+        initialTotalQuotePrice.value = undefined;
+        initialSupervisionFee.value = undefined;
+        initialClientQuotePrice.value = undefined;
+        supervisionPricing.value = null;
+        supervisionPricingTouched.value = false;
         return;
       }
 
@@ -162,7 +183,21 @@
   };
 
   const builderRequestsAreValid = () => {
-    const requests = [...detailsParams.value, ...pricingDrafts.value];
+    const requiresSupervisionPercentage =
+      initialQuoteType.value === ExecutionQuoteTypeEnum.SUPERVISION &&
+      supervisionPricingTouched.value &&
+      !supervisionPricing.value;
+
+    if (requiresSupervisionPercentage) {
+      dialogManager.toastWarning(t('execution_quote.validation.percentage'));
+      return false;
+    }
+
+    const requests = [
+      ...detailsParams.value,
+      ...pricingDrafts.value,
+      ...(supervisionPricing.value ? [supervisionPricing.value] : []),
+    ];
     const invalidRequest = requests.find((request) => !request.validate().isValid);
     if (!invalidRequest) return true;
 
@@ -177,12 +212,13 @@
     loading.value = true;
 
     try {
-      const response = await controller.storeBuilderChanges(
-        detailsParams.value,
-        pricingDrafts.value,
+      const response = await controller.storeBuilderChanges({
+        detailRequests: detailsParams.value,
+        pricingDrafts: pricingDrafts.value,
+        supervisionPricing: supervisionPricing.value,
         quoteId,
-        route.fullPath,
-      );
+        formKey: route.fullPath,
+      });
       return response instanceof DataSuccess;
     } finally {
       loading.value = false;
@@ -192,6 +228,8 @@
   const continueAtCurrentStage = async (quoteId: number) => {
     detailsParams.value = [];
     pricingDrafts.value = [];
+    supervisionPricing.value = null;
+    supervisionPricingTouched.value = false;
     await loadStoredQuote(quoteId);
     builderResetKey.value += 1;
 
@@ -209,6 +247,11 @@
     const stored = await storeBuilderRequests(quoteId);
     if (stored) await continueAtCurrentStage(quoteId);
   };
+
+  const updateSupervisionPricing = (pricing: SetExecutionQuoteSupervisionPricingParams | null) => {
+    supervisionPricing.value = pricing;
+    supervisionPricingTouched.value = true;
+  };
 </script>
 
 <template>
@@ -219,9 +262,14 @@
       :execution-quote-id="executionQuoteId"
       :initial-quote-type="initialQuoteType"
       :initial-quote-stages="initialQuoteStages"
+      :initial-supervision-percentage="initialSupervisionPercentage"
+      :initial-total-quote-price="initialTotalQuotePrice"
+      :initial-supervision-fee="initialSupervisionFee"
+      :initial-client-quote-price="initialClientQuotePrice"
       @update-data="baseParams = $event"
       @update-details="detailsParams = $event"
       @update-pricing="pricingDrafts = $event"
+      @update-supervision-pricing="updateSupervisionPricing"
     />
 
     <section v-if="!isBuilderPage" class="execution-quote-add__setup-dock">

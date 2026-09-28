@@ -8,20 +8,24 @@ import IndexParams from '@/base/Core/Params/indexParams';
 
 import ExecutionQuoteRepository from '../execution.quote.repository';
 
-const { index, setStagePricing, storeDetails } = vi.hoisted(() => ({
+const { index, setStagePricing, setSupervisionPricing, storeDetails } = vi.hoisted(() => ({
   index: vi.fn(),
   setStagePricing: vi.fn(),
+  setSupervisionPricing: vi.fn(),
   storeDetails: vi.fn(),
 }));
 
 vi.mock('../../api/execution.quote.api-service', () => ({
-  default: { getInstance: () => ({ index, setStagePricing, storeDetails }) },
+  default: {
+    getInstance: () => ({ index, setStagePricing, setSupervisionPricing, storeDetails }),
+  },
 }));
 
 describe('ExecutionQuoteRepository', () => {
   beforeEach(() => {
     index.mockReset();
     setStagePricing.mockReset();
+    setSupervisionPricing.mockReset();
     storeDetails.mockReset();
   });
 
@@ -104,5 +108,17 @@ describe('ExecutionQuoteRepository', () => {
 
     expect(response).toBeInstanceOf(DataSuccess);
     expect(response.message).toBe('Pricing saved');
+  });
+
+  it('maps a successful supervision-pricing response to DataSuccess', async () => {
+    setSupervisionPricing.mockResolvedValue({
+      statusCode: 200,
+      data: { status: true, message: 'Supervision pricing saved' },
+    });
+
+    const response = await ExecutionQuoteRepository.getInstance().setSupervisionPricing();
+
+    expect(response).toBeInstanceOf(DataSuccess);
+    expect(response.message).toBe('Supervision pricing saved');
   });
 });

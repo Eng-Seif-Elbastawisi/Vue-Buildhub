@@ -20,7 +20,7 @@ export default class ShowQuoteTypeParams implements Params {
 
   toMap(): { [p: string]: number } {
     return {
-      quote_type_id: this.id,
+      quote_type: this.id,
     };
   }
 

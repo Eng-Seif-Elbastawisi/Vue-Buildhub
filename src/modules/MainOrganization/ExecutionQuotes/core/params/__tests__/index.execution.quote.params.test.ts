@@ -20,7 +20,7 @@ describe('IndexExecutionQuoteParams', () => {
       quote_source: 1,
       project_id: 241,
       client_id: 46,
-      quote_type_id: 2,
+      quote_type: 2,
     });
   });
 

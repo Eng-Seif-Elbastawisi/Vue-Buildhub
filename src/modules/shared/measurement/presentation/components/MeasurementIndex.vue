@@ -183,7 +183,7 @@ v-model="word" class="search-input" type="text" :placeholder="$t('search_measure
 
       <div class="d-flex justify-end">
         <button
-class="app-btn btn btn-primary btn--md btn--has-icon btn-save"
+class="app-btn btn btn-primary btn--md btn--has-icon btn-save white"
           @click="router.push(`${routePrefix}/measurement/add`)">
           <svg
 width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"

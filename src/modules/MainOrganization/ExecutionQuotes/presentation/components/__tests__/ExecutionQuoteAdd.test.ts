@@ -9,6 +9,7 @@ import { ExecutionQuoteTypeEnum } from '../../../core/constants/execution.quote.
 import ExecutionQuoteShowModel from '../../../core/models/execution.quote.show.model';
 import AddExecutionQuoteParams from '../../../core/params/add.execution.quote.params';
 import { ExecutionQuoteStagePricingDraft } from '../../../core/params/set.execution.quote.stage.pricing.params';
+import SetExecutionQuoteSupervisionPricingParams from '../../../core/params/set.execution.quote.supervision.pricing.params';
 import StoreExecutionQuoteDetailsParams from '../../../core/params/store.execution.quote.details.params';
 import ExecutionQuoteAdd from '../ExecutionQuoteAdd.vue';
 
@@ -43,8 +44,17 @@ vi.mock('@/base/Presentation/Dialogs/dialog.manager', () => ({
 vi.mock('../ExecutionQuoteForm.vue', () => ({
   default: {
     name: 'ExecutionQuoteForm',
-    props: ['loading', 'executionQuoteId', 'initialQuoteType', 'initialQuoteStages'],
-    emits: ['updateData', 'updateDetails', 'updatePricing'],
+    props: [
+      'loading',
+      'executionQuoteId',
+      'initialQuoteType',
+      'initialQuoteStages',
+      'initialSupervisionPercentage',
+      'initialTotalQuotePrice',
+      'initialSupervisionFee',
+      'initialClientQuotePrice',
+    ],
+    emits: ['updateData', 'updateDetails', 'updatePricing', 'updateSupervisionPricing'],
     template: '<div class="execution-quote-form-stub" />',
   },
 }));
@@ -126,6 +136,10 @@ describe('ExecutionQuoteAdd', () => {
         data: new ExecutionQuoteShowModel({
           id: 28,
           quoteType: { id: ExecutionQuoteTypeEnum.SUPERVISION, title: 'Supervision' },
+          supervisionPercentage: 10,
+          totalQuotePrice: 2000,
+          supervisionFee: 200,
+          clientQuotePrice: 2200,
           quoteStages: [
             {
               id: 5,
@@ -151,6 +165,18 @@ describe('ExecutionQuoteAdd', () => {
     expect(
       wrapper.getComponent({ name: 'ExecutionQuoteForm' }).props('initialQuoteStages'),
     ).toEqual([expect.objectContaining({ stageId: 1, subStageId: 11 })]);
+    expect(
+      wrapper.getComponent({ name: 'ExecutionQuoteForm' }).props('initialSupervisionPercentage'),
+    ).toBe(10);
+    expect(
+      wrapper.getComponent({ name: 'ExecutionQuoteForm' }).props('initialClientQuotePrice'),
+    ).toBe(2200);
+    expect(
+      wrapper.getComponent({ name: 'ExecutionQuoteForm' }).props('initialTotalQuotePrice'),
+    ).toBe(2000);
+    expect(
+      wrapper.getComponent({ name: 'ExecutionQuoteForm' }).props('initialSupervisionFee'),
+    ).toBe(200);
   });
 
   it('saves the current batch and stays on the same main stage for more sub-stages', async () => {
@@ -190,12 +216,13 @@ describe('ExecutionQuoteAdd', () => {
     await wrapper.get('.execution-quote-add__save--details').trigger('click');
     await flushPromises();
 
-    expect(controller.storeBuilderChanges).toHaveBeenCalledWith(
-      [detailsParams],
-      [pricingDraft],
-      48,
-      routeState.fullPath,
-    );
+    expect(controller.storeBuilderChanges).toHaveBeenCalledWith({
+      detailRequests: [detailsParams],
+      pricingDrafts: [pricingDraft],
+      supervisionPricing: null,
+      quoteId: 48,
+      formKey: routeState.fullPath,
+    });
     expect(replace).toHaveBeenCalledWith({
       name: 'Build Execution Quote',
       params: { stageId: '129' },
@@ -218,30 +245,30 @@ describe('ExecutionQuoteAdd', () => {
       }),
     );
     controller.storeBuilderChanges.mockResolvedValue(new DataSuccess({ data: undefined }));
-    const pricingDraft = new ExecutionQuoteStagePricingDraft({
-      quoteStageId: 43,
-      stageId: 129,
-      subStageId: 150,
-      quoteType: ExecutionQuoteTypeEnum.SUPERVISION,
-      pricingValue: 10,
+    const supervisionPricing = new SetExecutionQuoteSupervisionPricingParams({
+      quoteId: 94,
+      percentage: 10,
     });
     const wrapper = mountAdd();
     await flushPromises();
 
-    wrapper.getComponent({ name: 'ExecutionQuoteForm' }).vm.$emit('updatePricing', [pricingDraft]);
+    wrapper
+      .getComponent({ name: 'ExecutionQuoteForm' })
+      .vm.$emit('updateSupervisionPricing', supervisionPricing);
     await wrapper.vm.$nextTick();
     await wrapper.get('.execution-quote-add__save--details').trigger('click');
     await flushPromises();
 
-    expect(controller.storeBuilderChanges).toHaveBeenCalledWith(
-      [],
-      [pricingDraft],
-      94,
-      routeState.fullPath,
-    );
+    expect(controller.storeBuilderChanges).toHaveBeenCalledWith({
+      detailRequests: [],
+      pricingDrafts: [],
+      supervisionPricing,
+      quoteId: 94,
+      formKey: routeState.fullPath,
+    });
   });
 
-  it('waits for a new stage item before saving an unresolved percentage draft', async () => {
+  it('does not enable saving when supervision pricing has not changed', async () => {
     routeState.name = 'Build Execution Quote';
     routeState.fullPath = '/organization/execution-quotes/add/stages/129?id=94';
     routeState.params.stageId = '129';
@@ -254,18 +281,46 @@ describe('ExecutionQuoteAdd', () => {
         }),
       }),
     );
-    const pricingDraft = new ExecutionQuoteStagePricingDraft({
+    const wrapper = mountAdd();
+    await flushPromises();
+
+    expect(wrapper.get('.execution-quote-add__save--details').attributes('disabled')).toBeDefined();
+  });
+
+  it('saves supervision stage items before final quote-wide pricing is entered', async () => {
+    routeState.name = 'Build Execution Quote';
+    routeState.fullPath = '/organization/execution-quotes/add/stages/129?id=94';
+    routeState.params.stageId = '129';
+    routeState.query.id = '94';
+    controller.fetchOne.mockResolvedValue(
+      new DataSuccess({
+        data: new ExecutionQuoteShowModel({
+          id: 94,
+          quoteType: { id: ExecutionQuoteTypeEnum.SUPERVISION, title: 'Supervision' },
+        }),
+      }),
+    );
+    const detailsParams = new StoreExecutionQuoteDetailsParams({
+      quoteId: 94,
       stageId: 129,
       subStageId: 150,
-      quoteType: ExecutionQuoteTypeEnum.SUPERVISION,
-      pricingValue: 10,
+      itemType: ExecutionQuoteItemSourceEnum.PRODUCT,
+      items: [{ morphId: 22, expectedPrice: 50, quantity: 2, unit: 9 }],
     });
     const wrapper = mountAdd();
     await flushPromises();
 
-    wrapper.getComponent({ name: 'ExecutionQuoteForm' }).vm.$emit('updatePricing', [pricingDraft]);
+    wrapper.getComponent({ name: 'ExecutionQuoteForm' }).vm.$emit('updateDetails', [detailsParams]);
     await wrapper.vm.$nextTick();
+    await wrapper.get('.execution-quote-add__save--details').trigger('click');
 
-    expect(wrapper.get('.execution-quote-add__save--details').attributes('disabled')).toBeDefined();
+    expect(toastWarning).not.toHaveBeenCalled();
+    expect(controller.storeBuilderChanges).toHaveBeenCalledWith({
+      detailRequests: [detailsParams],
+      pricingDrafts: [],
+      supervisionPricing: null,
+      quoteId: 94,
+      formKey: routeState.fullPath,
+    });
   });
 });

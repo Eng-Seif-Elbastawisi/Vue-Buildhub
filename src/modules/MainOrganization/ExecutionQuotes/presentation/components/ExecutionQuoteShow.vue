@@ -136,6 +136,12 @@
     }
   };
 
+  const quoteBuilderRoute = (stageId?: number) => ({
+    name: 'Build Execution Quote',
+    ...(stageId ? { params: { stageId: String(stageId) } } : {}),
+    query: { id: String(quoteId.value) },
+  });
+
   onMounted(fetchQuote);
 </script>
 
@@ -150,12 +156,21 @@
         <p>{{ $t('execution_quote.show.description') }}</p>
       </div>
 
-      <AppButton :to="{ name: 'Execution Quotes' }" theme="secondary" outline icon="left">
-        <template #icon>
-          <i class="pi pi-arrow-right" aria-hidden="true"></i>
-        </template>
-        {{ $t('execution_quote.show.back') }}
-      </AppButton>
+      <div class="execution-quote-show__header-actions">
+        <AppButton class="execution-quote-show__add-items" :to="quoteBuilderRoute()" icon="left">
+          <template #icon>
+            <i class="pi pi-plus" aria-hidden="true"></i>
+          </template>
+          {{ $t('execution_quote.show.add_items') }}
+        </AppButton>
+
+        <AppButton :to="{ name: 'Execution Quotes' }" theme="secondary" outline icon="left">
+          <template #icon>
+            <i class="pi pi-arrow-right" aria-hidden="true"></i>
+          </template>
+          {{ $t('execution_quote.show.back') }}
+        </AppButton>
+      </div>
     </header>
 
     <DataStatusBuilder :controller="state" :on-retry="fetchQuote">
@@ -212,11 +227,25 @@
                     <h3 id="quote-finance-title">
                       {{ $t('execution_quote.show.financial_summary') }}
                     </h3>
-                    <p>{{ $t('execution_quote.show.financial_summary_hint') }}</p>
+                    <p>
+                      {{
+                        $t(
+                          quote.quoteType?.id === ExecutionQuoteTypeEnum.SUPERVISION
+                            ? 'execution_quote.show.supervision_financial_summary_hint'
+                            : 'execution_quote.show.financial_summary_hint',
+                        )
+                      }}
+                    </p>
                   </div>
                 </header>
 
-                <dl class="execution-quote-show__finance-values">
+                <dl
+                  class="execution-quote-show__finance-values"
+                  :class="{
+                    'execution-quote-show__finance-values--supervision':
+                      quote.quoteType?.id === ExecutionQuoteTypeEnum.SUPERVISION,
+                  }"
+                >
                   <div class="execution-quote-show__finance-value">
                     <span class="execution-quote-show__finance-value-icon" aria-hidden="true">
                       <i class="pi pi-calculator"></i>
@@ -231,7 +260,8 @@
                   </div>
 
                   <div
-                    class="execution-quote-show__finance-value execution-quote-show__finance-value--client"
+                    v-if="quote.quoteType?.id === ExecutionQuoteTypeEnum.LUMP_SUM"
+                    class="execution-quote-show__finance-value execution-quote-show__finance-value--highlight"
                   >
                     <span class="execution-quote-show__finance-value-icon" aria-hidden="true">
                       <i class="pi pi-wallet"></i>
@@ -240,6 +270,36 @@
                     <dd>
                       <strong>{{ formatNumber(quote.clientQuotePrice) }}</strong>
                       <small v-if="quote.clientQuotePrice !== undefined">
+                        {{ $t('execution_quote.table.currency_egp') }}
+                      </small>
+                    </dd>
+                  </div>
+
+                  <div
+                    v-if="quote.quoteType?.id === ExecutionQuoteTypeEnum.SUPERVISION"
+                    class="execution-quote-show__finance-value execution-quote-show__finance-value--percentage"
+                  >
+                    <span class="execution-quote-show__finance-value-icon" aria-hidden="true">
+                      <i class="pi pi-percentage"></i>
+                    </span>
+                    <dt>{{ $t('execution_quote.show.supervision_percentage') }}</dt>
+                    <dd>
+                      <strong>{{ formatNumber(quote.supervisionPercentage) }}</strong>
+                      <small v-if="quote.supervisionPercentage !== undefined">%</small>
+                    </dd>
+                  </div>
+
+                  <div
+                    v-if="quote.quoteType?.id === ExecutionQuoteTypeEnum.SUPERVISION"
+                    class="execution-quote-show__finance-value execution-quote-show__finance-value--highlight"
+                  >
+                    <span class="execution-quote-show__finance-value-icon" aria-hidden="true">
+                      <i class="pi pi-verified"></i>
+                    </span>
+                    <dt>{{ $t('execution_quote.show.supervision_price') }}</dt>
+                    <dd>
+                      <strong>{{ formatNumber(quote.supervisionFee) }}</strong>
+                      <small v-if="quote.supervisionFee !== undefined">
                         {{ $t('execution_quote.table.currency_egp') }}
                       </small>
                     </dd>
@@ -340,6 +400,12 @@
           >
             <AccordionPanel value="stages" class="execution-quote-show__stages-panel">
               <AccordionHeader class="execution-quote-show__stages-header">
+                <template #toggleicon="{ active }">
+                  <span class="execution-quote-show__accordion-toggle" aria-hidden="true">
+                    <i :class="active ? 'pi pi-chevron-up' : 'pi pi-chevron-down'"></i>
+                  </span>
+                </template>
+
                 <div class="execution-quote-show__section-title">
                   <span class="execution-quote-show__section-icon">
                     <i class="pi pi-list-check" aria-hidden="true"></i>
@@ -359,6 +425,20 @@
               </AccordionHeader>
 
               <AccordionContent class="execution-quote-show__stages-content">
+                <div class="execution-quote-show__stages-actions">
+                  <AppButton
+                    class="execution-quote-show__add-stage-button"
+                    :to="quoteBuilderRoute()"
+                    size="sm"
+                    icon="left"
+                  >
+                    <template #icon>
+                      <i class="pi pi-sitemap" aria-hidden="true"></i>
+                    </template>
+                    {{ $t('execution_quote.table.add_stage') }}
+                  </AppButton>
+                </div>
+
                 <Accordion
                   v-if="quote.quoteStages.length"
                   v-model:value="activeQuoteStages"
@@ -367,11 +447,17 @@
                 >
                   <AccordionPanel
                     v-for="(stage, stageIndex) in quote.quoteStages"
-                    :key="stage.id ?? `${stage.stageId}-${stage.subStageId}`"
+                    :key="`${stage.id ?? 'stage'}-${stage.stageId}-${stage.subStageId ?? 'root'}`"
                     :value="stageIndex.toString()"
                     class="execution-quote-show__stage-panel"
                   >
                     <AccordionHeader class="execution-quote-show__stage-accordion-header">
+                      <template #toggleicon="{ active }">
+                        <span class="execution-quote-show__accordion-toggle" aria-hidden="true">
+                          <i :class="active ? 'pi pi-chevron-up' : 'pi pi-chevron-down'"></i>
+                        </span>
+                      </template>
+
                       <div class="execution-quote-show__stage-header">
                         <div>
                           <span>{{ $t('execution_quote.show.main_stage') }}</span>
@@ -416,6 +502,20 @@
                     </AccordionHeader>
 
                     <AccordionContent class="execution-quote-show__stage-content">
+                      <div class="execution-quote-show__stage-actions">
+                        <AppButton
+                          class="execution-quote-show__add-item-button"
+                          :to="quoteBuilderRoute(stage.stageId)"
+                          size="sm"
+                          icon="left"
+                        >
+                          <template #icon>
+                            <i class="pi pi-plus" aria-hidden="true"></i>
+                          </template>
+                          {{ $t('execution_quote.table.add_item') }}
+                        </AppButton>
+                      </div>
+
                       <div v-if="stage.items.length" class="execution-quote-show__items-table-wrap">
                         <table class="execution-quote-show__items-table">
                           <thead>
@@ -498,6 +598,13 @@
 
   .execution-quote-show__header {
     animation: execution-quote-show-enter 340ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+
+  .execution-quote-show__header-actions {
+    display: flex;
+    flex: 0 0 auto;
+    flex-wrap: wrap;
+    gap: 0.75rem;
   }
 
   .execution-quote-show h1,
@@ -783,6 +890,10 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .execution-quote-show__finance-values--supervision {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
   .execution-quote-show__finance-value {
     display: grid;
     grid-template-columns: auto minmax(0, 1fr);
@@ -804,12 +915,21 @@
     transform: translateY(-1px);
   }
 
-  .execution-quote-show__finance-value--client {
+  .execution-quote-show__finance-value--highlight {
     background: var(--PrimaryColor-alpha-4);
   }
 
-  .execution-quote-show__finance-value--client:hover {
+  .execution-quote-show__finance-value--highlight:hover {
     background: var(--PrimaryColor-alpha-8);
+  }
+
+  .execution-quote-show__finance-value--percentage {
+    background: var(--bg-section);
+  }
+
+  .execution-quote-show__finance-value--percentage .execution-quote-show__finance-value-icon {
+    background: var(--PrimaryColor-light);
+    color: var(--PrimaryColor);
   }
 
   .execution-quote-show__finance-value-icon {
@@ -821,7 +941,7 @@
     font-size: 1.05rem;
   }
 
-  .execution-quote-show__finance-value--client .execution-quote-show__finance-value-icon {
+  .execution-quote-show__finance-value--highlight .execution-quote-show__finance-value-icon {
     background: var(--PrimaryColor);
     color: var(--white);
   }
@@ -845,7 +965,7 @@
     line-height: 1.2;
   }
 
-  .execution-quote-show__finance-value--client strong {
+  .execution-quote-show__finance-value--highlight strong {
     color: var(--PrimaryColor);
   }
 
@@ -867,7 +987,6 @@
   }
 
   .execution-quote-show a {
-    color: var(--PrimaryColor);
     text-decoration: none;
   }
 
@@ -920,8 +1039,35 @@
     overflow: hidden;
   }
 
-  .execution-quote-show__stages-accordion :deep(.p-accordionheader-toggle-icon) {
-    transition: transform 280ms cubic-bezier(0.4, 0, 0.2, 1);
+  .execution-quote-show__accordion-toggle {
+    display: grid;
+    flex: 0 0 2.5rem;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border: 1px solid var(--PrimaryColor-alpha-20);
+    border-radius: var(--radius-full);
+    background: var(--bg-card);
+    color: var(--PrimaryColor);
+    box-shadow: var(--shadow-sm);
+    transition:
+      color var(--transition-fast),
+      background-color var(--transition-fast),
+      border-color var(--transition-fast),
+      transform var(--transition-fast);
+  }
+
+  :deep(.execution-quote-show__stages-header:hover) .execution-quote-show__accordion-toggle,
+  :deep(.execution-quote-show__stage-accordion-header:hover)
+    .execution-quote-show__accordion-toggle,
+  :deep(.execution-quote-show__stages-header[data-p-active='true'])
+    .execution-quote-show__accordion-toggle,
+  :deep(.execution-quote-show__stage-accordion-header[data-p-active='true'])
+    .execution-quote-show__accordion-toggle {
+    border-color: var(--PrimaryColor);
+    background: var(--PrimaryColor);
+    color: var(--white);
+    transform: translateY(-1px);
   }
 
   :deep(.execution-quote-show__stages-panel),
@@ -932,7 +1078,10 @@
   :deep(.execution-quote-show__stages-header) {
     padding: 1.25rem;
     background: var(--bg-card);
-    transition: background-color var(--transition-fast);
+    cursor: pointer;
+    transition:
+      background-color var(--transition-fast),
+      box-shadow var(--transition-fast);
   }
 
   :deep(.execution-quote-show__stages-header) .execution-quote-show__section-title {
@@ -941,11 +1090,28 @@
 
   :deep(.execution-quote-show__stages-header:hover),
   :deep(.execution-quote-show__stage-accordion-header:hover) {
-    background: var(--PrimaryColor-alpha-4);
+    background: var(--PrimaryColor-alpha-8);
+  }
+
+  :deep(.execution-quote-show__stages-header:focus-visible),
+  :deep(.execution-quote-show__stage-accordion-header:focus-visible) {
+    z-index: 1;
+    outline: 3px solid var(--PrimaryColor-alpha-20);
+    outline-offset: -3px;
   }
 
   :deep(.execution-quote-show__stages-content > .p-accordioncontent-content) {
     padding: 0 1.25rem 1.25rem;
+  }
+
+  .execution-quote-show__stages-actions,
+  .execution-quote-show__stage-actions {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .execution-quote-show__stages-actions {
+    padding-block-end: 1rem;
   }
 
   :deep(.execution-quote-show__stage-panel) {
@@ -959,27 +1125,44 @@
   }
 
   :deep(.execution-quote-show__stage-panel.p-accordionpanel-active) {
-    border-color: var(--PrimaryColor-alpha-30);
-    box-shadow: var(--shadow-sm);
+    border-color: var(--PrimaryColor);
+    box-shadow: var(--shadow-md);
   }
 
   :deep(.execution-quote-show__stage-accordion-header) {
-    padding: 1rem;
+    min-height: 5.5rem;
+    padding: 1rem 1.15rem;
     background: var(--bg-section);
-    transition: background-color var(--transition-fast);
+    color: var(--title-card-color);
+    cursor: pointer;
+    transition:
+      color var(--transition-fast),
+      background-color var(--transition-fast);
+  }
+
+  :deep(.execution-quote-show__stage-accordion-header[data-p-active='true']) {
+    border-block-end: 1px solid var(--PrimaryColor-alpha-20);
+    background: var(--PrimaryColor-alpha-8);
+  }
+
+  :deep(.execution-quote-show__stage-accordion-header[data-p-active='true'])
+    .execution-quote-show__stage-header
+    h3 {
+    color: var(--PrimaryColor);
   }
 
   :deep(.execution-quote-show__stage-content > .p-accordioncontent-content) {
     display: grid;
     gap: 1rem;
-    padding: 0 1rem 1rem;
+    padding: 1rem;
+    background: var(--bg-card);
   }
 
   .execution-quote-show__stage-header {
     display: flex;
     flex: 1;
     align-items: center;
-    justify-content: space-between;
+    justify-content: space-around;
     gap: 1rem;
   }
 
@@ -1101,6 +1284,21 @@
       flex-direction: column;
     }
 
+    .execution-quote-show__header-actions {
+      display: grid;
+      grid-template-columns: 1fr;
+      width: 100%;
+    }
+
+    .execution-quote-show__header-actions :deep(.app-btn) {
+      width: 100%;
+    }
+
+    .execution-quote-show__stages-actions :deep(.app-btn),
+    .execution-quote-show__stage-actions :deep(.app-btn) {
+      width: 100%;
+    }
+
     .execution-quote-show__grid,
     .execution-quote-show__details,
     .execution-quote-show__finance-values {
@@ -1131,6 +1329,7 @@
     .execution-quote-show__hero,
     .execution-quote-show__hero::after,
     .execution-quote-show__card,
+    .execution-quote-show__accordion-toggle,
     .execution-quote-show__details > div,
     .execution-quote-show__finance-value,
     .execution-quote-show__items-table tbody td,

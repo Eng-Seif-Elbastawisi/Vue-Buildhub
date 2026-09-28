@@ -4,7 +4,7 @@ import type { ExecutionQuoteStageRequest } from '../../core/params/store.executi
 export interface ExecutionQuoteItemState {
   id: string;
   stage_id: number | string;
-  sub_stage_id: number | string;
+  sub_stage_id?: number | string;
   source_type: ExecutionQuoteItemSource;
   source_id: number | string;
   sorting_id?: number | string | null;

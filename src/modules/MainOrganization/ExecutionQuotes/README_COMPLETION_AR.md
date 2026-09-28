@@ -16,7 +16,7 @@ Payload - تنفيذ فقط:
 {
   "client_id": 1,
   "project_id": 5,
-  "quote_type_id": 2,
+  "quote_type": 2,
   "quote_source": 1,
   "price_employee_id": 4
 }
@@ -28,7 +28,7 @@ Payload - تنفيذ من مقايسة تصميم:
 {
   "client_id": 1,
   "project_id": 5,
-  "quote_type_id": 2,
+  "quote_type": 2,
   "quote_source": 2,
   "design_quote_id": 10
 }
