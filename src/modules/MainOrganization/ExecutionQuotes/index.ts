@@ -20,6 +20,7 @@ export {
   type ExecutionQuoteTypeSummary,
 } from './core/models/execution.quote.show.model';
 export { default as AddExecutionQuoteParams } from './core/params/add.execution.quote.params';
+export { default as DeleteExecutionQuoteItemParams } from './core/params/delete.execution.quote.item.params';
 export { default as ShowExecutionQuoteParams } from './core/params/show.execution.quote.params';
 export {
   default as StoreExecutionQuoteDetailsParams,
@@ -27,6 +28,7 @@ export {
   type ExecutionQuoteMorphItemRequest,
   type ExecutionQuoteStageRequest,
 } from './core/params/store.execution.quote.details.params';
+export { default as UpdateExecutionQuoteItemParams } from './core/params/update.execution.quote.item.params';
 export { default as ExecutionQuoteRepository } from './data/repositories/execution.quote.repository';
 export { default as ExecutionQuoteApiService } from './data/api/execution.quote.api-service';
 export { default as ExecutionQuoteController } from './presentation/controllers/execution.quote.controller';

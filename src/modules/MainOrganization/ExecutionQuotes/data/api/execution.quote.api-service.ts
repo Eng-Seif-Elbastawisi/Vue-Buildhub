@@ -4,8 +4,10 @@ import BaseApiService, {
   type ApiResponse,
 } from '@/base/Data/ApiService/baseApiService';
 
+import type DeleteExecutionQuoteItemParams from '../../core/params/delete.execution.quote.item.params';
 import type StoreExecutionQuoteDetailsParams from '../../core/params/store.execution.quote.details.params';
 import type SetExecutionQuoteStagePricingParams from '../../core/params/set.execution.quote.stage.pricing.params';
+import type UpdateExecutionQuoteItemParams from '../../core/params/update.execution.quote.item.params';
 import { ExecutionQuoteApiEndpoints } from './execution.quote.api.endpoints';
 
 export interface ExecutionQuoteDetailsResponse {
@@ -52,6 +54,26 @@ export default class ExecutionQuoteApiService extends BaseApiService {
     return await this.customPost<ExecutionQuoteDetailsResponse>(
       this.executionQuoteEndpoints.setStagePricing,
       params as Params,
+      { useJson: true },
+    );
+  }
+
+  async updateExecutionQuoteItem(
+    params: UpdateExecutionQuoteItemParams,
+  ): Promise<ApiResponse<ExecutionQuoteDetailsResponse>> {
+    return await this.customPost<ExecutionQuoteDetailsResponse>(
+      this.executionQuoteEndpoints.editQuoteItem,
+      params,
+      { useJson: true },
+    );
+  }
+
+  async deleteExecutionQuoteItem(
+    params: DeleteExecutionQuoteItemParams,
+  ): Promise<ApiResponse<ExecutionQuoteDetailsResponse | undefined>> {
+    return await this.customPost<ExecutionQuoteDetailsResponse | undefined>(
+      this.executionQuoteEndpoints.deleteQuoteItem,
+      params,
       { useJson: true },
     );
   }

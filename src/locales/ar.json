@@ -2773,6 +2773,12 @@
       "expected_price": "سعر الوحدة المتوقع",
       "quantity": "الكمية",
       "total": "الإجمالي المتوقع",
+      "actions": "الإجراءات",
+      "edit_item_title": "تعديل البند",
+      "delete_item_title": "هل تريد المسح؟",
+      "delete_item_message": "هل أنت متأكد أنك تريد حذف هذا البند؟",
+      "item_updated_successfully": "تم تعديل بند المقايسة بنجاح.",
+      "item_deleted_successfully": "تم حذف بند المقايسة بنجاح.",
       "no_stage_items": "لم تتم إضافة بنود لهذه المرحلة.",
       "no_stages": "لم تتم إضافة مراحل لهذه المقايسة."
     },

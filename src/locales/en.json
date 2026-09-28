@@ -2847,6 +2847,12 @@
       "expected_price": "Expected unit price",
       "quantity": "Quantity",
       "total": "Expected total",
+      "actions": "Actions",
+      "edit_item_title": "Edit item",
+      "delete_item_title": "Delete item?",
+      "delete_item_message": "Are you sure you want to delete this item?",
+      "item_updated_successfully": "Quote item updated successfully.",
+      "item_deleted_successfully": "Quote item deleted successfully.",
       "no_stage_items": "No items were added to this stage.",
       "no_stages": "No stages were added to this quote."
     },

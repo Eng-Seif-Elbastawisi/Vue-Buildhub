@@ -38,6 +38,7 @@
       disabled?: boolean;
       pricingEnabled?: boolean;
       editingItem?: ExecutionQuoteItemState | null;
+      clearAfterSubmit?: boolean;
     }>(),
     {
       subStageId: undefined,
@@ -45,6 +46,7 @@
       disabled: false,
       pricingEnabled: true,
       editingItem: null,
+      clearAfterSubmit: true,
     },
   );
 
@@ -490,7 +492,7 @@
       sorting_title: selectedSortingData.value?.title ?? selectedSorting.value?.title,
     });
 
-    clear();
+    if (props.clearAfterSubmit) clear();
   };
 </script>
 
@@ -659,6 +661,7 @@
             class="cancel-edit-button"
             theme="secondary"
             outline
+            :disabled="isDisabled"
             @click="emit('cancel-edit')"
           >
             {{ $t('execution_quote.cancel_edit') }}
@@ -667,6 +670,7 @@
           <AppButton
             class="add-item-button"
             icon="right"
+            :loading="loading"
             :disabled="
               isDisabled ||
               !hasSelectedSourceItem ||

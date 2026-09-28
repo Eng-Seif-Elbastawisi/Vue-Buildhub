@@ -10,8 +10,10 @@ import { translate } from '@/locales/i18n';
 import { HttpStatusCode } from 'axios';
 
 import ExecutionQuoteShowModel from '../../core/models/execution.quote.show.model';
+import type DeleteExecutionQuoteItemParams from '../../core/params/delete.execution.quote.item.params';
 import type StoreExecutionQuoteDetailsParams from '../../core/params/store.execution.quote.details.params';
 import type SetExecutionQuoteStagePricingParams from '../../core/params/set.execution.quote.stage.pricing.params';
+import type UpdateExecutionQuoteItemParams from '../../core/params/update.execution.quote.item.params';
 import ExecutionQuoteApiService, {
   type ExecutionQuoteDetailsResponse,
 } from '../api/execution.quote.api-service';
@@ -80,22 +82,44 @@ export default class ExecutionQuoteRepository extends BaseRepository<
     }
   }
 
+  async updateExecutionQuoteItem(params: UpdateExecutionQuoteItemParams): Promise<DataState<void>> {
+    try {
+      const response = await this.apiService.updateExecutionQuoteItem(params);
+      return this.parseMutationResponse(response);
+    } catch (error) {
+      return this.handleError<void>(error);
+    }
+  }
+
+  async deleteExecutionQuoteItem(params: DeleteExecutionQuoteItemParams): Promise<DataState<void>> {
+    try {
+      const response = await this.apiService.deleteExecutionQuoteItem(params);
+      return this.parseMutationResponse(response);
+    } catch (error) {
+      return this.handleError<void>(error);
+    }
+  }
+
   private parseMutationResponse(
-    response: ApiResponse<ExecutionQuoteDetailsResponse>,
+    response: ApiResponse<ExecutionQuoteDetailsResponse | undefined>,
   ): DataState<void> {
+    const payload = response.data && typeof response.data === 'object' ? response.data : undefined;
     const isSuccess =
-      [HttpStatusCode.Ok, HttpStatusCode.Created, HttpStatusCode.Accepted].includes(
-        response.statusCode,
-      ) &&
-      (response.data.status ?? true);
+      [
+        HttpStatusCode.Ok,
+        HttpStatusCode.Created,
+        HttpStatusCode.Accepted,
+        HttpStatusCode.NoContent,
+      ].includes(response.statusCode) &&
+      (payload?.status ?? true);
 
     if (isSuccess) {
-      return new DataSuccess<void>({ message: response.data.message });
+      return new DataSuccess<void>({ message: payload?.message });
     }
 
     return new DataFailed<void>({
       error: new ErrorModel(
-        response.data.message ?? translate('execution_quote.store_details_failed'),
+        payload?.message ?? translate('execution_quote.store_details_failed'),
         ErrorType.serviceSide,
       ),
     });

@@ -14,10 +14,12 @@ import { translate } from '@/locales/i18n';
 import { useFormsStore } from '@/stores/formsStore';
 
 import type AddExecutionQuoteParams from '../../core/params/add.execution.quote.params';
+import type DeleteExecutionQuoteItemParams from '../../core/params/delete.execution.quote.item.params';
 import ShowExecutionQuoteParams from '../../core/params/show.execution.quote.params';
 import type StoreExecutionQuoteDetailsParams from '../../core/params/store.execution.quote.details.params';
 import type SetExecutionQuoteStagePricingParams from '../../core/params/set.execution.quote.stage.pricing.params';
 import type { ExecutionQuoteStagePricingDraft } from '../../core/params/set.execution.quote.stage.pricing.params';
+import type UpdateExecutionQuoteItemParams from '../../core/params/update.execution.quote.item.params';
 import type ExecutionQuoteShowModel from '../../core/models/execution.quote.show.model';
 import ExecutionQuoteRepository from '../../data/repositories/execution.quote.repository';
 
@@ -107,6 +109,34 @@ export default class ExecutionQuoteController extends BaseController<
     if (!(response instanceof DataSuccess)) return response;
 
     this.completeDetailsStore(formKey);
+    return response;
+  }
+
+  async updateExecutionQuoteItem(params: UpdateExecutionQuoteItemParams) {
+    const response = await this.repository.updateExecutionQuoteItem(params);
+    if (!(response instanceof DataSuccess)) {
+      this.handleErrorResponse(response);
+      return response;
+    }
+
+    this.showSuccessToast(
+      response.message ?? translate('execution_quote.show.item_updated_successfully'),
+    );
+    notifyDataMutationSucceeded();
+    return response;
+  }
+
+  async deleteExecutionQuoteItem(params: DeleteExecutionQuoteItemParams) {
+    const response = await this.repository.deleteExecutionQuoteItem(params);
+    if (!(response instanceof DataSuccess)) {
+      this.handleErrorResponse(response);
+      return response;
+    }
+
+    this.showSuccessToast(
+      response.message ?? translate('execution_quote.show.item_deleted_successfully'),
+    );
+    notifyDataMutationSucceeded();
     return response;
   }
 

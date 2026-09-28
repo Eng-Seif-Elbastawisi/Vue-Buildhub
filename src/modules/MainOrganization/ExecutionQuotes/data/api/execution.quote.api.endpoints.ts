@@ -13,4 +13,6 @@ export class ExecutionQuoteApiEndpoints extends BaseEndpoints {
   readonly setStagePricing = this.url('set_quote_stage_client_price');
   readonly update = this.url('update_quote');
   readonly delete = this.url('delete_quote');
+  readonly editQuoteItem = this.url('update_quote_stage_item');
+  readonly deleteQuoteItem = this.url('delete_quote_stage_item');
 }
