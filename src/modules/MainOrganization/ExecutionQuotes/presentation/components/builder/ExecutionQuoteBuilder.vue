@@ -126,6 +126,9 @@
       stage.items.map((item) => ({ ...item, stage_name: stage.stage_name })),
     ),
   );
+  const hasUnsavedItems = computed(() =>
+    quoteItems.value.some((quoteItem) => !quoteItem.persisted),
+  );
 
   const internalCost = computed(() =>
     quoteItems.value.reduce((total, item) => total + item.quantity * item.unit_price, 0),
@@ -609,7 +612,7 @@
   };
 
   const exitBuilder = () => {
-    if (!quoteItems.value.length) {
+    if (!hasUnsavedItems.value) {
       void navigateToQuoteList();
       return;
     }

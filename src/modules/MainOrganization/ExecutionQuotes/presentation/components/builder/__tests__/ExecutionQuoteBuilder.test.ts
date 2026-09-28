@@ -453,17 +453,36 @@ describe('ExecutionQuoteBuilder', () => {
     ]);
   });
 
-  it('provides an exit action back to all execution quotes', async () => {
+  it('leaves without confirmation when all quote items are already saved', async () => {
     fetchList
       .mockResolvedValueOnce(
         new DataSuccess({ data: [new StageModel({ id: 1, title: 'Main', children: [] })] }),
       )
       .mockResolvedValueOnce(new DataSuccess({ data: [] }));
 
-    const wrapper = mountBuilder();
+    const wrapper = mountBuilder({
+      initialStages: [
+        {
+          id: 5,
+          stageId: 1,
+          subStageId: 11,
+          items: [
+            {
+              id: 7,
+              itemType: ExecutionQuoteItemSourceEnum.PRODUCT,
+              itemableId: 17,
+              quantity: 1,
+              expectedPrice: 100,
+              unitId: 9,
+            },
+          ],
+        },
+      ],
+    });
     await flushPromises();
     await wrapper.get('.builder-toolbar__exit').trigger('click');
 
+    expect(confirm).not.toHaveBeenCalled();
     expect(push).toHaveBeenCalledWith({ name: 'Execution Quotes' });
   });
 
