@@ -7,7 +7,6 @@
   import { computed, onMounted, ref } from 'vue';
   import { useI18n } from 'vue-i18n';
   import { useRoute } from 'vue-router';
-
   import { ClientTypeEnum } from '@/modules/MainOrganization/client/core/constant/client.type.enum';
   import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
   import ConfirmCancelDialog from '@/base/Presentation/Dialogs/ConfirmCancelDialog.vue';
