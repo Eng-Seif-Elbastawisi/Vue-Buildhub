@@ -31,6 +31,7 @@ export default class ProjectModel {
   public readonly previewDate?: string;
   public readonly totalArea?: string;
   public readonly totalPrice?: string;
+  public readonly serviceType?: number;
 
   constructor(data: {
     id?: number;
@@ -44,6 +45,7 @@ export default class ProjectModel {
     previewDate?: string;
     totalArea?: string;
     totalPrice?: string;
+    serviceType?: number;
   }) {
     this.id = data.id;
     this.title = data.title;
@@ -56,6 +58,7 @@ export default class ProjectModel {
     this.previewDate = data.previewDate;
     this.totalArea = data.totalArea;
     this.totalPrice = data.totalPrice;
+    this.serviceType = data.serviceType;
 
     Object.freeze(this);
   }
@@ -154,6 +157,12 @@ export default class ProjectModel {
           : undefined,
       createdAt: json.created_at as string | undefined,
       projectType: TitleModel.fromMap(json.project_type),
+      serviceType:
+        typeof json.service_type === 'number'
+          ? json.service_type
+          : json.service_type
+            ? Number(json.service_type)
+            : undefined,
     });
   }
 

@@ -2941,5 +2941,29 @@
       "total": "Total",
       "action": "Action"
     }
-  }
+  },
+  "sidebar.execution_offers": "Execution offers",
+  "sidebar.attachment_types": "Attachment Types",
+  "attachment_types": "Attachment Types",
+  "attachment_type.add": "Add Attachment Type",
+  "attachment_type.edit": "Edit Attachment Type",
+  "attachment_type.add_title": "Add Attachment Type",
+  "attachment_type.edit_title": "Edit Attachment Type",
+  "attachment_type.add_description": "Enter attachment type details",
+  "attachment_type.edit_description": "Update attachment type details",
+  "attachment_type.list_description": "Manage and organize all attachment types",
+  "attachment_type.empty_title": "No Attachment Types Found",
+  "attachment_type.empty_description": "Add your first attachment type to get started",
+  "search_attachment_type": "Search attachment type...",
+  "project.attachments_title": "Your Attachments",
+  "project.attachment_type": "Attachment Type",
+  "project.attachment_type_placeholder": "Enter attachment type",
+  "project.click_to_upload": "Click to upload",
+  "project.attachment_type_label": "Attachment Type",
+  "project.validation.link_or_address_required": "Either site link or address is required",
+  "quote_status.draft": "Draft",
+  "quote_status.pending_validation": "Pending Validation",
+  "quote_status.revision_required": "Revision Required",
+  "quote_status.sent_to_client": "Sent to Client",
+  "quote_status.unknown": "Unknown"
 }

@@ -1,4 +1,5 @@
 import { QuoteSourceEnum } from '../constants/quote.source.enum';
+import type { QuoteStatusEnum } from '../constants/quote.status.enum';
 
 export interface ExecutionQuoteOrganizationSummary {
   id?: number;
@@ -221,6 +222,7 @@ const stageItemSummary = (rawItem: unknown): ExecutionQuoteStageItemSummary | un
     quantity: numberValue(stageItem.quantity),
     unitId: measurementUnit?.id ?? numberValue(stageItem.unit),
     measurementUnit,
+
   };
 };
 
@@ -330,6 +332,7 @@ export default class ExecutionQuoteShowModel {
   public readonly supervisionPercentage?: number;
   public readonly supervisionFee?: number;
   public readonly createdAt?: string;
+  public readonly quoteStatus ?: QuoteStatusEnum;
 
   constructor(data: {
     id?: number;
@@ -347,6 +350,7 @@ export default class ExecutionQuoteShowModel {
     supervisionPercentage?: number;
     supervisionFee?: number;
     createdAt?: string;
+    quoteStatus ?: QuoteStatusEnum;
   }) {
     this.id = data.id;
     this.organization = data.organization;
@@ -373,10 +377,11 @@ export default class ExecutionQuoteShowModel {
     this.supervisionPercentage = data.supervisionPercentage;
     this.supervisionFee = data.supervisionFee;
     this.createdAt = data.createdAt;
+    this.quoteStatus = data.quoteStatus;
     Object.freeze(this);
   }
 
-  static fromJson(json: Record<string, unknown>): ExecutionQuoteShowModel {
+  static fromJson(json: Record<string, unknown | null | undefined>): ExecutionQuoteShowModel {
     return new ExecutionQuoteShowModel({
       id: numberValue(json.id),
       organization: organizationSummary(json.organization),
@@ -395,6 +400,7 @@ export default class ExecutionQuoteShowModel {
       ),
       supervisionFee: numberValue(json.supervision_price ?? json.supervision_fee),
       createdAt: stringValue(json.created_at),
+      quoteStatus: json.quote_status as QuoteStatusEnum,
     });
   }
 

@@ -2867,5 +2867,29 @@
       "total": "الإجمالي",
       "action": "الإجراء"
     }
-  }
+  },
+  "sidebar.execution_offers": "عروض التنفيذ",
+  "sidebar.attachment_types": "أنواع المرفقات",
+  "attachment_types": "أنواع المرفقات",
+  "attachment_type.add": "إضافة نوع مرفق",
+  "attachment_type.edit": "تعديل نوع مرفق",
+  "attachment_type.add_title": "إضافة نوع مرفق",
+  "attachment_type.edit_title": "تعديل نوع مرفق",
+  "attachment_type.add_description": "أدخل بيانات نوع المرفق",
+  "attachment_type.edit_description": "تحديث بيانات نوع المرفق",
+  "attachment_type.list_description": "إدارة وتنظيم كافة أنواع المرفقات",
+  "attachment_type.empty_title": "لا توجد أنواع مرفقات",
+  "attachment_type.empty_description": "أضف أول نوع مرفق للبدء",
+  "search_attachment_type": "البحث عن نوع مرفق...",
+  "project.attachments_title": "مرفقاتك",
+  "project.attachment_type": "نوع المرفقات",
+  "project.attachment_type_placeholder": "ادخل نوع المرفقات",
+  "project.click_to_upload": "اضغط للرفع",
+  "project.attachment_type_label": "نوع المرفق",
+  "project.validation.link_or_address_required": "يجب إدخال رابط الموقع أو العنوان على الأقل",
+  "quote_status.draft": "مسودة",
+  "quote_status.pending_validation": "في انتظار التحقق",
+  "quote_status.revision_required": "مطلوب مراجعة",
+  "quote_status.sent_to_client": "تم الإرسال للعميل",
+  "quote_status.unknown": "غير معروف"
 }

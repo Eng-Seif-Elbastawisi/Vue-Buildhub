@@ -349,13 +349,9 @@ const asExecutionQuotes = (quotes: unknown): ExecutionQuoteShowModel[] =>
                 <div class="execution-quote-index__primary-cell">
                   <strong>{{ item.client?.name ?? '—' }}</strong>
                   <small>{{ item.client?.phone ?? '—' }}</small>
-                  <span
-                    v-if="item.client?.status !== undefined"
-                    class="execution-quote-index__client-status"
-                    :class="{
-                      'execution-quote-index__client-status--active': item.client.status === 1,
-                    }"
-                  >
+                  <span v-if="item.client?.status !== undefined" class="execution-quote-index__client-status" :class="{
+                    'execution-quote-index__client-status--active': item.client.status === 1,
+                  }">
                     <span aria-hidden="true"></span>
                     {{ clientStatusLabel(item.client.status) }}
                   </span>
@@ -429,40 +425,26 @@ const asExecutionQuotes = (quotes: unknown): ExecutionQuoteShowModel[] =>
 
             <template #actions="{ item }">
               <div class="execution-quote-index__row-actions">
-                <AppButton
-                  class="execution-quote-index__add-item-button"
-                  size="sm"
-                  icon="right"
-                  @click="openAddItem(item)"
-                >
+                <AppButton class="execution-quote-index__add-item-button" size="sm" icon="right"
+                  @click="openAddItem(item)">
                   <template #icon>
                     <i class="pi pi-list" aria-hidden="true"></i>
                   </template>
                   {{ $t('execution_quote.table.add_item') }}
                 </AppButton>
 
-                <AppButton
-                  class="execution-quote-index__add-stage-button"
-                  size="sm"
-                  theme="secondary"
-                  icon="right"
-                  outline
-                  @click="openAddStage(item)"
-                >
+                <AppButton class="execution-quote-index__add-stage-button" size="sm" theme="secondary" icon="right"
+                  outline @click="openAddStage(item)">
                   <template #icon>
                     <i class="pi pi-sitemap" aria-hidden="true"></i>
                   </template>
                   {{ $t('execution_quote.table.add_stage') }}
                 </AppButton>
 
-                <AppButton
-                  class="execution-quote-index__view-button"
-                  size="sm"
-                  theme="secondary"
-                  icon="right"
-                  ghost
-                  @click="openShow(item)"
-                >
+                <QuoteStatusBadge :status="item.quoteStatus" />
+
+                <AppButton class="execution-quote-index__view-button" size="sm" theme="secondary" icon="right" ghost
+                  @click="openShow(item)">
                   <template #icon>
                     <i class="pi pi-eye" aria-hidden="true"></i>
                   </template>
@@ -932,6 +914,7 @@ const asExecutionQuotes = (quotes: unknown): ExecutionQuoteShowModel[] =>
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   .execution-quote-index__header,
   .execution-quote-index__filters,
   .execution-quote-index__table-card,

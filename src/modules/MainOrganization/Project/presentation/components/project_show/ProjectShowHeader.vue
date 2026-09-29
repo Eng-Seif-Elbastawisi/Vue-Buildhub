@@ -74,7 +74,6 @@
 
     return (
       projectStatus === ConvertStatus.WAITING_PREVIEW ||
-      projectStatus === ConvertStatus.WAITING_PREVIEW_RESULT ||
       projectStatus === ConvertStatus.REVISE_VERSION
     );
   });

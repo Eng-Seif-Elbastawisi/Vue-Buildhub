@@ -338,6 +338,34 @@ export const sidebarSections: SidebarSectionConfig[] = [
   },
 
   {
+    key: 'execution-offers',
+    labelKey: 'sidebar.execution_offers',
+    icon: SidebarDesignOffersIcon,
+
+    items: [
+      {
+        path: `/offers-projects?service_type=${DepartmentTypeEnum.DESIGN}`,
+        labelKey: 'sidebar.execution_offers',
+        icon: SidebarOfferIcon,
+        roles: ['organization'],
+      },
+      {
+        labelKey: 'sidebar.hold',
+        icon: SidebarHoldIcon,
+        roles: ['organization'],
+        disabled: true,
+      },
+
+      {
+        labelKey: 'sidebar.canceled',
+        icon: SidebarCanceledIcon,
+        roles: ['organization'],
+        disabled: true,
+      },
+    ],
+  },
+
+  {
     key: 'design-projects',
     labelKey: 'sidebar.design_projects',
     icon: SidebarDesignProjectsIcon,
@@ -535,6 +563,13 @@ export const sidebarSections: SidebarSectionConfig[] = [
         labelKey: 'sidebar.terms',
         icon: SidebarTermIcon,
         countKey: 'term_count',
+        roles: ['organization'],
+      },
+
+      {
+        path: '/attachment-types',
+        labelKey: 'sidebar.attachment_types',
+        icon: SidebarTermIcon,
         roles: ['organization'],
       },
 

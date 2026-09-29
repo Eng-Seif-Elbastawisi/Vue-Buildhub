@@ -443,7 +443,8 @@
           ) in termLines"
           :key="`${termIndex}-${termLine}`"
         >
-          {{ termLine }}
+          {{ termLine    }}
+          
         </p>
       </div>
 

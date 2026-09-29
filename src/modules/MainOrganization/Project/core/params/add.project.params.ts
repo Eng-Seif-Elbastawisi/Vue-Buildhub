@@ -16,6 +16,9 @@ import { type ServiceType } from '@/modules/MainOrganization/Project/core/consta
 
 export interface ProjectAttachmentParams {
   file: string;
+  attachment_type_id?: number;
+  name?: string;
+  size?: number | string;
 }
 
 export type WithPreviewValue = 0 | 1;

@@ -39,6 +39,27 @@
 
   const perPage = ref(10);
   const word = ref('');
+  const sortBy = ref<string>((route.query.sort_by as string) || undefined);
+  const sortDirection = ref<'asc' | 'desc'>((route.query.sort_direction as 'asc' | 'desc') || undefined);
+
+  const sortableFields: Record<string, string> = {
+    title: 'title',
+    client: 'client_id',
+    projectType: 'project_type_id',
+    previewDate: 'preview_date',
+    totalArea: 'total_area',
+    totalPrice: 'total_price',
+    status: 'status',
+    createdAt: 'created_at',
+  };
+
+  const activeSortKey = computed(() => {
+    if (!sortBy.value) return undefined;
+    return (
+      Object.entries(sortableFields).find(([, serverField]) => serverField === sortBy.value)?.[0] ??
+      sortBy.value
+    );
+  });
 
   const parseServiceType = (routeServiceType: unknown): DepartmentTypeEnum[] => {
     const values = Array.isArray(routeServiceType)
@@ -109,11 +130,13 @@
         key: 'client',
         label: 'client',
         width: '16%',
+        sortable: true,
       },
       {
         key: 'projectType',
         label: 'project.Type',
         width: '16%',
+        sortable: true,
       },
     ];
 
@@ -123,16 +146,19 @@
           key: 'previewDate',
           label: 'preview_date',
           width: '13%',
+          sortable: true,
         },
         {
           key: 'totalArea',
           label: 'total_area',
           width: '12%',
+          sortable: true,
         },
         {
           key: 'totalPrice',
           label: 'total_price',
           width: '12%',
+          sortable: true,
         },
       );
     }
@@ -142,11 +168,13 @@
         key: 'status',
         label: 'status',
         width: '13%',
+        sortable: true,
       },
       {
         key: 'createdAt',
         label: 'createdAt',
         width: '13%',
+        sortable: true,
       },
     );
 
@@ -163,15 +191,34 @@
         null,
         props.statuses,
         serviceType.value,
+        sortBy.value,
+        sortDirection.value,
       ),
     );
   };
+
+  const onSort = (key: string, direction: 'asc' | 'desc') => {
+    sortBy.value = sortableFields[key] ?? key;
+    sortDirection.value = direction;
+    router.push({
+      query: {
+        ...route.query,
+        page: 1,
+        sort_by: sortBy.value,
+        sort_direction: sortDirection.value,
+      },
+    });
+    void fetchProjects(1, word.value);
+  };
+
   const Search = debounce(() => {
     router.push({
       query: {
         ...route.query,
         page: Number(route.query.page ?? 1),
         word: word.value || undefined,
+        sort_by: sortBy.value,
+        sort_direction: sortDirection.value,
       },
     });
     fetchProjects(1, word.value);
@@ -285,10 +332,13 @@
         <AppTable
           :headers="headers"
           :items="data as ProjectModel[]"
+          :sort-by="activeSortKey"
+          :sort-direction="sortDirection"
           selectable
           show-index
           hoverable
           striped
+          @sort="onSort"
         >
           <template #cell-client="{ item }">
             <span>
@@ -330,6 +380,20 @@
 
           <template #actions="{ item }">
             <div class="row-actions">
+              <!-- زر عمل مقايسة تنفيذ لمشاريع التنفيذ فقط -->
+              <router-link
+                v-if="Number(item.serviceType) === 2"
+                class="action-btn execution-btn"
+                :to="
+                  user?.isMaster
+                    ? `/admin/execution-quotes/add?project_id=${item.id}`
+                    : `/organization/execution-quotes/add?project_id=${item.id}`
+                "
+                :title="$t('execution_quote.add')"
+              >
+                <i class="pi pi-calculator"></i>
+              </router-link>
+
               <!-- زر العرض يظل ظاهرًا دائمًا -->
               <router-link
                 class="action-btn edit"
@@ -343,9 +407,9 @@
                 <i class="pi pi-eye"></i>
               </router-link>
 
-              <!-- إخفاء التعديل في Design وSupervision -->
+              <!-- إخفاء التعديل في Design وSupervision وعندما تكون الحالة WAITING_PREVIEW_RESULT -->
               <router-link
-                v-if="!hideEditAndDeleteActions"
+                v-if="!hideEditAndDeleteActions && item.status !== ConvertStatus.WAITING_PREVIEW_RESULT"
                 class="action-btn edit"
                 :to="
                   user?.isMaster
