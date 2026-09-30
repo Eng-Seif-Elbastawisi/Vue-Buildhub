@@ -6,7 +6,10 @@ import { ServiceType } from '@/modules/MainOrganization/Project/core/constants/s
 describe('AddProjectParams', () => {
   it('should instantiate correctly and convert to map', () => {
     const params = new AddProjectParams({
-      translations: new TranslationParams({ title: { en: 'Project title' } }),
+      translations: new TranslationParams({
+        title: { en: 'Project title' },
+        description: { en: 'Project description' },
+      }),
       client_name: 'John Doe',
       client_exist: true,
       client_id: 7,
@@ -39,7 +42,29 @@ describe('AddProjectParams', () => {
 
   it('requires at least one title translation', () => {
     const params = new AddProjectParams({
-      translations: new TranslationParams({ title: { en: '   ', ar: '' } }),
+      translations: new TranslationParams({
+        title: { en: '   ', ar: '' },
+        description: { en: 'Project description' },
+      }),
+      client_exist: false,
+      client_source: 6,
+      project_type_id: 3,
+      location_id: 22,
+      service_type: ServiceType.DESIGNONLY,
+    });
+
+    expect(params.validate()).toMatchObject({
+      isValid: false,
+      errors: [{ field: 'translations' }],
+    });
+  });
+
+  it('requires at least one description translation', () => {
+    const params = new AddProjectParams({
+      translations: new TranslationParams({
+        title: { en: 'Project title' },
+        description: { en: ' ', ar: '' },
+      }),
       client_exist: false,
       client_source: 6,
       project_type_id: 3,
@@ -55,7 +80,10 @@ describe('AddProjectParams', () => {
 
   it('requires project select values', () => {
     const params = new AddProjectParams({
-      translations: new TranslationParams({ title: { en: 'Project title' } }),
+      translations: new TranslationParams({
+        title: { en: 'Project title' },
+        description: { en: 'Project description' },
+      }),
       client_exist: false,
       client_source: 6,
     });
@@ -65,14 +93,17 @@ describe('AddProjectParams', () => {
     expect(validation.isValid).toBe(false);
     expect(validation.errors.map((error) => error.field)).toEqual([
       'project_type_id',
-      'location_id',
       'service_type',
+      'location_id',
     ]);
   });
 
   it('requires client selection when creating for an existing client', () => {
     const params = new AddProjectParams({
-      translations: new TranslationParams({ title: { en: 'Project title' } }),
+      translations: new TranslationParams({
+        title: { en: 'Project title' },
+        description: { en: 'Project description' },
+      }),
       client_exist: true,
       project_type_id: 3,
       location_id: 22,
@@ -87,7 +118,10 @@ describe('AddProjectParams', () => {
 
   it('requires client source when creating a new client', () => {
     const params = new AddProjectParams({
-      translations: new TranslationParams({ title: { en: 'Project title' } }),
+      translations: new TranslationParams({
+        title: { en: 'Project title' },
+        description: { en: 'Project description' },
+      }),
       client_exist: false,
       project_type_id: 3,
       location_id: 22,

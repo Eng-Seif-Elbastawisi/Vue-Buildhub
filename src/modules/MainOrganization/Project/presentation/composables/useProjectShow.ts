@@ -1224,13 +1224,22 @@ export const useProjectShow = () => {
   const itemsSectionProps = computed(() => ({
     class: sectionActiveClass('project-items'),
     addItem: t('ProjectShow.add_item'),
-    addItemTo: {
-      path: '/organization/project-item/add',
-      query: {
-        project_id: project.value.id,
-        project_preview_id: preview.value?.id,
-      },
-    },
+    addItemTo:
+      project.value.service_type === ServiceType.EXECUTIONONLY ||
+      Number(project.value.service_type) === 2
+        ? {
+            path: '/organization/execution-quotes/add',
+            query: {
+              project_id: project.value.id,
+            },
+          }
+        : {
+            path: '/organization/project-item/add',
+            query: {
+              project_id: project.value.id,
+              project_preview_id: preview.value?.id,
+            },
+          },
     title: t('Project.steps.project_items'),
     items: projectItems.value,
     emptyLabel: t('ProjectShow.no_project_items'),

@@ -1,8 +1,19 @@
 import { describe, expect, it } from 'vitest';
 
+import { QuoteStatusEnum } from '../../constants/quote.status.enum';
 import ExecutionQuoteShowModel from '../execution.quote.show.model';
 
 describe('ExecutionQuoteShowModel', () => {
+  it.each([
+    [QuoteStatusEnum.DRAFT, QuoteStatusEnum.DRAFT],
+    [String(QuoteStatusEnum.REVISION_REQUIRED), QuoteStatusEnum.REVISION_REQUIRED],
+    [99, undefined],
+  ])('maps valid quote statuses and rejects unsupported values', (rawStatus, expectedStatus) => {
+    const model = ExecutionQuoteShowModel.fromJson({ quote_status: rawStatus });
+
+    expect(model.quoteStatus).toBe(expectedStatus);
+  });
+
   it.each([
     [{ quote_type: 2 }, 2],
     [{ quote_type: '1' }, 1],
@@ -155,6 +166,7 @@ describe('ExecutionQuoteShowModel', () => {
         created_at: '2026-07-22 13:29:29',
       },
       quote_type: { id: 1, title: 'Lump_SUM' },
+      quote_status: QuoteStatusEnum.DRAFT,
       price_employee: { id: 68, name: 'type test' },
       total_quote_price: '123456.78',
       client_quote_price: '150000.00',
@@ -222,6 +234,7 @@ describe('ExecutionQuoteShowModel', () => {
         createdAt: '2026-07-22 13:29:29',
       },
       quoteType: { id: 1, title: 'Lump_SUM' },
+      quoteStatus: QuoteStatusEnum.DRAFT,
       priceEmployee: { id: 68, name: 'type test' },
       totalQuotePrice: 123456.78,
       clientQuotePrice: 150000,

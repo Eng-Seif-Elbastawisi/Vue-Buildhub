@@ -8,7 +8,9 @@ import type TitleInterface from '@/base/Data/Models/titleInterface';
 
 import MultiLangInput from '@/shared/MultiLangInput.vue';
 import UpdatedCustomInputSelect from '@/shared/FormInputs/UpdatedCustomInputSelect.vue';
-import HandleFilesUpload, { type UploadedFile } from '@/shared/FormInputs/HandleFilesUpload.vue';
+import ProjectAttachmentManager, {
+  type ProjectAttachmentItem,
+} from './ProjectAttachmentManager.vue';
 import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
 
 import { ServiceType } from '@/modules/MainOrganization/Project/core/constants/serviceType.enum';
@@ -131,8 +133,7 @@ const scrollToValidationField = (field: string): void => {
 defineExpose({ scrollToValidationField });
 
 const attachments = ref<ProjectAttachmentParams[]>([]);
-const existingAttachmentFiles = ref<string[]>([]);
-const attachmentFiles = computed(() => existingAttachmentFiles.value);
+const attachmentItems = ref<ProjectAttachmentItem[]>([]);
 
 type PrimeDateValue = Date | Date[] | (Date | null)[] | null | undefined;
 
@@ -377,15 +378,19 @@ const updateCity = (value: TitleInterface<number> | null) => {
   updateData();
 };
 
-const updateAttachments = (files: UploadedFile[]) => {
-  attachments.value = files
-    .filter((file) => file.base64 && file.base64.startsWith('data:'))
-    .map((file) => ({
-      file: file.base64,
-    }));
+const updateAttachmentItems = (items: ProjectAttachmentItem[]) => {
+  attachmentItems.value = items;
+  attachments.value = items.map((item) => ({
+    file: item.file,
+    attachment_type_id: item.typeId,
+    name: item.name,
+    size: item.size,
+  }));
 
   updateData();
 };
+
+const normalizeInlineText = (text: string): string => text.replace(/\s+/g, ' ').trim();
 
 const updateTerms = (value: TitleInterface<number>[] | TitleInterface<number> | null) => {
   if (!value) {
@@ -408,10 +413,14 @@ const updateTerms = (value: TitleInterface<number>[] | TitleInterface<number> | 
         (term) => Number(term.id) === Number(selectedItem.id),
       );
 
-      return fullTerm?.description ?? '';
+      const desc = fullTerm?.description ? normalizeInlineText(fullTerm.description) : '';
+      if (desc) return desc;
+
+      const title = fullTerm?.title || (selectedItem.title ? String(selectedItem.title) : '');
+      return normalizeInlineText(title);
     })
-    .filter((description): description is string => Boolean(description.trim()))
-    .join('\n');
+    .filter((description): description is string => Boolean(description && description.trim()))
+    .join(', ');
 
   updateData();
 };
@@ -430,6 +439,8 @@ watch(
       notes.value = '';
       termsText.value = '';
       selectedTerm.value = [];
+      attachmentItems.value = [];
+      attachments.value = [];
       updateData();
       return;
     }
@@ -460,11 +471,20 @@ watch(
      */
     termsText.value = typeof projectData.terms === 'string' ? projectData.terms : '';
 
-    existingAttachmentFiles.value = Array.isArray(projectData.attachments)
-      ? projectData.attachments.map((attachment: any) => attachment.file).filter(Boolean)
-      : [];
-
-    attachments.value = [];
+    if (Array.isArray(projectData.attachments)) {
+      attachmentItems.value = projectData.attachments.map((att: any) => ({
+        file: att.file,
+        name:
+          att.name ||
+          (typeof att.file === 'string' ? att.file.split('/').pop() : 'Attachment'),
+        typeId: att.attachment_type_id || att.attachment_type?.id,
+        typeName: att.attachment_type?.name || att.attachment_type?.title,
+      }));
+      attachments.value = [...attachmentItems.value];
+    } else {
+      attachmentItems.value = [];
+      attachments.value = [];
+    }
 
     selectedClient.value = projectData.client
       ? {
@@ -527,7 +547,7 @@ watch(
 
     <div class="form-fields" :class="{ disabled: loading }">
       <div id="project-title-field" class="field-group">
-        <MultiLangInput field-key="title" :label="$t('title')" :languages="['ar', 'en']"
+        <MultiLangInput field-key="title" :label="$t('project.name')" :languages="['ar', 'en']"
           :model-value="titleTranslations" type="title" required @update:model-value="updateTitleTranslations" />
       </div>
 
@@ -671,7 +691,6 @@ watch(
       <div id="notes-field" class="field-group col-span-2">
         <span class="field-help-label-row field-help-label-row--block">
           <label class="field-label" for="notes">
-            <span class="required-indicator" aria-hidden="true">*</span>
             {{ $t('notes') }}
           </label>
           <FieldHelpIcon :label="$t('notes')" field-name="notes" field-id="notes" />
@@ -682,8 +701,10 @@ watch(
       </div>
 
       <div class="field-group col-span-2">
-        <HandleFilesUpload id="attachments" :label="$t('attachments')" :file="attachmentFiles" :multiple="true"
-          @change="updateAttachments" />
+        <ProjectAttachmentManager
+          v-model="attachmentItems"
+          @change="updateAttachmentItems"
+        />
       </div>
     </div>
   </div>

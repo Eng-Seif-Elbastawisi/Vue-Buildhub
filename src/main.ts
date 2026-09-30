@@ -19,6 +19,9 @@ const app = createApp(App)
   .use(PrimeVue, {
     theme: {
       preset: Aura,
+      options: {
+        darkModeSelector: '.dark',
+      },
     },
   })
   .use(pinia)

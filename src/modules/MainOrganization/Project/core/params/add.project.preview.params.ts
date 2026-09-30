@@ -2,6 +2,7 @@ import type Params from '@/base/Core/Params/params';
 import { ClassValidation } from '@/base/Presentation/Utils/classValidation';
 import { type NotificationType } from '../constants/notificationType.enum';
 import { type Status } from '../constants/status.enum';
+import { translate } from '@/locales/i18n';
 
 export default class AddProjectPreviewParams implements Params {
   public engineer_id?: number;
@@ -20,8 +21,6 @@ export default class AddProjectPreviewParams implements Params {
     preview_date: { required: true },
     preview_time: { required: true },
     project_id: { required: true },
-    site_link: { required: true },
-    address: { required: true },
   });
 
   constructor(data: {
@@ -66,7 +65,23 @@ export default class AddProjectPreviewParams implements Params {
   }
 
   validate() {
-    return AddProjectPreviewParams.validation.validate(this);
+    const validation = AddProjectPreviewParams.validation.validate(this);
+    const hasLink = Boolean(this.site_link && this.site_link.trim().length > 0);
+    const hasAddress = Boolean(this.address && this.address.trim().length > 0);
+
+    if (!hasLink && !hasAddress) {
+      validation.errors.push({
+        field: 'site_link',
+        message: translate('project.validation.link_or_address_required'),
+      });
+      validation.errors.push({
+        field: 'address',
+        message: translate('project.validation.link_or_address_required'),
+      });
+      validation.isValid = false;
+    }
+
+    return validation;
   }
 
   validateOrThrow() {

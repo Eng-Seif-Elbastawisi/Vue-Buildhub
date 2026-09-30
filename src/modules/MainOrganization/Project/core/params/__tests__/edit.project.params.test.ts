@@ -7,7 +7,10 @@ describe('EditProjectParams', () => {
   it('should instantiate correctly and convert to map', () => {
     const params = new EditProjectParams({
       projectId: 123,
-      translations: new TranslationParams({ title: { en: 'Project title' } }),
+      translations: new TranslationParams({
+        title: { en: 'Project title' },
+        description: { en: 'Project description' },
+      }),
       client_name: 'Jane Doe',
       project_type_id: 4,
       location_id: 30,
@@ -37,7 +40,10 @@ describe('EditProjectParams', () => {
 
   it('requires project id and at least one title translation', () => {
     const params = new EditProjectParams({
-      translations: new TranslationParams({ title: { en: '', ar: '   ' } }),
+      translations: new TranslationParams({
+        title: { en: '', ar: '   ' },
+        description: { en: 'Project description' },
+      }),
       project_type_id: 4,
       location_id: 30,
       service_type: ServiceType.EXECUTIONONLY,
@@ -50,10 +56,31 @@ describe('EditProjectParams', () => {
     ]);
   });
 
+  it('requires at least one description translation', () => {
+    const params = new EditProjectParams({
+      projectId: 123,
+      translations: new TranslationParams({
+        title: { en: 'Project title' },
+        description: { en: ' ', ar: '' },
+      }),
+      project_type_id: 4,
+      location_id: 30,
+      service_type: ServiceType.EXECUTIONONLY,
+    });
+
+    expect(params.validate()).toMatchObject({
+      isValid: false,
+      errors: [{ field: 'translations' }],
+    });
+  });
+
   it('requires project select values', () => {
     const params = new EditProjectParams({
       projectId: 123,
-      translations: new TranslationParams({ title: { en: 'Project title' } }),
+      translations: new TranslationParams({
+        title: { en: 'Project title' },
+        description: { en: 'Project description' },
+      }),
     });
 
     const validation = params.validate();
@@ -61,8 +88,8 @@ describe('EditProjectParams', () => {
     expect(validation.isValid).toBe(false);
     expect(validation.errors.map((error) => error.field)).toEqual([
       'project_type_id',
-      'location_id',
       'service_type',
+      'location_id',
     ]);
   });
 });

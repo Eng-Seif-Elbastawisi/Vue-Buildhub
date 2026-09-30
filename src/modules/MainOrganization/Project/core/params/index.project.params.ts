@@ -7,6 +7,8 @@ export default class IndexProjectParams extends IndexParams {
   public status?: ConvertStatus[] | null;
   public readonly service_type?: DepartmentTypeEnum[];
   public clientId?: number;
+  public sortBy?: string;
+  public sortDirection?: 'asc' | 'desc';
 
   constructor(
     word: string = '',
@@ -16,12 +18,16 @@ export default class IndexProjectParams extends IndexParams {
     dateRemove?: string | null,
     status: ConvertStatus[] | null = [ConvertStatus.ACCEPT_CLIENT],
     serviceType?: DepartmentTypeEnum[],
+    sortBy?: string,
+    sortDirection?: 'asc' | 'desc',
   ) {
     super(word, pageNumber, perPage, withPage);
 
     this.dateRemove = dateRemove;
     this.status = status;
     this.service_type = serviceType;
+    this.sortBy = sortBy;
+    this.sortDirection = sortDirection;
   }
 
   toMap(): Record<string, string | number | number[] | null> {
@@ -41,6 +47,14 @@ export default class IndexProjectParams extends IndexParams {
 
     if (this.clientId) {
       data.client_id = this.clientId;
+    }
+
+    if (this.sortBy) {
+      data.sort_by = this.sortBy;
+    }
+
+    if (this.sortDirection) {
+      data.sort_direction = this.sortDirection;
     }
 
     return data;

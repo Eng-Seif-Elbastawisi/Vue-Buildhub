@@ -16,6 +16,7 @@ import {
   SidebarDesignOffersIcon,
   SidebarDesignProjectsIcon,
   SidebarDepartmentIcon,
+  SidebarExecutionQuoteIcon,
   SidebarFinanceIcon,
   SidebarFullPackageIcon,
   SidebarGeneralSettingIcon,
@@ -198,6 +199,7 @@ export interface SidebarItemConfig {
   roles?: SidebarRole[];
   countKey?: SidebarCountKey;
   disabled?: boolean;
+  flushTop?: boolean;
 }
 
 export interface SidebarSectionConfig {
@@ -334,6 +336,30 @@ export const sidebarSections: SidebarSectionConfig[] = [
         roles: ['organization'],
         disabled: true,
       },
+      {
+        type: 'group',
+        labelKey: 'sidebar.execution_offers',
+        roles: ['organization'],
+        flushTop: true,
+      },
+      {
+        path: `/offers-projects?service_type=${DepartmentTypeEnum.SUPERVISION},${DepartmentTypeEnum.BOTH}`,
+        labelKey: 'sidebar.supervision_offers',
+        icon: SidebarOfferIcon,
+        roles: ['organization'],
+      },
+      // {
+      //   labelKey: 'sidebar.hold',
+      //   icon: SidebarHoldIcon,
+      //   roles: ['organization'],
+      //   disabled: true,
+      // },
+      // {
+      //   labelKey: 'sidebar.canceled',
+      //   icon: SidebarCanceledIcon,
+      //   roles: ['organization'],
+      //   disabled: true,
+      // },
     ],
   },
 
@@ -390,19 +416,19 @@ export const sidebarSections: SidebarSectionConfig[] = [
   {
     key: 'execution-quotes',
     labelKey: 'sidebar.execution-quotes',
-    icon: SidebarOfferIcon,
+    icon: SidebarExecutionQuoteIcon,
 
     items: [
       {
         path: '/execution-quotes',
         labelKey: 'sidebar.execution-quote',
-        icon: SidebarOfferIcon,
+        icon: SidebarExecutionQuoteIcon,
         roles: ['organization'],
       },
       {
         path: '/execution-quotes/add',
         labelKey: 'sidebar.add-execution-quote',
-        icon: SidebarOfferIcon,
+        icon: SidebarAddRequestIcon,
         roles: ['organization'],
       },
     ],
@@ -535,6 +561,13 @@ export const sidebarSections: SidebarSectionConfig[] = [
         labelKey: 'sidebar.terms',
         icon: SidebarTermIcon,
         countKey: 'term_count',
+        roles: ['organization'],
+      },
+
+      {
+        path: '/attachment-types',
+        labelKey: 'sidebar.attachment_types',
+        icon: SidebarTermIcon,
         roles: ['organization'],
       },
 

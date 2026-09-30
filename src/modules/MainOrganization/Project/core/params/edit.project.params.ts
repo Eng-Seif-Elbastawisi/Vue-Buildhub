@@ -4,7 +4,11 @@ import { ClassValidation } from '@/base/Presentation/Utils/classValidation';
 
 import type TranslationParams from '@/base/Core/Params/translationParams';
 
-import { hasTitleTranslation, requiredSelectRule } from '@/base/Presentation/Utils/input_title';
+import {
+  hasDescriptionTranslation,
+  hasTitleTranslation,
+  requiredSelectRule,
+} from '@/base/Presentation/Utils/input_title';
 
 import { translate } from '@/locales/i18n';
 
@@ -12,6 +16,9 @@ import { type ServiceType } from '@/modules/MainOrganization/Project/core/consta
 
 export interface ProjectAttachmentParams {
   file: string;
+  attachment_type_id?: number;
+  name?: string;
+  size?: number | string;
 }
 
 export type WithPreviewValue = 0 | 1;
@@ -65,8 +72,13 @@ export default class EditProjectParams implements Params {
     translations: {
       required: true,
 
-      custom: (value?: TranslationParams) =>
-        hasTitleTranslation(value) || translate('validation.title_required'),
+      custom: (value?: TranslationParams) => {
+        if (!hasTitleTranslation(value)) return translate('validation.title_required');
+
+        return (
+          hasDescriptionTranslation(value) || translate('Project.validation.description_required')
+        );
+      },
     },
 
     project_type_id: requiredSelectRule(),

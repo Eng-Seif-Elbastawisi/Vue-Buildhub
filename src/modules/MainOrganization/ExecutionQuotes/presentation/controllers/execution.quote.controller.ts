@@ -1,6 +1,8 @@
 import type Params from '@/base/Core/Params/params';
 import {
   DataFailed,
+  DataInitial,
+  DataLoading,
   DataSuccess,
   type DataState,
 } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
@@ -12,8 +14,10 @@ import BaseController, {
 import { notifyDataMutationSucceeded } from '@/base/Presentation/Controller/dataMutationEvent';
 import { translate } from '@/locales/i18n';
 import { useFormsStore } from '@/stores/formsStore';
+import { ref, type Ref } from 'vue';
 
 import type AddExecutionQuoteParams from '../../core/params/add.execution.quote.params';
+import type ChangeQuoteStatusParams from '../../core/params/change.quote.status.params';
 import type DeleteExecutionQuoteItemParams from '../../core/params/delete.execution.quote.item.params';
 import ShowExecutionQuoteParams from '../../core/params/show.execution.quote.params';
 import type StoreExecutionQuoteDetailsParams from '../../core/params/store.execution.quote.details.params';
@@ -22,6 +26,8 @@ import type { ExecutionQuoteStagePricingDraft } from '../../core/params/set.exec
 import type UpdateExecutionQuoteItemParams from '../../core/params/update.execution.quote.item.params';
 import type SetExecutionQuoteSupervisionPricingParams from '../../core/params/set.execution.quote.supervision.pricing.params';
 import type ExecutionQuoteShowModel from '../../core/models/execution.quote.show.model';
+import type QuoteStatusModel from '../../core/models/quote.status.model';
+import type FetchQuoteStatusHistoryParams from '../../core/params/fetch.quote.status.history.params';
 import ExecutionQuoteRepository from '../../data/repositories/execution.quote.repository';
 
 export interface StoreExecutionQuoteBuilderChangesRequest {
@@ -37,6 +43,9 @@ export default class ExecutionQuoteController extends BaseController<
   ExecutionQuoteShowModel[]
 > {
   private static instance: ExecutionQuoteController;
+  public quoteStatusHistoryState: Ref<DataState<QuoteStatusModel[]>> = ref(
+    new DataInitial<QuoteStatusModel[]>([]),
+  ) as Ref<DataState<QuoteStatusModel[]>>;
 
   protected get repository() {
     return ExecutionQuoteRepository.getInstance();
@@ -146,6 +155,27 @@ export default class ExecutionQuoteController extends BaseController<
       response.message ?? translate('execution_quote.show.item_deleted_successfully'),
     );
     notifyDataMutationSucceeded();
+    return response;
+  }
+
+  async changeQuoteStatuses(requests: ChangeQuoteStatusParams[]) {
+    const lastResponse = await this.storeRequestBatch(requests, (request) =>
+      this.repository.changeQuoteStatus(request),
+    );
+    if (!(lastResponse instanceof DataSuccess)) return lastResponse;
+
+    this.showSuccessToast(lastResponse.message ?? translate('execution_quote.status.updated'));
+    notifyDataMutationSucceeded();
+    return lastResponse;
+  }
+
+  async fetchQuoteStatusHistory(params: FetchQuoteStatusHistoryParams) {
+    this.quoteStatusHistoryState.value = new DataLoading<QuoteStatusModel[]>();
+    const response = await this.repository.fetchQuoteStatusHistory(params);
+    this.quoteStatusHistoryState.value = response;
+
+    if (response.hasError) this.handleErrorResponse(response);
+
     return response;
   }
 

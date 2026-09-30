@@ -3,6 +3,7 @@ import { computed, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 
+import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
 import type TitleInterface from '@/base/Data/Models/titleInterface';
 import IndexClientParams from '@/modules/MainOrganization/client/core/params/index.client.params';
 import ClientController from '@/modules/MainOrganization/client/presentation/controllers/client.controller';
@@ -19,9 +20,18 @@ import {
   type ExecutionQuoteType,
 } from '../../core/constants/execution.quote.type.enum';
 import { getQuoteSourceTitleKey, QuoteSourceEnum } from '../../core/constants/quote.source.enum';
+import {
+  type QuoteStatusEnum,
+  canChangeQuoteStatus,
+  getAllowedQuoteStatusTransitions,
+  getQuoteStatusTransitionPath,
+} from '../../core/constants/quote.status.enum';
 import type ExecutionQuoteShowModel from '../../core/models/execution.quote.show.model';
+import ChangeQuoteStatusParams from '../../core/params/change.quote.status.params';
 import IndexExecutionQuoteParams from '../../core/params/index.execution.quote.params';
 import ExecutionQuoteController from '../controllers/execution.quote.controller';
+import QuoteStatusBadge from './QuoteStatusBadge.vue';
+import ExecutionQuoteStatusDialog from './ExecutionQuoteStatusDialog.vue';
 
 type FilterSelection = TitleInterface<string | number> | TitleInterface<string | number>[] | null;
 
@@ -44,6 +54,9 @@ const selectedProject = ref<FilterSelection>(null);
 const selectedClient = ref<FilterSelection>(null);
 const selectedQuoteType = ref<FilterSelection>(null);
 const appliedFilters = ref<ExecutionQuoteFilterIds>({});
+const statusDialogVisible = ref(false);
+const statusQuote = ref<ExecutionQuoteShowModel | null>(null);
+const statusChangeLoading = ref(false);
 
 const clientParams = new IndexClientParams('', 1, 100, 0);
 const projectParams = new IndexProjectParams('', 1, 100, 0);
@@ -161,6 +174,44 @@ const openAddItem = (quote: ExecutionQuoteShowModel) => {
   });
 };
 
+const canUpdateQuoteStatus = (quote: ExecutionQuoteShowModel) =>
+  Boolean(quote.id && getAllowedQuoteStatusTransitions(quote.quoteStatus).length);
+
+const openStatusDialog = (quote: ExecutionQuoteShowModel) => {
+  if (!canUpdateQuoteStatus(quote)) return;
+
+  statusQuote.value = quote;
+  statusDialogVisible.value = true;
+};
+
+const changeQuoteStatus = async (nextStatus: QuoteStatusEnum) => {
+  const quote = statusQuote.value;
+  const quoteId = quote?.id;
+  if (!quoteId || !canChangeQuoteStatus(quote.quoteStatus, nextStatus)) return;
+
+  statusChangeLoading.value = true;
+  try {
+    const transitionPath = getQuoteStatusTransitionPath(quote.quoteStatus, nextStatus);
+    const response = await controller.changeQuoteStatuses(
+      transitionPath.map((status) => new ChangeQuoteStatusParams({ quoteId, status })),
+    );
+    if (!(response instanceof DataSuccess)) {
+      if (transitionPath.length > 1) {
+        statusDialogVisible.value = false;
+        statusQuote.value = null;
+        await fetchQuotes(controller.pagination.value.currentPage);
+      }
+      return;
+    }
+
+    statusDialogVisible.value = false;
+    statusQuote.value = null;
+    await fetchQuotes(controller.pagination.value.currentPage);
+  } finally {
+    statusChangeLoading.value = false;
+  }
+};
+
 const headers: TableHeader[] = [
   { key: 'quoteSource', label: 'execution_quote.table.source' },
   { key: 'project', label: 'execution_quote.table.project' },
@@ -168,7 +219,8 @@ const headers: TableHeader[] = [
   { key: 'quoteType', label: 'execution_quote.table.quote_type' },
   { key: 'priceEmployee', label: 'execution_quote.fields.price_employee' },
   { key: 'totalQuotePrice', label: 'execution_quote.table.total_quote_price' },
-  { key: 'quoteProgress', label: 'execution_quote.table.status_and_progress' },
+  { key: 'quoteStatus', label: 'execution_quote.table.quote_status' },
+  { key: 'quoteProgress', label: 'execution_quote.table.progress' },
   { key: 'createdAt', label: 'execution_quote.table.created_at' },
 ];
 
@@ -321,8 +373,8 @@ const asExecutionQuotes = (quotes: unknown): ExecutionQuoteShowModel[] =>
                   item.quoteSource === QuoteSourceEnum.EXECUTION_FROM_DESIGN_QUOTE,
               }">
                 <i :class="item.quoteSource === QuoteSourceEnum.EXECUTION_FROM_DESIGN_QUOTE
-                  ? 'pi pi-file-check'
-                  : 'pi pi-bolt'
+                    ? 'pi pi-file-check'
+                    : 'pi pi-bolt'
                   " aria-hidden="true"></i>
                 {{ quoteSourceLabel(item) }}
               </span>
@@ -349,13 +401,9 @@ const asExecutionQuotes = (quotes: unknown): ExecutionQuoteShowModel[] =>
                 <div class="execution-quote-index__primary-cell">
                   <strong>{{ item.client?.name ?? '—' }}</strong>
                   <small>{{ item.client?.phone ?? '—' }}</small>
-                  <span
-                    v-if="item.client?.status !== undefined"
-                    class="execution-quote-index__client-status"
-                    :class="{
-                      'execution-quote-index__client-status--active': item.client.status === 1,
-                    }"
-                  >
+                  <span v-if="item.client?.status !== undefined" class="execution-quote-index__client-status" :class="{
+                    'execution-quote-index__client-status--active': item.client.status === 1,
+                  }">
                     <span aria-hidden="true"></span>
                     {{ clientStatusLabel(item.client.status) }}
                   </span>
@@ -369,8 +417,8 @@ const asExecutionQuotes = (quotes: unknown): ExecutionQuoteShowModel[] =>
                   item.quoteType?.id === ExecutionQuoteTypeEnum.SUPERVISION,
               }">
                 <i :class="item.quoteType?.id === ExecutionQuoteTypeEnum.SUPERVISION
-                  ? 'pi pi-eye'
-                  : 'pi pi-calculator'
+                    ? 'pi pi-eye'
+                    : 'pi pi-calculator'
                   " aria-hidden="true"></i>
                 {{ quoteTypeLabel(item) }}
               </span>
@@ -394,6 +442,10 @@ const asExecutionQuotes = (quotes: unknown): ExecutionQuoteShowModel[] =>
                   {{ $t('execution_quote.table.currency_egp') }}
                 </small>
               </div>
+            </template>
+
+            <template #cell-quoteStatus="{ item }">
+              <QuoteStatusBadge :status="item.quoteStatus" />
             </template>
 
             <template #cell-quoteProgress="{ item }">
@@ -429,40 +481,32 @@ const asExecutionQuotes = (quotes: unknown): ExecutionQuoteShowModel[] =>
 
             <template #actions="{ item }">
               <div class="execution-quote-index__row-actions">
-                <AppButton
-                  class="execution-quote-index__add-item-button"
-                  size="sm"
-                  icon="right"
-                  @click="openAddItem(item)"
-                >
+                <AppButton class="execution-quote-index__add-item-button" size="sm" icon="right"
+                  @click="openAddItem(item)">
                   <template #icon>
                     <i class="pi pi-list" aria-hidden="true"></i>
                   </template>
                   {{ $t('execution_quote.table.add_item') }}
                 </AppButton>
 
-                <AppButton
-                  class="execution-quote-index__add-stage-button"
-                  size="sm"
-                  theme="secondary"
-                  icon="right"
-                  outline
-                  @click="openAddStage(item)"
-                >
+                <AppButton class="execution-quote-index__add-stage-button" size="sm" theme="secondary" icon="right"
+                  outline @click="openAddStage(item)">
                   <template #icon>
                     <i class="pi pi-sitemap" aria-hidden="true"></i>
                   </template>
                   {{ $t('execution_quote.table.add_stage') }}
                 </AppButton>
 
-                <AppButton
-                  class="execution-quote-index__view-button"
-                  size="sm"
-                  theme="secondary"
-                  icon="right"
-                  ghost
-                  @click="openShow(item)"
-                >
+                <AppButton v-if="canUpdateQuoteStatus(item)" class="execution-quote-index__change-status-button"
+                  size="sm" theme="secondary" icon="right" outline @click="openStatusDialog(item)">
+                  <template #icon>
+                    <i class="pi pi-sync" aria-hidden="true"></i>
+                  </template>
+                  {{ $t('execution_quote.status.change_action') }}
+                </AppButton>
+
+                <AppButton class="execution-quote-index__view-button" size="sm" theme="secondary" icon="right" ghost
+                  @click="openShow(item)">
                   <template #icon>
                     <i class="pi pi-eye" aria-hidden="true"></i>
                   </template>
@@ -476,6 +520,9 @@ const asExecutionQuotes = (quotes: unknown): ExecutionQuoteShowModel[] =>
           @count-per-page="onPerPageChange" />
       </template>
     </DataStatusBuilder>
+
+    <ExecutionQuoteStatusDialog v-model="statusDialogVisible" :current-status="statusQuote?.quoteStatus"
+      :loading="statusChangeLoading" @submit="changeQuoteStatus" />
   </section>
 </template>
 
@@ -932,6 +979,7 @@ const asExecutionQuotes = (quotes: unknown): ExecutionQuoteShowModel[] =>
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   .execution-quote-index__header,
   .execution-quote-index__filters,
   .execution-quote-index__table-card,

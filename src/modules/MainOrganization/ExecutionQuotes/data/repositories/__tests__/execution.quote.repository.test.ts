@@ -6,21 +6,31 @@ import {
 } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
 import IndexParams from '@/base/Core/Params/indexParams';
 
+import { QuoteStatusEnum } from '../../../core/constants/quote.status.enum';
+import ChangeQuoteStatusParams from '../../../core/params/change.quote.status.params';
 import DeleteExecutionQuoteItemParams from '../../../core/params/delete.execution.quote.item.params';
 import ExecutionQuoteRepository from '../execution.quote.repository';
 
-const { deleteExecutionQuoteItem, index, setStagePricing, setSupervisionPricing, storeDetails } =
-  vi.hoisted(() => ({
-    deleteExecutionQuoteItem: vi.fn(),
-    index: vi.fn(),
-    setStagePricing: vi.fn(),
-    setSupervisionPricing: vi.fn(),
-    storeDetails: vi.fn(),
-  }));
+const {
+  changeQuoteStatus,
+  deleteExecutionQuoteItem,
+  index,
+  setStagePricing,
+  setSupervisionPricing,
+  storeDetails,
+} = vi.hoisted(() => ({
+  changeQuoteStatus: vi.fn(),
+  deleteExecutionQuoteItem: vi.fn(),
+  index: vi.fn(),
+  setStagePricing: vi.fn(),
+  setSupervisionPricing: vi.fn(),
+  storeDetails: vi.fn(),
+}));
 
 vi.mock('../../api/execution.quote.api-service', () => ({
   default: {
     getInstance: () => ({
+      changeQuoteStatus,
       deleteExecutionQuoteItem,
       index,
       setStagePricing,
@@ -32,6 +42,7 @@ vi.mock('../../api/execution.quote.api-service', () => ({
 
 describe('ExecutionQuoteRepository', () => {
   beforeEach(() => {
+    changeQuoteStatus.mockReset();
     deleteExecutionQuoteItem.mockReset();
     index.mockReset();
     setStagePricing.mockReset();
@@ -140,5 +151,22 @@ describe('ExecutionQuoteRepository', () => {
 
     expect(response).toBeInstanceOf(DataSuccess);
     expect(response.message).toBe('Supervision pricing saved');
+  });
+
+  it('maps a successful quote-status response to DataSuccess', async () => {
+    changeQuoteStatus.mockResolvedValue({
+      statusCode: 200,
+      data: { status: true, message: 'Status changed' },
+    });
+
+    const response = await ExecutionQuoteRepository.getInstance().changeQuoteStatus(
+      new ChangeQuoteStatusParams({
+        quoteId: 141,
+        status: QuoteStatusEnum.PENDING_VALIDATION,
+      }),
+    );
+
+    expect(response).toBeInstanceOf(DataSuccess);
+    expect(response.message).toBe('Status changed');
   });
 });

@@ -8,6 +8,12 @@ export const hasTitleTranslation = (translations?: TranslationParams) => {
   );
 };
 
+export const hasDescriptionTranslation = (translations?: TranslationParams) => {
+  return Object.values(translations?.description ?? {}).some(
+    (value) => typeof value === 'string' && value.trim().length > 0,
+  );
+};
+
 export const hasSelectValue = (value?: unknown): boolean => {
   if (value === null || value === undefined) return false;
 

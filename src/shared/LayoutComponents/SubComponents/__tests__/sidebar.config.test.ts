@@ -22,9 +22,12 @@ describe('sidebarSections', () => {
 
   it('assigns an icon to every section and item', () => {
     expect(sidebarSections.every((section) => section.icon)).toBe(true);
-    expect(sidebarSections.flatMap((section) => section.items).every((item) => item.icon)).toBe(
-      true,
-    );
+    expect(
+      sidebarSections
+        .flatMap((section) => section.items)
+        .filter((item) => item.type !== 'group')
+        .every((item) => item.icon),
+    ).toBe(true);
   });
 
   it('keeps every sidebar label localized in Arabic and English', () => {
@@ -54,6 +57,33 @@ describe('sidebarSections', () => {
       'sidebar.sys_identity',
       'sidebar.organization',
     ]);
+  });
+
+  it('groups execution offers after all design offer links in the same section', () => {
+    const offersSection = sidebarSections.find((section) => section.key === 'design-offers');
+
+    expect(offersSection?.items.slice(0, 3).map((item) => item.labelKey)).toEqual([
+      'sidebar.supervision_offers',
+      'sidebar.hold',
+      'sidebar.canceled',
+    ]);
+    expect(offersSection?.items[3]).toEqual(
+      expect.objectContaining({
+        type: 'group',
+        labelKey: 'sidebar.execution_offers',
+        roles: ['organization'],
+        flushTop: true,
+      }),
+    );
+    expect(offersSection?.items.slice(4)).toEqual([
+      expect.objectContaining({
+        labelKey: 'sidebar.supervision_offers',
+        path: `/offers-projects?service_type=${DepartmentTypeEnum.SUPERVISION},${DepartmentTypeEnum.BOTH}`,
+      }),
+      expect.objectContaining({ labelKey: 'sidebar.hold', disabled: true }),
+      expect.objectContaining({ labelKey: 'sidebar.canceled', disabled: true }),
+    ]);
+    expect(sidebarSections.some((section) => section.key === 'execution-offers')).toBe(false);
   });
 
   it('keeps the sys config group order', () => {

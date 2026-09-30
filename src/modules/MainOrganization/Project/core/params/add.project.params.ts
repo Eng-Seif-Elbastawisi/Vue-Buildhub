@@ -8,7 +8,11 @@ import {
 
 import type TranslationParams from '@/base/Core/Params/translationParams';
 
-import { hasSelectValue, hasTitleTranslation } from '@/base/Presentation/Utils/input_title';
+import {
+  hasDescriptionTranslation,
+  hasSelectValue,
+  hasTitleTranslation,
+} from '@/base/Presentation/Utils/input_title';
 
 import { translate } from '@/locales/i18n';
 
@@ -16,6 +20,9 @@ import { type ServiceType } from '@/modules/MainOrganization/Project/core/consta
 
 export interface ProjectAttachmentParams {
   file: string;
+  attachment_type_id?: number;
+  name?: string;
+  size?: number | string;
 }
 
 export type WithPreviewValue = 0 | 1;
@@ -62,8 +69,13 @@ export default class AddProjectParams implements Params {
     translations: {
       required: true,
 
-      custom: (value?: TranslationParams) =>
-        hasTitleTranslation(value) || translate('validation.title_required'),
+      custom: (value?: TranslationParams) => {
+        if (!hasTitleTranslation(value)) return translate('validation.title_required');
+
+        return (
+          hasDescriptionTranslation(value) || translate('Project.validation.description_required')
+        );
+      },
     },
 
     client_exist: {
@@ -72,16 +84,19 @@ export default class AddProjectParams implements Params {
     },
 
     project_type_id: {
+      required: true,
       custom: (value?: number) =>
         hasSelectValue(value) || translate('Project.validation.project_type_required'),
     },
 
     service_type: {
+      required: true,
       custom: (value?: ServiceType) =>
         hasSelectValue(value) || translate('Project.validation.service_type_required'),
     },
 
     location_id: {
+      required: true,
       custom: (value?: number) =>
         hasSelectValue(value) || translate('Project.validation.city_required'),
     },

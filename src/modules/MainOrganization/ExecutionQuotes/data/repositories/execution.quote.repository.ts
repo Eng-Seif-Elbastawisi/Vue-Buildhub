@@ -10,7 +10,10 @@ import { translate } from '@/locales/i18n';
 import { HttpStatusCode } from 'axios';
 
 import ExecutionQuoteShowModel from '../../core/models/execution.quote.show.model';
+import QuoteStatusModel from '../../core/models/quote.status.model';
+import type ChangeQuoteStatusParams from '../../core/params/change.quote.status.params';
 import type DeleteExecutionQuoteItemParams from '../../core/params/delete.execution.quote.item.params';
+import type FetchQuoteStatusHistoryParams from '../../core/params/fetch.quote.status.history.params';
 import type StoreExecutionQuoteDetailsParams from '../../core/params/store.execution.quote.details.params';
 import type SetExecutionQuoteStagePricingParams from '../../core/params/set.execution.quote.stage.pricing.params';
 import type SetExecutionQuoteSupervisionPricingParams from '../../core/params/set.execution.quote.supervision.pricing.params';
@@ -60,8 +63,8 @@ export default class ExecutionQuoteRepository extends BaseRepository<
   protected parseList(rawPayload: unknown): ExecutionQuoteShowModel[] {
     return Array.isArray(rawPayload)
       ? rawPayload.map((rawItem) =>
-        ExecutionQuoteShowModel.fromJson(rawItem as Record<string, unknown>),
-      )
+          ExecutionQuoteShowModel.fromJson(rawItem as Record<string, unknown>),
+        )
       : [];
   }
 
@@ -110,6 +113,54 @@ export default class ExecutionQuoteRepository extends BaseRepository<
     } catch (error) {
       return this.handleError<void>(error);
     }
+  }
+
+  async changeQuoteStatus(params: ChangeQuoteStatusParams): Promise<DataState<void>> {
+    try {
+      const response = await this.apiService.changeQuoteStatus(params);
+      return this.parseMutationResponse(response);
+    } catch (error) {
+      return this.handleError<void>(error);
+    }
+  }
+
+  async fetchQuoteStatusHistory(
+    params: FetchQuoteStatusHistoryParams,
+  ): Promise<DataState<QuoteStatusModel[]>> {
+    try {
+      const response = await this.apiService.fetchQuoteStatusHistory(params);
+      const payload = response.data;
+      const isSuccess =
+        [HttpStatusCode.Ok, HttpStatusCode.Created, HttpStatusCode.Accepted].includes(
+          response.statusCode,
+        ) &&
+        payload.status &&
+        Array.isArray(payload.data);
+
+      if (isSuccess) {
+        return new DataSuccess({
+          data: this.parseQuoteStatusHistory(payload.data),
+          message: payload.message,
+        });
+      }
+
+      return new DataFailed({
+        error: new ErrorModel(
+          payload.message ?? translate('execution_quote.show.status_history_failed'),
+          ErrorType.serviceSide,
+        ),
+      });
+    } catch (error) {
+      return this.handleError<QuoteStatusModel[]>(error);
+    }
+  }
+
+  private parseQuoteStatusHistory(rawPayload: unknown): QuoteStatusModel[] {
+    return Array.isArray(rawPayload)
+      ? rawPayload.map((historyItem) =>
+          QuoteStatusModel.fromJson(historyItem as Record<string, unknown>),
+        )
+      : [];
   }
 
   private parseMutationResponse(

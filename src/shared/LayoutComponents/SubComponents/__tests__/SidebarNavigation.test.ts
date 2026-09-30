@@ -153,6 +153,7 @@ describe('SidebarNavigation.vue', () => {
     const activeLinkLabels = wrapper.findAll('a.menu-item.active').map((link) => link.text());
 
     expect(activeSection.attributes('title')).toBe('sidebar.execution-quotes');
+    expect(activeSection.find('.pi-calculator').exists()).toBe(true);
     expect(activeLinkLabels).toContain('sidebar.add-execution-quote');
   });
 
@@ -165,6 +166,17 @@ describe('SidebarNavigation.vue', () => {
 
     await executionQuotesButton.trigger('click');
     expect(wrapper.get('.sidebar-shell').classes()).not.toContain('is-open');
+  });
+
+  it('removes the extra top spacing before the execution offers group', async () => {
+    const wrapper = mountSidebar();
+
+    await wrapper.get('.rail-action[title="sidebar.design_offers"]').trigger('click');
+
+    const executionOffersGroup = wrapper.get('.menu-subgroup[title="sidebar.execution_offers"]');
+
+    expect(executionOffersGroup.classes()).toContain('menu-subgroup--flush-top');
+    expect(executionOffersGroup.find('.menu-subgroup__icon').exists()).toBe(false);
   });
 
   it('emits clickItem event when a menu item is clicked', async () => {

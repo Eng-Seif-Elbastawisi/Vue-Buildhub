@@ -32,20 +32,38 @@ describe('AddProjectPreviewParams', () => {
     });
   });
 
-  it('omits undefined optional values and validates required fields', () => {
-    const params = new AddProjectPreviewParams({
+  it('omits undefined optional values and validates required fields with address or site_link', () => {
+    const invalidParams = new AddProjectPreviewParams({
       project_id: 10,
       engineer_id: 15,
       preview_date: '2026-06-25',
       preview_time: '10:30:00',
     });
+    expect(invalidParams.validate().isValid).toBe(false);
 
-    expect(params.toMap()).toEqual({
+    const validWithLink = new AddProjectPreviewParams({
       project_id: 10,
       engineer_id: 15,
       preview_date: '2026-06-25',
       preview_time: '10:30:00',
+      site_link: 'https://maps.google.com',
     });
-    expect(params.validate().isValid).toBe(true);
+    expect(validWithLink.validate().isValid).toBe(true);
+
+    const validWithAddress = new AddProjectPreviewParams({
+      project_id: 10,
+      engineer_id: 15,
+      preview_date: '2026-06-25',
+      preview_time: '10:30:00',
+      address: 'Cairo, Egypt',
+    });
+    expect(validWithAddress.validate().isValid).toBe(true);
+    expect(validWithAddress.toMap()).toEqual({
+      project_id: 10,
+      engineer_id: 15,
+      preview_date: '2026-06-25',
+      preview_time: '10:30:00',
+      address: 'Cairo, Egypt',
+    });
   });
 });

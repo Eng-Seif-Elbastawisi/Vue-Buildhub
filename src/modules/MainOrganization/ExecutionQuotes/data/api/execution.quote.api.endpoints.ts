@@ -14,6 +14,8 @@ export class ExecutionQuoteApiEndpoints extends BaseEndpoints {
   readonly setSupervisionPricing = this.url('set_quote_supervision_percentage');
   readonly update = this.url('update_quote');
   readonly delete = this.url('delete_quote');
+  readonly changeQuoteStatus = this.url('change_quote_status');
+  readonly fetchQuoteStatusHistory = this.url('fetch_quote_status_history');
   readonly editQuoteItem = this.url('update_quote_stage_item');
   readonly deleteQuoteItem = this.url('delete_quote_stage_item');
 }
