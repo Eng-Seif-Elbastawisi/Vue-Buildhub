@@ -371,6 +371,7 @@
   @use '@/styles/mixins/form_action_pair' as form-actions;
 
   .ProjectFloor-crud-page {
+    width: 100%;
     display: flex;
     flex-direction: column;
     gap: 1.5rem;

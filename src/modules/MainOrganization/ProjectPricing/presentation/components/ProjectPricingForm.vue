@@ -369,7 +369,7 @@ function updateData(): void {
 
 <style scoped lang="scss">
 .pricing-summary-card {
-  padding: 1rem 0;
+  padding: 1rem ;
   border-top: 1px solid rgba(214, 207, 198, 0.75);
   border-bottom: 1px solid rgba(214, 207, 198, 0.75);
   background: var(--bg-main);
