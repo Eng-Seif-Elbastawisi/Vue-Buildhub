@@ -51,7 +51,7 @@
       :reset-key="resetKey"
       @update-data="(value) => (params = value as EditDepartmentParams)"
     />
-    <div class="actions" :class="{ disabled: loading }">
+    <div class="actions form-action-pair" :class="{ disabled: loading }">
       <AppButton :loading="loading" :title="$t('save')" type="button" @click="save">{{
         $t('save')
       }}</AppButton>
@@ -66,10 +66,9 @@
 </template>
 
 <style scoped lang="scss">
-  .actions {
-    display: flex;
-    gap: 0.75rem;
+  @use '@/styles/mixins/form_action_pair' as form-actions;
 
+  .actions {
     &.disabled {
       cursor: not-allowed;
       pointer-events: none;
@@ -84,5 +83,9 @@
     color: var(--danger-dark);
     border: 1px solid #f5c6cb;
     border-radius: 4px;
+  }
+
+  .form-action-pair {
+    @include form-actions.layout;
   }
 </style>

@@ -29,9 +29,9 @@
 
   .icon-remove {
     position: absolute;
-    top: 50%;
+    inset-block-start: 50%;
+    inset-inline-start: var(--md-size);
     transform: translateY(-50%);
-    left: var(--md-size);
     cursor: pointer;
     color: var(--gray-500);
     transition: var(--transition-fast);
@@ -39,12 +39,5 @@
     &:hover {
       color: var(--Red);
     }
-  }
-}
-
-html[dir='rtl'] .input-search {
-  .icon-remove {
-    left: auto;
-    right: var(--md-size);
   }
 }

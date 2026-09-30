@@ -13,6 +13,7 @@ import UpdatedCustomInputSelect from '@/shared/FormInputs/UpdatedCustomInputSele
 import AppButton from '@/shared/HelpersComponents/AppButton.vue';
 import AppTable, { type TableHeader } from '@/shared/HelpersComponents/AppTable.vue';
 import Pagination from '@/shared/HelpersComponents/Pagination.vue';
+import IndexPageHeader from '@/shared/IndexPageHeader/IndexPageHeader.vue';
 import {
   ExecutionQuoteTypeEnum,
   getExecutionQuoteTypeTitleKey,
@@ -222,20 +223,24 @@ const asExecutionQuotes = (quotes: unknown): ExecutionQuoteShowModel[] =>
 
 <template>
   <section class="execution-quote-index">
-    <div class="execution-quote-index__header">
-      <div>
-        <h1>{{ $t('execution_quote.title') }}</h1>
-        <p>{{ $t('execution_quote.index_description') }}</p>
-      </div>
-      <AppButton icon="right" @click="openAdd">
-        <template #icon>
-          <i class="pi pi-plus" aria-hidden="true"></i>
-        </template>
-        {{ $t('execution_quote.new_quote') }}
-      </AppButton>
-    </div>
+    <IndexPageHeader
+      :title="$t('execution_quote.title')"
+      :subtitle="$t('execution_quote.index_description')"
+    >
+      <template #actions>
+        <AppButton icon="right" @click="openAdd">
+          <template #icon>
+            <i class="pi pi-plus" aria-hidden="true"></i>
+          </template>
+          {{ $t('execution_quote.new_quote') }}
+        </AppButton>
+      </template>
 
-    <section class="execution-quote-index__filters" aria-labelledby="execution-quote-filters-title">
+      <template #filters>
+        <section
+          class="execution-quote-index__filters execution-quote-index__filters--embedded"
+          aria-labelledby="execution-quote-filters-title"
+        >
       <header class="execution-quote-index__filters-heading">
         <div class="execution-quote-index__filters-title">
           <i class="pi pi-sliders-h" aria-hidden="true"></i>
@@ -289,7 +294,9 @@ const asExecutionQuotes = (quotes: unknown): ExecutionQuoteShowModel[] =>
           </AppButton>
         </div>
       </div>
-    </section>
+        </section>
+      </template>
+    </IndexPageHeader>
 
     <DataStatusBuilder :controller="state">
       <template #success="{ data: quotes }">
@@ -502,6 +509,14 @@ const asExecutionQuotes = (quotes: unknown): ExecutionQuoteShowModel[] =>
   gap: 0.75rem;
   padding: 0.9rem 1rem 1rem;
   animation: execution-quote-index-enter 400ms 50ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.execution-quote-index__filters--embedded {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
 .execution-quote-index__filters:focus-within,

@@ -57,7 +57,7 @@
         @update-data="updateData"
       />
 
-      <div class="actions" :class="{ disabled: loading }">
+      <div class="actions form-action-pair" :class="{ disabled: loading }">
         <button
           class="btn btn-primary"
           :class="{ 'btn--loading': loading }"
@@ -67,7 +67,9 @@
         >
           {{ $t('client_source.save') }}
         </button>
-        <button type="button" @click="clearInputs">{{ $t('cancel') }}</button>
+        <button class="btn btn-secondary" type="button" @click="clearInputs">
+          {{ $t('cancel') }}
+        </button>
       </div>
 
       <!-- Error Display -->
@@ -79,15 +81,11 @@
 </template>
 
 <style scoped lang="scss">
+  @use '@/styles/mixins/form_action_pair' as form-actions;
+
   .email-crud-example {
     padding: 0;
     padding-block: 20px;
-  }
-
-  .actions {
-    padding: 0 0 10px 20px;
-    display: flex;
-    gap: 0.75rem;
   }
 
   .actions {
@@ -105,5 +103,9 @@
     color: var(--danger-dark);
     border: 1px solid #f5c6cb;
     border-radius: 4px;
+  }
+
+  .form-action-pair {
+    @include form-actions.layout;
   }
 </style>

@@ -7,6 +7,7 @@
   import { deleteSelectedRows } from '@/shared/HelpersComponents/deleteSelectedRows';
   import Pagination from '@/shared/HelpersComponents/Pagination.vue';
   import TableSkelaton from '@/shared/HelpersComponents/TableSkelaton.vue';
+  import IndexPageHeader from '@/shared/IndexPageHeader/IndexPageHeader.vue';
   import DeleteDialog from '@/base/Presentation/Dialogs/MainDialogs/DeleteDialog.vue';
   import type ItemModel from '../../core/models/Item.model';
   import DeleteItemParams from '../../core/params/delete.Item.params';
@@ -149,42 +150,38 @@
 
 <template>
   <div class="item-page">
-    <div class="item-header">
-      <div>
-        <h4>{{ $t(itemTitleKey) }}</h4>
-        <p>{{ $t(itemDescriptionKey) }}</p>
-      </div>
-    </div>
-    <div class="toolbar">
-      <div class="search-field">
-        <span class="search-icon">
-          <svg
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-          >
-            <circle cx="11" cy="11" r="8" />
-            <path d="m21 21-4.35-4.35" />
-          </svg>
-        </span>
-        <input
-          v-model="word"
-          :placeholder="$t('search_items')"
-          class="search-input"
-          type="text"
-          @input="Search"
-        />
-      </div>
-      <div class="action-buttons">
+    <IndexPageHeader :title="$t(itemTitleKey)" :subtitle="$t(itemDescriptionKey)">
+      <template #search>
+        <div class="search-field">
+          <span class="search-icon">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <path d="m21 21-4.35-4.35" />
+            </svg>
+          </span>
+          <input
+            v-model="word"
+            :placeholder="$t('search_items')"
+            class="search-input"
+            type="text"
+            @input="Search"
+          />
+        </div>
+      </template>
+      <template #actions>
         <router-link class="btn btn-primary" :to="addRoute">
           <IndexAddIcon /> {{ $t('item.add') }}
         </router-link>
-      </div>
-    </div>
+      </template>
+    </IndexPageHeader>
 
     <DataStatusBuilder :controller="state" :on-retry="async () => await fetchItems()">
       <template #success="{ data }">

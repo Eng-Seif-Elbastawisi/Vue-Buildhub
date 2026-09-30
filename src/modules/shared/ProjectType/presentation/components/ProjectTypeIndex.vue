@@ -6,6 +6,7 @@
   import { deleteSelectedRows } from '@/shared/HelpersComponents/deleteSelectedRows';
   import Pagination from '@/shared/HelpersComponents/Pagination.vue';
   import TableSkelaton from '@/shared/HelpersComponents/TableSkelaton.vue';
+  import IndexPageHeader from '@/shared/IndexPageHeader/IndexPageHeader.vue';
   import { ProjectType } from '../../core/constant/project-type.enum';
   import type ProjectTypeModel from '../../core/models/project-type.model';
   import DeleteProjectTypeParams from '../../core/params/delete.project-type.params';
@@ -72,12 +73,8 @@
 
 <template>
   <div class="project-page">
-    <header class="page-header">
-      <div>
-        <h4>{{ $t('project.list_title') }}</h4>
-        <p>{{ $t('project.list_description') }}</p>
-      </div>
-      <div class="toolbar">
+    <IndexPageHeader :title="$t('project.list_title')" :subtitle="$t('project.list_description')">
+      <template #search>
         <div class="search-field">
           <span class="search-icon">
             <svg
@@ -101,13 +98,15 @@
             @input="Search"
           />
         </div>
+      </template>
+      <template #actions>
         <router-link
           class="btn btn-primary"
           :to="user?.type === 1 ? '/admin/projectType/add' : '/organization/projectType/add'"
           ><IndexAddIcon />{{ $t('project') }}</router-link
         >
-      </div>
-    </header>
+      </template>
+    </IndexPageHeader>
     <DataStatusBuilder
       :controller="state"
       :on-retry="

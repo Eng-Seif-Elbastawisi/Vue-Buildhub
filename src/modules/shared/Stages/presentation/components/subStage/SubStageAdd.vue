@@ -42,7 +42,7 @@
       @update-data="updateData"
     />
   
-    <div class="form-footer">
+    <div class="form-footer form-action-pair">
       <button
 class="btn btn-primary" :class="{ 'btn--loading': loading }" type="button" :disabled="loading"
         @click="saveStage">
@@ -60,20 +60,15 @@ class="btn btn-primary" :class="{ 'btn--loading': loading }" type="button" :disa
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
+@use '@/styles/mixins/form_action_pair' as form-actions;
+
   .Stage-crud-page {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
   }
-.form-footer {
-  display: flex;
-  gap: 1rem;
 
-  @media (max-width: 768px) {
-    flex-direction: column;
-  }
-}
   .error {
     margin-top: 20px;
     padding: 10px;
@@ -83,7 +78,7 @@ class="btn btn-primary" :class="{ 'btn--loading': loading }" type="button" :disa
     border-radius: 4px;
   }
 
-  .btn-primary {
-    width: 100%;
-  }
+.form-action-pair {
+  @include form-actions.layout;
+}
 </style>

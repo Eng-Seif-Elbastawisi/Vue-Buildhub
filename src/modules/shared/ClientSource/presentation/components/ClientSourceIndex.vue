@@ -2,6 +2,7 @@
   import { onMounted, ref, computed } from 'vue';
   import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
   import AppTable, { type TableHeader } from '@/shared/HelpersComponents/AppTable.vue';
+  import IndexPageHeader from '@/shared/IndexPageHeader/IndexPageHeader.vue';
   import { deleteSelectedRows } from '@/shared/HelpersComponents/deleteSelectedRows';
   import Pagination from '@/shared/HelpersComponents/Pagination.vue';
   import { useRoute, useRouter } from 'vue-router';
@@ -116,8 +117,8 @@
 
 <template>
   <div class="client-source-page">
-    <div class="index-header">
-      <div class="toolbar">
+    <IndexPageHeader :title="$t('Client Source')">
+      <template #search>
         <div class="search-field">
           <span class="search-icon">
             <svg
@@ -141,8 +142,8 @@
             @input="Search"
           />
         </div>
-      </div>
-    </div>
+      </template>
+    </IndexPageHeader>
     <ClientSourceAdd
       :key="formKey"
       :client-source="selectedClientSource"

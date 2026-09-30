@@ -4,6 +4,7 @@ import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
 import AppTable, { type TableHeader } from '@/shared/HelpersComponents/AppTable.vue';
 import { deleteSelectedRows } from '@/shared/HelpersComponents/deleteSelectedRows';
 import Pagination from '@/shared/HelpersComponents/Pagination.vue';
+import IndexPageHeader from '@/shared/IndexPageHeader/IndexPageHeader.vue';
 import { useRoute, useRouter } from 'vue-router';
 import { debounce } from '@/base/Presentation/Utils/debouced';
 
@@ -168,16 +169,11 @@ onMounted(async () => {
 
 <template>
   <div class="stage-page">
-    <header class="page-header">
-      <div class="page-info">
-        <h4>{{ $t('sub_stage.list_title') }}</h4>
-
-        <p>
-          {{ $t('sub_stage.list_description') }}
-        </p>
-      </div>
-
-      <div class="toolbar">
+    <IndexPageHeader
+      :title="$t('sub_stage.list_title')"
+      :subtitle="$t('sub_stage.list_description')"
+    >
+      <template #search>
         <div class="search-field">
           <span class="search-icon">
             <svg
@@ -192,7 +188,8 @@ width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" str
 v-model="word" :placeholder="$t('search_sub_stages')" class="search-input" type="text"
             @input="Search" />
         </div>
-
+      </template>
+      <template #actions>
         <router-link class="btn btn-primary" :to="formRoute">
           <IndexAddIcon />
           {{ $t('sub_stage.add') }}
@@ -201,8 +198,8 @@ v-model="word" :placeholder="$t('search_sub_stages')" class="search-input" type=
         <button class="btn btn-back-step" type="button" @click="router.push(`${routePrefix}/stages`)">
           {{ $t('back_to_parent_stage') }}
         </button>
-      </div>
-    </header>
+      </template>
+    </IndexPageHeader>
 
     <DataStatusBuilder
 :controller="state" :on-retry="async () => await fetchSubStages(route.query.page ? Number(route.query.page) : 1, word)

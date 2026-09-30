@@ -4,6 +4,7 @@
   import AppTable, { type TableHeader } from '@/shared/HelpersComponents/AppTable.vue';
   import { deleteSelectedRows } from '@/shared/HelpersComponents/deleteSelectedRows';
   import Pagination from '@/shared/HelpersComponents/Pagination.vue';
+  import IndexPageHeader from '@/shared/IndexPageHeader/IndexPageHeader.vue';
   import { useRoute, useRouter } from 'vue-router';
   import TableSkelaton from '@/shared/HelpersComponents/TableSkelaton.vue';
   import type BrandModel from '../../core/models/brand.model.ts';
@@ -101,13 +102,12 @@
 
 <template>
   <div class="document-page">
-    <h4 class="document-index-title">{{ $t('Brands') }}</h4>
-    <p class="document-index-dexription">
-      {{ $t('Manage and organize all uploaded documents in one place') }}
-    </p>
     <!-- <div class="badge">{{ $t('All Brands') }}</div> -->
-    <div class="index-header">
-      <div class="toolbar">
+    <IndexPageHeader
+      :title="$t('Brands')"
+      :subtitle="$t('Manage and organize all uploaded documents in one place')"
+    >
+      <template #search>
         <div class="search-field">
           <span class="search-icon">
             <svg
@@ -131,8 +131,8 @@
             @input="Search"
           />
         </div>
-      </div>
-      <div class="btns">
+      </template>
+      <template #actions>
         <router-link
           class="btn btn-primary"
           :to="user?.type === 1 ? '/admin/brand/add' : '/organization/brand/add'"
@@ -181,8 +181,8 @@
             <button>{{ $t('Save') }}</button>
           </div>
         </Dialog> -->
-      </div>
-    </div>
+      </template>
+    </IndexPageHeader>
 
     <DataStatusBuilder :controller="state" :on-retry="async () => await fetchBrand()">
       <template #success="{ data }">

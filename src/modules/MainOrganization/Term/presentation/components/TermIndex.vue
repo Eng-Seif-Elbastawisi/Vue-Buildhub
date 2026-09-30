@@ -3,6 +3,7 @@
   import { useRoute, useRouter } from 'vue-router';
 
   import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
+  import IndexPageHeader from '@/shared/IndexPageHeader/IndexPageHeader.vue';
   import AppTable, { type TableHeader } from '@/shared/HelpersComponents/AppTable.vue';
   import Pagination from '@/shared/HelpersComponents/Pagination.vue';
   import TableSkelaton from '@/shared/HelpersComponents/TableSkelaton.vue';
@@ -134,18 +135,11 @@
 <template>
   <div class="Term-page">
     <!-- ================= HEADER ================= -->
-    <header class="page-header">
-      <div class="page-info">
-        <h4>
-          {{ $t('Term.list_title') }}
-        </h4>
-
-        <p>
-          {{ $t('Term.list_description') }}
-        </p>
-      </div>
-
-      <div class="toolbar">
+    <IndexPageHeader
+      :title="$t('Term.list_title')"
+      :subtitle="$t('Term.list_description')"
+    >
+      <template #search>
         <!-- Search -->
         <div class="search-field">
           <span class="search-icon">
@@ -171,15 +165,17 @@
             @input="Search"
           />
         </div>
+      </template>
 
+      <template #actions>
         <!-- Add Term -->
         <router-link class="btn btn-primary" to="/organization/term/add">
           <IndexAddIcon />
 
           {{ $t('Term') }}
         </router-link>
-      </div>
-    </header>
+      </template>
+    </IndexPageHeader>
 
     <!-- ================= TABLE STATE ================= -->
     <DataStatusBuilder

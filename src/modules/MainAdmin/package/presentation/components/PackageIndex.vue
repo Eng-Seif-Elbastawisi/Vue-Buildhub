@@ -8,6 +8,7 @@
   import { deleteSelectedRows } from '@/shared/HelpersComponents/deleteSelectedRows';
   import Pagination from '@/shared/HelpersComponents/Pagination.vue';
   import TableSkelaton from '@/shared/HelpersComponents/TableSkelaton.vue';
+  import IndexPageHeader from '@/shared/IndexPageHeader/IndexPageHeader.vue';
 
   import type PackageModel from '../../core/models/package.model';
   import { FeaturesKEY } from '../../core/constants/features.enum';
@@ -144,21 +145,13 @@
 
 <template>
   <div class="package-page">
-    <div class="package-header">
-      <div>
-        <h4>
-          {{ $t('package.index.title') }}
-        </h4>
-
-        <p>
-          {{ $t('package.index.description') }}
-        </p>
-      </div>
-
-      <RouterLink class="btn btn-primary" :to="{ name: 'Add Package' }">
-        {{ $t('package.add') }}
-      </RouterLink>
-    </div>
+    <IndexPageHeader :title="$t('package.index.title')" :subtitle="$t('package.index.description')">
+      <template #actions>
+        <RouterLink class="btn btn-primary" :to="{ name: 'Add Package' }">
+          {{ $t('package.add') }}
+        </RouterLink>
+      </template>
+    </IndexPageHeader>
 
     <DataStatusBuilder :controller="state" :on-retry="() => fetchPackages(currentPage, word)">
       <template #success="{ data }">

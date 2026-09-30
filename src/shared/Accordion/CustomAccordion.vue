@@ -109,7 +109,7 @@
   }
 
   :deep(.p-accordionheader-toggle-icon) {
-    margin-left: auto;
+    margin-inline-start: auto;
     transition: transform 0.3s ease;
     color: var(--gray-500);
   }
@@ -139,11 +139,5 @@
 
   .content-body {
     white-space: pre-wrap;
-  }
-
-  /* RTL Support */
-  [dir='rtl'] :deep(.p-accordionheader-toggle-icon) {
-    margin-left: 0;
-    margin-right: auto;
   }
 </style>

@@ -8,7 +8,7 @@
 
   .search-icon {
     position: absolute;
-    left: 14px;
+    inset-inline-start: 14px;
     display: flex;
     color: var(--gray-400);
     pointer-events: none;
@@ -17,7 +17,8 @@
 
   .search-input {
     width: 100%;
-    padding: $BaseInputPadding $BaseInputPadding $BaseInputPadding calc($BaseInputPadding * 3.5);
+    padding-block: $BaseInputPadding;
+    padding-inline: calc($BaseInputPadding * 3.5) $BaseInputPadding;
     border: 1px solid $BorderColor;
     border-radius: $XlSize2;
     color: $Black;
@@ -51,7 +52,7 @@
 
   .clear-btn {
     position: absolute;
-    right: 10px;
+    inset-inline-end: 10px;
     display: flex;
     align-items: center;
     justify-content: center;

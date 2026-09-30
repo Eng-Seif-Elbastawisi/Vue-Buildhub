@@ -7,6 +7,7 @@
   import { dialogManager } from '@/base/Presentation/Dialogs/dialog.manager';
   import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
   import Pagination from '@/shared/HelpersComponents/Pagination.vue';
+  import IndexPageHeader from '@/shared/IndexPageHeader/IndexPageHeader.vue';
   import { debounce } from '@/base/Presentation/Utils/debouced';
   import IndexAddIcon from '@/shared/icons/IndexAddIcon.vue';
   import ConfirmCancelDialog from '@/base/Presentation/Dialogs/ConfirmCancelDialog.vue';
@@ -307,37 +308,208 @@
 
 <template>
   <div class="products-library">
-    <header class="page-header">
-      <div class="header-copy">
+    <IndexPageHeader :title="$t('Products.page_title')" :subtitle="$t('Products.page_subtitle')">
+      <template #eyebrow>
         <nav class="breadcrumb" :aria-label="$t('Products.breadcrumb_label')">
           <router-link to="/">{{ $t('home') }}</router-link>
           <span aria-hidden="true">/</span>
           <span aria-current="page">{{ $t('Products.page_title') }}</span>
         </nav>
+      </template>
 
-        <h1 class="title">{{ $t('Products.page_title') }}</h1>
-        <p class="subtitle">{{ $t('Products.page_subtitle') }}</p>
-      </div>
+      <template #decoration>
+        <svg
+          class="header-watermark"
+          width="150"
+          height="110"
+          viewBox="0 0 150 110"
+          fill="none"
+          aria-hidden="true"
+        >
+          <path d="M18 101V39l37-18v80M55 101V9l47 18v74M102 101V48l30 13v40" />
+          <path
+            d="M31 48h11M31 61h11M31 74h11M68 32h12M68 47h12M68 62h12M68 77h12M113 65h8M113 78h8"
+          />
+        </svg>
+      </template>
 
-      <svg
-        class="header-watermark"
-        width="150"
-        height="110"
-        viewBox="0 0 150 110"
-        fill="none"
-        aria-hidden="true"
-      >
-        <path d="M18 101V39l37-18v80M55 101V9l47 18v74M102 101V48l30 13v40" />
-        <path
-          d="M31 48h11M31 61h11M31 74h11M68 32h12M68 47h12M68 62h12M68 77h12M113 65h8M113 78h8"
-        />
-      </svg>
+      <template #search>
+        <div class="search-box">
+          <label class="sr-only" for="product-search">
+            {{ $t('Products.search_placeholder') }}
+          </label>
 
-      <router-link class="btn-add" to="/organization/products/add">
-        <IndexAddIcon />
-        {{ $t('Products.add') }}
-      </router-link>
-    </header>
+          <svg
+            class="search-icon"
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            aria-hidden="true"
+          >
+            <circle cx="11" cy="11" r="8" />
+            <path d="m21 21-4.35-4.35" />
+          </svg>
+
+          <input
+            id="product-search"
+            v-model="word"
+            type="search"
+            :placeholder="$t('Products.search_placeholder')"
+            @input="search"
+          />
+        </div>
+      </template>
+
+      <template #actions>
+        <router-link class="btn-add" to="/organization/products/add">
+          <IndexAddIcon />
+          {{ $t('Products.add') }}
+        </router-link>
+      </template>
+
+      <template #filters>
+        <div class="toolbar-actions">
+          <div ref="stageFilterRef" class="stage-filter">
+            <button
+              type="button"
+              class="stage-filter-button"
+              :class="{ active: selectedStageIds.length > 0 }"
+              aria-haspopup="dialog"
+              :aria-expanded="isStageFilterOpen"
+              aria-controls="products-stage-filter"
+              @click="isStageFilterOpen = !isStageFilterOpen"
+            >
+              <span class="filter-button-icon" aria-hidden="true">
+                <svg
+                  width="17"
+                  height="17"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M4 5h16" />
+                  <path d="M7 12h10" />
+                  <path d="M10 19h4" />
+                </svg>
+              </span>
+
+              <span>{{ $t('Products.filter_by_stage') }}</span>
+
+              <span v-if="selectedStageIds.length" class="active-filter-count">
+                {{ selectedStageIds.length }}
+              </span>
+
+              <svg
+                class="filter-chevron"
+                :class="{ open: isStageFilterOpen }"
+                width="15"
+                height="15"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                aria-hidden="true"
+              >
+                <path d="m6 9 6 6 6-6" />
+              </svg>
+            </button>
+
+            <div
+              v-if="isStageFilterOpen"
+              id="products-stage-filter"
+              class="stage-filter-popover"
+              role="dialog"
+              :aria-label="$t('Products.filter_by_stage')"
+            >
+              <header class="filter-popover-header">
+                <span class="filter-panel-icon" aria-hidden="true">
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path d="M4 5h16M7 12h10M10 19h4" />
+                  </svg>
+                </span>
+
+                <div>
+                  <strong>{{ $t('Products.filter_by_stage') }}</strong>
+                  <span v-if="selectedStageIds.length">
+                    {{ selectedStageIds.length }} {{ $t('Products.form.selected') }}
+                  </span>
+                </div>
+              </header>
+
+              <div class="stage-filter-content">
+                <div v-if="stagesLoading" class="stage-filter-state">
+                  {{ $t('Products.form.stages_loading') }}
+                </div>
+
+                <div v-else-if="!stageGroups.length" class="stage-filter-state">
+                  {{ $t('Products.form.stages_empty') }}
+                </div>
+
+                <div v-else class="stage-filter-groups">
+                  <section v-for="group in stageGroups" :key="group.id" class="stage-filter-group">
+                    <button
+                      type="button"
+                      class="stage-filter-group-button"
+                      :class="{ selected: isStageGroupSelected(group) }"
+                      :disabled="!hasSubStages(group)"
+                      :aria-pressed="hasSubStages(group) ? isStageGroupSelected(group) : undefined"
+                      @click="toggleStageGroup(group)"
+                    >
+                      <span>{{ group.title }}</span>
+                      <span class="stage-filter-count">{{ group.stages.length }}</span>
+                    </button>
+
+                    <div v-if="hasSubStages(group)" class="stage-filter-options">
+                      <label
+                        v-for="stage in group.stages"
+                        :key="stage.id"
+                        class="stage-filter-option"
+                      >
+                        <input
+                          type="checkbox"
+                          :checked="isStageSelected(stage.id)"
+                          @change="toggleStage(stage.id)"
+                        />
+
+                        <span>{{ stage.title }}</span>
+                      </label>
+                    </div>
+                  </section>
+                </div>
+              </div>
+
+              <div class="stage-filter-actions">
+                <button
+                  type="button"
+                  class="stage-filter-apply"
+                  :disabled="stagesLoading"
+                  @click="applyStageFilter"
+                >
+                  {{ $t('Products.apply_filter') }}
+                </button>
+
+                <button type="button" class="stage-filter-clear" @click="clearStageFilter">
+                  {{ $t('Products.clear_filter') }}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </template>
+    </IndexPageHeader>
 
     <div class="stats-grid">
       <article
@@ -401,174 +573,6 @@
         </div>
       </article>
     </div>
-
-    <section class="toolbar" :aria-label="$t('Products.search_placeholder')">
-      <div class="search-box">
-        <label class="sr-only" for="product-search">
-          {{ $t('Products.search_placeholder') }}
-        </label>
-
-        <svg
-          class="search-icon"
-          width="18"
-          height="18"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          aria-hidden="true"
-        >
-          <circle cx="11" cy="11" r="8" />
-          <path d="m21 21-4.35-4.35" />
-        </svg>
-
-        <input
-          id="product-search"
-          v-model="word"
-          type="search"
-          :placeholder="$t('Products.search_placeholder')"
-          @input="search"
-        />
-      </div>
-
-      <div class="toolbar-actions">
-        <div ref="stageFilterRef" class="stage-filter">
-          <button
-            type="button"
-            class="stage-filter-button"
-            :class="{ active: selectedStageIds.length > 0 }"
-            aria-haspopup="dialog"
-            :aria-expanded="isStageFilterOpen"
-            aria-controls="products-stage-filter"
-            @click="isStageFilterOpen = !isStageFilterOpen"
-          >
-            <span class="filter-button-icon" aria-hidden="true">
-              <svg
-                width="17"
-                height="17"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path d="M4 5h16" />
-                <path d="M7 12h10" />
-                <path d="M10 19h4" />
-              </svg>
-            </span>
-
-            <span>{{ $t('Products.filter_by_stage') }}</span>
-
-            <span v-if="selectedStageIds.length" class="active-filter-count">
-              {{ selectedStageIds.length }}
-            </span>
-
-            <svg
-              class="filter-chevron"
-              :class="{ open: isStageFilterOpen }"
-              width="15"
-              height="15"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              aria-hidden="true"
-            >
-              <path d="m6 9 6 6 6-6" />
-            </svg>
-          </button>
-
-          <div
-            v-if="isStageFilterOpen"
-            id="products-stage-filter"
-            class="stage-filter-popover"
-            role="dialog"
-            :aria-label="$t('Products.filter_by_stage')"
-          >
-            <header class="filter-popover-header">
-              <span class="filter-panel-icon" aria-hidden="true">
-                <svg
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                >
-                  <path d="M4 5h16M7 12h10M10 19h4" />
-                </svg>
-              </span>
-
-              <div>
-                <strong>{{ $t('Products.filter_by_stage') }}</strong>
-                <span v-if="selectedStageIds.length">
-                  {{ selectedStageIds.length }} {{ $t('Products.form.selected') }}
-                </span>
-              </div>
-            </header>
-
-            <div class="stage-filter-content">
-              <div v-if="stagesLoading" class="stage-filter-state">
-                {{ $t('Products.form.stages_loading') }}
-              </div>
-
-              <div v-else-if="!stageGroups.length" class="stage-filter-state">
-                {{ $t('Products.form.stages_empty') }}
-              </div>
-
-              <div v-else class="stage-filter-groups">
-                <section v-for="group in stageGroups" :key="group.id" class="stage-filter-group">
-                  <button
-                    type="button"
-                    class="stage-filter-group-button"
-                    :class="{ selected: isStageGroupSelected(group) }"
-                    :disabled="!hasSubStages(group)"
-                    :aria-pressed="hasSubStages(group) ? isStageGroupSelected(group) : undefined"
-                    @click="toggleStageGroup(group)"
-                  >
-                    <span>{{ group.title }}</span>
-                    <span class="stage-filter-count">{{ group.stages.length }}</span>
-                  </button>
-
-                  <div v-if="hasSubStages(group)" class="stage-filter-options">
-                    <label
-                      v-for="stage in group.stages"
-                      :key="stage.id"
-                      class="stage-filter-option"
-                    >
-                      <input
-                        type="checkbox"
-                        :checked="isStageSelected(stage.id)"
-                        @change="toggleStage(stage.id)"
-                      />
-
-                      <span>{{ stage.title }}</span>
-                    </label>
-                  </div>
-                </section>
-              </div>
-            </div>
-
-            <div class="stage-filter-actions">
-              <button
-                type="button"
-                class="stage-filter-apply"
-                :disabled="stagesLoading"
-                @click="applyStageFilter"
-              >
-                {{ $t('Products.apply_filter') }}
-              </button>
-
-              <button type="button" class="stage-filter-clear" @click="clearStageFilter">
-                {{ $t('Products.clear_filter') }}
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
 
     <DataStatusBuilder :controller="state" :on-retry="retryProducts">
       <template #success="{ data }">

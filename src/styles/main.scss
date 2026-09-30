@@ -78,6 +78,7 @@
 @use '../shared/HelpersComponents/FilterDialog/styles/filter_dialog';
 @use '../modules/shared/Stages/presentation/styles/stages_imports';
 @use '../modules/shared/Term/presentation/styles/term_imports';
+@use 'ui_standardization';
 /* =============================================================================
    GLOBAL OVERRIDES & BASE STYLES
    ============================================================================= */

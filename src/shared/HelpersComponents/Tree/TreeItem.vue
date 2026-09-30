@@ -59,7 +59,7 @@
 
 <style scoped>
   .tree-item {
-    padding-left: 10px;
+    padding-inline-start: 10px;
   }
 
   .tree-label {
@@ -76,8 +76,8 @@
   }
 
   .tree-children {
-    margin-left: 15px;
-    border-left: 1px dashed #ccc;
-    padding-left: 10px;
+    margin-inline-start: 15px;
+    border-inline-start: 1px dashed var(--gray-300);
+    padding-inline-start: 10px;
   }
 </style>

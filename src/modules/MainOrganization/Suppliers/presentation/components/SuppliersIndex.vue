@@ -1,6 +1,7 @@
 <script setup lang="ts">
   import { onMounted, ref, computed } from 'vue';
   import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
+  import IndexPageHeader from '@/shared/IndexPageHeader/IndexPageHeader.vue';
   import AppTable, { type TableHeader } from '@/shared/HelpersComponents/AppTable.vue';
   import { deleteSelectedRows } from '@/shared/HelpersComponents/deleteSelectedRows';
   import Pagination from '@/shared/HelpersComponents/Pagination.vue';
@@ -104,13 +105,12 @@
 
 <template>
   <div class="document-page">
-    <h4 class="document-index-title">{{ $t('Suppliers') }}</h4>
-    <p class="document-index-dexription">
-      {{ $t('Manage and organize all uploaded documents in one place') }}
-    </p>
     <!-- <div class="badge">{{ $t('All Suppliers') }}</div> -->
-    <div class="index-header">
-      <div class="toolbar">
+    <IndexPageHeader
+      :title="$t('Suppliers')"
+      :subtitle="$t('Manage and organize all uploaded documents in one place')"
+    >
+      <template #search>
         <div class="search-field">
           <span class="search-icon">
             <svg
@@ -134,16 +134,18 @@
             @input="Search"
           />
         </div>
-      </div>
-      <div class="btns">
-        <router-link
-          class="btn btn-primary"
-          :to="user?.isMaster ? '/suppliers/add' : '/organization/suppliers/add'"
-        >
-          <IndexAddIcon /> {{ $t('suppliers') }}
-        </router-link>
-        <!-- <button class="btn btn-secondary" @click="visible = true">{{ $t('add_Supplier') }}</button> -->
-        <!-- <Dialog
+      </template>
+
+      <template #actions>
+        <div class="btns">
+          <router-link
+            class="btn btn-primary"
+            :to="user?.isMaster ? '/suppliers/add' : '/organization/suppliers/add'"
+          >
+            <IndexAddIcon /> {{ $t('suppliers') }}
+          </router-link>
+          <!-- <button class="btn btn-secondary" @click="visible = true">{{ $t('add_Supplier') }}</button> -->
+          <!-- <Dialog
           v-model:visible="visible"
           :pt="{ root: 'filter-dialog', header: 'dialog-header', content: 'dialog-body' }"
           modal
@@ -211,9 +213,10 @@
           <div class="save_button">
             <button>{{ $t('Save') }}</button>
           </div>
-        </Dialog> -->
-      </div>
-    </div>
+          </Dialog> -->
+        </div>
+      </template>
+    </IndexPageHeader>
 
     <DataStatusBuilder :controller="state" :on-retry="async () => await fetchSuppliers()">
       <template #success="{ data }">

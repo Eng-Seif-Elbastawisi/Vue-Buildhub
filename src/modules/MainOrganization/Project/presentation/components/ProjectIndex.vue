@@ -4,6 +4,7 @@
   import { useRoute, useRouter } from 'vue-router';
 
   import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
+  import IndexPageHeader from '@/shared/IndexPageHeader/IndexPageHeader.vue';
   import AppTable, { type TableHeader } from '@/shared/HelpersComponents/AppTable.vue';
   import Pagination from '@/shared/HelpersComponents/Pagination.vue';
   import TableSkelaton from '@/shared/HelpersComponents/TableSkelaton.vue';
@@ -277,48 +278,45 @@
 
 <template>
   <div class="Project-page">
-    <header class="page-header">
-      <div>
-        <h4>
-          {{ pageHeaderTitle }}
-        </h4>
-
-        <p>
-          {{ pageHeaderDescription }}
-        </p>
-        <div class="toolbar">
-          <div class="search-field">
-            <span class="search-icon">
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-              >
-                <circle cx="11" cy="11" r="8" />
-                <path d="m21 21-4.35-4.35" />
-              </svg>
-            </span>
-            <input
-              v-model="word"
-              :placeholder="$t('search_request')"
-              class="search-input"
-              type="text"
-              @input="Search"
-            />
-          </div>
-          <router-link
-            class="btn btn-primary"
-            :to="user?.isMaster ? '/admin/Project/add' : '/organization/Project/add'"
-          >
-            {{ pageHeaderActionLabel }}
-          </router-link>
+    <IndexPageHeader
+      :title="pageHeaderTitle"
+      :subtitle="pageHeaderDescription"
+    >
+      <template #search>
+        <div class="search-field">
+          <span class="search-icon">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <path d="m21 21-4.35-4.35" />
+            </svg>
+          </span>
+          <input
+            v-model="word"
+            :placeholder="$t('search_request')"
+            class="search-input"
+            type="text"
+            @input="Search"
+          />
         </div>
-      </div>
-    </header>
+      </template>
+
+      <template #actions>
+        <router-link
+          class="btn btn-primary"
+          :to="user?.isMaster ? '/admin/Project/add' : '/organization/Project/add'"
+        >
+          {{ pageHeaderActionLabel }}
+        </router-link>
+      </template>
+    </IndexPageHeader>
 
     <DataStatusBuilder
       :controller="state"

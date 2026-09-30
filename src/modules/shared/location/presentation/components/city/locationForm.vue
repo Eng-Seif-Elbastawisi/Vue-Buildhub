@@ -167,6 +167,7 @@
     pointer-events: none;
     opacity: 0.7;
   }
+
   .document-form-header {
     display: flex;
     align-items: center;
@@ -177,7 +178,7 @@
   .field-input {
     width: 100%;
     padding: 12px 16px;
-    padding-right: 50px;
+    padding-inline-end: 50px;
     border: 1px solid var(--border-weak);
     border-radius: 28px;
     background: var(--white);

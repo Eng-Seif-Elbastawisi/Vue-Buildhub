@@ -86,11 +86,11 @@ describe('StageIndex.vue', () => {
     expect(wrapper.find('.stage-page').exists()).toBe(true);
   });
 
-  it('identifies the list header', () => {
+  it('renders the list title and subtitle in the shared page header', () => {
     const wrapper = mount(StageIndex, mountOptions);
 
-    expect(wrapper.get('.page-info h4').text()).toBe('stage.list_title');
-    expect(wrapper.get('.page-info p').text()).toBe('stage.list_description');
+    expect(wrapper.get('header h1').text()).toBe('stage.list_title');
+    expect(wrapper.get('header p').text()).toBe('stage.list_description');
   });
 
   it('renders the search input', () => {

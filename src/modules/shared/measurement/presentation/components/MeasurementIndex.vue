@@ -5,6 +5,7 @@ import { useRoute, useRouter } from 'vue-router';
 import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
 import AppTable, { type TableHeader } from '@/shared/HelpersComponents/AppTable.vue';
 import Pagination from '@/shared/HelpersComponents/Pagination.vue';
+import IndexPageHeader from '@/shared/IndexPageHeader/IndexPageHeader.vue';
 import { deleteSelectedRows } from '@/shared/HelpersComponents/deleteSelectedRows';
 import DeleteDialog from '@/base/Presentation/Dialogs/MainDialogs/DeleteDialog.vue';
 import EditIcon from '@/shared/icons/EditIcon.vue';
@@ -162,9 +163,8 @@ onMounted(async () => {
 
 <template>
   <div class="index-measurement-page">
-    <!-- Header -->
-    <div class="index-header">
-      <div class="toolbar">
+    <IndexPageHeader :title="$t('Measurement')">
+      <template #search>
         <div class="search-field">
           <span class="search-icon">
             <svg
@@ -179,9 +179,9 @@ width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" str
 v-model="word" class="search-input" type="text" :placeholder="$t('search_measurements')"
             @input="search" />
         </div>
-      </div>
+      </template>
 
-      <div class="d-flex justify-end">
+      <template #actions>
         <button
 class="app-btn btn btn-primary btn--md btn--has-icon btn-save white"
           @click="router.push(`${routePrefix}/measurement/add`)">
@@ -193,8 +193,8 @@ width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" str
 
           {{ $t('measurement.add') }}
         </button>
-      </div>
-    </div>
+      </template>
+    </IndexPageHeader>
 
     <!-- Table -->
     <DataStatusBuilder :controller="state" :on-retry="async () => await fetchMeasurements()">
@@ -310,4 +310,3 @@ width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" str
     </DataStatusBuilder>
   </div>
 </template>
-

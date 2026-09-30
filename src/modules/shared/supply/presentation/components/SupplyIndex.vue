@@ -6,6 +6,7 @@
   import { deleteSelectedRows } from '@/shared/HelpersComponents/deleteSelectedRows';
   import Pagination from '@/shared/HelpersComponents/Pagination.vue';
   import TableSkelaton from '@/shared/HelpersComponents/TableSkelaton.vue';
+  import IndexPageHeader from '@/shared/IndexPageHeader/IndexPageHeader.vue';
   import type SupplyModel from '../../core/models/supply.model';
   import DeleteSupplyParams from '../../core/params/delete.supply.params';
   import IndexSupplyParams from '../../core/params/index.supply.params';
@@ -91,12 +92,8 @@
 
 <template>
   <div class="supply-page">
-    <div class="supply-header">
-      <div>
-        <h4>{{ $t('supply.list_title') }}</h4>
-        <p>{{ $t('supply.list_description') }}</p>
-      </div>
-      <div class="toolbar">
+    <IndexPageHeader :title="$t('supply.list_title')" :subtitle="$t('supply.list_description')">
+      <template #search>
         <div class="search-field">
           <span class="search-icon">
             <svg
@@ -120,14 +117,16 @@
             @input="Search"
           />
         </div>
+      </template>
+      <template #actions>
         <router-link
           class="btn btn-primary"
           :to="user?.isMaster ? '/admin/supply/add' : '/organization/supply/add'"
         >
           <IndexAddIcon />{{ $t('supply') }}</router-link
         >
-      </div>
-    </div>
+      </template>
+    </IndexPageHeader>
 
     <DataStatusBuilder :controller="state" :on-retry="async () => await fetchSupply()">
       <template #success="{ data }">

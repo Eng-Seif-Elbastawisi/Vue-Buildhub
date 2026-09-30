@@ -4,6 +4,7 @@
   import AppTable, { type TableHeader } from '@/shared/HelpersComponents/AppTable.vue';
   import { deleteSelectedRows } from '@/shared/HelpersComponents/deleteSelectedRows';
   import Pagination from '@/shared/HelpersComponents/Pagination.vue';
+  import IndexPageHeader from '@/shared/IndexPageHeader/IndexPageHeader.vue';
   import { useRoute, useRouter } from 'vue-router';
   import { debounce } from '@/base/Presentation/Utils/debouced';
 
@@ -171,13 +172,8 @@
 
 <template>
   <div class="stage-page">
-    <header class="page-header">
-      <div class="page-info">
-        <h4>{{ $t('stage.list_title') }}</h4>
-        <p>{{ $t('stage.list_description') }}</p>
-      </div>
-
-      <div class="toolbar">
+    <IndexPageHeader :title="$t('stage.list_title')" :subtitle="$t('stage.list_description')">
+      <template #search>
         <div class="search-field">
           <span class="search-icon">
             <svg
@@ -202,13 +198,14 @@
             @input="Search"
           />
         </div>
-
+      </template>
+      <template #actions>
         <router-link class="btn btn-primary" :to="formRoute">
           <IndexAddIcon />
           {{ $t('stage.add') }}
         </router-link>
-      </div>
-    </header>
+      </template>
+    </IndexPageHeader>
 
     <DataStatusBuilder
       :controller="state"

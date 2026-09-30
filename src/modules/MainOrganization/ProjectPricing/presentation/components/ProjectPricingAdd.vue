@@ -200,7 +200,7 @@
         </span>
       </button> -->
 
-    <div class="buttons-container">
+    <div class="buttons-container form-action-pair">
            <button
         class="btn btn-primary w-full"
         :class="{
@@ -237,6 +237,8 @@
 </template>
 
 <style scoped lang="scss">
+  @use '@/styles/mixins/form_action_pair' as form-actions;
+
   .item-crud-page {
     display: flex;
     flex-direction: column;
@@ -259,16 +261,7 @@
     line-height: 1.6;
   }
 
-
-    .buttons-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex: 1 1;
-    margin: 20px 0;
-    gap: 10px;
-    .btn {
-      width: 100%;
-    }
+  .form-action-pair {
+    @include form-actions.layout;
   }
 </style>

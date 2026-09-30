@@ -38,7 +38,7 @@ const cancelQuoteTypeAdd = () => {
   <div class="QuoteType-crud-page">
     <QuoteTypeForm :loading="loading" @update-data="params = $event" :disabled="true" />
 
-    <div class="form-footer">
+    <div class="form-footer form-action-pair">
       <button
 class="btn btn-primary" :class="{ 'btn--loading': loading }" type="button" :disabled="loading"
         @click="saveQuoteType">
@@ -56,20 +56,13 @@ ref="confirmCancelRef" :title="$t('cancel_changes')"
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
+@use '@/styles/mixins/form_action_pair' as form-actions;
+
 .QuoteType-crud-page {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-}
-
-.form-footer {
-  display: flex;
-  gap: 1rem;
-
-  @media (max-width: 768px) {
-    flex-direction: column;
-  }
 }
 
 .error {
@@ -81,7 +74,7 @@ ref="confirmCancelRef" :title="$t('cancel_changes')"
   border-radius: 4px;
 }
 
-.btn-primary {
-  width: 100%;
+.form-action-pair {
+  @include form-actions.layout;
 }
 </style>

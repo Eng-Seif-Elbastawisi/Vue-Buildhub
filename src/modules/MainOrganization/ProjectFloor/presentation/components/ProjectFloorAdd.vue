@@ -199,7 +199,7 @@
       @update-data="params = $event"
     />
 
-    <div class="buttons-container">
+    <div class="buttons-container form-action-pair">
       <button
         :class="{ 'btn--loading': loading }"
         class="btn btn-primary"
@@ -368,6 +368,8 @@
 </template>
 
 <style scoped lang="scss">
+  @use '@/styles/mixins/form_action_pair' as form-actions;
+
   .ProjectFloor-crud-page {
     display: flex;
     flex-direction: column;
@@ -381,16 +383,6 @@
     color: var(--danger-dark);
     border: 1px solid #f5c6cb;
     border-radius: 4px;
-  }
-  .buttons-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex: 1 1;
-    gap: 10px;
-    .btn {
-      width: 100%;
-    }
   }
 
   .next-step-card {
@@ -717,5 +709,9 @@
     .next-step-card__button {
       width: 100%;
     }
+  }
+
+  .form-action-pair {
+    @include form-actions.layout;
   }
 </style>

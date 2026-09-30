@@ -117,18 +117,18 @@ describe('ProjectIndex', () => {
       const wrapper = mountProjectIndex();
       await nextTick();
       const i18n = wrapper.vm.$i18n as { locale: string };
-      const pageHeader = wrapper.get('.page-header');
-      const actionButton = pageHeader.get('.toolbar .btn-primary');
+      const pageHeader = wrapper.get('.index-page-heading');
+      const actionButton = wrapper.get('.index-page-toolbar__actions .btn-primary');
 
-      expect(pageHeader.get('h4').text()).toBe(english[0]);
-      expect(pageHeader.get('p').text()).toBe(english[1]);
+      expect(pageHeader.get('.index-page-heading__title').text()).toBe(english[0]);
+      expect(pageHeader.get('.index-page-heading__subtitle').text()).toBe(english[1]);
       expect(actionButton.text()).toBe(english[2]);
 
       i18n.locale = 'ar';
       await nextTick();
 
-      expect(pageHeader.get('h4').text()).toBe(arabic[0]);
-      expect(pageHeader.get('p').text()).toBe(arabic[1]);
+      expect(pageHeader.get('.index-page-heading__title').text()).toBe(arabic[0]);
+      expect(pageHeader.get('.index-page-heading__subtitle').text()).toBe(arabic[1]);
       expect(actionButton.text()).toBe(arabic[2]);
       i18n.locale = 'en';
     },

@@ -281,7 +281,7 @@
         @update-data="updateData"
       />
 
-      <div class="btns">
+      <div class="btns form-action-pair">
         <button
           class="btn btn-primary"
           :class="{
@@ -296,7 +296,7 @@
 
         <router-link :to="`/organization/project/show/${projectId}`">
           <button
-            class="btn btn-danger"
+            class="btn btn-secondary"
             :class="{
               'btn--loading': saving,
             }"
@@ -319,12 +319,9 @@
   </div>
 </template>
 
-<style scoped>
-  .btns {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-  }
+<style scoped lang="scss">
+  @use '@/styles/mixins/form_action_pair' as form-actions;
+
   .ProjectFloor-crud-page {
     display: flex;
     flex-direction: column;
@@ -363,11 +360,11 @@
     color: var(--danger-dark);
   }
 
-  .btn-primary {
-    width: 100%;
-  }
-
   .retry-button {
     width: auto;
+  }
+
+  .form-action-pair {
+    @include form-actions.layout;
   }
 </style>

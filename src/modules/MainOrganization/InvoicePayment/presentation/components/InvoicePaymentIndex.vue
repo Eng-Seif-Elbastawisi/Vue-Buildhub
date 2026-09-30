@@ -3,6 +3,7 @@
   import { useI18n } from 'vue-i18n';
   import { useRoute, useRouter } from 'vue-router';
   import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
+  import IndexPageHeader from '@/shared/IndexPageHeader/IndexPageHeader.vue';
   import AppTable, { type TableHeader } from '@/shared/HelpersComponents/AppTable.vue';
   import Pagination from '@/shared/HelpersComponents/Pagination.vue';
   import TableSkelaton from '@/shared/HelpersComponents/TableSkelaton.vue';
@@ -97,33 +98,31 @@
 
 <template>
   <div class="invoice-payment-page">
-    <div class="invoice-payment-header">
-      <div>
-        <h4>{{ $t('invoice_payment.index.title') }}</h4>
-        <p>{{ $t('invoice_payment.index.description') }}</p>
-      </div>
-    </div>
+    <IndexPageHeader
+      :title="$t('invoice_payment.index.title')"
+      :subtitle="$t('invoice_payment.index.description')"
+    >
+      <template #search>
+        <div class="search-field">
+          <span class="search-icon">
+            <i class="pi pi-search"></i>
+          </span>
+          <input
+            v-model="word"
+            :placeholder="$t('invoice_payment.search_placeholder')"
+            class="search-input"
+            type="text"
+            @input="search"
+          />
+        </div>
+      </template>
 
-    <div class="toolbar">
-      <div class="search-field">
-        <span class="search-icon">
-          <i class="pi pi-search"></i>
-        </span>
-        <input
-          v-model="word"
-          :placeholder="$t('invoice_payment.search_placeholder')"
-          class="search-input"
-          type="text"
-          @input="search"
-        />
-      </div>
-
-      <div class="action-buttons">
+      <template #actions>
         <router-link class="btn btn-primary" :to="`${basePath}/add`">
           <IndexAddIcon /> {{ $t('invoice_payment.add') }}
         </router-link>
-      </div>
-    </div>
+      </template>
+    </IndexPageHeader>
 
     <DataStatusBuilder :controller="state" :on-retry="async () => await fetchPayments()">
       <template #success="{ data }">

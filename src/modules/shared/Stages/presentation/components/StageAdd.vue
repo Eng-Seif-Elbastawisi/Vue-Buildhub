@@ -42,7 +42,7 @@ const cancelStageAdd = () => {
     <StageForm :loading="loading" @update-data="params = $event" />
 
 
-    <div class="form-footer">
+    <div class="form-footer form-action-pair">
       <button
 class="btn btn-primary" :class="{ 'btn--loading': loading }" type="button" :disabled="loading"
         @click="saveStage">
@@ -62,29 +62,13 @@ class="btn btn-primary" :class="{ 'btn--loading': loading }" type="button" :disa
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
+@use '@/styles/mixins/form_action_pair' as form-actions;
+
 .Stage-crud-page {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-}
-
-.form-footer {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-
-  .btn-primary {
-    width: 100%;
-  }
-
-  .back-button {
-    flex-grow: 1;
-  }
-
-  @media (max-width: 768px) {
-    flex-direction: column;
-  }
 }
 
 .error {
@@ -94,6 +78,10 @@ class="btn btn-primary" :class="{ 'btn--loading': loading }" type="button" :disa
   color: var(--danger-dark);
   border: 1px solid #f5c6cb;
   border-radius: 4px;
+}
+
+.form-action-pair {
+  @include form-actions.layout;
 }
 
 </style>
