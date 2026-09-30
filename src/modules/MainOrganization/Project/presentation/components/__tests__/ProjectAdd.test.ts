@@ -142,7 +142,10 @@ describe('ProjectAdd.vue', () => {
 
   it('does not create a project when required select values are missing', async () => {
     const invalidParams = new AddProjectParams({
-      translations: new TranslationParams({ title: { en: 'Project title' } }),
+      translations: new TranslationParams({
+        title: { en: 'Project title' },
+        description: { en: 'Project description' },
+      }),
       client_exist: false,
     });
 
@@ -173,7 +176,10 @@ describe('ProjectAdd.vue', () => {
     ['floor', 'floor'],
   ] as const)('keeps %s frontend-only and passes it as the post-create step', async (_, step) => {
     const validParams = new AddProjectParams({
-      translations: new TranslationParams({ title: { en: 'Project title' } }),
+      translations: new TranslationParams({
+        title: { en: 'Project title' },
+        description: { en: 'Project description' },
+      }),
       client_exist: true,
       client_id: 4,
       project_type_id: 5,

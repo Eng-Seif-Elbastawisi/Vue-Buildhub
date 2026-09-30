@@ -134,8 +134,6 @@ defineExpose({ scrollToValidationField });
 
 const attachments = ref<ProjectAttachmentParams[]>([]);
 const attachmentItems = ref<ProjectAttachmentItem[]>([]);
-const existingAttachmentFiles = ref<string[]>([]);
-const attachmentFiles = computed(() => existingAttachmentFiles.value);
 
 type PrimeDateValue = Date | Date[] | (Date | null)[] | null | undefined;
 
@@ -392,6 +390,8 @@ const updateAttachmentItems = (items: ProjectAttachmentItem[]) => {
   updateData();
 };
 
+const normalizeInlineText = (text: string): string => text.replace(/\s+/g, ' ').trim();
+
 const updateTerms = (value: TitleInterface<number>[] | TitleInterface<number> | null) => {
   if (!value) {
     selectedTerm.value = [];
@@ -413,14 +413,14 @@ const updateTerms = (value: TitleInterface<number>[] | TitleInterface<number> | 
         (term) => Number(term.id) === Number(selectedItem.id),
       );
 
-      const desc = fullTerm?.description?.trim();
+      const desc = fullTerm?.description ? normalizeInlineText(fullTerm.description) : '';
       if (desc) return desc;
 
       const title = fullTerm?.title || (selectedItem.title ? String(selectedItem.title) : '');
-      return title;
+      return normalizeInlineText(title);
     })
     .filter((description): description is string => Boolean(description && description.trim()))
-    .join('\n\n');
+    .join(', ');
 
   updateData();
 };
@@ -470,10 +470,6 @@ watch(
      * في حالة edit/show لو الباك راجع terms كـ string
      */
     termsText.value = typeof projectData.terms === 'string' ? projectData.terms : '';
-
-    existingAttachmentFiles.value = Array.isArray(projectData.attachments)
-      ? projectData.attachments.map((attachment: any) => attachment.file).filter(Boolean)
-      : [];
 
     if (Array.isArray(projectData.attachments)) {
       attachmentItems.value = projectData.attachments.map((att: any) => ({
@@ -551,7 +547,7 @@ watch(
 
     <div class="form-fields" :class="{ disabled: loading }">
       <div id="project-title-field" class="field-group">
-        <MultiLangInput field-key="title" :label="$t('title')" :languages="['ar', 'en']"
+        <MultiLangInput field-key="title" :label="$t('project.name')" :languages="['ar', 'en']"
           :model-value="titleTranslations" type="title" required @update:model-value="updateTitleTranslations" />
       </div>
 
@@ -688,7 +684,7 @@ watch(
 
       <div id="description-field" class="field-group col-span-2">
         <MultiLangInput field-key="description" :label="$t('description')" :languages="['ar', 'en']"
-          :model-value="descriptionTranslations" type="description"
+          :model-value="descriptionTranslations" type="description" required
           @update:model-value="updateDescriptionTranslations" />
       </div>
 
@@ -707,7 +703,6 @@ watch(
       <div class="field-group col-span-2">
         <ProjectAttachmentManager
           v-model="attachmentItems"
-          :existing-files="attachmentFiles"
           @change="updateAttachmentItems"
         />
       </div>

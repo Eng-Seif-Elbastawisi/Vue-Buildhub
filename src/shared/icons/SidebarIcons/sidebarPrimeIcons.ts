@@ -38,6 +38,7 @@ export const SidebarDesignOffersIcon = createPrimeSidebarIcon('pi pi-file-check'
 export const SidebarDesignProjectsIcon = createPrimeSidebarIcon('pi pi-building');
 export const SidebarDepartmentIcon = createPrimeSidebarIcon('pi pi-briefcase');
 export const SidebarEmployeeIcon = createPrimeSidebarIcon('pi pi-user-edit');
+export const SidebarExecutionQuoteIcon = createPrimeSidebarIcon('pi pi-calculator');
 export const SidebarFinanceIcon = createPrimeSidebarIcon('pi pi-wallet');
 export const SidebarFullPackageIcon = createPrimeSidebarIcon('pi pi-folder-open');
 export const SidebarGeneralSettingIcon = createPrimeSidebarIcon('pi pi-cog');

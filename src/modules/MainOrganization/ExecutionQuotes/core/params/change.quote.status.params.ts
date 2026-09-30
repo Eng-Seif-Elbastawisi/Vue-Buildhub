@@ -9,7 +9,6 @@ import { type QuoteStatusEnum } from '../constants/quote.status.enum';
 export default class ChangeQuoteStatusParams implements Params {
   public quoteId: number;
   public status: QuoteStatusEnum;
-  public notes?: string;
 
   public static readonly validation = new ClassValidation().setRules({
     quoteId: {
@@ -19,21 +18,15 @@ export default class ChangeQuoteStatusParams implements Params {
     status: { required: true },
   });
 
-  constructor(data: {
-    quoteId: number;
-    status: QuoteStatusEnum;
-    notes?: string;
-  }) {
+  constructor(data: { quoteId: number; status: QuoteStatusEnum }) {
     this.quoteId = data.quoteId;
     this.status = data.status;
-    this.notes = data.notes;
   }
 
   toMap(): Record<string, unknown> {
     return {
       quote_id: this.quoteId,
       status: this.status,
-      notes: this.notes,
     };
   }
 

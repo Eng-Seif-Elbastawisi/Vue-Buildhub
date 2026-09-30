@@ -1,5 +1,5 @@
 import { QuoteSourceEnum } from '../constants/quote.source.enum';
-import type { QuoteStatusEnum } from '../constants/quote.status.enum';
+import { QuoteStatusEnum } from '../constants/quote.status.enum';
 
 export interface ExecutionQuoteOrganizationSummary {
   id?: number;
@@ -222,7 +222,6 @@ const stageItemSummary = (rawItem: unknown): ExecutionQuoteStageItemSummary | un
     quantity: numberValue(stageItem.quantity),
     unitId: measurementUnit?.id ?? numberValue(stageItem.unit),
     measurementUnit,
-
   };
 };
 
@@ -314,6 +313,14 @@ const attachmentSummaries = (rawAttachments: unknown): ExecutionQuoteAttachmentS
     .filter((attachment): attachment is ExecutionQuoteAttachmentSummary => !!attachment);
 };
 
+const quoteStatusValue = (rawStatus: unknown): QuoteStatusEnum | undefined => {
+  const status = numberValue(rawStatus);
+
+  return status !== undefined && Object.values(QuoteStatusEnum).includes(status as QuoteStatusEnum)
+    ? (status as QuoteStatusEnum)
+    : undefined;
+};
+
 export default class ExecutionQuoteShowModel {
   public readonly id?: number;
   public readonly organization?: ExecutionQuoteOrganizationSummary;
@@ -332,7 +339,7 @@ export default class ExecutionQuoteShowModel {
   public readonly supervisionPercentage?: number;
   public readonly supervisionFee?: number;
   public readonly createdAt?: string;
-  public readonly quoteStatus ?: QuoteStatusEnum;
+  public readonly quoteStatus?: QuoteStatusEnum;
 
   constructor(data: {
     id?: number;
@@ -350,7 +357,7 @@ export default class ExecutionQuoteShowModel {
     supervisionPercentage?: number;
     supervisionFee?: number;
     createdAt?: string;
-    quoteStatus ?: QuoteStatusEnum;
+    quoteStatus?: QuoteStatusEnum;
   }) {
     this.id = data.id;
     this.organization = data.organization;
@@ -400,7 +407,7 @@ export default class ExecutionQuoteShowModel {
       ),
       supervisionFee: numberValue(json.supervision_price ?? json.supervision_fee),
       createdAt: stringValue(json.created_at),
-      quoteStatus: json.quote_status as QuoteStatusEnum,
+      quoteStatus: quoteStatusValue(json.quote_status),
     });
   }
 

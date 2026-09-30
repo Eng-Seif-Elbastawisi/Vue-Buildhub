@@ -80,10 +80,20 @@ const mutationDialogStubs = {
 describe('ExecutionQuoteShow', () => {
   const controller = ExecutionQuoteController.getInstance();
   const showRequest = vi.spyOn(ExecutionQuoteApiService.getInstance(), 'show');
+  const historyRequest = vi.spyOn(
+    ExecutionQuoteApiService.getInstance(),
+    'fetchQuoteStatusHistory',
+  );
   const postRequest = vi.spyOn(NetworkService.instance, 'post');
 
   beforeEach(() => {
     controller.setItemState(new DataInitial());
+    controller.quoteStatusHistoryState.value = new DataInitial([]);
+    historyRequest.mockReset();
+    historyRequest.mockResolvedValue({
+      statusCode: 200,
+      data: { status: true, data: [] },
+    });
     postRequest.mockReset();
     showRequest.mockReset();
   });
@@ -103,6 +113,22 @@ describe('ExecutionQuoteShow', () => {
   });
 
   it('shows the quote returned by the show endpoint', async () => {
+    historyRequest.mockResolvedValue({
+      statusCode: 200,
+      data: {
+        status: true,
+        data: [
+          {
+            id: 3,
+            employee: { id: 1, name: 'Techlab Employee' },
+            from_status: 1,
+            to_status: 2,
+            note: 'Update the client price',
+            created_at: '2026-09-30 07:50:08',
+          },
+        ],
+      },
+    });
     showRequest.mockResolvedValue({
       statusCode: 200,
       data: {
@@ -210,7 +236,10 @@ describe('ExecutionQuoteShow', () => {
     expect(wrapper.text()).not.toContain('execution_quote.show.email');
     expect(wrapper.text()).toContain('Lump sum');
     expect(wrapper.text()).toContain('Site plan');
+    expect(wrapper.text()).toContain('Update the client price');
+    expect(wrapper.text()).toContain('Techlab Employee');
     expect(wrapper.findAll('.quote-attachments__card')).toHaveLength(1);
+    expect(historyRequest.mock.calls[0]?.[0].toMap()).toEqual({ quote_id: 41 });
     expect(wrapper.text()).toContain('منعم');
     expect(wrapper.text()).toContain('sub stage');
     expect(wrapper.text()).toContain('تيست1');

@@ -48,6 +48,7 @@ interface SidebarItem {
   badge?: string;
   hasArrow?: boolean;
   disabled?: boolean;
+  flushTop?: boolean;
   link?: string;
 }
 
@@ -315,9 +316,10 @@ const logout = () => {
               </p>
 
               <template v-for="item in section.items" :key="getItemKey(item)">
-                <div v-if="isGroupItem(item)" class="menu-subgroup" :title="$t(item.labelKey)">
-                  <span class="menu-subgroup__icon">
-                    <component :is="item.icon" v-if="item.icon" class="icon" />
+                <div v-if="isGroupItem(item)" class="menu-subgroup"
+                  :class="{ 'menu-subgroup--flush-top': item.flushTop }" :title="$t(item.labelKey)">
+                  <span v-if="item.icon" class="menu-subgroup__icon">
+                    <component :is="item.icon" class="icon" />
                   </span>
 
                   <span class="menu-subgroup__label">
@@ -366,9 +368,10 @@ const logout = () => {
             </p>
 
             <template v-for="item in selectedSection.items" :key="getItemKey(item)">
-              <div v-if="isGroupItem(item)" class="menu-subgroup" :title="$t(item.labelKey)">
-                <span class="menu-subgroup__icon">
-                  <component :is="item.icon" v-if="item.icon" class="icon" />
+              <div v-if="isGroupItem(item)" class="menu-subgroup"
+                :class="{ 'menu-subgroup--flush-top': item.flushTop }" :title="$t(item.labelKey)">
+                <span v-if="item.icon" class="menu-subgroup__icon">
+                  <component :is="item.icon" class="icon" />
                 </span>
 
                 <span class="menu-subgroup__label">
@@ -1310,7 +1313,6 @@ const logout = () => {
   }
 
   @media (max-width: 768px) {
-
     .sidebar-shell,
     .sidebar-rail {
       width: 58px;
@@ -1340,6 +1342,10 @@ const logout = () => {
   font-weight: 900;
   letter-spacing: 0;
   text-transform: uppercase;
+}
+
+.menu-subgroup--flush-top {
+  margin-block-start: 0;
 }
 
 .menu-subgroup__icon {

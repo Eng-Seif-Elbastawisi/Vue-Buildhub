@@ -4,6 +4,8 @@
   import { useRoute, useRouter } from 'vue-router';
 
   import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
+  import type TitleInterface from '@/base/Data/Models/titleInterface';
+  import UpdatedCustomInputSelect from '@/shared/FormInputs/UpdatedCustomInputSelect.vue';
   import AppTable, { type TableHeader } from '@/shared/HelpersComponents/AppTable.vue';
   import Pagination from '@/shared/HelpersComponents/Pagination.vue';
   import TableSkelaton from '@/shared/HelpersComponents/TableSkelaton.vue';
@@ -34,6 +36,8 @@
   const route = useRoute();
   const router = useRouter();
   const { locale, t } = useI18n();
+
+  const showServiceTypeFilter = computed(() => route.name === 'project');
 
   const { user } = useUserStore();
 
@@ -83,6 +87,45 @@
     parseServiceType(route.query.service_type),
   );
 
+  const serviceTypeFilterValue = computed(() => serviceType.value.join(','));
+  const hasCompositeServiceTypeFilter = computed(() => serviceType.value.length > 1);
+
+  const serviceTypeLabel = (type?: number) => {
+    switch (type) {
+      case DepartmentTypeEnum.DESIGN:
+        return t('Project.service_types.designOnly');
+      case DepartmentTypeEnum.SUPERVISION:
+        return t('Project.service_types.executionOnly');
+      case DepartmentTypeEnum.BOTH:
+        return t('Project.service_types.both');
+      default:
+        return '-';
+    }
+  };
+
+  const activeServiceTypeFilterLabel = computed(() =>
+    serviceType.value.map(serviceTypeLabel).join(', '),
+  );
+
+  const serviceTypeFilterOptions = computed<TitleInterface<string | number>[]>(() => [
+    { id: '', title: t('project.service_type_all') },
+    ...(hasCompositeServiceTypeFilter.value
+      ? [{ id: serviceTypeFilterValue.value, title: activeServiceTypeFilterLabel.value }]
+      : []),
+    { id: DepartmentTypeEnum.DESIGN, title: serviceTypeLabel(DepartmentTypeEnum.DESIGN) },
+    {
+      id: DepartmentTypeEnum.SUPERVISION,
+      title: serviceTypeLabel(DepartmentTypeEnum.SUPERVISION),
+    },
+    { id: DepartmentTypeEnum.BOTH, title: serviceTypeLabel(DepartmentTypeEnum.BOTH) },
+  ]);
+
+  const selectedServiceTypeFilter = computed<TitleInterface<string | number>>(() =>
+    serviceTypeFilterOptions.value.find(
+      (option) => String(option.id) === serviceTypeFilterValue.value,
+    ) ?? serviceTypeFilterOptions.value[0]!,
+  );
+
   const hideEditAndDeleteActions = computed(() => {
     return (
       serviceType.value.includes(DepartmentTypeEnum.DESIGN) ||
@@ -122,7 +165,7 @@
     const baseHeaders: TableHeader[] = [
       {
         key: 'title',
-        label: 'title',
+        label: 'project.name',
         width: '18%',
         sortable: true,
       },
@@ -137,6 +180,11 @@
         label: 'project.Type',
         width: '16%',
         sortable: true,
+      },
+      {
+        key: 'serviceType',
+        label: 'service_type',
+        width: '14%',
       },
     ];
 
@@ -223,6 +271,22 @@
     });
     fetchProjects(1, word.value);
   });
+
+  const onServiceTypeFilterChange = async (
+    selection: TitleInterface<string | number> | TitleInterface<string | number>[] | null,
+  ) => {
+    const selectedOption = Array.isArray(selection) ? selection[0] : selection;
+    const selectedValue = selectedOption?.id === undefined ? '' : String(selectedOption.id);
+
+    await router.push({
+      query: {
+        ...route.query,
+        page: '1',
+        service_type: selectedValue || undefined,
+      },
+    });
+  };
+
   const onPageChange = async (page: number) => {
     await router.push({
       query: {
@@ -287,28 +351,43 @@
           {{ pageHeaderDescription }}
         </p>
         <div class="toolbar">
-          <div class="search-field">
-            <span class="search-icon">
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-              >
-                <circle cx="11" cy="11" r="8" />
-                <path d="m21 21-4.35-4.35" />
-              </svg>
-            </span>
-            <input
-              v-model="word"
-              :placeholder="$t('search_request')"
-              class="search-input"
-              type="text"
-              @input="Search"
-            />
+          <div class="toolbar__filters">
+            <div class="search-field">
+              <span class="search-icon">
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                >
+                  <circle cx="11" cy="11" r="8" />
+                  <path d="m21 21-4.35-4.35" />
+                </svg>
+              </span>
+              <input
+                v-model="word"
+                :placeholder="$t('search_request')"
+                class="search-input"
+                type="text"
+                @input="Search"
+              />
+            </div>
+
+            <div v-if="showServiceTypeFilter" class="service-type-filter">
+              <UpdatedCustomInputSelect
+                id="project_service_type_filter"
+                :model-value="selectedServiceTypeFilter"
+                :static-options="serviceTypeFilterOptions"
+                label="service_type"
+                :placeholder="$t('project.service_type_all')"
+                :reload="false"
+                :show-help="false"
+                @update:model-value="onServiceTypeFilterChange"
+              />
+            </div>
           </div>
           <router-link
             class="btn btn-primary"
@@ -349,6 +428,12 @@
           <template #cell-projectType="{ item }">
             <span>
               {{ item?.projectType?.title || '-' }}
+            </span>
+          </template>
+
+          <template #cell-serviceType="{ item }">
+            <span class="service-type-badge">
+              {{ serviceTypeLabel(item?.serviceType) }}
             </span>
           </template>
 
@@ -541,6 +626,35 @@
     display: flex;
     width: 100%;
     justify-content: space-between;
+    align-items: flex-end;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .toolbar__filters {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .service-type-filter {
+    min-width: 12rem;
+
+    :deep(.input-select) {
+      min-height: 2.75rem;
+    }
+  }
+
+  .service-type-badge {
+    display: inline-flex;
+    width: fit-content;
+    padding: 0.3rem 0.6rem;
+    border-radius: var(--radius-full);
+    background: var(--PrimaryColor-light);
+    color: var(--PrimaryColor);
+    font-size: var(--xs-size);
+    font-weight: 700;
   }
 
   .page-header,
@@ -597,5 +711,15 @@
   .empty-state {
     padding: 3rem 1rem;
     text-align: center;
+  }
+
+  @media (max-width: 640px) {
+    .toolbar,
+    .toolbar__filters,
+    .search-field,
+    .service-type-filter,
+    .toolbar .btn-primary {
+      width: 100%;
+    }
   }
 </style>

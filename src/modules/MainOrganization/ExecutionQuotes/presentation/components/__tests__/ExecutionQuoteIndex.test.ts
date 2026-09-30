@@ -5,18 +5,30 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { DataInitial } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
 import UpdatedCustomInputSelect from '@/shared/FormInputs/UpdatedCustomInputSelect.vue';
 
+import { QuoteStatusEnum } from '../../../core/constants/quote.status.enum';
 import ExecutionQuoteApiService from '../../../data/api/execution.quote.api-service';
 import ExecutionQuoteController from '../../controllers/execution.quote.controller';
 import ExecutionQuoteIndex from '../ExecutionQuoteIndex.vue';
 
 const { push } = vi.hoisted(() => ({ push: vi.fn() }));
 
+const DialogStub = {
+  props: ['visible'],
+  emits: ['update:visible'],
+  template: '<section v-if="visible" class="dialog-stub"><slot /></section>',
+};
+
 vi.mock('vue-router', async (importOriginal) => ({
   ...(await importOriginal<typeof VueRouterModule>()),
   useRouter: () => ({ push }),
 }));
 
-const createIndexResponse = (page: number, projectTitle: string, quoteType = 1) => ({
+const createIndexResponse = (
+  page: number,
+  projectTitle: string,
+  quoteType = 1,
+  quoteStatus: number | string = QuoteStatusEnum.DRAFT,
+) => ({
   statusCode: 200,
   data: {
     status: true,
@@ -28,6 +40,7 @@ const createIndexResponse = (page: number, projectTitle: string, quoteType = 1) 
           project: { id: 207, title: projectTitle },
           client: { id: 30, name: 'شارع', phone: '111', status: 1 },
           quote_type: quoteType,
+          quote_status: quoteStatus,
           price_employee: { id: 92, name: 'fwffefefe' },
           quote_stages: [
             {
@@ -75,12 +88,15 @@ const mountIndex = () =>
           if (key === 'execution_quote.quote_types.lump_sum.title') return 'Lump sum';
           if (key === 'execution_quote.quote_types.supervision.title') return 'Supervision';
           if (key === 'execution_quote.table.currency_egp') return 'EGP';
+          if (key === 'execution_quote.table.quote_status') return 'Quote status';
+          if (key === 'execution_quote.table.progress') return 'Progress';
           if (key === 'execution_quote.table.stages_count') return `Stages: ${params?.count}`;
           if (key === 'execution_quote.table.items_count_value') return `Items: ${params?.count}`;
           return key;
         },
       },
       stubs: {
+        Dialog: DialogStub,
         UpdatedCustomInputSelect: true,
       },
     },
@@ -89,10 +105,12 @@ const mountIndex = () =>
 describe('ExecutionQuoteIndex', () => {
   const controller = ExecutionQuoteController.getInstance();
   const indexRequest = vi.spyOn(ExecutionQuoteApiService.getInstance(), 'index');
+  const statusRequest = vi.spyOn(ExecutionQuoteApiService.getInstance(), 'changeQuoteStatus');
 
   beforeEach(() => {
     controller.setListState(new DataInitial());
     indexRequest.mockReset();
+    statusRequest.mockReset();
     push.mockReset();
   });
 
@@ -113,11 +131,101 @@ describe('ExecutionQuoteIndex', () => {
     expect(wrapper.text()).toContain('Contains items');
     expect(wrapper.text()).toContain('5,200');
     expect(wrapper.text()).toContain('EGP');
+    expect(wrapper.text()).toContain('Quote status');
+    expect(wrapper.text()).toContain('Draft');
+    expect(wrapper.get('.quote-status-badge').classes()).toContain('status-draft');
+    expect(wrapper.text()).toContain('Progress');
     expect(wrapper.text()).toContain('Stages: 1');
     expect(wrapper.text()).toContain('Items: 3');
     expect(wrapper.text()).not.toContain('execution_quote.table.id');
     expect(wrapper.text()).not.toContain('#207');
     expect(wrapper.text()).not.toContain('#92');
+  });
+
+  it('renders a numeric-string revision status from the index endpoint', async () => {
+    indexRequest.mockResolvedValue(
+      createIndexResponse(1, 'Revision project', 1, String(QuoteStatusEnum.REVISION_REQUIRED)),
+    );
+
+    const wrapper = mountIndex();
+    await flushPromises();
+
+    expect(wrapper.get('.quote-status-badge').text()).toBe('Revision Required');
+    expect(wrapper.get('.quote-status-badge').classes()).toContain('status-revision-required');
+  });
+
+  it('changes a draft quote status and refreshes the current table page', async () => {
+    indexRequest
+      .mockResolvedValueOnce(createIndexResponse(1, 'Status project'))
+      .mockResolvedValueOnce(
+        createIndexResponse(1, 'Status project', 1, QuoteStatusEnum.PENDING_VALIDATION),
+      );
+    statusRequest.mockResolvedValue({
+      statusCode: 200,
+      data: { status: true, message: 'Status changed' },
+    });
+
+    const wrapper = mountIndex();
+    await flushPromises();
+
+    await wrapper.get('.execution-quote-index__change-status-button').trigger('click');
+    await wrapper.get('.execution-quote-status-dialog__submit').trigger('click');
+    await flushPromises();
+
+    expect(statusRequest.mock.calls[0]?.[0].toMap()).toEqual({
+      quote_id: 38,
+      status: QuoteStatusEnum.PENDING_VALIDATION,
+    });
+    expect(indexRequest).toHaveBeenCalledTimes(2);
+    expect(wrapper.get('.quote-status-badge').text()).toBe('Pending Validation');
+  });
+
+  it('sends a revised quote through pending validation before sending it to the client', async () => {
+    indexRequest
+      .mockResolvedValueOnce(
+        createIndexResponse(1, 'Revised project', 1, QuoteStatusEnum.REVISION_REQUIRED),
+      )
+      .mockResolvedValueOnce(
+        createIndexResponse(1, 'Revised project', 1, QuoteStatusEnum.SENT_TO_CLIENT),
+      );
+    statusRequest.mockResolvedValue({
+      statusCode: 200,
+      data: { status: true, message: 'Status changed' },
+    });
+
+    const wrapper = mountIndex();
+    await flushPromises();
+
+    await wrapper.get('.execution-quote-index__change-status-button').trigger('click');
+    const options = wrapper.findAll('.execution-quote-status-dialog__option');
+    await options[1].trigger('click');
+    await wrapper.get('.execution-quote-status-dialog__submit').trigger('click');
+    await flushPromises();
+
+    expect(statusRequest.mock.calls.map(([params]) => params.toMap())).toEqual([
+      { quote_id: 38, status: QuoteStatusEnum.PENDING_VALIDATION },
+      { quote_id: 38, status: QuoteStatusEnum.SENT_TO_CLIENT },
+    ]);
+    expect(indexRequest).toHaveBeenCalledTimes(2);
+    expect(wrapper.get('.quote-status-badge').text()).toBe('Sent to Client');
+  });
+
+  it('keeps the status dialog open when the backend rejects the change', async () => {
+    indexRequest.mockResolvedValue(createIndexResponse(1, 'Rejected status project'));
+    statusRequest.mockResolvedValue({
+      statusCode: 200,
+      data: { status: false, message: 'Status rejected' },
+    });
+
+    const wrapper = mountIndex();
+    await flushPromises();
+
+    await wrapper.get('.execution-quote-index__change-status-button').trigger('click');
+    await wrapper.get('.execution-quote-status-dialog__submit').trigger('click');
+    await flushPromises();
+
+    expect(indexRequest).toHaveBeenCalledTimes(1);
+    expect(wrapper.find('.dialog-stub').exists()).toBe(true);
   });
 
   it('loads the selected page from the pagination control', async () => {

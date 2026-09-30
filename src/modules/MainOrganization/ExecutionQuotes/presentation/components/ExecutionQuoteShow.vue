@@ -31,6 +31,7 @@
     ExecutionQuoteStageSummary,
   } from '../../core/models/execution.quote.show.model';
   import DeleteExecutionQuoteItemParams from '../../core/params/delete.execution.quote.item.params';
+  import FetchQuoteStatusHistoryParams from '../../core/params/fetch.quote.status.history.params';
   import ShowExecutionQuoteParams from '../../core/params/show.execution.quote.params';
   import UpdateExecutionQuoteItemParams from '../../core/params/update.execution.quote.item.params';
   import ExecutionQuoteController from '../controllers/execution.quote.controller';
@@ -39,6 +40,7 @@
     ExecutionQuoteItemState,
   } from '../types/execution.quote.ui.types';
   import ExecutionQuoteAttachments from './ExecutionQuoteAttachments.vue';
+  import ExecutionQuoteStatusHistory from './ExecutionQuoteStatusHistory.vue';
   import ExecutionQuoteShowSkeleton from './ExecutionQuoteShowSkeleton.vue';
   import ExecutionQuoteItemForm from './builder/ExecutionQuoteItemForm.vue';
   import ExecutionQuoteItemSourceCards from './builder/ExecutionQuoteItemSourceCards.vue';
@@ -48,6 +50,7 @@
   const { locale, t } = useI18n();
 
   const state = computed(() => controller.itemState.value);
+  const statusHistoryState = computed(() => controller.quoteStatusHistoryState.value);
   const quoteId = computed(() => Number(route.params.id));
   const activeShowSection = ref('stages');
   const activeQuoteStages = ref<string[]>(['0']);
@@ -138,6 +141,14 @@
     if (!Number.isInteger(quoteId.value) || quoteId.value <= 0) return;
 
     await controller.fetchOne(new ShowExecutionQuoteParams({ executionQuoteId: quoteId.value }));
+  };
+
+  const fetchQuoteStatusHistory = async () => {
+    if (!Number.isInteger(quoteId.value) || quoteId.value <= 0) return;
+
+    await controller.fetchQuoteStatusHistory(
+      new FetchQuoteStatusHistoryParams({ quoteId: quoteId.value }),
+    );
   };
 
   const quoteTypeLabel = (quote: ExecutionQuoteShowModel) => {
@@ -350,7 +361,10 @@
     query: { id: String(quoteId.value) },
   });
 
-  onMounted(fetchQuote);
+  onMounted(() => {
+    void fetchQuote();
+    void fetchQuoteStatusHistory();
+  });
 </script>
 
 <template>
@@ -601,6 +615,11 @@
           </div>
 
           <ExecutionQuoteAttachments :attachments="quote.attachments" />
+
+          <ExecutionQuoteStatusHistory
+            :state="statusHistoryState"
+            @retry="fetchQuoteStatusHistory"
+          />
 
           <Accordion
             v-model:value="activeShowSection"

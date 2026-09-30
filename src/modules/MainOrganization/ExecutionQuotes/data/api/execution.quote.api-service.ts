@@ -4,7 +4,9 @@ import BaseApiService, {
   type ApiResponse,
 } from '@/base/Data/ApiService/baseApiService';
 
+import type ChangeQuoteStatusParams from '../../core/params/change.quote.status.params';
 import type DeleteExecutionQuoteItemParams from '../../core/params/delete.execution.quote.item.params';
+import type FetchQuoteStatusHistoryParams from '../../core/params/fetch.quote.status.history.params';
 import type StoreExecutionQuoteDetailsParams from '../../core/params/store.execution.quote.details.params';
 import type SetExecutionQuoteStagePricingParams from '../../core/params/set.execution.quote.stage.pricing.params';
 import type UpdateExecutionQuoteItemParams from '../../core/params/update.execution.quote.item.params';
@@ -15,6 +17,12 @@ export interface ExecutionQuoteDetailsResponse {
   status?: boolean;
   message?: string;
   data?: unknown;
+}
+
+export interface ExecutionQuoteStatusHistoryResponse {
+  status: boolean;
+  message?: string;
+  data: Record<string, unknown>[];
 }
 
 export default class ExecutionQuoteApiService extends BaseApiService {
@@ -85,6 +93,26 @@ export default class ExecutionQuoteApiService extends BaseApiService {
     return await this.customPost<ExecutionQuoteDetailsResponse>(
       this.executionQuoteEndpoints.setSupervisionPricing,
       params as Params,
+      { useJson: true },
+    );
+  }
+
+  async changeQuoteStatus(
+    params: ChangeQuoteStatusParams,
+  ): Promise<ApiResponse<ExecutionQuoteDetailsResponse>> {
+    return await this.customPost<ExecutionQuoteDetailsResponse>(
+      this.executionQuoteEndpoints.changeQuoteStatus,
+      params,
+      { useJson: true },
+    );
+  }
+
+  async fetchQuoteStatusHistory(
+    params: FetchQuoteStatusHistoryParams,
+  ): Promise<ApiResponse<ExecutionQuoteStatusHistoryResponse>> {
+    return await this.customPost<ExecutionQuoteStatusHistoryResponse>(
+      this.executionQuoteEndpoints.fetchQuoteStatusHistory,
+      params,
       { useJson: true },
     );
   }

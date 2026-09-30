@@ -83,6 +83,7 @@ describe('ProjectEdit.vue', () => {
     const wrapper = mount(ProjectEdit, {
       global: {
         stubs: {
+          RadioButton: true,
           ProjectForm: {
             emits: ['updateData'],
             template:
@@ -106,12 +107,16 @@ describe('ProjectEdit.vue', () => {
 
   it('does not update a project when required select values are missing', async () => {
     const invalidParams = new AddProjectParams({
-      translations: new TranslationParams({ title: { en: 'Project title' } }),
+      translations: new TranslationParams({
+        title: { en: 'Project title' },
+        description: { en: 'Project description' },
+      }),
     });
 
     const wrapper = mount(ProjectEdit, {
       global: {
         stubs: {
+          RadioButton: true,
           ProjectForm: {
             emits: ['updateData'],
             template:

@@ -8,6 +8,7 @@ import ProjectIndex from '../ProjectIndex.vue';
 const fetchList = vi.fn();
 const deleteProject = vi.fn();
 const routerPush = vi.fn();
+let routeName = 'project';
 const routeQuery = reactive<Record<string, string | string[] | undefined>>({});
 const routeMeta = reactive<Record<string, unknown>>({
   breadcrumb: 'project.breadcrumb.requests',
@@ -16,7 +17,7 @@ const routeMeta = reactive<Record<string, unknown>>({
 });
 
 vi.mock('vue-router', () => ({
-  useRoute: () => ({ query: routeQuery, meta: routeMeta }),
+  useRoute: () => ({ name: routeName, query: routeQuery, meta: routeMeta }),
   useRouter: () => ({ push: routerPush }),
 }));
 
@@ -39,13 +40,35 @@ const routerLinkStub = {
 const globalOptions = {
   stubs: {
     RouterLink: routerLinkStub,
+    UpdatedCustomInputSelect: {
+      name: 'UpdatedCustomInputSelect',
+      props: ['modelValue', 'staticOptions'],
+      emits: ['update:modelValue'],
+      template: `
+        <button
+          type="button"
+          class="custom-service-type-select"
+          @click="$emit('update:modelValue', staticOptions.find((option) => option.id === 2))"
+        >
+          {{ modelValue?.title }}
+        </button>
+      `,
+    },
     DataStatusBuilder: {
       props: ['controller', 'onRetry'],
       template: '<div><slot name="success" :data="[{ id: 7, title: `Tower` }]" /></div>',
     },
     AppTable: {
       props: ['headers', 'items'],
-      template: '<div class="app-table"><slot name="actions" :item="items[0]" /></div>',
+      template: `
+        <div class="app-table">
+          <span v-for="header in headers" :key="header.key" class="table-header">
+            {{ $t(header.label) }}
+          </span>
+          <slot name="cell-serviceType" :item="{ serviceType: 3 }" />
+          <slot name="actions" :item="items[0]" />
+        </div>
+      `,
     },
     Pagination: {
       emits: ['changePage', 'countPerPage'],
@@ -69,6 +92,7 @@ const mountProjectIndex = (props = {}) =>
 describe('ProjectIndex', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    routeName = 'project';
     Object.keys(routeQuery).forEach((key) => delete routeQuery[key]);
     routeMeta.breadcrumb = 'project.breadcrumb.requests';
     routeMeta.pageHeaderDescription = 'project.page.requests_description';
@@ -172,6 +196,34 @@ describe('ProjectIndex', () => {
       service_type: [DepartmentTypeEnum.SUPERVISION, DepartmentTypeEnum.DESIGN],
     });
   });
+
+  it('shows the service-type column and writes the quick filter to the route', async () => {
+    const wrapper = mountProjectIndex();
+    await nextTick();
+
+    expect(wrapper.findAll('.table-header').map((header) => header.text())).toContain('Service type');
+    expect(wrapper.get('.service-type-badge').text()).toBe('Design and Execution');
+
+    await wrapper.get('.custom-service-type-select').trigger('click');
+
+    expect(routerPush).toHaveBeenLastCalledWith({
+      query: expect.objectContaining({
+        page: '1',
+        service_type: String(DepartmentTypeEnum.SUPERVISION),
+      }),
+    });
+  });
+
+  it.each(['offers-projects', 'converted-projects'])(
+    'hides the service-type quick filter on the %s page',
+    async (name) => {
+      routeName = name;
+      const wrapper = mountProjectIndex();
+      await nextTick();
+
+      expect(wrapper.find('.service-type-filter').exists()).toBe(false);
+    },
+  );
 
   it('omits invalid route service types from the list request', async () => {
     routeQuery.service_type = 'invalid';

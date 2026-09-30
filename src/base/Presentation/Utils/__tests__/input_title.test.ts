@@ -1,10 +1,20 @@
 import { describe, expect, it } from 'vitest';
-import { hasSelectValue, hasTitleTranslation, requiredSelectRule } from '../input_title';
+import {
+  hasDescriptionTranslation,
+  hasSelectValue,
+  hasTitleTranslation,
+  requiredSelectRule,
+} from '../input_title';
 
 describe('input required helpers', () => {
   it('detects non-empty translated titles', () => {
     expect(hasTitleTranslation({ title: { en: 'Project', ar: '' } })).toBe(true);
     expect(hasTitleTranslation({ title: { en: ' ', ar: '' } })).toBe(false);
+  });
+
+  it('detects non-empty translated descriptions', () => {
+    expect(hasDescriptionTranslation({ description: { en: '', ar: 'وصف المشروع' } })).toBe(true);
+    expect(hasDescriptionTranslation({ description: { en: ' ', ar: '' } })).toBe(false);
   });
 
   it('detects selected values without rejecting valid zero and false values', () => {
