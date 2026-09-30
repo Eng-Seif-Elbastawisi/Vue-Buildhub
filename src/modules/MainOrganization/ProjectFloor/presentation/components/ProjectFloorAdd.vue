@@ -333,7 +333,7 @@ const floorTitle = (floorNumber?: number | string | null) => {
   padding: 10px;
   background-color: var(--danger-light);
   color: var(--danger-dark);
-  border: 1px solid #f5c6cb;
+  border: 1px solid #fdc7cc;
   border-radius: 4px;
 }
 

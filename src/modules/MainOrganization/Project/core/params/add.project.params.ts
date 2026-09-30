@@ -79,9 +79,7 @@ export default class AddProjectParams implements Params {
       custom: (value?: TranslationParams) => {
         if (!hasTitleTranslation(value)) return translate('validation.title_required');
 
-        return (
-          hasDescriptionTranslation(value) || translate('Project.validation.description_required')
-        );
+        return true
       },
     },
 

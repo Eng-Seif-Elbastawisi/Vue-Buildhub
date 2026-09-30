@@ -410,6 +410,7 @@ const updateTerms = (value: TitleInterface<number>[] | TitleInterface<number> | 
   selectedTerm.value = selectedValues.map((term) => ({
     id: Number(term.id),
     title: term.title,
+
   }));
 
   termsText.value = selectedValues
@@ -418,11 +419,12 @@ const updateTerms = (value: TitleInterface<number>[] | TitleInterface<number> | 
         (term) => Number(term.id) === Number(selectedItem.id),
       );
 
-      const desc = fullTerm?.description ? normalizeInlineText(fullTerm.description) : '';
-      if (desc) return desc;
+      const desc =
+        fullTerm?.description
+          ? normalizeInlineText(`${fullTerm?.title || ''} - ${fullTerm.description || ''}`)
+          : normalizeInlineText(fullTerm?.title || selectedItem.title || '');
 
-      const title = fullTerm?.title || (selectedItem.title ? String(selectedItem.title) : '');
-      return normalizeInlineText(title);
+      return desc;
     })
     .filter((description): description is string => Boolean(description && description.trim()))
     .join(', ');
@@ -474,7 +476,7 @@ watch(
     /**
      * في حالة edit/show لو الباك راجع terms كـ string
      */
-    termsText.value = typeof projectData.terms === 'string' ? projectData.terms : '';
+    termsText.value = typeof projectData.terms === 'string' ? projectData.term : '';
 
     if (Array.isArray(projectData.attachments)) {
       attachmentItems.value = projectData.attachments.map((att: any) => ({
@@ -573,8 +575,7 @@ watch(
 
         <DatePicker input-id="date" :model-value="selectedDate" date-format="yy-mm-dd" show-icon icon-display="input"
           :manual-input="false" :placeholder="$t('date_placeholder')" input-class="field-input" class="date-picker"
-          required aria-required="true"
-          @update:model-value="updateDate" />
+          required aria-required="true" @update:model-value="updateDate" />
       </div>
 
       <template v-if="!isEdit">
@@ -601,8 +602,8 @@ watch(
             </span>
 
             <input id="client_name" v-model="client_name" class="field-input"
-              :placeholder="$t('client_name_placeholder')" required aria-required="true"
-              autocomplete="name" @input="updateData" />
+              :placeholder="$t('client_name_placeholder')" required aria-required="true" autocomplete="name"
+              @input="updateData" />
           </div>
 
           <div id="client-phone-field" class="field-group">
@@ -614,9 +615,9 @@ watch(
               <FieldHelpIcon :label="$t('client_phone')" field-name="phone" field-id="client_phone" />
             </span>
 
-            <input id="client_phone" v-model="client_phone" class="field-input" type="tel"
-              inputmode="tel" autocomplete="tel" :placeholder="$t('client_phone_placeholder')"
-              required aria-required="true" @input="updateData" />
+            <input id="client_phone" v-model="client_phone" class="field-input" type="tel" inputmode="tel"
+              autocomplete="tel" :placeholder="$t('client_phone_placeholder')" required aria-required="true"
+              @input="updateData" />
           </div>
 
           <div id="client-source-field" class="field-group">
@@ -637,8 +638,8 @@ watch(
       <div id="governorate-field" class="field-group">
         <UpdatedCustomInputSelect id="governorate_id" :model-value="selectedGovernorate"
           :label="$t('location.governorate')" :controller="locationController" :placeholder="isGovernorateDisabled
-              ? $t('location.select_country_first')
-              : $t('location.governorate_placeholder')
+            ? $t('location.select_country_first')
+            : $t('location.governorate_placeholder')
             " :params="governorateParams" :disabled="isGovernorateDisabled" :readonly="isGovernorateDisabled" required
           @click.prevent="isGovernorateDisabled ? undefined : null" @update:model-value="updateGovernorate" />
       </div>
@@ -646,8 +647,8 @@ watch(
       <div id="city-field" class="field-group">
         <UpdatedCustomInputSelect id="city_id" :model-value="selectedCity" :label="$t('location.city')"
           :controller="locationController" :placeholder="isCityDisabled
-              ? $t('location.select_governorate_first')
-              : $t('location.city_placeholder')
+            ? $t('location.select_governorate_first')
+            : $t('location.city_placeholder')
             " :params="cityParams" :disabled="isCityDisabled" :readonly="isCityDisabled" required
           @click.prevent="isCityDisabled ? undefined : null" @update:model-value="updateCity" />
       </div>
@@ -655,7 +656,7 @@ watch(
       <div id="term-field" class="field-group">
         <UpdatedCustomInputSelect id="term_id" :model-value="selectedTerm" :label="$t('term')"
           :controller="termController" :placeholder="$t('term_placeholder')" :params="indexTermParams" :type="2"
-          required @update:model-value="updateTerms" />
+          @update:model-value="updateTerms" />
       </div>
 
       <div id="terms-field" class="field-group col-span-2">
@@ -667,7 +668,7 @@ watch(
           <FieldHelpIcon :label="$t('terms')" field-name="terms" field-id="terms" />
         </span>
 
-        <textarea id="terms" v-model="termsText" class="field-input field-textarea"
+        <textarea disabled id="terms" v-model="termsText" class="field-input field-textarea"
           :placeholder="$t('terms_placeholder')" required aria-required="true" @input="updateData" />
       </div>
 
@@ -701,7 +702,7 @@ watch(
 
       <div id="description-field" class="field-group col-span-2">
         <MultiLangInput field-key="description" :label="$t('description')" :languages="['ar', 'en']"
-          :model-value="descriptionTranslations" type="description" required
+          :model-value="descriptionTranslations" type="description"
           @update:model-value="updateDescriptionTranslations" />
       </div>
 
@@ -718,10 +719,7 @@ watch(
       </div>
 
       <div id="attachments-field" class="field-group col-span-2">
-        <ProjectAttachmentManager
-          v-model="attachmentItems"
-          @change="updateAttachmentItems"
-        />
+        <ProjectAttachmentManager v-model="attachmentItems" @change="updateAttachmentItems" />
       </div>
     </div>
   </div>
