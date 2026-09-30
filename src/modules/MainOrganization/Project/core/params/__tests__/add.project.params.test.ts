@@ -16,6 +16,8 @@ describe('AddProjectParams', () => {
       project_type_id: 3,
       location_id: 22,
       service_type: ServiceType.DESIGNONLY,
+      date: '2026-06-24',
+      terms: 'Payment terms',
       engineer_id: 15,
       preview_date: '2026-06-25',
       preview_time: '10:30:00',
@@ -48,9 +50,13 @@ describe('AddProjectParams', () => {
       }),
       client_exist: false,
       client_source: 6,
+      client_name: 'John Doe',
+      client_phone: '01012345678',
       project_type_id: 3,
       location_id: 22,
       service_type: ServiceType.DESIGNONLY,
+      date: '2026-06-24',
+      terms: 'Payment terms',
     });
 
     expect(params.validate()).toMatchObject({
@@ -67,9 +73,13 @@ describe('AddProjectParams', () => {
       }),
       client_exist: false,
       client_source: 6,
+      client_name: 'John Doe',
+      client_phone: '01012345678',
       project_type_id: 3,
       location_id: 22,
       service_type: ServiceType.DESIGNONLY,
+      date: '2026-06-24',
+      terms: 'Payment terms',
     });
 
     expect(params.validate()).toMatchObject({
@@ -86,6 +96,10 @@ describe('AddProjectParams', () => {
       }),
       client_exist: false,
       client_source: 6,
+      client_name: 'John Doe',
+      client_phone: '01012345678',
+      date: '2026-06-24',
+      terms: 'Payment terms',
     });
 
     const validation = params.validate();
@@ -108,6 +122,8 @@ describe('AddProjectParams', () => {
       project_type_id: 3,
       location_id: 22,
       service_type: ServiceType.DESIGNONLY,
+      date: '2026-06-24',
+      terms: 'Payment terms',
     });
 
     expect(params.validate()).toMatchObject({
@@ -123,14 +139,76 @@ describe('AddProjectParams', () => {
         description: { en: 'Project description' },
       }),
       client_exist: false,
+      client_name: 'John Doe',
+      client_phone: '01012345678',
       project_type_id: 3,
       location_id: 22,
       service_type: ServiceType.DESIGNONLY,
+      date: '2026-06-24',
+      terms: 'Payment terms',
     });
 
     expect(params.validate()).toMatchObject({
       isValid: false,
       errors: [{ field: 'client_source' }],
     });
+  });
+
+  it('requires the request date and terms', () => {
+    const params = new AddProjectParams({
+      translations: new TranslationParams({
+        title: { en: 'Project title' },
+        description: { en: 'Project description' },
+      }),
+      client_exist: true,
+      client_id: 7,
+      project_type_id: 3,
+      location_id: 22,
+      service_type: ServiceType.DESIGNONLY,
+    });
+
+    expect(params.validate().errors.map((error) => error.field)).toEqual(['date', 'terms']);
+  });
+
+  it('requires valid new-client details', () => {
+    const params = new AddProjectParams({
+      translations: new TranslationParams({
+        title: { en: 'Project title' },
+        description: { en: 'Project description' },
+      }),
+      client_exist: false,
+      client_source: 6,
+      client_name: ' ',
+      client_phone: 'invalid phone',
+      project_type_id: 3,
+      location_id: 22,
+      service_type: ServiceType.DESIGNONLY,
+      date: '2026-06-24',
+      terms: 'Payment terms',
+    });
+
+    expect(params.validate().errors.map((error) => error.field)).toEqual([
+      'client_name',
+      'client_phone',
+    ]);
+  });
+
+  it('rejects an attachment without its configured type', () => {
+    const params = new AddProjectParams({
+      translations: new TranslationParams({
+        title: { en: 'Project title' },
+        description: { en: 'Project description' },
+      }),
+      client_exist: true,
+      client_id: 7,
+      project_type_id: 3,
+      location_id: 22,
+      service_type: ServiceType.DESIGNONLY,
+      date: '2026-06-24',
+      terms: 'Payment terms',
+      attachments: [{ file: 'data:application/pdf;base64,cGxhbg==' }],
+    });
+
+    expect(params.validate().errors.map((error) => error.field)).toEqual(['attachments']);
   });
 });

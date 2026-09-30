@@ -201,7 +201,7 @@
   const closeStatusDialogAndRefresh = async () => {
     statusDialogVisible.value = false;
     statusQuote.value = null;
-    await fetchQuotes(controller.pagination.value.currentPage);
+    await fetchQuotes(controller.pagination.value?.currentPage);
   };
 
   const refreshAfterPartialStatusChange = async (transitionPath: QuoteStatusEnum[]) => {

@@ -124,4 +124,27 @@ describe('EditProjectFloorParams', () => {
       'spaces',
     ]);
   });
+
+  it('requires assessment text when editing the full floor form', () => {
+    const params = new EditProjectFloorParams({
+      id: 123,
+      project_id: 10,
+      site_description: ' ',
+      technical_general_notes: '',
+      inspection_recommendations: '',
+      floors: [
+        {
+          project_floor_id: 123,
+          floor_number: FloorNumber.GROUND_FLOOR,
+          spaces: [{ space_id: 1, length: 12, width: 8, height: 3 }],
+        },
+      ],
+    });
+
+    expect(params.validate().errors.map((error) => error.field)).toEqual([
+      'site_description',
+      'technical_general_notes',
+      'inspection_recommendations',
+    ]);
+  });
 });

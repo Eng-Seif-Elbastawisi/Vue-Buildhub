@@ -1,5 +1,6 @@
 import { flushPromises, mount } from '@vue/test-utils';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import AddProjectFloorParams from '../../../core/params/add.project.floor.params';
 import AddFinalProjectFloorResultParams from '../../../core/params/final.result.project.floor.params';
 import { NotificationType } from '../../../core/constants/notificationType.enum';
 import { Status } from '../../../core/constants/status.enum';
@@ -9,12 +10,19 @@ const mocks = vi.hoisted(() => ({
   fetchList: vi.fn(),
   create: vi.fn(),
   getProject: vi.fn(),
+  toastWarning: vi.fn(),
   push: vi.fn(),
   routeQuery: {
     project_id: '24',
     project_preview_id: '15',
   } as Record<string, string | string[] | undefined>,
   routeFullPath: '/organization/project_floor/add?project_id=24&project_preview_id=15',
+}));
+
+vi.mock('@/base/Presentation/Dialogs/dialog.manager', () => ({
+  dialogManager: {
+    toastWarning: mocks.toastWarning,
+  },
 }));
 
 vi.mock('vue-router', () => ({
@@ -136,11 +144,7 @@ describe('ProjectFloorAdd.vue', () => {
     expect(mocks.getProject).toHaveBeenCalledWith(finalParams);
     expect(mocks.getProject.mock.calls[0][0]).toBeInstanceOf(AddFinalProjectFloorResultParams);
     expect(mocks.push).toHaveBeenCalledWith({
-      path: '/organization/project-item/add',
-      query: {
-        project_id: 24,
-        project_item: 9,
-      },
+      path: '/organization/Project/show/24',
     });
   });
 
@@ -174,5 +178,37 @@ describe('ProjectFloorAdd.vue', () => {
     expect(form.props('projectPreviewId')).toBeUndefined();
     expect(wrapper.findComponent({ name: 'FinalResults' }).exists()).toBe(false);
     expect(mocks.fetchList).toHaveBeenCalledWith(expect.objectContaining({ projectId: 24 }));
+  });
+
+  it('blocks saving incomplete floor assessment data', async () => {
+    const invalidParams = new AddProjectFloorParams({
+      project_id: 24,
+      site_description: '',
+      technical_general_notes: '',
+      inspection_recommendations: '',
+      floors: [],
+    });
+
+    const wrapper = mount(ProjectFloorAdd, {
+      global: {
+        stubs: {
+          ProjectSteps: { template: '<div />' },
+          ProjectFloorForm: {
+            emits: ['updateData'],
+            props: ['validationErrors'],
+            template:
+              '<button data-test="emit-invalid-floor" type="button" @click="$emit(\'updateData\', invalidParams)">emit</button>',
+            setup: () => ({ invalidParams }),
+          },
+          FinalResults: { template: '<div />' },
+        },
+      },
+    });
+
+    await wrapper.get('[data-test="emit-invalid-floor"]').trigger('click');
+    await wrapper.get('.btn-primary').trigger('click');
+
+    expect(mocks.create).not.toHaveBeenCalled();
+    expect(mocks.toastWarning).toHaveBeenCalled();
   });
 });

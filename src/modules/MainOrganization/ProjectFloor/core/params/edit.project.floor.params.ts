@@ -213,18 +213,17 @@ export default class EditProjectFloorParams implements Params {
       },
     },
 
-    // يمكن تفعيلها لو أصبحت مطلوبة من الـ Backend:
-    // site_description: {
-    //   required: true,
-    // },
-    //
-    // technical_general_notes: {
-    //   required: true,
-    // },
-    //
-    // inspection_recommendations: {
-    //   required: true,
-    // },
+    site_description: {
+      required: true,
+    },
+
+    technical_general_notes: {
+      required: true,
+    },
+
+    inspection_recommendations: {
+      required: true,
+    },
   });
 
   public static readonly singleFloorValidation = new ClassValidation().setRules({

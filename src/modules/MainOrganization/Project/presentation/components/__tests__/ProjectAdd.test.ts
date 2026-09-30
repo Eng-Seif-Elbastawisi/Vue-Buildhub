@@ -185,6 +185,8 @@ describe('ProjectAdd.vue', () => {
       project_type_id: 5,
       location_id: 6,
       service_type: ServiceType.BOTH,
+      date: '2026-06-24',
+      terms: 'Payment terms',
     });
 
     const wrapper = mount(ProjectAdd, {

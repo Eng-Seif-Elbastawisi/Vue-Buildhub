@@ -15,6 +15,8 @@ describe('EditProjectParams', () => {
       project_type_id: 4,
       location_id: 30,
       service_type: ServiceType.EXECUTIONONLY,
+      date: '2026-06-24',
+      terms: 'Payment terms',
       engineer_id: 15,
       preview_date: '2026-06-25',
       preview_time: '10:30:00',
@@ -47,6 +49,8 @@ describe('EditProjectParams', () => {
       project_type_id: 4,
       location_id: 30,
       service_type: ServiceType.EXECUTIONONLY,
+      date: '2026-06-24',
+      terms: 'Payment terms',
     });
 
     expect(params.validate().isValid).toBe(false);
@@ -66,6 +70,8 @@ describe('EditProjectParams', () => {
       project_type_id: 4,
       location_id: 30,
       service_type: ServiceType.EXECUTIONONLY,
+      date: '2026-06-24',
+      terms: 'Payment terms',
     });
 
     expect(params.validate()).toMatchObject({
@@ -81,6 +87,8 @@ describe('EditProjectParams', () => {
         title: { en: 'Project title' },
         description: { en: 'Project description' },
       }),
+      date: '2026-06-24',
+      terms: 'Payment terms',
     });
 
     const validation = params.validate();
