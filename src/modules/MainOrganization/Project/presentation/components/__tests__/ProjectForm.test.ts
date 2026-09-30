@@ -31,7 +31,7 @@ const multiLangInputStub = {
 };
 
 describe('ProjectForm.vue', () => {
-  it('keeps the terms textbox and marks only the description as required', async () => {
+  it('keeps comma-separated terms and marks request fields as required', async () => {
     const wrapper = shallowMount(ProjectForm, {
       global: {
         stubs: {
@@ -57,6 +57,8 @@ describe('ProjectForm.vue', () => {
       'value',
       'First condition, Second condition',
     );
+    expect(wrapper.get('#terms').attributes('required')).toBeDefined();
+    expect(wrapper.get('#date-field .required-indicator').text()).toBe('*');
     expect(wrapper.get('#notes-field .field-label').text()).toBe('Notes');
     expect(latestParams.terms).toBe('First condition, Second condition');
   });

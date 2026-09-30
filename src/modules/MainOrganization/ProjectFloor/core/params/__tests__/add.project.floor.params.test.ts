@@ -63,6 +63,9 @@ describe('AddProjectFloorParams', () => {
     expect(invalidParams.validate().errors.map((error) => error.field)).toEqual([
       'project_id',
       'project_preview_id',
+      'site_description',
+      'technical_general_notes',
+      'inspection_recommendations',
       'floors',
     ]);
     expect(invalidParams.toMap()).not.toHaveProperty('floors');

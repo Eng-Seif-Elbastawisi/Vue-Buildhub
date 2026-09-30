@@ -132,6 +132,18 @@ export default class AddProjectFloorParams implements Params {
       },
     },
 
+    site_description: {
+      required: true,
+    },
+
+    technical_general_notes: {
+      required: true,
+    },
+
+    inspection_recommendations: {
+      required: true,
+    },
+
     floors: {
       required: true,
 

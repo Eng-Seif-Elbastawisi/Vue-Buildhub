@@ -86,6 +86,26 @@ export default class EditProjectParams implements Params {
     service_type: requiredSelectRule(),
 
     location_id: requiredSelectRule(),
+
+    date: {
+      required: true,
+    },
+
+    terms: {
+      required: true,
+    },
+
+    attachments: {
+      custom: (value?: ProjectAttachmentParams[]) =>
+        !value?.length ||
+        value.every(
+          (attachment) =>
+            Boolean(attachment.file?.trim()) &&
+            Number.isInteger(Number(attachment.attachment_type_id)) &&
+            Number(attachment.attachment_type_id) > 0,
+        ) ||
+        translate('Project.validation.attachment_incomplete'),
+    },
   });
 
   constructor(data: {

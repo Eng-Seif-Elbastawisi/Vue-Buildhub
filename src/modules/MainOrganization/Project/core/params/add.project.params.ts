@@ -27,6 +27,13 @@ export interface ProjectAttachmentParams {
 
 export type WithPreviewValue = 0 | 1;
 
+const PHONE_PATTERN = /^\+?[0-9][0-9\s-]{6,19}$/;
+
+const hasText = (value?: string): boolean => Boolean(value?.trim());
+
+const hasValidPhone = (value?: string): boolean =>
+  Boolean(value?.trim() && PHONE_PATTERN.test(value.trim()));
+
 export default class AddProjectParams implements Params {
   public translations?: TranslationParams;
 
@@ -99,6 +106,30 @@ export default class AddProjectParams implements Params {
       required: true,
       custom: (value?: number) =>
         hasSelectValue(value) || translate('Project.validation.city_required'),
+    },
+
+    date: {
+      required: true,
+      custom: (value?: string) =>
+        hasText(value) || translate('Project.validation.date_required'),
+    },
+
+    terms: {
+      required: true,
+      custom: (value?: string) =>
+        hasText(value) || translate('Project.validation.terms_required'),
+    },
+
+    attachments: {
+      custom: (value?: ProjectAttachmentParams[]) =>
+        !value?.length ||
+        value.every(
+          (attachment) =>
+            hasText(attachment.file) &&
+            Number.isInteger(Number(attachment.attachment_type_id)) &&
+            Number(attachment.attachment_type_id) > 0,
+        ) ||
+        translate('Project.validation.attachment_incomplete'),
     },
   });
   constructor(data: {
@@ -242,6 +273,28 @@ export default class AddProjectParams implements Params {
         field: 'client_source',
 
         message: translate('Project.validation.client_source_required'),
+      });
+    }
+
+    if (this.client_exist === false && !hasText(this.client_name)) {
+      errors.push({
+        field: 'client_name',
+
+        message: translate('Project.validation.client_name_required'),
+      });
+    }
+
+    if (this.client_exist === false && !hasText(this.client_phone)) {
+      errors.push({
+        field: 'client_phone',
+
+        message: translate('Project.validation.client_phone_required'),
+      });
+    } else if (this.client_exist === false && !hasValidPhone(this.client_phone)) {
+      errors.push({
+        field: 'client_phone',
+
+        message: translate('Project.validation.client_phone_invalid'),
       });
     }
 

@@ -95,7 +95,8 @@
     return (
       !!selectedStatus.value &&
       !!selectedPricingResponsible.value &&
-      !!selectedNotificationType.value
+      !!selectedNotificationType.value &&
+      notificationMessage.value.trim().length > 0
     );
   });
 
@@ -140,7 +141,8 @@
     if (
       !selectedStatus.value ||
       !selectedPricingResponsible.value ||
-      !selectedNotificationType.value
+      !selectedNotificationType.value ||
+      !notificationMessage.value.trim()
     ) {
       return;
     }
@@ -152,7 +154,7 @@
         status: selectedStatus.value.id as Status,
         pricing_responsible_id: Number(selectedPricingResponsible.value.id),
         notification_type: selectedNotificationType.value.id as NotificationType,
-        notification_message: notificationMessage.value,
+        notification_message: notificationMessage.value.trim(),
       }),
     );
 
@@ -223,6 +225,7 @@
           <div class="dialog-field">
             <span class="field-help-label-row field-help-label-row--block">
               <label class="field-label">
+                <span class="required-indicator" aria-hidden="true">*</span>
                 {{ $t('ProjectFloor.pricing_responsible') }}
               </label>
               <FieldHelpIcon
@@ -244,6 +247,7 @@
           <div class="dialog-field">
             <span class="field-help-label-row field-help-label-row--block">
               <label class="field-label">
+                <span class="required-indicator" aria-hidden="true">*</span>
                 {{ $t('ProjectFloor.notification_type') }}
               </label>
               <FieldHelpIcon :label="$t('ProjectFloor.notification_type')" field-name="type" />
@@ -275,6 +279,7 @@
         <div class="dialog-field">
           <span class="field-help-label-row field-help-label-row--block">
             <label class="field-label" for="notification_message">
+              <span class="required-indicator" aria-hidden="true">*</span>
               {{ $t('ProjectFloor.notification_message') }}
             </label>
             <FieldHelpIcon
@@ -289,6 +294,8 @@
             v-model="notificationMessage"
             class="field-input field-textarea"
             :placeholder="$t('ProjectFloor.notification_message_placeholder')"
+            required
+            aria-required="true"
           />
         </div>
       </div>
@@ -363,6 +370,10 @@
       pointer-events: none;
       opacity: 0.7;
     }
+  }
+
+  .required-indicator {
+    color: var(--danger);
   }
 
   .section-head {

@@ -722,18 +722,47 @@ onMounted(async () => {
 
           <div class="notes-grid">
             <label class="note-field">
-              <span>{{ $t('ProjectFloor.site_description') }}</span>
-              <textarea v-model="siteDescription" class="field-input" @input="updateData"></textarea>
+              <span>
+                <span class="required-indicator" aria-hidden="true">*</span>
+                {{ $t('ProjectFloor.site_description') }}
+              </span>
+              <textarea v-model="siteDescription" class="field-input"
+                :class="{ 'field-input--invalid': validationErrors.site_description }"
+                required aria-required="true" :aria-invalid="Boolean(validationErrors.site_description)"
+                @input="updateData"></textarea>
+              <small v-if="validationErrors.site_description" class="field-error" role="alert">
+                {{ validationErrors.site_description }}
+              </small>
             </label>
 
             <label class="note-field">
-              <span>{{ $t('ProjectFloor.technical_general_notes') }}</span>
-              <textarea v-model="technicalGeneralNotes" class="field-input" @input="updateData"></textarea>
+              <span>
+                <span class="required-indicator" aria-hidden="true">*</span>
+                {{ $t('ProjectFloor.technical_general_notes') }}
+              </span>
+              <textarea v-model="technicalGeneralNotes" class="field-input"
+                :class="{ 'field-input--invalid': validationErrors.technical_general_notes }"
+                required aria-required="true"
+                :aria-invalid="Boolean(validationErrors.technical_general_notes)"
+                @input="updateData"></textarea>
+              <small v-if="validationErrors.technical_general_notes" class="field-error" role="alert">
+                {{ validationErrors.technical_general_notes }}
+              </small>
             </label>
 
             <label class="note-field">
-              <span>{{ $t('ProjectFloor.inspection_recommendations') }}</span>
-              <textarea v-model="inspectionRecommendations" class="field-input" @input="updateData"></textarea>
+              <span>
+                <span class="required-indicator" aria-hidden="true">*</span>
+                {{ $t('ProjectFloor.inspection_recommendations') }}
+              </span>
+              <textarea v-model="inspectionRecommendations" class="field-input"
+                :class="{ 'field-input--invalid': validationErrors.inspection_recommendations }"
+                required aria-required="true"
+                :aria-invalid="Boolean(validationErrors.inspection_recommendations)"
+                @input="updateData"></textarea>
+              <small v-if="validationErrors.inspection_recommendations" class="field-error" role="alert">
+                {{ validationErrors.inspection_recommendations }}
+              </small>
             </label>
           </div>
         </section>
@@ -758,6 +787,19 @@ onMounted(async () => {
   filter: blur(5px);
   opacity: 0.45;
   transform: scale(0.995);
+}
+
+.required-indicator,
+.field-error {
+  color: var(--danger);
+}
+
+.field-input--invalid {
+  border-color: var(--danger);
+}
+
+.field-error {
+  font-size: var(--xs-size);
 }
 
 .preview-gate {

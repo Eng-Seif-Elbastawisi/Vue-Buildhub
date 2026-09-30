@@ -114,9 +114,14 @@ const validationFieldAnchors: Record<string, string> = {
   project_type_id: 'project-type-field',
   client_exist: 'client-type-field',
   client_id: 'client-field',
+  client_name: 'client-name-field',
+  client_phone: 'client-phone-field',
   client_source: 'client-source-field',
   location_id: 'city-field',
   service_type: 'service-type-field',
+  date: 'date-field',
+  terms: 'terms-field',
+  attachments: 'attachments-field',
 };
 
 const scrollToValidationField = (field: string): void => {
@@ -557,14 +562,18 @@ watch(
           :params="indexProjectTypeParams" required @update:model-value="updateProjectType" />
       </div>
 
-      <div class="field-group">
+      <div id="date-field" class="field-group">
         <span class="field-help-label-row field-help-label-row--block">
-          <label class="field-label" for="date">{{ $t('date') }}</label>
+          <label class="field-label" for="date">
+            <span class="required-indicator" aria-hidden="true">*</span>
+            {{ $t('date') }}
+          </label>
           <FieldHelpIcon :label="$t('date')" field-name="date" field-id="date" />
         </span>
 
         <DatePicker input-id="date" :model-value="selectedDate" date-format="yy-mm-dd" show-icon icon-display="input"
           :manual-input="false" :placeholder="$t('date_placeholder')" input-class="field-input" class="date-picker"
+          required aria-required="true"
           @update:model-value="updateDate" />
       </div>
 
@@ -582,27 +591,35 @@ watch(
         </div>
 
         <template v-if="selectedClientExist && client_exist === false">
-          <div id="client-source-field" class="field-group">
+          <div id="client-name-field" class="field-group">
             <span class="field-help-label-row field-help-label-row--block">
-              <label class="field-label" for="client_name">{{ $t('client_name') }}</label>
+              <label class="field-label" for="client_name">
+                <span class="required-indicator" aria-hidden="true">*</span>
+                {{ $t('client_name') }}
+              </label>
               <FieldHelpIcon :label="$t('client_name')" field-name="name" field-id="client_name" />
             </span>
 
             <input id="client_name" v-model="client_name" class="field-input"
-              :placeholder="$t('client_name_placeholder')" @input="updateData" />
+              :placeholder="$t('client_name_placeholder')" required aria-required="true"
+              autocomplete="name" @input="updateData" />
           </div>
 
-          <div class="field-group">
+          <div id="client-phone-field" class="field-group">
             <span class="field-help-label-row field-help-label-row--block">
-              <label class="field-label" for="client_phone">{{ $t('client_phone') }}</label>
+              <label class="field-label" for="client_phone">
+                <span class="required-indicator" aria-hidden="true">*</span>
+                {{ $t('client_phone') }}
+              </label>
               <FieldHelpIcon :label="$t('client_phone')" field-name="phone" field-id="client_phone" />
             </span>
 
-            <input id="client_phone" v-model="client_phone" class="field-input"
-              :placeholder="$t('client_phone_placeholder')" @input="updateData" />
+            <input id="client_phone" v-model="client_phone" class="field-input" type="tel"
+              inputmode="tel" autocomplete="tel" :placeholder="$t('client_phone_placeholder')"
+              required aria-required="true" @input="updateData" />
           </div>
 
-          <div class="field-group">
+          <div id="client-source-field" class="field-group">
             <UpdatedCustomInputSelect id="client_source" :model-value="selectedClientSource"
               :label="$t('client_source')" :controller="clientSourceController"
               :placeholder="$t('client_source_placeholder')" :params="indexClientSourceParams" required
@@ -651,7 +668,7 @@ watch(
         </span>
 
         <textarea id="terms" v-model="termsText" class="field-input field-textarea"
-          :placeholder="$t('terms_placeholder')" @input="updateData" />
+          :placeholder="$t('terms_placeholder')" required aria-required="true" @input="updateData" />
       </div>
 
       <div id="service-type-field" class="field-group col-span-2">
@@ -700,7 +717,7 @@ watch(
           @input="updateData" />
       </div>
 
-      <div class="field-group col-span-2">
+      <div id="attachments-field" class="field-group col-span-2">
         <ProjectAttachmentManager
           v-model="attachmentItems"
           @change="updateAttachmentItems"
