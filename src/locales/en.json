@@ -2987,6 +2987,8 @@
   "execution_quote.status.dialog_title": "Change quote status",
   "execution_quote.status.current": "Current status",
   "execution_quote.status.choose_next": "Choose the next status",
+  "execution_quote.status.note": "Note (optional)",
+  "execution_quote.status.note_placeholder": "Add a note about this status change",
   "execution_quote.status.update": "Update status",
   "execution_quote.status.updated": "Quote status updated successfully."
 }

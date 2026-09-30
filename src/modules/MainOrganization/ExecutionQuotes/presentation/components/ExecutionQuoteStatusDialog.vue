@@ -25,10 +25,11 @@
 
   const emit = defineEmits<{
     (event: 'update:modelValue', visible: boolean): void;
-    (event: 'submit', status: QuoteStatusEnum): void;
+    (event: 'submit', status: QuoteStatusEnum, note: string | null): void;
   }>();
 
   const selectedStatus = ref<QuoteStatusEnum>();
+  const note = ref('');
   const availableStatuses = computed(() => getAllowedQuoteStatusTransitions(props.currentStatus));
   const visible = computed({
     get: () => props.modelValue,
@@ -45,6 +46,7 @@
 
       selectedStatus.value =
         availableStatuses.value.length === 1 ? availableStatuses.value[0] : undefined;
+      note.value = '';
     },
     { immediate: true },
   );
@@ -55,8 +57,10 @@
   };
 
   const submit = () => {
-    if (!canChangeQuoteStatus(props.currentStatus, selectedStatus.value)) return;
-    emit('submit', selectedStatus.value as QuoteStatusEnum);
+    const nextStatus = selectedStatus.value;
+    if (nextStatus === undefined || !canChangeQuoteStatus(props.currentStatus, nextStatus)) return;
+
+    emit('submit', nextStatus, note.value.trim() || null);
   };
 </script>
 
@@ -98,6 +102,17 @@
           <i v-if="selectedStatus === status" class="pi pi-check" aria-hidden="true"></i>
         </button>
       </fieldset>
+
+      <label class="execution-quote-status-dialog__note" for="execution-quote-status-note">
+        <span>{{ $t('execution_quote.status.note') }}</span>
+        <textarea
+          id="execution-quote-status-note"
+          v-model="note"
+          rows="3"
+          :disabled="loading"
+          :placeholder="$t('execution_quote.status.note_placeholder')"
+        ></textarea>
+      </label>
 
       <div class="execution-quote-status-dialog__actions">
         <AppButton theme="secondary" outline :disabled="loading" @click="close">
@@ -176,6 +191,38 @@
   .execution-quote-status-dialog__option.is-selected {
     border-color: var(--PrimaryColor);
     background: var(--PrimaryColor-light);
+  }
+
+  .execution-quote-status-dialog__note {
+    display: grid;
+    gap: 0.5rem;
+    color: var(--gray-800);
+    font-weight: 800;
+  }
+
+  .execution-quote-status-dialog__note textarea {
+    width: 100%;
+    min-height: 6rem;
+    padding: 0.75rem;
+    resize: vertical;
+    border: 1px solid var(--border-weak);
+    border-radius: var(--radius-md);
+    background: var(--bg-card);
+    color: var(--title-card-color);
+    font: inherit;
+    font-weight: 400;
+    line-height: 1.6;
+  }
+
+  .execution-quote-status-dialog__note textarea:focus-visible {
+    border-color: var(--PrimaryColor);
+    outline: 2px solid var(--PrimaryColor-alpha-30);
+    outline-offset: 1px;
+  }
+
+  .execution-quote-status-dialog__note textarea:disabled {
+    cursor: not-allowed;
+    opacity: 0.65;
   }
 
   .execution-quote-status-dialog__actions {

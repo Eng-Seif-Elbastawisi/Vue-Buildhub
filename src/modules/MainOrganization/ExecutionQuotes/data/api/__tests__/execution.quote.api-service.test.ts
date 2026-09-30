@@ -89,6 +89,7 @@ describe('ExecutionQuoteApiService', () => {
       new ChangeQuoteStatusParams({
         quoteId: 141,
         status: QuoteStatusEnum.PENDING_VALIDATION,
+        note: 'Ready for validation',
       }),
     );
 
@@ -98,6 +99,7 @@ describe('ExecutionQuoteApiService', () => {
         data: {
           quote_id: 141,
           status: QuoteStatusEnum.PENDING_VALIDATION,
+          note: 'Ready for validation',
         },
         isAuth: true,
       }),
