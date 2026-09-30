@@ -2,5 +2,5 @@
   import ProjectPreviewEdit from '@/modules/MainOrganization/Project/presentation/components/project_preview/ProjectPreviewEdit.vue';
 </script>
 <template>
-  <ProjectPreviewEdit />
+  <ProjectPreviewEdit class="project-workflow-view project-workflow-view--form" />
 </template>

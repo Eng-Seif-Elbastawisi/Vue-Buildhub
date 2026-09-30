@@ -2,5 +2,5 @@
   import ProjectAdd from '@/modules/MainOrganization/Project/presentation/components/ProjectAdd.vue';
 </script>
 <template>
-  <ProjectAdd />
+  <ProjectAdd class="project-workflow-view project-workflow-view--form" />
 </template>

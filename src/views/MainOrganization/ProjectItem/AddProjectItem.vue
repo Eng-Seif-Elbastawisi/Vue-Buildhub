@@ -3,5 +3,5 @@
 </script>
 
 <template>
-  <ProjectItemAdd />
+  <ProjectItemAdd class="project-workflow-view project-workflow-view--form" />
 </template>

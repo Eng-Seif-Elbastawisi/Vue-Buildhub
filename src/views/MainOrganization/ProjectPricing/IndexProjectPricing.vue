@@ -3,5 +3,5 @@
 </script>
 
 <template>
-  <ProjectPricingIndex />
+  <ProjectPricingIndex class="project-workflow-view project-workflow-view--index" />
 </template>

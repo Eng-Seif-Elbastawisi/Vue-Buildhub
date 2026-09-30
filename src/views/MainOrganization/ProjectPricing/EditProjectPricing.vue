@@ -3,5 +3,5 @@
 </script>
 
 <template>
-  <ProjectPricingEdit />
+  <ProjectPricingEdit class="project-workflow-view project-workflow-view--form" />
 </template>

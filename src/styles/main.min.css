@@ -14394,6 +14394,668 @@ html[dir=rtl] :where(.back-button, .sidebar-back, .p-breadcrumb) :where(.pi-arro
   }
 }
 /* =============================================================================
+   MAIN STYLESHEET — Organized Import Hub
+   ============================================================================= */
+/* ── Core ──────────────────────────────────────────────────────── */
+/* =============================================================================
+   PROJECT WORKFLOWS
+   Presentation-only visual layer shared by project requests, inspections,
+   floors, items, pricing, offers, execution quotes, details and their dialogs.
+   Route views opt in with `.project-workflow-view`; no functional selectors or
+   visibility rules are changed here.
+   ============================================================================= */
+:where(.project-workflow-view,
+.project-search-dialog,
+.project-floor-edit-dialog,
+.execution-quote-client-dialog,
+.execution-quote-show__edit-dialog,
+.final-result-dialog,
+.not-ready-dialog) {
+  --workflow-accent: var(--PrimaryColor);
+  --workflow-accent-hover: color-mix(in srgb, var(--PrimaryColor) 78%, var(--gray-900));
+  --workflow-accent-strong: color-mix(in srgb, var(--PrimaryColor) 72%, var(--gray-900));
+  --workflow-accent-soft: color-mix(in srgb, var(--PrimaryColor) 8%, var(--white));
+  --workflow-accent-4: color-mix(in srgb, var(--PrimaryColor) 4%, transparent);
+  --workflow-accent-12: color-mix(in srgb, var(--PrimaryColor) 12%, transparent);
+  --workflow-accent-20: color-mix(in srgb, var(--PrimaryColor) 20%, transparent);
+  --workflow-accent-30: color-mix(in srgb, var(--PrimaryColor) 30%, transparent);
+  --workflow-accent-50: color-mix(in srgb, var(--PrimaryColor) 50%, transparent);
+}
+
+.project-workflow-view {
+  --workflow-card-padding: clamp(16px, 2vw, 24px);
+  --workflow-section-gap: clamp(14px, 1.7vw, 22px);
+  --workflow-control-height: 46px;
+  width: min(100%, var(--page-max-width));
+  min-width: 0;
+  margin-inline: auto;
+  color: var(--gray-800);
+}
+
+.project-workflow-view.project-workflow-view--index,
+.project-workflow-view.project-workflow-view--form,
+.project-workflow-view.project-workflow-view--details {
+  gap: var(--workflow-section-gap);
+  padding: 0 0 var(--page-padding-block);
+}
+
+/* ── Page headings, search and filter surfaces ─────────────────── */
+.project-workflow-view .index-page-heading {
+  min-height: 76px;
+  align-items: center;
+  padding: 12px 4px 18px;
+  border-bottom-color: var(--border-weak);
+}
+
+.project-workflow-view .index-page-heading__title,
+.project-workflow-view :where(.execution-quote__heading, .execution-quote-show__header) h1 {
+  color: var(--gray-900);
+  font-size: clamp(1.35rem, 2.4vw, 1.85rem);
+  letter-spacing: 0;
+}
+
+.project-workflow-view .index-page-heading__subtitle,
+.project-workflow-view :where(.execution-quote__heading, .execution-quote-show__header) p {
+  max-width: 72ch;
+  color: var(--gray-500);
+  line-height: 1.75;
+}
+
+.project-workflow-view .index-page-toolbar {
+  gap: 16px;
+  padding: var(--workflow-card-padding);
+  border-color: var(--border-weak);
+  border-radius: var(--card-radius);
+  background-color: var(--bg-card);
+  box-shadow: var(--shadow-sm);
+}
+
+.project-workflow-view .index-page-toolbar:focus-within {
+  border-color: var(--workflow-accent-30);
+  box-shadow: var(--shadow);
+}
+
+.project-workflow-view .index-page-toolbar__primary + .index-page-toolbar__filters {
+  padding-block-start: 18px;
+}
+
+.project-workflow-view .search-field input,
+.project-workflow-view .index-page-toolbar__search input {
+  min-height: var(--workflow-control-height) !important;
+  border-color: var(--border-strong) !important;
+  border-radius: var(--control-radius) !important;
+  background-color: var(--bg-main) !important;
+}
+
+.project-workflow-view .execution-quote-index__filters-heading {
+  padding-block-end: 14px;
+  border-bottom: 1px solid var(--border-weak);
+}
+
+.project-workflow-view .execution-quote-index__filters-grid {
+  gap: 14px;
+  padding-block-start: 2px;
+}
+
+/* ── Cards and section headers ─────────────────────────────────── */
+.project-workflow-view :where(.Project-form-card,
+.form-section,
+.project-floor-form-card,
+.section-card,
+.saved-floors,
+.pricing-card,
+.pricing-summary-card,
+.show-card,
+.project-state-card,
+.execution-quote__card,
+.execution-quote-show__card,
+.execution-builder-card,
+.next-step-selector,
+.next-step-card) {
+  border: 1px solid var(--border-weak);
+  border-radius: var(--card-radius);
+  background-color: var(--bg-card);
+  box-shadow: var(--shadow-sm);
+}
+
+.project-workflow-view :where(.Project-form-card, .pricing-card) {
+  padding: var(--workflow-card-padding);
+}
+
+.project-workflow-view .Project-form-card > header,
+.project-workflow-view .form-section > header,
+.project-workflow-view .pricing-header,
+.project-workflow-view .form-header,
+.project-workflow-view .section-head,
+.project-workflow-view .form-section__header,
+.project-workflow-view .items-section__header,
+.project-workflow-view .saved-floors__header {
+  position: relative;
+  gap: 12px;
+}
+
+.project-workflow-view .Project-form-card > header,
+.project-workflow-view .form-section > header,
+.project-workflow-view .pricing-header,
+.project-workflow-view .form-header,
+.project-workflow-view .saved-floors__header {
+  margin: 0;
+  padding: 0 0 16px;
+  border-bottom: 1px solid var(--border-weak);
+}
+
+.project-workflow-view :where(.Project-form-card > header,
+.form-section > header,
+.pricing-header,
+.form-header,
+.section-head,
+.form-section__header,
+.items-section__header,
+.saved-floors__header) :where(h2, h3, h4, h5) {
+  margin: 0;
+  color: var(--gray-900);
+  font-family: "Bold", var(--font-family);
+  line-height: 1.4;
+}
+
+.project-workflow-view :where(.Project-form-card > header,
+.form-section > header,
+.pricing-header,
+.form-header,
+.section-head,
+.form-section__header,
+.items-section__header,
+.saved-floors__header) p {
+  margin: 4px 0 0;
+  color: var(--gray-500);
+  line-height: 1.65;
+}
+
+.project-workflow-view :where(.pricing-header__icon,
+.section-head__icon,
+.form-section__number,
+.execution-quote-show__section-icon,
+.project-state-card__icon) {
+  display: inline-grid;
+  flex: 0 0 auto;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border: 1px solid var(--workflow-accent-12);
+  border-radius: 12px;
+  color: var(--workflow-accent);
+  background-color: var(--workflow-accent-soft);
+}
+
+.project-workflow-view :where(.form-section__number, .count-badge, .items-section__badge) {
+  font-family: "Bold", var(--font-family);
+}
+
+/* ── Form grids and controls ───────────────────────────────────── */
+.project-workflow-view :where(.form-fields,
+.form-grid,
+.quote-data__grid,
+.dialog-grid,
+.notes-grid,
+.summary-grid) {
+  gap: 18px;
+}
+
+.project-workflow-view :where(.field-group,
+.field-block,
+.field-box,
+.picker-field,
+.note-field,
+.dialog-field,
+.quote-field) {
+  min-width: 0;
+}
+
+.project-workflow-view :where(.field-label,
+.mini-label,
+.control-label,
+.note-field > span,
+.summary-label,
+.quote-field__label) {
+  color: var(--gray-700);
+  font-family: "Medium", var(--font-family);
+  font-size: var(--sm-size);
+  line-height: 1.45;
+}
+
+.project-workflow-view :where(input:not([type=checkbox], [type=radio], [type=file]),
+textarea,
+select,
+.field-input,
+.mini-input,
+.p-select,
+.p-multiselect,
+.p-datepicker,
+.total-field) {
+  min-height: var(--workflow-control-height);
+  border-color: var(--border-strong) !important;
+  border-radius: var(--control-radius) !important;
+  color: var(--gray-800);
+  background-color: var(--bg-main);
+  box-shadow: none;
+}
+
+.project-workflow-view :where(textarea, .field-textarea, .notes-input) {
+  min-height: 116px;
+  border-radius: 12px !important;
+  line-height: 1.7;
+  resize: vertical;
+}
+
+.project-workflow-view :where(input:not([type=checkbox], [type=radio], [type=file]),
+textarea,
+select,
+.field-input,
+.mini-input,
+.p-select,
+.p-multiselect,
+.p-datepicker):hover:not(:disabled) {
+  border-color: var(--gray-400) !important;
+}
+
+.project-workflow-view :where(input:not([type=checkbox], [type=radio], [type=file]),
+textarea,
+select,
+.field-input,
+.mini-input,
+.p-select,
+.p-multiselect,
+.p-datepicker):focus,
+.project-workflow-view :where(.p-select, .p-multiselect, .p-datepicker):focus-within {
+  border-color: var(--workflow-accent) !important;
+  outline: 0;
+  box-shadow: var(--focus-ring) !important;
+}
+
+.project-workflow-view :where(input:not([type=checkbox], [type=radio], [type=file]),
+textarea,
+select,
+.p-select,
+.p-multiselect,
+.p-datepicker):disabled,
+.project-workflow-view :where(input, textarea)[readonly] {
+  border-color: var(--border-weak) !important;
+  color: var(--gray-500) !important;
+  background-color: var(--gray-100) !important;
+  opacity: 1;
+}
+
+.project-workflow-view :where(input, textarea)::placeholder {
+  color: var(--gray-400);
+  opacity: 1;
+}
+
+.project-workflow-view :where(.field-error, .error, [class$=__error]) {
+  border-radius: var(--radius-sm);
+  color: var(--danger-dark);
+}
+
+/* ── Selectable cards, tabs and workflow steps ─────────────────── */
+.project-workflow-view :where(.service-tab,
+.next-step-option,
+.source-option,
+.quote-type-card,
+.build-path__option) {
+  min-height: 54px;
+  border: 1px solid var(--border-strong);
+  border-radius: 12px;
+  color: var(--gray-700);
+  background-color: var(--bg-main);
+  box-shadow: none;
+}
+
+.project-workflow-view :where(.service-tab,
+.next-step-option,
+.source-option,
+.quote-type-card,
+.build-path__option):hover {
+  border-color: var(--workflow-accent-50);
+  color: var(--workflow-accent-strong);
+  background-color: var(--workflow-accent-4);
+}
+
+.project-workflow-view :where(.service-tab.active,
+.next-step-option--selected,
+.source-option--selected,
+.quote-type-card--active,
+.build-path__option--active) {
+  border-color: var(--workflow-accent);
+  color: var(--workflow-accent-strong);
+  background-color: var(--workflow-accent-soft);
+  box-shadow: 0 0 0 1px var(--workflow-accent-20);
+}
+
+.project-workflow-view .project-steps {
+  padding: 22px clamp(16px, 4vw, 42px);
+  border: 1px solid var(--border-weak);
+  border-radius: var(--card-radius);
+  background-color: var(--bg-card);
+  box-shadow: var(--shadow-sm);
+}
+
+.project-workflow-view .project-steps__circle {
+  border-color: var(--border-strong);
+  background-color: var(--bg-main);
+  box-shadow: 0 0 0 5px var(--bg-card);
+}
+
+.project-workflow-view .project-steps__item.active .project-steps__circle,
+.project-workflow-view .project-steps__item.completed .project-steps__circle {
+  border-color: var(--workflow-accent);
+  color: var(--white);
+  background-color: var(--workflow-accent);
+}
+
+.project-workflow-view .project-steps__line {
+  background-color: var(--border-strong);
+}
+
+.project-workflow-view .project-steps__item.completed + .project-steps__line,
+.project-workflow-view .project-steps__item.active + .project-steps__line {
+  background-color: var(--workflow-accent-50);
+}
+
+/* ── Actions ───────────────────────────────────────────────────── */
+.project-workflow-view :where(.btn, .add-btn, .primary-action-btn, .secondary-action-btn) {
+  min-height: var(--workflow-control-height);
+  border-radius: var(--control-radius);
+  font-family: "Medium", var(--font-family);
+}
+
+.project-workflow-view :where(.btn-primary, .add-btn, .primary-action-btn, .dialog-btn--primary) {
+  border-color: var(--workflow-accent);
+  color: var(--white);
+  background-color: var(--workflow-accent);
+  box-shadow: 0 8px 18px var(--workflow-accent-20);
+}
+
+.project-workflow-view :where(.btn-primary, .add-btn, .primary-action-btn, .dialog-btn--primary):hover:not(:disabled) {
+  border-color: var(--workflow-accent-hover);
+  color: var(--white);
+  background-color: var(--workflow-accent-hover);
+  box-shadow: 0 10px 24px var(--workflow-accent-30);
+  transform: translateY(-1px);
+}
+
+.project-workflow-view :where(.btn-secondary, .secondary-action-btn, .dialog-btn--secondary) {
+  border: 1px solid var(--border-strong);
+  color: var(--gray-700);
+  background-color: var(--bg-card);
+  box-shadow: none;
+}
+
+.project-workflow-view :where(.btn-secondary, .secondary-action-btn, .dialog-btn--secondary):hover:not(:disabled) {
+  border-color: var(--workflow-accent-50);
+  color: var(--workflow-accent-strong);
+  background-color: var(--workflow-accent-soft);
+}
+
+.project-workflow-view :where(.form-action-pair, .buttons-container, .actions) {
+  gap: 12px;
+}
+
+.project-workflow-view :where(.form-action-pair, .buttons-container) {
+  padding: 16px;
+  border: 1px solid var(--border-weak);
+  border-radius: var(--card-radius);
+  background-color: var(--bg-card);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ── Tables, lists, status and pagination ──────────────────────── */
+.project-workflow-view .table-responsive,
+.project-workflow-view :where(.execution-quote-index__table-card, .local-table-wrap, .table-wrap) {
+  overflow-x: auto;
+  border: 1px solid var(--border-weak);
+  border-radius: var(--card-radius);
+  background-color: var(--bg-card);
+  box-shadow: var(--shadow-sm);
+}
+
+.project-workflow-view .execution-quote-index__table-card {
+  overflow: hidden;
+}
+
+.project-workflow-view .table-responsive table.main-table thead th,
+.project-workflow-view :where(.local-table-head, .floor-spaces-table__head) {
+  border-bottom-color: var(--border-strong);
+  color: var(--gray-600);
+  background-color: var(--gray-50);
+  font-family: "Medium", var(--font-family);
+}
+
+.project-workflow-view .table-responsive table.main-table tbody tr:nth-child(even) {
+  background-color: var(--bg-card);
+}
+
+.project-workflow-view .table-responsive table.main-table tbody tr:hover,
+.project-workflow-view :where(.local-table-row, .floor-space-row):hover {
+  background-color: var(--workflow-accent-4);
+}
+
+.project-workflow-view :where(.status-badge, [class$=__badge], [class$=-badge]) {
+  border-radius: var(--radius-full);
+}
+
+.project-workflow-view .pagination-wrapper {
+  padding: 14px 16px;
+  border-radius: var(--card-radius);
+  box-shadow: var(--shadow-sm);
+}
+
+.project-workflow-view .pagination-wrapper :where(.pagination-item, .pagination-btn) {
+  min-width: 38px;
+  min-height: 38px;
+  border-radius: var(--radius-sm);
+}
+
+.project-workflow-view .pagination-wrapper :where(.pagination-item, .pagination-btn).active {
+  border-color: var(--workflow-accent);
+  color: var(--white);
+  background-color: var(--workflow-accent);
+  box-shadow: 0 6px 14px var(--workflow-accent-20);
+}
+
+.project-workflow-view .row-actions,
+.project-workflow-view .execution-quote-index__row-actions {
+  gap: 6px;
+}
+
+.project-workflow-view :where(.action-btn, .remove-btn, .icon-btn) {
+  width: 36px;
+  min-width: 36px;
+  height: 36px;
+  border: 1px solid var(--border-weak);
+  border-radius: 10px;
+  color: var(--gray-500);
+  background-color: var(--bg-main);
+}
+
+.project-workflow-view :where(.action-btn, .remove-btn, .icon-btn):hover {
+  border-color: var(--workflow-accent-50);
+  color: var(--workflow-accent);
+  background-color: var(--workflow-accent-soft);
+}
+
+/* ── Floor, attachment and financial surfaces ─────────────────── */
+.project-workflow-view :where(.upload-dropzone, .upload-area, .drop-zone, .upload-chip) {
+  border: 1px dashed var(--border-strong);
+  border-radius: 12px;
+  background-color: var(--gray-50);
+}
+
+.project-workflow-view :where(.upload-dropzone, .upload-area, .drop-zone):hover {
+  border-color: var(--workflow-accent);
+  background-color: var(--workflow-accent-soft);
+}
+
+.project-workflow-view :where(.floor-card, .saved-floor-card, .attachment-card, .space-row) {
+  border: 1px solid var(--border-weak);
+  border-radius: 12px;
+  background-color: var(--bg-card);
+  box-shadow: none;
+}
+
+.project-workflow-view :where(.floor-card, .saved-floor-card, .attachment-card, .space-row):hover {
+  border-color: var(--workflow-accent-30);
+  box-shadow: var(--shadow-sm);
+}
+
+.project-workflow-view :where(.summary-box, .local-total, .quote-hero__totals > div) {
+  border: 1px solid var(--border-weak);
+  border-radius: 12px;
+  background-color: var(--gray-50);
+}
+
+.project-workflow-view :where(.summary-value, .local-total strong, [class$=__amount] strong) {
+  color: var(--gray-900);
+  font-family: "Bold", var(--font-family);
+  font-variant-numeric: tabular-nums;
+}
+
+.project-workflow-view :where(.quote-hero, .execution-quote-show__hero) {
+  border: 1px solid var(--border-sidebar);
+  border-radius: var(--card-radius);
+  background: linear-gradient(135deg, var(--SecondaryColor), var(--gray-900));
+  box-shadow: var(--shadow-lg);
+}
+
+/* ── Empty, loading, validation and locked states ──────────────── */
+.project-workflow-view :where(.empty-state, .empty-panel, .empty-local-row, .saved-floor-empty) {
+  min-height: 180px;
+  border: 1px dashed var(--border-strong);
+  border-radius: 12px;
+  color: var(--gray-500);
+  background-color: var(--gray-50);
+}
+
+.project-workflow-view :where(.loading-state, [aria-busy=true]) {
+  color: var(--gray-500);
+}
+
+.project-workflow-view .preview-gate__backdrop {
+  border-radius: var(--card-radius);
+  background: var(--white-alpha-85);
+}
+
+.project-workflow-view .preview-gate__card {
+  border-color: var(--workflow-accent-30);
+  border-radius: var(--card-radius);
+  background-color: var(--bg-card);
+  box-shadow: var(--shadow-xl);
+}
+
+/* ── Teleported workflow dialogs ───────────────────────────────── */
+:where(.project-search-dialog,
+.project-floor-edit-dialog,
+.execution-quote-client-dialog,
+.execution-quote-show__edit-dialog,
+.final-result-dialog,
+.not-ready-dialog) {
+  border: 1px solid var(--border-weak) !important;
+  border-radius: var(--modal-radius) !important;
+  background-color: var(--bg-card) !important;
+  box-shadow: var(--shadow-xl) !important;
+}
+
+:where(.project-search-dialog,
+.project-floor-edit-dialog,
+.execution-quote-client-dialog,
+.execution-quote-show__edit-dialog,
+.final-result-dialog,
+.not-ready-dialog) :where(.p-dialog-header, .p-dialog-footer) {
+  border-color: var(--border-weak);
+  background-color: var(--bg-card);
+}
+
+:where(.project-search-dialog,
+.project-floor-edit-dialog,
+.execution-quote-client-dialog,
+.execution-quote-show__edit-dialog,
+.final-result-dialog,
+.not-ready-dialog) :where(.dialog-header__icon, [class$=__heading-icon]) {
+  display: inline-grid;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border: 1px solid var(--workflow-accent-12);
+  border-radius: 12px;
+  color: var(--workflow-accent);
+  background-color: var(--workflow-accent-soft);
+}
+
+/* ── RTL/LTR and responsive adaptations ───────────────────────── */
+.project-workflow-view :where(code, .show-id, [class$=__date], [class$=__amount]) {
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
+@media (max-width: 1199px) {
+  .project-workflow-view .execution-quote-index__filters-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .project-workflow-view .execution-quote-index__filter-actions {
+    grid-column: 1/-1;
+    justify-content: flex-end;
+  }
+}
+@media (max-width: 767px) {
+  .project-workflow-view {
+    --workflow-card-padding: 14px;
+    --workflow-section-gap: 14px;
+  }
+  .project-workflow-view .index-page-heading {
+    min-height: auto;
+    padding-inline: 2px;
+  }
+  .project-workflow-view .execution-quote-index__filters-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .project-workflow-view .execution-quote-index__filter-actions {
+    grid-column: auto;
+    align-items: stretch;
+    flex-direction: column-reverse;
+  }
+  .project-workflow-view .execution-quote-index__filter-actions > * {
+    width: 100%;
+  }
+  .project-workflow-view :where(.form-action-pair, .buttons-container, .actions) {
+    align-items: stretch;
+    flex-direction: column-reverse;
+  }
+  .project-workflow-view :where(.form-action-pair, .buttons-container, .actions) :where(.btn, a) {
+    width: 100%;
+  }
+  .project-workflow-view .project-steps {
+    padding: 16px 12px;
+  }
+  .project-workflow-view :where(.quote-hero, .execution-quote-show__hero) {
+    border-radius: 12px;
+  }
+}
+@media (max-width: 479px) {
+  .project-workflow-view :where(.Project-form-card,
+  .form-section,
+  .project-floor-form-card,
+  .section-card,
+  .pricing-card,
+  .pricing-summary-card,
+  .show-card,
+  .execution-quote__card,
+  .execution-quote-show__card) {
+    border-radius: 12px;
+  }
+  .project-workflow-view .index-page-toolbar,
+  .project-workflow-view :where(.form-action-pair, .buttons-container) {
+    padding: 12px;
+  }
+}
+/* =============================================================================
    GLOBAL OVERRIDES & BASE STYLES
    ============================================================================= */
 html {

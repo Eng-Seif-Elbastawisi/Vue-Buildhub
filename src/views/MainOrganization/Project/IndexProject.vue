@@ -8,5 +8,8 @@
   ];
 </script>
 <template>
-  <ProjectIndex :statuses="pendingStatuses" />
+  <ProjectIndex
+    class="project-workflow-view project-workflow-view--index project-workflow-view--requests"
+    :statuses="pendingStatuses"
+  />
 </template>
