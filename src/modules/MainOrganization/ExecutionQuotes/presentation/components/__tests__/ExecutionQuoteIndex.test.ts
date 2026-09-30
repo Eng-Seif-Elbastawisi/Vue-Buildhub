@@ -169,12 +169,14 @@ describe('ExecutionQuoteIndex', () => {
     await flushPromises();
 
     await wrapper.get('.execution-quote-index__change-status-button').trigger('click');
+    await wrapper.get('#execution-quote-status-note').setValue('Ready for validation');
     await wrapper.get('.execution-quote-status-dialog__submit').trigger('click');
     await flushPromises();
 
     expect(statusRequest.mock.calls[0]?.[0].toMap()).toEqual({
       quote_id: 38,
       status: QuoteStatusEnum.PENDING_VALIDATION,
+      note: 'Ready for validation',
     });
     expect(indexRequest).toHaveBeenCalledTimes(2);
     expect(wrapper.get('.quote-status-badge').text()).toBe('Pending Validation');
@@ -199,12 +201,17 @@ describe('ExecutionQuoteIndex', () => {
     await wrapper.get('.execution-quote-index__change-status-button').trigger('click');
     const options = wrapper.findAll('.execution-quote-status-dialog__option');
     await options[1].trigger('click');
+    await wrapper.get('#execution-quote-status-note').setValue('Client-ready revision');
     await wrapper.get('.execution-quote-status-dialog__submit').trigger('click');
     await flushPromises();
 
     expect(statusRequest.mock.calls.map(([params]) => params.toMap())).toEqual([
-      { quote_id: 38, status: QuoteStatusEnum.PENDING_VALIDATION },
-      { quote_id: 38, status: QuoteStatusEnum.SENT_TO_CLIENT },
+      { quote_id: 38, status: QuoteStatusEnum.PENDING_VALIDATION, note: null },
+      {
+        quote_id: 38,
+        status: QuoteStatusEnum.SENT_TO_CLIENT,
+        note: 'Client-ready revision',
+      },
     ]);
     expect(indexRequest).toHaveBeenCalledTimes(2);
     expect(wrapper.get('.quote-status-badge').text()).toBe('Sent to Client');

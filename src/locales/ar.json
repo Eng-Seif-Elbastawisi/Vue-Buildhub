@@ -2913,6 +2913,8 @@
   "execution_quote.status.dialog_title": "تغيير حالة المقايسة",
   "execution_quote.status.current": "الحالة الحالية",
   "execution_quote.status.choose_next": "اختر الحالة التالية",
+  "execution_quote.status.note": "ملاحظة (اختيارية)",
+  "execution_quote.status.note_placeholder": "أضف ملاحظة حول تغيير الحالة",
   "execution_quote.status.update": "تحديث الحالة",
   "execution_quote.status.updated": "تم تحديث حالة المقايسة بنجاح."
 }

@@ -28,9 +28,12 @@ describe('ExecutionQuoteStatusDialog', () => {
       expect(wrapper.get('.execution-quote-status-dialog__submit').attributes('disabled')).toBe('');
 
       await options[1].trigger('click');
+      await wrapper.get('textarea').setValue('  Client requested this change  ');
       await wrapper.get('.execution-quote-status-dialog__submit').trigger('click');
 
-      expect(wrapper.emitted('submit')).toEqual([[QuoteStatusEnum.SENT_TO_CLIENT]]);
+      expect(wrapper.emitted('submit')).toEqual([
+        [QuoteStatusEnum.SENT_TO_CLIENT, 'Client requested this change'],
+      ]);
     },
   );
 
@@ -46,6 +49,6 @@ describe('ExecutionQuoteStatusDialog', () => {
     expect(wrapper.findAll('.execution-quote-status-dialog__option')).toHaveLength(1);
     await wrapper.get('.execution-quote-status-dialog__submit').trigger('click');
 
-    expect(wrapper.emitted('submit')).toEqual([[QuoteStatusEnum.PENDING_VALIDATION]]);
+    expect(wrapper.emitted('submit')).toEqual([[QuoteStatusEnum.PENDING_VALIDATION, null]]);
   });
 });

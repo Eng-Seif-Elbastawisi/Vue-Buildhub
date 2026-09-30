@@ -13,11 +13,13 @@ describe('ChangeQuoteStatusParams', () => {
     const valid = new ChangeQuoteStatusParams({
       quoteId: 10,
       status: QuoteStatusEnum.SENT_TO_CLIENT,
+      note: '  Client approved the quote  ',
     });
     expect(valid.validate().isValid).toBe(true);
     expect(valid.toMap()).toEqual({
       quote_id: 10,
       status: QuoteStatusEnum.SENT_TO_CLIENT,
+      note: 'Client approved the quote',
     });
   });
 });
