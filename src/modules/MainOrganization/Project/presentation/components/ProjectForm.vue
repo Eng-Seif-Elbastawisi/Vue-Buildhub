@@ -562,28 +562,15 @@ watch(
       <section class="form-section form-section--request">
         <div class="form-section__grid form-section__grid--two">
           <div id="project-title-field" class="field-group">
-            <MultiLangInput
-              field-key="title"
-              :label="$t('title')"
-              :languages="['ar', 'en']"
-              :model-value="titleTranslations"
-              type="title"
-              required
-              @update:model-value="updateTitleTranslations"
-            />
+            <MultiLangInput field-key="title" :label="$t('title')" :languages="['ar', 'en']"
+              :model-value="titleTranslations" type="title" required @update:model-value="updateTitleTranslations" />
           </div>
 
           <div id="project-type-field" class="field-group">
-            <UpdatedCustomInputSelect
-              id="project_type_id"
-              :model-value="selectedProjectType"
-              :label="$t('project_type_id')"
-              :controller="projectTypeController"
-              :placeholder="$t('project_type_id_placeholder')"
-              :params="indexProjectTypeParams"
-              required
-              @update:model-value="updateProjectType"
-            />
+            <UpdatedCustomInputSelect id="project_type_id" :model-value="selectedProjectType"
+              :label="$t('project_type_id')" :controller="projectTypeController"
+              :placeholder="$t('project_type_id_placeholder')" :params="indexProjectTypeParams" required
+              @update:model-value="updateProjectType" />
           </div>
 
           <div class="field-group">
@@ -592,96 +579,50 @@ watch(
               <FieldHelpIcon :label="$t('date')" field-name="date" field-id="date" />
             </span>
 
-            <DatePicker
-              input-id="date"
-              :model-value="selectedDate"
-              date-format="yy-mm-dd"
-              show-icon
-              icon-display="input"
-              :manual-input="false"
-              :placeholder="$t('date_placeholder')"
-              input-class="field-input"
-              class="date-picker"
-              @update:model-value="updateDate"
-            />
+            <DatePicker input-id="date" :model-value="selectedDate" date-format="yy-mm-dd" show-icon
+              icon-display="input" :manual-input="false" :placeholder="$t('date_placeholder')" input-class="field-input"
+              class="date-picker" @update:model-value="updateDate" />
           </div>
 
           <template v-if="!isEdit">
             <div id="client-type-field" class="field-group">
-              <UpdatedCustomInputSelect
-                id="client_exist"
-                :model-value="selectedClientExist"
-                :label="$t('client_type')"
-                :static-options="clientExistOptions"
-                :placeholder="$t('Project.client_exist_placeholder')"
-                required
-                @update:model-value="updateClientExist"
-              />
+              <UpdatedCustomInputSelect id="client_exist" :model-value="selectedClientExist" :label="$t('client_type')"
+                :static-options="clientExistOptions" :placeholder="$t('Project.client_exist_placeholder')" required
+                @update:model-value="updateClientExist" />
             </div>
 
             <div v-if="selectedClientExist && client_exist" id="client-field" class="field-group">
-              <UpdatedCustomInputSelect
-                id="client_id"
-                :model-value="selectedClient"
-                :label="$t('client_id')"
-                :controller="clientController"
-                :placeholder="$t('client_id_placeholder')"
-                :params="indexClientParams"
-                required
-                @update:model-value="updateClient"
-              />
+              <UpdatedCustomInputSelect id="client_id" :model-value="selectedClient" :label="$t('client_id')"
+                :controller="clientController" :placeholder="$t('client_id_placeholder')" :params="indexClientParams"
+                required @update:model-value="updateClient" />
             </div>
 
             <template v-if="selectedClientExist && client_exist === false">
               <div id="client-source-field" class="field-group">
                 <span class="field-help-label-row field-help-label-row--block">
                   <label class="field-label" for="client_name">{{ $t('client_name') }}</label>
-                  <FieldHelpIcon
-                    :label="$t('client_name')"
-                    field-name="name"
-                    field-id="client_name"
-                  />
+                  <FieldHelpIcon :label="$t('client_name')" field-name="name" field-id="client_name" />
                 </span>
 
-                <input
-                  id="client_name"
-                  v-model="client_name"
-                  class="field-input"
-                  :placeholder="$t('client_name_placeholder')"
-                  @input="updateData"
-                />
+                <input id="client_name" v-model="client_name" class="field-input"
+                  :placeholder="$t('client_name_placeholder')" @input="updateData" />
               </div>
 
               <div class="field-group">
                 <span class="field-help-label-row field-help-label-row--block">
                   <label class="field-label" for="client_phone">{{ $t('client_phone') }}</label>
-                  <FieldHelpIcon
-                    :label="$t('client_phone')"
-                    field-name="phone"
-                    field-id="client_phone"
-                  />
+                  <FieldHelpIcon :label="$t('client_phone')" field-name="phone" field-id="client_phone" />
                 </span>
 
-                <input
-                  id="client_phone"
-                  v-model="client_phone"
-                  class="field-input"
-                  :placeholder="$t('client_phone_placeholder')"
-                  @input="updateData"
-                />
+                <input id="client_phone" v-model="client_phone" class="field-input"
+                  :placeholder="$t('client_phone_placeholder')" @input="updateData" />
               </div>
 
               <div class="field-group">
-                <UpdatedCustomInputSelect
-                  id="client_source"
-                  :model-value="selectedClientSource"
-                  :label="$t('client_source')"
-                  :controller="clientSourceController"
-                  :placeholder="$t('client_source_placeholder')"
-                  :params="indexClientSourceParams"
-                  required
-                  @update:model-value="updateClientSource"
-                />
+                <UpdatedCustomInputSelect id="client_source" :model-value="selectedClientSource"
+                  :label="$t('client_source')" :controller="clientSourceController"
+                  :placeholder="$t('client_source_placeholder')" :params="indexClientSourceParams" required
+                  @update:model-value="updateClientSource" />
               </div>
             </template>
           </template>
@@ -704,56 +645,28 @@ watch(
 
         <div class="form-section__grid form-section__grid--three">
           <div id="country-field" class="field-group">
-            <UpdatedCustomInputSelect
-              id="country_id"
-              :model-value="selectedCountry"
-              :label="$t('location.country')"
-              :controller="locationController"
-              :placeholder="$t('location.country_placeholder')"
-              :params="countryParams"
-              required
-              @update:model-value="updateCountry"
-            />
+            <UpdatedCustomInputSelect id="country_id" :model-value="selectedCountry" :label="$t('location.country')"
+              :controller="locationController" :placeholder="$t('location.country_placeholder')" :params="countryParams"
+              required @update:model-value="updateCountry" />
           </div>
 
           <div id="governorate-field" class="field-group">
-            <UpdatedCustomInputSelect
-              id="governorate_id"
-              :model-value="selectedGovernorate"
-              :label="$t('location.governorate')"
-              :controller="locationController"
-              :placeholder="
-                isGovernorateDisabled
-                  ? $t('location.select_country_first')
-                  : $t('location.governorate_placeholder')
-              "
-              :params="governorateParams"
-              :disabled="isGovernorateDisabled"
-              :readonly="isGovernorateDisabled"
-              required
-              @click.prevent="isGovernorateDisabled ? undefined : null"
-              @update:model-value="updateGovernorate"
-            />
+            <UpdatedCustomInputSelect id="governorate_id" :model-value="selectedGovernorate"
+              :label="$t('location.governorate')" :controller="locationController" :placeholder="isGovernorateDisabled
+                ? $t('location.select_country_first')
+                : $t('location.governorate_placeholder')
+                " :params="governorateParams" :disabled="isGovernorateDisabled" :readonly="isGovernorateDisabled"
+              required @click.prevent="isGovernorateDisabled ? undefined : null"
+              @update:model-value="updateGovernorate" />
           </div>
 
           <div id="city-field" class="field-group">
-            <UpdatedCustomInputSelect
-              id="city_id"
-              :model-value="selectedCity"
-              :label="$t('location.city')"
-              :controller="locationController"
-              :placeholder="
-                isCityDisabled
-                  ? $t('location.select_governorate_first')
-                  : $t('location.city_placeholder')
-              "
-              :params="cityParams"
-              :disabled="isCityDisabled"
-              :readonly="isCityDisabled"
-              required
-              @click.prevent="isCityDisabled ? undefined : null"
-              @update:model-value="updateCity"
-            />
+            <UpdatedCustomInputSelect id="city_id" :model-value="selectedCity" :label="$t('location.city')"
+              :controller="locationController" :placeholder="isCityDisabled
+                ? $t('location.select_governorate_first')
+                : $t('location.city_placeholder')
+                " :params="cityParams" :disabled="isCityDisabled" :readonly="isCityDisabled" required
+              @click.prevent="isCityDisabled ? undefined : null" @update:model-value="updateCity" />
           </div>
         </div>
       </section>
@@ -837,41 +750,19 @@ watch(
           </span>
 
           <div class="service-tabs">
-            <button
-              v-for="option in serviceTypeOptions"
-              :key="option.id"
-              type="button"
-              class="service-tab"
+            <button v-for="option in serviceTypeOptions" :key="option.id" type="button" class="service-tab"
               :class="{ active: selectedServiceType?.id === option.id }"
-              :aria-pressed="selectedServiceType?.id === option.id"
-              @click="updateServiceType(option)"
-            >
+              :aria-pressed="selectedServiceType?.id === option.id" @click="updateServiceType(option)">
               <span class="service-tab__icon" aria-hidden="true">
-                <svg
-                  v-if="option.id === ServiceType.EXECUTIONONLY"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.8"
-                >
+                <svg v-if="option.id === ServiceType.EXECUTIONONLY" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="1.8">
                   <path d="m14 7 3-3 3 3-3 3M5 19l8-8M4 20l3-1-2-2z" />
                 </svg>
-                <svg
-                  v-else-if="option.id === ServiceType.DESIGNONLY"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.8"
-                >
+                <svg v-else-if="option.id === ServiceType.DESIGNONLY" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="1.8">
                   <path d="M4 20h16M6 16 16 6l2 2L8 18H6zM13 7l2 2" />
                 </svg>
-                <svg
-                  v-else
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.8"
-                >
+                <svg v-else viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                   <path d="M4 20V9l8-5 8 5v11M9 20v-5h6v5M8 10h8" />
                 </svg>
               </span>
@@ -897,14 +788,9 @@ watch(
         </header>
 
         <div class="field-group">
-          <MultiLangInput
-            field-key="description"
-            :label="$t('description')"
-            :languages="['ar', 'en']"
-            :model-value="descriptionTranslations"
-            type="description"
-            @update:model-value="updateDescriptionTranslations"
-          />
+          <MultiLangInput field-key="description" :label="$t('description')" :languages="['ar', 'en']"
+            :model-value="descriptionTranslations" type="description"
+            @update:model-value="updateDescriptionTranslations" />
         </div>
       </section>
 
@@ -929,22 +815,14 @@ watch(
             <FieldHelpIcon :label="$t('notes')" field-name="notes" field-id="notes" />
           </span>
 
-          <textarea
-            id="notes"
-            v-model="notes"
-            class="field-input field-textarea"
-            :placeholder="$t('notes_placeholder')"
-            @input="updateData"
-          />
+          <textarea id="notes" v-model="notes" class="field-input field-textarea" :placeholder="$t('notes_placeholder')"
+            @input="updateData" />
         </div>
       </section>
 
       <section class="form-section form-section--attachments">
-        <ProjectAttachmentManager
-          v-model="attachmentItems"
-          :existing-files="attachmentFiles"
-          @change="updateAttachmentItems"
-        />
+        <ProjectAttachmentManager v-model="attachmentItems" :existing-files="attachmentFiles"
+          @change="updateAttachmentItems" />
       </section>
     </div>
   </div>
@@ -1039,7 +917,7 @@ watch(
   padding-block-end: 0.95rem;
   border-block-end: 1px solid var(--gray-200-alpha-50);
 
-  > span:last-child {
+  >span:last-child {
     display: grid;
     min-width: 0;
     gap: 0.15rem;
@@ -1374,6 +1252,7 @@ watch(
 }
 
 @media (max-width: 768px) {
+
   .form-section__grid--two,
   .form-section__grid--three,
   .form-section__grid--terms,
@@ -1417,6 +1296,7 @@ watch(
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   .field-input,
   .service-tab,
   .service-tab__icon,
