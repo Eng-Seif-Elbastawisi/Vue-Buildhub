@@ -20,6 +20,7 @@
     type ExecutionQuoteType,
   } from '../../core/constants/execution.quote.type.enum';
   import { getQuoteSourceTitleKey, QuoteSourceEnum } from '../../core/constants/quote.source.enum';
+  import { QuoteStatusEnum } from '../../core/constants/quote.status.enum';
   import type ExecutionQuoteShowModel from '../../core/models/execution.quote.show.model';
   import IndexExecutionQuoteParams from '../../core/params/index.execution.quote.params';
   import ExecutionQuoteController from '../controllers/execution.quote.controller';
@@ -160,6 +161,10 @@
       ...(existingStageId ? { params: { stageId: String(existingStageId) } } : {}),
       query: { id: String(quote.id) },
     });
+  };
+
+  const canModifyQuote = (quote: ExecutionQuoteShowModel): boolean => {
+    return quote.quoteStatus !== QuoteStatusEnum.SENT_TO_CLIENT;
   };
 
   const headers: TableHeader[] = [
@@ -493,31 +498,33 @@
 
             <template #actions="{ item }">
               <div class="execution-quote-index__row-actions">
-                <AppButton
-                  class="execution-quote-index__add-item-button"
-                  size="sm"
-                  icon="right"
-                  @click="openAddItem(item)"
-                >
-                  <template #icon>
-                    <i class="pi pi-list" aria-hidden="true"></i>
-                  </template>
-                  {{ $t('execution_quote.table.add_item') }}
-                </AppButton>
+                <template v-if="canModifyQuote(item)">
+                  <AppButton
+                    class="execution-quote-index__add-item-button"
+                    size="sm"
+                    icon="right"
+                    @click="openAddItem(item)"
+                  >
+                    <template #icon>
+                      <i class="pi pi-list" aria-hidden="true"></i>
+                    </template>
+                    {{ $t('execution_quote.table.add_item') }}
+                  </AppButton>
 
-                <AppButton
-                  class="execution-quote-index__add-stage-button"
-                  size="sm"
-                  theme="secondary"
-                  icon="right"
-                  outline
-                  @click="openAddStage(item)"
-                >
-                  <template #icon>
-                    <i class="pi pi-sitemap" aria-hidden="true"></i>
-                  </template>
-                  {{ $t('execution_quote.table.add_stage') }}
-                </AppButton>
+                  <AppButton
+                    class="execution-quote-index__add-stage-button"
+                    size="sm"
+                    theme="secondary"
+                    icon="right"
+                    outline
+                    @click="openAddStage(item)"
+                  >
+                    <template #icon>
+                      <i class="pi pi-sitemap" aria-hidden="true"></i>
+                    </template>
+                    {{ $t('execution_quote.table.add_stage') }}
+                  </AppButton>
+                </template>
 
                 <QuoteStatusBadge :status="item.quoteStatus" />
 

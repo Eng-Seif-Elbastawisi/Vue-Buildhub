@@ -5,6 +5,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { DataInitial } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
 import UpdatedCustomInputSelect from '@/shared/FormInputs/UpdatedCustomInputSelect.vue';
 
+import { QuoteStatusEnum } from '../../../core/constants/quote.status.enum';
 import ExecutionQuoteApiService from '../../../data/api/execution.quote.api-service';
 import ExecutionQuoteController from '../../controllers/execution.quote.controller';
 import ExecutionQuoteIndex from '../ExecutionQuoteIndex.vue';
@@ -16,7 +17,12 @@ vi.mock('vue-router', async (importOriginal) => ({
   useRouter: () => ({ push }),
 }));
 
-const createIndexResponse = (page: number, projectTitle: string, quoteType = 1) => ({
+const createIndexResponse = (
+  page: number,
+  projectTitle: string,
+  quoteType = 1,
+  quoteStatus: QuoteStatusEnum = QuoteStatusEnum.DRAFT,
+) => ({
   statusCode: 200,
   data: {
     status: true,
@@ -28,7 +34,7 @@ const createIndexResponse = (page: number, projectTitle: string, quoteType = 1) 
           project: { id: 207, title: projectTitle },
           client: { id: 30, name: 'شارع', phone: '111', status: 1 },
           quote_type: quoteType,
-          quote_status: 1,
+          quote_status: quoteStatus,
           price_employee: { id: 92, name: 'fwffefefe' },
           quote_stages: [
             {
@@ -170,6 +176,24 @@ describe('ExecutionQuoteIndex', () => {
       name: 'Build Execution Quote',
       params: { stageId: '129' },
       query: { id: '38' },
+    });
+  });
+
+  it('shows only the view action when a quote has been sent to the client', async () => {
+    indexRequest.mockResolvedValue(
+      createIndexResponse(1, 'Sent quote', 1, QuoteStatusEnum.SENT_TO_CLIENT),
+    );
+
+    const wrapper = mountIndex();
+    await flushPromises();
+
+    expect(wrapper.find('.execution-quote-index__add-stage-button').exists()).toBe(false);
+    expect(wrapper.find('.execution-quote-index__add-item-button').exists()).toBe(false);
+
+    await wrapper.get('.execution-quote-index__view-button').trigger('click');
+    expect(push).toHaveBeenLastCalledWith({
+      name: 'Show Execution Quote',
+      params: { id: '38' },
     });
   });
 
