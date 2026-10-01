@@ -899,7 +899,7 @@ watch(
               <!-- SHOW -->
 
               <router-link
-                class="action-btn edit"
+                class="action-btn show"
                 :to="
                   user?.isMaster
                     ? `/admin/Project/show/${item.id}`

@@ -3,6 +3,7 @@
   import { useRoute, useRouter } from 'vue-router';
 
   import AppButton from '@/shared/HelpersComponents/AppButton.vue';
+  import StandardFormSectionHeader from '@/shared/components/form/StandardFormSectionHeader.vue';
   import IconAccept from '@/shared/icons/IconAccept.vue';
 
   import type AddMeasurementParams from '../../core/params/add.measurement.params';
@@ -66,6 +67,7 @@
 
 <template>
   <div class="Measurement-crud-page">
+    <StandardFormSectionHeader :title="$t('measurement')" icon="pi pi-sliders-h" />
     <MeasurementForm
       :measurement="controller.itemData.value!"
       :loading="loading"

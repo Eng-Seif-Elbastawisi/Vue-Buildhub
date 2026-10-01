@@ -70,7 +70,7 @@ const handleStatusChange = (event: Event): void => {
   <div class="task-status-action">
     <router-link
       v-if="showRoute"
-      class="action-btn edit"
+      class="action-btn show"
       :to="showRoute"
       :title="$t('show')"
     >
@@ -80,7 +80,7 @@ const handleStatusChange = (event: Event): void => {
     <button
       v-else
       type="button"
-      class="action-btn edit"
+      class="action-btn show"
       disabled
       :title="$t('show')"
     >

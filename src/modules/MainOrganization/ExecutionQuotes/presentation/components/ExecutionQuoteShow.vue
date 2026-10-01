@@ -24,7 +24,7 @@ import {
   getExecutionQuoteTypeTitleKey,
   type ExecutionQuoteType,
 } from '../../core/constants/execution.quote.type.enum';
-import { getQuoteSourceTitleKey, QuoteSourceEnum } from '../../core/constants/quote.source.enum';
+import { getQuoteSourceTitleKey } from '../../core/constants/quote.source.enum';
 import type ExecutionQuoteShowModel from '../../core/models/execution.quote.show.model';
 import type {
   ExecutionQuoteStageItemSummary,
@@ -747,6 +747,7 @@ onMounted(() => {
                                 <div class="execution-quote-show__item-actions">
                                   <AppButton
                                     class="execution-quote-show__item-action execution-quote-show__item-action--edit"
+                                    action-tone="edit"
                                     size="sm" theme="secondary" outline icon-only :disabled="!quoteItem.id ||
                                       editingQuoteItemId !== undefined ||
                                       deletingQuoteItemId !== undefined
@@ -759,6 +760,7 @@ onMounted(() => {
 
                                   <AppButton
                                     class="execution-quote-show__item-action execution-quote-show__item-action--delete"
+                                    action-tone="delete"
                                     size="sm" theme="danger" outline icon-only
                                     :loading="deletingQuoteItemId === quoteItem.id" :disabled="!quoteItem.id ||
                                       editingQuoteItemId !== undefined ||

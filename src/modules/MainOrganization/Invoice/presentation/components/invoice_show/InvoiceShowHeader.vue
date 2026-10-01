@@ -33,7 +33,7 @@
 
       <div class="invoice-show-header__actions">
         <button
-          class="invoice-show-btn invoice-show-btn--light"
+          class="invoice-show-btn invoice-show-btn--light action--download"
           type="button"
           @click="$emit('download')"
         >
@@ -42,7 +42,7 @@
         </button>
         <button
           v-if="invoice.export_status === 0"
-          class="invoice-show-btn invoice-show-btn--outline"
+          class="invoice-show-btn invoice-show-btn--outline action--download"
           type="button"
           :disabled="exportingInvoice"
           @click="$emit('exportInvoice')"

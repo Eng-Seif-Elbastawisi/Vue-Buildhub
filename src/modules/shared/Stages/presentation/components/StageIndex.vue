@@ -249,7 +249,7 @@
                 />
                 <!-- Sub Stages -->
                 <router-link
-                  class="action-btn"
+                  class="action-btn show"
                   :to="subStagesRoute(item.id)"
                   :title="$t('sub_stage.list_title')"
                 >

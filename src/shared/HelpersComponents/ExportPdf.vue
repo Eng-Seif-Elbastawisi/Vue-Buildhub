@@ -242,7 +242,7 @@
 
 <template>
   <button
-    class="btn btn-secondary ms-2"
+    class="btn btn-secondary ms-2 action--download"
     type="button"
     :disabled="exporting"
     @click="exportPDF"

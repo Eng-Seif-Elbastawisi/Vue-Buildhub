@@ -1,3 +1,5 @@
+@use 'dashboard-action-colors';
+
 /* Shared authenticated dashboard shell, promoted from the approved Execution Quotes pilot. */
 body:has(.dashboard-shell) {
   --quote-ink: #272a2b;
@@ -348,6 +350,11 @@ body:has(.dashboard-shell) {
   }
 }
 
+.dashboard-shell .dashboard-breadcrumb-row {
+  min-width: 0;
+  padding: 8px 26px 0;
+  background: transparent;
+}
 
 body:has(.dashboard-shell) .mobile-sidebar-layer {
   background: var(--quote-overlay);
@@ -476,6 +483,10 @@ body:has(.dashboard-shell) .mobile-sidebar-fade-leave-active .mobile-sidebar-dra
       outline-offset: 2px;
     }
   }
+
+  .dashboard-shell .dashboard-breadcrumb-row {
+    padding-inline: 18px;
+  }
 }
 
 
@@ -484,7 +495,7 @@ body:has(.dashboard-shell) .mobile-sidebar-fade-leave-active .mobile-sidebar-dra
 }
 
 .dashboard-shell .index-page-header {
-  margin-block-start: max(24px, var(--page-section-gap));
+  margin-block-start: 12px;
 }
 
 .dashboard-shell .main-content .index-page-heading {
@@ -505,7 +516,7 @@ body:has(.dashboard-shell) .mobile-sidebar-fade-leave-active .mobile-sidebar-dra
 
 .dashboard-shell .feature-header-container {
   min-height: 64px;
-  margin: 24px auto 16px;
+  margin: 12px auto 16px;
   padding: 0;
   overflow: visible;
   border: 0;
@@ -540,7 +551,7 @@ body:has(.dashboard-shell) .mobile-sidebar-fade-leave-active .mobile-sidebar-dra
   }
 
   .dashboard-shell .feature-header-container {
-    margin-block-start: var(--page-section-gap);
+    margin-block-start: 10px;
   }
 
   .dashboard-shell .feature-header-container .title {

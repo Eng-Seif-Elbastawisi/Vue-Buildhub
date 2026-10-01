@@ -3,5 +3,5 @@
 </script>
 
 <template>
-  <OrganizationEdit />
+  <OrganizationEdit class="standard-crud-page" />
 </template>

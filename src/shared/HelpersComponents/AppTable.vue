@@ -329,7 +329,7 @@
         :title="$t('bulk_delete_title')"
         :message="$t('bulk_delete_message')"
         :trigger-label="bulkDeleteLabel"
-        trigger-class="btn-add"
+        trigger-class="btn-add action--delete"
         :disabled="isBulkDeleting"
         @delete="deleteSelectedRows"
       />
@@ -631,6 +631,115 @@
     cursor: grabbing;
   }
 
+  .dashboard-shell .app-table-wrapper--standard .app-table .td-actions .action-btn {
+    --row-action-ink: var(--quote-ink, var(--gray-600));
+    --row-action-paper: var(--quote-paper, var(--bg-card));
+
+    display: inline-grid;
+    place-items: center;
+    flex: 0 0 34px;
+    box-sizing: border-box;
+    width: 34px;
+    min-width: 34px;
+    height: 34px;
+    min-height: 34px;
+    padding: 0;
+    border: 1px solid color-mix(in sRGB, var(--row-action-ink) 18%, var(--row-action-paper));
+    border-radius: 8px;
+    color: var(--row-action-ink);
+    background: color-mix(in sRGB, var(--row-action-ink) 9%, var(--row-action-paper));
+    box-shadow: none;
+    font-size: 16px;
+    text-decoration: none;
+    cursor: pointer;
+    transition:
+      color 160ms ease,
+      border-color 160ms ease,
+      background-color 160ms ease,
+      transform 160ms ease;
+  }
+
+  .dashboard-shell .app-table-wrapper--standard .app-table .td-actions .action-btn:is(.show, .view) {
+    --row-action-ink: var(--info-dark);
+
+    color: var(--row-action-ink);
+  }
+
+  .dashboard-shell .app-table-wrapper--standard .app-table .td-actions .action-btn.edit {
+    --row-action-ink: var(--quote-copper-dark);
+
+    color: var(--row-action-ink);
+  }
+
+  .dashboard-shell .app-table-wrapper--standard .app-table .td-actions .action-btn:is(.delete, .danger) {
+    --row-action-ink: var(--danger);
+
+    color: var(--row-action-ink);
+  }
+
+  .dashboard-shell .app-table-wrapper--standard .app-table .td-actions .action-btn:is(.execution-btn, .calculator, .pricing, .financial) {
+    --row-action-ink: #0f766e;
+
+    color: var(--row-action-ink);
+  }
+
+  .dashboard-shell .app-table-wrapper--standard .app-table .td-actions .action-btn svg {
+    width: 17px;
+    height: 17px;
+  }
+
+  .dashboard-shell .app-table-wrapper--standard .app-table .td-actions .action-btn i {
+    font-size: 16px;
+  }
+
+  .dashboard-shell .app-table-wrapper--standard .app-table .td-actions .action-btn:hover:not(:disabled, [aria-disabled='true']) {
+    border-color: color-mix(in sRGB, var(--row-action-ink) 42%, var(--row-action-paper));
+    color: var(--row-action-ink);
+    background: color-mix(in sRGB, var(--row-action-ink) 17%, var(--row-action-paper));
+    box-shadow: none;
+    transform: translateY(-1px);
+  }
+
+  .dashboard-shell .app-table-wrapper--standard .app-table .td-actions .action-btn:active:not(:disabled, [aria-disabled='true']) {
+    background: color-mix(in sRGB, var(--row-action-ink) 24%, var(--row-action-paper));
+    transform: translateY(1px);
+  }
+
+  .dashboard-shell .app-table-wrapper--standard .app-table .td-actions .action-btn:focus-visible {
+    outline: 2px solid var(--row-action-ink);
+    outline-offset: 2px;
+  }
+
+  .dashboard-shell .app-table-wrapper--standard .app-table .td-actions .action-btn:is(:disabled, [aria-disabled='true']) {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
+  .dashboard-shell .app-table-wrapper--standard .app-table .td-actions .app-btn.action--view {
+    --row-action-ink: var(--info-dark);
+    --row-action-paper: var(--quote-paper, var(--bg-card));
+
+    min-height: 34px;
+    border-color: color-mix(in sRGB, var(--row-action-ink) 18%, var(--row-action-paper));
+    color: var(--row-action-ink);
+    background: color-mix(in sRGB, var(--row-action-ink) 9%, var(--row-action-paper));
+  }
+
+  .dashboard-shell .app-table-wrapper--standard .app-table .td-actions .app-btn.action--view:hover:not(:disabled) {
+    border-color: color-mix(in sRGB, var(--row-action-ink) 42%, var(--row-action-paper));
+    color: var(--row-action-ink);
+    background: color-mix(in sRGB, var(--row-action-ink) 17%, var(--row-action-paper));
+  }
+
+  .dashboard-shell .app-table-wrapper--standard .app-table .td-actions .app-btn.action--view:focus-visible {
+    outline: 2px solid var(--row-action-ink);
+    outline-offset: 2px;
+  }
+
+  .dashboard-shell .app-table-wrapper--standard .app-table .td-actions .app-btn .btn__icon i {
+    font-size: 16px;
+  }
+
   .app-table tbody tr.drag-over-top .drag-handle-icon,
   .app-table tbody tr.drag-over-bottom .drag-handle-icon {
     color: var(--PrimaryColor);
@@ -641,7 +750,8 @@
 
   @media (prefers-reduced-motion: reduce) {
     .app-table tbody tr > td,
-    .drag-handle-icon {
+    .drag-handle-icon,
+    .app-table-wrapper--standard .app-table .td-actions .action-btn {
       transition: none;
     }
   }

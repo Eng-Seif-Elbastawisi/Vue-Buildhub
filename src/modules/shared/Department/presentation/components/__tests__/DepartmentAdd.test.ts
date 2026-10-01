@@ -45,9 +45,9 @@ describe('DepartmentAdd', () => {
     expect(wrapper.find('.department-form-stub').attributes('data-reset-key')).toBe('1');
   });
 
-  it('passes route department type to the form', () => {
+  it.each([Type.DESIGN, Type.SUPERVISION])('keeps type %s in the shared inline form layout', (type) => {
     const wrapper = mount(DepartmentAdd, {
-      props: { type: Type.DESIGN },
+      props: { type },
       global: {
         mocks: { $t: (key: string) => key },
         stubs: {
@@ -60,6 +60,8 @@ describe('DepartmentAdd', () => {
       },
     });
 
-    expect(wrapper.find('.department-form-stub').attributes('data-type')).toBe(String(Type.DESIGN));
+    expect(wrapper.get('section.department-inline-form').exists()).toBe(true);
+    expect(wrapper.find('section.department-page').exists()).toBe(false);
+    expect(wrapper.find('.department-form-stub').attributes('data-type')).toBe(String(type));
   });
 });
