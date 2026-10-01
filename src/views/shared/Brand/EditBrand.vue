@@ -3,5 +3,5 @@
 </script>
 
 <template>
-  <BrandEdit />
+  <BrandEdit class="standard-crud-page" />
 </template>

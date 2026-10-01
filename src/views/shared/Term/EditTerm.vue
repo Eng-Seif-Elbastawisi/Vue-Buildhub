@@ -3,5 +3,5 @@
 </script>
 
 <template>
-  <TermEdit />
+  <TermEdit class="standard-crud-page" />
 </template>

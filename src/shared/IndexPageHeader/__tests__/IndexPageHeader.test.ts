@@ -19,7 +19,7 @@ describe('IndexPageHeader', () => {
     expect(wrapper.find('.index-page-toolbar').exists()).toBe(false);
   });
 
-  it('keeps search before actions and filters in a separate toolbar row', () => {
+  it('places existing actions opposite the title and search and filters below it', () => {
     const wrapper = mount(IndexPageHeader, {
       props: { title: 'Products' },
       slots: {
@@ -31,13 +31,12 @@ describe('IndexPageHeader', () => {
 
     const toolbar = wrapper.get('.index-page-toolbar');
     const search = toolbar.get('[data-test="search"]');
-    const action = toolbar.get('[data-test="add"]');
+    const action = wrapper.get('.index-page-heading__actions [data-test="add"]');
     const filters = toolbar.get('.index-page-toolbar__filters');
 
     expect(toolbar.element.contains(search.element)).toBe(true);
-    expect(search.element.compareDocumentPosition(action.element)).toBe(
-      Node.DOCUMENT_POSITION_FOLLOWING,
-    );
+    expect(wrapper.get('.index-page-heading').element.contains(action.element)).toBe(true);
+    expect(toolbar.element.contains(action.element)).toBe(false);
     expect(filters.find('[data-test="status"]').exists()).toBe(true);
   });
 
@@ -52,8 +51,9 @@ describe('IndexPageHeader', () => {
     });
 
     expect(searchOnly.find('.index-page-toolbar__search').exists()).toBe(true);
-    expect(searchOnly.find('.index-page-toolbar__actions').exists()).toBe(false);
+    expect(searchOnly.find('.index-page-heading__actions').exists()).toBe(false);
     expect(actionOnly.find('.index-page-toolbar__search').exists()).toBe(false);
-    expect(actionOnly.find('.index-page-toolbar__actions').exists()).toBe(true);
+    expect(actionOnly.find('.index-page-heading__actions').exists()).toBe(true);
+    expect(actionOnly.find('.index-page-toolbar').exists()).toBe(false);
   });
 });

@@ -1,5 +1,6 @@
 import 'primeicons/primeicons.css';
 import './styles/main.min.css';
+import './styles/standard-crud-form.scss';
 import { createApp } from 'vue';
 import PrimeVue from 'primevue/config';
 import { createPinia } from 'pinia';
@@ -19,6 +20,10 @@ const app = createApp(App)
   .use(PrimeVue, {
     theme: {
       preset: Aura,
+    },
+    zIndex: {
+      // Keep body-teleported dialogs above both dashboard sidebar layers.
+      modal: 1600,
     },
   })
   .use(pinia)

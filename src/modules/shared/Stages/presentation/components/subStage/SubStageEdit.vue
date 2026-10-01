@@ -2,7 +2,6 @@
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
-import type AddStageParams from '../../../core/params/add.stges.params.ts';
 import type EditStageParams from '../../../core/params/edit.stage.params.ts';
 import ShowStageParams from '../../../core/params/show.stage.params.ts';
 import StageController from '../../controllers/stage.controller.ts';
@@ -60,35 +59,16 @@ onMounted(async () => {
 :stage="controller.itemData.value!" :parent-id="parentId" :loading="loading" :is-edit="true"
       @update-data="updateData" />
 
-    <button
+    <div class="form-actions">
+      <button
 class="btn btn-primary" :class="{ 'btn--loading': loading }" type="button" :disabled="loading"
-      @click="saveStage">
-      {{ $t('stage.update') }}
-    </button>
+        @click="saveStage">
+        {{ $t('stage.update') }}
+      </button>
+    </div>
 
     <div v-if="controller.errorMessage.value" class="error">
       {{ controller.errorMessage.value }}
     </div>
   </div>
 </template>
-
-<style scoped>
-.Stage-crud-page {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.error {
-  margin-top: 20px;
-  padding: 10px;
-  background-color: var(--danger-light);
-  color: var(--danger-dark);
-  border: 1px solid #f5c6cb;
-  border-radius: 4px;
-}
-
-.btn-primary {
-  width: 100%;
-}
-</style>

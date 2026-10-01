@@ -464,7 +464,7 @@
 }
 
 /* ── Tables, lists, status and pagination ──────────────────────── */
-.project-workflow-view .table-responsive,
+.project-workflow-view .table-responsive:not(.app-table-wrapper--standard > .table-responsive),
 .project-workflow-view :where(.execution-quote-index__table-card, .local-table-wrap, .table-wrap) {
   overflow-x: auto;
   border: 1px solid var(--border-weak);
@@ -498,19 +498,23 @@
   border-radius: var(--radius-full);
 }
 
-.project-workflow-view .pagination-wrapper {
+.project-workflow-view .pagination-wrapper:not(.pagination-wrapper--standard) {
   padding: 14px 16px;
   border-radius: var(--card-radius);
   box-shadow: var(--shadow-sm);
 }
 
-.project-workflow-view .pagination-wrapper :where(.pagination-item, .pagination-btn) {
+.project-workflow-view
+  .pagination-wrapper:not(.pagination-wrapper--standard)
+  :where(.pagination-item, .pagination-btn) {
   min-width: 38px;
   min-height: 38px;
   border-radius: var(--radius-sm);
 }
 
-.project-workflow-view .pagination-wrapper :where(.pagination-item, .pagination-btn).active {
+.project-workflow-view
+  .pagination-wrapper:not(.pagination-wrapper--standard)
+  :where(.pagination-item, .pagination-btn).active {
   border-color: var(--workflow-accent);
   color: var(--white);
   background-color: var(--workflow-accent);

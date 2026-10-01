@@ -10,7 +10,7 @@
 </script>
 
 <template>
-  <main class="content">
+  <main class="content dashboard-shell">
     <MobileTopBar @open-sidebar="isMobileSidebarOpen = true" />
     <MobileSidebarDrawer v-model:open="isMobileSidebarOpen" />
 
@@ -67,3 +67,5 @@
     }
   }
 </style>
+
+<style lang="scss" src="./styles/dashboard-shell.scss"></style>

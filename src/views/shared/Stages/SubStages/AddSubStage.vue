@@ -3,5 +3,5 @@
 </script>
 
 <template>
-  <SubStageAdd />
+  <SubStageAdd class="standard-crud-page" />
 </template>

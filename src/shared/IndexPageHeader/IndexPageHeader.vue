@@ -13,8 +13,7 @@
 
   const slots = useSlots();
 
-  const hasPrimaryControls = computed(() => Boolean(slots.search || slots.actions));
-  const hasToolbar = computed(() => Boolean(hasPrimaryControls.value || slots.filters));
+  const hasToolbar = computed(() => Boolean(slots.search || slots.filters));
 </script>
 
 <template>
@@ -32,16 +31,16 @@
           <slot name="meta" />
         </div>
       </div>
+      <div v-if="$slots.actions" class="index-page-heading__actions">
+        <slot name="actions" />
+      </div>
       <slot name="decoration" />
     </header>
 
     <section v-if="hasToolbar" class="index-page-toolbar">
-      <div v-if="hasPrimaryControls" class="index-page-toolbar__primary">
-        <div v-if="$slots.search" class="index-page-toolbar__search">
+      <div v-if="$slots.search" class="index-page-toolbar__primary">
+        <div class="index-page-toolbar__search">
           <slot name="search" />
-        </div>
-        <div v-if="$slots.actions" class="index-page-toolbar__actions">
-          <slot name="actions" />
         </div>
       </div>
 
@@ -64,11 +63,12 @@
   .index-page-heading {
     position: relative;
     display: flex;
-    align-items: flex-start;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
     width: 100%;
-    overflow: hidden;
-    padding-block: 2px 18px;
-    border-bottom: 1px solid var(--border-weak);
+    min-height: 64px;
+    padding-block: 2px;
   }
 
   .index-page-heading__copy {
@@ -78,19 +78,29 @@
 
   .index-page-heading__title {
     margin: 0;
-    color: var(--form-title);
+    color: var(--quote-ink, var(--form-title));
     font-family: 'Bold', var(--font-family);
-    font-size: clamp(1.25rem, 2vw, 1.6rem);
+    font-size: 1.7rem;
     font-weight: 700;
-    line-height: 1.3;
+    line-height: 1.35;
   }
 
   .index-page-heading__subtitle {
     max-width: 70ch;
-    margin: 4px 0 0;
-    color: var(--gray-500);
-    font-size: var(--sm-size);
-    line-height: 1.6;
+    margin: 6px 0 0;
+    color: var(--quote-muted, var(--gray-500));
+    font-size: 0.84rem;
+    line-height: 1.5;
+  }
+
+  .index-page-heading__actions {
+    display: flex;
+    flex: 0 0 auto;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-inline-start: auto;
   }
 
   .index-page-heading__meta {
@@ -174,16 +184,6 @@
     box-shadow: var(--focus-ring);
   }
 
-  .index-page-toolbar__actions {
-    display: flex;
-    flex: 0 0 auto;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 10px;
-    margin-inline-start: auto;
-  }
-
   .index-page-toolbar__filters {
     min-width: 0;
     width: 100%;
@@ -195,6 +195,29 @@
   }
 
   @media (max-width: 767px) {
+    .index-page-heading {
+      min-height: 0;
+      align-items: stretch;
+      flex-direction: column;
+      gap: var(--page-section-gap);
+    }
+
+    .index-page-heading__title {
+      font-size: 1.45rem;
+    }
+
+    .index-page-heading__actions {
+      width: 100%;
+      margin-inline-start: 0;
+    }
+
+    .index-page-heading__actions :deep(.btn),
+    .index-page-heading__actions :deep(.btn-add),
+    .index-page-heading__actions :deep(button) {
+      flex: 1 1 auto;
+      justify-content: center;
+    }
+
     .index-page-toolbar__primary {
       align-items: stretch;
       flex-direction: column;
@@ -207,17 +230,6 @@
       max-width: none;
     }
 
-    .index-page-toolbar__actions {
-      width: 100%;
-      margin-inline-start: 0;
-    }
-
-    .index-page-toolbar__actions :deep(.btn),
-    .index-page-toolbar__actions :deep(.btn-add),
-    .index-page-toolbar__actions :deep(button) {
-      flex: 1 1 auto;
-      justify-content: center;
-    }
   }
 
   @media (max-width: 479px) {

@@ -44,7 +44,7 @@ describe('AttachmentTypeIndex', () => {
     expect(wrapper.get('.index-page-toolbar input').attributes('placeholder')).toBe(
       'Search attachment type...',
     );
-    const addAction = wrapper.get('.index-page-toolbar__actions a');
+    const addAction = wrapper.get('.index-page-heading__actions a');
     expect(addAction.text()).toBe('Add Attachment Type');
     expect(addAction.attributes('href')).toBe('/organization/attachment-types/add');
     expect(fetchList).toHaveBeenCalledTimes(1);

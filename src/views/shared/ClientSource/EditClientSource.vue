@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import ClientSourceEdit from '@/modules/shared/ClientSource/presentation/components/ClientSourceEdit.vue';
+  import ClientSourceEdit from '@/modules/shared/ClientSource/presentation/components/ClientSourceEdit.vue';
 </script>
 
 <template>
-  <ClientSourceEdit />
+  <ClientSourceEdit class="standard-crud-page" />
 </template>

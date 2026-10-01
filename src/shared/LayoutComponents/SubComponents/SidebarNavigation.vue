@@ -34,7 +34,7 @@ const userStore = useUserStore();
 const { user } = storeToRefs(userStore);
 const { currentPalette } = useSystemIdentityTheme();
 
-const isPanelOpen = ref(false);
+const isPanelOpen = ref(true);
 const selectedSectionKey = ref<string | null>(null);
 const sidebarSectionsState = ref(getSidebarSections());
 const sidebarCounts = ref<SidebarCountsPayload | null>(null);
@@ -210,6 +210,10 @@ const selectedSection = computed(() => {
   return bySelection ?? fallbackSection ?? null;
 });
 
+const activeRailIndex = computed(() =>
+  Math.max(0, menu.value.findIndex((section) => section.key === selectedSection.value?.key)),
+);
+
 watch(
   activeSection,
   (section) => {
@@ -269,7 +273,11 @@ const logout = () => {
 
 <template>
   <aside class="sidebar-shell" :class="{ 'is-open': isPanelOpen }">
-    <nav class="sidebar-rail" :aria-label="$t('sidebar_groups')">
+    <nav
+      class="sidebar-rail"
+      :aria-label="$t('sidebar_groups')"
+      :style="{ '--active-section-index': activeRailIndex }"
+    >
       <div class="rail-brand">
         <img class="rail-logo" :src="brandLogo" :alt="$t('buildhub_logo')" />
       </div>

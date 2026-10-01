@@ -3,5 +3,5 @@
 </script>
 
 <template>
-  <BrandAdd />
+  <BrandAdd class="standard-crud-page" />
 </template>

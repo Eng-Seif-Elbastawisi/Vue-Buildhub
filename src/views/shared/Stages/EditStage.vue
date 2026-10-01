@@ -3,5 +3,5 @@
 </script>
 
 <template>
-  <StageEdit />
+  <StageEdit class="standard-crud-page" />
 </template>

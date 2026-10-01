@@ -27,8 +27,9 @@
       pagination: PaginationDisplay | null;
       showPageSize?: boolean;
       showSinglePage?: boolean;
+      appearance?: 'standard' | 'custom';
     }>(),
-    { showPageSize: true, showSinglePage: false },
+    { showPageSize: true, showSinglePage: false, appearance: 'standard' },
   );
 
   const currentPage = computed(
@@ -57,7 +58,11 @@
 </script>
 
 <template>
-  <div v-if="shouldShow" class="pagination-wrapper">
+  <div
+    v-if="shouldShow"
+    class="pagination-wrapper"
+    :class="{ 'pagination-wrapper--standard': appearance !== 'custom' }"
+  >
     <span class="show-results">
       {{ $t('show') }} {{ firstResult }} {{ $t('to') }} {{ lastResult }}
       {{ $t('of') }}

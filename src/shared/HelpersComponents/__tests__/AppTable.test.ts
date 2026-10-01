@@ -50,6 +50,20 @@ describe('AppTable', () => {
   it('renders without crashing', () => {
     const wrapper = createWrapper();
     expect(wrapper.exists()).toBe(true);
+    expect(wrapper.classes()).toContain('app-table-wrapper--standard');
+  });
+
+  it('keeps locally styled tables on their existing appearance', () => {
+    const wrapper = createWrapper({ appearance: 'custom' });
+    expect(wrapper.classes()).not.toContain('app-table-wrapper--standard');
+    expect(wrapper.find('th').attributes('style')).toContain('text-align: left');
+  });
+
+  it('uses the shared index table inside the Execution Quotes frame', () => {
+    const wrapper = createWrapper({ flush: true, minWidth: '1210px' });
+    expect(wrapper.classes()).toContain('app-table-wrapper--standard');
+    expect(wrapper.classes()).toContain('app-table-wrapper--flush');
+    expect(wrapper.find('table').attributes('style')).toContain('min-width: 1210px');
   });
 
   it('renders table headers', () => {
@@ -57,6 +71,13 @@ describe('AppTable', () => {
     const ths = wrapper.findAll('th');
     expect(ths[0].text()).toBe('Name');
     expect(ths[1].text()).toBe('Email');
+    expect(ths[0].attributes('style')).toContain('text-align: start');
+  });
+
+  it('preserves an explicit column alignment', () => {
+    const wrapper = createWrapper({ headers: [{ key: 'name', label: 'Name', align: 'right' }] });
+    expect(wrapper.find('th').attributes('style')).toContain('text-align: right');
+    expect(wrapper.find('.td-data').attributes('style')).toContain('text-align: right');
   });
 
   it('renders table rows', () => {

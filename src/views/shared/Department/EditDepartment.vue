@@ -3,5 +3,5 @@
 </script>
 
 <template>
-  <DepartmentEdit />
+  <DepartmentEdit class="standard-crud-page" />
 </template>

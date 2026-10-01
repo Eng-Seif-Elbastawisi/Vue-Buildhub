@@ -23,12 +23,13 @@
 </script>
 
 <template>
-  <div class="material-crud-page">
-    <ClientForm :form-key="formKey" :loading="loading" @update-data="params = $event" />
+  <div class="material-crud-page client-add-pilot">
+    <ClientForm :form-key="formKey" :loading="loading" pilot @update-data="params = $event" />
 
     <div class="actions" :class="{ disabled: loading }">
       <button
         :disabled="loading"
+        :aria-busy="loading"
         :class="{ 'btn--loading': loading }"
         class="btn btn-primary w-full"
         type="button"
@@ -39,30 +40,10 @@
       </button>
     </div>
 
-    <div v-if="controller.errorMessage.value" class="error">
+    <div v-if="controller.errorMessage.value" class="error" role="alert">
       {{ controller.errorMessage.value }}
     </div>
   </div>
 </template>
 
-<style scoped lang="scss">
-  .material-crud-page {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
-
-  .actions.disabled {
-    pointer-events: none;
-    opacity: 0.7;
-  }
-
-  .error {
-    margin-top: 20px;
-    padding: 10px;
-    background-color: var(--danger-light);
-    color: var(--danger-dark);
-    border: 1px solid #f5c6cb;
-    border-radius: 4px;
-  }
-</style>
+<style lang="scss" src="./client-add-pilot.scss"></style>

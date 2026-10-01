@@ -3,5 +3,5 @@
 </script>
 
 <template>
-  <ClientEdit />
+  <ClientEdit class="standard-crud-page" />
 </template>

@@ -64,7 +64,11 @@
       >
         {{ $t('stage.update') }}
       </button>
-      <button class="btn btn-secondary back-button" type="button" @click="router.push?.({ name: 'Stages' })">
+      <button
+        class="btn btn-secondary back-button"
+        type="button"
+        @click="router.push?.({ name: 'Stages' })"
+      >
         {{ $t('common.back') }}
       </button>
     </div>
@@ -81,16 +85,6 @@
   .Stage-crud-page {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
-  }
-
-  .error {
-    margin-top: 20px;
-    padding: 10px;
-    background-color: var(--danger-light);
-    color: var(--danger-dark);
-    border: 1px solid #f5c6cb;
-    border-radius: 4px;
   }
 
   .form-action-pair {

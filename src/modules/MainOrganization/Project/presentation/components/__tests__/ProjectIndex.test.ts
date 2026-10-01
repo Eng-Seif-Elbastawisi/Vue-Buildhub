@@ -118,7 +118,7 @@ describe('ProjectIndex', () => {
       await nextTick();
       const i18n = wrapper.vm.$i18n as { locale: string };
       const pageHeader = wrapper.get('.index-page-heading');
-      const actionButton = wrapper.get('.index-page-toolbar__actions .btn-primary');
+      const actionButton = pageHeader.get('.index-page-heading__actions .btn-primary');
 
       expect(pageHeader.get('.index-page-heading__title').text()).toBe(english[0]);
       expect(pageHeader.get('.index-page-heading__subtitle').text()).toBe(english[1]);

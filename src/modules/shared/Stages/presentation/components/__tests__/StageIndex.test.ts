@@ -81,9 +81,12 @@ describe('StageIndex.vue', () => {
     },
   };
 
-  it('renders the index wrapper', () => {
+  it('uses the shared index header, toolbar, and table container', () => {
     const wrapper = mount(StageIndex, mountOptions);
-    expect(wrapper.find('.stage-page').exists()).toBe(true);
+    expect(wrapper.find('.stages-index-page').exists()).toBe(true);
+    expect(wrapper.find('.index-page-header').exists()).toBe(true);
+    expect(wrapper.find('.index-page-toolbar').exists()).toBe(true);
+    expect(wrapper.find('.table-frame').exists()).toBe(true);
   });
 
   it('renders the list title and subtitle in the shared page header', () => {

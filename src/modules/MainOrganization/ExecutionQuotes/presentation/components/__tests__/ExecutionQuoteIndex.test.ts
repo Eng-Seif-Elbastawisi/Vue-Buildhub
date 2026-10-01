@@ -28,6 +28,7 @@ const createIndexResponse = (page: number, projectTitle: string, quoteType = 1) 
           project: { id: 207, title: projectTitle },
           client: { id: 30, name: 'شارع', phone: '111', status: 1 },
           quote_type: quoteType,
+          quote_status: 1,
           price_employee: { id: 92, name: 'fwffefefe' },
           quote_stages: [
             {
@@ -111,6 +112,7 @@ describe('ExecutionQuoteIndex', () => {
     expect(wrapper.text()).toContain('fwffefefe');
     expect(wrapper.text()).toContain('Active');
     expect(wrapper.text()).toContain('Contains items');
+    expect(wrapper.get('.quote-status-badge').text()).toContain('Draft');
     expect(wrapper.text()).toContain('5,200');
     expect(wrapper.text()).toContain('EGP');
     expect(wrapper.text()).toContain('Stages: 1');

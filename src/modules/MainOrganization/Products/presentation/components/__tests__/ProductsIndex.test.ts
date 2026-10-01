@@ -105,9 +105,10 @@ describe('ProductsIndex', () => {
     const wrapper = mountIndex();
     await flushPromises();
 
-    const productTable = wrapper.get('[role="table"]');
+    const productTable = wrapper.get('table[aria-label="Products.page_title"]');
 
-    expect(productTable.findAll('[role="columnheader"]')).toHaveLength(5);
+    expect(productTable.findAll('thead th')).toHaveLength(5);
+    expect(productTable.findAll('tbody td')).toHaveLength(5);
     expect(productTable.get('img[alt="Door"]').attributes('src')).toBe('/door.jpg');
     expect(productTable.text()).toContain('Door');
     expect(productTable.text()).toContain('#P-006');
@@ -120,7 +121,6 @@ describe('ProductsIndex', () => {
     expect(productTable.findAll('a[href="/organization/products/show/6"]')).toHaveLength(2);
     expect(productTable.get('a[href="/organization/products/edit/6"]').exists()).toBe(true);
     expect(productTable.get('button[aria-label="status control"]').exists()).toBe(true);
-    expect(productTable.get('button[aria-label="common.delete"]').exists()).toBe(true);
   });
 
   it('restores stage filters and preserves them across pagination and search', async () => {

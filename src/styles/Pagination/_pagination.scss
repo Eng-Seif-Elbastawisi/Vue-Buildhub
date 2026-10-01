@@ -99,6 +99,16 @@
   }
 }
 
+.pagination-wrapper--standard {
+  margin: 0;
+  padding: 12px 16px;
+  border: 1px solid var(--index-table-line);
+  border-radius: 11px;
+  color: var(--index-table-muted);
+  background-color: var(--index-table-paper);
+  font-variant-numeric: tabular-nums;
+}
+
 .p-popover-content {
   padding: 0 !important;
 }

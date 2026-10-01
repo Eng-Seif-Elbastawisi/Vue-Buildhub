@@ -7,6 +7,7 @@
   import { dialogManager } from '@/base/Presentation/Dialogs/dialog.manager';
   import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
   import Pagination from '@/shared/HelpersComponents/Pagination.vue';
+  import AppTable, { type TableHeader } from '@/shared/HelpersComponents/AppTable.vue';
   import IndexPageHeader from '@/shared/IndexPageHeader/IndexPageHeader.vue';
   import { debounce } from '@/base/Presentation/Utils/debouced';
   import IndexAddIcon from '@/shared/icons/IndexAddIcon.vue';
@@ -43,6 +44,13 @@
   const stageController = StageController.getInstance();
 
   const state = computed(() => controller.listState.value);
+
+  const tableHeaders: TableHeader[] = [
+    { key: 'summary', label: 'Products.form.product_name' },
+    { key: 'meta', label: 'Products.form.product_data' },
+    { key: 'price', label: 'price' },
+    { key: 'status', label: 'Products.form.status' },
+  ];
 
   const route = useRoute();
   const router = useRouter();
@@ -576,157 +584,143 @@
 
     <DataStatusBuilder :controller="state" :on-retry="retryProducts">
       <template #success="{ data }">
-        <div class="products-table" role="table" :aria-label="$t('Products.page_title')">
-          <div class="product-table-head" role="row">
-            <span role="columnheader">{{ $t('Products.form.product_name') }}</span>
-            <span role="columnheader">{{ $t('Products.form.product_data') }}</span>
-            <span role="columnheader">{{ $t('price') }}</span>
-            <span role="columnheader">{{ $t('Products.form.status') }}</span>
-            <span role="columnheader">{{ $t('Products.show.actions') }}</span>
-          </div>
+        <AppTable
+          :headers="tableHeaders"
+          :items="data as ProductsModel[]"
+          row-key="id"
+          min-width="1100px"
+          table-label="Products.page_title"
+          actions-label="Products.show.actions"
+          hoverable
+        >
+          <template #cell-summary="{ item: product }">
+            <div class="product-cell product-summary">
+              <div class="product-thumbnail">
+                <img
+                  v-if="product.image"
+                  :src="product.image"
+                  :alt="product.title"
+                  loading="lazy"
+                />
 
-          <div class="product-table-body" role="rowgroup">
-            <article
-              v-for="product in data as ProductsModel[]"
-              :key="product.id"
-              class="product-row"
-              role="row"
-            >
-              <div
-                class="product-cell product-summary"
-                role="cell"
-                :data-label="$t('Products.form.product_name')"
-              >
-                <div class="product-thumbnail">
-                  <img
-                    v-if="product.image"
-                    :src="product.image"
-                    :alt="product.title"
-                    loading="lazy"
+                <svg
+                  v-else
+                  width="25"
+                  height="25"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"
                   />
-
-                  <svg
-                    v-else
-                    width="25"
-                    height="25"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.5"
-                    aria-hidden="true"
-                  >
-                    <path
-                      d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"
-                    />
-                    <path d="m3.3 7 8.7 5 8.7-5M12 22V12" />
-                  </svg>
-                </div>
-
-                <div class="product-primary-copy">
-                  <router-link
-                    class="product-title"
-                    :to="`/organization/products/show/${product.id}`"
-                  >
-                    {{ product.title || '—' }}
-                  </router-link>
-                  <span v-if="product.code" class="product-code">#{{ product.code }}</span>
-                </div>
+                  <path d="m3.3 7 8.7 5 8.7-5M12 22V12" />
+                </svg>
               </div>
 
-              <div
-                class="product-cell product-meta"
-                role="cell"
-                :data-label="$t('Products.form.product_data')"
-              >
-                <span class="tag tag-category">
-                  {{ product.itemTypeTitle || $t('Products.show.uncategorized') }}
-                </span>
-
-                <span v-if="getStageCount(product)" class="tag tag-stage">
-                  {{ $t('Products.tags.stage', { count: getStageCount(product) }) }}
-                </span>
-
-                <span v-if="product.measurementUnitTitle" class="tag tag-unit">
-                  {{ product.measurementUnitTitle }}
-                </span>
-
-                <span v-if="product.sortings?.length" class="tag tag-sorting">
-                  {{ $t('Products.tags.sorting') }}
-                </span>
-              </div>
-
-              <div class="product-cell product-price" role="cell" :data-label="$t('price')">
-                <strong>{{ formatPrice(product.expectedPrice) }}</strong>
-                <span>{{ $t('Products.form.currency') }}</span>
-              </div>
-
-              <div
-                class="product-cell product-status"
-                role="cell"
-                :data-label="$t('Products.form.status')"
-              >
-                <span class="status-badge" :class="product.status ? 'is-active' : 'is-inactive'">
-                  <span class="status-dot" aria-hidden="true"></span>
-                  {{ product.status ? $t('Products.form.active') : $t('Products.form.inactive') }}
-                </span>
-              </div>
-
-              <div
-                class="product-cell product-actions"
-                role="cell"
-                :data-label="$t('Products.show.actions')"
-              >
+              <div class="product-primary-copy">
                 <router-link
-                  class="action-btn show"
+                  class="product-title"
                   :to="`/organization/products/show/${product.id}`"
-                  :title="$t('show')"
-                  :aria-label="$t('show')"
                 >
-                  <svg
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    aria-hidden="true"
-                  >
-                    <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z" />
-                    <circle cx="12" cy="12" r="2.5" />
-                  </svg>
+                  {{ product.title || '—' }}
                 </router-link>
+                <span v-if="product.code" class="product-code">#{{ product.code }}</span>
+              </div>
+            </div>
+          </template>
 
-                <router-link
-                  class="action-btn edit"
-                  :to="`/organization/products/edit/${product.id}`"
-                  :title="$t('common.edit')"
-                  :aria-label="$t('common.edit')"
+          <template #cell-meta="{ item: product }">
+            <div class="product-cell product-meta">
+              <span class="tag tag-category">
+                {{ product.itemTypeTitle || $t('Products.show.uncategorized') }}
+              </span>
+
+              <span v-if="getStageCount(product)" class="tag tag-stage">
+                {{ $t('Products.tags.stage', { count: getStageCount(product) }) }}
+              </span>
+
+              <span v-if="product.measurementUnitTitle" class="tag tag-unit">
+                {{ product.measurementUnitTitle }}
+              </span>
+
+              <span v-if="product.sortings?.length" class="tag tag-sorting">
+                {{ $t('Products.tags.sorting') }}
+              </span>
+            </div>
+          </template>
+
+          <template #cell-price="{ item: product }">
+            <div class="product-cell product-price">
+              <strong>{{ formatPrice(product.expectedPrice) }}</strong>
+              <span>{{ $t('Products.form.currency') }}</span>
+            </div>
+          </template>
+
+          <template #cell-status="{ item: product }">
+            <div class="product-cell product-status">
+              <span class="status-badge" :class="product.status ? 'is-active' : 'is-inactive'">
+                <span class="status-dot" aria-hidden="true"></span>
+                {{ product.status ? $t('Products.form.active') : $t('Products.form.inactive') }}
+              </span>
+            </div>
+          </template>
+
+          <template #actions="{ item: product }">
+            <div class="product-cell product-actions row-actions">
+              <router-link
+                class="action-btn show"
+                :to="`/organization/products/show/${product.id}`"
+                :title="$t('show')"
+                :aria-label="$t('show')"
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  aria-hidden="true"
                 >
-                  <svg
-                    width="15"
-                    height="15"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    aria-hidden="true"
-                  >
-                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                    <path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5Z" />
-                  </svg>
-                </router-link>
+                  <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z" />
+                  <circle cx="12" cy="12" r="2.5" />
+                </svg>
+              </router-link>
 
-                <div class="status-action">
-                  <span class="sr-only">{{ $t('Products.form.status') }}</span>
-                  <ChangeStatusButton
-                    :id="product.id!"
-                    :key="`${product.id}-${product.isActive}`"
-                    :initial-is-active="product.status"
-                    :type="StatusTypeEnum.PRODUCT"
-                    @reload="reloadProducts"
-                  />
-                </div>
-<!-- 
+              <router-link
+                class="action-btn edit table-action-primary"
+                :to="`/organization/products/edit/${product.id}`"
+                :title="$t('common.edit')"
+                :aria-label="$t('common.edit')"
+              >
+                <svg
+                  width="15"
+                  height="15"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  aria-hidden="true"
+                >
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                  <path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5Z" />
+                </svg>
+              </router-link>
+
+              <div class="status-action">
+                <span class="sr-only">{{ $t('Products.form.status') }}</span>
+                <ChangeStatusButton
+                  :id="product.id!"
+                  :key="`${product.id}-${product.isActive}`"
+                  :initial-is-active="product.status"
+                  :type="StatusTypeEnum.PRODUCT"
+                  @reload="reloadProducts"
+                />
+              </div>
+              <!--
                 <ConfirmCancelDialog
                   :title="$t('Products.delete_dialog.title')"
                   :message="$t('Products.delete_dialog.message')"
@@ -757,10 +751,9 @@
                     </button>
                   </template>
                 </ConfirmCancelDialog> -->
-              </div>
-            </article>
-          </div>
-        </div>
+            </div>
+          </template>
+        </AppTable>
 
         <Pagination
           :pagination="controller.pagination.value"
@@ -804,7 +797,7 @@
       </template>
 
       <template #loader>
-        <div class="products-table product-list-skeleton" aria-hidden="true">
+        <div class="product-list-skeleton" aria-hidden="true">
           <div v-for="i in 6" :key="i" class="skeleton-row">
             <div class="skeleton-product">
               <span class="skeleton-thumbnail skeleton-box"></span>
@@ -1335,7 +1328,7 @@
     }
   }
 
-  .products-table {
+  .product-list-skeleton {
     overflow: hidden;
     background: var(--bg-card);
     border: 1px solid var(--border-weak);
@@ -1343,8 +1336,6 @@
     box-shadow: var(--shadow-sm);
   }
 
-  .product-table-head,
-  .product-row,
   .skeleton-row {
     display: grid;
     grid-template-columns:
@@ -1357,36 +1348,6 @@
     gap: 1rem;
   }
 
-  .product-table-head {
-    min-height: 3.2rem;
-    padding-inline: 1rem;
-    color: var(--gray-600);
-    background: var(--gray-50);
-    border-bottom: 1px solid var(--border-weak);
-    font-size: var(--xs-size);
-    font-weight: 700;
-  }
-
-  .product-table-body {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .product-row {
-    min-height: 5.5rem;
-    padding: 0.75rem 1rem;
-    border-bottom: 1px solid var(--border-weak);
-    transition: background var(--transition-fast);
-
-    &:last-child {
-      border-bottom: 0;
-    }
-
-    &:hover {
-      background: var(--gray-50);
-    }
-  }
-
   .product-cell {
     min-width: 0;
   }
@@ -1394,19 +1355,19 @@
   .product-summary {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 8px;
   }
 
   .product-thumbnail {
     display: grid;
     overflow: hidden;
-    flex: 0 0 3.75rem;
-    width: 3.75rem;
-    height: 3.75rem;
+    flex: 0 0 25px;
+    width: 25px;
+    height: 25px;
     color: var(--gray-300);
     background: var(--gray-100);
     border: 1px solid var(--border-weak);
-    border-radius: var(--radius-sm);
+    border-radius: 7px;
     place-items: center;
 
     img {
@@ -1420,32 +1381,32 @@
     display: flex;
     min-width: 0;
     flex-direction: column;
-    gap: 0.3rem;
+    gap: 2px;
   }
 
   .product-title {
     overflow: hidden;
-    color: var(--title-card-color);
+    color: var(--index-table-ink);
     font-size: var(--sm-size);
-    font-weight: 800;
+    font-weight: 700;
     line-height: 1.4;
     text-decoration: none;
     text-overflow: ellipsis;
     white-space: nowrap;
 
     &:hover {
-      color: var(--PrimaryColor);
+      color: var(--index-table-accent);
     }
 
     &:focus-visible {
-      outline: 2px solid var(--PrimaryColor);
+      outline: 2px solid var(--index-table-accent);
       outline-offset: 2px;
     }
   }
 
   .product-code {
-    color: var(--gray-500);
-    font-size: var(--xs-size-2);
+    color: var(--index-table-muted);
+    font-size: 0.68rem;
     font-weight: 700;
     direction: ltr;
     text-align: start;
@@ -1459,30 +1420,24 @@
   }
 
   .tag {
-    max-width: 100%;
     overflow: hidden;
-    padding: 0.28rem 0.55rem;
-    border-radius: var(--radius-full);
-    font-size: var(--xs-size-2);
-    font-weight: 600;
     text-overflow: ellipsis;
-    white-space: nowrap;
   }
 
   .tag-category,
   .tag-stage {
-    color: var(--info-dark);
-    background: var(--info-light);
+    color: var(--index-table-neutral-ink);
+    background: var(--index-table-neutral-soft);
   }
 
   .tag-sorting {
-    color: var(--PrimaryColor);
-    background: var(--PrimaryColor-light);
+    color: var(--index-table-accent-dark);
+    background: var(--index-table-accent-soft);
   }
 
   .tag-unit {
-    color: var(--gray-600);
-    background: var(--gray-100);
+    color: var(--index-table-neutral-ink);
+    background: var(--index-table-neutral-soft);
   }
 
   .product-price {
@@ -1492,14 +1447,14 @@
     white-space: nowrap;
 
     strong {
-      color: var(--title-color);
+      color: var(--index-table-ink);
       font-size: var(--sm-size);
-      font-weight: 800;
+      font-weight: 700;
     }
 
     span {
-      color: var(--subtitle-color);
-      font-size: var(--xs-size-2);
+      color: var(--index-table-muted);
+      font-size: 0.68rem;
       font-weight: 600;
     }
   }
@@ -1510,15 +1465,6 @@
   }
 
   .status-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    padding: 0.32rem 0.6rem;
-    border-radius: var(--radius-full);
-    font-size: var(--xs-size-2);
-    font-weight: 700;
-    white-space: nowrap;
-
     &.is-active {
       color: var(--success-dark);
       background: var(--success-light);
@@ -1537,75 +1483,12 @@
     border-radius: var(--radius-full);
   }
 
-  .product-actions {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 0.35rem;
-  }
-
-  .action-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.35rem;
-    min-height: 2.25rem;
-    padding: 0.4rem 0.65rem;
-    color: var(--gray-700);
-    background: var(--bg-card);
-    border: 1px solid var(--border-weak);
-    border-radius: var(--radius-sm);
-    font-size: var(--xs-size-2);
-    font-weight: 700;
-    text-decoration: none;
-    cursor: pointer;
-    transition: var(--transition-fast);
-
-    svg {
-      flex-shrink: 0;
-    }
-
-    &.show:hover {
-      color: var(--PrimaryColor);
-      background: var(--PrimaryColor-light);
-      border-color: var(--PrimaryColor);
-    }
-
-    &.edit {
-      color: var(--standard-white);
-      background: var(--PrimaryColor);
-      border-color: var(--PrimaryColor);
-
-      &:hover {
-        background: var(--PrimaryColor-hover);
-        border-color: var(--PrimaryColor-hover);
-      }
-    }
-
-    &.delete {
-      width: 2.25rem;
-      padding: 0;
-      color: var(--danger);
-
-      &:hover {
-        color: var(--standard-white);
-        background: var(--danger);
-        border-color: var(--danger);
-      }
-    }
-
-    &:focus-visible {
-      outline: 2px solid var(--PrimaryColor);
-      outline-offset: 2px;
-    }
-  }
-
   .status-action {
     display: grid;
-    width: 2.8rem;
-    min-height: 2.25rem;
-    background: var(--bg-card);
-    border: 1px solid var(--border-weak);
+    width: 44px;
+    min-height: 27px;
+    background: var(--index-table-paper);
+    border: 1px solid var(--index-table-line);
     border-radius: var(--radius-sm);
     place-items: center;
   }
@@ -1847,16 +1730,10 @@
 
   @media (max-width: 520px) {
     .stage-filter-options,
-    .product-row,
     .skeleton-row {
       grid-template-columns: 1fr;
     }
 
-    .product-summary,
-    .product-meta,
-    .product-price,
-    .product-status,
-    .product-actions,
     .skeleton-product,
     .skeleton-line--meta,
     .skeleton-line--price,
@@ -1865,29 +1742,9 @@
       grid-column: 1;
     }
 
-    .product-thumbnail {
-      flex-basis: 3.25rem;
-      width: 3.25rem;
-      height: 3.25rem;
-    }
-
-    .product-price,
-    .product-status {
-      min-height: 2rem;
-    }
-
-    .product-actions {
-      flex-wrap: wrap;
-
-      .show,
-      .edit {
-        flex: 1;
-      }
-    }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .product-row,
     .action-btn,
     .filter-chevron,
     .btn-add {
