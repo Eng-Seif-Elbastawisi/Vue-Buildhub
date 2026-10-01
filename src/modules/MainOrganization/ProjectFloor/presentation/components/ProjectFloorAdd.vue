@@ -17,6 +17,7 @@ import { useUserStore } from '@/stores/user';
 import { type FloorNumber } from '../../core/constants/floor.number.enum.ts';
 import { useI18n } from 'vue-i18n';
 import { getFloorNumberNameKey } from '../../core/constants/floor.number.enum';
+import { Status } from '../../core/constants/status.enum.ts';
 const controller = ProjectFloorController.getInstance();
 
 const route = useRoute();
@@ -146,6 +147,26 @@ const submitFinalResult = async (finalParams: AddFinalProjectFloorResultParams) 
 
     await router.push({
       path: `${getPrefix()}/Project/show/${currentProjectId}`,
+    });
+  } finally {
+    loading.value = false;
+  }
+};
+const handleNotReadyForCompletion = async (
+  projectPreviewId: number,
+) => {
+  try {
+    loading.value = true;
+
+    await controller.update({
+      id: projectPreviewId,
+      project_preview: {
+        status: Status.NOT_READY_FOR_COMPLETION,
+      }
+    });
+
+    await router.push({
+      name: 'requests',
     });
   } finally {
     loading.value = false;
@@ -285,8 +306,11 @@ const floorTitle = (floorNumber?: number | string | null) => {
       </article>
     </section>
 
-    <FinalResults v-if="canShowFinalResults" :project-id="projectId" :project-preview-id="projectPreviewId"
-      :loading="loading" @submit-final-result="submitFinalResult" />
+    <FinalResults :project-id="projectId" :project-preview-id="projectPreviewId" :loading="loading"
+      @submit-final-result="handleSubmitFinalResult" @mark-not-ready-for-completion="
+        handleNotReadyForCompletion
+      " />
+
 
     <div v-if="canShowNextStep" class="next-step-card">
       <div class="next-step-card__content">

@@ -2763,7 +2763,7 @@
       "total_quote_price": "إجمالي تكلفة البنود",
       "client_quote_price": "سعر المقايسة للعميل",
       "supervision_percentage": "نسبة الإشراف الإجمالية",
-      "supervision_price": "قيمة الإشراف",
+      "supervision_price": "القيمة الإجمالية",
       "client_id": "معرف العميل",
       "client_type": "نوع العميل",
       "client_source": "مصدر العميل",

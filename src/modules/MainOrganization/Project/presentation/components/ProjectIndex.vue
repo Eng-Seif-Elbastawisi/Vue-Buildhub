@@ -20,6 +20,7 @@
 
   import { ConvertStatus, getConvertStatusNameKey } from '../../core/constants/convert.status.enum';
   import { debounce } from '@/base/Presentation/Utils/debouced';
+import { deleteSelectedRows } from '@/shared/HelpersComponents/deleteSelectedRows';
 
   interface ProjectIndexProps {
     statuses?: ConvertStatus[] | null;
@@ -327,6 +328,9 @@
     await fetchProjects();
   };
 
+  const deleteSelectedProjects = async (projects: ProjectModel[]) =>
+    deleteSelectedRows(projects, (id) => controller.delete(new DeleteProjectParams({projectId: id})), fetchProjects);
+
   onMounted(async () => {
     await fetchProjects();
   });
@@ -415,6 +419,7 @@
           :sort-direction="sortDirection"
           selectable
           show-index
+           :bulk-delete="deleteSelectedProjects"
           hoverable
           striped
           @sort="onSort"

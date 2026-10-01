@@ -1,5 +1,8 @@
 import type Params from '@/base/Core/Params/params';
-import { ClassValidation } from '@/base/Presentation/Utils/classValidation';
+import {
+  ClassValidation,
+  ValidationError,
+} from '@/base/Presentation/Utils/classValidation';
 import { type NotificationType } from '../constants/notificationType.enum';
 import { type Status } from '../constants/status.enum';
 import { translate } from '@/locales/i18n';
@@ -61,30 +64,41 @@ export default class AddProjectPreviewParams implements Params {
       notification_message: this.notification_message,
     };
 
-    return Object.fromEntries(Object.entries(map).filter(([, value]) => value !== undefined));
+    return Object.fromEntries(
+      Object.entries(map).filter(([, value]) => value !== undefined),
+    );
   }
 
   validate() {
     const validation = AddProjectPreviewParams.validation.validate(this);
-    const hasLink = Boolean(this.site_link && this.site_link.trim().length > 0);
-    const hasAddress = Boolean(this.address && this.address.trim().length > 0);
+
+    const hasLink = Boolean(this.site_link?.trim());
+    const hasAddress = Boolean(this.address?.trim());
 
     if (!hasLink && !hasAddress) {
       validation.errors.push({
         field: 'site_link',
         message: translate('project.validation.link_or_address_required'),
       });
+
       validation.errors.push({
         field: 'address',
         message: translate('project.validation.link_or_address_required'),
       });
+
       validation.isValid = false;
     }
 
     return validation;
   }
 
-  validateOrThrow() {
-    return AddProjectPreviewParams.validation.validateOrThrow(this);
+  validateOrThrow(): void {
+    const validation = this.validate();
+
+    if (!validation.isValid) {
+      const validationError = new ValidationError(validation.errors);
+
+      validationError.openDialog();
+    }
   }
 }

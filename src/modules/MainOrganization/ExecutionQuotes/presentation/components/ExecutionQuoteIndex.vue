@@ -564,11 +564,12 @@
 
             <template #actions="{ item }">
               <div class="execution-quote-index__row-actions">
-                <AppButton
-                  class="execution-quote-index__add-item-button"
-                  size="sm"
-                  icon="right"
-                  @click="openAddItem(item)"
+                <div class="execution-quote-index__row-actions__button-group" v-if="canUpdateQuoteStatus(item)">
+                  <AppButton
+                    class="execution-quote-index__add-item-button"
+                    size="sm"
+                    icon="right"
+                    @click="openAddItem(item)"
                 >
                   <template #icon>
                     <i class="pi pi-list" aria-hidden="true"></i>
@@ -591,7 +592,6 @@
                 </AppButton>
 
                 <AppButton
-                  v-if="canUpdateQuoteStatus(item)"
                   class="execution-quote-index__change-status-button"
                   size="sm"
                   theme="secondary"
@@ -604,6 +604,7 @@
                   </template>
                   {{ $t('execution_quote.status.change_action') }}
                 </AppButton>
+                </div>
 
                 <AppButton
                   class="execution-quote-index__view-button"
@@ -1027,6 +1028,13 @@
   }
 
   .execution-quote-index__row-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    // justify-content: flex-end;
+  }
+
+  .execution-quote-index__row-actions__button-group {
     display: flex;
     align-items: center;
     gap: 0.45rem;

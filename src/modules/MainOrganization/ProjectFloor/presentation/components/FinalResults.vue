@@ -17,6 +17,7 @@ import { NotificationType } from '../../core/constants/notificationType.enum';
 
 const emit = defineEmits<{
   submitFinalResult: [params: AddFinalProjectFloorResultParams];
+  markNotReadyForCompletion: [projectPreviewId: number];
 }>();
 
 const props = defineProps<{
@@ -29,14 +30,23 @@ const { t } = useI18n();
 const router = useRouter();
 
 const employeeController = EmployeeController.getInstance();
-const pricingResponsibleParams = new IndexEmployeeParams('', 1, 100, 0, 4);
+
+const pricingResponsibleParams = new IndexEmployeeParams(
+  '',
+  1,
+  100,
+  0,
+  4,
+);
 
 const dialogVisible = ref(false);
-const notReadyDialogVisible = ref(false);
 
 const selectedStatus = ref<TitleInterface<Status> | null>(null);
-const selectedPricingResponsible = ref<TitleInterface<number> | null>(null);
-const selectedNotificationType = ref<TitleInterface<NotificationType> | null>(null);
+const selectedPricingResponsible =
+  ref<TitleInterface<number> | null>(null);
+const selectedNotificationType =
+  ref<TitleInterface<NotificationType> | null>(null);
+
 const notificationMessage = ref('');
 
 const statusOptions = computed<TitleInterface<Status>[]>(() => [
@@ -54,7 +64,9 @@ const statusOptions = computed<TitleInterface<Status>[]>(() => [
   },
 ]);
 
-const notificationTypeOptions = computed<TitleInterface<NotificationType>[]>(() => [
+const notificationTypeOptions = computed<
+  TitleInterface<NotificationType>[]
+>(() => [
   {
     id: NotificationType.NORMAL,
     title: t('ProjectFloor.notification_normal'),
@@ -73,13 +85,15 @@ const pricingResponsibleOptions = computed<TitleInterface<number>[]>(() => {
   const state = employeeController.listState.value as any;
 
   const data =
-    state?.data ??
     state?.data?.data ??
-    state?.response?.data ??
+    state?.data ??
     state?.response?.data?.data ??
+    state?.response?.data ??
     [];
 
-  if (!Array.isArray(data)) return [];
+  if (!Array.isArray(data)) {
+    return [];
+  }
 
   return data.map((item) => ({
     id: Number(item.id),
@@ -94,6 +108,7 @@ const isReadyForPricing = computed(() => {
 const canSubmit = computed(() => {
   return (
     !!selectedStatus.value &&
+    selectedStatus.value.id === Status.READY_FOR_PRICING &&
     !!selectedPricingResponsible.value &&
     !!selectedNotificationType.value &&
     notificationMessage.value.trim().length > 0
@@ -105,6 +120,7 @@ const resetDialogFields = () => {
   selectedNotificationType.value = null;
   notificationMessage.value = '';
 };
+
 const goBackToPreviewStep = async () => {
   await router.push({
     name: 'add-project_preview',
@@ -114,22 +130,52 @@ const goBackToPreviewStep = async () => {
   });
 };
 
-const updateStatus = async (value: TitleInterface<Status>) => {
+const updateStatus = async (
+  value: TitleInterface<Status>,
+) => {
   selectedStatus.value = value;
 
+  /**
+   * READY FOR PRICING
+   *
+   * This flow requires:
+   * - pricing responsible
+   * - notification type
+   * - notification message
+   */
   if (value.id === Status.READY_FOR_PRICING) {
     resetDialogFields();
     dialogVisible.value = true;
     return;
   }
 
+  /**
+   * NEED ADDITIONAL VISIT
+   *
+   * Existing behavior: return to preview.
+   */
   if (value.id === Status.NEED_ADDITIONAL_VISIT) {
     await goBackToPreviewStep();
     return;
   }
 
+  /**
+   * NOT READY FOR COMPLETION
+   *
+   * IMPORTANT:
+   * This status must NOT require any incomplete floor data,
+   * pricing responsible, notification type, or notification message.
+   *
+   * Send a separate event to the parent so the parent can call
+   * the appropriate API/use-case and save the status directly.
+   */
   if (value.id === Status.NOT_READY_FOR_COMPLETION) {
-    notReadyDialogVisible.value = true;
+    emit(
+      'markNotReadyForCompletion',
+      props.projectPreviewId,
+    );
+
+    return;
   }
 };
 
@@ -138,8 +184,11 @@ const closeDialog = () => {
 };
 
 const submitFinalResult = () => {
+  /**
+   * This validation applies ONLY to READY_FOR_PRICING.
+   */
   if (
-    !selectedStatus.value ||
+    selectedStatus.value?.id !== Status.READY_FOR_PRICING ||
     !selectedPricingResponsible.value ||
     !selectedNotificationType.value ||
     !notificationMessage.value.trim()
@@ -151,10 +200,14 @@ const submitFinalResult = () => {
     'submitFinalResult',
     new AddFinalProjectFloorResultParams({
       project_preview_id: props.projectPreviewId,
-      status: selectedStatus.value.id as Status,
-      pricing_responsible_id: Number(selectedPricingResponsible.value.id),
-      notification_type: selectedNotificationType.value.id as NotificationType,
-      notification_message: notificationMessage.value.trim(),
+      status: Status.READY_FOR_PRICING,
+      pricing_responsible_id: Number(
+        selectedPricingResponsible.value.id,
+      ),
+      notification_type:
+        selectedNotificationType.value.id as NotificationType,
+      notification_message:
+        notificationMessage.value.trim(),
     }),
   );
 
@@ -162,24 +215,45 @@ const submitFinalResult = () => {
 };
 
 onMounted(async () => {
-  await employeeController.fetchList(pricingResponsibleParams);
+  await employeeController.fetchList(
+    pricingResponsibleParams,
+  );
 });
 </script>
 
 <template>
-  <section class="final-results-card" :class="{ disabled: loading }">
+  <section
+    class="final-results-card"
+    :class="{ disabled: loading }"
+  >
     <div class="section-head">
-      <div class="section-head__icon">✅</div>
+      <div class="section-head__icon">
+        ✅
+      </div>
 
       <div>
-        <h4>{{ $t('ProjectFloor.final_result') }}</h4>
-        <p>{{ $t('ProjectFloor.final_result_description') }}</p>
+        <h4>
+          {{ $t('ProjectFloor.final_result') }}
+        </h4>
+
+        <p>
+          {{ $t('ProjectFloor.final_result_description') }}
+        </p>
       </div>
     </div>
 
     <div class="result-tabs">
-      <button v-for="option in statusOptions" :key="option.id" type="button" class="result-tab"
-        :class="{ active: selectedStatus?.id === option.id }" @click="updateStatus(option)">
+      <button
+        v-for="option in statusOptions"
+        :key="option.id"
+        type="button"
+        class="result-tab"
+        :class="{
+          active: selectedStatus?.id === option.id,
+        }"
+        :disabled="loading"
+        @click="updateStatus(option)"
+      >
         <span class="result-tab__icon">
           {{
             option.id === Status.READY_FOR_PRICING
@@ -190,12 +264,26 @@ onMounted(async () => {
           }}
         </span>
 
-        <span>{{ option.title }}</span>
+        <span>
+          {{ option.title }}
+        </span>
       </button>
     </div>
 
-    <Dialog v-model:visible="dialogVisible" modal :draggable="false" :style="{ width: '70vw', maxWidth: '96vw' }"
-      class="final-result-dialog">
+    <!--
+      READY FOR PRICING DIALOG
+      Only this status requires the additional fields.
+    -->
+    <Dialog
+      v-model:visible="dialogVisible"
+      modal
+      :draggable="false"
+      :style="{
+        width: '70vw',
+        maxWidth: '96vw',
+      }"
+      class="final-result-dialog"
+    >
       <template #header>
         <div class="dialog-header">
           <span class="dialog-header__icon">
@@ -203,107 +291,206 @@ onMounted(async () => {
           </span>
 
           <div>
-            <h4>{{ selectedStatus?.title }}</h4>
-            <p>{{ $t('ProjectFloor.ready_for_pricing_description') }}</p>
+            <h4>
+              {{ selectedStatus?.title }}
+            </h4>
+
+            <p>
+              {{
+                $t(
+                  'ProjectFloor.ready_for_pricing_description',
+                )
+              }}
+            </p>
           </div>
         </div>
       </template>
 
       <div class="dialog-body">
         <div class="dialog-grid">
+          <!-- Pricing Responsible -->
           <div class="dialog-field">
-            <span class="field-help-label-row field-help-label-row--block">
+            <span
+              class="field-help-label-row field-help-label-row--block"
+            >
               <label class="field-label">
-                <span class="required-indicator" aria-hidden="true">*</span>
-                {{ $t('ProjectFloor.pricing_responsible') }}
+                <span
+                  class="required-indicator"
+                  aria-hidden="true"
+                >
+                  *
+                </span>
+
+                {{
+                  $t(
+                    'ProjectFloor.pricing_responsible',
+                  )
+                }}
               </label>
-              <FieldHelpIcon :label="$t('ProjectFloor.pricing_responsible')" field-name="engineer"
-                field-id="pricing_responsible_id" />
+
+              <FieldHelpIcon
+                :label="
+                  $t(
+                    'ProjectFloor.pricing_responsible',
+                  )
+                "
+                field-name="engineer"
+                field-id="pricing_responsible_id"
+              />
             </span>
 
-            <UpdatedCustomInputSelect id="pricing_responsible_id" :model-value="selectedPricingResponsible"
-              :static-options="pricingResponsibleOptions"
-              :placeholder="$t('ProjectFloor.pricing_responsible_placeholder')"
-              @update:model-value="selectedPricingResponsible = $event" />
+            <UpdatedCustomInputSelect
+              id="pricing_responsible_id"
+              :model-value="
+                selectedPricingResponsible
+              "
+              :static-options="
+                pricingResponsibleOptions
+              "
+              :placeholder="
+                $t(
+                  'ProjectFloor.pricing_responsible_placeholder',
+                )
+              "
+              @update:model-value="
+                selectedPricingResponsible = $event
+              "
+            />
           </div>
 
+          <!-- Notification Type -->
           <div class="dialog-field">
-            <span class="field-help-label-row field-help-label-row--block">
+            <span
+              class="field-help-label-row field-help-label-row--block"
+            >
               <label class="field-label">
-                <span class="required-indicator" aria-hidden="true">*</span>
-                {{ $t('ProjectFloor.notification_type') }}
+                <span
+                  class="required-indicator"
+                  aria-hidden="true"
+                >
+                  *
+                </span>
+
+                {{
+                  $t(
+                    'ProjectFloor.notification_type',
+                  )
+                }}
               </label>
-              <FieldHelpIcon :label="$t('ProjectFloor.notification_type')" field-name="type" />
+
+              <FieldHelpIcon
+                :label="
+                  $t(
+                    'ProjectFloor.notification_type',
+                  )
+                "
+                field-name="type"
+              />
             </span>
 
             <div class="notification-tabs">
-              <button v-for="option in notificationTypeOptions" :key="option.id" type="button" class="notification-tab"
-                :class="{ active: selectedNotificationType?.id === option.id }"
-                @click="selectedNotificationType = option">
+              <button
+                v-for="option in notificationTypeOptions"
+                :key="option.id"
+                type="button"
+                class="notification-tab"
+                :class="{
+                  active:
+                    selectedNotificationType?.id ===
+                    option.id,
+                }"
+                @click="
+                  selectedNotificationType = option
+                "
+              >
                 {{
-                  option.id === NotificationType.URGENT
+                  option.id ===
+                  NotificationType.URGENT
                     ? '🚨'
-                    : option.id === NotificationType.LOW
+                    : option.id ===
+                        NotificationType.LOW
                       ? '⬇️'
                       : '🔔'
                 }}
 
-                <span>{{ option.title }}</span>
+                <span>
+                  {{ option.title }}
+                </span>
               </button>
             </div>
           </div>
         </div>
 
+        <!-- Notification Message -->
         <div class="dialog-field">
-          <span class="field-help-label-row field-help-label-row--block">
-            <label class="field-label" for="notification_message">
-              <span class="required-indicator" aria-hidden="true">*</span>
-              {{ $t('ProjectFloor.notification_message') }}
+          <span
+            class="field-help-label-row field-help-label-row--block"
+          >
+            <label
+              class="field-label"
+              for="notification_message"
+            >
+              <span
+                class="required-indicator"
+                aria-hidden="true"
+              >
+                *
+              </span>
+
+              {{
+                $t(
+                  'ProjectFloor.notification_message',
+                )
+              }}
             </label>
-            <FieldHelpIcon :label="$t('ProjectFloor.notification_message')" field-name="notes"
-              field-id="notification_message" />
+
+            <FieldHelpIcon
+              :label="
+                $t(
+                  'ProjectFloor.notification_message',
+                )
+              "
+              field-name="notes"
+              field-id="notification_message"
+            />
           </span>
 
-          <textarea id="notification_message" v-model="notificationMessage" class="field-input field-textarea"
-            :placeholder="$t('ProjectFloor.notification_message_placeholder')" required aria-required="true" />
+          <textarea
+            id="notification_message"
+            v-model="notificationMessage"
+            class="field-input field-textarea"
+            :placeholder="
+              $t(
+                'ProjectFloor.notification_message_placeholder',
+              )
+            "
+            required
+            aria-required="true"
+          />
         </div>
       </div>
 
       <template #footer>
         <div class="dialog-actions">
-          <button type="button" class="dialog-btn dialog-btn--secondary" @click="closeDialog">
+          <button
+            type="button"
+            class="dialog-btn dialog-btn--secondary"
+            @click="closeDialog"
+          >
             {{ $t('cancel') }}
           </button>
 
-          <button type="button" class="dialog-btn dialog-btn--primary" :disabled="!canSubmit || loading"
-            @click="submitFinalResult">
-            {{ $t('ProjectFloor.send_to_pricing') }}
-          </button>
-        </div>
-      </template>
-    </Dialog>
-
-    <Dialog v-model:visible="notReadyDialogVisible" modal :draggable="false"
-      :style="{ width: '560px', maxWidth: '95vw' }" class="not-ready-dialog">
-      <template #header>
-        <div class="dialog-header">
-          <span class="dialog-header__icon">⚠️</span>
-
-          <div>
-            <h4>{{ $t('ProjectFloor.not_ready_for_completion') }}</h4>
-            <p>{{ $t('ProjectFloor.not_ready_message') }}</p>
-          </div>
-        </div>
-      </template>
-
-      <div class="not-ready-body">
-        {{ $t('ProjectFloor.not_ready_details') }}
-      </div>
-
-      <template #footer>
-        <div class="dialog-actions">
-          <button type="button" class="dialog-btn dialog-btn--primary" @click="notReadyDialogVisible = false">
-            {{ $t('ok') }}
+          <button
+            type="button"
+            class="dialog-btn dialog-btn--primary"
+            :disabled="!canSubmit || loading"
+            @click="submitFinalResult"
+          >
+            {{
+              $t(
+                'ProjectFloor.send_to_pricing',
+              )
+            }}
           </button>
         </div>
       </template>
@@ -387,12 +574,17 @@ onMounted(async () => {
   font-family: 'Medium';
   transition: all 0.25s ease;
 
-  &:hover,
+  &:hover:not(:disabled),
   &.active {
     border-color: var(--PrimaryColor);
     background: var(--PrimaryColor-light);
     color: var(--PrimaryColor);
     box-shadow: 0 0 0 1px var(--PrimaryColor);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.65;
   }
 }
 
@@ -497,16 +689,6 @@ onMounted(async () => {
   }
 }
 
-.not-ready-body {
-  padding: 1rem;
-  border: 1px solid rgba(220, 38, 38, 0.12);
-  border-radius: 18px;
-  background: rgba(220, 38, 38, 0.06);
-  color: #991b1b;
-  font-family: 'Medium';
-  line-height: 1.8;
-}
-
 .dialog-actions {
   display: flex;
   width: 100%;
@@ -536,12 +718,15 @@ onMounted(async () => {
 }
 
 .dialog-btn--primary {
-  background: linear-gradient(135deg, var(--PrimaryColor), #7a4318);
+  background: linear-gradient(
+    135deg,
+    var(--PrimaryColor),
+    #7a4318
+  );
   color: #fff;
 }
 
 @media (max-width: 768px) {
-
   .result-tabs,
   .dialog-grid,
   .notification-tabs {
