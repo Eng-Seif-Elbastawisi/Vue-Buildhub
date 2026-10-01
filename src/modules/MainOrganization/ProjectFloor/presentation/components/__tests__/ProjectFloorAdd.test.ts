@@ -1,5 +1,7 @@
 import { flushPromises, mount } from '@vue/test-utils';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { defineComponent, ref } from 'vue';
+import AddProjectFloorParams from '../../../core/params/add.project.floor.params';
 import AddFinalProjectFloorResultParams from '../../../core/params/final.result.project.floor.params';
 import { NotificationType } from '../../../core/constants/notificationType.enum';
 import { Status } from '../../../core/constants/status.enum';
@@ -95,6 +97,56 @@ describe('ProjectFloorAdd.vue', () => {
 
   it('should be defined', () => {
     expect(ProjectFloorAdd).toBeDefined();
+  });
+
+  it('keeps the floor draft and skips refresh when client validation rejects the save', async () => {
+    const floorDraft = new AddProjectFloorParams({
+      project_id: 24,
+      project_preview_id: 15,
+      site_description: 'Existing site description',
+      technical_general_notes: 'Existing technical notes',
+      inspection_recommendations: 'Existing inspection recommendations',
+      floors: [],
+    });
+    const ProjectFloorFormStub = defineComponent({
+      emits: ['updateData'],
+      setup(_, { emit, expose }) {
+        const siteDescription = ref(floorDraft.site_description);
+
+        expose({
+          resetForm: () => {
+            siteDescription.value = '';
+          },
+        });
+
+        return {
+          siteDescription,
+          emitFloorDraft: () => emit('updateData', floorDraft),
+        };
+      },
+      template:
+        '<div><input v-model="siteDescription" data-test="site-description" /><button data-test="emit-floor-draft" type="button" @click="emitFloorDraft">draft</button></div>',
+    });
+    const wrapper = mount(ProjectFloorAdd, {
+      global: {
+        stubs: {
+          ProjectSteps: true,
+          ProjectFloorForm: ProjectFloorFormStub,
+          FinalResults: true,
+        },
+      },
+    });
+    await flushPromises();
+
+    await wrapper.find('[data-test="emit-floor-draft"]').trigger('click');
+    await wrapper.find('.btn-primary').trigger('click');
+    await flushPromises();
+
+    expect(mocks.create).toHaveBeenCalledWith(floorDraft, undefined, mocks.routeFullPath);
+    expect(mocks.fetchList).toHaveBeenCalledTimes(1);
+    expect(wrapper.get<HTMLInputElement>('[data-test="site-description"]').element.value).toBe(
+      'Existing site description',
+    );
   });
 
   it.each([

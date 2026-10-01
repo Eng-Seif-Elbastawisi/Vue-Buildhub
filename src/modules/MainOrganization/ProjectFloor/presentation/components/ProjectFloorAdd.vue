@@ -2,6 +2,7 @@
   import { computed, onMounted, ref } from 'vue';
   import { useRoute } from 'vue-router';
 
+  import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
   import type AddProjectFloorParams from '../../core/params/add.project.floor.params';
   import IndexProjectFloorParams from '../../core/params/index.project.floor.params';
 
@@ -122,7 +123,11 @@
     loading.value = true;
 
     try {
-      await controller.create(params.value, undefined, route.fullPath);
+      const createState = await controller.create(params.value, undefined, route.fullPath);
+
+      if (!(createState instanceof DataSuccess)) {
+        return;
+      }
 
       await fetchProjectFloors();
 
