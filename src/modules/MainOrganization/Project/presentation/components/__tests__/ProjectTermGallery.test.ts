@@ -31,33 +31,30 @@ const mountGallery = (selectedIds: number[] = []) =>
   });
 
 describe('ProjectTermGallery', () => {
-  it('shows each term title in bold with its description underneath', () => {
-    const wrapper = mountGallery();
-    const cards = wrapper.findAll('button');
+  it('shows only selected terms with a bold title and description', () => {
+    const wrapper = mountGallery([1]);
+    const cards = wrapper.findAll('.term-gallery__card');
 
-    expect(cards).toHaveLength(2);
+    expect(cards).toHaveLength(1);
     expect(cards[0]?.find('strong').text()).toBe('Payment');
     expect(cards[0]?.find('.term-gallery__content span').text()).toBe('Pay within 30 days');
+    expect(wrapper.text()).not.toContain('Delivery');
   });
 
-  it('marks selected terms and removes them when selected again', async () => {
-    const wrapper = mountGallery([1]);
-    const selectedCard = wrapper.find('button[aria-pressed="true"]');
+  it('removes a selected term from the gallery result', async () => {
+    const wrapper = mountGallery([1, 2]);
 
-    expect(selectedCard.attributes('aria-pressed')).toBe('true');
-    await selectedCard.trigger('click');
-
-    expect(wrapper.emitted('update:modelValue')?.at(-1)?.[0]).toEqual([]);
-  });
-
-  it('adds a term while preserving the existing selection', async () => {
-    const wrapper = mountGallery([1]);
-
-    await wrapper.findAll('button')[1]?.trigger('click');
+    await wrapper.findAll('.term-gallery__remove')[0]?.trigger('click');
 
     expect(wrapper.emitted('update:modelValue')?.at(-1)?.[0]).toEqual([
-      expect.objectContaining({ id: 1, title: 'Payment' }),
       expect.objectContaining({ id: 2, title: 'Delivery' }),
     ]);
+  });
+
+  it('shows guidance when no terms are selected', () => {
+    const wrapper = mountGallery();
+
+    expect(wrapper.find('.term-gallery__empty').exists()).toBe(true);
+    expect(wrapper.findAll('.term-gallery__card')).toHaveLength(0);
   });
 });

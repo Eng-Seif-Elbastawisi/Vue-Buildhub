@@ -1,38 +1,42 @@
 <script setup lang="ts">
   import { computed } from 'vue';
 
-  import TitleInterface from '@/base/Data/Models/titleInterface';
+  import type TitleInterface from '@/base/Data/Models/titleInterface';
   import type TermModel from '@/modules/MainOrganization/Term/core/models/term.model';
 
   const props = defineProps<{
     modelValue: TitleInterface<number>[];
     options: TermModel[];
-    loading: boolean;
   }>();
 
   const emit = defineEmits<{
     'update:modelValue': [terms: TitleInterface<number>[]];
   }>();
 
-  const selectedIds = computed(() => new Set(props.modelValue.map((term) => Number(term.id))));
+  const selectedTerms = computed(() =>
+    props.modelValue.map((selectedTerm) => {
+      const fullTerm = props.options.find(
+        (availableTerm) => Number(availableTerm.id) === Number(selectedTerm.id),
+      );
 
-  const isSelected = (term: TermModel): boolean =>
-    term.id !== undefined && selectedIds.value.has(Number(term.id));
+      return {
+        id: Number(selectedTerm.id),
+        title: fullTerm?.title || selectedTerm.title,
+        description: fullTerm?.description,
+      };
+    }),
+  );
 
-  const toggleTerm = (term: TermModel) => {
-    if (term.id === undefined) return;
-
-    const termId = Number(term.id);
-    const nextSelection = isSelected(term)
-      ? props.modelValue.filter((selectedTerm) => Number(selectedTerm.id) !== termId)
-      : [...props.modelValue, new TitleInterface<number>({ id: termId, title: term.title })];
-
-    emit('update:modelValue', nextSelection);
+  const removeTerm = (termId: number) => {
+    emit(
+      'update:modelValue',
+      props.modelValue.filter((selectedTerm) => Number(selectedTerm.id) !== termId),
+    );
   };
 </script>
 
 <template>
-  <section class="term-gallery" :aria-busy="loading">
+  <section class="term-gallery">
     <header class="term-gallery__header">
       <div>
         <h5>{{ $t('project.term_gallery_title') }}</h5>
@@ -44,35 +48,40 @@
       </span>
     </header>
 
-    <div v-if="loading" class="term-gallery__grid" aria-hidden="true">
-      <div v-for="index in 4" :key="index" class="term-gallery__skeleton" />
-    </div>
-
-    <div v-else-if="options.length" class="term-gallery__grid">
-      <button
-        v-for="term in options"
-        :key="term.id"
-        type="button"
-        class="term-gallery__card"
-        :class="{ 'term-gallery__card--selected': isSelected(term) }"
-        :disabled="term.id === undefined"
-        :aria-pressed="isSelected(term)"
-        @click="toggleTerm(term)"
-      >
+    <div v-if="selectedTerms.length" class="term-gallery__grid">
+      <article v-for="term in selectedTerms" :key="term.id" class="term-gallery__card">
         <span class="term-gallery__check" aria-hidden="true">
-          <i :class="isSelected(term) ? 'pi pi-check' : 'pi pi-plus'" />
+          <i class="pi pi-check" />
         </span>
 
         <span class="term-gallery__content">
           <strong>{{ term.title || $t('project.untitled_term') }}</strong>
           <span>{{ term.description || $t('project.term_without_description') }}</span>
         </span>
-      </button>
+
+        <button
+          type="button"
+          class="term-gallery__remove"
+          :aria-label="
+            $t('project.remove_selected_term', {
+              title: term.title || $t('project.untitled_term'),
+            })
+          "
+          :title="
+            $t('project.remove_selected_term', {
+              title: term.title || $t('project.untitled_term'),
+            })
+          "
+          @click="removeTerm(term.id)"
+        >
+          <i class="pi pi-times" aria-hidden="true" />
+        </button>
+      </article>
     </div>
 
     <div v-else class="term-gallery__empty">
       <i class="pi pi-bookmark" aria-hidden="true" />
-      <span>{{ $t('project.no_terms_available') }}</span>
+      <span>{{ $t('project.no_selected_terms') }}</span>
     </div>
   </section>
 </template>
@@ -127,47 +136,18 @@
   }
 
   .term-gallery__card {
-    position: relative;
     display: flex;
     align-items: flex-start;
     gap: 0.75rem;
     min-width: 0;
     min-height: 94px;
     padding: 0.9rem;
-    border: 1px solid var(--border-weak);
+    border: 1px solid var(--PrimaryColor-alpha-30);
     border-radius: var(--radius-md);
-    color: var(--gray-700);
+    color: var(--gray-900);
     text-align: start;
-    background-color: var(--bg-card);
-    box-shadow: var(--shadow-sm);
-    transition:
-      border-color var(--transition-fast),
-      box-shadow var(--transition-fast),
-      transform var(--transition-fast),
-      background-color var(--transition-fast);
-
-    &:hover:not(:disabled) {
-      border-color: var(--PrimaryColor-alpha-50);
-      box-shadow: var(--shadow-md);
-      transform: translateY(-1px);
-    }
-
-    &:focus-visible {
-      outline: 3px solid var(--PrimaryColor-alpha-20);
-      outline-offset: 2px;
-    }
-
-    &:disabled {
-      cursor: not-allowed;
-      opacity: 0.6;
-    }
-
-    &--selected {
-      border-color: var(--PrimaryColor);
-      color: var(--gray-900);
-      background-color: var(--PrimaryColor-alpha-4);
-      box-shadow: 0 0 0 1px var(--PrimaryColor-alpha-20);
-    }
+    background-color: var(--PrimaryColor-alpha-4);
+    box-shadow: 0 0 0 1px var(--PrimaryColor-alpha-8);
   }
 
   .term-gallery__check {
@@ -176,17 +156,11 @@
     width: 30px;
     height: 30px;
     place-items: center;
-    border: 1px solid var(--border-strong);
+    border: 1px solid var(--PrimaryColor);
     border-radius: var(--radius-full);
-    color: var(--gray-500);
-    background-color: var(--gray-50);
+    color: var(--white);
+    background-color: var(--PrimaryColor);
     font-size: 0.75rem;
-
-    .term-gallery__card--selected & {
-      border-color: var(--PrimaryColor);
-      color: var(--white);
-      background-color: var(--PrimaryColor);
-    }
   }
 
   .term-gallery__content {
@@ -213,6 +187,30 @@
     }
   }
 
+  .term-gallery__remove {
+    display: grid;
+    flex: 0 0 30px;
+    width: 30px;
+    height: 30px;
+    margin-inline-start: auto;
+    place-items: center;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-full);
+    color: var(--gray-500);
+    background-color: var(--bg-card);
+
+    &:hover {
+      border-color: var(--danger);
+      color: var(--danger);
+      background-color: var(--danger-light);
+    }
+
+    &:focus-visible {
+      outline: 3px solid var(--PrimaryColor-alpha-20);
+      outline-offset: 2px;
+    }
+  }
+
   .term-gallery__empty {
     display: flex;
     align-items: center;
@@ -224,20 +222,6 @@
     color: var(--gray-500);
     background-color: var(--gray-50);
     font-size: var(--sm-size);
-  }
-
-  .term-gallery__skeleton {
-    min-height: 94px;
-    border-radius: var(--radius-md);
-    background: linear-gradient(90deg, var(--gray-100), var(--gray-200), var(--gray-100));
-    background-size: 200% 100%;
-    animation: term-gallery-loading 1.2s ease-in-out infinite;
-  }
-
-  @keyframes term-gallery-loading {
-    to {
-      background-position: -200% 0;
-    }
   }
 
   @media (max-width: 720px) {

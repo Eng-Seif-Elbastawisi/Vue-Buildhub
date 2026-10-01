@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import DatePicker from 'primevue/datepicker';
 
@@ -70,10 +70,6 @@ const termOptions = computed<TermModel[]>(() => {
 
   return Array.isArray(data) ? data : [];
 });
-
-const termsLoading = computed(() => termController.isListLoading());
-
-onMounted(() => void termController.fetchList(indexTermParams));
 
 const locationController = LocationController.getInstance();
 
@@ -778,10 +774,21 @@ watch(
 
         <div class="form-section__grid form-section__grid--terms">
           <div id="term-field" class="field-group">
+            <UpdatedCustomInputSelect
+              id="term_id"
+              :model-value="selectedTerm"
+              :label="$t('term')"
+              :controller="termController"
+              :placeholder="$t('term_placeholder')"
+              :params="indexTermParams"
+              :type="2"
+              required
+              @update:model-value="updateTerms"
+            />
+
             <ProjectTermGallery
               :model-value="selectedTerm"
               :options="termOptions"
-              :loading="termsLoading"
               @update:model-value="updateTerms"
             />
           </div>
