@@ -2,5 +2,5 @@
   import ProjectFloorShow from '@/modules/MainOrganization/ProjectFloor/presentation/components/ProjectFloorShow.vue';
 </script>
 <template>
-  <ProjectFloorShow />
+  <ProjectFloorShow class="project-workflow-view project-workflow-view--details" />
 </template>

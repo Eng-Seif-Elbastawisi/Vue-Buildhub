@@ -61,7 +61,7 @@
       @update-data="updateData"
     />
 
-    <div class="form-actions">
+    <div class="form-actions form-action-pair">
       <button
         :class="{ 'btn--loading': loading }"
         class="btn btn-primary"
@@ -86,7 +86,9 @@
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
+  @use '@/styles/mixins/form_action_pair' as form-actions;
+
   .Products-crud-page {
     display: flex;
     flex-direction: column;
@@ -102,16 +104,7 @@
     border-radius: 4px;
   }
 
-  .btn-primary {
-    width: 50%;
-  }
-
-  .form-actions {
-    display: flex;
-    gap: 1rem;
-  }
-
-  .form-actions :deep(.back-button) {
-    width: 50%;
+  .form-action-pair {
+    @include form-actions.layout;
   }
 </style>

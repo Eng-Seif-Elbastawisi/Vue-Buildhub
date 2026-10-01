@@ -57,13 +57,13 @@
 
   .input {
     width: 100%;
-    padding-right: 70px;
+    padding-inline-end: 70px;
   }
 
   .lang-select {
     position: absolute;
-    right: 5px;
-    top: 50%;
+    inset-block-start: 50%;
+    inset-inline-end: 5px;
     transform: translateY(-50%);
     border: none;
     background: transparent;

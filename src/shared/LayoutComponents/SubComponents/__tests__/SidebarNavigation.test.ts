@@ -157,15 +157,43 @@ describe('SidebarNavigation.vue', () => {
     expect(activeLinkLabels).toContain('sidebar.add-execution-quote');
   });
 
-  it('toggles the execution quotes section with the existing collapse behavior', async () => {
+  it('starts with the shared navigation pane open across dashboard routes', async () => {
+    const route = reactive({
+      name: 'Execution Quotes',
+      path: '/organization/execution-quotes',
+      fullPath: '/organization/execution-quotes',
+      params: {},
+      query: {},
+    });
+    routerMocks.useRoute.mockReturnValue(route);
+
+    const wrapper = mountSidebar();
+
+    expect(wrapper.get('.sidebar-shell').classes()).toContain('is-open');
+    expect(wrapper.get('.rail-action.active').attributes('title')).toBe(
+      'sidebar.execution-quotes',
+    );
+
+    route.name = 'Other Route';
+    await nextTick();
+
+    expect(wrapper.get('.sidebar-shell').classes()).toContain('is-open');
+  });
+
+  it('toggles the selected section with the existing collapse behavior', async () => {
     const wrapper = mountSidebar();
     const executionQuotesButton = wrapper.get('.rail-action[title="sidebar.execution-quotes"]');
+
+    expect(wrapper.get('.sidebar-shell').classes()).toContain('is-open');
 
     await executionQuotesButton.trigger('click');
     expect(wrapper.get('.sidebar-shell').classes()).toContain('is-open');
 
     await executionQuotesButton.trigger('click');
     expect(wrapper.get('.sidebar-shell').classes()).not.toContain('is-open');
+
+    await executionQuotesButton.trigger('click');
+    expect(wrapper.get('.sidebar-shell').classes()).toContain('is-open');
   });
 
   it('removes the extra top spacing before the execution offers group', async () => {

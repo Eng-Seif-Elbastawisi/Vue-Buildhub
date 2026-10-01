@@ -60,7 +60,14 @@
 </script>
 
 <template>
-  <AppTable :headers="subscriptionHeaders" :items="subscriptions" row-key="id" hoverable striped>
+  <AppTable
+    :headers="subscriptionHeaders"
+    :items="subscriptions"
+    row-key="id"
+    appearance="custom"
+    hoverable
+    striped
+  >
     <template #cell-status="{ item }">
       <span
         class="package-subscription-status"

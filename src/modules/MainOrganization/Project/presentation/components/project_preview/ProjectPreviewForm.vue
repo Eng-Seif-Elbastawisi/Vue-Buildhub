@@ -288,18 +288,29 @@
 </script>
 
 <template>
-  <section class="form-section" :class="{ disabled: loading }" :data-mode="isEdit ? 'edit' : 'add'">
-    <header>
-      <h3>{{ $t('project.preview_title') }}</h3>
-      <p>{{ $t('project.preview_description') }}</p>
+  <section
+    class="project-preview-form-page form-section"
+    :class="{ disabled: loading }"
+    :data-mode="isEdit ? 'edit' : 'add'"
+    :aria-busy="loading"
+  >
+    <header class="form-section__header">
+      <span class="form-section__icon" aria-hidden="true">
+        <i class="pi pi-file-edit"></i>
+      </span>
+
+      <div class="form-section__heading">
+        <h3>{{ $t('project.preview_title') }}</h3>
+        <p>{{ $t('project.preview_description') }}</p>
+      </div>
     </header>
 
     <div class="form-grid form-grid--three">
-      <div class="field-block">
+      <div class="field-block field-block--third">
         <div class="field-label-row">
-          <!-- <span class="label-icon">👷</span> -->
           <label class="field-label" for="engineer_id">
             {{ $t('project.preview_engineer') }}
+            <span class="field-required" aria-hidden="true">*</span>
           </label>
           <FieldHelpIcon
             :label="$t('project.preview_engineer')"
@@ -322,11 +333,11 @@
         </small>
       </div>
 
-      <div class="field-block">
+      <div class="field-block field-block--third">
         <div class="field-label-row">
-          <!-- <span class="label-icon">📅</span> -->
           <label class="field-label" for="preview_date">
             {{ $t('project.preview_date') }}
+            <span class="field-required" aria-hidden="true">*</span>
           </label>
           <FieldHelpIcon
             :label="$t('project.preview_date')"
@@ -352,11 +363,11 @@
         </small>
       </div>
 
-      <div class="field-block">
+      <div class="field-block field-block--third">
         <div class="field-label-row">
-          <!-- <span class="label-icon">⏰</span> -->
           <label class="field-label" for="preview_time">
             {{ $t('project.preview_time') }}
+            <span class="field-required" aria-hidden="true">*</span>
           </label>
           <FieldHelpIcon
             :label="$t('project.preview_time')"
@@ -383,9 +394,8 @@
         </small>
       </div>
 
-      <div class="field-block">
+      <div class="field-block field-block--half">
         <div class="field-label-row">
-          <!-- <span class="label-icon">🔗</span> -->
           <label class="field-label" for="site_link">
             {{ $t('project.site_link') }}
           </label>
@@ -396,22 +406,26 @@
           />
         </div>
 
-        <input
-          id="site_link"
-          v-model="siteLink"
-          class="field-input"
-          type="url"
-          :placeholder="$t('project.site_link_placeholder')"
-          @input="updateData"
-        />
-        <small v-if="validationErrors.site_link" class="field-error">
+        <div class="field-control">
+          <i class="field-control__icon pi pi-link" aria-hidden="true"></i>
+          <input
+            id="site_link"
+            v-model="siteLink"
+            class="field-input field-input--url"
+            type="url"
+            :placeholder="$t('project.site_link_placeholder')"
+            :aria-invalid="Boolean(validationErrors.site_link)"
+            :aria-describedby="validationErrors.site_link ? 'site_link-error' : undefined"
+            @input="updateData"
+          />
+        </div>
+        <small v-if="validationErrors.site_link" id="site_link-error" class="field-error">
           {{ validationErrors.site_link }}
         </small>
       </div>
 
-      <div class="field-block col-span-3">
+      <div class="field-block field-block--half">
         <div class="field-label-row">
-          <!-- <span class="label-icon">📍</span> -->
           <label class="field-label" for="address">
             {{ $t('address') }}
           </label>
@@ -421,12 +435,48 @@
         <textarea
           id="address"
           v-model="address"
-          class="field-input field-textarea"
+          class="field-input field-textarea field-textarea--compact"
+          rows="1"
           :placeholder="$t('project.preview_address_placeholder')"
+          :aria-invalid="Boolean(validationErrors.address)"
+          :aria-describedby="validationErrors.address ? 'address-error' : undefined"
           @input="updateData"
         />
-        <small v-if="validationErrors.address" class="field-error">
+        <small v-if="validationErrors.address" id="address-error" class="field-error">
           {{ validationErrors.address }}
+        </small>
+      </div>
+
+      <div class="field-block field-block--full">
+        <div class="field-label-row">
+          <label class="field-label" for="notification_message">
+            {{ $t('notification_message') }}
+          </label>
+          <FieldHelpIcon
+            :label="$t('notification_message')"
+            field-name="notification_message"
+            field-id="notification_message"
+          />
+        </div>
+
+        <textarea
+          id="notification_message"
+          v-model="notificationMessage"
+          class="field-input field-textarea"
+          rows="4"
+          :placeholder="$t('project.preview_notification_message_placeholder')"
+          :aria-invalid="Boolean(validationErrors.notification_message)"
+          :aria-describedby="
+            validationErrors.notification_message ? 'notification_message-error' : undefined
+          "
+          @input="updateData"
+        />
+        <small
+          v-if="validationErrors.notification_message"
+          id="notification_message-error"
+          class="field-error"
+        >
+          {{ validationErrors.notification_message }}
         </small>
       </div>
     </div>
@@ -437,84 +487,175 @@
   .form-section {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    min-width: 0;
+    overflow: visible;
+    border: 1px solid var(--border-weak);
+    border-radius: var(--card-radius);
+    background: var(--bg-card);
+    box-shadow: var(--shadow-sm);
 
     &.disabled {
       pointer-events: none;
-      opacity: 0.7;
+      opacity: 0.72;
     }
   }
 
-  header p {
-    color: var(--gray-5);
+  .form-section__header {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    padding: clamp(1rem, 2vw, 1.5rem);
+    border-bottom: 1px solid var(--border-weak);
+  }
+
+  .form-section__icon {
+    display: inline-grid;
+    flex: 0 0 auto;
+    width: 2.75rem;
+    height: 2.75rem;
+    place-items: center;
+    border: 1px solid var(--workflow-accent-12, var(--border-weak));
+    border-radius: var(--radius-md);
+    background: var(--workflow-accent-soft, var(--PrimaryColor-light));
+    color: var(--PrimaryColor);
+    font-size: 1.15rem;
+  }
+
+  .form-section__heading {
+    min-width: 0;
+  }
+
+  .form-section__heading h3,
+  .form-section__heading p {
+    margin: 0;
+  }
+
+  .form-section__heading h3 {
+    color: var(--gray-900);
+    font-family: 'Bold', var(--font-family);
+    font-size: var(--xl-size-base);
+    line-height: 1.4;
+  }
+
+  .form-section__heading p {
+    margin-top: 0.25rem;
+    color: var(--gray-500);
+    font-size: var(--sm-size);
+    line-height: 1.65;
   }
 
   .form-grid {
     display: grid;
-    gap: 1rem;
-    align-items: end;
+    gap: 1.25rem 1.125rem;
+    align-items: start;
+    padding: clamp(1rem, 2vw, 1.5rem);
   }
 
   .form-grid--three {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(6, minmax(0, 1fr));
   }
 
   .field-block {
     display: flex;
+    min-width: 0;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 0.625rem;
+  }
+
+  .field-block--third {
+    grid-column: span 2;
+  }
+
+  .field-block--half {
+    grid-column: span 3;
+  }
+
+  .field-block--full {
+    grid-column: 1 / -1;
   }
 
   .field-label-row {
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
-    min-height: 24px;
-  }
-
-  .label-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 22px;
-    min-width: 22px;
-    height: 22px;
-    line-height: 1;
-    border-radius: 50%;
-    background: var(--PrimaryColor-light);
-    color: var(--PrimaryColor);
-    font-size: 0.78rem;
+    gap: 0.375rem;
+    min-height: 1.5rem;
   }
 
   .field-label {
-    font-family: 'Medium';
+    color: var(--gray-800);
+    font-family: 'Medium', var(--font-family);
     font-size: var(--sm-size);
-    color: var(--gray-6);
+    line-height: 1.45;
+  }
+
+  .field-required {
+    margin-inline-start: 0.15rem;
+    color: var(--danger);
+  }
+
+  .field-control {
+    position: relative;
+    min-width: 0;
+    direction: ltr;
+  }
+
+  .field-control__icon {
+    position: absolute;
+    z-index: 1;
+    top: 50%;
+    inset-inline-end: 1rem;
+    color: var(--gray-500);
+    font-size: 0.95rem;
+    pointer-events: none;
+    transform: translateY(-50%);
   }
 
   .field-input {
     width: 100%;
-    min-height: 46px;
-    padding: 12px 16px;
-    border: 1px solid var(--border-weak);
-    border-radius: 28px;
-    background: var(--white);
+    min-height: var(--workflow-control-height, var(--control-height));
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--control-radius);
+    background: var(--bg-main);
+    color: var(--gray-800);
     outline: none;
-    transition: all 0.25s ease;
-    font-family: 'Medium';
+    font-family: 'Medium', var(--font-family);
     font-weight: 400;
     font-size: var(--sm-size);
-    color: var(--bread-crumb-color-span);
+    line-height: 1.5;
+    transition:
+      border-color var(--transition-fast),
+      box-shadow var(--transition-fast),
+      background-color var(--transition-fast);
   }
 
-  .field-input:focus {
+  .field-input:hover:not(:disabled) {
+    border-color: var(--gray-400);
+  }
+
+  .field-input:focus-visible {
     border-color: var(--PrimaryColor);
+    box-shadow: var(--focus-ring);
+  }
+
+  .field-input::placeholder {
+    color: var(--gray-400);
+    opacity: 1;
+  }
+
+  .field-input--url {
+    padding-inline-end: 2.75rem;
+    text-align: start;
+    unicode-bidi: isolate;
   }
 
   .field-error {
+    display: block;
+    margin: 0;
     color: var(--danger-dark);
-    font-family: 'Medium';
+    font-family: 'Medium', var(--font-family);
     font-size: var(--xs-size);
+    line-height: 1.5;
   }
 
   .prime-date-picker {
@@ -523,36 +664,79 @@
 
   :deep(.p-datepicker-input) {
     width: 100%;
-    min-height: 46px;
-    padding: 12px 16px;
-    border: 1px solid var(--border-weak);
-    border-radius: 28px;
-    background: var(--white);
+    min-height: var(--workflow-control-height, var(--control-height));
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--control-radius);
+    background: var(--bg-main);
+    color: var(--gray-800);
     outline: none;
-    transition: all 0.25s ease;
-    font-family: 'Medium';
+    font-family: 'Medium', var(--font-family);
     font-weight: 400;
     font-size: var(--sm-size);
-    color: var(--bread-crumb-color-span);
+    transition:
+      border-color var(--transition-fast),
+      box-shadow var(--transition-fast);
   }
 
-  :deep(.p-datepicker-input:focus) {
+  :deep(.p-datepicker-input:hover:not(:disabled)) {
+    border-color: var(--gray-400);
+  }
+
+  :deep(.p-datepicker-input:focus-visible) {
     border-color: var(--PrimaryColor);
+    box-shadow: var(--focus-ring);
   }
 
   :deep(.p-datepicker-dropdown) {
-    border-start-end-radius: 28px;
-    border-end-end-radius: 28px;
+    border-start-end-radius: var(--control-radius);
+    border-end-end-radius: var(--control-radius);
+    color: var(--gray-500);
+  }
+
+  :deep(.p-select) {
+    width: 100%;
+    min-height: var(--workflow-control-height, var(--control-height));
+    border-color: var(--border-strong);
+    border-radius: var(--control-radius);
+    background: var(--bg-main);
+    box-shadow: none;
+  }
+
+  :deep(.p-select:hover:not(.p-disabled)) {
+    border-color: var(--gray-400);
+  }
+
+  :deep(.p-select:focus-within) {
+    border-color: var(--PrimaryColor);
+    box-shadow: var(--focus-ring);
+  }
+
+  :deep(.p-select-label) {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    color: var(--gray-800);
+    font-family: 'Medium', var(--font-family);
+    font-size: var(--sm-size);
+  }
+
+  :deep(.p-select-label.p-placeholder) {
+    color: var(--gray-400);
   }
 
   .field-textarea {
-    min-height: 110px;
+    min-height: 7rem;
     resize: vertical;
-    border-radius: 18px;
   }
 
-  .col-span-3 {
-    grid-column: span 3;
+  .field-textarea--compact {
+    min-height: var(--workflow-control-height, var(--control-height));
+    border-radius: var(--control-radius);
+  }
+
+  .form-section :deep(.input-label) {
+    display: none;
   }
 
   @media (max-width: 992px) {
@@ -560,22 +744,41 @@
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    .col-span-3 {
-      grid-column: span 2;
+    .field-block--third,
+    .field-block--half {
+      grid-column: span 1;
+    }
+
+    .field-block--full {
+      grid-column: 1 / -1;
     }
   }
 
-  @media (max-width: 768px) {
+  @media (max-width: 640px) {
+    .form-section__header,
+    .form-grid {
+      padding: 1rem;
+    }
+
+    .form-section__header {
+      align-items: flex-start;
+    }
+
     .form-grid--three {
       grid-template-columns: 1fr;
     }
 
-    .col-span-3 {
+    .field-block--third,
+    .field-block--half,
+    .field-block--full {
       grid-column: span 1;
     }
   }
 
-  .form-section :deep(.input-label) {
-    display: none;
+  @media (prefers-reduced-motion: reduce) {
+    .field-input,
+    :deep(.p-datepicker-input) {
+      transition: none;
+    }
   }
 </style>

@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { mount } from '@vue/test-utils';
+import { flushPromises, mount } from '@vue/test-utils';
 import { defineComponent, h, onMounted } from 'vue';
 import ClientAdd from '../clientAdd.vue';
 
@@ -27,5 +27,30 @@ describe('ClientAdd', () => {
     await wrapper.find('button').trigger('click');
 
     expect(create).toHaveBeenCalledWith(params, undefined, '/client/add');
+  });
+
+  it('keeps save unavailable while creation is pending', async () => {
+    let resolveCreate: () => void = vi.fn();
+    create.mockImplementationOnce(
+      () =>
+        new Promise<void>((resolve) => {
+          resolveCreate = resolve;
+        }),
+    );
+
+    const wrapper = mount(ClientAdd, { global: { mocks: { $t: (key: string) => key } } });
+    const saveButton = wrapper.get('button');
+
+    await saveButton.trigger('click');
+
+    expect(saveButton.attributes('disabled')).toBeDefined();
+    expect(saveButton.attributes('aria-busy')).toBe('true');
+    expect(saveButton.classes()).toContain('btn--loading');
+
+    resolveCreate();
+    await flushPromises();
+
+    expect(saveButton.attributes('disabled')).toBeUndefined();
+    expect(saveButton.attributes('aria-busy')).toBe('false');
   });
 });

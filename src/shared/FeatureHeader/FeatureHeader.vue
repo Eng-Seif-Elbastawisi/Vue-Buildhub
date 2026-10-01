@@ -36,17 +36,19 @@
   <div v-if="!isProjectShowRoute" class="feature-header-container">
     <img class="header-img" :src="FeatureHeader" :alt="$t('feature_header_image_alt')" />
     <div class="content">
-      <p class="title">
-        {{ getLabel(items[items.length - 1]) }}
-      </p>
       <div class="breadcrump">
         <Breadcrumb :model="items">
           <template #item="{ item }">
-            <span @click="$router.push(item.url!)">{{ getLabel(item) }}</span>
+            <button type="button" class="breadcrumb-link" @click="$router.push(item.url!)">
+              {{ getLabel(item) }}
+            </button>
           </template>
           <template #separator> / </template>
         </Breadcrumb>
       </div>
+      <h1 class="title">
+        {{ getLabel(items[items.length - 1]) }}
+      </h1>
     </div>
     <div class="actions">
       <slot name="actions"></slot>

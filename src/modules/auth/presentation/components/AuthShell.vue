@@ -79,7 +79,7 @@
 </script>
 
 <template>
-  <main class="auth-shell" :class="`auth-shell--${mode}`" :style="shellStyle" dir="rtl">
+  <main class="auth-shell" :class="`auth-shell--${mode}`" :style="shellStyle">
     <div class="auth-shell__layout">
       <section class="auth-shell__hero" :aria-labelledby="`${mode}-login-title`">
         <div class="auth-shell__hero-image" aria-hidden="true"></div>

@@ -3,5 +3,5 @@
 </script>
 
 <template>
-  <MaterialsAdd />
+  <MaterialsAdd class="standard-crud-page" />
 </template>

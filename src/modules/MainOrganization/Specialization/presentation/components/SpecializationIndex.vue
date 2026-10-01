@@ -2,6 +2,7 @@
   import { computed, onMounted, ref } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
+  import IndexPageHeader from '@/shared/IndexPageHeader/IndexPageHeader.vue';
   import AppTable, { type TableHeader } from '@/shared/HelpersComponents/AppTable.vue';
   import { deleteSelectedRows } from '@/shared/HelpersComponents/deleteSelectedRows';
   import Pagination from '@/shared/HelpersComponents/Pagination.vue';
@@ -74,12 +75,11 @@
 
 <template>
   <div class="Specialization-page">
-    <header class="page-header">
-      <div>
-        <h4>{{ $t('Specialization.list_title') }}</h4>
-        <p>{{ $t('Specialization.list_description') }}</p>
-      </div>
-      <div class="toolbar">
+    <IndexPageHeader
+      :title="$t('Specialization.list_title')"
+      :subtitle="$t('Specialization.list_description')"
+    >
+      <template #search>
         <div class="search-field">
           <span class="search-icon">
             <svg
@@ -103,6 +103,9 @@
             @input="Search"
           />
         </div>
+      </template>
+
+      <template #actions>
         <router-link
           class="btn btn-primary"
           :to="
@@ -112,8 +115,8 @@
           "
           ><IndexAddIcon />{{ $t('Specialization') }}</router-link
         >
-      </div>
-    </header>
+      </template>
+    </IndexPageHeader>
     <DataStatusBuilder
       :controller="state"
       :on-retry="

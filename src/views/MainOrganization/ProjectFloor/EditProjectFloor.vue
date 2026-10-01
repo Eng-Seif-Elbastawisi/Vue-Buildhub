@@ -2,5 +2,5 @@
   import ProjectFloorEdit from '@/modules/MainOrganization/ProjectFloor/presentation/components/ProjectFloorEdit.vue';
 </script>
 <template>
-  <ProjectFloorEdit />
+  <ProjectFloorEdit class="project-workflow-view project-workflow-view--form" />
 </template>

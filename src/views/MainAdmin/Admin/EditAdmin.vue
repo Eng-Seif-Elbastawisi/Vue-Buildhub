@@ -3,5 +3,5 @@
 </script>
 
 <template>
-  <AdminEdit />
+  <AdminEdit class="standard-crud-page" />
 </template>

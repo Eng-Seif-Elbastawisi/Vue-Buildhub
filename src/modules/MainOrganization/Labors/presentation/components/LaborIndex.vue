@@ -5,6 +5,7 @@
   import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
   import { dialogManager } from '@/base/Presentation/Dialogs/dialog.manager';
   import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
+  import IndexPageHeader from '@/shared/IndexPageHeader/IndexPageHeader.vue';
   import ChangeStatusButton from '@/modules/MainOrganization/ChangeStatus/presentation/components/ChangeStatusButton.vue';
   import { StatusTypeEnum } from '@/modules/MainOrganization/ChangeStatus/core/constant/change_status.type.enum';
   import DeleteDialog from '@/base/Presentation/Dialogs/MainDialogs/DeleteDialog.vue';
@@ -356,37 +357,38 @@
 
 <template>
   <div class="labor-page">
-    <div class="labor-header">
-      <div>
-        <h4>{{ $t('labor.list_title') }}</h4>
-        <p>{{ $t('labor.list_description') }}</p>
-      </div>
-      <div class="toolbar">
-        <div class="toolbar-filters">
-          <div class="search-field">
-            <span class="search-icon">
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-              >
-                <circle cx="11" cy="11" r="8" />
-                <path d="m21 21-4.35-4.35" />
-              </svg>
-            </span>
-            <input
-              v-model="word"
-              :placeholder="$t('labor.search_placeholder')"
-              class="search-input"
-              type="text"
-              @input="search"
-            />
-          </div>
+    <IndexPageHeader
+      :title="$t('labor.list_title')"
+      :subtitle="$t('labor.list_description')"
+    >
+      <template #search>
+        <div class="search-field">
+          <span class="search-icon">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <path d="m21 21-4.35-4.35" />
+            </svg>
+          </span>
+          <input
+            v-model="word"
+            :placeholder="$t('labor.search_placeholder')"
+            class="search-input"
+            type="text"
+            @input="search"
+          />
+        </div>
+      </template>
 
+      <template #filters>
+        <div class="toolbar-filters">
           <div class="labor-filter" @keydown.esc="closeFilterDialog">
             <button
               type="button"
@@ -493,14 +495,17 @@
             </div>
           </div>
         </div>
+      </template>
+
+      <template #actions>
         <router-link
           class="btn btn-primary"
           :to="user?.type === 1 ? '/admin/labor/add' : '/organization/labor/add'"
         >
           <IndexAddIcon /> {{ $t('labor.add') }}
         </router-link>
-      </div>
-    </div>
+      </template>
+    </IndexPageHeader>
 
     <DataStatusBuilder :controller="state" :on-retry="async () => await fetchLabors()">
       <template #success="{ data }">

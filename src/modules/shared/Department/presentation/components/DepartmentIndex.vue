@@ -4,6 +4,7 @@
   import AppTable, { type TableHeader } from '@/shared/HelpersComponents/AppTable.vue';
   import { deleteSelectedRows } from '@/shared/HelpersComponents/deleteSelectedRows';
   import Pagination from '@/shared/HelpersComponents/Pagination.vue';
+  import IndexPageHeader from '@/shared/IndexPageHeader/IndexPageHeader.vue';
   import { useRoute, useRouter } from 'vue-router';
   import { debounce } from '@/base/Presentation/Utils/debouced';
   import EditIcon from '@/shared/icons/EditIcon.vue';
@@ -162,15 +163,8 @@
 
 <template>
   <div class="index-page-department">
-    <header class="page-header department-page__header">
-      <div>
-        <h4>{{ $t(departmentTitleKey) }}</h4>
-        <p>{{ $t(departmentDescriptionKey) }}</p>
-      </div>
-    </header>
-
-    <div class="index-header">
-      <div class="toolbar">
+    <IndexPageHeader :title="$t(departmentTitleKey)" :subtitle="$t(departmentDescriptionKey)">
+      <template #search>
         <div class="search-field">
           <span class="search-icon">
             <svg
@@ -194,8 +188,8 @@
             @input="Search"
           />
         </div>
-      </div>
-    </div>
+      </template>
+    </IndexPageHeader>
     <DepartmentAdd
       :key="formKey"
       :department="selectedDepartment"

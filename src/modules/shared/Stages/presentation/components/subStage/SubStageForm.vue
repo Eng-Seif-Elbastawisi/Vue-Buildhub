@@ -119,11 +119,6 @@ v-model="status" input-id="sub-stage-status" :disabled="loading"
 .Stage-form-card {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
-}
-
-header p {
-  color: var(--gray-5);
 }
 
 .form-fields {

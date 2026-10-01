@@ -6,5 +6,8 @@
 </script>
 
 <template>
-  <ProjectIndex :statuses="projectStatuses" />
+  <ProjectIndex
+    class="project-workflow-view project-workflow-view--index project-workflow-view--converted"
+    :statuses="projectStatuses"
+  />
 </template>

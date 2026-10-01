@@ -3,5 +3,5 @@
 </script>
 
 <template>
-  <LaborAdd />
+  <LaborAdd class="standard-crud-page" />
 </template>

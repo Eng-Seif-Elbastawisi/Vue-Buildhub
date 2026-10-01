@@ -73,7 +73,7 @@
       @update-data="updateData"
     />
 
-    <div class="actions" :class="{ disabled: loading }">
+    <div class="actions form-action-pair" :class="{ disabled: loading }">
       <AppButton
         :loading="loading"
         class="btn-save"
@@ -106,25 +106,13 @@
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
+  @use '@/styles/mixins/form_action_pair' as form-actions;
+
   .Measurement-crud-page {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
-  }
-
-  .actions {
-    display: flex;
-    gap: 0.75rem;
-  }
-
-  .btn-save {
-    flex: 1;
-    width: 100%;
-  }
-
-  .btn-cancel {
-    flex: 0 0 auto;
   }
 
   .actions.disabled {
@@ -140,5 +128,9 @@
     color: var(--danger-dark);
     border: 1px solid #f5c6cb;
     border-radius: 4px;
+  }
+
+  .form-action-pair {
+    @include form-actions.layout;
   }
 </style>

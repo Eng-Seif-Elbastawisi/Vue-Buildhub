@@ -24,18 +24,29 @@ describe('AttachmentTypeIndex', () => {
   it('renders and fetches attachment types', () => {
     const wrapper = mount(AttachmentTypeIndex, {
       global: {
-        mocks: { $t: (key: string) => key },
         stubs: {
           DataStatusBuilder: true,
           AppTable: true,
           Pagination: true,
           TableSkelaton: true,
           DeleteDialog: true,
-          RouterLink: true,
+          RouterLink: {
+            props: ['to'],
+            template: '<a :href="to"><slot /></a>',
+          },
         },
       },
     });
-    expect(wrapper.text()).toContain('attachment_types');
+    expect(wrapper.get('.index-page-heading__title').text()).toBe('Attachment Types');
+    expect(wrapper.get('.index-page-heading__subtitle').text()).toBe(
+      'Manage and organize all attachment types',
+    );
+    expect(wrapper.get('.index-page-toolbar input').attributes('placeholder')).toBe(
+      'Search attachment type...',
+    );
+    const addAction = wrapper.get('.index-page-heading__actions a');
+    expect(addAction.text()).toBe('Add Attachment Type');
+    expect(addAction.attributes('href')).toBe('/organization/attachment-types/add');
     expect(fetchList).toHaveBeenCalledTimes(1);
   });
 });

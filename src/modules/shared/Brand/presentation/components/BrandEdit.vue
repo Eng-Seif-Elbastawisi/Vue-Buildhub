@@ -65,7 +65,7 @@
         </template>
 </AppButton>
 </div> -->
-    <div class="actions" :class="{ disabled: loading }">
+    <div class="actions form-action-pair" :class="{ disabled: loading }">
       <button
         :disabled="loading"
         :class="{ 'btn--loading': loading }"
@@ -91,6 +91,8 @@
 </template>
 
 <style scoped lang="scss">
+  @use '@/styles/mixins/form_action_pair' as form-actions;
+
   .document-crud-example {
     margin: 0 auto;
     display: flex;
@@ -125,17 +127,10 @@
   }
 
   .actions {
-    display: flex;
-    gap: 1rem;
-
     &.disabled {
       cursor: not-allowed;
       pointer-events: none;
       opacity: 0.7;
-    }
-
-    .btn {
-      width: 50%;
     }
   }
 
@@ -146,5 +141,9 @@
     color: var(--danger-dark);
     border: 1px solid #f5c6cb;
     border-radius: 4px;
+  }
+
+  .form-action-pair {
+    @include form-actions.layout;
   }
 </style>

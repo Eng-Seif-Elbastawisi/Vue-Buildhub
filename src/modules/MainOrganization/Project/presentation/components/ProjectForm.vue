@@ -1107,15 +1107,27 @@ watch(
 </script>
 
 <template>
-  <div class="Project-form-card">
-    <header>
-      <h3>
-        {{ $t('Project.form_title') }}
-      </h3>
+  <div class="Project-form-card project-form-page">
+    <header class="project-form-heading">
+      <span
+        class="project-form-heading__icon"
+        aria-hidden="true"
+      >
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+        >
+          <path d="M7 3h8l4 4v14H7z" />
+          <path d="M15 3v5h4M10 12h6M10 16h6" />
+        </svg>
+      </span>
 
-      <p>
-        {{ $t('Project.form_description') }}
-      </p>
+      <span class="project-form-heading__copy">
+        <h3>{{ $t('Project.form_title') }}</h3>
+        <p>{{ $t('Project.form_description') }}</p>
+      </span>
     </header>
 
     <div
@@ -1123,611 +1135,878 @@ watch(
       :class="{ disabled: loading }"
     >
       <!-- ========================================================= -->
-      <!-- TITLE -->
+      <!-- REQUEST -->
       <!-- ========================================================= -->
 
-      <div
-        id="project-title-field"
-        class="field-group"
+      <section
+        class="form-section form-section--request"
       >
-        <MultiLangInput
-          field-key="title"
-          :label="$t('project.name')"
-          :languages="['ar', 'en']"
-          :model-value="titleTranslations"
-          type="title"
-          required
-          @update:model-value="
-            updateTitleTranslations
-          "
-        />
-      </div>
-
-      <!-- ========================================================= -->
-      <!-- PROJECT TYPE -->
-      <!-- ========================================================= -->
-
-      <div
-        id="project-type-field"
-        class="field-group"
-      >
-        <UpdatedCustomInputSelect
-          id="project_type_id"
-          :model-value="selectedProjectType"
-          :label="$t('project_type_id')"
-          :controller="projectTypeController"
-          :placeholder="
-            $t('project_type_id_placeholder')
-          "
-          :params="indexProjectTypeParams"
-          required
-          @update:model-value="
-            updateProjectType
-          "
-        />
-      </div>
-
-      <!-- ========================================================= -->
-      <!-- DATE -->
-      <!-- ========================================================= -->
-
-      <div
-        id="date-field"
-        class="field-group"
-      >
-        <span
-          class="field-help-label-row field-help-label-row--block"
-        >
-          <label
-            class="field-label"
-            for="date"
-          >
-            <span
-              class="required-indicator"
-              aria-hidden="true"
-            >
-              *
-            </span>
-
-            {{ $t('date') }}
-          </label>
-
-          <FieldHelpIcon
-            :label="$t('date')"
-            field-name="date"
-            field-id="date"
-          />
-        </span>
-
-        <DatePicker
-          input-id="date"
-          :model-value="selectedDate"
-          date-format="yy-mm-dd"
-          show-icon
-          icon-display="input"
-          :manual-input="false"
-          :placeholder="
-            $t('date_placeholder')
-          "
-          input-class="field-input"
-          class="date-picker"
-          required
-          aria-required="true"
-          @update:model-value="updateDate"
-        />
-      </div>
-
-      <!-- ========================================================= -->
-      <!-- CLIENT -->
-      <!-- ========================================================= -->
-
-      <template v-if="!isEdit">
         <div
-          id="client-type-field"
-          class="field-group"
+          class="form-section__grid form-section__grid--two"
         >
-          <UpdatedCustomInputSelect
-            id="client_exist"
-            :model-value="selectedClientExist"
-            :label="$t('client_type')"
-            :static-options="
-              clientExistOptions
-            "
-            :placeholder="
-              $t(
-                'Project.client_exist_placeholder',
-              )
-            "
-            required
-            @update:model-value="
-              updateClientExist
-            "
-          />
-        </div>
-
-        <div
-          v-if="
-            selectedClientExist &&
-            client_exist
-          "
-          id="client-field"
-          class="field-group"
-        >
-          <UpdatedCustomInputSelect
-            id="client_id"
-            :model-value="selectedClient"
-            :label="$t('client_id')"
-            :controller="clientController"
-            :placeholder="
-              $t('client_id_placeholder')
-            "
-            :params="indexClientParams"
-            required
-            @update:model-value="
-              updateClient
-            "
-          />
-        </div>
-
-        <template
-          v-if="
-            selectedClientExist &&
-            client_exist === false
-          "
-        >
-          <!-- CLIENT NAME -->
+          <!-- TITLE -->
 
           <div
-            id="client-name-field"
+            id="project-title-field"
             class="field-group"
           >
-            <span
-              class="field-help-label-row field-help-label-row--block"
-            >
-              <label
-                class="field-label"
-                for="client_name"
-              >
-                <span
-                  class="required-indicator"
-                  aria-hidden="true"
-                >
-                  *
-                </span>
-
-                {{ $t('client_name') }}
-              </label>
-
-              <FieldHelpIcon
-                :label="
-                  $t('client_name')
-                "
-                field-name="name"
-                field-id="client_name"
-              />
-            </span>
-
-            <input
-              id="client_name"
-              v-model="client_name"
-              class="field-input"
-              :placeholder="
-                $t(
-                  'client_name_placeholder',
-                )
-              "
+            <MultiLangInput
+              field-key="title"
+              :label="$t('title')"
+              :languages="['ar', 'en']"
+              :model-value="titleTranslations"
+              type="title"
               required
-              aria-required="true"
-              autocomplete="name"
-              @input="updateData"
+              @update:model-value="
+                updateTitleTranslations
+              "
             />
           </div>
 
-          <!-- CLIENT PHONE -->
+          <!-- PROJECT TYPE -->
 
           <div
-            id="client-phone-field"
-            class="field-group"
-          >
-            <span
-              class="field-help-label-row field-help-label-row--block"
-            >
-              <label
-                class="field-label"
-                for="client_phone"
-              >
-                <span
-                  class="required-indicator"
-                  aria-hidden="true"
-                >
-                  *
-                </span>
-
-                {{ $t('client_phone') }}
-              </label>
-
-              <FieldHelpIcon
-                :label="
-                  $t('client_phone')
-                "
-                field-name="phone"
-                field-id="client_phone"
-              />
-            </span>
-
-            <input
-              id="client_phone"
-              v-model="client_phone"
-              class="field-input"
-              type="tel"
-              inputmode="tel"
-              autocomplete="tel"
-              :placeholder="
-                $t(
-                  'client_phone_placeholder',
-                )
-              "
-              required
-              aria-required="true"
-              @input="updateData"
-            />
-          </div>
-
-          <!-- CLIENT SOURCE -->
-
-          <div
-            id="client-source-field"
+            id="project-type-field"
             class="field-group"
           >
             <UpdatedCustomInputSelect
-              id="client_source"
-              :model-value="
-                selectedClientSource
-              "
-              :label="
-                $t('client_source')
-              "
-              :controller="
-                clientSourceController
-              "
+              id="project_type_id"
+              :model-value="selectedProjectType"
+              :label="$t('project_type_id')"
+              :controller="projectTypeController"
               :placeholder="
-                $t(
-                  'client_source_placeholder',
-                )
+                $t('project_type_id_placeholder')
               "
-              :params="
-                indexClientSourceParams
-              "
+              :params="indexProjectTypeParams"
               required
               @update:model-value="
-                updateClientSource
+                updateProjectType
               "
             />
           </div>
-        </template>
-      </template>
 
-      <!-- ========================================================= -->
-      <!-- COUNTRY -->
-      <!-- ========================================================= -->
+          <!-- DATE -->
 
-      <div
-        id="country-field"
-        class="field-group"
-      >
-        <UpdatedCustomInputSelect
-          id="country_id"
-          :model-value="selectedCountry"
-          :label="
-            $t('location.country')
-          "
-          :controller="locationController"
-          :placeholder="
-            $t(
-              'location.country_placeholder',
-            )
-          "
-          :params="countryParams"
-          required
-          @update:model-value="
-            updateCountry
-          "
-        />
-      </div>
-
-      <!-- ========================================================= -->
-      <!-- GOVERNORATE -->
-      <!-- ========================================================= -->
-
-      <div
-        id="governorate-field"
-        class="field-group"
-      >
-        <UpdatedCustomInputSelect
-          id="governorate_id"
-          :model-value="
-            selectedGovernorate
-          "
-          :label="
-            $t('location.governorate')
-          "
-          :controller="locationController"
-          :placeholder="
-            isGovernorateDisabled
-              ? $t(
-                  'location.select_country_first',
-                )
-              : $t(
-                  'location.governorate_placeholder',
-                )
-          "
-          :params="governorateParams"
-          :disabled="
-            isGovernorateDisabled
-          "
-          :readonly="
-            isGovernorateDisabled
-          "
-          required
-          @click.prevent="
-            isGovernorateDisabled
-              ? undefined
-              : null
-          "
-          @update:model-value="
-            updateGovernorate
-          "
-        />
-      </div>
-
-      <!-- ========================================================= -->
-      <!-- CITY -->
-      <!-- ========================================================= -->
-
-      <div
-        id="city-field"
-        class="field-group"
-      >
-        <UpdatedCustomInputSelect
-          id="city_id"
-          :model-value="selectedCity"
-          :label="$t('location.city')"
-          :controller="locationController"
-          :placeholder="
-            isCityDisabled
-              ? $t(
-                  'location.select_governorate_first',
-                )
-              : $t(
-                  'location.city_placeholder',
-                )
-          "
-          :params="cityParams"
-          :disabled="isCityDisabled"
-          :readonly="isCityDisabled"
-          required
-          @click.prevent="
-            isCityDisabled
-              ? undefined
-              : null
-          "
-          @update:model-value="
-            updateCity
-          "
-        />
-      </div>
-
-      <!-- ========================================================= -->
-      <!-- TERM SELECT -->
-      <!-- ========================================================= -->
-
-      <div
-        id="term-field"
-        class="field-group"
-      >
-        <UpdatedCustomInputSelect
-          id="term_id"
-          :model-value="selectedTerm"
-          :label="$t('term')"
-          :controller="termController"
-          :placeholder="
-            $t('term_placeholder')
-          "
-          :params="indexTermParams"
-          :type="2"
-          @update:model-value="
-            updateTerms
-          "
-        />
-      </div>
-
-      <!-- ========================================================= -->
-      <!-- TERMS EDITOR -->
-      <!-- ========================================================= -->
-
-      <div
-        id="terms-field"
-        class="field-group col-span-2"
-      >
-        <span
-          class="field-help-label-row field-help-label-row--block"
-        >
-          <label
-            class="field-label"
-            for="terms"
+          <div
+            id="date-field"
+            class="field-group"
           >
             <span
-              class="required-indicator"
-              aria-hidden="true"
+              class="field-help-label-row field-help-label-row--block"
             >
-              *
+              <label
+                class="field-label"
+                for="date"
+              >
+                <span
+                  class="required-indicator"
+                  aria-hidden="true"
+                >
+                  *
+                </span>
+
+                {{ $t('date') }}
+              </label>
+
+              <FieldHelpIcon
+                :label="$t('date')"
+                field-name="date"
+                field-id="date"
+              />
             </span>
 
-            {{ $t('terms') }}
-          </label>
+            <DatePicker
+              input-id="date"
+              :model-value="selectedDate"
+              date-format="yy-mm-dd"
+              show-icon
+              icon-display="input"
+              :manual-input="false"
+              :placeholder="
+                $t('date_placeholder')
+              "
+              input-class="field-input"
+              class="date-picker"
+              required
+              aria-required="true"
+              @update:model-value="updateDate"
+            />
+          </div>
 
-          <FieldHelpIcon
-            :label="$t('terms')"
-            field-name="terms"
-            field-id="terms"
-          />
-        </span>
+          <!-- CLIENT TYPE -->
 
-        <Editor
-          v-model="termsText"
-          editor-style="min-height: 180px"
-          class="terms-editor"
-          @update:model-value="updateData"
-        />
-      </div>
+          <template v-if="!isEdit">
+            <div
+              id="client-type-field"
+              class="field-group"
+            >
+              <UpdatedCustomInputSelect
+                id="client_exist"
+                :model-value="
+                  selectedClientExist
+                "
+                :label="$t('client_type')"
+                :static-options="
+                  clientExistOptions
+                "
+                :placeholder="
+                  $t(
+                    'Project.client_exist_placeholder',
+                  )
+                "
+                required
+                @update:model-value="
+                  updateClientExist
+                "
+              />
+            </div>
+
+            <!-- EXISTING CLIENT -->
+
+            <div
+              v-if="
+                selectedClientExist &&
+                client_exist
+              "
+              id="client-field"
+              class="field-group"
+            >
+              <UpdatedCustomInputSelect
+                id="client_id"
+                :model-value="
+                  selectedClient
+                "
+                :label="$t('client_id')"
+                :controller="clientController"
+                :placeholder="
+                  $t('client_id_placeholder')
+                "
+                :params="indexClientParams"
+                required
+                @update:model-value="
+                  updateClient
+                "
+              />
+            </div>
+
+            <!-- NEW CLIENT -->
+
+            <template
+              v-if="
+                selectedClientExist &&
+                client_exist === false
+              "
+            >
+              <!-- CLIENT NAME -->
+
+              <div
+                id="client-name-field"
+                class="field-group"
+              >
+                <span
+                  class="field-help-label-row field-help-label-row--block"
+                >
+                  <label
+                    class="field-label"
+                    for="client_name"
+                  >
+                    <span
+                      class="required-indicator"
+                      aria-hidden="true"
+                    >
+                      *
+                    </span>
+
+                    {{ $t('client_name') }}
+                  </label>
+
+                  <FieldHelpIcon
+                    :label="$t('client_name')"
+                    field-name="name"
+                    field-id="client_name"
+                  />
+                </span>
+
+                <input
+                  id="client_name"
+                  v-model="client_name"
+                  class="field-input"
+                  :placeholder="
+                    $t(
+                      'client_name_placeholder',
+                    )
+                  "
+                  required
+                  aria-required="true"
+                  autocomplete="name"
+                  @input="updateData"
+                />
+              </div>
+
+              <!-- CLIENT PHONE -->
+
+              <div
+                id="client-phone-field"
+                class="field-group"
+              >
+                <span
+                  class="field-help-label-row field-help-label-row--block"
+                >
+                  <label
+                    class="field-label"
+                    for="client_phone"
+                  >
+                    <span
+                      class="required-indicator"
+                      aria-hidden="true"
+                    >
+                      *
+                    </span>
+
+                    {{ $t('client_phone') }}
+                  </label>
+
+                  <FieldHelpIcon
+                    :label="$t('client_phone')"
+                    field-name="phone"
+                    field-id="client_phone"
+                  />
+                </span>
+
+                <input
+                  id="client_phone"
+                  v-model="client_phone"
+                  class="field-input"
+                  type="tel"
+                  inputmode="tel"
+                  autocomplete="tel"
+                  :placeholder="
+                    $t(
+                      'client_phone_placeholder',
+                    )
+                  "
+                  required
+                  aria-required="true"
+                  @input="updateData"
+                />
+              </div>
+
+              <!-- CLIENT SOURCE -->
+
+              <div
+                id="client-source-field"
+                class="field-group"
+              >
+                <UpdatedCustomInputSelect
+                  id="client_source"
+                  :model-value="
+                    selectedClientSource
+                  "
+                  :label="$t('client_source')"
+                  :controller="
+                    clientSourceController
+                  "
+                  :placeholder="
+                    $t(
+                      'client_source_placeholder',
+                    )
+                  "
+                  :params="
+                    indexClientSourceParams
+                  "
+                  required
+                  @update:model-value="
+                    updateClientSource
+                  "
+                />
+              </div>
+            </template>
+          </template>
+        </div>
+      </section>
+
+      <!-- ========================================================= -->
+      <!-- LOCATION -->
+      <!-- ========================================================= -->
+
+      <section
+        class="form-section form-section--location"
+      >
+        <header class="form-section__header">
+          <span
+            class="form-section__icon"
+            aria-hidden="true"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+            >
+              <path
+                d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"
+              />
+              <circle
+                cx="12"
+                cy="10"
+                r="2.5"
+              />
+            </svg>
+          </span>
+
+          <span>
+            <h4>{{ $t('location') }}</h4>
+            <p>
+              {{
+                $t(
+                  'location.form_description',
+                )
+              }}
+            </p>
+          </span>
+        </header>
+
+        <div
+          class="form-section__grid form-section__grid--three"
+        >
+          <!-- COUNTRY -->
+
+          <div
+            id="country-field"
+            class="field-group"
+          >
+            <UpdatedCustomInputSelect
+              id="country_id"
+              :model-value="selectedCountry"
+              :label="
+                $t('location.country')
+              "
+              :controller="
+                locationController
+              "
+              :placeholder="
+                $t(
+                  'location.country_placeholder',
+                )
+              "
+              :params="countryParams"
+              required
+              @update:model-value="
+                updateCountry
+              "
+            />
+          </div>
+
+          <!-- GOVERNORATE -->
+
+          <div
+            id="governorate-field"
+            class="field-group"
+          >
+            <UpdatedCustomInputSelect
+              id="governorate_id"
+              :model-value="
+                selectedGovernorate
+              "
+              :label="
+                $t('location.governorate')
+              "
+              :controller="
+                locationController
+              "
+              :placeholder="
+                isGovernorateDisabled
+                  ? $t(
+                      'location.select_country_first',
+                    )
+                  : $t(
+                      'location.governorate_placeholder',
+                    )
+              "
+              :params="governorateParams"
+              :disabled="
+                isGovernorateDisabled
+              "
+              :readonly="
+                isGovernorateDisabled
+              "
+              required
+              @click.prevent="
+                isGovernorateDisabled
+                  ? undefined
+                  : null
+              "
+              @update:model-value="
+                updateGovernorate
+              "
+            />
+          </div>
+
+          <!-- CITY -->
+
+          <div
+            id="city-field"
+            class="field-group"
+          >
+            <UpdatedCustomInputSelect
+              id="city_id"
+              :model-value="selectedCity"
+              :label="$t('location.city')"
+              :controller="
+                locationController
+              "
+              :placeholder="
+                isCityDisabled
+                  ? $t(
+                      'location.select_governorate_first',
+                    )
+                  : $t(
+                      'location.city_placeholder',
+                    )
+              "
+              :params="cityParams"
+              :disabled="isCityDisabled"
+              :readonly="isCityDisabled"
+              required
+              @click.prevent="
+                isCityDisabled
+                  ? undefined
+                  : null
+              "
+              @update:model-value="
+                updateCity
+              "
+            />
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================================= -->
+      <!-- TERMS -->
+      <!-- ========================================================= -->
+
+      <section
+        class="form-section form-section--terms"
+      >
+        <header class="form-section__header">
+          <span
+            class="form-section__icon"
+            aria-hidden="true"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+            >
+              <path
+                d="M7 3h10a2 2 0 0 1 2 2v16l-7-3-7 3V5a2 2 0 0 1 2-2Z"
+              />
+              <path
+                d="M9 8h6M9 12h6"
+              />
+            </svg>
+          </span>
+
+          <span>
+            <h4>{{ $t('terms') }}</h4>
+            <p>
+              {{
+                $t('terms_placeholder')
+              }}
+            </p>
+          </span>
+        </header>
+
+        <div
+          class="form-section__grid form-section__grid--terms"
+        >
+          <!-- TERM SELECT -->
+
+          <div
+            id="term-field"
+            class="field-group"
+          >
+            <UpdatedCustomInputSelect
+              id="term_id"
+              :model-value="selectedTerm"
+              :label="$t('term')"
+              :controller="termController"
+              :placeholder="
+                $t('term_placeholder')
+              "
+              :params="indexTermParams"
+              :type="2"
+              @update:model-value="
+                updateTerms
+              "
+            />
+          </div>
+
+          <!-- TERMS EDITOR -->
+
+          <div
+            id="terms-field"
+            class="field-group"
+          >
+            <span
+              class="field-help-label-row field-help-label-row--block"
+            >
+              <label
+                class="field-label"
+                for="terms"
+              >
+                <span
+                  class="required-indicator"
+                  aria-hidden="true"
+                >
+                  *
+                </span>
+
+                {{ $t('terms') }}
+              </label>
+
+              <FieldHelpIcon
+                :label="$t('terms')"
+                field-name="terms"
+                field-id="terms"
+              />
+            </span>
+
+            <Editor
+              v-model="termsText"
+              editor-style="min-height: 180px"
+              class="terms-editor"
+              @update:model-value="
+                updateData
+              "
+            />
+          </div>
+        </div>
+      </section>
 
       <!-- ========================================================= -->
       <!-- SERVICE TYPE -->
       <!-- ========================================================= -->
 
-      <div
+      <section
         id="service-type-field"
-        class="field-group col-span-2"
+        class="form-section form-section--service"
       >
-        <span
-          class="field-help-label-row field-help-label-row--block"
-        >
-          <label class="field-label">
-            <span
-              class="required-indicator"
-              aria-hidden="true"
-            >
-              *
-            </span>
-
-            {{ $t('service_type') }}
-          </label>
-
-          <FieldHelpIcon
-            :label="$t('service_type')"
-            field-name="type"
-            field-id="service_type"
-          />
-        </span>
-
-        <div class="service-tabs">
-          <button
-            v-for="option in serviceTypeOptions"
-            :key="option.id"
-            type="button"
-            class="service-tab"
-            :class="{
-              active:
-                selectedServiceType?.id ===
-                option.id,
-            }"
-            @click="
-              updateServiceType(option)
-            "
+        <header class="form-section__header">
+          <span
+            class="form-section__icon"
+            aria-hidden="true"
           >
-            <span class="service-tab__icon">
-              {{
-                option.id ===
-                ServiceType.EXECUTIONONLY
-                  ? '🛠'
-                  : option.id ===
-                      ServiceType.DESIGNONLY
-                    ? '✏️'
-                    : '🏗'
-              }}
-            </span>
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+            >
+              <path
+                d="M12 3 4 7v10l8 4 8-4V7z"
+              />
+              <path
+                d="m4 7 8 4 8-4M12 11v10"
+              />
+            </svg>
+          </span>
 
-            <span class="service-tab__title">
-              {{ option.title }}
-            </span>
-          </button>
+          <span>
+            <h4>{{ $t('service_type') }}</h4>
+          </span>
+        </header>
+
+        <div class="field-group">
+          <span
+            class="field-help-label-row field-help-label-row--block"
+          >
+            <label class="field-label">
+              <span
+                class="required-indicator"
+                aria-hidden="true"
+              >
+                *
+              </span>
+
+              {{ $t('service_type') }}
+            </label>
+
+            <FieldHelpIcon
+              :label="$t('service_type')"
+              field-name="type"
+              field-id="service_type"
+            />
+          </span>
+
+          <div class="service-tabs">
+            <button
+              v-for="option in serviceTypeOptions"
+              :key="option.id"
+              type="button"
+              class="service-tab"
+              :class="{
+                active:
+                  selectedServiceType?.id ===
+                  option.id,
+              }"
+              :aria-pressed="
+                selectedServiceType?.id ===
+                option.id
+              "
+              @click="
+                updateServiceType(option)
+              "
+            >
+              <span
+                class="service-tab__icon"
+                aria-hidden="true"
+              >
+                <svg
+                  v-if="
+                    option.id ===
+                    ServiceType.EXECUTIONONLY
+                  "
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                >
+                  <path
+                    d="m14 7 3-3 3 3-3 3M5 19l8-8M4 20l3-1-2-2z"
+                  />
+                </svg>
+
+                <svg
+                  v-else-if="
+                    option.id ===
+                    ServiceType.DESIGNONLY
+                  "
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                >
+                  <path
+                    d="M4 20h16M6 16 16 6l2 2L8 18H6zM13 7l2 2"
+                  />
+                </svg>
+
+                <svg
+                  v-else
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                >
+                  <path
+                    d="M4 20V9l8-5 8 5v11M9 20v-5h6v5M8 10h8"
+                  />
+                </svg>
+              </span>
+
+              <span class="service-tab__title">
+                {{ option.title }}
+              </span>
+
+              <span
+                class="service-tab__check"
+                aria-hidden="true"
+              >
+                ✓
+              </span>
+            </button>
+          </div>
         </div>
-      </div>
+      </section>
 
       <!-- ========================================================= -->
       <!-- DESCRIPTION -->
       <!-- ========================================================= -->
 
-      <div
+      <section
         id="description-field"
-        class="field-group col-span-2"
+        class="form-section form-section--description"
       >
-        <MultiLangInput
-          field-key="description"
-          :label="$t('description')"
-          :languages="['ar', 'en']"
-          :model-value="
-            descriptionTranslations
-          "
-          type="description"
-          @update:model-value="
-            updateDescriptionTranslations
-          "
-        />
-      </div>
+        <header class="form-section__header">
+          <span
+            class="form-section__icon"
+            aria-hidden="true"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+            >
+              <path
+                d="M5 4h14v16H5zM8 8h8M8 12h8M8 16h5"
+              />
+            </svg>
+          </span>
+
+          <span>
+            <h4>{{ $t('description') }}</h4>
+          </span>
+        </header>
+
+        <div class="field-group">
+          <MultiLangInput
+            field-key="description"
+            :label="$t('description')"
+            :languages="['ar', 'en']"
+            :model-value="
+              descriptionTranslations
+            "
+            type="description"
+            @update:model-value="
+              updateDescriptionTranslations
+            "
+          />
+        </div>
+      </section>
 
       <!-- ========================================================= -->
       <!-- NOTES -->
       <!-- ========================================================= -->
 
-      <div
+      <section
         id="notes-field"
-        class="field-group col-span-2"
+        class="form-section form-section--notes"
       >
-        <span
-          class="field-help-label-row field-help-label-row--block"
-        >
-          <label
-            class="field-label"
-            for="notes"
+        <header class="form-section__header">
+          <span
+            class="form-section__icon"
+            aria-hidden="true"
           >
-            {{ $t('notes') }}
-          </label>
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+            >
+              <path
+                d="M4 5h16v12H8l-4 4zM8 9h8M8 13h5"
+              />
+            </svg>
+          </span>
 
-          <FieldHelpIcon
-            :label="$t('notes')"
-            field-name="notes"
-            field-id="notes"
+          <span>
+            <h4>{{ $t('notes') }}</h4>
+            <p>
+              {{
+                $t('notes_placeholder')
+              }}
+            </p>
+          </span>
+        </header>
+
+        <div class="field-group">
+          <span
+            class="field-help-label-row field-help-label-row--block"
+          >
+            <label
+              class="field-label"
+              for="notes"
+            >
+              {{ $t('notes') }}
+            </label>
+
+            <FieldHelpIcon
+              :label="$t('notes')"
+              field-name="notes"
+              field-id="notes"
+            />
+          </span>
+
+          <textarea
+            id="notes"
+            v-model="notes"
+            class="field-input field-textarea"
+            :placeholder="
+              $t('notes_placeholder')
+            "
+            @input="updateData"
           />
-        </span>
-
-        <textarea
-          id="notes"
-          v-model="notes"
-          class="field-input field-textarea"
-          :placeholder="
-            $t('notes_placeholder')
-          "
-          @input="updateData"
-        />
-      </div>
+        </div>
+      </section>
 
       <!-- ========================================================= -->
       <!-- ATTACHMENTS -->
       <!-- ========================================================= -->
 
-      <div
+      <section
         id="attachments-field"
-        class="field-group col-span-2"
+        class="form-section form-section--attachments"
       >
         <ProjectAttachmentManager
           v-model="filesItems"
           @change="updatefilesItems"
         />
-      </div>
+      </section>
     </div>
   </div>
 </template>
+
 
 <style scoped lang="scss">
 .Project-form-card {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: var(--page-section-gap);
 }
 
-header p {
-  color: var(--gray-5);
+.project-form-heading {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding-inline: 0.25rem;
+}
+
+.project-form-heading__icon,
+.form-section__icon {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid var(--PrimaryColor-alpha-20);
+  border-radius: var(--radius-md);
+  background: var(--PrimaryColor-alpha-8);
+  color: var(--PrimaryColor);
+
+  svg {
+    width: 1.35rem;
+    height: 1.35rem;
+  }
+}
+
+.project-form-heading__icon {
+  width: 2.75rem;
+  height: 2.75rem;
+}
+
+.project-form-heading__copy {
+  display: grid;
+  min-width: 0;
+  gap: 0.2rem;
+
+  h3,
+  p {
+    margin: 0;
+  }
+
+  h3 {
+    color: var(--gray-900);
+    font-family: 'Bold';
+    font-size: var(--xl-size-base);
+    line-height: 1.35;
+  }
+
+  p {
+    color: var(--gray-500);
+    font-size: var(--sm-size);
+    line-height: 1.5;
+  }
 }
 
 .form-fields {
@@ -1739,22 +2018,97 @@ header p {
   gap: 1rem;
   align-items: end;
 
+
   &.disabled {
     pointer-events: none;
     opacity: 0.7;
   }
 }
 
+.form-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  min-width: 0;
+  padding: var(--surface-padding);
+  border: 1px solid var(--border-weak);
+  border-radius: var(--card-radius);
+  background: var(--bg-card);
+  box-shadow: var(--shadow-sm);
+}
+
+.form-section__header {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding-block-end: 0.95rem;
+  border-block-end: 1px solid var(--gray-200-alpha-50);
+
+  > span:last-child {
+    display: grid;
+    min-width: 0;
+    gap: 0.15rem;
+  }
+
+  h4,
+  p {
+    margin: 0;
+  }
+
+  h4 {
+    color: var(--gray-900);
+    font-family: 'Bold';
+    font-size: var(--md-size);
+    line-height: 1.4;
+  }
+
+  p {
+    color: var(--gray-500);
+    font-size: var(--xs-size);
+    line-height: 1.55;
+  }
+}
+
+.form-section__icon {
+  width: 2.35rem;
+  height: 2.35rem;
+  border-radius: var(--radius-sm);
+}
+
+.form-section__grid {
+  display: grid;
+  gap: 1rem;
+  align-items: start;
+}
+
+.form-section__grid--two,
+.form-section__grid--terms {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.form-section__grid--three {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.form-section--request::before {
+  width: 2.5rem;
+  height: 0.2rem;
+  border-radius: var(--radius-full);
+  background: var(--PrimaryColor);
+  content: '';
+}
+
 .field-group {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  min-width: 0;
 }
 
 .field-label {
   font-family: 'Medium';
   font-size: var(--sm-size);
-  color: var(--gray-6);
+  color: var(--gray-700);
 }
 
 .required-indicator {
@@ -1763,26 +2117,31 @@ header p {
 
 .field-input {
   width: 100%;
-  padding: 12px 16px;
+  min-height: var(--control-height);
+  padding: 0.7rem 0.9rem;
   border: 1px solid var(--border-weak);
-  border-radius: 28px;
+  border-radius: var(--control-radius);
   background: var(--white);
   outline: none;
-  transition: all 0.25s ease;
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    background-color var(--transition-fast);
   font-family: 'Medium';
   font-weight: 400;
   font-size: var(--sm-size);
-  color: var(--bread-crumb-color-span);
+  color: var(--gray-800);
 }
 
 .field-input:focus {
   border-color: var(--PrimaryColor);
+  box-shadow: var(--focus-ring);
 }
 
 .field-textarea {
-  min-height: 110px;
+  min-height: 7rem;
   resize: vertical;
-  border-radius: 18px;
+  line-height: 1.65;
 }
 
 .date-picker {
@@ -1791,20 +2150,67 @@ header p {
 
 :deep(.p-datepicker-input) {
   width: 100%;
-  padding: 12px 16px;
+  min-height: var(--control-height);
+  padding: 0.7rem 0.9rem;
   border: 1px solid var(--border-weak);
-  border-radius: 28px;
+  border-radius: var(--control-radius);
   background: var(--white);
   outline: none;
-  transition: all 0.25s ease;
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
   font-family: 'Medium';
   font-weight: 400;
   font-size: var(--sm-size);
-  color: var(--bread-crumb-color-span);
+  color: var(--gray-800);
 }
 
 :deep(.p-datepicker-input:focus) {
   border-color: var(--PrimaryColor);
+  box-shadow: var(--focus-ring);
+}
+
+:deep(.p-datepicker-input-icon-container) {
+  color: var(--gray-500);
+}
+
+:deep(.input-select),
+:deep(.multi-lang-input .field-input) {
+  min-height: var(--control-height);
+  border-radius: var(--control-radius);
+  background: var(--white);
+}
+
+:deep(.input-select:not(.p-disabled):hover),
+:deep(.multi-lang-input .field-input:hover) {
+  border-color: var(--border-strong);
+}
+
+:deep(.input-select:not(.p-disabled).p-focus),
+:deep(.multi-lang-input .field-input:focus) {
+  border-color: var(--PrimaryColor);
+  box-shadow: var(--focus-ring);
+}
+
+:deep(.multi-lang-input .field-input--textarea) {
+  min-height: 7rem;
+  height: auto;
+  border-radius: var(--control-radius);
+  resize: vertical;
+}
+
+:deep(.multi-lang-input .header-input) {
+  margin-block-end: 0.5rem;
+}
+
+:deep(.multi-lang-input .lang-switcher) {
+  border-color: var(--border-weak);
+  background: var(--gray-50);
+}
+
+:deep(.multi-lang-input .lang-btn.active) {
+  background: var(--PrimaryColor);
+  color: var(--standard-white);
 }
 
 /*
@@ -1868,45 +2274,136 @@ header p {
 }
 
 .service-tab {
+  position: relative;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  min-height: 48px;
-  padding: 0.75rem 1rem;
+  justify-content: flex-start;
+  gap: 0.75rem;
+  min-height: 4.5rem;
+  padding: 0.9rem 1rem;
   border: 1px solid var(--border-weak);
-  border-radius: 28px;
+  border-radius: var(--radius-md);
   background: var(--white);
   cursor: pointer;
   font-family: 'Medium';
   font-size: var(--sm-size);
-  color: var(--bread-crumb-color-span);
-  transition: all 0.25s ease;
+  color: var(--gray-700);
+  text-align: start;
+  transition:
+    color var(--transition-fast),
+    border-color var(--transition-fast),
+    background-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast);
 
   &:hover {
     border-color: var(--PrimaryColor);
-    background: var(--PrimaryColor-light);
+    background: var(--PrimaryColor-alpha-4);
+    transform: translateY(-1px);
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
   }
 
   &.active {
     border-color: var(--PrimaryColor);
-    background: var(--PrimaryColor-light);
+    background: var(--PrimaryColor-alpha-8);
     color: var(--PrimaryColor);
     box-shadow:
       0 0 0 1px var(--PrimaryColor);
+
+    .service-tab__icon {
+      background: var(--PrimaryColor);
+      color: var(--standard-white);
+    }
+
+    .service-tab__check {
+      opacity: 1;
+      transform: scale(1);
+    }
   }
 }
 
 .service-tab__icon {
-  line-height: 1;
+  display: grid;
+  flex: 0 0 auto;
+  width: 2.25rem;
+  height: 2.25rem;
+  place-items: center;
+  border-radius: var(--radius-sm);
+  background: var(--gray-100);
+  color: var(--gray-600);
+  transition:
+    color var(--transition-fast),
+    background-color var(--transition-fast);
+
+  svg {
+    width: 1.2rem;
+    height: 1.2rem;
+  }
 }
 
 .service-tab__title {
-  white-space: nowrap;
+  min-width: 0;
+  line-height: 1.4;
 }
 
-.col-span-2 {
-  grid-column: span 2;
+.service-tab__check {
+  display: grid;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-inline-start: auto;
+  place-items: center;
+  border-radius: var(--radius-full);
+  background: var(--PrimaryColor);
+  color: var(--standard-white);
+  font-size: var(--xs-size);
+  opacity: 0;
+  transform: scale(0.7);
+  transition:
+    opacity var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.form-section--attachments :deep(.project-attachments-section) {
+  gap: 1.15rem;
+}
+
+.form-section--attachments :deep(.section-title h4) {
+  color: var(--gray-900);
+  font-family: 'Bold';
+  font-size: var(--md-size);
+}
+
+.form-section--attachments :deep(.attachment-controls-card) {
+  align-items: flex-end;
+  padding: 1rem;
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-md);
+  background: var(--gray-50);
+}
+
+.form-section--attachments :deep(.upload-dropzone) {
+  min-height: 4.25rem;
+  height: auto;
+  border-radius: var(--control-radius);
+  background: var(--white);
+}
+
+.form-section--attachments :deep(.attachment-card) {
+  border-width: 1px;
+  border-color: var(--border-weak);
+  border-radius: var(--radius-md);
+}
+
+.form-section--attachments :deep(.attachment-type-select .input-select) {
+  min-height: var(--control-height);
+}
+
+.form-section--attachments :deep(.add-btn) {
+  border-radius: var(--control-radius);
 }
 
 .dependent-field-hint {
@@ -1924,17 +2421,66 @@ header p {
   }
 }
 
-@media (max-width: 768px) {
-  .form-fields {
-    grid-template-columns: 1fr;
+@media (max-width: 1024px) {
+  .form-section__grid--three {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .service-tabs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .form-section__grid--two,
+  .form-section__grid--three,
+  .form-section__grid--terms,
   .service-tabs {
     grid-template-columns: 1fr;
   }
 
-  .col-span-2 {
-    grid-column: span 1;
+  .form-section {
+    padding: 1rem;
+  }
+
+  .form-section--attachments :deep(.attachment-controls-card) {
+    align-items: stretch;
+    flex-direction: column-reverse;
+  }
+
+  .form-section--attachments :deep(.add-btn) {
+    width: 100%;
+    border-radius: var(--control-radius);
+  }
+}
+
+@media (max-width: 480px) {
+  .project-form-heading {
+    align-items: flex-start;
+  }
+
+  .project-form-heading__icon {
+    width: 2.4rem;
+    height: 2.4rem;
+  }
+
+  .form-section__header {
+    gap: 0.6rem;
+  }
+
+  .form-section--attachments :deep(.attachment-card) {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .field-input,
+  .service-tab,
+  .service-tab__icon,
+  .service-tab__check,
+  :deep(.p-datepicker-input) {
+    transition: none;
   }
 }
 </style>

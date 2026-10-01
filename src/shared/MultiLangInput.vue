@@ -117,7 +117,7 @@
       </div>
     </div>
 
-    <div class="input-wrap">
+    <div class="input-wrap" :class="activeLang === 'ar' ? 'input-wrap--rtl' : 'input-wrap--ltr'">
       <textarea
         v-if="type === 'description'"
         v-model="currentValue"
@@ -167,5 +167,27 @@
     padding: 12px 16px;
     resize: none;
     border-radius: 28px;
+  }
+
+  .input-wrap--ltr > .field-input {
+    padding-right: 50px !important;
+    padding-left: 16px !important;
+    text-align: left;
+  }
+
+  .input-wrap--ltr > .active-indicator {
+    right: 12px;
+    left: auto;
+  }
+
+  .input-wrap--rtl > .field-input {
+    padding-right: 16px !important;
+    padding-left: 50px !important;
+    text-align: right;
+  }
+
+  .input-wrap--rtl > .active-indicator {
+    right: auto;
+    left: 12px;
   }
 </style>

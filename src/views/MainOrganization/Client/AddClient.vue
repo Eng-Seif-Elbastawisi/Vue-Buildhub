@@ -3,5 +3,5 @@
 </script>
 
 <template>
-  <ClientAdd />
+  <ClientAdd class="standard-crud-page" />
 </template>

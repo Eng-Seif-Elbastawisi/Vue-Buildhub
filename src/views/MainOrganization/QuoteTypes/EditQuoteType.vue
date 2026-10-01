@@ -3,5 +3,5 @@
 </script>
 
 <template>
-  <QuoteTypeEdit />
+  <QuoteTypeEdit class="standard-crud-page" />
 </template>

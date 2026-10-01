@@ -6,6 +6,7 @@
   import AppTable, { type TableHeader } from '@/shared/HelpersComponents/AppTable.vue';
   import Pagination from '@/shared/HelpersComponents/Pagination.vue';
   import TableSkelaton from '@/shared/HelpersComponents/TableSkelaton.vue';
+  import IndexPageHeader from '@/shared/IndexPageHeader/IndexPageHeader.vue';
   import type AdminModel from '../../core/models/admin.model';
   import DeleteAdminParams from '../../core/params/delete.admin.params';
   import IndexAdminParams from '../../core/params/index.admin.params';
@@ -62,15 +63,13 @@
 
 <template>
   <div class="admin-page">
-    <div class="admin-header">
-      <div>
-        <h4>{{ $t('admin.index.title') }}</h4>
-        <p>{{ $t('admin.index.description') }}</p>
-      </div>
-      <router-link class="btn btn-primary" :to="{ name: 'Add Admin' }">
-        {{ $t('admin.add') }}
-      </router-link>
-    </div>
+    <IndexPageHeader :title="$t('admin.index.title')" :subtitle="$t('admin.index.description')">
+      <template #actions>
+        <router-link class="btn btn-primary" :to="{ name: 'Add Admin' }">
+          {{ $t('admin.add') }}
+        </router-link>
+      </template>
+    </IndexPageHeader>
 
     <DataStatusBuilder :controller="state" :on-retry="async () => await fetchAdmins()">
       <template #success="{ data }">

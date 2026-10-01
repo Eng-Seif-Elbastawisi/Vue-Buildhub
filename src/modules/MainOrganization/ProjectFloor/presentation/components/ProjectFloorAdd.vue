@@ -215,9 +215,14 @@ const floorTitle = (floorNumber?: number | string | null) => {
     <ProjectFloorForm ref="projectFloorFormRef" :loading="loading" :project-id="projectId"
       :project-preview-id="projectPreviewId" @update-data="params = $event" />
 
-    <div class="buttons-container">
-      <button :class="{ 'btn--loading': loading }" class="btn btn-primary" type="button" :disabled="loading || !params"
-        @click="saveProjectFloor">
+    <div class="buttons-container form-action-pair">
+      <button
+        :class="{ 'btn--loading': loading }"
+        class="btn btn-primary"
+        type="button"
+        :disabled="loading || !params"
+        @click="saveProjectFloor"
+      >
         {{ $t('Project.save') }}
       </button>
 
@@ -346,20 +351,24 @@ const floorTitle = (floorNumber?: number | string | null) => {
 </template>
 
 <style scoped lang="scss">
-.ProjectFloor-crud-page {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
 
-.error {
-  margin-top: 20px;
-  padding: 10px;
-  background-color: var(--danger-light);
-  color: var(--danger-dark);
-  border: 1px solid #fdc7cc;
-  border-radius: 4px;
-}
+  @use '@/styles/mixins/form_action_pair' as form-actions;
+
+  .ProjectFloor-crud-page {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .error {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: var(--danger-light);
+    color: var(--danger-dark);
+    border: 1px solid #f5c6cb;
+    border-radius: 4px;
+  }
 
 .buttons-container {
   display: flex;
@@ -698,4 +707,8 @@ const floorTitle = (floorNumber?: number | string | null) => {
     width: 100%;
   }
 }
+
+  .form-action-pair {
+    @include form-actions.layout;
+  }
 </style>

@@ -6,6 +6,7 @@
   import { deleteSelectedRows } from '@/shared/HelpersComponents/deleteSelectedRows';
   import Pagination from '@/shared/HelpersComponents/Pagination.vue';
   import TableSkelaton from '@/shared/HelpersComponents/TableSkelaton.vue';
+  import IndexPageHeader from '@/shared/IndexPageHeader/IndexPageHeader.vue';
   import type SpaceModel from '../../core/models/space.model';
   import DeleteSpaceParams from '../../core/params/delete.space.params';
   import IndexSpaceParams from '../../core/params/index.space.params';
@@ -74,12 +75,8 @@
 
 <template>
   <div class="Space-page">
-    <header class="page-header">
-      <div class="header-text">
-        <h4>{{ $t('Space.list_title') }}</h4>
-        <p>{{ $t('Space.list_description') }}</p>
-      </div>
-      <div class="toolbar">
+    <IndexPageHeader :title="$t('Space.list_title')" :subtitle="$t('Space.list_description')">
+      <template #search>
         <div class="search-field">
           <span class="search-icon">
             <svg
@@ -103,13 +100,15 @@
             @input="Search"
           />
         </div>
+      </template>
+      <template #actions>
         <router-link
           class="btn btn-primary"
           :to="user?.type === 1 ? '/admin/space/add' : '/organization/space/add'"
           ><IndexAddIcon />{{ $t('Space') }}</router-link
         >
-      </div>
-    </header>
+      </template>
+    </IndexPageHeader>
     <DataStatusBuilder
       :controller="state"
       :on-retry="

@@ -2,7 +2,7 @@
 @use '../../../../styles/mixins/flex' as *;
 
 .p-dialog.filter-dialog {
-  background-color: white;
+  background-color: var(--bg-card);
 
   .filter-document {
     .filter-title {
@@ -15,36 +15,62 @@
 }
 
 .fillter-button {
-  border: 1px solid var(--input-border-color);
-  border-radius: 30px;
-  font-family: 'Medium';
+  min-height: var(--control-height);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--control-radius);
+  color: var(--gray-700);
+  background-color: var(--bg-main);
+  font-family: var(--font-family);
+
+  &:hover {
+    border-color: var(--PrimaryColor);
+    color: var(--PrimaryColor);
+    background-color: var(--PrimaryColor-light);
+  }
 }
 
 .filter-action {
   @include flex(row, wrap, justify-content, center);
 
   gap: 10px;
+  justify-content: flex-end;
   margin-top: $XlSize3;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-weak);
 
   .btn-cancel {
     // width: 30%;
-    padding: 14px;
-    background-color: $DangerLightAlt;
-    color: $Red;
-    border: 1.5px solid $DangerBorderLight;
-    border-radius: 50px;
-    font-size: 15px;
+    min-height: var(--control-height);
+    padding: 10px 16px;
+    background-color: var(--bg-main);
+    color: var(--gray-700);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--control-radius);
+    font-size: var(--sm-size);
     font-weight: $BaseFontSemiBoldWeight;
     font-family: 'medium';
     cursor: pointer;
     transition: background-color 0.2s;
 
     &:hover {
-      background-color: $BgRed;
+      border-color: var(--gray-400);
+      background-color: var(--gray-100);
     }
   }
 
   .btn-primary {
-    width: 65%;
+    min-width: 140px;
+  }
+}
+
+@media (max-width: 479px) {
+  .filter-action {
+    align-items: stretch;
+    flex-direction: column-reverse;
+
+    .btn,
+    .btn-primary {
+      width: 100%;
+    }
   }
 }

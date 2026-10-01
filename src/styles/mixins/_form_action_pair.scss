@@ -1,0 +1,35 @@
+@mixin layout {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 1fr);
+  align-items: stretch;
+  gap: 1rem;
+  width: 100%;
+
+  > * {
+    min-width: 0;
+  }
+
+  :deep(.btn) {
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    height: var(--control-height);
+    min-height: var(--control-height);
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--control-radius);
+    font-family: var(--font-family);
+    font-size: var(--sm-size);
+    font-weight: 600;
+    line-height: 1.2;
+  }
+
+  :deep(a) {
+    display: block;
+    width: 100%;
+  }
+
+  @media (max-width: 640px) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

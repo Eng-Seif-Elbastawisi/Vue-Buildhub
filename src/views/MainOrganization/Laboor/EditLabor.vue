@@ -3,5 +3,5 @@
 </script>
 
 <template>
-  <LaborEdit />
+  <LaborEdit class="standard-crud-page" />
 </template>

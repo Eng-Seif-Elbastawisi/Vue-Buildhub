@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
+import IndexPageHeader from '@/shared/IndexPageHeader/IndexPageHeader.vue';
 import AppTable, { type TableHeader } from '@/shared/HelpersComponents/AppTable.vue';
 import Pagination from '@/shared/HelpersComponents/Pagination.vue';
 
@@ -148,14 +149,11 @@ onMounted(async () => {
 
 <template>
   <div class="quote-type-page">
-    <header class="page-header">
-      <div class="page-info">
-        <h4>{{ $t('quote_type.list_title') }}</h4>
-
-        <p>{{ $t('quote_type.list_description') }}</p>
-      </div>
-
-      <div class="toolbar">
+    <IndexPageHeader
+      :title="$t('quote_type.list_title')"
+      :subtitle="$t('quote_type.list_description')"
+    >
+      <template #search>
         <div class="search-field">
           <span class="search-icon">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -169,14 +167,14 @@ onMounted(async () => {
           <input v-model="word" :placeholder="$t('search_quote_types')" class="search-input" type="text"
             @input="Search" />
         </div>
+      </template>
+    </IndexPageHeader>
 
-        <!-- <router-link class="btn btn-primary" :to="formRoute">
-          <IndexAddIcon />
+    <!-- <router-link class="btn btn-primary" :to="formRoute">
+      <IndexAddIcon />
 
-          {{ $t('quote_type.add') }}
-        </router-link> -->
-      </div>
-    </header>
+      {{ $t('quote_type.add') }}
+    </router-link> -->
 
     <DataStatusBuilder :controller="state" :on-retry="async () => await fetchQuoteTypes(route.query.page ? Number(route.query.page) : 1, word)
       ">

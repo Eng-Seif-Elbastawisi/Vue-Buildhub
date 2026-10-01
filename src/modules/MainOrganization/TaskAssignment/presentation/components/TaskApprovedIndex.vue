@@ -6,6 +6,7 @@
   import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
   import AppTable, { type TableHeader } from '@/shared/HelpersComponents/AppTable.vue';
   import Pagination from '@/shared/HelpersComponents/Pagination.vue';
+  import IndexPageHeader from '@/shared/IndexPageHeader/IndexPageHeader.vue';
   import TableSkelaton from '@/shared/HelpersComponents/TableSkelaton.vue';
 
   import TaskAssignmentController from '../controllers/task.assignment.controller';
@@ -157,17 +158,10 @@
 
 <template>
   <div class="task-assignment-approved-page">
-    <header class="page-header">
-      <div>
-        <h4>
-          {{ $t('task_assignment.approved_tasks.title') }}
-        </h4>
-
-        <p>
-          {{ $t('task_assignment.approved_tasks.description') }}
-        </p>
-      </div>
-    </header>
+    <IndexPageHeader
+      :title="$t('task_assignment.approved_tasks.title')"
+      :subtitle="$t('task_assignment.approved_tasks.description')"
+    />
 
     <DataStatusBuilder :controller="state" :on-retry="fetchApprovedTasks">
       <template #success="{ data }">

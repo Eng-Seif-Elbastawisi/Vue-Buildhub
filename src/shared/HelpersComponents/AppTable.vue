@@ -26,6 +26,12 @@
     rowKey?: string;
     striped?: boolean;
     hoverable?: boolean;
+    appearance?: 'standard' | 'custom';
+    flush?: boolean;
+    minWidth?: string;
+    tableLabel?: string;
+    actionsLabel?: string;
+    rowClickable?: boolean;
     bulkDelete?: (items: T[]) => Promise<void>;
   }>();
 
@@ -306,7 +312,13 @@
 </script>
 
 <template>
-  <div class="app-table-wrapper">
+  <div
+    class="app-table-wrapper"
+    :class="{
+      'app-table-wrapper--standard': appearance !== 'custom',
+      'app-table-wrapper--flush': flush && appearance !== 'custom',
+    }"
+  >
     <div
       v-if="bulkDelete && selectedItems.length > 0"
       class="table-bulk-actions"
@@ -326,7 +338,14 @@
     <div class="table-responsive">
       <table
         class="app-table"
-        :class="{ striped, hoverable, 'is-reordering': draggedIndex !== null }"
+        :class="{
+          striped,
+          hoverable,
+          'app-table--row-clickable': rowClickable,
+          'is-reordering': draggedIndex !== null,
+        }"
+        :style="{ minWidth }"
+        :aria-label="tableLabel ? $t(tableLabel) : undefined"
       >
         <!-- Header -->
         <thead>
@@ -348,7 +367,7 @@
               :key="header.key"
               :style="{
                 width: header.width,
-                textAlign: header.align || 'left',
+                textAlign: header.align || (appearance === 'custom' ? 'left' : 'start'),
               }"
               :class="{
                 sortable: header.sortable,
@@ -401,7 +420,9 @@
             </th>
 
             <!-- Actions column (if slot provided) -->
-            <th v-if="$slots.actions" class="th-actions"></th>
+            <th v-if="$slots.actions" class="th-actions">
+              {{ actionsLabel ? $t(actionsLabel) : '' }}
+            </th>
           </tr>
         </thead>
 
