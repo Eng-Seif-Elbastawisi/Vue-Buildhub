@@ -145,7 +145,7 @@
           </div>
 
           <a
-            class="download-btn"
+            class="download-btn action--download"
             :href="attachment.file"
             target="_blank"
             rel="noopener noreferrer"

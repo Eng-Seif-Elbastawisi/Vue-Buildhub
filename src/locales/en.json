@@ -1677,6 +1677,8 @@
   "data_failed_image_alt": "Data failed image",
   "data_empty_image_alt": "Empty data image",
   "feature_header_image_alt": "Feature header image",
+  "standard_form.add_description": "Enter the details below to create a new record.",
+  "standard_form.edit_description": "Review and update the details below.",
   "remove_file": "Remove file",
   "checkbox_icon_alt": "Checkbox icon",
   "timeline": "Timeline",
@@ -2639,6 +2641,7 @@
   },
   "sidebar.quote-types": "Quote Types",
   "execution_quote": {
+    "measurement_loading": "Preparing quotation...",
     "title": "Execution Quote",
     "subtitle": "Execution phase",
     "badge": "BuildHub OS",

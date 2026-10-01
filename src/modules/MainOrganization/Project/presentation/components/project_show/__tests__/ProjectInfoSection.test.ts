@@ -31,6 +31,27 @@ describe('ProjectInfoSection', () => {
     expect(wrapper.find('.status-badge--inline').text()).toBe('Active');
   });
 
+  it('shows the existing project image beside the information and falls back once on error', async () => {
+    const wrapper = mount(ProjectInfoSection, {
+      props: {
+        title: 'Project Information',
+        additionalDetailsLabel: 'View all project information',
+        items: [{ icon: 'pi pi-user', label: 'Client', value: 'Marny Barnett' }],
+        imageSource: '/project.png',
+        fallbackImageSource: '/project-fallback.png',
+        imageAlt: 'Test Project',
+      },
+    });
+
+    const image = wrapper.find<HTMLImageElement>('.project-info-media img');
+    expect(image.attributes('src')).toBe('/project.png');
+    expect(image.attributes('alt')).toBe('Test Project');
+    expect(wrapper.text()).toContain('Marny Barnett');
+
+    await image.trigger('error');
+    expect(image.attributes('src')).toBe('/project-fallback.png');
+  });
+
   it('keeps secondary and long backend values inside a collapsed disclosure', () => {
     const wrapper = mount(ProjectInfoSection, {
       props: {
@@ -52,7 +73,9 @@ describe('ProjectInfoSection', () => {
     expect(
       wrapper
         .findAll('.project-safe-value')
-        .some((projectValue) => projectValue.html().includes('&lt;script&gt;unsafe()&lt;/script&gt;')),
+        .some((projectValue) =>
+          projectValue.html().includes('&lt;script&gt;unsafe()&lt;/script&gt;'),
+        ),
     ).toBe(true);
   });
 });

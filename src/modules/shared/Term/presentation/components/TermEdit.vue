@@ -2,6 +2,7 @@
   import { onMounted, ref } from 'vue';
   import { useRoute } from 'vue-router';
   import AppButton from '@/shared/HelpersComponents/AppButton.vue';
+  import StandardFormSectionHeader from '@/shared/components/form/StandardFormSectionHeader.vue';
   import TermForm from './TermForm.vue';
   import type EditTermParams from '../../core/params/edit.term.params.ts';
   import TermController from '../controllers/term.controller.ts';
@@ -27,6 +28,11 @@
 
 <template>
   <section class="department-page">
+    <StandardFormSectionHeader
+      :title="$t('Term.form_title')"
+      :description="$t('Term.form_description')"
+      icon="pi pi-file-edit"
+    />
     <TermForm
       :term="controller.itemData.value ?? undefined"
       :loading="loading"

@@ -1,6 +1,7 @@
 <script setup lang="ts">
   import { ref } from 'vue';
   import AppButton from '@/shared/HelpersComponents/AppButton.vue';
+  import StandardFormSectionHeader from '@/shared/components/form/StandardFormSectionHeader.vue';
   import TermController from '../controllers/term.controller';
   import type AddTermParams from '../../core/params/add.term.params';
   import type TermModel from '../../core/models/term.model';
@@ -41,6 +42,11 @@
 
 <template>
   <section class="department-page">
+    <StandardFormSectionHeader
+      :title="$t('Term.form_title')"
+      :description="$t('Term.form_description')"
+      icon="pi pi-file-edit"
+    />
     <TermForm
       :loading="loading"
       :term="term"

@@ -3,5 +3,5 @@
 </script>
 
 <template>
-  <InvoicePaymentEdit />
+  <InvoicePaymentEdit class="standard-crud-page" />
 </template>

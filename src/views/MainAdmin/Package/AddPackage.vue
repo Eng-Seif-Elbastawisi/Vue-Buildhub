@@ -3,5 +3,5 @@
 </script>
 
 <template>
-  <PackageAdd />
+  <PackageAdd class="standard-crud-page" />
 </template>

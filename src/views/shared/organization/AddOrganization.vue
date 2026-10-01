@@ -3,5 +3,5 @@
 </script>
 
 <template>
-  <OrganizationAdd />
+  <OrganizationAdd class="standard-crud-page" />
 </template>

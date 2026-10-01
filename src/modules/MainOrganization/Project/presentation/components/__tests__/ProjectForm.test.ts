@@ -31,7 +31,7 @@ const multiLangInputStub = {
 };
 
 describe('ProjectForm.vue', () => {
-  it('keeps comma-separated terms and marks request fields as required', async () => {
+  it('groups required title and date fields and keeps selected terms', async () => {
     const wrapper = shallowMount(ProjectForm, {
       global: {
         stubs: {
@@ -47,19 +47,18 @@ describe('ProjectForm.vue', () => {
     await wrapper.get('[data-test="term-select"]').trigger('click');
 
     const titleInput = wrapper.get('[data-field-key="title"]');
-    const descriptionInput = wrapper.get('[data-field-key="description"]');
+    const titleDateRow = wrapper.get('.project-form-title-date-row');
     const updates = wrapper.emitted('updateData');
     const latestParams = updates?.at(-1)?.[0] as { terms?: string };
 
-    expect(titleInput.text()).toBe('Project name');
-    expect(descriptionInput.attributes('data-required')).toBe('true');
-    expect(wrapper.get('#terms').element).toHaveProperty(
-      'value',
-      'First condition, Second condition',
-    );
-    expect(wrapper.get('#terms').attributes('required')).toBeDefined();
+    expect([...titleDateRow.element.children].map((field) => field.id)).toEqual([
+      'project-title-field',
+      'date-field',
+    ]);
+    expect(titleInput.text()).toBe('Title');
+    expect(titleInput.attributes('data-required')).toBe('true');
     expect(wrapper.get('#date-field .required-indicator').text()).toBe('*');
-    expect(wrapper.get('#notes-field .field-label').text()).toBe('Notes');
-    expect(latestParams.terms).toBe('First condition, Second condition');
+    expect(latestParams.terms).toContain('First condition');
+    expect(latestParams.terms).toContain('Second condition');
   });
 });

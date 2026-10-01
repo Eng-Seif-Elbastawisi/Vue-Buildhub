@@ -1,46 +1,6 @@
 @use '../../../../../styles/variables' as *;
-@use '../../../../../styles/mixins/flex' as *;
 
 .index-page-department {
-  .department-page {
-    background: var(--bg-main);
-    border-radius: 24px;
-    padding: 16px;
-    overflow: hidden;
-    position: relative;
-    width: 100%;
-    background-color: var(--color-light-gray);
-    // @include flex(row, nowrap , space-between , end );
-    display: grid;
-    grid-template-columns: 4fr 1fr;
-    align-items: end;
-    gap: $XsSize4;
-    margin: $XlSize2 0;
-
-    &::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.15), transparent);
-      pointer-events: none;
-    }
-
-    .form-fields {
-      width: 100%;
-
-      @include flex-row(nowrap, space-between, center);
-
-      gap: 30px;
-
-      .field-group {
-        width: 50%;
-      }
-    }
-  }
-
   .row-actions {
     display: flex;
     gap: $XsSize5;

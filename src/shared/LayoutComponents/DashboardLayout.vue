@@ -2,11 +2,24 @@
   import SidebarNavigation from './SubComponents/SidebarNavigation.vue';
   import Navbar from './SubComponents/Navbar.vue';
   import FeatureHeader from '../FeatureHeader/FeatureHeader.vue';
+  import AnimatedBreadcrumb from '../FeatureHeader/AnimatedBreadcrumb.vue';
   import MobileTopBar from './SubComponents/MobileTopBar.vue';
   import MobileSidebarDrawer from './SubComponents/MobileSidebarDrawer.vue';
-  import { ref } from 'vue';
+  import { provide, ref, watch } from 'vue';
+  import { useRoute } from 'vue-router';
 
   const isMobileSidebarOpen = ref(false);
+  const route = useRoute();
+  const breadcrumbCurrentLabel = ref<string | undefined>();
+
+  provide('dashboard-breadcrumb-current-label', breadcrumbCurrentLabel);
+
+  watch(
+    () => route.fullPath,
+    () => {
+      breadcrumbCurrentLabel.value = undefined;
+    },
+  );
 </script>
 
 <template>
@@ -19,6 +32,9 @@
     </div>
     <section class="content-wrapper">
       <Navbar class="desktop-navbar" />
+      <div class="dashboard-breadcrumb-row">
+        <AnimatedBreadcrumb :current-label="breadcrumbCurrentLabel" />
+      </div>
       <div class="main-content">
         <FeatureHeader />
         <slot />

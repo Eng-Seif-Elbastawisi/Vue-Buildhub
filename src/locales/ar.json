@@ -1676,6 +1676,8 @@
   "data_failed_image_alt": "صورة فشل تحميل البيانات",
   "data_empty_image_alt": "صورة عدم وجود بيانات",
   "feature_header_image_alt": "صورة ترويسة الميزة",
+  "standard_form.add_description": "أدخل البيانات أدناه لإنشاء سجل جديد.",
+  "standard_form.edit_description": "راجع البيانات أدناه وحدّثها.",
   "remove_file": "إزالة الملف",
   "checkbox_icon_alt": "أيقونة مربع الاختيار",
   "timeline": "الخط الزمني",
@@ -2565,6 +2567,7 @@
   },
   "sidebar.quote-types": "نوع المقايسات",
   "execution_quote": {
+    "measurement_loading": "جاري تجهيز المقايسة...",
     "quote_type_title": "نوع المقايسة",
     "quote_type_hint": "اختر طريقة تسعير المقايسة وإدارتها.",
     "quote_types": {

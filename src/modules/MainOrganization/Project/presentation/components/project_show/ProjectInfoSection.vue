@@ -6,10 +6,22 @@
     title: string;
     items: ProjectInfoItem[];
     additionalDetailsLabel: string;
+    imageSource?: string;
+    fallbackImageSource?: string;
+    imageAlt?: string;
   }>();
 
   const summaryItems = computed(() => props.items.slice(0, 8));
   const additionalItems = computed(() => props.items.slice(8));
+
+  const useFallbackImage = (event: Event) => {
+    const image = event.currentTarget as HTMLImageElement;
+
+    if (!props.fallbackImageSource || image.dataset.fallbackApplied === 'true') return;
+
+    image.dataset.fallbackApplied = 'true';
+    image.src = props.fallbackImageSource;
+  };
 </script>
 
 <template>
@@ -20,25 +32,35 @@
       <i class="pi pi-chevron-down project-disclosure-chevron" aria-hidden="true"></i>
     </summary>
 
-    <div class="project-info-summary-grid">
-      <div v-for="projectInfo in summaryItems" :key="projectInfo.label" class="project-info-field">
-        <i :class="projectInfo.icon" aria-hidden="true"></i>
-        <div class="project-info-field__content">
-          <span>{{ projectInfo.label }}</span>
-          <strong
-            v-if="!projectInfo.badge"
-            :title="projectInfo.value.length <= 160 ? projectInfo.value : undefined"
-          >
-            {{ projectInfo.value }}
-          </strong>
-          <small v-if="projectInfo.meta" :title="projectInfo.meta">{{ projectInfo.meta }}</small>
-          <span
-            v-if="projectInfo.badge"
-            class="status-badge status-badge--inline"
-            :class="projectInfo.badge"
-          >
-            {{ projectInfo.value }}
-          </span>
+    <div class="project-info-body" :class="{ 'project-info-body--with-media': imageSource }">
+      <div v-if="imageSource" class="project-info-media">
+        <img :src="imageSource" :alt="imageAlt || ''" loading="lazy" @error="useFallbackImage" />
+      </div>
+
+      <div class="project-info-summary-grid">
+        <div
+          v-for="projectInfo in summaryItems"
+          :key="projectInfo.label"
+          class="project-info-field"
+        >
+          <i :class="projectInfo.icon" aria-hidden="true"></i>
+          <div class="project-info-field__content">
+            <span>{{ projectInfo.label }}</span>
+            <strong
+              v-if="!projectInfo.badge"
+              :title="projectInfo.value.length <= 160 ? projectInfo.value : undefined"
+            >
+              {{ projectInfo.value }}
+            </strong>
+            <small v-if="projectInfo.meta" :title="projectInfo.meta">{{ projectInfo.meta }}</small>
+            <span
+              v-if="projectInfo.badge"
+              class="status-badge status-badge--inline"
+              :class="projectInfo.badge"
+            >
+              {{ projectInfo.value }}
+            </span>
+          </div>
         </div>
       </div>
     </div>

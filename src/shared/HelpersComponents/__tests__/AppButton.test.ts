@@ -52,6 +52,12 @@ describe('AppButton', () => {
     expect(wrapper.classes()).toContain('btn-danger');
   });
 
+  it('applies a semantic action tone without changing its button theme', () => {
+    const wrapper = createWrapper({ theme: 'secondary', actionTone: 'download' });
+    expect(wrapper.classes()).toContain('btn-secondary');
+    expect(wrapper.classes()).toContain('action--download');
+  });
+
   it('applies size class', () => {
     const wrapper = createWrapper({ size: 'lg' });
     expect(wrapper.classes()).toContain('btn--lg');
