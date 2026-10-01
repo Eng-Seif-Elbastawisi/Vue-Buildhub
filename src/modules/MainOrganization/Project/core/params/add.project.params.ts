@@ -17,9 +17,50 @@ import { type ServiceType } from '@/modules/MainOrganization/Project/core/consta
 export interface ProjectAttachmentParams {
   file: string;
   attachment_type_id?: number;
+  alt?: string | null;
+  link?: string | null;
   name?: string;
   size?: number | string;
 }
+
+interface ProjectAttachmentPayload {
+  file: string;
+  alt: string | null;
+  link: string | null;
+}
+
+interface ProjectAttachmentGroupParams {
+  attachment_type_id: number;
+  attachments: ProjectAttachmentPayload[];
+}
+
+export const groupProjectAttachments = (
+  attachments?: ProjectAttachmentParams[],
+): ProjectAttachmentGroupParams[] | undefined => {
+  if (!attachments) return undefined;
+  if (attachments.length === 0) return [];
+
+  const groups = new Map<number, ProjectAttachmentPayload[]>();
+
+  attachments.forEach((attachment) => {
+    if (!attachment.attachment_type_id) {
+      throw new TypeError('attachment_type_id is required for every project attachment');
+    }
+
+    const groupedAttachments = groups.get(attachment.attachment_type_id) ?? [];
+    groupedAttachments.push({
+      file: attachment.file,
+      alt: attachment.alt?.trim() || attachment.name?.trim() || null,
+      link: attachment.link?.trim() || null,
+    });
+    groups.set(attachment.attachment_type_id, groupedAttachments);
+  });
+
+  return Array.from(groups, ([attachment_type_id, groupedAttachments]) => ({
+    attachment_type_id,
+    attachments: groupedAttachments,
+  }));
+};
 
 export type WithPreviewValue = 0 | 1;
 
@@ -87,6 +128,12 @@ export default class AddProjectParams implements Params {
     location_id: {
       custom: (value?: number) =>
         hasSelectValue(value) || translate('Project.validation.city_required'),
+    },
+
+    attachments: {
+      custom: (value?: ProjectAttachmentParams[]) =>
+        !value?.some((attachment) => !attachment.attachment_type_id) ||
+        translate('project.validation.attachment_type_required'),
     },
   });
   constructor(data: {
@@ -196,7 +243,7 @@ export default class AddProjectParams implements Params {
 
       notes: this.notes,
 
-      attachments: this.attachments,
+      files: groupProjectAttachments(this.attachments),
 
       engineer_id: this.engineer_id,
 

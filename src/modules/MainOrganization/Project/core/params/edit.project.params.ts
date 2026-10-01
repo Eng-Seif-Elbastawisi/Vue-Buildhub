@@ -9,13 +9,7 @@ import { hasTitleTranslation, requiredSelectRule } from '@/base/Presentation/Uti
 import { translate } from '@/locales/i18n';
 
 import { type ServiceType } from '@/modules/MainOrganization/Project/core/constants/serviceType.enum';
-
-export interface ProjectAttachmentParams {
-  file: string;
-  attachment_type_id?: number;
-  name?: string;
-  size?: number | string;
-}
+import { groupProjectAttachments, type ProjectAttachmentParams } from './add.project.params';
 
 export type WithPreviewValue = 0 | 1;
 
@@ -77,6 +71,12 @@ export default class EditProjectParams implements Params {
     service_type: requiredSelectRule(),
 
     location_id: requiredSelectRule(),
+
+    attachments: {
+      custom: (value?: ProjectAttachmentParams[]) =>
+        !value?.some((attachment) => !attachment.attachment_type_id) ||
+        translate('project.validation.attachment_type_required'),
+    },
   });
 
   constructor(data: {
@@ -200,7 +200,7 @@ export default class EditProjectParams implements Params {
 
       notes: this.notes,
 
-      attachments: this.attachments,
+      files: groupProjectAttachments(this.attachments),
 
       engineer_id: this.engineer_id,
 

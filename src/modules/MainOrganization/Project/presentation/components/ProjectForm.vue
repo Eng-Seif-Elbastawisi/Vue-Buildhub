@@ -283,7 +283,7 @@ const updateData = () => {
 
       service_type: selectedServiceType.value?.id as ServiceType | undefined,
 
-      attachments: attachments.value.length ? attachments.value : undefined,
+      attachments: attachments.value,
 
       notes: notes.value,
       date: date.value,
@@ -385,6 +385,8 @@ const updateAttachmentItems = (items: ProjectAttachmentItem[]) => {
   attachments.value = items.map((item) => ({
     file: item.file,
     attachment_type_id: item.typeId,
+    alt: item.alt,
+    link: item.link,
     name: item.name,
     size: item.size,
   }));
@@ -481,10 +483,19 @@ watch(
         name:
           att.name ||
           (typeof att.file === 'string' ? att.file.split('/').pop() : 'Attachment'),
-        typeId: att.attachment_type_id || att.attachment_type?.id,
+        typeId: att.attachment_type_id || att.attachment_type?.id || att.type?.id || att.type,
         typeName: att.attachment_type?.name || att.attachment_type?.title,
+        alt: att.alt,
+        link: att.link,
       }));
-      attachments.value = [...attachmentItems.value];
+      attachments.value = attachmentItems.value.map((item) => ({
+        file: item.file,
+        attachment_type_id: item.typeId,
+        alt: item.alt,
+        link: item.link,
+        name: item.name,
+        size: item.size,
+      }));
     } else {
       attachmentItems.value = [];
       attachments.value = [];

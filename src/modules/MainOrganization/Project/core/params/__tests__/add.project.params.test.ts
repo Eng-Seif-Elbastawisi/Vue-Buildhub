@@ -99,4 +99,54 @@ describe('AddProjectParams', () => {
       errors: [{ field: 'client_source' }],
     });
   });
+
+  it('groups attachments by type in the files payload', () => {
+    const params = new AddProjectParams({
+      attachments: [
+        {
+          file: 'data:image/png;base64,front',
+          attachment_type_id: 5,
+          alt: 'Front view',
+        },
+        {
+          file: 'data:image/jpeg;base64,side',
+          attachment_type_id: 5,
+          alt: 'Side view',
+        },
+        {
+          file: 'data:application/pdf;base64,contract',
+          attachment_type_id: 2,
+          name: 'Contract',
+        },
+      ],
+    });
+
+    expect(params.toMap().files).toEqual([
+      {
+        attachment_type_id: 5,
+        attachments: [
+          { file: 'data:image/png;base64,front', alt: 'Front view', link: null },
+          { file: 'data:image/jpeg;base64,side', alt: 'Side view', link: null },
+        ],
+      },
+      {
+        attachment_type_id: 2,
+        attachments: [
+          { file: 'data:application/pdf;base64,contract', alt: 'Contract', link: null },
+        ],
+      },
+    ]);
+    expect(params.toMap()).not.toHaveProperty('attachments');
+  });
+
+  it('rejects an attachment without an attachment type', () => {
+    const params = new AddProjectParams({
+      attachments: [{ file: 'data:image/png;base64,front' }],
+    });
+
+    expect(params.validate().errors).toEqual(
+      expect.arrayContaining([expect.objectContaining({ field: 'attachments' })]),
+    );
+    expect(() => params.toMap()).toThrow('attachment_type_id is required');
+  });
 });
