@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import DatePicker from 'primevue/datepicker';
 
@@ -11,6 +11,7 @@ import UpdatedCustomInputSelect from '@/shared/FormInputs/UpdatedCustomInputSele
 import ProjectAttachmentManager, {
   type ProjectAttachmentItem,
 } from './ProjectAttachmentManager.vue';
+import ProjectTermGallery from './ProjectTermGallery.vue';
 import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
 
 import { ServiceType } from '@/modules/MainOrganization/Project/core/constants/serviceType.enum';
@@ -36,6 +37,7 @@ import IndexProjectTypeParams from '@/modules/shared/ProjectType/core/params/ind
 import TermController from '@/modules/MainOrganization/Term/presentation/controllers/term.controller';
 import IndexTermParams from '@/modules/MainOrganization/Term/core/params/index.term.params';
 import type TermModel from '@/modules/MainOrganization/Term/core/models/term.model';
+import { formatSelectedProjectTerms } from '../utils/project.term.formatter';
 
 const emit = defineEmits<{
   updateData: [params: AddProjectParams];
@@ -68,6 +70,10 @@ const termOptions = computed<TermModel[]>(() => {
 
   return Array.isArray(data) ? data : [];
 });
+
+const termsLoading = computed(() => termController.isListLoading());
+
+onMounted(() => void termController.fetchList(indexTermParams));
 
 const locationController = LocationController.getInstance();
 
@@ -409,20 +415,7 @@ const updateTerms = (value: TitleInterface<number>[] | TitleInterface<number> | 
     title: term.title,
   }));
 
-  termsText.value = selectedValues
-    .map((selectedItem) => {
-      const fullTerm = termOptions.value.find(
-        (term) => Number(term.id) === Number(selectedItem.id),
-      );
-
-      const desc = fullTerm?.description?.trim();
-      if (desc) return desc;
-
-      const title = fullTerm?.title || (selectedItem.title ? String(selectedItem.title) : '');
-      return title;
-    })
-    .filter((description): description is string => Boolean(description && description.trim()))
-    .join('\n\n');
+  termsText.value = formatSelectedProjectTerms(selectedValues, termOptions.value);
 
   updateData();
 };
@@ -785,15 +778,10 @@ watch(
 
         <div class="form-section__grid form-section__grid--terms">
           <div id="term-field" class="field-group">
-            <UpdatedCustomInputSelect
-              id="term_id"
+            <ProjectTermGallery
               :model-value="selectedTerm"
-              :label="$t('term')"
-              :controller="termController"
-              :placeholder="$t('term_placeholder')"
-              :params="indexTermParams"
-              :type="2"
-              required
+              :options="termOptions"
+              :loading="termsLoading"
               @update:model-value="updateTerms"
             />
           </div>
@@ -811,6 +799,7 @@ watch(
               id="terms"
               v-model="termsText"
               class="field-input field-textarea"
+              rows="8"
               :placeholder="$t('terms_placeholder')"
               @input="updateData"
             />
@@ -1080,9 +1069,12 @@ watch(
   align-items: start;
 }
 
-.form-section__grid--two,
-.form-section__grid--terms {
+.form-section__grid--two {
   grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.form-section__grid--terms {
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .form-section__grid--three {
