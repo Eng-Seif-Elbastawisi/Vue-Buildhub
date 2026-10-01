@@ -32,7 +32,6 @@
   const pricingResponsibleParams = new IndexEmployeeParams('', 1, 100, 0, 4);
 
   const dialogVisible = ref(false);
-  const notReadyDialogVisible = ref(false);
 
   const selectedStatus = ref<TitleInterface<Status> | null>(null);
   const selectedPricingResponsible = ref<TitleInterface<number> | null>(null);
@@ -128,7 +127,13 @@
     }
 
     if (value.id === Status.NOT_READY_FOR_COMPLETION) {
-      notReadyDialogVisible.value = true;
+      emit(
+        'submitFinalResult',
+        new AddFinalProjectFloorResultParams({
+          project_preview_id: props.projectPreviewId,
+          status: Status.NOT_READY_FOR_COMPLETION,
+        }),
+      );
     }
   };
 
@@ -138,7 +143,7 @@
 
   const submitFinalResult = () => {
     if (
-      !selectedStatus.value ||
+      selectedStatus.value?.id !== Status.READY_FOR_PRICING ||
       !selectedPricingResponsible.value ||
       !selectedNotificationType.value
     ) {
@@ -149,7 +154,7 @@
       'submitFinalResult',
       new AddFinalProjectFloorResultParams({
         project_preview_id: props.projectPreviewId,
-        status: selectedStatus.value.id as Status,
+        status: Status.READY_FOR_PRICING,
         pricing_responsible_id: Number(selectedPricingResponsible.value.id),
         notification_type: selectedNotificationType.value.id as NotificationType,
         notification_message: notificationMessage.value,
@@ -306,41 +311,6 @@
             @click="submitFinalResult"
           >
             {{ $t('ProjectFloor.send_to_pricing') }}
-          </button>
-        </div>
-      </template>
-    </Dialog>
-
-    <Dialog
-      v-model:visible="notReadyDialogVisible"
-      modal
-      :draggable="false"
-      :style="{ width: '560px', maxWidth: '95vw' }"
-      class="not-ready-dialog"
-    >
-      <template #header>
-        <div class="dialog-header">
-          <span class="dialog-header__icon">⚠️</span>
-
-          <div>
-            <h4>{{ $t('ProjectFloor.not_ready_for_completion') }}</h4>
-            <p>{{ $t('ProjectFloor.not_ready_message') }}</p>
-          </div>
-        </div>
-      </template>
-
-      <div class="not-ready-body">
-        {{ $t('ProjectFloor.not_ready_details') }}
-      </div>
-
-      <template #footer>
-        <div class="dialog-actions">
-          <button
-            type="button"
-            class="dialog-btn dialog-btn--primary"
-            @click="notReadyDialogVisible = false"
-          >
-            {{ $t('ok') }}
           </button>
         </div>
       </template>
@@ -528,16 +498,6 @@
       background: var(--PrimaryColor-light);
       color: var(--PrimaryColor);
     }
-  }
-
-  .not-ready-body {
-    padding: 1rem;
-    border: 1px solid rgba(220, 38, 38, 0.12);
-    border-radius: 18px;
-    background: rgba(220, 38, 38, 0.06);
-    color: #991b1b;
-    font-family: 'Medium';
-    line-height: 1.8;
   }
 
   .dialog-actions {

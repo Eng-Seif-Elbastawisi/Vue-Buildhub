@@ -15,6 +15,7 @@
   import router from '@/router/index';
   import { useUserStore } from '@/stores/user';
   import { type FloorNumber } from '../../core/constants/floor.number.enum.ts';
+  import { Status } from '../../core/constants/status.enum';
   import { useI18n } from 'vue-i18n';
   import { getFloorNumberNameKey } from '../../core/constants/floor.number.enum';
   const controller = ProjectFloorController.getInstance();
@@ -144,9 +145,13 @@
     try {
       await controller.getProject(finalParams);
 
-      await router.push({
-        path: `${getPrefix()}/Project/show/${currentProjectId}`,
-      });
+      if (finalParams.status === Status.NOT_READY_FOR_COMPLETION) {
+        await router.push({ name: 'project' });
+      } else {
+        await router.push({
+          path: `${getPrefix()}/Project/show/${currentProjectId}`,
+        });
+      }
     } finally {
       loading.value = false;
     }

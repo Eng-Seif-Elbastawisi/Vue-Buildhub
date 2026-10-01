@@ -97,52 +97,61 @@ describe('ProjectFloorAdd.vue', () => {
     expect(ProjectFloorAdd).toBeDefined();
   });
 
-  it('submits final result params without converting them to a plain object', async () => {
-    const finalParams = new AddFinalProjectFloorResultParams({
-      project_preview_id: 15,
-      status: Status.READY_FOR_PRICING,
-      pricing_responsible_id: 7,
-      notification_type: NotificationType.URGENT,
-      notification_message: 'Ready for pricing',
-    });
-
-    const wrapper = mount(ProjectFloorAdd, {
-      global: {
-        stubs: {
-          ProjectSteps: {
-            template: '<div />',
-          },
-          ProjectFloorForm: {
-            template: '<div />',
-          },
-          FinalResults: {
-            emits: ['submitFinalResult'],
-            props: ['projectId', 'projectPreviewId', 'loading'],
-            template:
-              '<button data-test="submit-final-result" type="button" @click="$emit(\'submitFinalResult\', finalParams)">submit</button>',
-            setup() {
-              return {
-                finalParams,
-              };
+  it.each([
+    {
+      scenario: 'ready for pricing',
+      finalParams: new AddFinalProjectFloorResultParams({
+        project_preview_id: 15,
+        status: Status.READY_FOR_PRICING,
+        pricing_responsible_id: 7,
+        notification_type: NotificationType.URGENT,
+        notification_message: 'Ready for pricing',
+      }),
+      expectedRoute: { path: '/organization/Project/show/24' },
+    },
+    {
+      scenario: 'not ready for completion',
+      finalParams: new AddFinalProjectFloorResultParams({
+        project_preview_id: 15,
+        status: Status.NOT_READY_FOR_COMPLETION,
+      }),
+      expectedRoute: { name: 'project' },
+    },
+  ])(
+    'submits $scenario and routes to the expected destination',
+    async ({ finalParams, expectedRoute }) => {
+      const wrapper = mount(ProjectFloorAdd, {
+        global: {
+          stubs: {
+            ProjectSteps: {
+              template: '<div />',
+            },
+            ProjectFloorForm: {
+              template: '<div />',
+            },
+            FinalResults: {
+              emits: ['submitFinalResult'],
+              props: ['projectId', 'projectPreviewId', 'loading'],
+              template:
+                '<button data-test="submit-final-result" type="button" @click="$emit(\'submitFinalResult\', finalParams)">submit</button>',
+              setup() {
+                return {
+                  finalParams,
+                };
+              },
             },
           },
         },
-      },
-    });
+      });
 
-    await wrapper.find('[data-test="submit-final-result"]').trigger('click');
-    await flushPromises();
+      await wrapper.find('[data-test="submit-final-result"]').trigger('click');
+      await flushPromises();
 
-    expect(mocks.getProject).toHaveBeenCalledWith(finalParams);
-    expect(mocks.getProject.mock.calls[0][0]).toBeInstanceOf(AddFinalProjectFloorResultParams);
-    expect(mocks.push).toHaveBeenCalledWith({
-      path: '/organization/project-item/add',
-      query: {
-        project_id: 24,
-        project_item: 9,
-      },
-    });
-  });
+      expect(mocks.getProject).toHaveBeenCalledWith(finalParams);
+      expect(mocks.getProject.mock.calls[0][0]).toBeInstanceOf(AddFinalProjectFloorResultParams);
+      expect(mocks.push).toHaveBeenCalledWith(expectedRoute);
+    },
+  );
 
   it('supports direct entry with only project_id and does not render preview-only final results', async () => {
     mocks.routeQuery = { project_id: ['24'] };
