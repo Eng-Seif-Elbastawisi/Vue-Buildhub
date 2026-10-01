@@ -43,6 +43,7 @@ import ChangeQuoteStatusParams from '../../core/params/change.quote.status.param
 import IndexExecutionQuoteParams from '../../core/params/index.execution.quote.params';
 
 import ExecutionQuoteController from '../controllers/execution.quote.controller';
+import BoqMeasurementLoader from './BoqMeasurementLoader.vue';
 import QuoteStatusBadge from './QuoteStatusBadge.vue';
 import ExecutionQuoteStatusDialog from './ExecutionQuoteStatusDialog.vue';
 
@@ -623,6 +624,10 @@ const asExecutionQuotes = (
     </section>
 
     <DataStatusBuilder :controller="state">
+      <template #loader>
+        <BoqMeasurementLoader />
+      </template>
+
       <template #success="{ data: quotes }">
         <section class="execution-quote-index__table-card">
           <header class="execution-quote-index__table-header">
@@ -917,6 +922,7 @@ const asExecutionQuotes = (
     <!-- Always show View -->
     <AppButton
       class="execution-quote-index__view-button"
+      action-tone="view"
       size="sm"
       theme="secondary"
       icon="right"

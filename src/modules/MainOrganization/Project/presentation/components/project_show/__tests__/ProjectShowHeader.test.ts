@@ -51,10 +51,6 @@ const mountHeader = (
     },
     global: {
       stubs: {
-        ProjectHeroBreadcrumb: {
-          props: ['currentLabel'],
-          template: '<nav class="project-hero-breadcrumb-stub">{{ currentLabel }}</nav>',
-        },
         AutoInvoicesModal: {
           props: ['projectId'],
           emits: ['close'],
@@ -72,13 +68,15 @@ const mountHeader = (
 
 describe('ProjectShowHeader', () => {
   it('renders project metadata and emits pdf download action', async () => {
-    const wrapper = mountHeader();
+    const wrapper = mountHeader({ locationText: 'Country > Governorate > City' });
 
     expect(wrapper.text()).toContain('Test Project');
     expect(wrapper.text()).toContain('Villa');
     expect(wrapper.text()).toContain('Project Code: 24');
+    expect(wrapper.find('.project-meta-row bdi').text()).toBe('Country > Governorate > City');
     expect(wrapper.text()).toContain('Active');
     expect(wrapper.text()).toContain('Actions');
+    expect(wrapper.find('.project-hero-breadcrumb').exists()).toBe(false);
     expect(wrapper.find('img[alt="Test Project"]').attributes('src')).toBe('/project.png');
 
     await wrapper.find('.project-actions__trigger').trigger('click');

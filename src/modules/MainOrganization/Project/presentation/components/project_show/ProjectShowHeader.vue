@@ -3,7 +3,6 @@
   import Popover from 'primevue/popover';
 
   import { ConvertStatus } from '../../../core/constants/convert.status.enum';
-  import ProjectHeroBreadcrumb from './ProjectHeroBreadcrumb.vue';
   import type { ProjectShowRaw, StatusMeta } from './projectShow.types';
 
   const AutoInvoicesModal = defineAsyncComponent(
@@ -29,6 +28,7 @@
     fallbackImageSource: string;
     statusMeta: StatusMeta;
     projectCodeLabel: string;
+    locationText?: string;
     createdAtLabel: string;
     downloadPdfLabel: string;
     generatingPdfLabel: string;
@@ -227,20 +227,20 @@
     <div class="project-hero__overlay" aria-hidden="true"></div>
 
     <div class="project-hero__inner">
-      <ProjectHeroBreadcrumb :current-label="projectTitle" />
-
       <div class="project-hero__body">
         <div class="project-hero__content">
-          <span v-if="projectTypeLabel" class="project-type-badge">
-            {{ projectTypeLabel }}
-          </span>
-
-          <div class="project-title-row">
-            <h1>{{ projectTitle }}</h1>
-
+          <div class="project-hero__badges">
             <span class="status-badge" :class="statusMeta.className">
               {{ statusMeta.label }}
             </span>
+
+            <span v-if="projectTypeLabel" class="project-type-badge">
+              {{ projectTypeLabel }}
+            </span>
+          </div>
+
+          <div class="project-title-row">
+            <h1>{{ projectTitle }}</h1>
           </div>
 
           <div class="project-meta-row">
@@ -252,6 +252,11 @@
             <span>
               <i class="pi pi-calendar-clock"></i>
               {{ formatDate(project.date) }}
+            </span>
+
+            <span v-if="locationText">
+              <i class="pi pi-map-marker" aria-hidden="true"></i>
+              <bdi>{{ locationText }}</bdi>
             </span>
 
             <span>
@@ -292,7 +297,7 @@
               @keydown="navigateActionsMenu"
             >
               <button
-                class="project-actions__item"
+                class="project-actions__item action--download"
                 type="button"
                 role="menuitem"
                 :disabled="exportingPdf"
@@ -389,7 +394,7 @@
 
               <RouterLink
                 v-if="canEditProject"
-                class="project-actions__item project-actions__item--primary project-actions__item--neutral"
+                class="project-actions__item project-actions__item--primary project-actions__item--neutral action--edit"
                 role="menuitem"
                 :to="{
                   name: 'edit-project',
@@ -409,12 +414,7 @@
     </div>
 
     <Teleport to="body">
-      <div
-        v-if="isStatusModalOpen"
-        class="project-status-modal"
-        role="dialog"
-        aria-modal="true"
-      >
+      <div v-if="isStatusModalOpen" class="project-status-modal" role="dialog" aria-modal="true">
         <div class="project-status-modal__backdrop" @click="closeStatusModal"></div>
 
         <form class="project-status-modal__panel" @submit.prevent="submitStatusChange">

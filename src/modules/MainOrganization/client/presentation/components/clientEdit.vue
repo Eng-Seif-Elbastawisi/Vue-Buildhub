@@ -34,11 +34,12 @@
 </script>
 
 <template>
-  <div class="material-crud-page">
+  <div class="material-crud-page client-add-pilot">
     <ClientForm
       :client="controller.itemData.value!"
       :form-key="formKey"
       :loading="loading"
+      pilot
       @update-data="updateData"
     />
 

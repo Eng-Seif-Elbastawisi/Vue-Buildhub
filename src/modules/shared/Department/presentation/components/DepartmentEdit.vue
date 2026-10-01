@@ -2,6 +2,7 @@
   import { onMounted, ref } from 'vue';
   import { useRoute } from 'vue-router';
   import AppButton from '@/shared/HelpersComponents/AppButton.vue';
+  import StandardFormSectionHeader from '@/shared/components/form/StandardFormSectionHeader.vue';
   import DepartmentController from '../controllers/department.controller';
   import DepartmentForm from './DepartmentForm.vue';
   import DepartmentIdParams from '../../core/params/department-id.params';
@@ -43,6 +44,7 @@
 
 <template>
   <section class="department-page">
+    <StandardFormSectionHeader :title="$t('department')" icon="pi pi-sitemap" />
     <h2>{{ $t('edit_department') }}</h2>
     <DepartmentForm
       :department="controller.itemData.value ?? undefined"

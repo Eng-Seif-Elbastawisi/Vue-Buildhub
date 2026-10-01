@@ -98,7 +98,7 @@ watch(
       <p>{{ $t('invoice_payment.form_description') }}</p>
     </header>
 
-    <div class="invoice-payment-form-grid" :class="{ disabled: loading }">
+    <div class="invoice-payment-form-grid form-fields" :class="{ disabled: loading }">
       <div class="field-group">
         <UpdatedCustomInputSelect id="invoice_payment_invoice_id" :model-value="selectedInvoice"
           :label="$t('invoice_payment.invoice')" :controller="invoiceController"

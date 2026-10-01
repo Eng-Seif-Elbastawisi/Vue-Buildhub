@@ -40,6 +40,7 @@ const globalConfig = {
 describe('FeatureHeader.vue', () => {
   beforeEach(() => {
     mockRoute.name = 'some-route';
+    mockRoute.path = '/feature';
   });
 
   it('renders the header image', () => {
@@ -54,11 +55,24 @@ describe('FeatureHeader.vue', () => {
     expect(title.text()).toContain('Feature');
   });
 
-  it('defers breadcrumb rendering to the hero on the project show route', () => {
+  it('keeps the project show page header hidden while the layout supplies its breadcrumb', () => {
     mockRoute.name = 'show-project';
 
     const wrapper = mount(FeatureHeader, { global: globalConfig });
 
     expect(wrapper.find('.feature-header-container').exists()).toBe(false);
+  });
+
+  it('shows the shared form heading treatment only for normal Add/Edit routes', () => {
+    mockRoute.path = '/organization/stages/add';
+    const formHeader = mount(FeatureHeader, { global: globalConfig });
+
+    expect(formHeader.find('.standard-form-header-icon .pi-clone').exists()).toBe(true);
+    expect(formHeader.find('.standard-form-header-description').exists()).toBe(true);
+
+    mockRoute.path = '/organization/execution-quotes/add';
+    const specializedHeader = mount(FeatureHeader, { global: globalConfig });
+
+    expect(specializedHeader.find('.standard-form-header-icon').exists()).toBe(false);
   });
 });

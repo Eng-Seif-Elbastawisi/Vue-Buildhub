@@ -3,6 +3,7 @@ import { ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 import AppButton from '@/shared/HelpersComponents/AppButton.vue';
+import StandardFormSectionHeader from '@/shared/components/form/StandardFormSectionHeader.vue';
 import IconAccept from '@/shared/icons/IconAccept.vue';
 
 import type AddMeasurementParams from '../../core/params/add.measurement.params';
@@ -39,6 +40,7 @@ const cancelMeasurement = () => {
 
 <template>
   <div class="Measurement-crud-page">
+    <StandardFormSectionHeader :title="$t('measurement')" icon="pi pi-sliders-h" />
     <MeasurementForm :loading="loading" @update-data="params = $event" />
 
     <div class="actions form-action-pair" :class="{ disabled: loading }">
