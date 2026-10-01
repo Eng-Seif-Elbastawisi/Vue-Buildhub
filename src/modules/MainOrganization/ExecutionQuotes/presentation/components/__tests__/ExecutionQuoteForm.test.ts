@@ -126,6 +126,9 @@ describe('ExecutionQuoteForm', () => {
     expect(wrapper.find('#execution-quote-project').exists()).toBe(true);
     expect(params).toBeInstanceOf(AddExecutionQuoteParams);
     expect(params.toMap().quote_source).toBe(QuoteSourceEnum.EXECUTION_ONLY);
+    expect(wrapper.find('.execution-quote__actions').exists()).toBe(true);
+    expect(wrapper.find('.execution-quote__header').exists()).toBe(false);
+    expect(wrapper.find('h1').exists()).toBe(false);
   });
 
   it('shows existing client dropdown when client_exist is 1', async () => {
@@ -265,6 +268,7 @@ describe('ExecutionQuoteForm', () => {
 
     expect(wrapper.classes()).toContain('execution-quote--stage-page');
     expect(wrapper.find('.execution-quote__header').exists()).toBe(false);
+    expect(wrapper.find('.execution-quote__actions').exists()).toBe(false);
     expect(wrapper.find('.source-section').exists()).toBe(false);
     expect(wrapper.find('.execution-quote-builder-stub').exists()).toBe(true);
     expect(wrapper.getComponent({ name: 'ExecutionQuoteBuilder' }).props('initialStages')).toEqual(

@@ -2,6 +2,12 @@
 
 /* Shared authenticated dashboard shell, promoted from the approved Execution Quotes pilot. */
 body:has(.dashboard-shell) {
+  --motion-fast: 140ms;
+  --motion-base: 200ms;
+  --motion-slow: 280ms;
+  --motion-loading: 1000ms;
+  --motion-loading-cycle: 1400ms;
+  --motion-ease: cubic-bezier(0.22, 1, 0.36, 1);
   --quote-ink: #272a2b;
   --quote-muted: #676b6d;
   --quote-line: #e7e1da;
@@ -73,8 +79,8 @@ body:has(.dashboard-shell) {
     background: var(--quote-canvas);
     overflow: visible;
     transition:
-      width 230ms ease,
-      margin-inline-start 230ms ease;
+      width var(--motion-slow) var(--motion-ease),
+      margin-inline-start var(--motion-slow) var(--motion-ease);
   }
 
   &:has(.sidebar-shell.is-open) .content-wrapper {
@@ -122,7 +128,7 @@ body:has(.dashboard-shell) {
     background: var(--quote-copper-bright);
     content: '';
     transform: translateY(calc(var(--active-section-index, 0) * 56px));
-    transition: transform 250ms cubic-bezier(0.2, 0.8, 0.2, 1);
+    transition: transform var(--motion-slow) var(--motion-ease);
   }
 
   .rail-brand {
@@ -153,8 +159,8 @@ body:has(.dashboard-shell) {
     border-inline-end: 1px solid var(--quote-graphite-line);
     box-shadow: 12px 0 30px rgb(24 25 25 / 8%);
     transition:
-      opacity 190ms ease,
-      transform 190ms ease;
+      opacity var(--motion-base) var(--motion-ease),
+      transform var(--motion-base) var(--motion-ease);
   }
 
   .sidebar-wrapper {
@@ -223,9 +229,9 @@ body:has(.dashboard-shell) {
     border-radius: 9px;
     font-weight: 600;
     transition:
-      background-color 180ms ease,
-      color 180ms ease,
-      transform 180ms ease;
+      background-color var(--motion-base) var(--motion-ease),
+      color var(--motion-base) var(--motion-ease),
+      transform var(--motion-base) var(--motion-ease);
   }
 
   .menu-item:hover {
@@ -314,9 +320,9 @@ body:has(.dashboard-shell) {
     color: var(--quote-ink);
     background: var(--quote-warm-white);
     transition:
-      background-color 180ms ease,
-      border-color 180ms ease,
-      transform 180ms ease;
+      background-color var(--motion-base) var(--motion-ease),
+      border-color var(--motion-base) var(--motion-ease),
+      transform var(--motion-base) var(--motion-ease);
   }
 
   .header .nav-action:hover,
@@ -340,8 +346,8 @@ body:has(.dashboard-shell) {
   .header .mega-menu-enter-active,
   .header .mega-menu-leave-active {
     transition:
-      opacity 170ms ease,
-      transform 170ms ease;
+      opacity var(--motion-base) var(--motion-ease),
+      transform var(--motion-base) var(--motion-ease);
   }
 
   .header .mega-menu-enter-from,
@@ -380,7 +386,9 @@ body:has(.dashboard-shell) .mobile-sidebar-drawer :is(.drawer-copy span, .user-c
   color: var(--quote-drawer-muted);
 }
 
-body:has(.dashboard-shell) .mobile-sidebar-drawer :is(.drawer-close, .user-card, .drawer-item .item-icon) {
+body:has(.dashboard-shell)
+  .mobile-sidebar-drawer
+  :is(.drawer-close, .user-card, .drawer-item .item-icon) {
   border-color: var(--quote-drawer-line);
   color: var(--quote-graphite-text);
   background: var(--quote-graphite-input);
@@ -394,8 +402,8 @@ body:has(.dashboard-shell) .mobile-sidebar-drawer .drawer-item {
   border-radius: 8px;
   color: var(--quote-graphite-text);
   transition:
-    background-color 170ms ease,
-    color 170ms ease;
+    background-color var(--motion-base) var(--motion-ease),
+    color var(--motion-base) var(--motion-ease);
 }
 
 body:has(.dashboard-shell) .mobile-sidebar-drawer .drawer-item.active {
@@ -410,7 +418,7 @@ body:has(.dashboard-shell) .mobile-sidebar-drawer :is(button, a):focus-visible {
 
 body:has(.dashboard-shell) .mobile-sidebar-fade-enter-active,
 body:has(.dashboard-shell) .mobile-sidebar-fade-leave-active {
-  transition-duration: 190ms;
+  transition-duration: var(--motion-base);
 }
 
 body:has(.dashboard-shell) .project-search-dialog {
@@ -423,8 +431,8 @@ body:has(.dashboard-shell) .project-search-dialog {
 body:has(.dashboard-shell) .p-dialog-enter-active,
 body:has(.dashboard-shell) .p-dialog-leave-active {
   transition:
-    opacity 180ms ease,
-    transform 180ms ease;
+    opacity var(--motion-base) var(--motion-ease),
+    transform var(--motion-base) var(--motion-ease);
 }
 
 body:has(.dashboard-shell) .p-dialog-enter-from,
@@ -435,13 +443,15 @@ body:has(.dashboard-shell) .p-dialog-leave-to {
 
 body:has(.dashboard-shell) .mobile-sidebar-fade-enter-active .mobile-sidebar-drawer,
 body:has(.dashboard-shell) .mobile-sidebar-fade-leave-active .mobile-sidebar-drawer {
-  transition: transform 190ms ease;
+  transition: transform var(--motion-base) var(--motion-ease);
 }
 
-[dir='rtl'] body:has(.dashboard-shell) :is(.mobile-sidebar-fade-enter-from, .mobile-sidebar-fade-leave-to) .mobile-sidebar-drawer {
+[dir='rtl']
+  body:has(.dashboard-shell)
+  :is(.mobile-sidebar-fade-enter-from, .mobile-sidebar-fade-leave-to)
+  .mobile-sidebar-drawer {
   transform: translateX(100%);
 }
-
 
 @media (max-width: 1023px) {
   .dashboard-shell,
@@ -470,8 +480,8 @@ body:has(.dashboard-shell) .mobile-sidebar-fade-leave-active .mobile-sidebar-dra
       color: var(--quote-copper-dark);
       background: var(--quote-copper-soft);
       transition:
-        transform 170ms ease,
-        background-color 170ms ease;
+        transform var(--motion-base) var(--motion-ease),
+        background-color var(--motion-base) var(--motion-ease);
     }
 
     .mobile-menu-btn:active {
@@ -489,8 +499,9 @@ body:has(.dashboard-shell) .mobile-sidebar-fade-leave-active .mobile-sidebar-dra
   }
 }
 
-
-.dashboard-shell .main-content:has(.index-page-header, .execution-quote-index__masthead) > .feature-header-container {
+.dashboard-shell
+  .main-content:has(.index-page-header, .execution-quote-index__masthead)
+  > .feature-header-container {
   display: none;
 }
 
@@ -545,6 +556,56 @@ body:has(.dashboard-shell) .mobile-sidebar-fade-leave-active .mobile-sidebar-dra
   outline-color: var(--quote-copper);
 }
 
+.dashboard-shell .feature-header-container--page-intro {
+  min-height: 0;
+  margin-block: 28px 30px;
+}
+
+.dashboard-shell .feature-header-container--page-intro > .content {
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+  padding: 0;
+}
+
+.dashboard-shell .feature-header-container--page-intro .title {
+  font-size: clamp(1.8rem, 2.4vw, 2.2rem);
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.dashboard-shell .feature-header-container--page-intro .standard-form-header-icon {
+  display: grid;
+  flex: 0 0 72px;
+  place-items: center;
+  width: 72px;
+  height: 72px;
+  border-radius: 18px;
+  background: var(--quote-copper-soft);
+  color: var(--quote-copper-dark);
+  font-size: 1.8rem;
+}
+
+.dashboard-shell .feature-header-container--page-intro .standard-form-header-icon .pi {
+  font-size: inherit;
+}
+
+.dashboard-shell .feature-header-container--page-intro .standard-form-header-copy {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 7px;
+  text-align: start;
+}
+
+.dashboard-shell .feature-header-container--page-intro .standard-form-header-description {
+  margin: 0;
+  color: var(--quote-muted);
+  font-size: 1rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
 @media (max-width: 680px) {
   .dashboard-shell .main-content .index-page-heading__title {
     font-size: 1.45rem;
@@ -557,11 +618,39 @@ body:has(.dashboard-shell) .mobile-sidebar-fade-leave-active .mobile-sidebar-dra
   .dashboard-shell .feature-header-container .title {
     font-size: 1.45rem;
   }
+
+  .dashboard-shell .feature-header-container--page-intro {
+    margin-block: 20px 22px;
+  }
+
+  .dashboard-shell .feature-header-container--page-intro .standard-form-header-icon {
+    flex-basis: 62px;
+    width: 62px;
+    height: 62px;
+    border-radius: 15px;
+    font-size: 1.5rem;
+  }
+
+  .dashboard-shell .feature-header-container--page-intro .title {
+    font-size: 1.6rem;
+  }
+
+  .dashboard-shell .feature-header-container--page-intro .standard-form-header-description {
+    font-size: 0.88rem;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .dashboard-shell :is(.content-wrapper, .rail-action, .menu-item, .nav-action, .profile-trigger, .mega-menu),
-  body:has(.dashboard-shell) :is(.mobile-sidebar-layer, .mobile-sidebar-drawer, .drawer-item, .p-dialog-enter-active, .p-dialog-leave-active) {
+  .dashboard-shell
+    :is(.content-wrapper, .rail-action, .menu-item, .nav-action, .profile-trigger, .mega-menu),
+  body:has(.dashboard-shell)
+    :is(
+      .mobile-sidebar-layer,
+      .mobile-sidebar-drawer,
+      .drawer-item,
+      .p-dialog-enter-active,
+      .p-dialog-leave-active
+    ) {
     transition: none;
   }
 

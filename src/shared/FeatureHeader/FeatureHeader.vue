@@ -64,7 +64,38 @@
     return { icon, description: t(descriptionKey) };
   });
 
-  const isProjectShowRoute = computed(() => route.name === 'show-project');
+  const specializedPageIntro = computed(() => {
+    switch (route.name) {
+      case 'add-project':
+        return {
+          icon: 'pi pi-building',
+          title: t('Project.add'),
+          description: t('Project.form_description'),
+        };
+      case 'edit-project':
+        return {
+          icon: 'pi pi-pen-to-square',
+          title: t('Project.edit'),
+          description: t('standard_form.edit_description'),
+        };
+      case 'show-project':
+        return {
+          icon: 'pi pi-building',
+          title: t('ProjectShow.project_details'),
+          description: t('ProjectShow.project_information_summary'),
+        };
+      case 'Add Execution Quote':
+        return {
+          icon: 'pi pi-file-edit',
+          title: t('execution_quote.title'),
+          description: t('execution_quote.subtitle'),
+        };
+      default:
+        return undefined;
+    }
+  });
+
+  const pageIntroDetail = computed(() => specializedPageIntro.value ?? standardFormDetail.value);
 
   const items = computed(() => {
     void locale.value;
@@ -84,16 +115,21 @@
 </script>
 
 <template>
-  <div v-if="!isProjectShowRoute" class="feature-header-container">
+  <div
+    class="feature-header-container"
+    :class="{ 'feature-header-container--page-intro': pageIntroDetail }"
+  >
     <img class="header-img" :src="FeatureHeader" :alt="$t('feature_header_image_alt')" />
-    <div class="content" :class="{ 'content--standard-form': standardFormDetail }">
-      <span v-if="standardFormDetail" class="standard-form-header-icon" aria-hidden="true">
-        <i :class="standardFormDetail.icon"></i>
+    <div class="content" :class="{ 'content--standard-form': pageIntroDetail }">
+      <span v-if="pageIntroDetail" class="standard-form-header-icon" aria-hidden="true">
+        <i :class="pageIntroDetail.icon"></i>
       </span>
-      <div v-if="standardFormDetail" class="standard-form-header-copy">
-        <h1 class="title">{{ getLabel(items[items.length - 1]) }}</h1>
-        <p v-if="standardFormDetail.description" class="standard-form-header-description">
-          {{ standardFormDetail.description }}
+      <div v-if="pageIntroDetail" class="standard-form-header-copy">
+        <h1 class="title">
+          {{ specializedPageIntro?.title ?? getLabel(items[items.length - 1]) }}
+        </h1>
+        <p v-if="pageIntroDetail.description" class="standard-form-header-description">
+          {{ pageIntroDetail.description }}
         </p>
       </div>
       <h1 v-else class="title">{{ getLabel(items[items.length - 1]) }}</h1>

@@ -1,5 +1,6 @@
 <script setup lang="ts">
   import Skeleton from 'primevue/skeleton';
+  import ConstructionMotionAccent from '@/shared/DataStatues/ConstructionMotionAccent.vue';
 </script>
 
 <template>
@@ -99,6 +100,10 @@
           </div>
 
           <div class="execution-quote-show-skeleton__table">
+            <ConstructionMotionAccent
+              variant="boq"
+              class="execution-quote-show-skeleton__measure"
+            />
             <div
               v-for="tableRowIndex in 4"
               :key="tableRowIndex"
@@ -127,6 +132,10 @@
     clip: rect(0, 0, 0, 0);
     clip-path: inset(50%);
     white-space: nowrap;
+  }
+
+  .execution-quote-show-skeleton :deep(.p-skeleton)::after {
+    animation-duration: var(--motion-loading-cycle, 1400ms);
   }
 
   .execution-quote-show-skeleton__content {
@@ -263,9 +272,14 @@
   }
 
   .execution-quote-show-skeleton__table {
+    position: relative;
     overflow: hidden;
     border-block-start: 1px solid var(--border-weak);
     background: var(--bg-card);
+  }
+
+  .execution-quote-show-skeleton__measure {
+    inset-block-start: 3rem;
   }
 
   .execution-quote-show-skeleton__table-row {

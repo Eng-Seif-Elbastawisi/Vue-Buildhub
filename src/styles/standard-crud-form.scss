@@ -313,7 +313,12 @@ body .main-content .standard-crud-page .form-fields > .all_inputs {
   min-width: 0;
 }
 
-.standard-crud-page .form-fields > :is(.full-row, .col-span-2) {
+.standard-crud-page .form-fields > :is(.full-row, .col-span-2, .standard-form-field--full),
+.standard-crud-page .form-fields > :only-child,
+.standard-crud-page .form-fields > .field-group:has(textarea),
+.standard-crud-page .form-fields > .all_inputs > :is(.full-row, .col-span-2, .standard-form-field--full),
+.standard-crud-page .form-fields > .all_inputs > :only-child,
+.standard-crud-page .form-fields > .all_inputs > .field-group:has(textarea) {
   grid-column: 1 / -1;
 }
 
@@ -928,7 +933,8 @@ body:has(.standard-crud-page) .p-select-overlay.p-anchored-overlay-leave-to {
     grid-column: auto;
   }
 
-  .standard-crud-page .form-fields > :is(.full-row, .col-span-2) {
+  .standard-crud-page .form-fields > :is(.full-row, .col-span-2, .standard-form-field--full),
+  .standard-crud-page .form-fields > .all_inputs > :is(.full-row, .col-span-2, .standard-form-field--full) {
     grid-column: auto;
   }
 }

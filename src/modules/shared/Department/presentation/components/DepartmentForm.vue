@@ -14,7 +14,6 @@ import AddDepartmentParams from '../../core/params/add.department.params';
 import EditDepartmentParams from '../../core/params/edit.department.params';
 import DepartmentModel from '../../core/models/department.model';
 import { DepartmentTypeEnum } from '../../core/constants/Type.enum';
-import { StatusTypeEnum } from '@/modules/MainOrganization/ChangeStatus/core/constant/change_status.type.enum';
 
 const emit = defineEmits<{
   updateData: [params: AddDepartmentParams | EditDepartmentParams];
@@ -163,14 +162,27 @@ onMounted(() => {
 <template>
   <div class="form-fields">
     <div class="field-group col-span-2" :class="{ disabled: loading }">
-      <MultiLangInput field-key="title" :label="$t('title')" :languages="['en', 'ar']" :model-value="title" type="title"
-        @update:model-value="updateTitle" />
+      <MultiLangInput
+        field-key="title"
+        :label="$t('title')"
+        :languages="['en', 'ar']"
+        :model-value="title"
+        type="title"
+        @update:model-value="updateTitle"
+      />
     </div>
 
-    <div v-if="requiresStage" class="field-group" :class="{ disabled: loading }">
-      <UpdatedCustomInputSelect id="doc-branch" v-model="selectedStage" :label="$t('stage')" :params="stageParams"
-        :controller="stageController" :placeholder="$t('select_stage')" :reload="true"
-        @update:model-value="updateStage" />
+    <div v-if="requiresStage" class="field-group field-group--stage" :class="{ disabled: loading }">
+      <UpdatedCustomInputSelect
+        id="doc-branch"
+        v-model="selectedStage"
+        :label="$t('stage')"
+        :params="stageParams"
+        :controller="stageController"
+        :placeholder="$t('select_stage')"
+        :reload="true"
+        @update:model-value="updateStage"
+      />
     </div>
   </div>
 </template>
@@ -195,6 +207,12 @@ onMounted(() => {
     pointer-events: none;
     opacity: 0.7;
   }
+}
+
+.field-group--stage {
+  grid-column: 1 / -1;
+  justify-self: start;
+  width: min(100%, 720px);
 }
 
 @media (max-width: 768px) {
