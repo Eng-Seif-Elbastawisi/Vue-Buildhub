@@ -3,5 +3,5 @@
 </script>
 
 <template>
-  <ExecutionQuoteAdd />
+  <ExecutionQuoteAdd class="project-workflow-view project-workflow-view--form" />
 </template>

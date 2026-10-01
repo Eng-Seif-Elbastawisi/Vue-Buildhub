@@ -58,6 +58,7 @@
         :headers="headers"
         :items="items"
         row-key="id"
+        appearance="custom"
         striped
         hoverable
         empty-message="execution_quote.quote_items_empty"

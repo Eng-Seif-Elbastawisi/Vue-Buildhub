@@ -176,6 +176,7 @@
 
         <Pagination
           :pagination="tasksPagination"
+          appearance="custom"
           @change-page="emit('change-page', $event)"
           @count-per-page="emit('per-page-change', $event)"
         />

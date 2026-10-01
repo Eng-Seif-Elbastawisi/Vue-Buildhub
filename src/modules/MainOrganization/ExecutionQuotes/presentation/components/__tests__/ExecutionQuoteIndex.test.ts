@@ -129,6 +129,7 @@ describe('ExecutionQuoteIndex', () => {
     expect(wrapper.text()).toContain('fwffefefe');
     expect(wrapper.text()).toContain('Active');
     expect(wrapper.text()).toContain('Contains items');
+    expect(wrapper.get('.quote-status-badge').text()).toContain('Draft');
     expect(wrapper.text()).toContain('5,200');
     expect(wrapper.text()).toContain('EGP');
     expect(wrapper.text()).toContain('Quote status');

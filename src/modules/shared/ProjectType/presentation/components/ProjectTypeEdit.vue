@@ -41,38 +41,19 @@
       :loading="loading"
       @update-data="updateData"
     />
-    <button
-      :class="{ 'btn--loading': loading }"
-      class="btn btn-primary"
-      type="button"
-      :disabled="loading"
-      @click="saveProject"
-    >
-      {{ $t('project.update') }}
-    </button>
+    <div class="form-actions">
+      <button
+        :class="{ 'btn--loading': loading }"
+        class="btn btn-primary"
+        type="button"
+        :disabled="loading"
+        @click="saveProject"
+      >
+        {{ $t('project.update') }}
+      </button>
+    </div>
     <div v-if="controller.errorMessage.value" class="error">
       {{ controller.errorMessage.value }}
     </div>
   </div>
 </template>
-
-<style scoped>
-  .project-crud-page {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
-
-  .error {
-    margin-top: 20px;
-    padding: 10px;
-    background-color: var(--danger-light);
-    color: var(--danger-dark);
-    border: 1px solid #f5c6cb;
-    border-radius: 4px;
-  }
-
-  .btn-primary {
-    width: 100%;
-  }
-</style>

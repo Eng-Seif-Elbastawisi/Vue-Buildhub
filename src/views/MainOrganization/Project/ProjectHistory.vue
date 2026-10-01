@@ -3,5 +3,5 @@
 </script>
 
 <template>
-  <ProjectHistory />
+  <ProjectHistory class="project-workflow-view project-workflow-view--details" />
 </template>

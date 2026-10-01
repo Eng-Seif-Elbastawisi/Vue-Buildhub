@@ -1,5 +1,6 @@
 import { flushPromises, mount } from '@vue/test-utils';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import IndexPageHeader from '@/shared/IndexPageHeader/IndexPageHeader.vue';
 import { ItemStatusEnum } from '../../../core/constant/item.status.enum';
 import { ItemTypeEnum } from '../../../core/constant/item.type.enum copy';
 import { ItemServiceTypeEnum } from '../../../core/constant/item.service.type.enum';
@@ -101,9 +102,10 @@ describe('ItemIndex', () => {
     (serviceType, title, description) => {
       route.query = { service_type: String(serviceType) };
       const wrapper = mount(ItemIndex, { global });
+      const pageHeader = wrapper.getComponent(IndexPageHeader);
 
-      expect(wrapper.get('.item-header h4').text()).toBe(title);
-      expect(wrapper.get('.item-header p').text()).toBe(description);
+      expect(pageHeader.get('h1').text()).toBe(title);
+      expect(pageHeader.get('p').text()).toBe(description);
     },
   );
 

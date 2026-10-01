@@ -2,6 +2,7 @@
 import { computed, onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
+import IndexPageHeader from '@/shared/IndexPageHeader/IndexPageHeader.vue';
 import AppTable, { type TableHeader } from '@/shared/HelpersComponents/AppTable.vue';
 import { deleteSelectedRows } from '@/shared/HelpersComponents/deleteSelectedRows';
 import Pagination from '@/shared/HelpersComponents/Pagination.vue';
@@ -76,12 +77,11 @@ const { user } = useUserStore();
 
 <template>
   <div class="ItemTypes-page">
-    <header class="page-header">
-      <div>
-        <h4>{{ $t('ItemTypes.list_title') }}</h4>
-        <p>{{ $t('ItemTypes.list_description') }}</p>
-      </div>
-      <div class="toolbar">
+    <IndexPageHeader
+      :title="$t('ItemTypes.list_title')"
+      :subtitle="$t('ItemTypes.list_description')"
+    >
+      <template #search>
         <div class="search-field">
           <span class="search-icon">
             <svg
@@ -95,13 +95,16 @@ width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" str
 v-model="word" :placeholder="$t('search_itemTypess')" class="search-input" type="text"
             @input="Search" />
         </div>
+      </template>
+
+      <template #actions>
         <router-link
 class="btn btn-primary"
           :to="user?.type === 1 ? '/organization/item_types/add' : '/organization/item_types/add'">
           <IndexAddIcon />{{ $t('ItemTypes') }}
         </router-link>
-      </div>
-    </header>
+      </template>
+    </IndexPageHeader>
     <DataStatusBuilder
 :controller="state" :on-retry="async () => {
         await fetchItemTypess();

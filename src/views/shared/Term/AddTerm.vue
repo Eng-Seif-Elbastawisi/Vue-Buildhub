@@ -3,5 +3,5 @@
 </script>
 
 <template>
-  <TermAdd />
+  <TermAdd class="standard-crud-page" />
 </template>

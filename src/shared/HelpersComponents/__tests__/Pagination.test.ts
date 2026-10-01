@@ -35,6 +35,12 @@ describe('Pagination', () => {
   it('renders without crashing', () => {
     const wrapper = createWrapper();
     expect(wrapper.exists()).toBe(true);
+    expect(wrapper.classes()).toContain('pagination-wrapper--standard');
+  });
+
+  it('keeps custom pagination surfaces on their existing appearance', () => {
+    const wrapper = createWrapper({ appearance: 'custom' });
+    expect(wrapper.classes()).not.toContain('pagination-wrapper--standard');
   });
 
   it('displays results info', () => {

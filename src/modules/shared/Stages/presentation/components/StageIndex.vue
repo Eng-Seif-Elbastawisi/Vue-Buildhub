@@ -4,6 +4,7 @@
   import AppTable, { type TableHeader } from '@/shared/HelpersComponents/AppTable.vue';
   import { deleteSelectedRows } from '@/shared/HelpersComponents/deleteSelectedRows';
   import Pagination from '@/shared/HelpersComponents/Pagination.vue';
+  import IndexPageHeader from '@/shared/IndexPageHeader/IndexPageHeader.vue';
   import { useRoute, useRouter } from 'vue-router';
   import { debounce } from '@/base/Presentation/Utils/debouced';
 
@@ -170,14 +171,9 @@
 </script>
 
 <template>
-  <div class="stage-page">
-    <header class="page-header">
-      <div class="page-info">
-        <h4>{{ $t('stage.list_title') }}</h4>
-        <p>{{ $t('stage.list_description') }}</p>
-      </div>
-
-      <div class="toolbar">
+  <div class="stages-index-page">
+    <IndexPageHeader :title="$t('stage.list_title')" :subtitle="$t('stage.list_description')">
+      <template #search>
         <div class="search-field">
           <span class="search-icon">
             <svg
@@ -202,13 +198,14 @@
             @input="Search"
           />
         </div>
-
+      </template>
+      <template #actions>
         <router-link class="btn btn-primary" :to="formRoute">
           <IndexAddIcon />
           {{ $t('stage.add') }}
         </router-link>
-      </div>
-    </header>
+      </template>
+    </IndexPageHeader>
 
     <DataStatusBuilder
       :controller="state"
@@ -345,109 +342,18 @@
       </template>
 
       <template #loader>
-        <div class="table-loading">Loading...</div>
+        <div class="loading-state">Loading...</div>
       </template>
     </DataStatusBuilder>
   </div>
 </template>
 
 <style scoped lang="scss">
-  .stage-page {
+  .stages-index-page {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
-    width: 100%;
-  }
-
-  .page-header {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    width: 100%;
-  }
-
-  .page-info {
-    width: 100%;
-  }
-
-  .page-info h4 {
-    margin: 0;
-  }
-
-  .page-info p {
-    margin: 0.35rem 0 0;
-    color: var(--gray-5);
-  }
-
-  .toolbar {
-    display: flex;
-    align-items: center;
-    width: 100%;
-    gap: 1rem;
-    box-sizing: border-box;
-  }
-
-  .search-field {
-    display: flex;
-    align-items: center;
-    width: 50%;
-    flex: 0 0 40%;
-    min-width: 0;
-  }
-
-  .search-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    margin-inline-end: 0.5rem;
-  }
-
-  .search-input {
+    gap: var(--page-section-gap);
     width: 100%;
     min-width: 0;
-  }
-
-  .toolbar .btn-primary {
-    margin-inline-start: auto;
-    flex-shrink: 0;
-    white-space: nowrap;
-  }
-
-  .row-actions {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  .empty-state {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    padding: 3rem 1rem;
-    text-align: center;
-  }
-
-  .empty-state p {
-    margin: 0;
-    color: var(--gray-5);
-  }
-
-  .table-loading {
-    padding: 2rem;
-    text-align: center;
-    color: var(--gray-5);
-  }
-
-  @media (max-width: 768px) {
-    .toolbar {
-      gap: 0.75rem;
-    }
-
-    .toolbar .btn-primary {
-      margin-inline-start: auto;
-    }
   }
 </style>

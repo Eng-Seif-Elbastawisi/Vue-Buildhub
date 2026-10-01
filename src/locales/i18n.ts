@@ -3,9 +3,13 @@ import ar from './ar.json';
 import en from './en.json';
 
 const savedLocale = localStorage.getItem('locale');
+const initialLocale = savedLocale === 'ar' ? 'ar' : 'en';
+
+document.documentElement.lang = initialLocale;
+document.documentElement.dir = initialLocale === 'ar' ? 'rtl' : 'ltr';
 
 export const i18n = createI18n({
-  locale: savedLocale === 'ar' ? 'ar' : 'en',
+  locale: initialLocale,
   fallbackLocale: 'en',
   messages: {
     en,

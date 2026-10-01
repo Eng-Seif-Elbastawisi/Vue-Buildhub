@@ -3,5 +3,5 @@
 </script>
 
 <template>
-  <LocationEdit />
+  <LocationEdit class="standard-crud-page" />
 </template>

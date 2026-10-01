@@ -3,5 +3,5 @@
 </script>
 
 <template>
-  <MeasurementAdd />
+  <MeasurementAdd class="standard-crud-page" />
 </template>

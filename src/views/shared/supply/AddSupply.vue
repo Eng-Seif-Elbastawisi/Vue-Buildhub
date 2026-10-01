@@ -3,5 +3,5 @@
 </script>
 
 <template>
-  <SupplyAdd />
+  <SupplyAdd class="standard-crud-page" />
 </template>

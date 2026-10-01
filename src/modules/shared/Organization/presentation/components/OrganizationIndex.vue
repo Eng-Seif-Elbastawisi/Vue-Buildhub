@@ -3,6 +3,7 @@
   import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
   import AppTable, { type TableHeader } from '@/shared/HelpersComponents/AppTable.vue';
   import Pagination from '@/shared/HelpersComponents/Pagination.vue';
+  import IndexPageHeader from '@/shared/IndexPageHeader/IndexPageHeader.vue';
   import { useRoute, useRouter } from 'vue-router';
   import TableSkelaton from '@/shared/HelpersComponents/TableSkelaton.vue';
   import { useUserStore } from '@/stores/user.ts';
@@ -96,26 +97,23 @@
 
 <template>
   <div class="document-page">
-    <h4 class="document-index-title">{{ $t('Organizations') }}</h4>
-    <p class="document-index-dexription">
-      {{ $t('Manage and organize all uploaded documents in one place') }}
-    </p>
     <!-- <div class="badge">{{ $t('All Organizations') }}</div> -->
-    <div class="index-header">
-      <div class="toolbar">
-        <!-- <div class="search-field">
-          <span class="search-icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-              stroke-linecap="round">
-              <circle cx="11" cy="11" r="8" />
-              <path d="m21 21-4.35-4.35" />
-            </svg>
-          </span>
-          <input v-model="word" :placeholder="$t('search_suppliers')" class="search-input" type="text"
-            @input="Search" />
-        </div> -->
-      </div>
-      <div class="btns">
+    <IndexPageHeader
+      :title="$t('Organizations')"
+      :subtitle="$t('Manage and organize all uploaded documents in one place')"
+    >
+      <!-- <div class="search-field">
+        <span class="search-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round">
+            <circle cx="11" cy="11" r="8" />
+            <path d="m21 21-4.35-4.35" />
+          </svg>
+        </span>
+        <input v-model="word" :placeholder="$t('search_suppliers')" class="search-input" type="text"
+          @input="Search" />
+      </div> -->
+      <template #actions>
         <router-link
           class="btn btn-primary"
           :to="user?.type === 1 ? '/admin/organization/add' : '/organization/organization/add'"
@@ -168,8 +166,8 @@
   <button>{{ $t('Save') }}</button>
 </div>
 </Dialog> -->
-      </div>
-    </div>
+      </template>
+    </IndexPageHeader>
 
     <DataStatusBuilder :controller="state" :on-retry="async () => await fetchOrganizations()">
       <template #success="{ data }">

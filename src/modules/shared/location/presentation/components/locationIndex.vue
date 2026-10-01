@@ -7,6 +7,7 @@
   import { deleteSelectedRows } from '@/shared/HelpersComponents/deleteSelectedRows';
   import Pagination from '@/shared/HelpersComponents/Pagination.vue';
   import TableSkelaton from '@/shared/HelpersComponents/TableSkelaton.vue';
+  import IndexPageHeader from '@/shared/IndexPageHeader/IndexPageHeader.vue';
   import DeleteDialog from '@/base/Presentation/Dialogs/MainDialogs/DeleteDialog.vue';
   import type LocationModel from '../../core/models/location.model';
   import DeleteLocationParams from '../../core/params/delete.location.params';
@@ -92,12 +93,8 @@
 
 <template>
   <div class="location-page">
-    <div class="location-header">
-      <div>
-        <h4>{{ $t('location.list_title') }}</h4>
-        <p>{{ $t('location.list_description') }}</p>
-      </div>
-      <div class="toolbar">
+    <IndexPageHeader :title="$t('location.list_title')" :subtitle="$t('location.list_description')">
+      <template #search>
         <div class="search-field">
           <span class="search-icon">
             <svg
@@ -121,14 +118,16 @@
             @input="Search"
           />
         </div>
+      </template>
+      <template #actions>
         <router-link
           class="btn btn-primary"
           :to="user?.type === 1 ? '/admin/location/add' : '/organization/location/add'"
         >
           <IndexAddIcon /> {{ $t('location') }}</router-link
         >
-      </div>
-    </div>
+      </template>
+    </IndexPageHeader>
 
     <DataStatusBuilder :controller="state" :on-retry="async () => await fetchLocations()">
       <template #success="{ data }">

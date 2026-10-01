@@ -173,7 +173,9 @@
     <div v-else-if="isEmpty" class="status-empty">
       <slot name="empty" :state="currentState">
         <div class="empty-default">
-          <div class="empty-icon">📭</div>
+          <div class="state-icon empty-icon" aria-hidden="true">
+            <i class="pi pi-inbox"></i>
+          </div>
           <p class="empty-message">{{ $t('no_data') }}</p>
         </div>
       </slot>
@@ -226,7 +228,9 @@
         :state="currentState"
       >
         <div class="rate-limited-default">
-          <div class="rate-limited-icon">⏱️</div>
+          <div class="state-icon rate-limited-icon" aria-hidden="true">
+            <i class="pi pi-clock"></i>
+          </div>
           <h3>{{ $t('too_many_requests') }}</h3>
           <p>{{ $t('please_wait_before_trying_again') }}</p>
           <button class="retry-btn" @click="handleRetry">{{ $t('try_again') }}</button>
@@ -238,7 +242,9 @@
     <div v-else-if="isCancelled" class="status-cancelled">
       <slot name="cancelled" :state="currentState">
         <div class="cancelled-default">
-          <div class="cancelled-icon">🚫</div>
+          <div class="state-icon cancelled-icon" aria-hidden="true">
+            <i class="pi pi-ban"></i>
+          </div>
           <p>{{ $t('request_was_cancelled') }}</p>
         </div>
       </slot>
@@ -287,34 +293,43 @@
     width: 100%;
   }
 
-  /* Empty State */
-  .empty-default {
+  .empty-default,
+  .rate-limited-default,
+  .cancelled-default,
+  .spinner-loader {
     display: flex;
+    min-height: 190px;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 3rem;
+    gap: 0.75rem;
+    padding: 2rem;
+    border: 1px dashed var(--border-strong);
+    border-radius: var(--card-radius);
+    background-color: var(--gray-50);
     text-align: center;
   }
 
-  .empty-icon {
-    font-size: 3rem;
-    margin-bottom: 1rem;
+  .state-icon {
+    display: inline-flex;
+    width: 48px;
+    height: 48px;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-full);
+    color: var(--PrimaryColor);
+    background-color: var(--PrimaryColor-light);
+    font-size: 1.25rem;
   }
 
   .empty-message {
     color: var(--gray-500);
-    font-size: 1rem;
+    font-size: 0.875rem;
   }
 
   /* Loading */
   .spinner-loader {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 3rem;
-    gap: 1rem;
+    border-style: solid;
   }
 
   .spinner {
@@ -322,7 +337,7 @@
     height: 40px;
     border: 3px solid var(--gray-200);
     border-top-color: var(--PrimaryColor);
-    border-radius: 50%;
+    border-radius: var(--radius-full);
     animation: spin 0.8s linear infinite;
   }
 
@@ -378,7 +393,7 @@
     padding: 0.75rem 1rem;
     background: var(--danger-light);
     border: 1px solid var(--danger-light);
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     font-size: 0.875rem;
   }
 
@@ -392,11 +407,12 @@
   }
 
   .inline-retry {
-    padding: 0.25rem 0.75rem;
+    min-height: 36px;
+    padding: 0.5rem 0.875rem;
     background: var(--danger);
     color: white;
     border: none;
-    border-radius: 4px;
+    border-radius: var(--radius-sm);
     font-size: 0.75rem;
     cursor: pointer;
     transition: background 0.2s;
@@ -407,17 +423,9 @@
   }
 
   /* Rate Limited */
-  .rate-limited-default {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 2rem;
-    text-align: center;
-  }
-
   .rate-limited-icon {
-    font-size: 3rem;
-    margin-bottom: 1rem;
+    color: var(--warning-dark);
+    background-color: var(--warning-light);
   }
 
   .rate-limited-default h3 {
@@ -431,11 +439,12 @@
   }
 
   .retry-btn {
-    padding: 0.75rem 1.5rem;
+    min-height: var(--control-height);
+    padding: 0.625rem 1.25rem;
     background: var(--PrimaryColor);
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: var(--control-radius);
     cursor: pointer;
     transition: background 0.2s;
   }
@@ -445,18 +454,9 @@
   }
 
   /* Cancelled */
-  .cancelled-default {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 2rem;
-    text-align: center;
-    color: var(--gray-500);
-  }
-
   .cancelled-icon {
-    font-size: 2rem;
-    margin-bottom: 0.5rem;
+    color: var(--gray-600);
+    background-color: var(--gray-200);
   }
 
   /* Dark mode support */

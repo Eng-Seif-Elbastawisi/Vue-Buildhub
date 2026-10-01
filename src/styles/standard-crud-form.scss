@@ -1,0 +1,600 @@
+/* Opt-in presentation for standard CRUD Add/Edit pages. */
+body:has(.standard-crud-page) {
+  --standard-form-canvas: #f5f3f0;
+  --standard-form-paper: #fffdfa;
+  --standard-form-footer: #faf8f5;
+  --standard-form-ink: #292c2d;
+  --standard-form-muted: #666b6c;
+  --standard-form-line: #e4ded7;
+  --standard-form-field-line: #cbc5bd;
+  --standard-form-copper: #a45e39;
+  --standard-form-copper-dark: #854725;
+  --standard-form-copper-soft: #f4e8df;
+  --standard-form-danger: #9b4238;
+  --standard-form-danger-soft: #fbefec;
+  --standard-form-disabled: #f1eeea;
+  --standard-form-shadow: 0 12px 32px rgb(39 42 43 / 6%);
+}
+
+body:has(.standard-crud-page) .main-content {
+  padding-block-end: 44px;
+  background-color: var(--standard-form-canvas) !important;
+}
+
+body:has(.standard-crud-page) .feature-header-container {
+  min-height: 0;
+  width: min(100%, 1120px);
+  margin: 24px auto 16px;
+  padding: 0;
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+body:has(.standard-crud-page) .feature-header-container .header-img,
+body:has(.standard-crud-page) .feature-header-container::after {
+  display: none;
+}
+
+body:has(.standard-crud-page) .feature-header-container > .content {
+  width: 100%;
+  min-height: 0;
+  gap: 5px;
+  padding: 0;
+  background: transparent;
+}
+
+body:has(.standard-crud-page) .feature-header-container .title {
+  color: var(--standard-form-ink);
+  font-size: 1.75rem;
+  line-height: 1.3;
+}
+
+body:has(.standard-crud-page) .feature-header-container .breadcrumb-link:hover,
+body:has(.standard-crud-page) .feature-header-container .breadcrumb-link:focus-visible {
+  color: var(--standard-form-copper-dark);
+}
+
+.main-content > .standard-crud-page {
+  display: flex;
+  width: min(100%, 1120px);
+  min-width: 0;
+  flex-direction: column;
+  gap: 0;
+  margin-inline: auto;
+  padding: 0;
+  overflow: visible;
+  border: 1px solid var(--standard-form-line);
+  border-radius: 16px;
+  background: var(--standard-form-paper);
+  box-shadow: var(--standard-form-shadow);
+  color: var(--standard-form-ink);
+  font-family: 'Medium', 'Segoe UI', sans-serif;
+}
+
+.main-content > .standard-crud-page.email-crud-example {
+  padding: 0;
+}
+
+.main-content
+  .standard-crud-page
+  > :is(
+    .material-form-card,
+    .document-form-card,
+    [class$='-form-card'],
+    .measurement-form,
+    .form-fields
+  ) {
+  margin: 0;
+  padding: 30px 32px 28px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.main-content .standard-crud-page > .email-form-card {
+  display: block;
+  padding: 0;
+}
+
+.standard-crud-page > .email-form-card > .field-group {
+  padding: 30px 32px 28px;
+}
+
+.main-content .standard-crud-page .document-form-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 0 0 22px;
+  padding: 0 0 18px;
+  border-bottom: 1px solid var(--standard-form-line);
+}
+
+.main-content .standard-crud-page > [class$='-form-card'] > :is(header, .form-header) {
+  margin: 0 0 22px;
+  padding: 0 0 18px;
+  border-bottom: 1px solid var(--standard-form-line);
+}
+
+.standard-crud-page > [class$='-form-card'] > :is(header, .form-header) :is(h2, h3, h4) {
+  margin: 0;
+  color: var(--standard-form-ink);
+  font-family: 'Bold', 'Segoe UI', sans-serif;
+  font-size: 1.16rem;
+  line-height: 1.35;
+}
+
+.standard-crud-page > [class$='-form-card'] > :is(header, .form-header) p {
+  margin: 4px 0 0;
+  color: var(--standard-form-muted);
+  font-size: 0.84rem;
+  line-height: 1.5;
+}
+
+.standard-crud-page .form-header {
+  min-width: 0;
+}
+
+.standard-crud-page .form-header h3 {
+  margin: 0;
+  color: var(--standard-form-ink);
+  font-family: 'Bold', 'Segoe UI', sans-serif;
+  font-size: 1.16rem;
+  line-height: 1.35;
+}
+
+.standard-crud-page .form-header p {
+  margin: 4px 0 0;
+  color: var(--standard-form-muted);
+  font-size: 0.84rem;
+  line-height: 1.5;
+}
+
+.main-content .standard-crud-page .form-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px 22px;
+  align-items: start;
+}
+
+body .main-content .standard-crud-page .form-fields > .all_inputs {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px 22px;
+  min-width: 0;
+}
+
+.standard-crud-page .form-fields > :is(.full-row, .col-span-2) {
+  grid-column: 1 / -1;
+}
+
+.standard-crud-page .status-toggle-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 46px;
+}
+
+.standard-crud-page .configuration-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px 22px;
+  margin-block-end: 22px;
+}
+
+.standard-crud-page.client-add-pilot .form-fields > .field-group:last-child {
+  grid-column: 1 / -1;
+}
+
+.main-content .standard-crud-page .field-group {
+  min-width: 0;
+  gap: 7px;
+}
+
+.standard-crud-page .field-help-label-row {
+  min-width: 0;
+  align-items: center;
+  gap: 7px;
+}
+
+.standard-crud-page .field-label,
+.standard-crud-page .field-group > label,
+.standard-crud-page .configuration-field > label,
+.standard-crud-page .field-group .input-label label {
+  min-width: 0;
+  color: var(--standard-form-ink);
+  font-family: 'Medium', 'Segoe UI', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.standard-crud-page .input-label .text-red-500 {
+  margin-inline-start: 4px;
+  color: var(--standard-form-danger);
+  font-weight: 700;
+}
+
+.standard-crud-page .field-help {
+  --field-help-icon-bg: var(--standard-form-copper-soft);
+  --field-help-icon-bg-hover: var(--standard-form-paper);
+  --field-help-icon-color: var(--standard-form-copper-dark);
+  --field-help-icon-color-hover: var(--standard-form-copper);
+}
+
+.standard-crud-page .input-wrap {
+  min-width: 0;
+}
+
+.standard-crud-page
+  :is(.field-group, .configuration-field)
+  :is(
+    input:not([type='checkbox'], [type='radio'], [type='file']),
+    textarea,
+    select,
+    .p-select,
+    .p-multiselect
+  ) {
+  width: 100%;
+  min-width: 0;
+  min-height: 44px !important;
+  margin: 0;
+  padding: 0 14px !important;
+  border: 1px solid var(--standard-form-field-line) !important;
+  border-radius: 9px !important;
+  background: var(--standard-form-paper);
+  color: var(--standard-form-ink);
+  font-family: 'Medium', 'Segoe UI', sans-serif;
+  font-size: 0.88rem;
+  line-height: 1.4;
+  box-shadow: none;
+  transition:
+    border-color 160ms ease,
+    background-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.standard-crud-page .field-group textarea {
+  min-height: 112px !important;
+  padding-block: 11px !important;
+}
+
+.standard-crud-page .field-group .field-input {
+  height: 44px;
+  max-height: none;
+}
+
+.standard-crud-page :is(.field-group, .configuration-field) :is(input, textarea)::placeholder {
+  color: var(--standard-form-muted);
+  opacity: 1;
+}
+
+.standard-crud-page .field-group input:is([type='tel'], [type='email'], [type='number']) {
+  direction: ltr;
+  text-align: start;
+}
+
+.standard-crud-page
+  .field-group
+  :is(
+    input:not([type='checkbox'], [type='radio'], [type='file']),
+    textarea,
+    select,
+    .p-select,
+    .p-multiselect
+  ):hover:not(:disabled) {
+  border-color: var(--standard-form-copper) !important;
+  background: var(--standard-form-footer);
+}
+
+.standard-crud-page
+  :is(.field-group, .configuration-field)
+  :is(
+    input:not([type='checkbox'], [type='radio']),
+    textarea,
+    select,
+    .p-select,
+    .p-multiselect
+  ):focus,
+.standard-crud-page .field-group .p-select:focus-within {
+  border-color: var(--standard-form-copper) !important;
+  background: var(--standard-form-paper);
+  box-shadow: 0 0 0 3px var(--standard-form-copper-soft) !important;
+}
+
+.standard-crud-page
+  .field-group
+  :is(input:not([type='checkbox'], [type='radio'], [type='file']), textarea, select):focus-visible,
+.standard-crud-page .field-group .p-select:focus-visible {
+  outline: 2px solid var(--standard-form-copper);
+  outline-offset: 2px;
+}
+
+.standard-crud-page
+  .field-group
+  :is(input:not([type='checkbox'], [type='radio'], [type='file']), textarea, select):disabled,
+.standard-crud-page
+  .field-group
+  :is(input:not([type='checkbox'], [type='radio'], [type='file']), textarea, select)[readonly],
+.standard-crud-page .field-group .p-select.p-disabled {
+  border-color: var(--standard-form-line) !important;
+  background: var(--standard-form-disabled);
+  color: var(--standard-form-muted);
+  cursor: not-allowed;
+}
+
+.standard-crud-page .form-fields.disabled {
+  opacity: 0.66;
+  pointer-events: none;
+}
+
+.standard-crud-page .field-group > .input-label {
+  min-height: 20px;
+}
+
+.standard-crud-page .field-group .p-select-label {
+  min-width: 0;
+  width: 100% !important;
+  overflow: hidden;
+  color: var(--standard-form-ink) !important;
+  font-size: 0.88rem !important;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.standard-crud-page .field-group .p-select-label.p-placeholder {
+  color: var(--standard-form-muted) !important;
+  font-size: 0.88rem !important;
+  font-weight: 500 !important;
+}
+
+.standard-crud-page .p-select-dropdown {
+  color: var(--standard-form-copper-dark);
+}
+
+.standard-crud-page
+  .field-group:has(:is(.error-text, .field-error))
+  :is(input, textarea, select, .p-select),
+.standard-crud-page .field-group :is(input, textarea, select)[aria-invalid='true'] {
+  border-color: var(--standard-form-danger) !important;
+}
+
+.standard-crud-page .field-group :is(.error-text, .field-error) {
+  display: block;
+  margin-block-start: 6px;
+  color: var(--standard-form-danger);
+  font-size: 0.78rem;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.standard-crud-page :is(.actions, .form-actions, .form-footer) {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  margin: 0;
+  padding: 20px 32px;
+  border-top: 1px solid var(--standard-form-line);
+  background: var(--standard-form-footer);
+}
+
+.main-content .standard-crud-page > .form-action-pair {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.main-content .standard-crud-page > .btn {
+  align-self: flex-end;
+  margin: 0 32px 24px;
+}
+
+.main-content .standard-crud-page > button.btn.btn-primary {
+  width: auto;
+}
+
+.standard-crud-page :is(.actions, .form-actions, .form-footer).disabled {
+  pointer-events: none;
+}
+
+.standard-crud-page :is(.actions, .form-actions, .form-footer) .btn,
+.main-content .standard-crud-page > .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: auto;
+  min-width: 160px;
+  min-height: 44px;
+  padding: 0 22px;
+  border: 1px solid var(--standard-form-copper-dark);
+  border-radius: 9px;
+  background: var(--standard-form-copper-dark);
+  color: var(--standard-form-paper);
+  font-size: 0.88rem;
+  font-weight: 700;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
+}
+
+.standard-crud-page :is(.actions, .form-actions, .form-footer) .btn-primary:hover:not(:disabled),
+.standard-crud-page > .btn-primary:hover:not(:disabled) {
+  border-color: var(--standard-form-copper);
+  background: var(--standard-form-copper);
+  color: var(--standard-form-paper);
+  box-shadow: 0 5px 14px var(--standard-form-copper-soft);
+}
+
+.standard-crud-page :is(.actions, .form-actions, .form-footer) .btn:active:not(:disabled),
+.standard-crud-page > .btn:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.standard-crud-page :is(.actions, .form-actions, .form-footer) .btn:focus-visible,
+.standard-crud-page > .btn:focus-visible {
+  outline: 2px solid var(--standard-form-copper);
+  outline-offset: 3px;
+}
+
+.standard-crud-page :is(.actions, .form-actions, .form-footer) .btn:disabled,
+.standard-crud-page > .btn:disabled {
+  opacity: 0.66;
+  cursor: not-allowed;
+}
+
+.standard-crud-page
+  :is(.actions, .form-actions, .form-footer)
+  :is(.btn-secondary, .back-button, .btn-cancel) {
+  border-color: var(--standard-form-line);
+  background: var(--standard-form-paper);
+  color: var(--standard-form-ink);
+}
+
+.standard-crud-page
+  :is(.actions, .form-actions, .form-footer)
+  :is(.btn-secondary, .back-button, .btn-cancel):hover:not(:disabled) {
+  border-color: var(--standard-form-field-line);
+  background: var(--standard-form-footer);
+  color: var(--standard-form-ink);
+  box-shadow: none;
+}
+
+.standard-crud-page :is(.actions, .form-actions, .form-footer) .btn--loading::after {
+  inset-inline-start: auto;
+  left: 50%;
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--standard-form-paper);
+  border-inline-end-color: transparent;
+  border-radius: 50%;
+  background-image: none;
+  animation: standard-crud-spin 800ms linear infinite;
+}
+
+.standard-crud-page > .error,
+.standard-crud-page > .email-form-card > .error {
+  margin: 0 32px 24px;
+  padding: 11px 13px;
+  border: 1px solid var(--standard-form-danger);
+  border-radius: 9px;
+  background: var(--standard-form-danger-soft);
+  color: var(--standard-form-danger);
+  font-size: 0.84rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+body:has(.standard-crud-page) .p-select-overlay {
+  border: 1px solid var(--standard-form-line) !important;
+  border-radius: 9px;
+  background: var(--standard-form-paper) !important;
+  box-shadow: var(--standard-form-shadow);
+}
+
+body:has(.standard-crud-page) .p-select-option {
+  background: var(--standard-form-paper) !important;
+  color: var(--standard-form-ink) !important;
+}
+
+body:has(.standard-crud-page) .p-select-option:is(:hover, .p-focus, [aria-selected='true']) {
+  background: var(--standard-form-copper-soft) !important;
+}
+
+body:has(.standard-crud-page) .p-select-overlay.p-anchored-overlay-enter-active,
+body:has(.standard-crud-page) .p-select-overlay.p-anchored-overlay-leave-active {
+  transition:
+    opacity 150ms ease,
+    transform 150ms ease;
+}
+
+body:has(.standard-crud-page) .p-select-overlay.p-anchored-overlay-enter-from,
+body:has(.standard-crud-page) .p-select-overlay.p-anchored-overlay-leave-to {
+  opacity: 0;
+  transform: translateY(-4px);
+}
+
+@keyframes standard-crud-spin {
+  to {
+    transform: translate(-50%, -50%) rotate(1turn);
+  }
+}
+
+@media (max-width: 768px) {
+  body:has(.standard-crud-page) .feature-header-container {
+    margin-block-start: 18px;
+  }
+
+  .main-content
+    .standard-crud-page
+    > :is(
+      .material-form-card,
+      .document-form-card,
+      [class$='-form-card'],
+      .measurement-form,
+      .form-fields
+    ) {
+    padding: 22px 20px;
+  }
+
+  .standard-crud-page > .email-form-card > .field-group {
+    padding: 22px 20px;
+  }
+
+  .standard-crud-page :is(.actions, .form-actions, .form-footer) {
+    padding: 16px 20px;
+  }
+
+  .standard-crud-page > .error,
+  .standard-crud-page > .email-form-card > .error {
+    margin-inline: 20px;
+  }
+
+  .main-content .standard-crud-page .form-fields,
+  body .main-content .standard-crud-page .form-fields > .all_inputs,
+  body .main-content .standard-crud-page .configuration-fields {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
+
+  .standard-crud-page.client-add-pilot .form-fields > .field-group:last-child {
+    grid-column: auto;
+  }
+
+  .standard-crud-page .form-fields > :is(.full-row, .col-span-2) {
+    grid-column: auto;
+  }
+}
+
+@media (max-width: 620px) {
+  body:has(.standard-crud-page) .feature-header-container {
+    margin-block: 16px 14px;
+  }
+
+  body:has(.standard-crud-page) .feature-header-container .title {
+    font-size: 1.42rem;
+  }
+
+  .standard-crud-page :is(.actions, .form-actions, .form-footer) .btn {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .standard-crud-page :is(input, textarea, select, .p-select, .p-multiselect, .btn),
+  body:has(.standard-crud-page) .field-help__button,
+  body:has(.standard-crud-page) .p-select-overlay.p-anchored-overlay-enter-active,
+  body:has(.standard-crud-page) .p-select-overlay.p-anchored-overlay-leave-active {
+    transition: none;
+  }
+
+  .standard-crud-page :is(.actions, .form-actions, .form-footer) .btn--loading::after {
+    animation: none;
+  }
+}

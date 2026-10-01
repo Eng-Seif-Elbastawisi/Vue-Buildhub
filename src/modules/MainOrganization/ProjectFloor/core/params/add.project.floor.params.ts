@@ -131,18 +131,18 @@ export default class AddProjectFloorParams implements Params {
         return Number.isInteger(previewId) && previewId > 0;
       },
     },
-
-    site_description: {
-      required: true,
-    },
-
-    technical_general_notes: {
-      required: true,
-    },
-
-    inspection_recommendations: {
-      required: true,
-    },
+    /**
+        site_description: {
+          required: true,
+        },
+    
+        technical_general_notes: {
+          required: true,
+        },
+    
+        inspection_recommendations: {
+          required: true,
+        }, */
 
     floors: {
       required: true,

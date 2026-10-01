@@ -352,10 +352,6 @@
     background: var(--black-alpha-45);
   }
 
-  [dir='rtl'] .mobile-sidebar-layer {
-    justify-content: flex-end;
-  }
-
   .mobile-sidebar-drawer {
     display: flex;
     flex-direction: column;

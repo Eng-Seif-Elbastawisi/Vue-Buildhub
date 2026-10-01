@@ -507,10 +507,10 @@
 </script>
 
 <template>
-  <section class="pricing-card">
+  <section class="project-item-form-page pricing-card" :aria-busy="loading">
     <header class="pricing-header">
       <div class="pricing-header__content">
-        <span class="pricing-header__icon">
+        <span class="pricing-header__icon" aria-hidden="true">
           <i class="pi pi-box"></i>
         </span>
 
@@ -529,18 +529,27 @@
     <div class="add-panel" :class="{ disabled: loading }">
       <div class="form-section">
         <div class="form-section__header">
-          <span class="form-section__number">01</span>
+          <div class="form-section__heading">
+            <span class="form-section__icon" aria-hidden="true">
+              <i class="pi pi-info-circle"></i>
+            </span>
 
-          <div>
-            <h4>{{ $t('project_item.basic_information') }}</h4>
-            <p>{{ $t('project_item.basic_information_description') }}</p>
+            <div>
+              <h4>{{ $t('project_item.basic_information') }}</h4>
+              <p>{{ $t('project_item.basic_information_description') }}</p>
+            </div>
           </div>
+
+          <span class="form-section__number">01</span>
         </div>
 
         <div class="form-grid form-grid--main">
           <div class="field-box">
             <span class="field-help-label-row">
-              <label class="mini-label">{{ $t('department.title') }}</label>
+              <label class="mini-label">
+                {{ $t('department.title') }}
+                <span class="field-required" aria-hidden="true">*</span>
+              </label>
 
               <FieldHelpIcon
                 :label="$t('department.title')"
@@ -563,7 +572,10 @@
 
           <div class="field-box">
             <span class="field-help-label-row">
-              <label class="mini-label">{{ $t('project_item.item') }}</label>
+              <label class="mini-label">
+                {{ $t('project_item.item') }}
+                <span class="field-required" aria-hidden="true">*</span>
+              </label>
 
               <FieldHelpIcon
                 :label="$t('project_item.item')"
@@ -586,7 +598,10 @@
 
           <div class="field-box">
             <span class="field-help-label-row">
-              <label class="mini-label">{{ $t('project_item.pricing_method') }}</label>
+              <label class="mini-label">
+                {{ $t('project_item.pricing_method') }}
+                <span class="field-required" aria-hidden="true">*</span>
+              </label>
 
               <FieldHelpIcon
                 :label="$t('project_item.pricing_method')"
@@ -609,18 +624,27 @@
 
       <div v-if="isFullFloorRelated || isSpaceRelated" class="form-section form-section--related">
         <div class="form-section__header">
-          <span class="form-section__number">02</span>
+          <div class="form-section__heading">
+            <span class="form-section__icon" aria-hidden="true">
+              <i class="pi pi-link"></i>
+            </span>
 
-          <div>
-            <h4>{{ $t('project_item.related_label') }}</h4>
-            <p>{{ $t('project_item.related_description') }}</p>
+            <div>
+              <h4>{{ $t('project_item.related_label') }}</h4>
+              <p>{{ $t('project_item.related_description') }}</p>
+            </div>
           </div>
+
+          <span class="form-section__number">02</span>
         </div>
 
         <div class="form-grid form-grid--related">
           <div v-if="isFullFloorRelated" class="field-box">
             <span class="field-help-label-row">
-              <label class="mini-label">{{ $t('ProjectFloor.floor_number') }}</label>
+              <label class="mini-label">
+                {{ $t('ProjectFloor.floor_number') }}
+                <span class="field-required" aria-hidden="true">*</span>
+              </label>
 
               <FieldHelpIcon
                 :label="$t('ProjectFloor.floor_number')"
@@ -641,7 +665,10 @@
 
           <div v-if="isSpaceRelated" class="field-box">
             <span class="field-help-label-row">
-              <label class="mini-label">{{ $t('ProjectFloor.space') }}</label>
+              <label class="mini-label">
+                {{ $t('ProjectFloor.space') }}
+                <span class="field-required" aria-hidden="true">*</span>
+              </label>
 
               <FieldHelpIcon
                 :label="$t('ProjectFloor.space')"
@@ -663,47 +690,63 @@
 
       <div class="form-section">
         <div class="form-section__header">
+          <div class="form-section__heading">
+            <span class="form-section__icon" aria-hidden="true">
+              <i class="pi pi-calculator"></i>
+            </span>
+
+            <div>
+              <h4>{{ $t('project_item.pricing_details') }}</h4>
+              <p>{{ $t('project_item.pricing_details_description') }}</p>
+            </div>
+          </div>
+
           <span class="form-section__number">
             {{ isFullFloorRelated || isSpaceRelated ? '03' : '02' }}
           </span>
-
-          <div>
-            <h4>{{ $t('project_item.pricing_details') }}</h4>
-            <p>{{ $t('project_item.pricing_details_description') }}</p>
-          </div>
         </div>
 
         <div class="form-grid form-grid--pricing">
           <div class="field-box">
             <span class="field-help-label-row">
-              <label class="mini-label">{{ $t('project_item.quantity') }}</label>
+              <label class="mini-label" for="project-item-quantity">
+                {{ $t('project_item.quantity') }}
+                <span class="field-required" aria-hidden="true">*</span>
+              </label>
 
               <FieldHelpIcon :label="$t('project_item.quantity')" field-name="quantity" />
             </span>
 
             <input
+              id="project-item-quantity"
               v-model.number="quantity"
-              class="field-input"
+              class="field-input field-input--numeric"
               min="0"
               step="1"
               type="number"
+              aria-required="true"
               @input="updateData"
             />
           </div>
 
           <div class="field-box">
             <span class="field-help-label-row">
-              <label class="mini-label">{{ $t('project_item.price') }}</label>
+              <label class="mini-label" for="project-item-price">
+                {{ $t('project_item.price') }}
+                <span class="field-required" aria-hidden="true">*</span>
+              </label>
 
               <FieldHelpIcon :label="$t('project_item.price')" field-name="price" />
             </span>
 
             <input
+              id="project-item-price"
               v-model.number="price"
-              class="field-input"
+              class="field-input field-input--numeric"
               min="0"
               step="1"
               type="number"
+              aria-required="true"
               @input="updateData"
             />
           </div>
@@ -715,7 +758,7 @@
               <FieldHelpIcon :label="$t('project_item.total_label')" field-name="total" />
             </span>
 
-            <div class="total-field">
+            <div class="total-field" role="status" aria-live="polite">
               <span>{{ total.toLocaleString() }}</span>
             </div>
           </div>
@@ -726,7 +769,7 @@
             </span>
 
             <button type="button" class="add-btn" :disabled="loading" @click="addItemToList">
-              <i class="pi pi-plus"></i>
+              <i class="pi pi-plus" aria-hidden="true"></i>
               <span>{{ $t('general.add') }}</span>
             </button>
           </div>
@@ -735,14 +778,20 @@
 
       <div class="form-section">
         <div class="form-section__header">
+          <div class="form-section__heading">
+            <span class="form-section__icon" aria-hidden="true">
+              <i class="pi pi-map-marker"></i>
+            </span>
+
+            <div>
+              <h4>{{ $t('ProjectFloor.site_recommendations') }}</h4>
+              <p>{{ $t('ProjectFloor.site_recommendations_description') }}</p>
+            </div>
+          </div>
+
           <span class="form-section__number">
             {{ isFullFloorRelated || isSpaceRelated ? '04' : '03' }}
           </span>
-
-          <div>
-            <h4>{{ $t('ProjectFloor.site_recommendations') }}</h4>
-            <p>{{ $t('ProjectFloor.site_recommendations_description') }}</p>
-          </div>
         </div>
 
         <div class="form-grid form-grid--notes">
@@ -783,9 +832,15 @@
 
       <div class="items-section">
         <div class="items-section__header">
-          <div>
-            <h4>{{ $t('project_item.selected_items') }}</h4>
-            <p>{{ $t('project_item.selected_items_description') }}</p>
+          <div class="items-section__heading">
+            <span class="items-section__icon" aria-hidden="true">
+              <i class="pi pi-list"></i>
+            </span>
+
+            <div>
+              <h4>{{ $t('project_item.selected_items') }}</h4>
+              <p>{{ $t('project_item.selected_items_description') }}</p>
+            </div>
           </div>
 
           <span class="items-section__badge">
@@ -794,7 +849,7 @@
         </div>
 
         <div v-if="!localItems.length" class="empty-local-row">
-          <span class="empty-local-row__icon">
+          <span class="empty-local-row__icon" aria-hidden="true">
             <i class="pi pi-inbox"></i>
           </span>
 
@@ -828,9 +883,10 @@
                 type="button"
                 class="remove-btn"
                 :title="$t('general.delete')"
+                :aria-label="$t('general.delete')"
                 @click="removeItem(item.local_id)"
               >
-                <i class="pi pi-trash"></i>
+                <i class="pi pi-trash" aria-hidden="true"></i>
               </button>
             </div>
           </div>
@@ -850,9 +906,9 @@
   .pricing-card {
     overflow: hidden;
     border: 1px solid var(--border-weak);
-    border-radius: 28px;
-    background: var(--BgWhite);
-    box-shadow: 0 18px 50px rgba(15, 23, 42, 0.06);
+    border-radius: var(--radius-xl);
+    background: var(--bg-card);
+    box-shadow: var(--shadow-sm);
   }
 
   .pricing-header {
@@ -860,13 +916,10 @@
     align-items: center;
     justify-content: space-between;
     gap: 1.5rem;
-    padding: 1.5rem;
+    min-height: 5.5rem;
+    padding: var(--surface-padding);
     border-bottom: 1px solid var(--border-weak);
-    background: linear-gradient(
-      135deg,
-      var(--BgWhite),
-      color-mix(in sRGB, var(--PrimaryColor-light) 45%, var(--BgWhite))
-    );
+    background: color-mix(in sRGB, var(--PrimaryColor) 5%, var(--bg-card));
   }
 
   .pricing-header__content {
@@ -877,30 +930,32 @@
 
     h3 {
       margin: 0;
-      color: var(--bread-crumb-color-span);
-      font-family: 'Bold';
-      font-size: 1.15rem;
+      color: var(--gray-900);
+      font-family: 'Bold', var(--font-family);
+      font-size: var(--xl-size-base);
+      line-height: 1.4;
     }
 
     p {
       margin: 0.3rem 0 0;
-      color: var(--gray-5);
+      color: var(--gray-500);
       font-size: var(--xs-size);
+      line-height: 1.55;
     }
   }
 
   .pricing-header__icon {
     display: inline-flex;
-    width: 48px;
-    height: 48px;
-    flex: 0 0 48px;
+    width: 3rem;
+    height: 3rem;
+    flex: 0 0 3rem;
     align-items: center;
     justify-content: center;
-    border: 1px solid color-mix(in sRGB, var(--PrimaryColor) 18%, transparent);
-    border-radius: 16px;
-    background: var(--BgWhite);
+    border: 1px solid color-mix(in sRGB, var(--PrimaryColor) 18%, var(--border-weak));
+    border-radius: var(--radius-md);
+    background: color-mix(in sRGB, var(--PrimaryColor) 9%, var(--bg-card));
     color: var(--PrimaryColor);
-    box-shadow: 0 8px 24px color-mix(in sRGB, var(--PrimaryColor) 12%, transparent);
+    font-size: 1.25rem;
   }
 
   .pricing-header__count {
@@ -908,8 +963,12 @@
     flex: 0 0 auto;
     align-items: center;
     gap: 0.7rem;
-    color: var(--gray-5);
-    font-family: 'Medium';
+    padding: 0.5rem 0.65rem;
+    border: 1px solid color-mix(in sRGB, var(--PrimaryColor) 14%, var(--border-weak));
+    border-radius: var(--radius-md);
+    background: var(--bg-card);
+    color: var(--gray-500);
+    font-family: 'Medium', var(--font-family);
     font-size: var(--xs-size);
 
     strong {
@@ -918,19 +977,19 @@
       height: 38px;
       align-items: center;
       justify-content: center;
-      border-radius: 12px;
+      border-radius: var(--radius-sm);
       background: var(--PrimaryColor);
-      color: #fff;
-      font-family: 'Bold';
+      color: var(--standard-white);
+      font-family: 'Bold', var(--font-family);
     }
   }
 
   .add-panel {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
-    padding: 1.25rem;
-    background: color-mix(in sRGB, var(--bg-main) 72%, var(--BgWhite));
+    gap: var(--page-section-gap);
+    padding: var(--surface-padding);
+    background: var(--bg-section);
 
     &.disabled {
       pointer-events: none;
@@ -940,35 +999,60 @@
 
   .form-section,
   .items-section {
-    padding: 1.15rem;
+    overflow: hidden;
     border: 1px solid var(--border-weak);
-    border-radius: 20px;
-    background: var(--BgWhite);
-  }
-
-  .form-section--related {
-    background: color-mix(in sRGB, var(--PrimaryColor-light) 24%, var(--BgWhite));
+    border-radius: var(--radius-xl);
+    background: var(--bg-card);
+    box-shadow: var(--shadow-sm);
   }
 
   .form-section__header,
   .items-section__header {
     display: flex;
     align-items: center;
-    gap: 0.85rem;
-    margin-bottom: 1rem;
+    justify-content: space-between;
+    gap: 1rem;
+    min-height: 4.5rem;
+    margin: 0;
+    padding: 1rem var(--surface-padding);
+    border-bottom: 1px solid color-mix(in sRGB, var(--PrimaryColor) 10%, var(--border-weak));
+    background: color-mix(in sRGB, var(--PrimaryColor) 6%, var(--bg-card));
 
     h4 {
       margin: 0;
-      color: var(--bread-crumb-color-span);
-      font-family: 'Bold';
-      font-size: 0.95rem;
+      color: var(--gray-900);
+      font-family: 'Bold', var(--font-family);
+      font-size: var(--md-size);
+      line-height: 1.4;
     }
 
     p {
       margin: 0.25rem 0 0;
-      color: var(--gray-5);
+      color: var(--gray-500);
       font-size: var(--xs-size);
+      line-height: 1.5;
     }
+  }
+
+  .form-section__heading,
+  .items-section__heading {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .form-section__icon,
+  .items-section__icon {
+    display: grid;
+    width: 2.35rem;
+    height: 2.35rem;
+    flex: 0 0 auto;
+    place-items: center;
+    border: 1px solid color-mix(in sRGB, var(--PrimaryColor) 16%, var(--border-weak));
+    border-radius: var(--radius-sm);
+    background: color-mix(in sRGB, var(--PrimaryColor) 9%, var(--bg-card));
+    color: var(--PrimaryColor);
   }
 
   .form-section__number {
@@ -978,10 +1062,11 @@
     flex: 0 0 34px;
     align-items: center;
     justify-content: center;
-    border-radius: 10px;
-    background: var(--PrimaryColor-light);
+    border: 1px solid color-mix(in sRGB, var(--PrimaryColor) 18%, var(--border-weak));
+    border-radius: var(--radius-full);
+    background: var(--bg-card);
     color: var(--PrimaryColor);
-    font-family: 'Bold';
+    font-family: 'Bold', var(--font-family);
     font-size: 0.78rem;
   }
 
@@ -989,6 +1074,7 @@
     display: grid;
     gap: 1rem;
     align-items: end;
+    padding: var(--surface-padding);
   }
 
   .form-grid--main {
@@ -996,7 +1082,7 @@
   }
 
   .form-grid--related {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .form-grid--pricing {
@@ -1026,35 +1112,56 @@
   }
 
   .mini-label {
-    color: var(--gray-6);
-    font-family: 'Bold';
-    font-size: 0.78rem;
+    color: var(--gray-700);
+    font-family: 'Medium', var(--font-family);
+    font-size: var(--sm-size);
+    line-height: 1.45;
+  }
+
+  .field-required {
+    margin-inline-start: 0.15rem;
+    color: var(--danger);
   }
 
   .field-input,
   .total-field,
   .add-btn {
     width: 100%;
-    min-height: 48px;
-    border-radius: 14px;
+    min-height: max(var(--control-height), 46px);
+    border-radius: var(--control-radius);
   }
 
   .field-input {
     padding: 0.75rem 0.9rem;
-    border: 1px solid var(--border-weak);
-    background: var(--BgWhite);
-    color: var(--bread-crumb-color-span);
+    border: 1px solid var(--border-strong);
+    background: var(--bg-card);
+    color: var(--gray-800);
     outline: none;
-    font-family: 'Medium';
+    font-family: 'Medium', var(--font-family);
     font-size: var(--sm-size);
     transition:
-      border-color 0.2s ease,
-      box-shadow 0.2s ease;
+      border-color var(--transition-fast),
+      box-shadow var(--transition-fast);
 
-    &:focus {
-      border-color: var(--PrimaryColor);
-      box-shadow: 0 0 0 3px var(--PrimaryColor-light);
+    &:hover:not(:disabled) {
+      border-color: var(--gray-400);
     }
+
+    &:focus-visible {
+      border-color: var(--PrimaryColor);
+      box-shadow: var(--focus-ring);
+    }
+
+    &::placeholder {
+      color: var(--gray-400);
+      opacity: 1;
+    }
+  }
+
+  .field-input--numeric {
+    direction: ltr;
+    font-variant-numeric: tabular-nums;
+    text-align: start;
   }
 
   .notes-input {
@@ -1067,9 +1174,11 @@
     align-items: center;
     justify-content: center;
     border: 1px solid color-mix(in sRGB, var(--PrimaryColor) 20%, var(--border-weak));
-    background: var(--PrimaryColor-light);
+    background: color-mix(in sRGB, var(--PrimaryColor) 7%, var(--bg-card));
     color: var(--PrimaryColor);
-    font-family: 'Bold';
+    font-family: 'Bold', var(--font-family);
+    font-variant-numeric: tabular-nums;
+    direction: ltr;
   }
 
   .add-btn {
@@ -1077,15 +1186,17 @@
     align-items: center;
     justify-content: center;
     gap: 0.55rem;
-    border: 0;
+    border: 1px solid var(--PrimaryColor);
     background: var(--PrimaryColor);
-    color: #fff;
+    color: var(--standard-white);
     cursor: pointer;
-    font-family: 'Bold';
+    font-family: 'Medium', var(--font-family);
     transition:
-      transform 0.2s ease,
-      box-shadow 0.2s ease,
-      opacity 0.2s ease;
+      background-color var(--transition-fast),
+      border-color var(--transition-fast),
+      box-shadow var(--transition-fast),
+      transform var(--transition-fast),
+      opacity var(--transition-fast);
 
     &:disabled {
       cursor: not-allowed;
@@ -1094,21 +1205,13 @@
 
     &:hover:not(:disabled) {
       transform: translateY(-1px);
-      box-shadow: 0 10px 24px color-mix(in sRGB, var(--PrimaryColor) 24%, transparent);
+      box-shadow: 0 8px 18px color-mix(in sRGB, var(--PrimaryColor) 20%, transparent);
     }
-  }
 
-  .items-section {
-    padding: 0;
-    overflow: hidden;
-  }
-
-  .items-section__header {
-    justify-content: space-between;
-    margin: 0;
-    padding: 1rem 1.15rem;
-    border-bottom: 1px solid var(--border-weak);
-    background: var(--bg-main);
+    &:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
+    }
   }
 
   .items-section__badge {
@@ -1117,10 +1220,11 @@
     height: 34px;
     align-items: center;
     justify-content: center;
-    border-radius: 10px;
-    background: var(--PrimaryColor-light);
+    border: 1px solid color-mix(in sRGB, var(--PrimaryColor) 18%, var(--border-weak));
+    border-radius: var(--radius-full);
+    background: var(--bg-card);
     color: var(--PrimaryColor);
-    font-family: 'Bold';
+    font-family: 'Bold', var(--font-family);
   }
 
   .empty-local-row {
@@ -1130,11 +1234,14 @@
     justify-content: center;
     flex-direction: column;
     gap: 0.75rem;
-    color: var(--gray-5);
+    padding: 2rem 1rem;
+    background: var(--bg-card);
+    color: var(--gray-500);
     text-align: center;
 
     strong {
-      font-family: 'Medium';
+      color: var(--gray-800);
+      font-family: 'Medium', var(--font-family);
     }
   }
 
@@ -1144,44 +1251,46 @@
     height: 54px;
     align-items: center;
     justify-content: center;
-    border-radius: 18px;
-    background: var(--bg-main);
+    border: 1px dashed var(--border-weak);
+    border-radius: var(--radius-full);
+    background: var(--bg-section);
     color: var(--PrimaryColor);
     font-size: 1.2rem;
   }
 
   .local-table-wrap {
     overflow-x: auto;
+    overscroll-behavior-inline: contain;
   }
 
   .local-table {
-    min-width: 980px;
+    min-width: 56rem;
   }
 
   .local-table-head,
   .local-table-row {
     display: grid;
-    grid-template-columns: minmax(170px, 1.3fr) minmax(140px, 1fr) minmax(150px, 1fr) minmax(
-        90px,
-        0.6fr
-      ) minmax(100px, 0.7fr) minmax(110px, 0.75fr) 56px;
+    grid-template-columns:
+      minmax(170px, 1.3fr) minmax(140px, 1fr) minmax(150px, 1fr) minmax(90px, 0.6fr)
+      minmax(100px, 0.7fr) minmax(110px, 0.75fr) 56px;
     gap: 0.75rem;
     align-items: center;
     padding: 0.8rem 1rem;
   }
 
   .local-table-head {
-    background: var(--bg-main);
-    color: var(--gray-6);
-    font-family: 'Bold';
+    border-bottom: 1px solid var(--border-weak);
+    background: var(--bg-section);
+    color: var(--gray-600);
+    font-family: 'Medium', var(--font-family);
     font-size: 0.76rem;
   }
 
   .local-table-row {
     min-height: 58px;
     border-top: 1px solid var(--border-weak);
-    color: var(--bread-crumb-color-span);
-    font-family: 'Medium';
+    color: var(--gray-700);
+    font-family: 'Medium', var(--font-family);
     font-size: var(--sm-size);
 
     > span {
@@ -1193,12 +1302,20 @@
 
   .local-table-row__primary,
   .local-table-row__total {
-    color: var(--bread-crumb-color-span);
-    font-family: 'Bold';
+    color: var(--gray-900);
+    font-family: 'Bold', var(--font-family);
   }
 
   .local-table-row__total {
     color: var(--PrimaryColor);
+  }
+
+  .local-table-head > :nth-child(n + 4):nth-child(-n + 6),
+  .local-table-row > :nth-child(n + 4):nth-child(-n + 6),
+  .local-total strong {
+    direction: ltr;
+    font-variant-numeric: tabular-nums;
+    unicode-bidi: isolate;
   }
 
   .remove-btn {
@@ -1207,18 +1324,27 @@
     height: 36px;
     align-items: center;
     justify-content: center;
-    border: 1px solid rgba(239, 68, 68, 0.24);
-    border-radius: 10px;
-    background: var(--BgWhite);
-    color: var(--Red);
+    border: 1px solid var(--danger-alpha-15);
+    border-radius: var(--control-radius);
+    background: var(--bg-card);
+    color: var(--danger);
     cursor: pointer;
     transition:
-      background 0.2s ease,
-      transform 0.2s ease;
+      border-color var(--transition-fast),
+      background-color var(--transition-fast),
+      box-shadow var(--transition-fast),
+      transform var(--transition-fast);
 
-    &:hover {
+    &:hover,
+    &:focus-visible {
+      border-color: var(--danger);
       transform: translateY(-1px);
       background: var(--danger-light);
+      outline: none;
+    }
+
+    &:focus-visible {
+      box-shadow: var(--focus-ring);
     }
   }
 
@@ -1227,19 +1353,20 @@
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
-    padding: 1rem 1.15rem;
+    padding: 1rem var(--surface-padding);
     border-top: 1px solid var(--border-weak);
-    background: linear-gradient(135deg, var(--PrimaryColor-light), var(--BgWhite));
+    background: color-mix(in sRGB, var(--PrimaryColor) 6%, var(--bg-card));
 
     span {
-      color: var(--gray-6);
-      font-family: 'Bold';
+      color: var(--gray-700);
+      font-family: 'Medium', var(--font-family);
     }
 
     strong {
       color: var(--PrimaryColor);
-      font-family: 'Bold';
+      font-family: 'Bold', var(--font-family);
       font-size: 1.05rem;
+      font-variant-numeric: tabular-nums;
     }
   }
 
@@ -1250,8 +1377,20 @@
   .add-panel :deep(.p-select),
   .add-panel :deep(.custom-select),
   .add-panel :deep(.form-control) {
-    min-height: 48px;
-    border-radius: 14px;
+    min-height: max(var(--control-height), 46px);
+    border-color: var(--border-strong);
+    border-radius: var(--control-radius);
+    background: var(--bg-card);
+    box-shadow: none;
+  }
+
+  .add-panel :deep(.p-select:not(.p-disabled):hover) {
+    border-color: var(--gray-400);
+  }
+
+  .add-panel :deep(.p-select.p-focus) {
+    border-color: var(--PrimaryColor);
+    box-shadow: var(--focus-ring);
   }
 
   @media (max-width: 1100px) {
@@ -1265,6 +1404,7 @@
     .pricing-header {
       align-items: flex-start;
       flex-direction: column;
+      padding: 1rem;
     }
 
     .pricing-header__count {
@@ -1283,26 +1423,38 @@
       display: none;
     }
 
-    .local-table {
-      min-width: 0;
+    .form-section__header,
+    .items-section__header,
+    .form-grid,
+    .local-total {
+      padding-inline: 1rem;
+    }
+  }
+
+  @media (max-width: 520px) {
+    .pricing-header__content,
+    .form-section__heading,
+    .items-section__heading {
+      align-items: flex-start;
     }
 
-    .local-table-head {
-      display: none;
+    .form-section__icon,
+    .items-section__icon {
+      width: 2rem;
+      height: 2rem;
     }
 
-    .local-table-row {
-      grid-template-columns: 1fr;
-      gap: 0.45rem;
-      padding: 1rem;
-
-      > span {
-        white-space: normal;
-      }
+    .form-section__header,
+    .items-section__header {
+      gap: 0.65rem;
     }
+  }
 
+  @media (prefers-reduced-motion: reduce) {
+    .field-input,
+    .add-btn,
     .remove-btn {
-      width: 100%;
+      transition: none;
     }
   }
 </style>

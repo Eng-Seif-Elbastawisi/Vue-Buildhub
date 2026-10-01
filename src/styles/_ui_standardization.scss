@@ -1,0 +1,791 @@
+@use 'variables' as *;
+
+/* =============================================================================
+   APPLICATION UI STANDARDIZATION
+   Shared presentation rules for every routed page. Feature-specific behavior and
+   layout remain owned by their components; this layer only normalizes the visual
+   language used by those components.
+   ============================================================================= */
+
+/* ── Page canvas and vertical rhythm ───────────────────────────── */
+.content,
+.content-wrapper {
+  background-color: var(--bg-body);
+}
+
+.main-content {
+  background-color: transparent !important;
+}
+
+.main-content > :not(.feature-header-container) {
+  width: min(100%, var(--page-max-width));
+  min-width: 0;
+  margin-inline: auto;
+  padding-block-end: var(--page-padding-block);
+}
+
+.main-content
+  > :where(
+    [class$='-page'],
+    [class*='-page '],
+    [class$='-crud-page'],
+    [class*='-crud-page '],
+    .document-crud-example,
+    .email-crud-example,
+    .show-page
+  ) {
+  gap: var(--page-section-gap);
+}
+
+/* ── Page headers ─────────────────────────────────────────────── */
+.main-content
+  > :not(.feature-header-container)
+  > :where(
+    header,
+    .page-header,
+    .index-header,
+    .admin-header,
+    .package-header,
+    .employee-header,
+    .client-header,
+    .invoice-header,
+    .invoice-payment-header,
+    .item-header,
+    .location-header,
+    .material-header,
+    .project-header,
+    .supply-header,
+    .settings-header
+  ) {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  padding-block: 2px 18px;
+  border-bottom: 1px solid var(--border-weak);
+}
+
+.main-content
+  :where(.page-header, .index-header, [class$='-header'])
+  :where(h1, h2, h3, h4, h5, h6),
+.main-content > :not(.feature-header-container) > :where(h1, h2, h3, h4) {
+  margin: 0;
+  color: var(--form-title);
+  font-family: 'Bold', var(--font-family);
+  font-size: clamp(1.25rem, 2vw, 1.6rem);
+  font-weight: $BaseFontWeightBold;
+  line-height: 1.3;
+}
+
+.main-content :where(.page-header, .index-header, [class$='-header']) p {
+  max-width: 70ch;
+  margin-block-start: 4px;
+  color: var(--gray-500);
+  font-size: var(--sm-size);
+  line-height: 1.6;
+}
+
+/* ── Toolbars, search and filters ──────────────────────────────── */
+.main-content :where(.toolbar, .page-header__actions, .action-buttons, .toolbar-actions) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 0;
+}
+
+.main-content .toolbar {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--border-weak);
+  border-radius: var(--card-radius);
+  background-color: var(--bg-card);
+  box-shadow: var(--shadow-sm);
+}
+
+.main-content :where(.search-field, .search-box, .input-search) {
+  position: relative;
+  display: flex;
+  flex: 1 1 280px;
+  align-items: center;
+  width: min(100%, 420px);
+  min-width: 220px;
+  max-width: 520px;
+}
+
+.main-content :where(.search-field, .search-box) .search-icon {
+  position: absolute;
+  inset-inline-start: 14px;
+  left: auto;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gray-400);
+  pointer-events: none;
+}
+
+.main-content .search-field .search-input,
+.main-content .search-box .search-input,
+.main-content .input-search input {
+  width: 100%;
+  min-height: var(--control-height) !important;
+  padding-block: 10px !important;
+  padding-inline: 42px 14px !important;
+  border: 1px solid var(--border-strong) !important;
+  border-radius: var(--control-radius) !important;
+  outline: none;
+  color: var(--gray-800);
+  background-color: var(--bg-main);
+  font-family: var(--font-family);
+  font-size: var(--sm-size);
+  font-weight: $BaseFontMediumWeight;
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    background-color var(--transition-fast);
+}
+
+.main-content :where(.search-field, .search-box, .input-search) input::placeholder {
+  color: var(--gray-400);
+  font-weight: $BaseFontMediumWeight;
+}
+
+.main-content :where(.search-field, .search-box, .input-search) input:focus {
+  border-color: var(--PrimaryColor);
+  box-shadow: var(--focus-ring);
+}
+
+/* ── Form surfaces and sections ──────────────────────────────────── */
+.main-content
+  :where(
+    [class*='-crud-page'],
+    .document-crud-example,
+    .email-crud-example,
+    .department-page,
+    .invoice-action-page,
+    .price-percentage-settings,
+    .system-identity-settings
+  ) {
+  width: min(100%, var(--form-max-width));
+  margin-inline: auto;
+}
+
+.main-content
+  :where(
+    .document-form-card,
+    .email-form-card,
+    .package-form-card,
+    .Project-form-card,
+    .invoice-form__card,
+    .invoice-action-card,
+    .form-section,
+    .percentage-card,
+    .toggle-card,
+    .execution-quote__card,
+    .execution-builder-card,
+    .show-card
+  ) {
+  min-width: 0;
+  padding: var(--surface-padding);
+  border: 1px solid var(--border-weak);
+  border-radius: var(--card-radius);
+  background-color: var(--bg-card);
+  box-shadow: var(--shadow-sm);
+}
+
+.main-content
+  :where(
+    .document-form-header,
+    .package-form-header,
+    .invoice-form__header,
+    .invoice-form__type-header,
+    .form-section__header,
+    .card-header
+  ) {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-block-end: 20px;
+  padding-block-end: 16px;
+  border-bottom: 1px solid var(--border-weak);
+}
+
+.main-content
+  :where(
+    .document-form-header,
+    .package-form-header,
+    .invoice-form__header,
+    .invoice-form__type-header,
+    .form-section__header,
+    .card-header
+  )
+  :where(h2, h3, h4) {
+  margin: 0;
+  color: var(--gray-900);
+  font-family: 'Bold', var(--font-family);
+  font-size: 1.05rem;
+  line-height: 1.4;
+}
+
+.main-content
+  :where(
+    .document-form-header,
+    .package-form-header,
+    .invoice-form__header,
+    .invoice-form__type-header,
+    .form-section__header,
+    .card-header
+  )
+  p {
+  margin-block-start: 3px;
+  color: var(--gray-500);
+  font-size: var(--sm-size);
+  line-height: 1.5;
+}
+
+.main-content
+  :where(
+    .form-fields,
+    .form-grid,
+    .fields-grid,
+    .invoice-form__fields,
+    .invoice-action-grid,
+    .project-floor-edit-dialog__fields
+  ) {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  width: 100%;
+}
+
+.main-content
+  :where(
+    .field-group--full,
+    .col-span-2,
+    .invoice-form__project,
+    .invoice-form__invoices,
+    .invoice-form__group-title,
+    .invoice-form__notes
+  ) {
+  grid-column: 1 / -1;
+}
+
+.main-content .field-group,
+.p-dialog .field-group {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.main-content :where(.field-label, .field-group > label, .quote-field__label),
+.p-dialog :where(.field-label, .field-group > label) {
+  color: var(--gray-700);
+  font-family: var(--font-family);
+  font-size: var(--sm-size);
+  font-weight: $BaseFontSemiBoldWeight;
+  line-height: 1.45;
+}
+
+.main-content :where(.required-indicator, .quote-field__required) {
+  color: var(--danger);
+}
+
+.main-content
+  .field-group
+  :where(
+    input:not([type='checkbox'], [type='radio'], [type='file']),
+    textarea,
+    select,
+    .field-input,
+    .form-input
+  ),
+.p-dialog
+  .field-group
+  :where(
+    input:not([type='checkbox'], [type='radio'], [type='file']),
+    textarea,
+    select,
+    .field-input,
+    .form-input
+  ) {
+  width: 100%;
+  min-height: var(--control-height) !important;
+  padding: 10px 13px !important;
+  border: 1px solid var(--border-strong) !important;
+  border-radius: var(--control-radius) !important;
+  outline: none;
+  color: var(--gray-800);
+  background-color: var(--bg-main);
+  font-family: var(--font-family);
+  font-size: var(--sm-size);
+  font-weight: $BaseFontMediumWeight;
+  line-height: 1.4;
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    background-color var(--transition-fast);
+}
+
+.main-content .field-group :where(textarea, .field-textarea),
+.p-dialog .field-group :where(textarea, .field-textarea) {
+  min-height: 112px !important;
+  resize: vertical;
+}
+
+.main-content .field-group :where(input, textarea, select, .field-input, .form-input):focus,
+.main-content .field-group :where(input, textarea, select, .field-input, .form-input):focus-within,
+.p-dialog .field-group :where(input, textarea, select, .field-input, .form-input):focus {
+  border-color: var(--PrimaryColor);
+  box-shadow: var(--focus-ring);
+}
+
+.main-content .field-group :where(input, textarea, select)::placeholder,
+.p-dialog .field-group :where(input, textarea, select)::placeholder {
+  color: var(--gray-400);
+  opacity: 1;
+}
+
+.main-content .field-group :where(input, textarea, select):disabled,
+.main-content .field-group :where(input, textarea, select)[readonly],
+.p-dialog .field-group :where(input, textarea, select):disabled {
+  border-color: var(--border-weak);
+  color: var(--gray-500);
+  background-color: var(--gray-100);
+  cursor: not-allowed;
+}
+
+.main-content :where(.p-select, .p-multiselect, .p-datepicker) {
+  min-height: var(--control-height);
+  border-radius: var(--control-radius) !important;
+}
+
+.main-content :where(.p-select, .p-multiselect) {
+  align-items: center;
+  padding-block: 0 !important;
+}
+
+.main-content :where(.p-select, .p-multiselect):focus-within {
+  border-color: var(--PrimaryColor) !important;
+  box-shadow: var(--focus-ring) !important;
+}
+
+.main-content :where(.field-error, .error, [class$='__field-error']) {
+  color: var(--danger);
+  font-size: var(--xs-size);
+  line-height: 1.45;
+}
+
+.main-content :where(.form-actions, .form-footer, .buttons-container, .invoice-form__footer),
+.p-dialog :where(.form-actions, .dialog-actions, [class$='__actions']) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  width: 100%;
+  margin-block-start: 20px;
+  padding-block-start: 18px;
+  border-top: 1px solid var(--border-weak);
+}
+
+.main-content [class*='-crud-page'] > .actions,
+.main-content :where(.document-crud-example, .email-crud-example, .department-page) > .actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  width: 100%;
+}
+
+/* ── Buttons and row actions ─────────────────────────────────────── */
+.main-content .btn {
+  min-height: var(--control-height) !important;
+  border-radius: var(--control-radius) !important;
+}
+
+.main-content .btn--sm {
+  min-height: 36px !important;
+}
+
+.main-content .btn--lg {
+  min-height: 50px !important;
+}
+
+.main-content :where(.row-actions, .table-actions, .saved-floor-card__actions) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.main-content :where(.action-btn, .icon-button, [class$='__close']) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  min-width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid var(--border-weak);
+  border-radius: var(--radius-sm);
+  color: var(--gray-500);
+  background-color: var(--bg-main);
+  transition:
+    color var(--transition-fast),
+    border-color var(--transition-fast),
+    background-color var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.main-content :where(.action-btn, .icon-button, [class$='__close']):hover {
+  border-color: var(--PrimaryColor);
+  color: var(--PrimaryColor);
+  background-color: var(--PrimaryColor-light);
+  transform: translateY(-1px);
+}
+
+.main-content :where(.action-btn.delete, .action-btn.danger):hover {
+  border-color: var(--danger);
+  color: var(--danger);
+  background-color: var(--danger-light);
+}
+
+/* ── Tables and dense data ───────────────────────────────────────── */
+.main-content :where(.table-frame, .table-wrap, [class$='__table-wrap']) {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--border-weak);
+  border-radius: var(--card-radius);
+  background-color: var(--bg-card);
+  box-shadow: var(--shadow-sm);
+}
+
+.main-content :where(.table-frame, .table-wrap, [class$='__table-wrap']) > .table-responsive {
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.main-content :where(.table-wrap, [class$='__table-wrap']) {
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+}
+
+.main-content :where(.project-table, [class$='__table']):not(.app-table) {
+  width: 100%;
+  min-width: 680px;
+  border-collapse: collapse;
+  color: var(--gray-700);
+  background-color: var(--bg-card);
+}
+
+.main-content :where(.project-table, [class$='__table']):not(.app-table) th {
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--border-strong);
+  color: var(--gray-600);
+  background-color: var(--gray-50);
+  font-size: var(--xs-size);
+  font-weight: $BaseFontSemiBoldWeight;
+  text-align: start;
+  white-space: nowrap;
+}
+
+.main-content :where(.project-table, [class$='__table']):not(.app-table) td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border-weak);
+  color: var(--gray-700);
+  font-size: var(--sm-size);
+  line-height: 1.5;
+  text-align: start;
+  vertical-align: middle;
+}
+
+.main-content :where(.project-table, [class$='__table']):not(.app-table) tbody tr:hover {
+  background-color: var(--PrimaryColor-alpha-4);
+}
+
+/* ── Cards, statuses, empty and loading states ─────────────────────── */
+.main-content
+  :where(
+    .card,
+    [class$='-card'],
+    [class$='__card'],
+    .project-section,
+    .invoice-show-card,
+    .task-assignment-card
+  ) {
+  border-color: var(--border-weak);
+}
+
+.main-content
+  :where(
+    .status-badge,
+    [class$='-status-badge'],
+    .status-pill,
+    [class$='-status-pill'],
+    .status-chip,
+    [class$='-status-chip'],
+    .type-chip,
+    .tag
+  ) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 26px;
+  padding: 4px 10px;
+  border: 1px solid var(--border-weak);
+  border-radius: var(--radius-full);
+  font-size: var(--xs-size);
+  font-weight: $BaseFontSemiBoldWeight;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.main-content :where(.empty-state, .empty-panel, .stage-empty, [class$='__empty']) {
+  display: flex;
+  min-height: 190px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 32px 20px;
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--card-radius);
+  color: var(--gray-500);
+  background-color: var(--gray-50);
+  text-align: center;
+}
+
+.main-content
+  :where(.empty-state, .empty-panel, .stage-empty, [class$='__empty'])
+  :where(h2, h3, h4) {
+  margin: 0;
+  color: var(--gray-700);
+  font-size: 1rem;
+}
+
+.main-content :where(.empty-state, .empty-panel, .stage-empty, [class$='__empty']) p {
+  max-width: 52ch;
+  margin: 0;
+  color: var(--gray-500);
+  font-size: var(--sm-size);
+}
+
+.main-content :where(.loading-state, .status-loading, [class$='__loading']) {
+  display: flex;
+  min-height: 180px;
+  align-items: center;
+  justify-content: center;
+  color: var(--gray-500);
+}
+
+/* ── Tabs ───────────────────────────────────────────────────── */
+.main-content :where(.project-tabs, .service-tabs, [class$='__tabs']) {
+  display: flex;
+  gap: 4px;
+  min-width: 0;
+  overflow-x: auto;
+  padding: 5px;
+  border: 1px solid var(--border-weak);
+  border-radius: var(--control-radius);
+  background-color: var(--gray-50);
+  scrollbar-width: thin;
+}
+
+.main-content :where(.project-tab, .service-tab, [class$='__tab']) {
+  min-height: 38px;
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  color: var(--gray-600);
+  font-size: var(--sm-size);
+  font-weight: $BaseFontSemiBoldWeight;
+  white-space: nowrap;
+  transition:
+    color var(--transition-fast),
+    background-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.main-content :where(.project-tab, .service-tab, [class$='__tab']):hover,
+.main-content :where(.project-tab, .service-tab, [class$='__tab']).active,
+.main-content :where(.project-tab, .service-tab, [class$='__tab']).is-active {
+  color: var(--PrimaryColor);
+  background-color: var(--bg-main);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ── PrimeVue dialogs and overlays ────────────────────────────────── */
+.p-dialog-mask {
+  padding: 16px;
+}
+
+.p-dialog {
+  max-width: calc(100vw - 32px);
+  max-height: calc(100dvh - 32px);
+  overflow: hidden;
+  border: 1px solid var(--border-weak);
+  border-radius: var(--modal-radius) !important;
+  color: var(--gray-800);
+  background-color: var(--bg-card);
+  box-shadow: var(--shadow-xl);
+}
+
+.p-dialog .p-dialog-header {
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--border-weak);
+  color: var(--gray-900);
+  background-color: var(--bg-card);
+}
+
+.p-dialog .p-dialog-content {
+  padding: 20px;
+  color: var(--gray-700);
+  background-color: var(--bg-card);
+}
+
+.p-dialog .p-dialog-footer {
+  padding: 16px 20px;
+  border-top: 1px solid var(--border-weak);
+  background-color: var(--bg-card);
+}
+
+/* ── File and image upload areas ─────────────────────────────────── */
+.main-content :where(.input-image, .upload-area, .drop-zone, [class$='__upload']) {
+  min-height: 132px;
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--card-radius);
+  background-color: var(--gray-50);
+  transition:
+    border-color var(--transition-fast),
+    background-color var(--transition-fast);
+}
+
+.main-content :where(.input-image, .upload-area, .drop-zone, [class$='__upload']):hover {
+  border-color: var(--PrimaryColor);
+  background-color: var(--PrimaryColor-light);
+}
+
+/* ── Accessible focus and motion ──────────────────────────────────── */
+.main-content :where(a, button, input, textarea, select, [tabindex]):focus-visible,
+.p-dialog :where(a, button, input, textarea, select, [tabindex]):focus-visible {
+  outline: 3px solid var(--PrimaryColor-alpha-20);
+  outline-offset: 2px;
+}
+
+/* ── RTL-safe directional affordances ──────────────────────────────── */
+html[dir='rtl']
+  :where(.back-button, .sidebar-back, .p-breadcrumb)
+  :where(.pi-arrow-left, .pi-arrow-right, .pi-chevron-left, .pi-chevron-right, svg) {
+  transform: scaleX(-1);
+}
+
+/* ── Responsive adaptation ──────────────────────────────────────── */
+@media (max-width: 1023px) {
+  .main-content > :not(.feature-header-container) {
+    width: 100%;
+  }
+
+  .main-content :where(.form-fields, .form-grid, .fields-grid, .invoice-action-grid) {
+    gap: 16px;
+  }
+}
+
+@media (max-width: 767px) {
+  .main-content
+    > :not(.feature-header-container)
+    > :where(header, .page-header, .index-header, [class$='-header']) {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .main-content :where(.toolbar, .page-header__actions, .action-buttons, .toolbar-actions) {
+    align-items: stretch;
+  }
+
+  .main-content :where(.search-field, .search-box, .input-search) {
+    flex-basis: 100%;
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+  }
+
+  .main-content
+    :where(
+      .form-fields,
+      .form-grid,
+      .fields-grid,
+      .invoice-form__fields,
+      .invoice-action-grid,
+      .project-floor-edit-dialog__fields
+    ) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .main-content :where(.field-group--full, .col-span-2) {
+    grid-column: auto;
+  }
+
+  .main-content :where(.form-actions, .form-footer, .buttons-container, .invoice-form__footer),
+  .main-content [class*='-crud-page'] > .actions,
+  .main-content :where(.document-crud-example, .email-crud-example, .department-page) > .actions {
+    align-items: stretch;
+    flex-direction: column-reverse;
+  }
+
+  .main-content :where(.form-actions, .form-footer, .buttons-container, .invoice-form__footer) .btn,
+  .main-content [class*='-crud-page'] > .actions .btn,
+  .main-content
+    :where(.document-crud-example, .email-crud-example, .department-page)
+    > .actions
+    .btn {
+    width: 100%;
+  }
+
+  .p-dialog-mask {
+    padding: 10px;
+  }
+
+  .p-dialog {
+    width: calc(100vw - 20px) !important;
+    max-width: calc(100vw - 20px);
+    max-height: calc(100dvh - 20px);
+  }
+
+  .p-dialog .p-dialog-header,
+  .p-dialog .p-dialog-content,
+  .p-dialog .p-dialog-footer {
+    padding-inline: 16px;
+  }
+}
+
+@media (max-width: 479px) {
+  .main-content
+    :where(
+      .document-form-card,
+      .email-form-card,
+      .package-form-card,
+      .Project-form-card,
+      .invoice-form__card,
+      .invoice-action-card,
+      .form-section,
+      .percentage-card,
+      .toggle-card,
+      .execution-quote__card,
+      .execution-builder-card,
+      .show-card
+    ) {
+    padding: 14px;
+    border-radius: var(--radius-md);
+  }
+
+  .main-content .toolbar {
+    padding: 10px;
+  }
+}

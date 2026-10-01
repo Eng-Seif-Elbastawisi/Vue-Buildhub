@@ -6,6 +6,7 @@ import AppTable, { type TableHeader } from '@/shared/HelpersComponents/AppTable.
 import { deleteSelectedRows } from '@/shared/HelpersComponents/deleteSelectedRows';
 import Pagination from '@/shared/HelpersComponents/Pagination.vue';
 import TableSkelaton from '@/shared/HelpersComponents/TableSkelaton.vue';
+import IndexPageHeader from '@/shared/IndexPageHeader/IndexPageHeader.vue';
 import type MaterialsModel from '../../core/models/materials.model';
 import DeleteMaterialParams from '../../core/params/delete.materials.params';
 import IndexMaterialParams from '../../core/params/index.materials.params';
@@ -114,12 +115,11 @@ const { user } = useUserStore();
 
 <template>
   <div class="material-page">
-    <div class="material-header">
-      <div>
-        <h4>{{ $t('material.list_title') }}</h4>
-        <p>{{ $t('material.list_description') }}</p>
-      </div>
-      <div class="toolbar">
+    <IndexPageHeader
+      :title="$t('material.list_title')"
+      :subtitle="$t('material.list_description')"
+    >
+      <template #search>
         <div class="search-field">
           <span class="search-icon">
             <svg
@@ -133,13 +133,15 @@ width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" str
 v-model="word" :placeholder="$t('search_materials')" class="search-input" type="text"
             @input="Search" />
         </div>
+      </template>
+      <template #actions>
         <router-link
 class="btn btn-primary"
           :to="user?.type === 1 ? '/admin/material/add' : '/organization/material/add'">
           <IndexAddIcon /> {{ $t('material') }}
         </router-link>
-      </div>
-    </div>
+      </template>
+    </IndexPageHeader>
 
     <MaterialStatsCard :stats="materialStats" />
 

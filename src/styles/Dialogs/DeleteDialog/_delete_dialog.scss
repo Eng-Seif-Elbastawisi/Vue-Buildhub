@@ -1,73 +1,87 @@
 @use '../../variables' as *;
-@use '../../mixins/flex' as *;
 
 .delete-dialog {
-  padding: 3rem;
-  text-align: center;
-  background-color: var(--BgWhite) !important;
-  color: var(--gray-900) !important;
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-xl);
-
-  @include flex-column(nowrap, center, center);
-
-  font-family: 'Medium';
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   gap: 10px;
+  padding: clamp(24px, 5vw, 40px);
+  border: 1px solid var(--border-weak);
+  border-radius: var(--modal-radius);
+  color: var(--gray-900) !important;
+  background-color: var(--bg-card) !important;
+  box-shadow: var(--shadow-xl);
+  font-family: var(--font-family);
+  text-align: center;
 
-  img {
-    width: 350px;
-    margin-left: auto;
-    margin-right: auto;
-    padding-right: 25px;
+  img,
+  svg:first-child {
+    width: min(180px, 42vw);
+    max-height: 140px;
+    margin-inline: auto;
+    object-fit: contain;
   }
 
   .dialog-title {
-    font-family: 'Bold';
-    font-size: 1.5rem;
+    margin: 4px 0 0;
     color: var(--gray-900);
+    font-family: 'Bold', var(--font-family);
+    font-size: 1.3rem;
+    line-height: 1.35;
   }
 
-  p {
-    font-family: 'Medium';
+  .dialog-message {
+    max-width: 48ch;
+    margin: 0;
     color: var(--gray-500);
-    margin-bottom: var(--space-sm);
-    max-width: 100%;
-  }
-
-  .btn-third {
-    border: 1px solid var(--gray-400);
-    color: var(--gray-700);
-
-    &:hover {
-      border-color: var(--gray-900);
-      color: var(--gray-900);
-    }
+    font-family: var(--font-family);
+    font-size: var(--sm-size);
+    line-height: 1.6;
   }
 
   .btns {
     display: flex;
-    gap: 1rem;
-    width: 100%;
-    margin-top: 1.2rem;
     align-items: center;
-
-    .btn-delete-danger {
-      background-color: $DangerAlt;
-      color: white;
-      transition: 0.3s all linear;
-
-      &:hover {
-        background-color: white;
-        color: $DangerAlt;
-        border: 1px solid $DangerAlt;
-      }
-    }
+    gap: 10px;
+    width: 100%;
+    margin-block-start: 14px;
+    padding-block-start: 16px;
+    border-top: 1px solid var(--border-weak);
 
     button {
       width: 50%;
-      border-radius: 50px;
-      padding: 16px;
-      font-family: 'Medium';
+      min-height: var(--control-height);
+      padding: 10px 16px;
+      border-radius: var(--control-radius);
+      font-family: var(--font-family);
+      font-size: var(--sm-size);
+      font-weight: $BaseFontSemiBoldWeight;
+    }
+
+    .btn-delete-danger {
+      border: 1px solid var(--danger);
+      color: var(--white);
+      background-color: var(--danger);
+      transition:
+        border-color var(--transition-fast),
+        background-color var(--transition-fast);
+
+      &:hover {
+        border-color: var(--danger-dark);
+        background-color: var(--danger-dark);
+      }
+    }
+  }
+}
+
+@media (max-width: 479px) {
+  .delete-dialog .btns {
+    align-items: stretch;
+    flex-direction: column-reverse;
+
+    button {
+      width: 100%;
     }
   }
 }

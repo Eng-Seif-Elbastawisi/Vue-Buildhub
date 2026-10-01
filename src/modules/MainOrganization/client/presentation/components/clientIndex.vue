@@ -2,6 +2,7 @@
   import { computed, onMounted, ref } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
+  import IndexPageHeader from '@/shared/IndexPageHeader/IndexPageHeader.vue';
   import AppTable, { type TableHeader } from '@/shared/HelpersComponents/AppTable.vue';
   import Pagination from '@/shared/HelpersComponents/Pagination.vue';
   import TableSkelaton from '@/shared/HelpersComponents/TableSkelaton.vue';
@@ -79,12 +80,11 @@
 
 <template>
   <div class="client-page">
-    <div class="client-header">
-      <div>
-        <h4>{{ $t('client.list_title') }}</h4>
-        <p>{{ $t('client.list_description') }}</p>
-      </div>
-      <div class="toolbar">
+    <IndexPageHeader
+      :title="$t('client.list_title')"
+      :subtitle="$t('client.list_description')"
+    >
+      <template #search>
         <div class="search-field">
           <span class="search-icon">
             <svg
@@ -108,14 +108,17 @@
             @input="Search"
           />
         </div>
+      </template>
+
+      <template #actions>
         <router-link
           class="btn btn-primary"
           :to="user?.isMaster ? '/client/add' : '/organization/client/add'"
         >
           <IndexAddIcon /> {{ $t('client') }}</router-link
         >
-      </div>
-    </div>
+      </template>
+    </IndexPageHeader>
 
     <DataStatusBuilder :controller="state" :on-retry="async () => await fetchClient()">
       <template #success="{ data }">

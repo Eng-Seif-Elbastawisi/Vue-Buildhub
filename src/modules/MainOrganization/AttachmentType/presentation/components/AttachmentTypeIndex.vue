@@ -3,6 +3,7 @@ import { computed, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
+import IndexPageHeader from '@/shared/IndexPageHeader/IndexPageHeader.vue';
 import AppTable, { type TableHeader } from '@/shared/HelpersComponents/AppTable.vue';
 import Pagination from '@/shared/HelpersComponents/Pagination.vue';
 import TableSkelaton from '@/shared/HelpersComponents/TableSkelaton.vue';
@@ -95,45 +96,42 @@ onMounted(async () => {
 
 <template>
   <div class="attachment-types-page">
-    <header class="page-header">
-      <div class="page-header__content">
-        <div class="page-header__titles">
-          <h1>{{ $t('attachment_types') }}</h1>
-          <p>{{ $t('attachment_type.list_description') }}</p>
+    <IndexPageHeader
+      :title="t('attachment_types')"
+      :subtitle="t('attachment_type.list_description')"
+    >
+      <template #search>
+        <div class="search-box">
+          <span class="search-icon">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <path d="m21 21-4.35-4.35" />
+            </svg>
+          </span>
+          <input
+            v-model="word"
+            :placeholder="$t('search_attachment_type')"
+            class="search-input"
+            type="text"
+            @input="Search"
+          />
         </div>
-        <div class="page-header__actions">
-          <div class="search-box">
-            <span class="search-icon">
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-              >
-                <circle cx="11" cy="11" r="8" />
-                <path d="m21 21-4.35-4.35" />
-              </svg>
-            </span>
-            <input
-              v-model="word"
-              :placeholder="$t('search_attachment_type')"
-              class="search-input"
-              type="text"
-              @input="Search"
-            />
-          </div>
-          <router-link
-            class="btn btn-primary"
-            :to="`${routePrefix}/attachment-types/add`"
-          >
-            {{ $t('attachment_type.add') }}
-          </router-link>
-        </div>
-      </div>
-    </header>
+      </template>
+
+      <template #actions>
+        <router-link class="btn btn-primary" :to="`${routePrefix}/attachment-types/add`">
+          {{ $t('attachment_type.add') }}
+        </router-link>
+      </template>
+    </IndexPageHeader>
 
     <DataStatusBuilder
       :controller="state"

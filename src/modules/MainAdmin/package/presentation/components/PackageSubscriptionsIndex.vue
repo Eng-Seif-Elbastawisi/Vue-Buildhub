@@ -6,6 +6,7 @@
   import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
   import AppTable, { type TableHeader } from '@/shared/HelpersComponents/AppTable.vue';
   import TableSkelaton from '@/shared/HelpersComponents/TableSkelaton.vue';
+  import IndexPageHeader from '@/shared/IndexPageHeader/IndexPageHeader.vue';
 
   import {
     PackageSubscriptionStatus,
@@ -265,23 +266,18 @@
 
 <template>
   <div class="package-subscriptions-page">
-    <div class="package-subscriptions-header">
-      <div>
-        <h4>
-          {{ $t('package.subscriptions_title') }}
-        </h4>
+    <IndexPageHeader
+      :title="$t('package.subscriptions_title')"
+      :subtitle="$t('package.subscriptions_description')"
+    >
+      <template #actions>
+        <button class="btn btn-secondary" type="button" @click="fetchSubscriptions">
+          <i class="pi pi-refresh" aria-hidden="true" />
 
-        <p>
-          {{ $t('package.subscriptions_description') }}
-        </p>
-      </div>
-
-      <button class="btn btn-secondary" type="button" @click="fetchSubscriptions">
-        <i class="pi pi-refresh" aria-hidden="true" />
-
-        {{ $t('try_again') }}
-      </button>
-    </div>
+          {{ $t('try_again') }}
+        </button>
+      </template>
+    </IndexPageHeader>
 
     <DataStatusBuilder :controller="state" :on-retry="fetchSubscriptions">
       <template #success="{ data }">

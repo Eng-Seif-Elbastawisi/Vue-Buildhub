@@ -54,7 +54,7 @@
   <div class="Stage-crud-page">
     <StageForm :stage="controller.itemData.value!" :loading="loading" @update-data="updateData" />
 
-    <div class="form-actions">
+    <div class="form-actions form-action-pair">
       <button
         class="btn btn-primary"
         :class="{ 'btn--loading': loading }"
@@ -64,7 +64,11 @@
       >
         {{ $t('stage.update') }}
       </button>
-      <button class="btn btn-secondary back-button" type="button" @click="router.push?.({ name: 'Stages' })">
+      <button
+        class="btn btn-secondary back-button"
+        type="button"
+        @click="router.push?.({ name: 'Stages' })"
+      >
         {{ $t('common.back') }}
       </button>
     </div>
@@ -75,32 +79,15 @@
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
+  @use '@/styles/mixins/form_action_pair' as form-actions;
+
   .Stage-crud-page {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
   }
 
-  .error {
-    margin-top: 20px;
-    padding: 10px;
-    background-color: var(--danger-light);
-    color: var(--danger-dark);
-    border: 1px solid #f5c6cb;
-    border-radius: 4px;
-  }
-
-  .btn-primary {
-    width: 50%;
-  }
-
-  .form-actions {
-    display: flex;
-    gap: 1rem;
-  }
-
-  .back-button {
-    width: 50%;
+  .form-action-pair {
+    @include form-actions.layout;
   }
 </style>

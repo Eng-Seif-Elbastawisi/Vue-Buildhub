@@ -274,17 +274,28 @@ onMounted(fetchProjectFloor);
       <ProjectFloorForm :project-floor="projectFloor" :project-id="projectId" :project-preview-id="projectPreviewId"
         :loading="saving" :is-edit="true" :validation-errors="validationErrors" @update-data="updateData" />
 
-      <div class="btns">
-        <button class="btn btn-primary" :class="{
-          'btn--loading': saving,
-        }" type="button" :disabled="saving || !params" @click="saveProjectFloor">
+      <div class="btns form-action-pair">
+        <button
+          class="btn btn-primary"
+          :class="{
+            'btn--loading': saving,
+          }"
+          type="button"
+          :disabled="saving || !params"
+          @click="saveProjectFloor"
+        >
           {{ $t('ProjectFloor.update') }}
         </button>
 
         <router-link :to="`/organization/project/show/${projectId}`">
-          <button class="btn btn-danger" :class="{
-            'btn--loading': saving,
-          }" type="button" :disabled="saving">
+          <button
+            class="btn btn-secondary"
+            :class="{
+              'btn--loading': saving,
+            }"
+            type="button"
+            :disabled="saving"
+          >
             {{ $t('cancel') }}
           </button>
         </router-link>
@@ -301,56 +312,22 @@ onMounted(fetchProjectFloor);
   </div>
 </template>
 
-<style scoped>
-.btns {
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-}
 
-.ProjectFloor-crud-page {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
+<style scoped lang="scss">
+  @use '@/styles/mixins/form_action_pair' as form-actions;
 
-.project-floor-state {
-  display: flex;
-  min-height: 160px;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
-  padding: 1.5rem;
-  border: 1px solid var(--border-weak);
-  border-radius: 12px;
-  background: var(--white);
-  color: var(--gray-700);
-}
+  .ProjectFloor-crud-page {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
 
-.project-floor-state--error {
-  flex-direction: column;
-  color: var(--danger-dark);
-}
 
-.retry-button {
-  width: auto;
-  min-width: 150px;
-}
+  .retry-button {
+    width: auto;
+  }
 
-.error {
-  margin-top: 20px;
-  padding: 10px;
-  border: 1px solid #f5c6cb;
-  border-radius: 4px;
-  background-color: var(--danger-light);
-  color: var(--danger-dark);
-}
-
-.btn-primary {
-  width: 100%;
-}
-
-.retry-button {
-  width: auto;
-}
+  .form-action-pair {
+    @include form-actions.layout;
+  }
 </style>

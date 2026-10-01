@@ -767,13 +767,13 @@
 }
 
 .auth-shell .auth-input-wrap--password input {
-  padding-left: 54px;
+  padding-inline-start: 54px;
 }
 
 .auth-shell .auth-password-toggle {
   position: absolute;
-  top: 50%;
-  left: 7px;
+  inset-block-start: 50%;
+  inset-inline-start: 7px;
   width: 36px;
   height: 36px;
 

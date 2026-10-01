@@ -3,5 +3,5 @@
 </script>
 
 <template>
-  <ExecutionQuoteIndex />
+  <ExecutionQuoteIndex class="project-workflow-view project-workflow-view--index" />
 </template>

@@ -1,16 +1,28 @@
 import type Params from '@/base/Core/Params/params';
-import type { DataState } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
-import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
-import type { ApiCallOptions } from '@/base/Data/ApiService/baseApiService';
+import type {
+  DataState,
+} from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
+import {
+  DataSuccess,
+} from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
+import type {
+  ApiCallOptions,
+} from '@/base/Data/ApiService/baseApiService';
+
 import BaseController, {
   type ControllerConfig,
 } from '@/base/Presentation/Controller/baseController';
+
 import router from '@/router';
 import { useFormsStore } from '@/stores/formsStore';
+import { useUserStore } from '@/stores/user';
+
 import type ProjectFloorModel from '../../core/models/project.floor.model';
 import type ProjectFloorShowModel from '../../core/models/project.floor.show.model';
-import ProjectFloorRepository from '../../data/repositories/project.floor.repository';
+
 import type ShowProjectFloorParams from '../../core/params/show.project.floor.params';
+
+import ProjectFloorRepository from '../../data/repositories/project.floor.repository';
 
 export default class ProjectFloorController extends BaseController<
   ProjectFloorShowModel,
@@ -21,6 +33,7 @@ export default class ProjectFloorController extends BaseController<
   protected get repository() {
     return ProjectFloorRepository.getInstance();
   }
+
   protected get config(): ControllerConfig {
     return {
       showLoadingDialog: false,
@@ -36,23 +49,37 @@ export default class ProjectFloorController extends BaseController<
   private constructor() {
     super();
   }
+
   static getInstance(): ProjectFloorController {
-    if (!ProjectFloorController.instance)
-      ProjectFloorController.instance = new ProjectFloorController();
+    if (!ProjectFloorController.instance) {
+      ProjectFloorController.instance =
+        new ProjectFloorController();
+    }
+
     return ProjectFloorController.instance;
   }
 
-  private getPositiveInteger(value: unknown): number | undefined {
+  private getPositiveInteger(
+    value: unknown,
+  ): number | undefined {
     const numberValue = Number(value);
 
-    return Number.isInteger(numberValue) && numberValue > 0 ? numberValue : undefined;
+    return Number.isInteger(numberValue) &&
+      numberValue > 0
+      ? numberValue
+      : undefined;
   }
 
-  private getProjectId(params: Params, data?: ProjectFloorShowModel | null): number | undefined {
+  private getProjectId(
+    params: Params,
+    data?: ProjectFloorShowModel | null,
+  ): number | undefined {
     return (
       this.getPositiveInteger(data?.project_id) ??
       this.getPositiveInteger(data?.project?.id) ??
-      this.getPositiveInteger(params.toMap().project_id)
+      this.getPositiveInteger(
+        params.toMap().project_id,
+      )
     );
   }
 
@@ -60,66 +87,174 @@ export default class ProjectFloorController extends BaseController<
     params: Params,
     data?: ProjectFloorShowModel | null,
   ): number | undefined {
-    return this.getPositiveInteger(data?.id) ?? this.getPositiveInteger(params.toMap().id);
+    return (
+      this.getPositiveInteger(data?.id) ??
+      this.getPositiveInteger(params.toMap().id)
+    );
   }
 
-  async create(params: Params, options?: ApiCallOptions, formKey?: string) {
-    const result = await super.create(params, { ...options, useJson: true });
-    if (result instanceof DataSuccess) {
-      // await router.push({ name: 'Projects' });
-      // router.push(
-      //   this.userStore.user?.type === 1
-      //     ? '/mainportal/project-floor'
-      //     : '/organization/project-floor',
-      // );
+  /**
+   * Create project floor.
+   *
+   * Existing behavior is preserved.
+   */
+  async create(
+    params: Params,
+    options?: ApiCallOptions,
+    formKey?: string,
+  ) {
+    const result = await super.create(params, {
+      ...options,
+      useJson: true,
+    });
 
-      if (formKey) useFormsStore().clearFormData(formKey);
+    if (result instanceof DataSuccess) {
+      router.push(
+        useUserStore().user?.type === 1
+          ? '/mainportal/project'
+          : '/organization/project',
+      );
+
+      if (formKey) {
+        useFormsStore().clearFormData(formKey);
+      }
     }
+
     return result;
   }
 
-  async updateWithoutNavigation(params: Params, options?: ApiCallOptions) {
-    return await super.update(params, { ...options, useJson: true });
+  /**
+   * Update without automatic navigation.
+   *
+   * This is used by status-only operations where the caller
+   * controls what happens after the request succeeds.
+   */
+  async updateWithoutNavigation(
+    params: Params,
+    options?: ApiCallOptions,
+  ) {
+    return await super.update(params, {
+      ...options,
+      useJson: true,
+    });
   }
 
-  async update(params: Params, options?: ApiCallOptions, formKey?: string) {
-    const result = await this.updateWithoutNavigation(params, options);
-    if (result instanceof DataSuccess) {
-      const projectId = this.getProjectId(params, result.data);
-      const projectFloorId = this.getProjectFloorId(params, result.data);
+  /**
+   * Update project floor.
+   *
+   * Existing behavior is preserved.
+   */
+  async update(
+    params: Params,
+    options?: ApiCallOptions,
+    formKey?: string,
+  ) {
+    const result = await this.updateWithoutNavigation(
+      params,
+      options,
+    );
 
-      if (formKey) useFormsStore().clearFormData(formKey);
+    if (result instanceof DataSuccess) {
+      const projectId = this.getProjectId(
+        params,
+        result.data,
+      );
+
+      const projectFloorId =
+        this.getProjectFloorId(
+          params,
+          result.data,
+        );
+
+      if (formKey) {
+        useFormsStore().clearFormData(formKey);
+      }
 
       if (projectId) {
-        await router.push({ name: 'show-project', params: { project_id: projectId } });
+        await router.push({
+          name: 'show-project',
+          params: {
+            project_id: projectId,
+          },
+        });
       } else if (projectFloorId) {
         await router.push({
           name: 'show-project_floor',
-          params: { project_floor_id: projectFloorId },
+          params: {
+            project_floor_id: projectFloorId,
+          },
         });
       } else {
-        await router.push({ name: 'project' });
+        await router.push({
+          name: 'project',
+        });
       }
     }
+
     return result;
   }
 
+  /**
+   * Mark project floor as NOT_READY_FOR_COMPLETION.
+   *
+   * IMPORTANT:
+   * This method intentionally uses updateWithoutNavigation()
+   * so that:
+   *
+   * 1. No automatic project-floor navigation happens.
+   * 2. The caller can navigate to Requests after success.
+   * 3. No pricing/notification fields are added here.
+   * 4. The status update is treated as an independent operation.
+   */
+  async markNotReadyForCompletion(
+    params: Params,
+    options?: ApiCallOptions,
+  ) {
+    return await this.updateWithoutNavigation(
+      params,
+      options,
+    );
+  }
+
+  /**
+   * Fetch project floor list.
+   */
   async fetchList(
     params: Params,
     options?: ApiCallOptions,
   ): Promise<DataState<ProjectFloorModel[]>> {
-    return await super.fetchList(params, { ...options, useJson: true });
+    return await super.fetchList(params, {
+      ...options,
+      useJson: true,
+    });
   }
-  async fetchOne(params: Params, options?: ApiCallOptions) {
+
+  /**
+   * Fetch one project floor.
+   */
+  async fetchOne(
+    params: Params,
+    options?: ApiCallOptions,
+  ) {
     return await super.fetchOne(params, {
       ...options,
       useJson: true,
       headers: {
-        'Accept-Language': (params as ShowProjectFloorParams).allLocales ? '*' : 'en',
+        'Accept-Language':
+          (params as ShowProjectFloorParams)
+            .allLocales
+            ? '*'
+            : 'en',
       },
     });
   }
+
+  /**
+   * Get project.
+   */
   async getProject(params?: Params) {
-    return await this.repository.getProject(params);
+    return await this.repository.getProject(
+      params,
+    );
   }
 }

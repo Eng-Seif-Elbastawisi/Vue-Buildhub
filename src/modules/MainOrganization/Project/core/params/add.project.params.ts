@@ -18,18 +18,40 @@ import { translate } from '@/locales/i18n';
 
 import { type ServiceType } from '@/modules/MainOrganization/Project/core/constants/serviceType.enum';
 
-export interface ProjectAttachmentParams {
+export interface ProjectAttachmentFile {
   file: string;
-  attachment_type_id?: number;
-  name?: string;
-  size?: number | string;
+  alt?: string;
+  link?: string | null;
 }
+
+export interface ProjectAttachmentGroup {
+  attachment_type_id: number;
+  attachments: ProjectAttachmentFile[];
+}
+
+
 
 export type WithPreviewValue = 0 | 1;
 
 const PHONE_PATTERN = /^\+?[0-9][0-9\s-]{6,19}$/;
 
 const hasText = (value?: string): boolean => Boolean(value?.trim());
+
+// const hasValidPhone = (value?: string): boolean =>
+//   Boolean(value?.trim() && PHONE_PATTERN.test(value.trim()));
+
+const hasValidUrl = (value?: string): boolean => {
+  if (!hasText(value)) return true;
+
+  try {
+    const url = new URL(value.trim());
+
+    return url.protocol === 'http:' || url.protocol === 'https:';
+  } catch {
+    return false;
+  }
+};
+
 
 const hasValidPhone = (value?: string): boolean =>
   Boolean(value?.trim() && PHONE_PATTERN.test(value.trim()));
@@ -57,7 +79,7 @@ export default class AddProjectParams implements Params {
 
   public notes?: string;
 
-  public attachments?: ProjectAttachmentParams[];
+  public files?: ProjectAttachmentGroup[];
 
   public engineer_id?: number;
 
@@ -118,17 +140,23 @@ export default class AddProjectParams implements Params {
         hasText(value) || translate('Project.validation.terms_required'),
     },
 
-    attachments: {
-      custom: (value?: ProjectAttachmentParams[]) =>
-        !value?.length ||
-        value.every(
-          (attachment) =>
-            hasText(attachment.file) &&
-            Number.isInteger(Number(attachment.attachment_type_id)) &&
-            Number(attachment.attachment_type_id) > 0,
-        ) ||
-        translate('Project.validation.attachment_incomplete'),
-    },
+    // files: {
+    //   custom: (value?: ProjectAttachmentGroup[]) =>
+    //     !value?.length ||
+    //     value.every(
+    //       (group) =>
+    //         Number.isInteger(Number(group.attachment_type_id)) &&
+    //         Number(group.attachment_type_id) > 0 &&
+    //         Array.isArray(group.attachments) &&
+    //         group.attachments.length > 0,
+    //         // group.attachments.every(
+    //         //   (attachment) =>
+    //         //     hasText(attachment.file),
+    //         // ),
+    //     ) ||
+    //     translate('Project.validation.attachment_incomplete'),
+    // },
+
   });
   constructor(data: {
     translations?: TranslationParams;
@@ -153,7 +181,7 @@ export default class AddProjectParams implements Params {
 
     notes?: string;
 
-    attachments?: ProjectAttachmentParams[];
+    files?: ProjectAttachmentGroup[];
 
     engineer_id?: number;
 
@@ -191,7 +219,7 @@ export default class AddProjectParams implements Params {
 
     this.notes = data.notes;
 
-    this.attachments = data.attachments;
+    this.files = data.files;
 
     this.engineer_id = data.engineer_id;
 
@@ -237,7 +265,7 @@ export default class AddProjectParams implements Params {
 
       notes: this.notes,
 
-      attachments: this.attachments,
+      files: this.files,
 
       engineer_id: this.engineer_id,
 
@@ -295,6 +323,23 @@ export default class AddProjectParams implements Params {
         message: translate('Project.validation.client_phone_invalid'),
       });
     }
+    // const hasAddress = hasText(this.address);
+    // const hasLocationLink = hasText(this.site_link);
+
+    // if (!hasAddress && !hasLocationLink) {
+    //   errors.push({
+    //     field: 'address',
+    //     message: translate('Project.validation.address_or_location_link_required'),
+    //   });
+    // }
+
+    // if (hasLocationLink && !hasValidUrl(this.site_link)) {
+    //   errors.push({
+    //     field: 'site_link',
+    //     message: translate('Project.validation.location_link_invalid'),
+    //   });
+    // }
+
 
     return errors;
   }

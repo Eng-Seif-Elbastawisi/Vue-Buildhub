@@ -2,16 +2,17 @@
 @use '../mixins/border' as *;
 
 .btn-danger {
-  background-color: var(--BgWhite);
-  color: var(--Red);
+  background-color: var(--danger);
+  color: var(--white);
 
-  @include border($BaseBorderWidth, var(--Red), solid, var(--xl-size-base));
+  @include border($BaseBorderWidth, var(--danger), solid, var(--control-radius));
 
   font-weight: $BaseFontSemiBoldWeight;
 
-  &:hover {
-    background-color: var(--Red);
-    color: var(--BgWhite);
-    box-shadow: var(--shadow);
+  &:hover:not(:disabled) {
+    border-color: var(--danger-dark);
+    background-color: var(--danger-dark);
+    color: var(--white);
+    box-shadow: var(--shadow-md);
   }
 }

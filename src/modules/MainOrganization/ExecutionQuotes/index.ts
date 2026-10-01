@@ -1,7 +1,4 @@
-export {
-  getQuoteSourceTitleKey,
-  QuoteSourceEnum,
-} from './core/constants/quote.source.enum';
+export { getQuoteSourceTitleKey, QuoteSourceEnum } from './core/constants/quote.source.enum';
 export {
   ExecutionQuoteTypeEnum,
   type ExecutionQuoteType,

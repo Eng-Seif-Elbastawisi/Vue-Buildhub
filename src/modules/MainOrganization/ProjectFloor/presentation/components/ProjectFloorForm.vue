@@ -504,231 +504,96 @@ onMounted(async () => {
 </script>
 
 <template>
-  <ProjectPreviewIndex @upcoming-change="handleUpcomingPreviewChange" />
-
-  <div class="project-floor-form-wrapper" :class="{
-    'project-floor-form-wrapper--locked': floorFormLocked,
-  }">
-    <div v-if="floorFormLocked" class="preview-gate" role="alert" aria-live="polite">
-      <div class="preview-gate__backdrop" aria-hidden="true"></div>
-
-      <section class="preview-gate__card">
-        <span class="preview-gate__icon" aria-hidden="true">
-          <i class="pi pi-calendar-clock"></i>
-        </span>
-
-        <div class="preview-gate__content">
-          <span class="preview-gate__eyebrow">
-            {{ $t('ProjectFloor.preview_not_started') }}
-          </span>
-
-          <h3>{{ $t('ProjectFloor.preview_pending_title') }}</h3>
-
-          <p>
-            {{
-              $t('ProjectFloor.preview_pending_description', {
-                date: formatUpcomingPreviewDate,
-              })
-            }}
-          </p>
-
-          <div class="preview-gate__date">
-            <i class="pi pi-clock" aria-hidden="true"></i>
-            <span>{{ formatUpcomingPreviewDate }}</span>
-          </div>
-
-          <div class="preview-gate__actions">
-            <button type="button" class="preview-gate__button preview-gate__button--primary"
-              @click="allowAddingBeforePreview">
-              <i class="pi pi-unlock" aria-hidden="true"></i>
-              {{ $t('ProjectFloor.continue_before_preview') }}
-            </button>
-
-            <router-link :to="{ name: 'project' }">
-              <button type="button" class="preview-gate__button preview-gate__button--secondary"
-                @click="keepFormLocked">
-                <i class="pi pi-calendar" aria-hidden="true"></i>
-                {{ $t('ProjectFloor.wait_for_preview') }}
-              </button>
-            </router-link>
-          </div>
-
-          <small>{{ $t('ProjectFloor.preview_pending_hint') }}</small>
-        </div>
-      </section>
+  <div class="project-floor-form-page">
+    <div class="project-floor-form-page__previews">
+      <ProjectPreviewIndex @upcoming-change="handleUpcomingPreviewChange" />
     </div>
 
-    <div class="project-floor-form-card">
-      <header class="form-header">
-        <div>
-          <span class="form-header__eyebrow">{{ $t('ProjectFloor.form_title') }}</span>
-          <h3>{{ $t('ProjectFloor.floor_data') }}</h3>
-          <p>{{ $t('ProjectFloor.form_description') }}</p>
-        </div>
+    <div
+      class="project-floor-form-wrapper"
+      :class="{
+        'project-floor-form-wrapper--locked': floorFormLocked,
+      }"
+    >
+      <div v-if="floorFormLocked" class="preview-gate" role="alert" aria-live="polite">
+        <div class="preview-gate__backdrop" aria-hidden="true"></div>
 
-        <div class="form-summary">
-          <div>
-            <span>{{ $t('ProjectFloor.floors') }}</span>
-            <strong>{{ floors.length }}</strong>
-          </div>
-          <div>
-            <span>{{ $t('ProjectFloor.selected_spaces') }}</span>
-            <strong>{{ totalSpacesCount }}</strong>
-          </div>
-        </div>
-      </header>
+        <section class="preview-gate__card">
+          <span class="preview-gate__icon" aria-hidden="true">
+            <i class="pi pi-calendar-clock"></i>
+          </span>
 
-      <div class="form-body" :class="{ disabled: loading }">
-        <section class="section-card">
-          <div class="section-head">
-            <span class="section-head__icon">🏢</span>
-            <div>
-              <h4>{{ $t('ProjectFloor.floor_data') }}</h4>
-              <p>{{ $t('ProjectFloor.floor_data_description') }}</p>
-            </div>
-          </div>
+          <div class="preview-gate__content">
+            <span class="preview-gate__eyebrow">
+              {{ $t('ProjectFloor.preview_not_started') }}
+            </span>
 
-          <div class="picker-panel">
-            <div class="picker-field">
-              <!-- <label class="field-label">{{ $t('ProjectFloor.floor_number') }}</label> -->
-              <UpdatedCustomInputSelect id="floor_number" :label="$t('ProjectFloor.floor_number')"
-                :model-value="selectedFloorNumber" :static-options="floorNumberOptions"
-                :placeholder="$t('ProjectFloor.floor_number_placeholder')" @update:model-value="updateFloorNumber" />
+            <h3>{{ $t('ProjectFloor.preview_pending_title') }}</h3>
+
+            <p>
+              {{
+                $t('ProjectFloor.preview_pending_description', {
+                  date: formatUpcomingPreviewDate,
+                })
+              }}
+            </p>
+
+            <div class="preview-gate__date">
+              <i class="pi pi-clock" aria-hidden="true"></i>
+              <span>{{ formatUpcomingPreviewDate }}</span>
             </div>
 
-            <div class="picker-field">
-              <!-- <label class="field-label">{{ $t('ProjectFloor.space') }}</label> -->
-              <UpdatedCustomInputSelect id="space_id" :label="$t('ProjectFloor.space')" :model-value="selectedSpace"
-                :static-options="spaceOptions" :placeholder="$t('ProjectFloor.space_placeholder')" :type="2"
-                @update:model-value="updateSelectedSpace" />
-            </div>
-
-            <button type="button" class="secondary-action-btn" :disabled="!selectedSpace.length" @click="addSpace">
-              <i class="pi pi-plus"></i>
-              {{ $t('ProjectFloor.add_space') }}
-            </button>
-          </div>
-
-          <div v-if="currentSpaces.length" class="current-spaces">
-            <article v-for="(item, index) in currentSpaces" :key="`${item.space.id}-${index}`" class="space-row">
-              <strong class="space-name">{{ item.space.title }}</strong>
-
-              <div v-for="field in dimensionFields" :key="field" class="space-dimension-field">
-                <input v-model="item[field]" class="mini-input"
-                  :class="{ 'mini-input--invalid': currentSpaceError(index, field) }" type="number" min="0.01" step="1"
-                  required :placeholder="$t(`ProjectFloor.${field}`)" :aria-label="$t(`ProjectFloor.${field}`)"
-                  aria-required="true" :aria-invalid="Boolean(currentSpaceError(index, field))" :aria-describedby="currentSpaceError(index, field)
-                      ? `floor-space-${index}-${field}-error`
-                      : undefined
-                    " @input="clearCurrentSpaceError(index, field)" />
-                <small v-if="currentSpaceError(index, field)" :id="`floor-space-${index}-${field}-error`"
-                  class="space-dimension-field__error" role="alert">
-                  {{ currentSpaceError(index, field) }}
-                </small>
-              </div>
-              <input v-model="item.notes" class="mini-input" type="text" :placeholder="$t('ProjectFloor.notes')" />
-
-              <label class="upload-chip">
-                <input type="file" multiple @change="updateCurrentSpaceAttachments($event, index)" />
-                <i class="pi pi-upload"></i>
-                <span>{{ item.attachments.length || $t('ProjectFloor.choose_files') }}</span>
-              </label>
-
-              <button type="button" class="icon-btn icon-btn--danger" @click="removeCurrentSpace(index)">
-                <i class="pi pi-trash"></i>
+            <div class="preview-gate__actions">
+              <button
+                type="button"
+                class="preview-gate__button preview-gate__button--primary"
+                @click="allowAddingBeforePreview"
+              >
+                <i class="pi pi-unlock" aria-hidden="true"></i>
+                {{ $t('ProjectFloor.continue_before_preview') }}
               </button>
-            </article>
-          </div>
 
-          <button type="button" class="primary-action-btn" :disabled="!selectedFloorNumber || !currentSpaces.length"
-            @click="addFloor">
-            <i class="pi pi-plus-circle"></i>
-            {{ $t('ProjectFloor.add_floor') }}
-          </button>
-
-          <p v-if="duplicateFloorSpaceError" class="floor-duplicate-error" role="alert">
-            <i class="pi pi-exclamation-circle" aria-hidden="true"></i>
-            {{ duplicateFloorSpaceError }}
-          </p>
-        </section>
-
-        <section class="section-card">
-          <div class="section-head section-head--between">
-            <div class="section-head__start">
-              <span class="section-head__icon">📚</span>
-              <div>
-                <h4>{{ $t('ProjectFloor.saved_floors') }}</h4>
-                <p>{{ $t('ProjectFloor.selected_spaces_description') }}</p>
-              </div>
+              <router-link :to="{ name: 'project' }">
+                <button
+                  type="button"
+                  class="preview-gate__button preview-gate__button--secondary"
+                  @click="keepFormLocked"
+                >
+                  <i class="pi pi-calendar" aria-hidden="true"></i>
+                  {{ $t('ProjectFloor.wait_for_preview') }}
+                </button>
+              </router-link>
             </div>
-            <span class="count-badge">{{ floors.length }}</span>
-          </div>
 
-          <div v-if="!floors.length" class="empty-state">
-            {{ $t('ProjectFloor.no_spaces_title') }}
-          </div>
-
-          <div v-else class="floors-list">
-            <article v-for="(floor, floorIndex) in floors" :key="floor.localId" class="floor-card">
-              <header class="floor-card__head">
-                <div>
-                  <span>{{ $t('ProjectFloor.floor_number') }}</span>
-                  <strong>{{ floor.floorNumber.title }}</strong>
-                </div>
-
-                <div class="floor-card__actions">
-                  <span class="count-badge">{{ floor.spaces.length }}</span>
-                  <button type="button" class="icon-btn" @click="editFloor(floorIndex)">
-                    <i class="pi pi-pencil"></i>
-                  </button>
-                  <button type="button" class="icon-btn icon-btn--danger" @click="removeFloor(floorIndex)">
-                    <i class="pi pi-trash"></i>
-                  </button>
-                </div>
-              </header>
-
-              <div class="floor-spaces-table">
-                <div class="floor-spaces-table__head">
-                  <span>#</span>
-                  <span>{{ $t('ProjectFloor.space') }}</span>
-                  <span>{{ $t('ProjectFloor.length') }}</span>
-                  <span>{{ $t('ProjectFloor.width') }}</span>
-                  <span>{{ $t('ProjectFloor.height') }}</span>
-                  <span>{{ $t('ProjectFloor.notes') }}</span>
-                </div>
-
-                <div v-for="(space, spaceIndex) in floor.spaces" :key="`${floor.localId}-${space.space.id}`"
-                  class="floor-space-row">
-                  <span>{{ spaceIndex + 1 }}</span>
-                  <strong>{{ space.space.title }}</strong>
-                  <span>{{ space.length || '-' }}</span>
-                  <span>{{ space.width || '-' }}</span>
-                  <span>{{ space.height || '-' }}</span>
-                  <span>{{ space.notes || '-' }}</span>
-                </div>
-              </div>
-            </article>
+            <small>{{ $t('ProjectFloor.preview_pending_hint') }}</small>
           </div>
         </section>
+      </div>
 
-        <section class="section-card">
-          <div class="section-head">
-            <span class="section-head__icon">📝</span>
+      <div class="project-floor-form-card">
+        <header class="form-header">
+          <div class="form-header__identity">
+            <span class="form-header__icon" aria-hidden="true">
+              <i class="pi pi-building"></i>
+            </span>
+
             <div>
-              <h4>{{ $t('ProjectFloor.site_recommendations') }}</h4>
-              <p>{{ $t('ProjectFloor.site_recommendations_description') }}</p>
+              <span class="form-header__eyebrow">{{ $t('ProjectFloor.form_title') }}</span>
+              <h3>{{ $t('ProjectFloor.floor_data') }}</h3>
+              <p>{{ $t('ProjectFloor.form_description') }}</p>
             </div>
           </div>
 
+<<<<<<< HEAD
           <div class="notes-grid">
             <label class="note-field">
               <span>
-                <span class="required-indicator" aria-hidden="true">*</span>
+                <!-- <span class="required-indicator" aria-hidden="true">*</span> -->
                 {{ $t('ProjectFloor.site_description') }}
               </span>
               <textarea v-model="siteDescription" class="field-input"
                 :class="{ 'field-input--invalid': validationErrors.site_description }"
-                required aria-required="true" :aria-invalid="Boolean(validationErrors.site_description)"
+                 aria-required="true" :aria-invalid="Boolean(validationErrors.site_description)"
                 @input="updateData"></textarea>
               <small v-if="validationErrors.site_description" class="field-error" role="alert">
                 {{ validationErrors.site_description }}
@@ -737,12 +602,12 @@ onMounted(async () => {
 
             <label class="note-field">
               <span>
-                <span class="required-indicator" aria-hidden="true">*</span>
+                <!-- <span class="required-indicator" aria-hidden="true">*</span> -->
                 {{ $t('ProjectFloor.technical_general_notes') }}
               </span>
               <textarea v-model="technicalGeneralNotes" class="field-input"
                 :class="{ 'field-input--invalid': validationErrors.technical_general_notes }"
-                required aria-required="true"
+                 aria-required="true"
                 :aria-invalid="Boolean(validationErrors.technical_general_notes)"
                 @input="updateData"></textarea>
               <small v-if="validationErrors.technical_general_notes" class="field-error" role="alert">
@@ -752,26 +617,312 @@ onMounted(async () => {
 
             <label class="note-field">
               <span>
-                <span class="required-indicator" aria-hidden="true">*</span>
+                <!-- <span class="required-indicator" aria-hidden="true">*</span> -->
                 {{ $t('ProjectFloor.inspection_recommendations') }}
               </span>
               <textarea v-model="inspectionRecommendations" class="field-input"
                 :class="{ 'field-input--invalid': validationErrors.inspection_recommendations }"
-                required aria-required="true"
+                 aria-required="true"
                 :aria-invalid="Boolean(validationErrors.inspection_recommendations)"
                 @input="updateData"></textarea>
               <small v-if="validationErrors.inspection_recommendations" class="field-error" role="alert">
                 {{ validationErrors.inspection_recommendations }}
               </small>
             </label>
+=======
+          <div class="form-summary">
+            <div>
+              <span>{{ $t('ProjectFloor.floors') }}</span>
+              <strong>{{ floors.length }}</strong>
+            </div>
+            <div>
+              <span>{{ $t('ProjectFloor.selected_spaces') }}</span>
+              <strong>{{ totalSpacesCount }}</strong>
+            </div>
+>>>>>>> origin/hotfix/new-design
           </div>
-        </section>
+        </header>
+
+        <div class="form-body" :class="{ disabled: loading }">
+          <section class="section-card">
+            <div class="section-head">
+              <span class="section-head__icon" aria-hidden="true">
+                <i class="pi pi-building"></i>
+              </span>
+              <div>
+                <h4>{{ $t('ProjectFloor.floor_data') }}</h4>
+                <p>{{ $t('ProjectFloor.floor_data_description') }}</p>
+              </div>
+            </div>
+
+            <div class="section-card__body">
+              <div class="picker-panel">
+                <div class="picker-field">
+                  <UpdatedCustomInputSelect
+                    id="floor_number"
+                    :label="$t('ProjectFloor.floor_number')"
+                    :model-value="selectedFloorNumber"
+                    :static-options="floorNumberOptions"
+                    :placeholder="$t('ProjectFloor.floor_number_placeholder')"
+                    @update:model-value="updateFloorNumber"
+                  />
+                </div>
+
+                <div class="picker-field">
+                  <UpdatedCustomInputSelect
+                    id="space_id"
+                    :label="$t('ProjectFloor.space')"
+                    :model-value="selectedSpace"
+                    :static-options="spaceOptions"
+                    :placeholder="$t('ProjectFloor.space_placeholder')"
+                    :type="2"
+                    @update:model-value="updateSelectedSpace"
+                  />
+                </div>
+
+                <button
+                  type="button"
+                  class="secondary-action-btn"
+                  :disabled="!selectedSpace.length"
+                  @click="addSpace"
+                >
+                  <i class="pi pi-plus" aria-hidden="true"></i>
+                  {{ $t('ProjectFloor.add_space') }}
+                </button>
+              </div>
+
+              <div v-if="currentSpaces.length" class="current-spaces">
+                <article
+                  v-for="(item, index) in currentSpaces"
+                  :key="`${item.space.id}-${index}`"
+                  class="space-row"
+                >
+                  <strong class="space-name">{{ item.space.title }}</strong>
+
+                  <div v-for="field in dimensionFields" :key="field" class="space-dimension-field">
+                    <input
+                      v-model="item[field]"
+                      class="mini-input"
+                      :class="{ 'mini-input--invalid': currentSpaceError(index, field) }"
+                      type="number"
+                      min="0.01"
+                      step="1"
+                      required
+                      :placeholder="$t(`ProjectFloor.${field}`)"
+                      :aria-label="$t(`ProjectFloor.${field}`)"
+                      aria-required="true"
+                      :aria-invalid="Boolean(currentSpaceError(index, field))"
+                      :aria-describedby="
+                        currentSpaceError(index, field)
+                          ? `floor-space-${index}-${field}-error`
+                          : undefined
+                      "
+                      @input="clearCurrentSpaceError(index, field)"
+                    />
+                    <small
+                      v-if="currentSpaceError(index, field)"
+                      :id="`floor-space-${index}-${field}-error`"
+                      class="space-dimension-field__error"
+                      role="alert"
+                    >
+                      {{ currentSpaceError(index, field) }}
+                    </small>
+                  </div>
+                  <input
+                    v-model="item.notes"
+                    class="mini-input"
+                    type="text"
+                    :placeholder="$t('ProjectFloor.notes')"
+                  />
+
+                  <label class="upload-chip">
+                    <input
+                      type="file"
+                      multiple
+                      @change="updateCurrentSpaceAttachments($event, index)"
+                    />
+                    <i class="pi pi-upload" aria-hidden="true"></i>
+                    <span>{{ item.attachments.length || $t('ProjectFloor.choose_files') }}</span>
+                  </label>
+
+                  <button
+                    type="button"
+                    class="icon-btn icon-btn--danger"
+                    :aria-label="$t('delete')"
+                    @click="removeCurrentSpace(index)"
+                  >
+                    <i class="pi pi-trash" aria-hidden="true"></i>
+                  </button>
+                </article>
+              </div>
+
+              <button
+                type="button"
+                class="primary-action-btn"
+                :disabled="!selectedFloorNumber || !currentSpaces.length"
+                @click="addFloor"
+              >
+                <i class="pi pi-plus-circle" aria-hidden="true"></i>
+                {{ $t('ProjectFloor.add_floor') }}
+              </button>
+
+              <p v-if="duplicateFloorSpaceError" class="floor-duplicate-error" role="alert">
+                <i class="pi pi-exclamation-circle" aria-hidden="true"></i>
+                {{ duplicateFloorSpaceError }}
+              </p>
+            </div>
+          </section>
+
+          <section class="section-card">
+            <div class="section-head section-head--between">
+              <div class="section-head__start">
+                <span class="section-head__icon" aria-hidden="true">
+                  <i class="pi pi-list"></i>
+                </span>
+                <div>
+                  <h4>{{ $t('ProjectFloor.saved_floors') }}</h4>
+                  <p>{{ $t('ProjectFloor.selected_spaces_description') }}</p>
+                </div>
+              </div>
+              <span class="count-badge">{{ floors.length }}</span>
+            </div>
+
+            <div class="section-card__body">
+              <div v-if="!floors.length" class="empty-state">
+                <span class="empty-state__icon" aria-hidden="true">
+                  <i class="pi pi-building"></i>
+                </span>
+                <strong>{{ $t('ProjectFloor.no_spaces_title') }}</strong>
+                <small>{{ $t('ProjectFloor.selected_spaces_description') }}</small>
+              </div>
+
+              <div v-else class="floors-list">
+                <article
+                  v-for="(floor, floorIndex) in floors"
+                  :key="floor.localId"
+                  class="floor-card"
+                >
+                  <header class="floor-card__head">
+                    <div>
+                      <span>{{ $t('ProjectFloor.floor_number') }}</span>
+                      <strong>{{ floor.floorNumber.title }}</strong>
+                    </div>
+
+                    <div class="floor-card__actions">
+                      <span class="count-badge">{{ floor.spaces.length }}</span>
+                      <button
+                        type="button"
+                        class="icon-btn"
+                        :aria-label="$t('edit')"
+                        @click="editFloor(floorIndex)"
+                      >
+                        <i class="pi pi-pencil" aria-hidden="true"></i>
+                      </button>
+                      <button
+                        type="button"
+                        class="icon-btn icon-btn--danger"
+                        :aria-label="$t('delete')"
+                        @click="removeFloor(floorIndex)"
+                      >
+                        <i class="pi pi-trash" aria-hidden="true"></i>
+                      </button>
+                    </div>
+                  </header>
+
+                  <div class="floor-spaces-table">
+                    <div class="floor-spaces-table__head">
+                      <span>#</span>
+                      <span>{{ $t('ProjectFloor.space') }}</span>
+                      <span>{{ $t('ProjectFloor.length') }}</span>
+                      <span>{{ $t('ProjectFloor.width') }}</span>
+                      <span>{{ $t('ProjectFloor.height') }}</span>
+                      <span>{{ $t('ProjectFloor.notes') }}</span>
+                    </div>
+
+                    <div
+                      v-for="(space, spaceIndex) in floor.spaces"
+                      :key="`${floor.localId}-${space.space.id}`"
+                      class="floor-space-row"
+                    >
+                      <span>{{ spaceIndex + 1 }}</span>
+                      <strong>{{ space.space.title }}</strong>
+                      <span>{{ space.length || '-' }}</span>
+                      <span>{{ space.width || '-' }}</span>
+                      <span>{{ space.height || '-' }}</span>
+                      <span>{{ space.notes || '-' }}</span>
+                    </div>
+                  </div>
+                </article>
+              </div>
+            </div>
+          </section>
+
+          <section class="section-card">
+            <div class="section-head">
+              <span class="section-head__icon" aria-hidden="true">
+                <i class="pi pi-map-marker"></i>
+              </span>
+              <div>
+                <h4>{{ $t('ProjectFloor.site_recommendations') }}</h4>
+                <p>{{ $t('ProjectFloor.site_recommendations_description') }}</p>
+              </div>
+            </div>
+
+            <div class="section-card__body">
+              <div class="notes-grid">
+                <label class="note-field">
+                  <span>{{ $t('ProjectFloor.site_description') }}</span>
+                  <textarea
+                    v-model="siteDescription"
+                    class="field-input"
+                    @input="updateData"
+                  ></textarea>
+                </label>
+
+                <label class="note-field">
+                  <span>{{ $t('ProjectFloor.technical_general_notes') }}</span>
+                  <textarea
+                    v-model="technicalGeneralNotes"
+                    class="field-input"
+                    @input="updateData"
+                  ></textarea>
+                </label>
+
+                <label class="note-field">
+                  <span>{{ $t('ProjectFloor.inspection_recommendations') }}</span>
+                  <textarea
+                    v-model="inspectionRecommendations"
+                    class="field-input"
+                    @input="updateData"
+                  ></textarea>
+                </label>
+              </div>
+            </div>
+          </section>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <style scoped lang="scss">
+.project-floor-form-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--page-section-gap);
+  padding: clamp(0.75rem, 2vw, 1.25rem);
+  border-radius: var(--radius-xl);
+  background: var(--bg-body);
+}
+
+.project-floor-form-page__previews {
+  padding: var(--surface-padding);
+  border: 1px solid var(--border-weak);
+  border-radius: var(--radius-xl);
+  background: var(--bg-card);
+  box-shadow: var(--shadow-sm);
+}
+
 .project-floor-form-wrapper {
   position: relative;
   isolation: isolate;
@@ -784,9 +935,8 @@ onMounted(async () => {
 .project-floor-form-wrapper--locked .project-floor-form-card {
   pointer-events: none;
   user-select: none;
-  filter: blur(5px);
-  opacity: 0.45;
-  transform: scale(0.995);
+  filter: blur(3px);
+  opacity: 0.5;
 }
 
 .required-indicator,
@@ -804,48 +954,48 @@ onMounted(async () => {
 
 .preview-gate {
   position: absolute;
-  z-index: 20;
   inset: 0;
+  z-index: 20;
   display: grid;
   min-height: 520px;
-  padding: 1.5rem;
+  padding: clamp(1rem, 3vw, 2rem);
   place-items: center;
 }
 
 .preview-gate__backdrop {
   position: absolute;
   inset: 0;
-  border-radius: 24px;
-  background: linear-gradient(135deg, rgb(255 255 255 / 65%), rgb(248 250 252 / 82%));
-  backdrop-filter: blur(8px);
+  border-radius: var(--radius-lg);
+  background: var(--black-alpha-45);
+  backdrop-filter: blur(4px);
 }
 
 .preview-gate__card {
   position: relative;
   z-index: 1;
   display: flex;
-  width: min(100%, 620px);
+  width: min(100%, 42rem);
   align-items: flex-start;
-  gap: 1.1rem;
-  padding: 1.5rem;
-  border: 1px solid rgba(245, 158, 11, 0.35);
-  border-radius: 24px;
-  background: #fff;
-  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.16);
-  animation: preview-gate-enter 0.3s ease-out;
+  gap: 1rem;
+  padding: clamp(1.25rem, 3vw, 1.75rem);
+  border: 1px solid var(--border-weak);
+  border-radius: var(--radius-xl);
+  background: var(--bg-card);
+  box-shadow: var(--shadow-xl);
+  animation: preview-gate-enter var(--transition-slow) both;
 }
 
 .preview-gate__icon {
-  display: inline-grid;
-  width: 58px;
-  height: 58px;
+  display: grid;
+  width: 3.5rem;
+  height: 3.5rem;
   flex: 0 0 auto;
-  border-radius: 18px;
-  background: #fff7ed;
-  color: #ea580c;
-  font-size: 1.35rem;
   place-items: center;
-  box-shadow: inset 0 0 0 1px rgba(234, 88, 12, 0.14);
+  border: 1px solid color-mix(in sRGB, var(--PrimaryColor) 18%, var(--border-weak));
+  border-radius: var(--radius-lg);
+  background: color-mix(in sRGB, var(--PrimaryColor) 9%, var(--bg-card));
+  color: var(--PrimaryColor);
+  font-size: 1.35rem;
 }
 
 .preview-gate__content {
@@ -854,27 +1004,27 @@ onMounted(async () => {
 
   h3 {
     margin: 0.3rem 0 0.5rem;
-    color: #111827;
+    color: var(--gray-900);
     font-family: 'Bold';
-    font-size: 1.15rem;
+    font-size: var(--xl-size-base);
   }
 
   p {
     margin: 0;
-    color: #64748b;
-    line-height: 1.8;
+    color: var(--gray-600);
+    line-height: 1.7;
   }
 
   small {
     display: block;
     margin-top: 0.85rem;
-    color: #94a3b8;
+    color: var(--gray-500);
     line-height: 1.6;
   }
 }
 
 .preview-gate__eyebrow {
-  color: #ea580c;
+  color: var(--PrimaryColor);
   font-family: 'Bold';
   font-size: var(--xs-size);
 }
@@ -885,9 +1035,10 @@ onMounted(async () => {
   gap: 0.45rem;
   margin-top: 1rem;
   padding: 0.55rem 0.8rem;
-  border-radius: 999px;
-  background: #fff7ed;
-  color: #c2410c;
+  border: 1px solid color-mix(in sRGB, var(--PrimaryColor) 18%, var(--border-weak));
+  border-radius: var(--radius-full);
+  background: color-mix(in sRGB, var(--PrimaryColor) 8%, var(--bg-card));
+  color: var(--PrimaryColor);
   font-family: 'Bold';
   font-size: var(--sm-size);
 }
@@ -906,30 +1057,36 @@ onMounted(async () => {
   justify-content: center;
   gap: 0.45rem;
   padding-inline: 1rem;
-  border-radius: 13px;
+  border-radius: var(--control-radius);
   cursor: pointer;
   font-family: 'Medium';
   transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease,
-    background-color 0.2s ease;
+    color var(--transition-fast),
+    border-color var(--transition-fast),
+    background-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast);
 }
 
-.preview-gate__button:hover {
+.preview-gate__button:hover:not(:disabled) {
   transform: translateY(-1px);
 }
 
+.preview-gate__button:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
 .preview-gate__button--primary {
-  border: 1px solid #ea580c;
-  background: #ea580c;
-  color: #fff;
-  box-shadow: 0 10px 22px rgba(234, 88, 12, 0.22);
+  border: 1px solid var(--PrimaryColor);
+  background: var(--PrimaryColor);
+  color: var(--standard-white);
 }
 
 .preview-gate__button--secondary {
-  border: 1px solid #e2e8f0;
-  background: #fff;
-  color: #475569;
+  border: 1px solid var(--border-weak);
+  background: var(--bg-card);
+  color: var(--gray-700);
 }
 
 @keyframes preview-gate-enter {
@@ -947,13 +1104,11 @@ onMounted(async () => {
 .project-floor-form-card {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  padding: 1.25rem;
-  border-radius: 24px;
-  background: var(--BgWhite);
+  gap: var(--page-section-gap);
 }
 
 .form-header,
+.form-header__identity,
 .section-head,
 .section-head__start,
 .floor-card__head,
@@ -965,20 +1120,44 @@ onMounted(async () => {
 .form-header {
   justify-content: space-between;
   gap: 1rem;
-  padding: 1.25rem;
+  padding: var(--surface-padding);
   border: 1px solid var(--border-weak);
-  border-radius: 20px;
-  background: var(--BgWhite);
+  border-radius: var(--radius-xl);
+  background: var(--bg-card);
+  box-shadow: var(--shadow-sm);
 
   h3 {
-    margin: 0.35rem 0;
+    margin: 0.2rem 0;
+    color: var(--gray-900);
     font-family: 'Bold';
+    font-size: var(--xl-size-base);
+    line-height: 1.4;
   }
 
   p {
     margin: 0;
-    color: var(--gray-5);
+    color: var(--gray-500);
+    font-size: var(--sm-size);
+    line-height: 1.55;
   }
+}
+
+.form-header__identity {
+  min-width: 0;
+  gap: 0.85rem;
+}
+
+.form-header__icon {
+  display: grid;
+  width: 3rem;
+  height: 3rem;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid color-mix(in sRGB, var(--PrimaryColor) 18%, var(--border-weak));
+  border-radius: var(--radius-md);
+  background: color-mix(in sRGB, var(--PrimaryColor) 9%, var(--bg-card));
+  color: var(--PrimaryColor);
+  font-size: 1.25rem;
 }
 
 .form-header__eyebrow {
@@ -991,17 +1170,18 @@ onMounted(async () => {
   display: flex;
   gap: 0.75rem;
 
-  >div {
-    min-width: 110px;
-    padding: 0.75rem;
-    border-radius: 16px;
-    background: var(--PrimaryColor-light);
+  > div {
+    min-width: 7.5rem;
+    padding: 0.7rem 0.9rem;
+    border: 1px solid color-mix(in sRGB, var(--PrimaryColor) 16%, var(--border-weak));
+    border-radius: var(--radius-md);
+    background: color-mix(in sRGB, var(--PrimaryColor) 6%, var(--bg-card));
     text-align: center;
   }
 
   span {
     display: block;
-    color: var(--gray-5);
+    color: var(--gray-500);
     font-size: var(--xs-size);
   }
 
@@ -1025,16 +1205,21 @@ onMounted(async () => {
 }
 
 .section-card {
-  padding: 1rem;
+  overflow: hidden;
   border: 1px solid var(--border-weak);
-  border-radius: 20px;
-  background: var(--BgWhite);
+  border-radius: var(--radius-xl);
+  background: var(--bg-card);
+  box-shadow: var(--shadow-sm);
 }
 
 .section-head {
   gap: 0.75rem;
-  margin-bottom: 1rem;
-  align-items: flex-start;
+  min-height: 4.5rem;
+  padding: 1rem var(--surface-padding);
+  align-items: center;
+  border-block-end: 1px solid
+    color-mix(in sRGB, var(--PrimaryColor) 10%, var(--border-weak));
+  background: color-mix(in sRGB, var(--PrimaryColor) 6%, var(--bg-card));
 }
 
 .section-head--between {
@@ -1044,35 +1229,49 @@ onMounted(async () => {
 
 .section-head__start {
   gap: 0.75rem;
-  align-items: flex-start;
+  align-items: center;
 }
 
 .section-head h4 {
   margin: 0;
+  color: var(--gray-900);
   font-family: 'Bold';
+  font-size: var(--md-size);
+  line-height: 1.4;
 }
 
 .section-head p {
   margin: 0.25rem 0 0;
-  color: var(--gray-5);
+  color: var(--gray-500);
   font-size: var(--xs-size);
+  line-height: 1.5;
 }
 
 .section-head__icon {
-  display: inline-flex;
-  width: 42px;
-  height: 42px;
-  align-items: center;
-  justify-content: center;
-  border-radius: 14px;
-  background: var(--PrimaryColor-light);
+  display: grid;
+  width: 2.35rem;
+  height: 2.35rem;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid color-mix(in sRGB, var(--PrimaryColor) 16%, var(--border-weak));
+  border-radius: var(--radius-sm);
+  background: color-mix(in sRGB, var(--PrimaryColor) 9%, var(--bg-card));
+  color: var(--PrimaryColor);
+}
+
+.section-card__body {
+  padding: var(--surface-padding);
 }
 
 .picker-panel {
   display: grid;
-  grid-template-columns: 1fr 1fr auto;
-  gap: 0.75rem;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 1rem;
   align-items: end;
+}
+
+.picker-field:first-child {
+  grid-column: 1 / -1;
 }
 
 .picker-field {
@@ -1082,9 +1281,19 @@ onMounted(async () => {
   min-width: 0;
 }
 
-.field-label {
-  color: var(--gray-6);
-  font-family: 'Medium';
+:deep(.picker-panel .input-select) {
+  min-height: max(var(--control-height), 48px);
+  border-radius: var(--control-radius);
+  background: var(--bg-card);
+}
+
+:deep(.picker-panel .input-select:not(.p-disabled):hover) {
+  border-color: var(--border-strong);
+}
+
+:deep(.picker-panel .input-select:not(.p-disabled).p-focus) {
+  border-color: var(--PrimaryColor);
+  box-shadow: var(--focus-ring);
 }
 
 .secondary-action-btn,
@@ -1095,22 +1304,44 @@ onMounted(async () => {
   justify-content: center;
   gap: 0.5rem;
   padding: 0 1rem;
-  border: 0;
-  border-radius: 14px;
+  border-radius: var(--control-radius);
   cursor: pointer;
   font-family: 'Medium';
+  transition:
+    color var(--transition-fast),
+    border-color var(--transition-fast),
+    background-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast);
 }
 
 .secondary-action-btn {
-  background: var(--PrimaryColor-light);
+  border: 1px solid var(--PrimaryColor);
+  background: var(--bg-card);
   color: var(--PrimaryColor);
 }
 
 .primary-action-btn {
-  width: 100%;
-  margin-top: 1rem;
+  min-width: 10rem;
+  margin-top: 1.25rem;
+  border: 1px solid var(--PrimaryColor);
   background: var(--PrimaryColor);
-  color: #fff;
+  color: var(--standard-white);
+}
+
+.secondary-action-btn:hover:not(:disabled),
+.primary-action-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.secondary-action-btn:hover:not(:disabled) {
+  background: color-mix(in sRGB, var(--PrimaryColor) 8%, var(--bg-card));
+}
+
+.secondary-action-btn:focus-visible,
+.primary-action-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
 }
 
 .secondary-action-btn:disabled,
@@ -1120,24 +1351,38 @@ onMounted(async () => {
 }
 
 .current-spaces {
-  display: flex;
-  flex-direction: column;
-  gap: 0.65rem;
-  margin-top: 1rem;
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
 }
 
 .space-row {
   display: grid;
   grid-template-columns: 1.2fr repeat(4, 0.8fr) 1fr 44px;
-  gap: 0.6rem;
-  align-items: center;
-  padding: 0.75rem;
+  gap: 0.75rem;
+  align-items: start;
+  padding: 0.9rem;
   border: 1px solid var(--border-weak);
-  border-radius: 16px;
+  border-radius: var(--radius-md);
+  background: var(--bg-section);
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.space-row:hover {
+  border-color: color-mix(in sRGB, var(--PrimaryColor) 34%, var(--border-weak));
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
 }
 
 .space-name {
+  display: flex;
+  min-height: var(--control-height);
+  align-items: center;
   overflow: hidden;
+  color: var(--gray-800);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -1152,19 +1397,34 @@ onMounted(async () => {
   min-height: 44px;
   padding: 0.65rem 0.75rem;
   border: 1px solid var(--border-weak);
-  border-radius: 12px;
-  background: var(--BgWhite);
+  border-radius: var(--control-radius);
+  background: var(--bg-card);
+  color: var(--gray-800);
   outline: none;
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.mini-input:hover,
+.field-input:hover {
+  border-color: var(--border-strong);
+}
+
+.mini-input:focus,
+.field-input:focus {
+  border-color: var(--PrimaryColor);
+  box-shadow: var(--focus-ring);
 }
 
 .mini-input--invalid {
-  border-color: var(--Red);
+  border-color: var(--danger);
 }
 
 .space-dimension-field__error {
   display: block;
   margin-top: 0.35rem;
-  color: var(--Red);
+  color: var(--danger);
   font-size: var(--xs-size);
   line-height: 1.35;
 }
@@ -1177,8 +1437,21 @@ onMounted(async () => {
   gap: 0.4rem;
   padding: 0 0.65rem;
   border: 1px dashed var(--border-weak);
-  border-radius: 12px;
+  border-radius: var(--control-radius);
+  background: var(--bg-section);
+  color: var(--gray-600);
   cursor: pointer;
+  transition:
+    color var(--transition-fast),
+    border-color var(--transition-fast),
+    background-color var(--transition-fast);
+}
+
+.upload-chip:hover,
+.upload-chip:focus-within {
+  border-color: var(--PrimaryColor);
+  background: color-mix(in sRGB, var(--PrimaryColor) 6%, var(--bg-card));
+  color: var(--PrimaryColor);
 }
 
 .upload-chip input {
@@ -1192,14 +1465,36 @@ onMounted(async () => {
   align-items: center;
   justify-content: center;
   border: 1px solid var(--border-weak);
-  border-radius: 10px;
-  background: var(--BgWhite);
+  border-radius: var(--control-radius);
+  background: var(--bg-card);
   color: var(--PrimaryColor);
   cursor: pointer;
+  transition:
+    color var(--transition-fast),
+    border-color var(--transition-fast),
+    background-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.icon-btn:hover,
+.icon-btn:focus-visible {
+  border-color: var(--PrimaryColor);
+  background: color-mix(in sRGB, var(--PrimaryColor) 8%, var(--bg-card));
+  outline: none;
+}
+
+.icon-btn:focus-visible {
+  box-shadow: var(--focus-ring);
 }
 
 .icon-btn--danger {
-  color: var(--Red);
+  color: var(--danger);
+}
+
+.icon-btn--danger:hover,
+.icon-btn--danger:focus-visible {
+  border-color: var(--danger);
+  background: var(--danger-light);
 }
 
 .count-badge {
@@ -1208,18 +1503,46 @@ onMounted(async () => {
   height: 36px;
   align-items: center;
   justify-content: center;
-  border-radius: 999px;
-  background: var(--PrimaryColor-light);
+  border: 1px solid color-mix(in sRGB, var(--PrimaryColor) 16%, var(--border-weak));
+  border-radius: var(--radius-full);
+  background: color-mix(in sRGB, var(--PrimaryColor) 9%, var(--bg-card));
   color: var(--PrimaryColor);
   font-family: 'Bold';
 }
 
 .empty-state {
-  padding: 2rem;
+  display: grid;
+  min-height: 11rem;
+  padding: 2rem 1rem;
+  place-items: center;
+  align-content: center;
+  gap: 0.45rem;
   border: 1px dashed var(--border-weak);
-  border-radius: 16px;
-  color: var(--gray-5);
+  border-radius: var(--radius-md);
+  background: var(--bg-section);
+  color: var(--gray-600);
   text-align: center;
+
+  strong {
+    color: var(--gray-800);
+    font-family: 'Bold';
+  }
+
+  small {
+    color: var(--gray-500);
+  }
+}
+
+.empty-state__icon {
+  display: grid;
+  width: 3rem;
+  height: 3rem;
+  margin-bottom: 0.25rem;
+  place-items: center;
+  border-radius: var(--radius-full);
+  background: color-mix(in sRGB, var(--PrimaryColor) 9%, var(--bg-card));
+  color: var(--PrimaryColor);
+  font-size: 1.25rem;
 }
 
 .floors-list {
@@ -1231,25 +1554,27 @@ onMounted(async () => {
 .floor-card {
   overflow: hidden;
   border: 1px solid var(--border-weak);
-  border-radius: 16px;
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
 }
 
 .floor-card__head {
   justify-content: space-between;
   gap: 1rem;
-  padding: 0.85rem 1rem;
-  background: var(--PrimaryColor-light);
+  padding: 0.9rem 1rem;
+  border-block-end: 1px solid var(--border-weak);
+  background: color-mix(in sRGB, var(--PrimaryColor) 5%, var(--bg-card));
 }
 
 .floor-card__head span {
-  // display: block;
-  color: var(--gray-5);
+  color: var(--gray-500);
   font-size: var(--xs-size);
 }
 
 .floor-card__head strong {
   display: block;
   margin-top: 0.2rem;
+  color: var(--gray-900);
 }
 
 .floor-card__actions {
@@ -1259,6 +1584,7 @@ onMounted(async () => {
 .floor-spaces-table__head,
 .floor-space-row {
   display: grid;
+  min-width: 46rem;
   grid-template-columns: 44px 1.2fr repeat(3, 0.8fr) 1.4fr;
   gap: 0.65rem;
   align-items: center;
@@ -1266,19 +1592,30 @@ onMounted(async () => {
 }
 
 .floor-spaces-table__head {
-  background: var(--bg-main);
-  color: var(--gray-5);
+  background: var(--bg-section);
+  color: var(--gray-600);
+  font-family: 'Medium';
   font-size: var(--xs-size);
 }
 
 .floor-space-row {
   border-top: 1px solid var(--border-weak);
+  color: var(--gray-700);
+}
+
+.floor-space-row strong {
+  color: var(--gray-900);
+}
+
+.floor-spaces-table {
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
 }
 
 .notes-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.75rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
 }
 
 .note-field {
@@ -1288,13 +1625,32 @@ onMounted(async () => {
 }
 
 .note-field span {
-  color: var(--gray-6);
+  color: var(--gray-700);
   font-family: 'Medium';
+  font-size: var(--sm-size);
 }
 
 .note-field textarea {
   min-height: 120px;
+  line-height: 1.65;
   resize: vertical;
+}
+
+.note-field:last-child {
+  grid-column: 1 / -1;
+}
+
+.floor-duplicate-error {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 0.85rem 0 0;
+  padding: 0.7rem 0.85rem;
+  border: 1px solid var(--danger-alpha-15);
+  border-radius: var(--radius-sm);
+  background: var(--danger-light);
+  color: var(--danger-dark);
+  font-size: var(--sm-size);
 }
 
 @media (max-width: 1100px) {
@@ -1302,12 +1658,30 @@ onMounted(async () => {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .notes-grid {
-    grid-template-columns: 1fr;
+  .space-name {
+    grid-column: 1 / -1;
+  }
+
+  .space-row > .icon-btn {
+    justify-self: end;
   }
 }
 
 @media (max-width: 768px) {
+  .project-floor-form-page__previews,
+  .form-header {
+    padding: 1rem;
+  }
+
+  .project-floor-form-page {
+    padding: 0.75rem;
+  }
+
+  .section-head,
+  .section-card__body {
+    padding: 1rem;
+  }
+
   .form-header {
     align-items: stretch;
     flex-direction: column;
@@ -1317,7 +1691,7 @@ onMounted(async () => {
     width: 100%;
   }
 
-  .form-summary>div {
+  .form-summary > div {
     flex: 1;
   }
 
@@ -1325,16 +1699,29 @@ onMounted(async () => {
     grid-template-columns: 1fr;
   }
 
+  .picker-field:first-child {
+    grid-column: auto;
+  }
+
+  .secondary-action-btn,
+  .primary-action-btn {
+    width: 100%;
+  }
+
   .space-row {
     grid-template-columns: 1fr;
   }
 
-  .floor-spaces-table__head {
-    display: none;
+  .space-name {
+    grid-column: auto;
   }
 
-  .floor-space-row {
+  .notes-grid {
     grid-template-columns: 1fr;
+  }
+
+  .note-field:last-child {
+    grid-column: auto;
   }
 }
 
@@ -1355,14 +1742,50 @@ onMounted(async () => {
   .preview-gate__button {
     width: 100%;
   }
+
+  .form-header__identity {
+    align-items: flex-start;
+  }
+
+  .form-header__icon {
+    width: 2.6rem;
+    height: 2.6rem;
+  }
+
+  .form-summary {
+    flex-direction: column;
+  }
+
+  .form-summary > div {
+    width: 100%;
+  }
+
+  .section-head,
+  .section-head__start {
+    gap: 0.55rem;
+  }
+
+  .section-head__icon {
+    width: 2rem;
+    height: 2rem;
+  }
+
+  .section-head--between {
+    align-items: flex-start;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .preview-gate__card {
+  .preview-gate__card,
+  .preview-gate__button,
+  .secondary-action-btn,
+  .primary-action-btn,
+  .space-row,
+  .mini-input,
+  .field-input,
+  .upload-chip,
+  .icon-btn {
     animation: none;
-  }
-
-  .preview-gate__button {
     transition: none;
   }
 }

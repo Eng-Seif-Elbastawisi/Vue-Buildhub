@@ -1,6 +1,7 @@
 import { flushPromises, mount } from '@vue/test-utils';
 import { createMemoryHistory, createRouter, type Router } from 'vue-router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import IndexPageHeader from '@/shared/IndexPageHeader/IndexPageHeader.vue';
 import { DepartmentTypeEnum } from '../../../core/constants/Type.enum';
 import DepartmentIndex from '../DepartmentIndex.vue';
 
@@ -91,9 +92,10 @@ describe('DepartmentIndex', () => {
     'identifies the department configuration type in the page header',
     async (type, title, description) => {
       const wrapper = await mountComponent(`/departments?type=${type}`);
+      const pageHeader = wrapper.getComponent(IndexPageHeader);
 
-      expect(wrapper.get('.department-page__header h4').text()).toBe(title);
-      expect(wrapper.get('.department-page__header p').text()).toBe(description);
+      expect(pageHeader.get('h1').text()).toBe(title);
+      expect(pageHeader.get('p').text()).toBe(description);
     },
   );
 

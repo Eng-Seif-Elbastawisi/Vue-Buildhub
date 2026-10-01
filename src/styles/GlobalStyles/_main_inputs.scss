@@ -25,7 +25,7 @@
     font-size: $MdSize;
     font-weight: $BaseFontSemiBoldWeight;
     text-transform: capitalize !important;
-    font-family: 'Demi';
+    font-family: var(--font-family);
   }
 
   .lang-switcher {
@@ -79,7 +79,7 @@
   .field-input {
     width: 100%;
     padding: 12px 16px;
-    padding-right: 50px; // Space for indicator
+    padding-inline-end: 50px; // Space for indicator
     border: 1px solid var(--border-weak);
     border-radius: 28px;
     background: var(--white);
@@ -120,8 +120,8 @@
 
   .active-indicator {
     position: absolute;
-    right: 12px;
-    top: 50%;
+    inset-block-start: 50%;
+    inset-inline-end: 12px;
     transform: translateY(-50%);
     font-size: 0.65rem;
     font-weight: 800;
@@ -131,17 +131,5 @@
     border-radius: 4px;
     pointer-events: none;
     text-transform: uppercase;
-  }
-
-  // RTL support for indicator
-  [dir='rtl'] .active-indicator,
-  .field-input[dir='rtl']+.active-indicator {
-    right: auto;
-    left: 12px;
-  }
-
-  .field-input[dir='rtl'] {
-    padding-right: 16px;
-    padding-left: 50px;
   }
 }
