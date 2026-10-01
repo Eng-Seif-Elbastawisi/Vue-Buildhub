@@ -867,14 +867,13 @@ const asExecutionQuotes = (
 
             <template #actions="{ item }">
   <div class="execution-quote-index__row-actions">
-    <div
-      v-if="!props.client"
-      class="execution-quote-index__row-actions__button-group"
-    >
+    <div class="execution-quote-index__row-actions__button-group">
       <!-- Add Item -->
       <AppButton
         class="execution-quote-index__add-item-button"
         size="sm"
+        theme="secondary"
+        action-tone="edit"
         icon="right"
         @click.stop="openAddItem(item)"
       >
@@ -890,8 +889,8 @@ const asExecutionQuotes = (
         class="execution-quote-index__add-stage-button"
         size="sm"
         theme="secondary"
+        action-tone="edit"
         icon="right"
-        outline
         @click.stop="openAddStage(item)"
       >
         <template #icon>
@@ -908,7 +907,6 @@ const asExecutionQuotes = (
         size="sm"
         theme="secondary"
         icon="right"
-        outline
         @click.stop="openStatusDialog(item)"
       >
         <template #icon>
@@ -926,7 +924,6 @@ const asExecutionQuotes = (
       size="sm"
       theme="secondary"
       icon="right"
-      ghost
       @click.stop="openShow(item)"
     >
       <template #icon>

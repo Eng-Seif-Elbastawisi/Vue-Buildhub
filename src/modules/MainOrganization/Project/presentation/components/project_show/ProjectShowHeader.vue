@@ -214,7 +214,7 @@
 </script>
 
 <template>
-  <header class="project-hero">
+  <section class="project-hero" aria-labelledby="project-summary-title">
     <img
       :key="imageSource"
       class="project-hero__background"
@@ -240,7 +240,7 @@
           </div>
 
           <div class="project-title-row">
-            <h1>{{ projectTitle }}</h1>
+            <h2 id="project-summary-title">{{ projectTitle }}</h2>
           </div>
 
           <div class="project-meta-row">
@@ -467,5 +467,5 @@
       :project-id="Number(project.id)"
       @close="closeAutoInvoicesModal"
     />
-  </header>
+  </section>
 </template>

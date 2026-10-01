@@ -7,7 +7,7 @@
     sortable?: boolean;
   }
 
-  import { ref, computed, watch } from 'vue';
+  import { ref, computed, watch, provide, onBeforeUnmount } from 'vue';
   import { useI18n } from 'vue-i18n';
   import { dialogManager } from '@/base/Presentation/Dialogs/dialog.manager';
   import DeleteDialog from '@/base/Presentation/Dialogs/MainDialogs/DeleteDialog.vue';
@@ -156,6 +156,65 @@
     return typeof val === 'string' || typeof val === 'number' ? val : index;
   }
 
+  const confirmedRemovalKeys = ref<Set<string>>(new Set());
+  let removalExpiry: ReturnType<typeof setTimeout> | undefined;
+
+  const armDestructiveRemoval = (trigger: HTMLElement | null) => {
+    const rowKey = trigger?.closest<HTMLElement>('tr[data-row-key]')?.dataset.rowKey;
+    const keys = rowKey
+      ? [rowKey]
+      : trigger?.closest('.table-bulk-actions')
+        ? Array.from(selectedRows.value).flatMap((index) => {
+            const item = props.items[index];
+            return item === undefined ? [] : [String(getRowKey(item, index))];
+          })
+        : [];
+
+    if (!keys.length) return;
+    confirmedRemovalKeys.value = new Set([...confirmedRemovalKeys.value, ...keys]);
+    if (removalExpiry) clearTimeout(removalExpiry);
+    removalExpiry = setTimeout(() => {
+      confirmedRemovalKeys.value = new Set();
+    }, 10_000);
+  };
+
+  const beforeRowLeave = (element: Element) => {
+    const row = element as HTMLElement;
+    const key = row.dataset.rowKey;
+    if (!key || !confirmedRemovalKeys.value.has(key)) return;
+
+    row.classList.add('is-confirmed-removal');
+    row.style.setProperty('--removal-row-width', `${row.getBoundingClientRect().width}px`);
+    row.querySelectorAll<HTMLElement>('td').forEach((cell) => {
+      cell.style.width = `${cell.getBoundingClientRect().width}px`;
+    });
+  };
+
+  const afterRowLeave = (element: Element) => {
+    const key = (element as HTMLElement).dataset.rowKey;
+    if (!key) return;
+    const next = new Set(confirmedRemovalKeys.value);
+    next.delete(key);
+    confirmedRemovalKeys.value = next;
+  };
+
+  provide('dashboard-destructive-motion', armDestructiveRemoval);
+
+  watch(
+    () => props.items,
+    (items) => {
+      const currentKeys = new Set(items.map((item, index) => String(getRowKey(item, index))));
+      if (Array.from(confirmedRemovalKeys.value).some((key) => currentKeys.has(key))) {
+        confirmedRemovalKeys.value = new Set();
+      }
+    },
+    { flush: 'post' },
+  );
+
+  onBeforeUnmount(() => {
+    if (removalExpiry) clearTimeout(removalExpiry);
+  });
+
   // when double click on any filed copy to clipboard
   const copyToClipboard = async (value: unknown) => {
     const text = String(value ?? '').trim();
@@ -287,6 +346,10 @@
     if (fromIndex !== toIndex) {
       const newItems = [...props.items];
       const [movedItem] = newItems.splice(fromIndex, 1);
+      if (movedItem === undefined) {
+        onDragEnd();
+        return;
+      }
       newItems.splice(toIndex, 0, movedItem);
       emit('reorder', {
         items: newItems,
@@ -427,7 +490,7 @@
         </thead>
 
         <!-- Body -->
-        <tbody>
+        <tbody :class="{ 'is-destructive-removal': confirmedRemovalKeys.size > 0 }">
           <slot name="CustomRow"></slot>
           <tr v-if="items.length === 0">
             <td
@@ -445,83 +508,93 @@
             </td>
           </tr>
 
-          <tr
-            v-for="(item, index) in items"
-            :key="getRowKey(item, index)"
-            :class="{
-              selected: selectable && isRowSelected(index),
-              'is-dragging': draggedIndex === index,
-              'drag-over-top': dragOverIndex === index && dragOverPosition === 'top',
-              'drag-over-bottom': dragOverIndex === index && dragOverPosition === 'bottom',
-            }"
-            @dragover="onDragOver($event, index)"
-            @dragleave="onDragLeave($event, index)"
-            @drop="onDrop($event, index)"
-            @dragend="onDragEnd"
-            @click="emit('row-click', item, index)"
+          <TransitionGroup
+            name="dashboard-row-removal"
+            @before-leave="beforeRowLeave"
+            @after-leave="afterRowLeave"
           >
-            <!-- Selection checkbox -->
-            <td v-if="selectable" class="td-checkbox" @click.stop>
-              <input type="checkbox" :checked="isRowSelected(index)" @change="toggleRow(index)" />
-            </td>
-
-            <!-- Row index -->
-            <td v-if="showIndex" class="td-index">{{ index + 1 }}</td>
-
-            <!-- Drag handle column -->
-            <td
-              v-if="reorderable"
-              class="td-drag-handle"
-              :draggable="reorderable"
-              @click.stop
-              @dragstart.stop="onDragStart($event, index)"
+            <tr
+              v-for="(item, index) in items"
+              :key="getRowKey(item, index)"
+              :data-row-key="String(getRowKey(item, index))"
+              :class="{
+                selected: selectable && isRowSelected(index),
+                'is-dragging': draggedIndex === index,
+                'drag-over-top': dragOverIndex === index && dragOverPosition === 'top',
+                'drag-over-bottom': dragOverIndex === index && dragOverPosition === 'bottom',
+              }"
+              @dragover="onDragOver($event, index)"
+              @dragleave="onDragLeave($event, index)"
+              @drop="onDrop($event, index)"
+              @dragend="onDragEnd"
+              @click="emit('row-click', item, index)"
             >
-              <slot name="drag-handle" :item="item" :index="index">
-                <span class="drag-handle-icon" :title="$t('drag_to_reorder') || 'Drag to reorder'">
-                  <svg
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  >
-                    <circle cx="9" cy="5" r="1" fill="currentColor" />
-                    <circle cx="9" cy="12" r="1" fill="currentColor" />
-                    <circle cx="9" cy="19" r="1" fill="currentColor" />
-                    <circle cx="15" cy="5" r="1" fill="currentColor" />
-                    <circle cx="15" cy="12" r="1" fill="currentColor" />
-                    <circle cx="15" cy="19" r="1" fill="currentColor" />
-                  </svg>
-                </span>
-              </slot>
-            </td>
+              <!-- Selection checkbox -->
+              <td v-if="selectable" class="td-checkbox" @click.stop>
+                <input type="checkbox" :checked="isRowSelected(index)" @change="toggleRow(index)" />
+              </td>
 
-            <!-- Data cells -->
-            <td
-              v-for="header in headers"
-              :key="header.key"
-              :style="{ textAlign: header.align || 'start' }"
-              class="td-data"
-              @dblclick.stop="copyToClipboard((item as any)?.[header.key])"
-            >
-              <slot
-                :name="`cell-${header.key}`"
-                :item="item"
-                :index="index"
-                :value="(item as any)[header.key]"
+              <!-- Row index -->
+              <td v-if="showIndex" class="td-index">{{ index + 1 }}</td>
+
+              <!-- Drag handle column -->
+              <td
+                v-if="reorderable"
+                class="td-drag-handle"
+                :draggable="reorderable"
+                @click.stop
+                @dragstart.stop="onDragStart($event, index)"
               >
-                {{ (item as any)[header.key] ?? '--' }}
-              </slot>
-            </td>
+                <slot name="drag-handle" :item="item" :index="index">
+                  <span
+                    class="drag-handle-icon"
+                    :title="$t('drag_to_reorder') || 'Drag to reorder'"
+                  >
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <circle cx="9" cy="5" r="1" fill="currentColor" />
+                      <circle cx="9" cy="12" r="1" fill="currentColor" />
+                      <circle cx="9" cy="19" r="1" fill="currentColor" />
+                      <circle cx="15" cy="5" r="1" fill="currentColor" />
+                      <circle cx="15" cy="12" r="1" fill="currentColor" />
+                      <circle cx="15" cy="19" r="1" fill="currentColor" />
+                    </svg>
+                  </span>
+                </slot>
+              </td>
 
-            <!-- Actions cell -->
-            <td v-if="$slots.actions" class="td-actions" @click.stop>
-              <slot name="actions" :item="item" :index="index" />
-            </td>
-          </tr>
+              <!-- Data cells -->
+              <td
+                v-for="header in headers"
+                :key="header.key"
+                :style="{ textAlign: header.align || 'start' }"
+                class="td-data"
+                @dblclick.stop="copyToClipboard((item as any)?.[header.key])"
+              >
+                <slot
+                  :name="`cell-${header.key}`"
+                  :item="item"
+                  :index="index"
+                  :value="(item as any)[header.key]"
+                >
+                  {{ (item as any)[header.key] ?? '--' }}
+                </slot>
+              </td>
+
+              <!-- Actions cell -->
+              <td v-if="$slots.actions" class="td-actions" @click.stop>
+                <slot name="actions" :item="item" :index="index" />
+              </td>
+            </tr>
+          </TransitionGroup>
         </tbody>
       </table>
     </div>
@@ -594,6 +667,48 @@
     user-select: none;
   }
 
+  .dashboard-shell .app-table {
+    position: relative;
+  }
+
+  .dashboard-shell .app-table tbody.is-destructive-removal .dashboard-row-removal-move {
+    transition: transform var(--motion-base, 200ms) var(--motion-ease, ease-out);
+  }
+
+  .dashboard-shell .app-table .dashboard-row-removal-leave-active.is-confirmed-removal {
+    position: absolute;
+    width: var(--removal-row-width);
+    pointer-events: none;
+    transition:
+      opacity var(--motion-base, 200ms) ease-out,
+      transform var(--motion-base, 200ms) var(--motion-ease, ease-out);
+  }
+
+  .dashboard-shell .app-table .dashboard-row-removal-leave-active.is-confirmed-removal > td {
+    background: var(--danger-light, var(--gray-100));
+  }
+
+  .dashboard-shell .app-table .dashboard-row-removal-leave-to.is-confirmed-removal {
+    opacity: 0;
+    transform: translateY(3px) scaleY(0.88);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .dashboard-shell .app-table tbody.is-destructive-removal .dashboard-row-removal-move {
+      transition: none;
+    }
+
+    .dashboard-shell .app-table .dashboard-row-removal-leave-active.is-confirmed-removal {
+      position: relative;
+      width: auto;
+      transition: opacity var(--motion-fast, 140ms) ease-out;
+    }
+
+    .dashboard-shell .app-table .dashboard-row-removal-leave-to.is-confirmed-removal {
+      transform: none;
+    }
+  }
+
   .app-table tbody tr > td {
     transition:
       background-color 0.16s ease,
@@ -659,7 +774,11 @@
       transform 160ms ease;
   }
 
-  .dashboard-shell .app-table-wrapper--standard .app-table .td-actions .action-btn:is(.show, .view) {
+  .dashboard-shell
+    .app-table-wrapper--standard
+    .app-table
+    .td-actions
+    .action-btn:is(.show, .view) {
     --row-action-ink: var(--info-dark);
 
     color: var(--row-action-ink);
@@ -671,13 +790,21 @@
     color: var(--row-action-ink);
   }
 
-  .dashboard-shell .app-table-wrapper--standard .app-table .td-actions .action-btn:is(.delete, .danger) {
+  .dashboard-shell
+    .app-table-wrapper--standard
+    .app-table
+    .td-actions
+    .action-btn:is(.delete, .danger) {
     --row-action-ink: var(--danger);
 
     color: var(--row-action-ink);
   }
 
-  .dashboard-shell .app-table-wrapper--standard .app-table .td-actions .action-btn:is(.execution-btn, .calculator, .pricing, .financial) {
+  .dashboard-shell
+    .app-table-wrapper--standard
+    .app-table
+    .td-actions
+    .action-btn:is(.execution-btn, .calculator, .pricing, .financial) {
     --row-action-ink: #0f766e;
 
     color: var(--row-action-ink);
@@ -692,7 +819,11 @@
     font-size: 16px;
   }
 
-  .dashboard-shell .app-table-wrapper--standard .app-table .td-actions .action-btn:hover:not(:disabled, [aria-disabled='true']) {
+  .dashboard-shell
+    .app-table-wrapper--standard
+    .app-table
+    .td-actions
+    .action-btn:hover:not(:disabled, [aria-disabled='true']) {
     border-color: color-mix(in sRGB, var(--row-action-ink) 42%, var(--row-action-paper));
     color: var(--row-action-ink);
     background: color-mix(in sRGB, var(--row-action-ink) 17%, var(--row-action-paper));
@@ -700,7 +831,11 @@
     transform: translateY(-1px);
   }
 
-  .dashboard-shell .app-table-wrapper--standard .app-table .td-actions .action-btn:active:not(:disabled, [aria-disabled='true']) {
+  .dashboard-shell
+    .app-table-wrapper--standard
+    .app-table
+    .td-actions
+    .action-btn:active:not(:disabled, [aria-disabled='true']) {
     background: color-mix(in sRGB, var(--row-action-ink) 24%, var(--row-action-paper));
     transform: translateY(1px);
   }
@@ -710,7 +845,11 @@
     outline-offset: 2px;
   }
 
-  .dashboard-shell .app-table-wrapper--standard .app-table .td-actions .action-btn:is(:disabled, [aria-disabled='true']) {
+  .dashboard-shell
+    .app-table-wrapper--standard
+    .app-table
+    .td-actions
+    .action-btn:is(:disabled, [aria-disabled='true']) {
     opacity: 0.55;
     cursor: not-allowed;
   }
@@ -725,13 +864,21 @@
     background: color-mix(in sRGB, var(--row-action-ink) 9%, var(--row-action-paper));
   }
 
-  .dashboard-shell .app-table-wrapper--standard .app-table .td-actions .app-btn.action--view:hover:not(:disabled) {
+  .dashboard-shell
+    .app-table-wrapper--standard
+    .app-table
+    .td-actions
+    .app-btn.action--view:hover:not(:disabled) {
     border-color: color-mix(in sRGB, var(--row-action-ink) 42%, var(--row-action-paper));
     color: var(--row-action-ink);
     background: color-mix(in sRGB, var(--row-action-ink) 17%, var(--row-action-paper));
   }
 
-  .dashboard-shell .app-table-wrapper--standard .app-table .td-actions .app-btn.action--view:focus-visible {
+  .dashboard-shell
+    .app-table-wrapper--standard
+    .app-table
+    .td-actions
+    .app-btn.action--view:focus-visible {
     outline: 2px solid var(--row-action-ink);
     outline-offset: 2px;
   }

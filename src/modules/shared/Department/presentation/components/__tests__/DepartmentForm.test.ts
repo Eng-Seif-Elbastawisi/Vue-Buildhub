@@ -80,8 +80,8 @@ describe('DepartmentForm', () => {
     });
   });
 
-  it('hides the stage field and emits no stage id for supervision departments', async () => {
-    const wrapper = mountForm({ type: Type.SUPERVISION });
+  it('keeps the stage field out of design departments', async () => {
+    const wrapper = mountForm({ type: Type.DESIGN });
 
     expect(wrapper.find('.stage-select').exists()).toBe(false);
     await wrapper.find('.multi-lang-input').trigger('click');
@@ -90,9 +90,15 @@ describe('DepartmentForm', () => {
     const params = events.at(-1)?.[0] as AddDepartmentParams;
     expect(params.toMap()).toMatchObject({
       stage_id: undefined,
-      type: Type.SUPERVISION,
+      type: Type.DESIGN,
     });
     expect(params.validate().isValid).toBe(true);
+  });
+
+  it('places the supervision stage field in the expanded grid area', () => {
+    const wrapper = mountForm({ type: Type.SUPERVISION });
+
+    expect(wrapper.find('.field-group--stage .stage-select').exists()).toBe(true);
   });
 
   it('uses route type prop when editing an existing department', () => {
@@ -140,7 +146,11 @@ describe('DepartmentForm', () => {
   });
 
   it('clears title and selected stage when resetKey changes', async () => {
-    const wrapper = mountForm({ department: DepartmentModel.example(), resetKey: 0 });
+    const wrapper = mountForm({
+      department: DepartmentModel.example(),
+      type: Type.SUPERVISION,
+      resetKey: 0,
+    });
 
     expect(wrapper.find('.title-en').text()).toBe('Design Department');
     expect(wrapper.find('.stage-select').text()).toBe('Engineering');

@@ -71,6 +71,8 @@ describe('ProjectShowHeader', () => {
     const wrapper = mountHeader({ locationText: 'Country > Governorate > City' });
 
     expect(wrapper.text()).toContain('Test Project');
+    expect(wrapper.find('.project-title-row h2').text()).toBe('Test Project');
+    expect(wrapper.find('.project-title-row h1').exists()).toBe(false);
     expect(wrapper.text()).toContain('Villa');
     expect(wrapper.text()).toContain('Project Code: 24');
     expect(wrapper.find('.project-meta-row bdi').text()).toBe('Country > Governorate > City');
