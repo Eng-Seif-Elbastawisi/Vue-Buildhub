@@ -149,12 +149,13 @@ describe('SidebarNavigation.vue', () => {
     );
 
     const wrapper = mountSidebar();
-    const activeSection = wrapper.get('.rail-action.active');
+    const activeSection = wrapper.get('.section-toggle.active');
     const activeLinkLabels = wrapper.findAll('a.menu-item.active').map((link) => link.text());
 
     expect(activeSection.attributes('title')).toBe('sidebar.execution-quotes');
     expect(activeSection.find('.pi-calculator').exists()).toBe(true);
     expect(activeLinkLabels).toContain('sidebar.add-execution-quote');
+    expect(wrapper.get('a.menu-item.active').find('.item-icon').exists()).toBe(false);
   });
 
   it('starts with the shared navigation pane open across dashboard routes', async () => {
@@ -170,9 +171,10 @@ describe('SidebarNavigation.vue', () => {
     const wrapper = mountSidebar();
 
     expect(wrapper.get('.sidebar-shell').classes()).toContain('is-open');
-    expect(wrapper.get('.rail-action.active').attributes('title')).toBe(
+    expect(wrapper.get('.section-toggle.active').attributes('title')).toBe(
       'sidebar.execution-quotes',
     );
+    expect(wrapper.find('.sidebar-rail').exists()).toBe(false);
 
     route.name = 'Other Route';
     await nextTick();
@@ -180,26 +182,33 @@ describe('SidebarNavigation.vue', () => {
     expect(wrapper.get('.sidebar-shell').classes()).toContain('is-open');
   });
 
-  it('toggles the selected section with the existing collapse behavior', async () => {
+  it('expands nested items and collapses the single sidebar', async () => {
     const wrapper = mountSidebar();
-    const executionQuotesButton = wrapper.get('.rail-action[title="sidebar.execution-quotes"]');
+    const executionQuotesButton = wrapper.get('.section-toggle[title="sidebar.execution-quotes"]');
 
     expect(wrapper.get('.sidebar-shell').classes()).toContain('is-open');
+    expect(executionQuotesButton.attributes('aria-expanded')).toBe('false');
 
     await executionQuotesButton.trigger('click');
-    expect(wrapper.get('.sidebar-shell').classes()).toContain('is-open');
+    expect(executionQuotesButton.attributes('aria-expanded')).toBe('true');
+    expect(wrapper.get('#sidebar-section-execution-quotes').isVisible()).toBe(true);
 
     await executionQuotesButton.trigger('click');
+    expect(executionQuotesButton.attributes('aria-expanded')).toBe('false');
+    expect(wrapper.find('#sidebar-section-execution-quotes').exists()).toBe(false);
+
+    await wrapper.get('.collapse-toggle').trigger('click');
     expect(wrapper.get('.sidebar-shell').classes()).not.toContain('is-open');
+    expect(wrapper.get('.collapse-toggle').attributes('aria-label')).toBe('expand_sidebar');
 
-    await executionQuotesButton.trigger('click');
+    await wrapper.get('.collapse-toggle').trigger('click');
     expect(wrapper.get('.sidebar-shell').classes()).toContain('is-open');
   });
 
   it('removes the extra top spacing before the execution offers group', async () => {
     const wrapper = mountSidebar();
 
-    await wrapper.get('.rail-action[title="sidebar.design_offers"]').trigger('click');
+    await wrapper.get('.section-toggle[title="sidebar.design_offers"]').trigger('click');
 
     const executionOffersGroup = wrapper.get('.menu-subgroup[title="sidebar.execution_offers"]');
 
