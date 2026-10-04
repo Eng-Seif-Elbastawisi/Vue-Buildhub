@@ -25,6 +25,11 @@ const router = createRouter({
       component: () => import('@/views/error/Error.vue'),
     },
     {
+      path: '/server-error',
+      name: 'Server Error',
+      component: () => import('@/views/error/Error.vue'),
+    },
+    {
       path: '/',
       redirect: '/organization',
     },

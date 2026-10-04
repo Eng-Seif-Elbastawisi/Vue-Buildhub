@@ -28,6 +28,14 @@
   min-width: 0;
 }
 
+.execution-quote-index__identity {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
 .execution-quote-index__heading-copy h1 {
   margin: 0;
   color: var(--quote-ink);
@@ -317,6 +325,42 @@ body:has(.execution-quote-index) .p-select-overlay.p-anchored-overlay-leave-to {
   box-shadow: 0 8px 22px rgb(39 42 43 / 4%);
 }
 
+.execution-quote-index .status-loading {
+  display: block;
+  width: 100%;
+  min-width: 0;
+}
+
+.execution-quote-index__table-card--loading {
+  width: 100%;
+  min-height: calc(100dvh - 18rem);
+}
+
+.execution-quote-index__table-card--loading .skeleton-wrapper {
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.execution-quote-index__table-card--loading .skeleton-table {
+  min-width: 1210px;
+}
+
+.execution-quote-index__table-card--loading .skeleton-table thead th {
+  padding-block: 10px;
+}
+
+.execution-quote-index__table-card--loading .skeleton-table tbody tr {
+  height: 72px;
+}
+
+.execution-quote-index__result-count-placeholder {
+  flex: 0 0 72px;
+  height: 14px;
+  border-radius: 8px;
+  background: var(--gray-200);
+}
+
 .execution-quote-index__table-header {
   min-height: 62px;
   padding: 12px 18px;
@@ -452,70 +496,57 @@ body:has(.execution-quote-index) .p-select-overlay.p-anchored-overlay-leave-to {
   white-space: nowrap;
 }
 
-.execution-quote-index__row-actions__button-group {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-
 .execution-quote-index .execution-quote-index__row-actions .app-btn {
-  --quote-row-action-ink: var(--semantic-action-ink, var(--quote-neutral-ink));
-
   display: inline-flex;
   flex: 0 0 auto;
   align-items: center;
   justify-content: center;
   gap: 6px;
   box-sizing: border-box;
-  height: 36px;
-  min-height: 36px;
-  padding: 0 10px;
-  border: 1px solid color-mix(in srgb, var(--quote-row-action-ink) 20%, var(--quote-paper));
+  height: 34px;
+  min-height: 34px;
   border-radius: 8px;
-  color: var(--quote-row-action-ink);
-  background: color-mix(in srgb, var(--quote-row-action-ink) 9%, var(--quote-paper));
   box-shadow: none;
   font-size: 0.75rem;
   line-height: 1.2;
   white-space: nowrap;
 }
 
-.execution-quote-index
-  .execution-quote-index__row-actions
-  .execution-quote-index__change-status-button {
-  --quote-row-action-ink: var(--quote-neutral-ink);
-}
-
-.execution-quote-index
-  .app-table-wrapper--standard
-  .app-table
-  .td-actions
-  .execution-quote-index__row-actions
-  .app-btn.action--view {
-  --row-action-ink: var(--dashboard-action-view);
+.execution-quote-index .execution-quote-index__row-actions .execution-quote-index__view-button {
+  padding: 0 11px;
+  border: 1px solid var(--quote-copper-dark);
+  color: var(--quote-paper);
+  background: var(--quote-copper-dark);
 }
 
 .execution-quote-index
   .execution-quote-index__row-actions
-  .app-btn:hover:not(:disabled, [aria-disabled='true']) {
-  border-color: color-mix(in srgb, var(--quote-row-action-ink) 42%, var(--quote-paper));
-  color: var(--quote-row-action-ink);
-  background: color-mix(in srgb, var(--quote-row-action-ink) 16%, var(--quote-paper));
-  box-shadow: none;
+  .execution-quote-index__view-button:hover:not(:disabled, [aria-disabled='true']) {
+  border-color: var(--quote-copper-pressed);
+  color: var(--quote-paper);
+  background: var(--quote-copper-pressed);
+}
+
+.execution-quote-index .execution-quote-index__row-actions .execution-quote-index__more-button {
+  width: 34px;
+  min-width: 34px;
+  padding: 0;
+  border: 1px solid var(--quote-line);
+  color: var(--quote-neutral-ink);
+  background: var(--quote-paper);
+}
+
+.execution-quote-index
+  .execution-quote-index__row-actions
+  .execution-quote-index__more-button:hover:not(:disabled, [aria-disabled='true']) {
+  border-color: var(--quote-copper-dark);
+  color: var(--quote-copper-dark);
+  background: var(--quote-canvas);
 }
 
 .execution-quote-index .execution-quote-index__row-actions .app-btn:focus-visible {
-  outline: 2px solid var(--quote-row-action-ink);
+  outline: 2px solid var(--quote-copper-dark);
   outline-offset: 2px;
-}
-
-.execution-quote-index
-  .execution-quote-index__row-actions
-  .app-btn:is(:disabled, [aria-disabled='true']) {
-  border-color: var(--quote-line);
-  color: var(--quote-muted);
-  background: var(--quote-canvas);
-  opacity: 0.55;
 }
 
 .execution-quote-index__row-actions .btn__icon--right {
@@ -523,7 +554,38 @@ body:has(.execution-quote-index) .p-select-overlay.p-anchored-overlay-leave-to {
 }
 
 .execution-quote-index__row-actions .btn__icon i {
-  font-size: 16px;
+  font-size: 14px;
+}
+
+.execution-quote-index__no-actions {
+  color: var(--quote-muted);
+}
+
+.execution-quote-index__actions-menu.p-menu {
+  min-width: 170px;
+  padding: 4px;
+  border: 1px solid var(--quote-line);
+  border-radius: 9px;
+  background: var(--quote-paper);
+  box-shadow: var(--shadow-md);
+}
+
+.execution-quote-index__actions-menu .p-menu-item-link {
+  gap: 9px;
+  padding: 9px 10px;
+  border-radius: 6px;
+  color: var(--quote-ink);
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.execution-quote-index__actions-menu .p-menu-item-icon {
+  color: var(--quote-copper-dark);
+  font-size: 14px;
+}
+
+.execution-quote-index__actions-menu[dir='rtl'] .p-menu-item-link {
+  direction: rtl;
 }
 
 @keyframes quote-pilot-enter {
@@ -600,6 +662,10 @@ body:has(.execution-quote-index) .p-select-overlay.p-anchored-overlay-leave-to {
 
 @media (prefers-reduced-motion: reduce) {
   .execution-quote-index {
+    animation: none;
+  }
+
+  .execution-quote-index__table-card--loading .skeleton::after {
     animation: none;
   }
 

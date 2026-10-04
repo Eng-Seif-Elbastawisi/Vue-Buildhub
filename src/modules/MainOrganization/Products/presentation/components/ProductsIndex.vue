@@ -1741,7 +1741,6 @@
     .skeleton-line--actions {
       grid-column: 1;
     }
-
   }
 
   @media (prefers-reduced-motion: reduce) {

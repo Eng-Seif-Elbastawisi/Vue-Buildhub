@@ -26,6 +26,9 @@
   import TimeoutState from './TimeoutState.vue';
   // import NoNetworkState from './NoNetworkState.vue';
   import ProgressState from './ProgressState.vue';
+  import AppErrorState from '@/shared/ConstructionStates/AppErrorState.vue';
+  import AppEmptyState from '@/shared/ConstructionStates/AppEmptyState.vue';
+  import ConstructionScene from '@/shared/ConstructionStates/ConstructionScene.vue';
 
   const props = defineProps({
     /**
@@ -172,12 +175,7 @@
     <!-- Empty State -->
     <div v-else-if="isEmpty" class="status-empty">
       <slot name="empty" :state="currentState">
-        <div class="empty-default">
-          <div class="state-icon empty-icon" aria-hidden="true">
-            <i class="pi pi-inbox"></i>
-          </div>
-          <p class="empty-message">{{ $t('no_data') }}</p>
-        </div>
+        <AppEmptyState :title="$t('no_data')" />
       </slot>
     </div>
 
@@ -252,15 +250,14 @@
 
     <!-- Failed State -->
     <div v-else-if="isFailed" class="status-failed">
+      <ConstructionScene v-if="$slots.failed" variant="section" class="section-failed-scene" />
       <slot name="failed" :error="currentState.error" :retry="handleRetry" :state="currentState">
-        <!-- <div v-if="inlineError" class="inline-error">
-          <span class="error-icon">⚠️</span>
-          <span class="error-text">{{ errorMessage }}</span>
-          <button v-if="retryFn || $attrs.onRetry" class="inline-retry" @click="handleRetry">
-            Retry
-          </button>
-        </div>
-        <DataFailedState v-else /> -->
+        <AppErrorState
+          variant="section"
+          :class="{ 'app-error-state--inline': inlineError }"
+          :message="currentState.error?.displayMessage || undefined"
+          @retry="handleRetry"
+        />
       </slot>
     </div>
 
@@ -273,7 +270,7 @@
           <div class="skeleton-line"></div>
         </div>
         <div v-else class="spinner-loader">
-          <div class="spinner"></div>
+          <ConstructionScene variant="loading" class="section-loading-scene" />
           <span class="loading-text">{{ $t('loading') }}</span>
         </div>
       </slot>
@@ -350,6 +347,18 @@
   .loading-text {
     color: var(--gray-500);
     font-size: 0.875rem;
+  }
+
+  .section-loading-scene {
+    width: 140px;
+  }
+
+  .section-failed-scene {
+    width: min(100%, 140px);
+  }
+
+  :deep(.app-error-state--inline) {
+    min-height: 190px;
   }
 
   /* Skeleton Loader */

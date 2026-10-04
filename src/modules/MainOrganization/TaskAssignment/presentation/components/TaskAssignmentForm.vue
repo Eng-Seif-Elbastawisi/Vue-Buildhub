@@ -2,6 +2,11 @@
   import { computed, nextTick, reactive, ref, watch } from 'vue';
 
   import { useI18n } from 'vue-i18n';
+  import {
+    attachmentGallery,
+    attachmentKind,
+    toGalleryAttachment,
+  } from '@/shared/AttachmentGallery/attachmentGallery';
 
   import type TitleInterface from '@/base/Data/Models/titleInterface';
 
@@ -202,11 +207,12 @@
     await resetUploader();
   };
 
-  const isImageAttachment = (attachment: TaskAssignmentAttachment): boolean => {
-    return (
-      attachment.type?.startsWith('image/') === true || attachment.file.startsWith('data:image/')
-    );
-  };
+  const isImageAttachment = (attachment: TaskAssignmentAttachment): boolean =>
+    attachmentKind({
+      url: attachment.file,
+      name: attachment.name || '',
+      mimeType: attachment.type,
+    }) === 'image';
 
   const getAttachmentName = (attachment: TaskAssignmentAttachment, index: number): string => {
     if (attachment.name) {
@@ -369,8 +375,6 @@
         />
       </div>
 
-    
-
       <!-- Notes -->
       <div class="task-assignment-form__field task-assignment-form__field--full">
         <label class="task-assignment-form__label" for="task_assignment_notes">
@@ -386,7 +390,7 @@
         />
       </div>
 
-        <!-- Has Attached -->
+      <!-- Has Attached -->
       <div class="task-assignment-form__field">
         <label class="task-assignment-form__checkbox" for="has_attached">
           <input id="has_attached" v-model="form.hasAttached" type="checkbox" :disabled="loading" />
@@ -396,15 +400,13 @@
           </span>
         </label>
       </div>
-      
+
       <!-- Attachments -->
       <div class="task-assignment-form__field task-assignment-form__field--full">
         <section class="task-assignment-attachments">
           <div class="task-assignment-attachments__header">
             <div>
-              <h2>
-                {{ $t('task_assignment.form.attachments.label') }} ({{ $t('optional') }} )
-              </h2>
+              <h2>{{ $t('task_assignment.form.attachments.label') }} ({{ $t('optional') }} )</h2>
 
               <p>
                 {{ $t('task_assignment.form.attachments.description') }}
@@ -436,7 +438,12 @@
               :key="attachment.signature ?? `${attachment.file}-${index}`"
               class="task-assignment-attachment"
             >
-              <div class="task-assignment-attachment__preview">
+              <button
+                type="button"
+                class="task-assignment-attachment__preview"
+                :aria-label="getAttachmentName(attachment, index)"
+                @click="attachmentGallery.open(form.attachments.map(toGalleryAttachment), index)"
+              >
                 <img
                   v-if="isImageAttachment(attachment)"
                   :src="attachment.file"
@@ -460,7 +467,7 @@
                     }}
                   </small>
                 </span>
-              </div>
+              </button>
 
               <!-- Alt -->
               <div class="task-assignment-attachment__fields">

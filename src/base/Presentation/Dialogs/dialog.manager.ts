@@ -60,6 +60,8 @@ class DialogManager {
   /** Loading message */
   public loadingMessage: Ref<string> = ref('');
 
+  public loadingKind: Ref<'default' | 'delete'> = ref('default');
+
   /** Progress value for loading */
   public loadingProgress: Ref<number> = ref(0);
 
@@ -134,6 +136,14 @@ class DialogManager {
       duration: 3000,
       ...options,
     });
+  }
+
+  deleteSuccess(message: string, options?: Partial<DialogOptions>): string {
+    return this.success(message, { constructionState: 'delete-success', ...options });
+  }
+
+  deleteError(message: string, options?: Partial<DialogOptions>): string {
+    return this.error(message, { constructionState: 'delete-error', ...options });
   }
 
   /**
@@ -253,9 +263,10 @@ class DialogManager {
   /**
    * Show loading dialog
    */
-  loading(message: string = 'loading'): void {
+  loading(message: string = 'loading', kind: 'default' | 'delete' = 'default'): void {
     this.isLoading.value = true;
     this.loadingMessage.value = message;
+    this.loadingKind.value = kind;
     this.loadingProgress.value = 0;
   }
 
@@ -275,6 +286,7 @@ class DialogManager {
   hideLoading(): void {
     this.isLoading.value = false;
     this.loadingMessage.value = '';
+    this.loadingKind.value = 'default';
     this.loadingProgress.value = 0;
   }
 
@@ -392,6 +404,7 @@ class DialogManager {
     this.toasts.value = [];
     this.isLoading.value = false;
     this.loadingMessage.value = '';
+    this.loadingKind.value = 'default';
     this.loadingProgress.value = 0;
   }
 

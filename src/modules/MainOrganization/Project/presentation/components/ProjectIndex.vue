@@ -787,7 +787,33 @@
       <!-- ======================================================= -->
 
       <template #loader>
+        <div
+          v-if="route.name === 'offers-projects'"
+          class="project-offers-skeleton"
+          role="status"
+          aria-busy="true"
+          :aria-label="$t('loading')"
+        >
+          <TableSkelaton
+            :rows="perPage"
+            :columns="headers.length"
+            :has-actions="true"
+            :show-index="true"
+            :selectable="true"
+          />
+          <div
+            class="pagination-wrapper pagination-wrapper--standard project-offers-skeleton__pagination"
+            aria-hidden="true"
+          >
+            <span class="project-offers-skeleton__summary"></span>
+            <div class="project-offers-skeleton__pages">
+              <span v-for="pageIndex in 4" :key="pageIndex"></span>
+            </div>
+            <span class="project-offers-skeleton__page-size"></span>
+          </div>
+        </div>
         <TableSkelaton
+          v-else
           :rows="5"
           :columns="headers.length"
           :has-actions="true"
@@ -814,6 +840,74 @@
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
+  }
+
+  .project-offers-skeleton {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 100%;
+    gap: 1rem;
+    width: 100%;
+    min-width: 0;
+    min-height: calc(100dvh - 17rem);
+  }
+
+  .project-offers-skeleton :deep(.skeleton-wrapper) {
+    display: flex;
+    flex: 1 1 auto;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .project-offers-skeleton :deep(.table-responsive) {
+    display: flex;
+    flex: 1 1 auto;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .project-offers-skeleton :deep(.skeleton-table) {
+    flex: 1 0 auto;
+    min-width: 70rem;
+    height: 100%;
+  }
+
+  .project-offers-skeleton__pagination {
+    flex: 0 0 auto;
+  }
+
+  .project-offers-skeleton__summary,
+  .project-offers-skeleton__page-size,
+  .project-offers-skeleton__pages span {
+    display: block;
+    height: 0.9rem;
+    border-radius: var(--radius-sm);
+    background: var(--gray-200);
+  }
+
+  .project-offers-skeleton__summary {
+    width: 8rem;
+  }
+
+  .project-offers-skeleton__page-size {
+    width: 6rem;
+  }
+
+  .project-offers-skeleton__pages {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .project-offers-skeleton__pages span {
+    width: 2.25rem;
+    height: 2.25rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .project-offers-skeleton :deep(.skeleton::after) {
+      animation: none;
+    }
   }
 
   /*

@@ -6,6 +6,7 @@ import { describe, expect, it, vi } from 'vitest';
 import AttachmentModel from '../../../../core/models/attachment.model';
 import ProductsShowModel from '../../../../core/models/products.show.model';
 import ProductShowInfo from '../ProductShowInfo.vue';
+import { attachmentGallery } from '@/shared/AttachmentGallery/attachmentGallery';
 
 vi.mock('vue-i18n', async (importOriginal) => {
   const vueI18n = await importOriginal<typeof VueI18nModule>();
@@ -17,7 +18,7 @@ vi.mock('vue-i18n', async (importOriginal) => {
 });
 
 describe('ProductShowInfo', () => {
-  it('renders product code and attachment links from model data', () => {
+  it('opens the product attachment in the shared gallery', async () => {
     const product = new ProductsShowModel({
       code: 'P-009',
       attachments: [
@@ -36,8 +37,9 @@ describe('ProductShowInfo', () => {
 
     expect(wrapper.text()).toContain('#P-009');
     expect(wrapper.text()).toContain('specification.pdf');
-    expect(wrapper.get('.download-btn').attributes('href')).toBe(
-      'https://assets.test/specification.pdf',
-    );
+    await wrapper.get('.attachment-view-btn').trigger('click');
+    expect(attachmentGallery.current.value?.url).toBe('https://assets.test/specification.pdf');
+    expect(attachmentGallery.visible.value).toBe(true);
+    attachmentGallery.close();
   });
 });

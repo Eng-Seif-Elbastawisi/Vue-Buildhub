@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
 import ProjectFloorShowModel from '../../../core/models/project.floor.show.model';
 import ProjectFloorShow from '../ProjectFloorShow.vue';
+import { attachmentGallery } from '@/shared/AttachmentGallery/attachmentGallery';
 
 const { fetchListMock, routeMock } = vi.hoisted(() => ({
   fetchListMock: vi.fn(),
@@ -88,7 +89,9 @@ describe('ProjectFloorShow', () => {
     expect(wrapper.text()).toContain('Site Engineer');
     expect(wrapper.text()).toContain('Lobby');
     expect(wrapper.text()).toContain('Lobby report');
-    expect(wrapper.find('a[href="https://example.com/lobby.pdf"]').exists()).toBe(true);
+    await wrapper.get('.attachment-card').trigger('click');
+    expect(attachmentGallery.current.value?.url).toBe('https://example.com/lobby.pdf');
+    attachmentGallery.close();
   });
 
   it('renders the empty state when no floor id is available', async () => {

@@ -8,6 +8,7 @@
   import { useI18n } from 'vue-i18n';
   import { dialogManager } from './dialog.manager';
   import { DIALOG_ICONS, DIALOG_COLORS, type Toast } from './dialog.types';
+  import AppToast from '@/shared/ConstructionStates/AppToast.vue';
 
   const { t, te } = useI18n();
 
@@ -21,12 +22,7 @@
   const props = withDefaults(
     defineProps<{
       position?:
-        | 'top-right'
-        | 'top-left'
-        | 'top-center'
-        | 'bottom-right'
-        | 'bottom-left'
-        | 'bottom-center';
+        'top-right' | 'top-left' | 'top-center' | 'bottom-right' | 'bottom-left' | 'bottom-center';
       maxToasts?: number;
     }>(),
     {
@@ -103,16 +99,21 @@
           :class="[`toast-type-${toast.type}`]"
           @click="handleToastClick(toast)"
         >
-          <!-- Icon -->
-          <div class="toast-icon" :style="{ backgroundColor: getToastColor(toast) }">
-            {{ getToastIcon(toast) }}
-          </div>
-
-          <!-- Content -->
-          <div class="toast-content">
-            <h4 v-if="toast.title" class="toast-title">{{ translateIfExists(toast.title) }}</h4>
-            <p class="toast-message">{{ translateIfExists(toast.message) }}</p>
-          </div>
+          <AppToast
+            v-if="toast.type === 'error' || toast.type === 'success' || toast.type === 'warning'"
+            :type="toast.type"
+            :title="translateIfExists(toast.title)"
+            :message="translateIfExists(toast.message)"
+          />
+          <template v-else>
+            <div class="toast-icon" :style="{ backgroundColor: getToastColor(toast) }">
+              {{ getToastIcon(toast) }}
+            </div>
+            <div class="toast-content">
+              <h4 v-if="toast.title" class="toast-title">{{ translateIfExists(toast.title) }}</h4>
+              <p class="toast-message">{{ translateIfExists(toast.message) }}</p>
+            </div>
+          </template>
 
           <!-- Close Button -->
           <button
@@ -144,13 +145,13 @@
 
   .toast-top-right {
     top: 1rem;
-    right: 1rem;
+    inset-inline-end: 1rem;
     align-items: flex-end;
   }
 
   .toast-top-left {
     top: 1rem;
-    left: 1rem;
+    inset-inline-start: 1rem;
     align-items: flex-start;
   }
 
@@ -163,14 +164,14 @@
 
   .toast-bottom-right {
     bottom: 1rem;
-    right: 1rem;
+    inset-inline-end: 1rem;
     align-items: flex-end;
     flex-direction: column-reverse;
   }
 
   .toast-bottom-left {
     bottom: 1rem;
-    left: 1rem;
+    inset-inline-start: 1rem;
     align-items: flex-start;
     flex-direction: column-reverse;
   }
@@ -191,7 +192,7 @@
     min-width: 300px;
     max-width: 400px;
     padding: 1rem;
-    background: var(--bg-main);
+    background: var(--quote-paper, var(--bg-main));
     border-radius: 12px;
     box-shadow:
       0 10px 25px -5px rgba(0 0 0 / 10%),
@@ -294,6 +295,16 @@
     transform: translateX(-100%);
   }
 
+  :global([dir='rtl'] .toast-top-right .toast-slide-enter-from),
+  :global([dir='rtl'] .toast-top-right .toast-slide-leave-to) {
+    transform: translateX(-100%);
+  }
+
+  :global([dir='rtl'] .toast-top-left .toast-slide-enter-from),
+  :global([dir='rtl'] .toast-top-left .toast-slide-leave-to) {
+    transform: translateX(100%);
+  }
+
   /* Center position animations */
   .toast-top-center .toast-slide-enter-from,
   .toast-bottom-center .toast-slide-enter-from {
@@ -334,6 +345,19 @@
       min-width: 0;
       max-width: 100%;
       width: 100%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .toast-slide-enter-active,
+    .toast-slide-leave-active,
+    .toast {
+      transition: none;
+    }
+
+    .toast-slide-enter-from,
+    .toast-slide-leave-to {
+      transform: none;
     }
   }
 </style>

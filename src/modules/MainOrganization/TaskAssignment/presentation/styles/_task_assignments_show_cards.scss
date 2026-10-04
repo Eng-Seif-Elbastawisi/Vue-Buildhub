@@ -439,6 +439,18 @@
     background: var(--white);
   }
 
+  .task-assignment-show__attachment-preview button {
+    display: grid;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--PrimaryColor);
+    cursor: pointer;
+    place-items: center;
+  }
+
   .task-assignment-show__attachment-preview img {
     width: 100%;
     height: 82px;

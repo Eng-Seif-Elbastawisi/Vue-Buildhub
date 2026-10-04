@@ -7,6 +7,10 @@
   import ProjectFloorController from '../controllers/project.floor.controller';
   import type ProjectFloorShowModel from '../../core/models/project.floor.show.model';
   import CustomAccordion from '@/shared/Accordion/CustomAccordion.vue';
+  import {
+    attachmentGallery,
+    toGalleryAttachment,
+  } from '@/shared/AttachmentGallery/attachmentGallery';
 
   const controller = ProjectFloorController.getInstance();
   const route = useRoute();
@@ -471,14 +475,18 @@
                     <span class="field-label">{{ $t('Project.attachments') }}</span>
                     <div v-if="!spaceItem.attachments?.length" class="empty-attachment">-</div>
                     <div v-else class="attachment-list">
-                      <a
-                        v-for="attachment in spaceItem.attachments"
+                      <button
+                        v-for="(attachment, attachmentIndex) in spaceItem.attachments"
                         :key="attachment.id ?? attachment.file"
-                        :href="attachment.file"
-                        :title="attachment.alt || $t('Project.view_file')"
-                        target="_blank"
-                        rel="noopener"
+                        type="button"
                         class="attachment-card"
+                        :title="attachment.alt || $t('Project.view_file')"
+                        @click="
+                          attachmentGallery.open(
+                            spaceItem.attachments.map(toGalleryAttachment),
+                            Number(attachmentIndex),
+                          )
+                        "
                       >
                         <span class="attachment-card__icon" aria-hidden="true"
                           ><svg
@@ -513,7 +521,7 @@
                               d="M14 3h7v7m0-7L10 14M10 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5"
                             /></svg
                         ></span>
-                      </a>
+                      </button>
                     </div>
                   </div>
                 </article>
@@ -1106,6 +1114,9 @@
     border-radius: 10px;
     background: #fcfdff;
     color: var(--floor-text);
+    font: inherit;
+    text-align: start;
+    cursor: pointer;
     text-decoration: none;
     transition:
       border-color 0.18s ease,

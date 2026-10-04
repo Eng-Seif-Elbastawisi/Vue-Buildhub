@@ -19,7 +19,13 @@ import { dialogManager } from '@/base/Presentation/Dialogs/dialog.manager';
 import { env } from '@/base/Core/Config';
 import type PaginationModel from '@/base/Core/Models/paginationModel';
 import TitleInterface from '@/base/Data/Models/titleInterface';
-import { notifyDataMutationSucceeded } from '@/base/Presentation/Controller/dataMutationEvent';
+import {
+  deleteSuccessMotionDuration,
+  isDeleteConfirmationActive,
+  notifyDataMutationSucceeded,
+  notifyDeleteOutcome,
+} from '@/base/Presentation/Controller/dataMutationEvent';
+import { ErrorType } from '@/base/Core/NetworkStructure/Resources/errors/errorModel';
 
 /**
  * Controller configuration options
@@ -435,34 +441,61 @@ export default abstract class BaseController<T, TList = T[]> {
 
     this.setItemLoading();
 
-    if (this.config.showLoadingDialog) {
-      this.showLoadingDialog('Deleting...');
-    }
-
     params?.validate();
     if (!params?.validate().isValid) {
       params?.validateOrThrow();
       return;
     }
+    const displayGlobalLoading = this.config.showLoadingDialog && !isDeleteConfirmationActive();
+    if (displayGlobalLoading) {
+      dialogManager.loading('construction_states.delete_loading', 'delete');
+    }
     try {
       const result = await this.repository.delete(params, this.mergeOptions(options));
+      const errorHandled =
+        result instanceof DataFailed &&
+        notifyDeleteOutcome({
+          status: 'error',
+          errorMessage: result.error?.displayMessage,
+        });
 
       // Reset item state on successful delete
       if (result instanceof DataSuccess) {
         this.setItemState(new DataInitial<T>());
         if (this.config.showSuccessDialog) {
-          this.showSuccessDialog('delete_success');
           this.setItemState(result);
         }
+        if (notifyDeleteOutcome({ status: 'success' })) {
+          await new Promise<void>((resolve) => setTimeout(resolve, deleteSuccessMotionDuration()));
+        }
+        if (this.config.showSuccessDialog) {
+          dialogManager.deleteSuccess(result.message || 'construction_states.delete_success');
+        }
         notifyDataMutationSucceeded();
+      } else if (
+        result instanceof DataFailed &&
+        result.error &&
+        (result.error.type === ErrorType.conflict ||
+          /related|linked|referenced|in use|مرتبط/.test(
+            result.error.displayMessage.toLowerCase(),
+          )) &&
+        !this.config.showErrorDialog &&
+        !errorHandled
+      ) {
+        dialogManager.deleteError(result.error.displayMessage);
       }
 
       return result;
     } catch (error: any) {
-      this.handleErrorResponse(new DataFailed({ error }));
-      return new DataFailed<void>({ error });
+      const failed = new DataFailed<void>({ error });
+      const errorHandled = notifyDeleteOutcome({
+        status: 'error',
+        errorMessage: failed.error?.displayMessage,
+      });
+      if (!errorHandled) this.handleErrorResponse(failed);
+      return failed;
     } finally {
-      this.hideLoadingDialog();
+      if (displayGlobalLoading) this.hideLoadingDialog();
     }
   }
 

@@ -1,5 +1,8 @@
 <script setup lang="ts">
-  import Image from 'primevue/image';
+  import {
+    attachmentGallery,
+    toGalleryAttachment,
+  } from '@/shared/AttachmentGallery/attachmentGallery';
   import type { Attachment, FloorSpace, NamedEntity } from './projectShow.types';
 
   defineProps<{
@@ -68,30 +71,22 @@
             </td>
             <td>
               <div v-if="space.attachments?.length" class="space-attachments">
-                <template
-                  v-for="attachment in space.attachments"
+                <button
+                  v-for="(attachment, index) in space.attachments"
                   :key="attachment.id ?? attachment.file"
+                  type="button"
+                  class="space-attachment"
+                  :aria-label="attachment.alt || attachment.file"
+                  @click="attachmentGallery.open(space.attachments.map(toGalleryAttachment), index)"
                 >
-                  <Image
+                  <img
                     v-if="isImageAttachment(attachment)"
-                    class="space-attachment space-attachment--image"
                     :src="attachment.file"
                     :alt="attachment.alt || getEntityName(space.space)"
-                    preview
-                    image-class="space-attachment__image"
+                    class="space-attachment__image"
                   />
-                  <a
-                    v-else
-                    class="space-attachment"
-                    :href="attachment.file"
-                    target="_blank"
-                    rel="noopener"
-                  >
-                    <span>
-                      <i class="pi pi-paperclip"></i>
-                    </span>
-                  </a>
-                </template>
+                  <i v-else class="pi pi-paperclip" aria-hidden="true" />
+                </button>
               </div>
               <span v-else>{{ emptyValue }}</span>
             </td>

@@ -24,6 +24,8 @@ describe('AuthShell.vue', () => {
     expect(wrapper.text()).toContain('auth_organization_headline_first_accent');
     expect(wrapper.text()).toContain('auth_organization_headline_second_accent');
     expect(wrapper.text()).toContain('auth_organization_card_estimates');
+    expect(wrapper.find('.organization-construction').exists()).toBe(true);
+    expect(wrapper.find('.admin-estimation').exists()).toBe(false);
     expect(wrapper.find('form.login-form').exists()).toBe(true);
   });
 
@@ -37,5 +39,7 @@ describe('AuthShell.vue', () => {
     expect(wrapper.text()).toContain('auth_admin_headline_first_accent');
     expect(wrapper.text()).toContain('auth_admin_headline_second_accent');
     expect(wrapper.text()).toContain('auth_admin_card_roles');
+    expect(wrapper.find('.organization-construction').exists()).toBe(false);
+    expect(wrapper.find('.admin-estimation').exists()).toBe(true);
   });
 });

@@ -1,7 +1,11 @@
 import { mount } from '@vue/test-utils';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import IndexPageHeader from '../IndexPageHeader.vue';
+
+vi.mock('vue-router', () => ({
+  useRoute: () => ({ path: '/admin/client-source' }),
+}));
 
 describe('IndexPageHeader', () => {
   it('renders the shared title hierarchy and omits an empty toolbar', () => {
@@ -55,5 +59,12 @@ describe('IndexPageHeader', () => {
     expect(actionOnly.find('.index-page-toolbar__search').exists()).toBe(false);
     expect(actionOnly.find('.index-page-heading__actions').exists()).toBe(true);
     expect(actionOnly.find('.index-page-toolbar').exists()).toBe(false);
+  });
+
+  it('uses an entity icon without an Add or Edit accent on a list page', () => {
+    const wrapper = mount(IndexPageHeader, { props: { title: 'Client sources' } });
+
+    expect(wrapper.find('.page-header-icon[data-icon-kind="hierarchy"]').exists()).toBe(true);
+    expect(wrapper.find('.page-header-icon__accent').exists()).toBe(false);
   });
 });

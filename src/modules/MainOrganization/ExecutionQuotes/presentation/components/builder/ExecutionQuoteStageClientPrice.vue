@@ -41,7 +41,8 @@ const onInput = (event: Event) => {
     </div>
 
     <div class="pricing-input">
-      <input :value="modelValue ?? ''" type="number" :min="EXECUTION_QUOTE_STAGE_PRICING_MINIMUM" step="1" required
+      <input
+:value="modelValue ?? ''" type="number" :min="EXECUTION_QUOTE_STAGE_PRICING_MINIMUM" step="1" required
         :disabled="disabled" :aria-required="!disabled" :aria-label="$t('execution_quote.client_stage_price')"
         :placeholder="$t('execution_quote.placeholders.client_stage_price')" @input="onInput" />
 

@@ -7,6 +7,7 @@ import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/da
 import fallbackCompanyLogo from '@/assets/images/BuildHubLogo.jpg';
 import fallbackProjectImage from '@/assets/images/ChatGPT Image Jul 1, 2026, 11_19_16 AM.png';
 import { loadFirstPdfImage } from '@/shared/Pdf/loadPdfImage';
+import { attachmentKind, toGalleryAttachment } from '@/shared/AttachmentGallery/attachmentGallery';
 import {
   configurePdfDocumentFont,
   getPdfFontFamily,
@@ -569,9 +570,8 @@ export const useProjectShow = () => {
     return t(`ProjectFloor.floor_numbers.${floorEntry[0]}`);
   };
 
-  const isImageAttachment = (attachment?: Attachment | null) => {
-    return /\.(png|jpe?g|webp|gif|svg)$/i.test(attachment?.file ?? '');
-  };
+  const isImageAttachment = (attachment?: Attachment | null) =>
+    attachment ? attachmentKind(toGalleryAttachment(attachment)) === 'image' : false;
 
   const goToSection = (tabId: string) => {
     activeTab.value = tabId;

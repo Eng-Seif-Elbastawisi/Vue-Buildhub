@@ -62,6 +62,9 @@ export interface DialogOptions {
     /** Dialog type determines styling and icon */
     type: DialogType;
 
+    /** Construction feedback used by delete operations. */
+    constructionState?: 'delete-success' | 'delete-error';
+
     /** Dialog title */
     title?: string;
 
