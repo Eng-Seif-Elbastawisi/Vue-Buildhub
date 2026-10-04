@@ -1,4 +1,6 @@
 <script setup lang="ts">
+  import { inject, onUnmounted, watch } from 'vue';
+  import type { Ref } from 'vue';
   import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
   import ProjectDepartmentsSection from './project_show/ProjectDepartmentsSection.vue';
   import ProjectFloorsSection from './project_show/ProjectFloorsSection.vue';
@@ -8,6 +10,7 @@
   import ProjectShowHeader from './project_show/ProjectShowHeader.vue';
   import ProjectStatsSection from './project_show/ProjectStatsSection.vue';
   import ProjectShowTabs from './project_show/ProjectShowTabs.vue';
+  import ProjectShowSkeleton from './project_show/ProjectShowSkeleton.vue';
   import ProjectSideColumn from './project_show/ProjectSideColumn.vue';
   import ProjectSpacesSection from './project_show/ProjectSpacesSection.vue';
   import { useProjectShow } from '../composables/useProjectShow';
@@ -32,6 +35,23 @@
     pricingSectionProps,
     sideColumnProps,
   } = useProjectShow();
+
+  const breadcrumbCurrentLabel = inject<Ref<string | undefined>>(
+    'dashboard-breadcrumb-current-label',
+    undefined,
+  );
+
+  watch(
+    () => (headerProps.value.project.id ? headerProps.value.projectTitle : undefined),
+    (label) => {
+      if (breadcrumbCurrentLabel) breadcrumbCurrentLabel.value = label;
+    },
+    { immediate: true },
+  );
+
+  onUnmounted(() => {
+    if (breadcrumbCurrentLabel) breadcrumbCurrentLabel.value = undefined;
+  });
 </script>
 
 <template>
@@ -45,18 +65,7 @@
       "
     >
       <template #loader>
-        <section class="project-state-card" aria-live="polite" aria-busy="true">
-          <span class="project-state-card__icon" aria-hidden="true">
-            <i class="pi pi-spin pi-spinner"></i>
-          </span>
-          <strong>{{ t('loading') }}</strong>
-
-          <div class="project-state-card__skeleton" aria-hidden="true">
-            <span></span>
-            <span></span>
-            <span></span>
-          </div>
-        </section>
+        <ProjectShowSkeleton />
       </template>
 
       <template #failed="{ error, retry }">
@@ -106,7 +115,12 @@
 
             <main class="project-dashboard-grid">
               <div class="project-dashboard-main">
-                <ProjectInfoSection v-bind="projectInfoSectionProps" />
+                <ProjectInfoSection
+                  v-bind="projectInfoSectionProps"
+                  :image-source="headerProps.imageSource"
+                  :fallback-image-source="headerProps.fallbackImageSource"
+                  :image-alt="headerProps.projectTitle"
+                />
 
                 <ProjectFloorsSection v-bind="floorsSectionProps" />
 

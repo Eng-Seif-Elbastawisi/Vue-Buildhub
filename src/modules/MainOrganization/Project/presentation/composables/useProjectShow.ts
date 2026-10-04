@@ -448,11 +448,11 @@ export const useProjectShow = () => {
       value: preview.value?.engineering_responsible?.name ?? emptyValue,
     },
 
-    // {
-    //   icon: 'pi pi-verified',
-    //   label: t('Project.engineer'),
-    //   value: getEntityName(preview.value?.engineer),
-    // },
+    {
+      icon: 'pi pi-verified',
+      label: t('Project.engineer'),
+      value: getEntityName(preview.value?.engineer),
+    },
     {
       icon: 'pi pi-book',
       label: t('Project.site_description'),
@@ -1081,6 +1081,9 @@ export const useProjectShow = () => {
     fallbackImageSource: fallbackProjectImage,
     statusMeta: getConvertStatusMeta(currentConvertStatus.value),
     projectCodeLabel: t('ProjectShow.project_code'),
+    locationText: project.value.location
+      ? getLocationBreadcrumb(project.value.location)
+      : undefined,
     createdAtLabel: t('ProjectShow.created_at'),
     downloadPdfLabel: t('ProjectShow.download_pdf'),
     generatingPdfLabel: t('ProjectShow.generating_pdf'),

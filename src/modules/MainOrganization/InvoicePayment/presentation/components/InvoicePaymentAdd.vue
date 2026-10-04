@@ -28,7 +28,7 @@
   <div class="invoice-payment-crud-page">
     <InvoicePaymentForm :form-key="formKey" :loading="loading" @update-data="params = $event" />
 
-    <div class="invoice-payment-actions" :class="{ disabled: loading }">
+    <div class="invoice-payment-actions actions" :class="{ disabled: loading }">
       <button
         class="btn btn-primary w-full"
         type="button"
@@ -41,7 +41,7 @@
       </button>
     </div>
 
-    <div v-if="controller.errorMessage.value" class="invoice-payment-error">
+    <div v-if="controller.errorMessage.value" class="invoice-payment-error error">
       {{ controller.errorMessage.value }}
     </div>
   </div>

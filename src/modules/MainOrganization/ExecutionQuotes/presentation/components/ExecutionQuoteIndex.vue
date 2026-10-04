@@ -38,6 +38,7 @@
   import IndexExecutionQuoteParams from '../../core/params/index.execution.quote.params';
 
   import ExecutionQuoteController from '../controllers/execution.quote.controller';
+  import BoqMeasurementLoader from './BoqMeasurementLoader.vue';
   import QuoteStatusBadge from './QuoteStatusBadge.vue';
   import ExecutionQuoteStatusDialog from './ExecutionQuoteStatusDialog.vue';
 
@@ -510,6 +511,10 @@
     </section>
 
     <DataStatusBuilder :controller="state">
+      <template #loader>
+        <BoqMeasurementLoader />
+      </template>
+
       <template #success="{ data: quotes }">
         <section class="execution-quote-index__table-card">
           <header class="execution-quote-index__table-header">
@@ -722,6 +727,8 @@
                   <AppButton
                     class="execution-quote-index__add-item-button"
                     size="sm"
+                    theme="secondary"
+                    action-tone="edit"
                     icon="right"
                     @click.stop="openAddItem(item)"
                   >
@@ -737,8 +744,8 @@
                     class="execution-quote-index__add-stage-button"
                     size="sm"
                     theme="secondary"
+                    action-tone="edit"
                     icon="right"
-                    outline
                     @click.stop="openAddStage(item)"
                   >
                     <template #icon>
@@ -755,7 +762,6 @@
                     size="sm"
                     theme="secondary"
                     icon="right"
-                    outline
                     @click.stop="openStatusDialog(item)"
                   >
                     <template #icon>
@@ -769,10 +775,10 @@
                 <!-- Always show View -->
                 <AppButton
                   class="execution-quote-index__view-button"
+                  action-tone="view"
                   size="sm"
                   theme="secondary"
                   icon="right"
-                  ghost
                   @click.stop="openShow(item)"
                 >
                   <template #icon>

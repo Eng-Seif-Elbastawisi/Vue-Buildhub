@@ -83,7 +83,7 @@
             </td>
             <td>
               <button
-                class="invoice-show-icon-btn"
+                class="invoice-show-icon-btn action--download"
                 type="button"
                 :title="$t('invoice_show.download_receipt')"
                 @click="$emit('download', payment)"

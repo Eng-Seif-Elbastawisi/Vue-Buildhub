@@ -359,13 +359,13 @@
 */
 
   const mapAttachmentItems = (items: ProjectAttachmentItem[]): ProjectAttachmentParams[] =>
-    items.map((item) => ({
-      file: item.file,
-      attachment_type_id: item.typeId,
-      alt: item.alt,
-      link: item.link,
-      name: item.name,
-      size: item.size,
+    items.map((attachment) => ({
+      file: attachment.file,
+      attachment_type_id: attachment.typeId,
+      alt: attachment.alt,
+      link: attachment.link,
+      name: attachment.name,
+      size: attachment.size,
     }));
 
   /*
@@ -823,179 +823,176 @@
 
       <section class="form-section form-section--request">
         <div class="form-section__grid form-section__grid--two">
-          <!-- TITLE -->
+          <div class="project-form-title-date-row">
+            <!-- TITLE -->
 
-          <div id="project-title-field" class="field-group">
-            <MultiLangInput
-              field-key="title"
-              :label="$t('title')"
-              :languages="['ar', 'en']"
-              :model-value="titleTranslations"
-              type="title"
-              required
-              @update:model-value="updateTitleTranslations"
-            />
+            <div id="project-title-field" class="field-group">
+              <MultiLangInput
+                field-key="title"
+                :label="$t('title')"
+                :languages="['ar', 'en']"
+                :model-value="titleTranslations"
+                type="title"
+                required
+                @update:model-value="updateTitleTranslations"
+              />
+            </div>
+
+            <!-- DATE -->
+
+            <div id="date-field" class="field-group">
+              <span class="field-help-label-row field-help-label-row--block">
+                <label class="field-label" for="date">
+                  <span class="required-indicator" aria-hidden="true"> * </span>
+
+                  {{ $t('date') }}
+                </label>
+
+                <FieldHelpIcon :label="$t('date')" field-name="date" field-id="date" />
+              </span>
+
+              <DatePicker
+                input-id="date"
+                :model-value="selectedDate"
+                date-format="yy-mm-dd"
+                show-icon
+                icon-display="input"
+                :manual-input="false"
+                :placeholder="$t('date_placeholder')"
+                input-class="field-input"
+                class="date-picker"
+                required
+                aria-required="true"
+                @update:model-value="updateDate"
+              />
+            </div>
           </div>
 
           <!-- PROJECT TYPE -->
-
-          <div id="project-type-field" class="field-group">
-            <UpdatedCustomInputSelect
-              id="project_type_id"
-              :model-value="selectedProjectType"
-              :label="$t('project_type_id')"
-              :controller="projectTypeController"
-              :placeholder="$t('project_type_id_placeholder')"
-              :params="indexProjectTypeParams"
-              required
-              @update:model-value="updateProjectType"
-            />
-
-            <ProjectTermGallery
-              :model-value="selectedTerm"
-              :options="termOptions"
-              @update:model-value="updateTerms"
-            />
-          </div>
-
-          <!-- DATE -->
-
-          <div id="date-field" class="field-group">
-            <span class="field-help-label-row field-help-label-row--block">
-              <label class="field-label" for="date">
-                <span class="required-indicator" aria-hidden="true"> * </span>
-
-                {{ $t('date') }}
-              </label>
-
-              <FieldHelpIcon :label="$t('date')" field-name="date" field-id="date" />
-            </span>
-
-            <DatePicker
-              input-id="date"
-              :model-value="selectedDate"
-              date-format="yy-mm-dd"
-              show-icon
-              icon-display="input"
-              :manual-input="false"
-              :placeholder="$t('date_placeholder')"
-              input-class="field-input"
-              class="date-picker"
-              required
-              aria-required="true"
-              @update:model-value="updateDate"
-            />
-          </div>
-
-          <!-- CLIENT TYPE -->
-
-          <template v-if="!isEdit">
-            <div id="client-type-field" class="field-group">
+          <div class="project-form-title-date-row">
+            <div id="project-type-field" class="field-group">
               <UpdatedCustomInputSelect
-                id="client_exist"
-                :model-value="selectedClientExist"
-                :label="$t('client_type')"
-                :static-options="clientExistOptions"
-                :placeholder="$t('Project.client_exist_placeholder')"
+                id="project_type_id"
+                :model-value="selectedProjectType"
+                :label="$t('project_type_id')"
+                :controller="projectTypeController"
+                :placeholder="$t('project_type_id_placeholder')"
+                :params="indexProjectTypeParams"
                 required
-                @update:model-value="updateClientExist"
+                @update:model-value="updateProjectType"
               />
             </div>
 
-            <!-- EXISTING CLIENT -->
+            <!-- CLIENT TYPE -->
 
-            <div v-if="selectedClientExist && client_exist" id="client-field" class="field-group">
-              <UpdatedCustomInputSelect
-                id="client_id"
-                :model-value="selectedClient"
-                :label="$t('client_id')"
-                :controller="clientController"
-                :placeholder="$t('client_id_placeholder')"
-                :params="indexClientParams"
-                required
-                @update:model-value="updateClient"
-              />
-            </div>
-
-            <!-- NEW CLIENT -->
-
-            <template v-if="selectedClientExist && client_exist === false">
-              <!-- CLIENT NAME -->
-
-              <div id="client-name-field" class="field-group">
-                <span class="field-help-label-row field-help-label-row--block">
-                  <label class="field-label" for="client_name">
-                    <span class="required-indicator" aria-hidden="true"> * </span>
-
-                    {{ $t('client_name') }}
-                  </label>
-
-                  <FieldHelpIcon
-                    :label="$t('client_name')"
-                    field-name="name"
-                    field-id="client_name"
-                  />
-                </span>
-
-                <input
-                  id="client_name"
-                  v-model="client_name"
-                  class="field-input"
-                  :placeholder="$t('client_name_placeholder')"
-                  required
-                  aria-required="true"
-                  autocomplete="name"
-                  @input="updateData"
-                />
-              </div>
-
-              <!-- CLIENT PHONE -->
-
-              <div id="client-phone-field" class="field-group">
-                <span class="field-help-label-row field-help-label-row--block">
-                  <label class="field-label" for="client_phone">
-                    <span class="required-indicator" aria-hidden="true"> * </span>
-
-                    {{ $t('client_phone') }}
-                  </label>
-
-                  <FieldHelpIcon
-                    :label="$t('client_phone')"
-                    field-name="phone"
-                    field-id="client_phone"
-                  />
-                </span>
-
-                <input
-                  id="client_phone"
-                  v-model="client_phone"
-                  class="field-input"
-                  type="tel"
-                  inputmode="tel"
-                  autocomplete="tel"
-                  :placeholder="$t('client_phone_placeholder')"
-                  required
-                  aria-required="true"
-                  @input="updateData"
-                />
-              </div>
-
-              <!-- CLIENT SOURCE -->
-
-              <div id="client-source-field" class="field-group">
+            <template v-if="!isEdit">
+              <div id="client-type-field" class="field-group">
                 <UpdatedCustomInputSelect
-                  id="client_source"
-                  :model-value="selectedClientSource"
-                  :label="$t('client_source')"
-                  :controller="clientSourceController"
-                  :placeholder="$t('client_source_placeholder')"
-                  :params="indexClientSourceParams"
+                  id="client_exist"
+                  :model-value="selectedClientExist"
+                  :label="$t('client_type')"
+                  :static-options="clientExistOptions"
+                  :placeholder="$t('Project.client_exist_placeholder')"
                   required
-                  @update:model-value="updateClientSource"
+                  @update:model-value="updateClientExist"
                 />
               </div>
+
+              <!-- EXISTING CLIENT -->
+
+              <div v-if="selectedClientExist && client_exist" id="client-field" class="field-group">
+                <UpdatedCustomInputSelect
+                  id="client_id"
+                  :model-value="selectedClient"
+                  :label="$t('client_id')"
+                  :controller="clientController"
+                  :placeholder="$t('client_id_placeholder')"
+                  :params="indexClientParams"
+                  required
+                  @update:model-value="updateClient"
+                />
+              </div>
+
+              <!-- NEW CLIENT -->
+
+              <template v-if="selectedClientExist && client_exist === false">
+                <!-- CLIENT NAME -->
+
+                <div id="client-name-field" class="field-group">
+                  <span class="field-help-label-row field-help-label-row--block">
+                    <label class="field-label" for="client_name">
+                      <span class="required-indicator" aria-hidden="true"> * </span>
+
+                      {{ $t('client_name') }}
+                    </label>
+
+                    <FieldHelpIcon
+                      :label="$t('client_name')"
+                      field-name="name"
+                      field-id="client_name"
+                    />
+                  </span>
+
+                  <input
+                    id="client_name"
+                    v-model="client_name"
+                    class="field-input"
+                    :placeholder="$t('client_name_placeholder')"
+                    required
+                    aria-required="true"
+                    autocomplete="name"
+                    @input="updateData"
+                  />
+                </div>
+
+                <!-- CLIENT PHONE -->
+
+                <div id="client-phone-field" class="field-group">
+                  <span class="field-help-label-row field-help-label-row--block">
+                    <label class="field-label" for="client_phone">
+                      <span class="required-indicator" aria-hidden="true"> * </span>
+
+                      {{ $t('client_phone') }}
+                    </label>
+
+                    <FieldHelpIcon
+                      :label="$t('client_phone')"
+                      field-name="phone"
+                      field-id="client_phone"
+                    />
+                  </span>
+
+                  <input
+                    id="client_phone"
+                    v-model="client_phone"
+                    class="field-input"
+                    type="tel"
+                    inputmode="tel"
+                    autocomplete="tel"
+                    :placeholder="$t('client_phone_placeholder')"
+                    required
+                    aria-required="true"
+                    @input="updateData"
+                  />
+                </div>
+
+                <!-- CLIENT SOURCE -->
+
+                <div id="client-source-field" class="field-group">
+                  <UpdatedCustomInputSelect
+                    id="client_source"
+                    :model-value="selectedClientSource"
+                    :label="$t('client_source')"
+                    :controller="clientSourceController"
+                    :placeholder="$t('client_source_placeholder')"
+                    :params="indexClientSourceParams"
+                    required
+                    @update:model-value="updateClientSource"
+                  />
+                </div>
+              </template>
             </template>
-          </template>
+          </div>
         </div>
       </section>
 
@@ -1115,6 +1112,12 @@
               :placeholder="$t('term_placeholder')"
               :params="indexTermParams"
               :type="2"
+              @update:model-value="updateTerms"
+            />
+
+            <ProjectTermGallery
+              :model-value="selectedTerm"
+              :options="termOptions"
               @update:model-value="updateTerms"
             />
           </div>
@@ -1365,7 +1368,7 @@
 
   .form-fields {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(1, minmax(0, 1fr));
     gap: 1rem;
     align-items: end;
 
@@ -1433,11 +1436,57 @@
 
   .form-section__grid--two,
   .form-section__grid--terms {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(1, minmax(0, 1fr));
   }
 
   .form-section__grid--three {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .project-form-title-date-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+    gap: 1rem;
+
+    > .field-group {
+      min-width: 0;
+    }
+
+    #date-field > .field-help-label-row,
+    :deep(.multi-lang-input .header-input) {
+      display: flex;
+      min-height: 2.25rem;
+      align-items: center;
+      gap: 0.5rem;
+      margin-block-end: 0;
+    }
+
+    :deep(.multi-lang-input) {
+      min-width: 0;
+      gap: 0.5rem;
+    }
+
+    :deep(.multi-lang-input .header-input) {
+      justify-content: space-between;
+    }
+
+    :deep(.multi-lang-input .field-label) {
+      color: var(--gray-700);
+      font-family: 'Medium';
+      font-size: var(--sm-size);
+    }
+
+    :deep(.multi-lang-input .lang-switcher) {
+      flex: 0 0 auto;
+      margin-inline-start: auto;
+    }
+
+    :deep(.multi-lang-input .field-input--text),
+    :deep(.p-datepicker-input) {
+      height: 3rem;
+      min-height: 3rem;
+    }
   }
 
   .form-section--request::before {
@@ -1778,6 +1827,19 @@
   }
 
   @media (max-width: 768px) {
+    .project-form-title-date-row {
+      grid-template-columns: minmax(0, 1fr);
+
+      :deep(.multi-lang-input .header-input) {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      :deep(.multi-lang-input .lang-switcher) {
+        margin-inline-start: 0;
+      }
+    }
+
     .form-section__grid--two,
     .form-section__grid--three,
     .form-section__grid--terms,

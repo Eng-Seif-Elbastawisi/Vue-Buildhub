@@ -824,8 +824,13 @@
                   <textarea
                     v-model="siteDescription"
                     class="field-input"
+                    :class="{ 'field-input--invalid': validationErrors.site_description }"
+                    :aria-invalid="Boolean(validationErrors.site_description)"
                     @input="updateData"
                   ></textarea>
+                  <small v-if="validationErrors.site_description" class="field-error" role="alert">
+                    {{ validationErrors.site_description }}
+                  </small>
                 </label>
 
                 <label class="note-field">
@@ -833,8 +838,17 @@
                   <textarea
                     v-model="technicalGeneralNotes"
                     class="field-input"
+                    :class="{ 'field-input--invalid': validationErrors.technical_general_notes }"
+                    :aria-invalid="Boolean(validationErrors.technical_general_notes)"
                     @input="updateData"
                   ></textarea>
+                  <small
+                    v-if="validationErrors.technical_general_notes"
+                    class="field-error"
+                    role="alert"
+                  >
+                    {{ validationErrors.technical_general_notes }}
+                  </small>
                 </label>
 
                 <label class="note-field">
@@ -842,8 +856,17 @@
                   <textarea
                     v-model="inspectionRecommendations"
                     class="field-input"
+                    :class="{ 'field-input--invalid': validationErrors.inspection_recommendations }"
+                    :aria-invalid="Boolean(validationErrors.inspection_recommendations)"
                     @input="updateData"
                   ></textarea>
+                  <small
+                    v-if="validationErrors.inspection_recommendations"
+                    class="field-error"
+                    role="alert"
+                  >
+                    {{ validationErrors.inspection_recommendations }}
+                  </small>
                 </label>
               </div>
             </div>

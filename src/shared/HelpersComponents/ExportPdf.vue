@@ -7,10 +7,7 @@
   const { t } = useI18n();
 
   const exportPDF = async (): Promise<void> => {
-    const tableElement =
-      document.querySelector<HTMLElement>(
-        '.table-responsive',
-      );
+    const tableElement = document.querySelector<HTMLElement>('.table-responsive');
 
     if (!tableElement || exporting.value) {
       console.error('Table element not found.');
@@ -24,32 +21,21 @@
         await document.fonts.ready;
       }
 
-      const printWindow = window.open(
-        '',
-        '_blank',
-        'width=1200,height=800',
-      );
+      const printWindow = window.open('', '_blank', 'width=1200,height=800');
 
       if (!printWindow) {
-        console.error(
-          'Print window was blocked by the browser.',
-        );
+        console.error('Print window was blocked by the browser.');
 
         return;
       }
 
-      const documentStyles = Array.from(
-        document.querySelectorAll(
-          'style, link[rel="stylesheet"]',
-        ),
-      )
+      const documentStyles = Array.from(document.querySelectorAll('style, link[rel="stylesheet"]'))
         .map((styleElement) => {
           return styleElement.outerHTML;
         })
         .join('\n');
 
-      const clonedTable =
-        tableElement.cloneNode(true) as HTMLElement;
+      const clonedTable = tableElement.cloneNode(true) as HTMLElement;
 
       clonedTable.style.width = '100%';
       clonedTable.style.maxWidth = 'none';
@@ -179,30 +165,21 @@
       printWindow.document.close();
 
       await new Promise<void>((resolve) => {
-        if (
-          printWindow.document.readyState ===
-          'complete'
-        ) {
+        if (printWindow.document.readyState === 'complete') {
           resolve();
           return;
         }
 
-        printWindow.addEventListener(
-          'load',
-          () => resolve(),
-          {
-            once: true,
-          },
-        );
+        printWindow.addEventListener('load', () => resolve(), {
+          once: true,
+        });
       });
 
       if (printWindow.document.fonts) {
         await printWindow.document.fonts.ready;
       }
 
-      const images = Array.from(
-        printWindow.document.images,
-      );
+      const images = Array.from(printWindow.document.images);
 
       await Promise.all(
         images.map((image) => {
@@ -230,10 +207,7 @@
         },
       );
     } catch (error: unknown) {
-      console.error(
-        'Error printing table:',
-        error,
-      );
+      console.error('Error printing table:', error);
     } finally {
       exporting.value = false;
     }
@@ -242,16 +216,12 @@
 
 <template>
   <button
-    class="btn btn-secondary ms-2"
+    class="btn btn-secondary ms-2 action--download"
     type="button"
     :disabled="exporting"
     @click="exportPDF"
   >
-    {{
-      exporting
-        ? $t('exporting')
-        : $t('export_pdf')
-    }}
+    {{ exporting ? $t('exporting') : $t('export_pdf') }}
 
     <ExportIcon v-if="!exporting" />
   </button>

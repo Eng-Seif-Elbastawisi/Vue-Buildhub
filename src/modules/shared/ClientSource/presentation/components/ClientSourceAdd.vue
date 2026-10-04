@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormSectionHeader from '@/shared/components/form/StandardFormSectionHeader.vue';
   import { ref } from 'vue';
   import AppButton from '@/shared/HelpersComponents/AppButton.vue';
   import IconAccept from '@/shared/icons/IconAccept.vue';
@@ -64,6 +65,7 @@
 <template>
   <div class="email-crud-example">
     <div class="email-form-card">
+      <StandardFormSectionHeader :title="$t('client_source')" icon="pi pi-share-alt" />
       <ClientSourceForm
         :form-key="formKey"
         :client-source="clientSource"

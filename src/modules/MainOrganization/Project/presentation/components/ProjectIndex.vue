@@ -1,330 +1,229 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue';
-import { useI18n } from 'vue-i18n';
-import { useRoute, useRouter } from 'vue-router';
+  import { computed, onMounted, ref, watch } from 'vue';
+  import { useI18n } from 'vue-i18n';
+  import { useRoute, useRouter } from 'vue-router';
 
-import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
-import type TitleInterface from '@/base/Data/Models/titleInterface';
-import UpdatedCustomInputSelect from '@/shared/FormInputs/UpdatedCustomInputSelect.vue';
-import IndexPageHeader from '@/shared/IndexPageHeader/IndexPageHeader.vue';
-import AppTable, {
-  type TableHeader,
-} from '@/shared/HelpersComponents/AppTable.vue';
-import Pagination from '@/shared/HelpersComponents/Pagination.vue';
-import TableSkelaton from '@/shared/HelpersComponents/TableSkelaton.vue';
-import DeleteDialog from '@/base/Presentation/Dialogs/MainDialogs/DeleteDialog.vue';
-import { useUserStore } from '@/stores/user';
-import { DepartmentTypeEnum } from '@/modules/shared/Department/core/constants/Type.enum';
+  import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
+  import type TitleInterface from '@/base/Data/Models/titleInterface';
+  import UpdatedCustomInputSelect from '@/shared/FormInputs/UpdatedCustomInputSelect.vue';
+  import IndexPageHeader from '@/shared/IndexPageHeader/IndexPageHeader.vue';
+  import AppTable, { type TableHeader } from '@/shared/HelpersComponents/AppTable.vue';
+  import Pagination from '@/shared/HelpersComponents/Pagination.vue';
+  import TableSkelaton from '@/shared/HelpersComponents/TableSkelaton.vue';
+  import DeleteDialog from '@/base/Presentation/Dialogs/MainDialogs/DeleteDialog.vue';
+  import { useUserStore } from '@/stores/user';
+  import { DepartmentTypeEnum } from '@/modules/shared/Department/core/constants/Type.enum';
 
-import type ProjectModel from '../../core/models/project.model';
-import DeleteProjectParams from '../../core/params/delete.project.params';
-import IndexProjectParams from '../../core/params/index.project.params';
-import ProjectController from '../controllers/project.controller';
+  import type ProjectModel from '../../core/models/project.model';
+  import DeleteProjectParams from '../../core/params/delete.project.params';
+  import IndexProjectParams from '../../core/params/index.project.params';
+  import ProjectController from '../controllers/project.controller';
 
-import {
-  ConvertStatus,
-  getConvertStatusNameKey,
-} from '../../core/constants/convert.status.enum';
+  import { ConvertStatus, getConvertStatusNameKey } from '../../core/constants/convert.status.enum';
 
-import { debounce } from '@/base/Presentation/Utils/debouced';
-import { deleteSelectedRows } from '@/shared/HelpersComponents/deleteSelectedRows';
+  import { debounce } from '@/base/Presentation/Utils/debouced';
+  import { deleteSelectedRows } from '@/shared/HelpersComponents/deleteSelectedRows';
 
-interface ProjectIndexProps {
-  statuses?: ConvertStatus[] | null;
-}
+  interface ProjectIndexProps {
+    statuses?: ConvertStatus[] | null;
+  }
 
-const props = withDefaults(
-  defineProps<ProjectIndexProps>(),
-  {
-    statuses: () => [
-      ConvertStatus.WAITING_PREVIEW,
-      ConvertStatus.WAITING_PREVIEW_RESULT,
-    ],
-  },
-);
+  const props = withDefaults(defineProps<ProjectIndexProps>(), {
+    statuses: () => [ConvertStatus.WAITING_PREVIEW, ConvertStatus.WAITING_PREVIEW_RESULT],
+  });
 
-const controller =
-  ProjectController.getInstance();
+  const controller = ProjectController.getInstance();
 
-const state = computed(
-  () => controller.listState.value,
-);
+  const state = computed(() => controller.listState.value);
 
-const route = useRoute();
-const router = useRouter();
-const { locale, t } = useI18n();
+  const route = useRoute();
+  const router = useRouter();
+  const { locale, t } = useI18n();
 
-const showServiceTypeFilter = computed(
-  () => route.name === 'project',
-);
+  const showServiceTypeFilter = computed(() => route.name === 'project');
 
-const { user } = useUserStore();
+  const { user } = useUserStore();
 
-const perPage = ref(10);
-const word = ref('');
+  const perPage = ref(10);
+  const word = ref('');
 
-const sortBy = ref<string | undefined>(
-  (route.query.sort_by as string) ||
-    undefined,
-);
+  const sortBy = ref<string | undefined>((route.query.sort_by as string) || undefined);
 
-const sortDirection =
-  ref<'asc' | 'desc' | undefined>(
-    (route.query.sort_direction as
-      | 'asc'
-      | 'desc') || undefined,
+  const sortDirection = ref<'asc' | 'desc' | undefined>(
+    (route.query.sort_direction as 'asc' | 'desc') || undefined,
   );
 
-/*
+  /*
 |--------------------------------------------------------------------------
 | Sorting
 |--------------------------------------------------------------------------
 */
 
-const sortableFields: Record<
-  string,
-  string
-> = {
-  title: 'title',
-  client: 'client_id',
-  projectType: 'project_type_id',
-  previewDate: 'preview_date',
-  totalArea: 'total_area',
-  totalPrice: 'total_price',
-  status: 'status',
-  createdAt: 'created_at',
-};
+  const sortableFields: Record<string, string> = {
+    title: 'title',
+    client: 'client_id',
+    projectType: 'project_type_id',
+    previewDate: 'preview_date',
+    totalArea: 'total_area',
+    totalPrice: 'total_price',
+    status: 'status',
+    createdAt: 'created_at',
+  };
 
-const activeSortKey = computed(() => {
-  if (!sortBy.value) return undefined;
+  const activeSortKey = computed(() => {
+    if (!sortBy.value) return undefined;
 
-  return (
-    Object.entries(
-      sortableFields,
-    ).find(
-      ([, serverField]) =>
-        serverField === sortBy.value,
-    )?.[0] ?? sortBy.value
-  );
-});
+    return (
+      Object.entries(sortableFields).find(([, serverField]) => serverField === sortBy.value)?.[0] ??
+      sortBy.value
+    );
+  });
 
-/*
+  /*
 |--------------------------------------------------------------------------
 | Service Type
 |--------------------------------------------------------------------------
 */
 
-const parseServiceType = (
-  routeServiceType: unknown,
-): DepartmentTypeEnum[] => {
-  const values = Array.isArray(
-    routeServiceType,
-  )
-    ? routeServiceType
-    : routeServiceType
-      ? [routeServiceType]
-      : [];
+  const parseServiceType = (routeServiceType: unknown): DepartmentTypeEnum[] => {
+    const values = Array.isArray(routeServiceType)
+      ? routeServiceType
+      : routeServiceType
+        ? [routeServiceType]
+        : [];
 
-  return values
-    .flatMap((value) =>
-      String(value).split(','),
-    )
-    .map(Number)
-    .filter(
-      (
-        value,
-      ): value is DepartmentTypeEnum =>
-        value ===
-          DepartmentTypeEnum.DESIGN ||
-        value ===
-          DepartmentTypeEnum.SUPERVISION ||
-        value ===
-          DepartmentTypeEnum.BOTH,
-    );
-};
+    return values
+      .flatMap((value) => String(value).split(','))
+      .map(Number)
+      .filter(
+        (value): value is DepartmentTypeEnum =>
+          value === DepartmentTypeEnum.DESIGN ||
+          value === DepartmentTypeEnum.SUPERVISION ||
+          value === DepartmentTypeEnum.BOTH,
+      );
+  };
 
-const serviceType = computed<
-  DepartmentTypeEnum[]
->(() =>
-  parseServiceType(
-    route.query.service_type,
-  ),
-);
-
-const serviceTypeFilterValue =
-  computed(() =>
-    serviceType.value.join(','),
+  const serviceType = computed<DepartmentTypeEnum[]>(() =>
+    parseServiceType(route.query.service_type),
   );
 
-const hasCompositeServiceTypeFilter =
-  computed(
-    () =>
-      serviceType.value.length > 1,
+  const serviceTypeFilterValue = computed(() => serviceType.value.join(','));
+
+  const hasCompositeServiceTypeFilter = computed(() => serviceType.value.length > 1);
+
+  const serviceTypeLabel = (type?: number) => {
+    switch (type) {
+      case DepartmentTypeEnum.DESIGN:
+        return t('Project.service_types.designOnly');
+
+      case DepartmentTypeEnum.SUPERVISION:
+        return t('Project.service_types.executionOnly');
+
+      case DepartmentTypeEnum.BOTH:
+        return t('Project.service_types.both');
+
+      default:
+        return '-';
+    }
+  };
+
+  const activeServiceTypeFilterLabel = computed(() =>
+    serviceType.value.map(serviceTypeLabel).join(', '),
   );
 
-const serviceTypeLabel = (
-  type?: number,
-) => {
-  switch (type) {
-    case DepartmentTypeEnum.DESIGN:
-      return t(
-        'Project.service_types.designOnly',
-      );
-
-    case DepartmentTypeEnum.SUPERVISION:
-      return t(
-        'Project.service_types.executionOnly',
-      );
-
-    case DepartmentTypeEnum.BOTH:
-      return t(
-        'Project.service_types.both',
-      );
-
-    default:
-      return '-';
-  }
-};
-
-const activeServiceTypeFilterLabel =
-  computed(() =>
-    serviceType.value
-      .map(serviceTypeLabel)
-      .join(', '),
-  );
-
-const serviceTypeFilterOptions =
-  computed<
-    TitleInterface<string | number>[]
-  >(() => [
+  const serviceTypeFilterOptions = computed<TitleInterface<string | number>[]>(() => [
     {
       id: '',
-      title: t(
-        'project.service_type_all',
-      ),
+      title: t('project.service_type_all'),
     },
 
     ...(hasCompositeServiceTypeFilter.value
       ? [
           {
             id: serviceTypeFilterValue.value,
-            title:
-              activeServiceTypeFilterLabel.value,
+            title: activeServiceTypeFilterLabel.value,
           },
         ]
       : []),
 
     {
       id: DepartmentTypeEnum.DESIGN,
-      title: serviceTypeLabel(
-        DepartmentTypeEnum.DESIGN,
-      ),
+      title: serviceTypeLabel(DepartmentTypeEnum.DESIGN),
     },
 
     {
       id: DepartmentTypeEnum.SUPERVISION,
-      title: serviceTypeLabel(
-        DepartmentTypeEnum.SUPERVISION,
-      ),
+      title: serviceTypeLabel(DepartmentTypeEnum.SUPERVISION),
     },
 
     {
       id: DepartmentTypeEnum.BOTH,
-      title: serviceTypeLabel(
-        DepartmentTypeEnum.BOTH,
-      ),
+      title: serviceTypeLabel(DepartmentTypeEnum.BOTH),
     },
   ]);
 
-const selectedServiceTypeFilter =
-  computed<
-    TitleInterface<string | number>
-  >(
+  const selectedServiceTypeFilter = computed<TitleInterface<string | number>>(
     () =>
       serviceTypeFilterOptions.value.find(
-        (option) =>
-          String(option.id) ===
-          serviceTypeFilterValue.value,
-      ) ??
-      serviceTypeFilterOptions.value[0]!,
+        (option) => String(option.id) === serviceTypeFilterValue.value,
+      ) ?? serviceTypeFilterOptions.value[0]!,
   );
 
-/*
+  /*
 |--------------------------------------------------------------------------
 | Permissions / Page State
 |--------------------------------------------------------------------------
 */
 
-const hideEditAndDeleteActions =
-  computed(() => {
+  const hideEditAndDeleteActions = computed(() => {
     return (
-      serviceType.value.includes(
-        DepartmentTypeEnum.DESIGN,
-      ) ||
-      serviceType.value.includes(
-        DepartmentTypeEnum.SUPERVISION,
-      )
+      serviceType.value.includes(DepartmentTypeEnum.DESIGN) ||
+      serviceType.value.includes(DepartmentTypeEnum.SUPERVISION)
     );
   });
 
-const isPendingPage = computed(() => {
-  return (
-    Array.isArray(props.statuses) &&
-    props.statuses.length === 1 &&
-    props.statuses[0] ===
-      ConvertStatus.PENDING
-  );
-});
+  const isPendingPage = computed(() => {
+    return (
+      Array.isArray(props.statuses) &&
+      props.statuses.length === 1 &&
+      props.statuses[0] === ConvertStatus.PENDING
+    );
+  });
 
-/*
+  /*
 |--------------------------------------------------------------------------
 | Page Header
 |--------------------------------------------------------------------------
 */
 
-const pageHeaderTitle = computed(() => {
-  void locale.value;
+  const pageHeaderTitle = computed(() => {
+    void locale.value;
 
-  const breadcrumb =
-    route.meta.breadcrumb;
+    const breadcrumb = route.meta.breadcrumb;
 
-  return typeof breadcrumb === 'string'
-    ? t(breadcrumb)
-    : t(
-        isPendingPage.value
-          ? 'requests'
-          : 'request.list_title',
-      );
-});
+    return typeof breadcrumb === 'string'
+      ? t(breadcrumb)
+      : t(isPendingPage.value ? 'requests' : 'request.list_title');
+  });
 
-const pageHeaderDescription =
-  computed(() =>
+  const pageHeaderDescription = computed(() =>
     t(
-      route.meta
-        .pageHeaderDescription ??
-        (isPendingPage.value
-          ? 'requests_description'
-          : 'request.list_description'),
+      route.meta.pageHeaderDescription ??
+        (isPendingPage.value ? 'requests_description' : 'request.list_description'),
     ),
   );
 
-const pageHeaderActionLabel =
-  computed(() =>
-    t(
-      route.meta
-        .pageHeaderActionLabel ??
-        'request.add',
-    ),
+  const pageHeaderActionLabel = computed(() =>
+    t(route.meta.pageHeaderActionLabel ?? 'request.add'),
   );
 
-/*
+  /*
 |--------------------------------------------------------------------------
 | Table Headers
 |--------------------------------------------------------------------------
 */
 
-const headers = computed<TableHeader[]>(
-  () => {
+  const headers = computed<TableHeader[]>(() => {
     const baseHeaders: TableHeader[] = [
       {
         key: 'title',
@@ -396,199 +295,150 @@ const headers = computed<TableHeader[]>(
     );
 
     return baseHeaders;
-  },
-);
+  });
 
-/*
+  /*
 |--------------------------------------------------------------------------
 | Fetch
 |--------------------------------------------------------------------------
 */
 
-const fetchProjects = async (
-  page: number = 1,
-  searchWord: string = '',
-) => {
-  await controller.fetchList(
-    new IndexProjectParams(
-      searchWord,
-      route.query.page
-        ? Number(route.query.page)
-        : page,
-      perPage.value,
-      1,
-      null,
-      props.statuses,
-      serviceType.value,
-      sortBy.value,
-      sortDirection.value,
-    ),
-  );
-};
+  const fetchProjects = async (page: number = 1, searchWord: string = '') => {
+    await controller.fetchList(
+      new IndexProjectParams(
+        searchWord,
+        route.query.page ? Number(route.query.page) : page,
+        perPage.value,
+        1,
+        null,
+        props.statuses,
+        serviceType.value,
+        sortBy.value,
+        sortDirection.value,
+      ),
+    );
+  };
 
-/*
+  /*
 |--------------------------------------------------------------------------
 | Sorting
 |--------------------------------------------------------------------------
 */
 
-const onSort = (
-  key: string,
-  direction: 'asc' | 'desc',
-) => {
-  sortBy.value =
-    sortableFields[key] ?? key;
+  const onSort = (key: string, direction: 'asc' | 'desc') => {
+    sortBy.value = sortableFields[key] ?? key;
 
-  sortDirection.value = direction;
+    sortDirection.value = direction;
 
-  router.push({
-    query: {
-      ...route.query,
-      page: 1,
-      sort_by: sortBy.value,
-      sort_direction:
-        sortDirection.value,
-    },
-  });
+    router.push({
+      query: {
+        ...route.query,
+        page: 1,
+        sort_by: sortBy.value,
+        sort_direction: sortDirection.value,
+      },
+    });
 
-  void fetchProjects(
-    1,
-    word.value,
-  );
-};
+    void fetchProjects(1, word.value);
+  };
 
-/*
+  /*
 |--------------------------------------------------------------------------
 | Search
 |--------------------------------------------------------------------------
 */
 
-const Search = debounce(() => {
-  router.push({
-    query: {
-      ...route.query,
-      page: Number(
-        route.query.page ?? 1,
-      ),
-      word:
-        word.value || undefined,
-      sort_by: sortBy.value,
-      sort_direction:
-        sortDirection.value,
-    },
+  const Search = debounce(() => {
+    router.push({
+      query: {
+        ...route.query,
+        page: Number(route.query.page ?? 1),
+        word: word.value || undefined,
+        sort_by: sortBy.value,
+        sort_direction: sortDirection.value,
+      },
+    });
+
+    void fetchProjects(1, word.value);
   });
 
-  void fetchProjects(
-    1,
-    word.value,
-  );
-});
-
-/*
+  /*
 |--------------------------------------------------------------------------
 | Service Type Filter
 |--------------------------------------------------------------------------
 */
 
-const onServiceTypeFilterChange =
-  async (
-    selection:
-      | TitleInterface<
-          string | number
-        >
-      | TitleInterface<
-          string | number
-        >[]
-      | null,
+  const onServiceTypeFilterChange = async (
+    selection: TitleInterface<string | number> | TitleInterface<string | number>[] | null,
   ) => {
-    const selectedOption =
-      Array.isArray(selection)
-        ? selection[0]
-        : selection;
+    const selectedOption = Array.isArray(selection) ? selection[0] : selection;
 
-    const selectedValue =
-      selectedOption?.id === undefined
-        ? ''
-        : String(
-            selectedOption.id,
-          );
+    const selectedValue = selectedOption?.id === undefined ? '' : String(selectedOption.id);
 
     await router.push({
       query: {
         ...route.query,
         page: '1',
-        service_type:
-          selectedValue || undefined,
+        service_type: selectedValue || undefined,
       },
     });
   };
 
-/*
+  /*
 |--------------------------------------------------------------------------
 | Pagination
 |--------------------------------------------------------------------------
 */
 
-const onPageChange = async (
-  page: number,
-) => {
-  await router.push({
-    query: {
-      ...route.query,
-      page: String(page),
-    },
-  });
+  const onPageChange = async (page: number) => {
+    await router.push({
+      query: {
+        ...route.query,
+        page: String(page),
+      },
+    });
 
-  await fetchProjects(page);
-};
+    await fetchProjects(page);
+  };
 
-const onPerPageChange = async (
-  count: number,
-) => {
-  perPage.value = count;
+  const onPerPageChange = async (count: number) => {
+    perPage.value = count;
 
-  await router.push({
-    query: {
-      ...route.query,
-      page: '1',
-    },
-  });
+    await router.push({
+      query: {
+        ...route.query,
+        page: '1',
+      },
+    });
 
-  await fetchProjects(1);
-};
+    await fetchProjects(1);
+  };
 
-/*
+  /*
 |--------------------------------------------------------------------------
 | Delete
 |--------------------------------------------------------------------------
 */
 
-const deleteProject = async (
-  id: number,
-) => {
-  /**
-   * حماية إضافية حتى لا يتم الحذف برمجيًا
-   * في صفحات التصميم أو الإشراف.
-   */
-  if (
-    hideEditAndDeleteActions.value
-  ) {
-    return;
-  }
+  const deleteProject = async (id: number) => {
+    /**
+     * حماية إضافية حتى لا يتم الحذف برمجيًا
+     * في صفحات التصميم أو الإشراف.
+     */
+    if (hideEditAndDeleteActions.value) {
+      return;
+    }
 
-  await controller.delete(
-    new DeleteProjectParams({
-      projectId: id,
-    }),
-  );
+    await controller.delete(
+      new DeleteProjectParams({
+        projectId: id,
+      }),
+    );
 
-  await fetchProjects();
-};
+    await fetchProjects();
+  };
 
-const deleteSelectedProjects =
-  async (
-    projects: ProjectModel[],
-  ) =>
+  const deleteSelectedProjects = async (projects: ProjectModel[]) =>
     deleteSelectedRows(
       projects,
       (id) =>
@@ -600,26 +450,24 @@ const deleteSelectedProjects =
       fetchProjects,
     );
 
-/*
+  /*
 |--------------------------------------------------------------------------
 | Lifecycle
 |--------------------------------------------------------------------------
 */
 
-onMounted(async () => {
-  word.value = String(
-    route.query.word ?? '',
-  );
+  onMounted(async () => {
+    word.value = String(route.query.word ?? '');
 
-  await fetchProjects();
-});
-
-watch(
-  () => route.query.service_type,
-  async () => {
     await fetchProjects();
-  },
-);
+  });
+
+  watch(
+    () => route.query.service_type,
+    async () => {
+      await fetchProjects();
+    },
+  );
 </script>
 
 <template>
@@ -628,10 +476,7 @@ watch(
     <!-- PAGE HEADER -->
     <!-- ========================================================= -->
 
-    <IndexPageHeader
-      :title="pageHeaderTitle"
-      :subtitle="pageHeaderDescription"
-    >
+    <IndexPageHeader :title="pageHeaderTitle" :subtitle="pageHeaderDescription">
       <template #search>
         <div class="project-header-filters">
           <!-- SEARCH -->
@@ -647,23 +492,15 @@ watch(
                 stroke-width="2"
                 stroke-linecap="round"
               >
-                <circle
-                  cx="11"
-                  cy="11"
-                  r="8"
-                />
+                <circle cx="11" cy="11" r="8" />
 
-                <path
-                  d="m21 21-4.35-4.35"
-                />
+                <path d="m21 21-4.35-4.35" />
               </svg>
             </span>
 
             <input
               v-model="word"
-              :placeholder="
-                $t('search_request')
-              "
+              :placeholder="$t('search_request')"
               class="search-input"
               type="text"
               @input="Search"
@@ -672,29 +509,16 @@ watch(
 
           <!-- SERVICE TYPE FILTER -->
 
-          <div
-            v-if="showServiceTypeFilter"
-            class="service-type-filter"
-          >
+          <div v-if="showServiceTypeFilter" class="service-type-filter">
             <UpdatedCustomInputSelect
               id="project_service_type_filter"
-              :model-value="
-                selectedServiceTypeFilter
-              "
-              :static-options="
-                serviceTypeFilterOptions
-              "
+              :model-value="selectedServiceTypeFilter"
+              :static-options="serviceTypeFilterOptions"
               label="service_type"
-              :placeholder="
-                $t(
-                  'project.service_type_all',
-                )
-              "
+              :placeholder="$t('project.service_type_all')"
               :reload="false"
               :show-help="false"
-              @update:model-value="
-                onServiceTypeFilterChange
-              "
+              @update:model-value="onServiceTypeFilterChange"
             />
           </div>
         </div>
@@ -705,11 +529,7 @@ watch(
       <template #actions>
         <router-link
           class="btn btn-primary"
-          :to="
-            user?.isMaster
-              ? '/admin/Project/add'
-              : '/organization/Project/add'
-          "
+          :to="user?.isMaster ? '/admin/Project/add' : '/organization/Project/add'"
         >
           {{ pageHeaderActionLabel }}
         </router-link>
@@ -740,9 +560,7 @@ watch(
           :sort-direction="sortDirection"
           selectable
           show-index
-          :bulk-delete="
-            deleteSelectedProjects
-          "
+          :bulk-delete="deleteSelectedProjects"
           hoverable
           striped
           @sort="onSort"
@@ -753,9 +571,7 @@ watch(
 
           <template #cell-client="{ item }">
             <span>
-              {{
-                item?.client?.name || '-'
-              }}
+              {{ item?.client?.name || '-' }}
             </span>
           </template>
 
@@ -763,14 +579,9 @@ watch(
           <!-- PROJECT TYPE -->
           <!-- =================================================== -->
 
-          <template
-            #cell-projectType="{ item }"
-          >
+          <template #cell-projectType="{ item }">
             <span>
-              {{
-                item?.projectType
-                  ?.title || '-'
-              }}
+              {{ item?.projectType?.title || '-' }}
             </span>
           </template>
 
@@ -778,17 +589,9 @@ watch(
           <!-- SERVICE TYPE -->
           <!-- =================================================== -->
 
-          <template
-            #cell-serviceType="{ item }"
-          >
-            <span
-              class="service-type-badge"
-            >
-              {{
-                serviceTypeLabel(
-                  item?.serviceType,
-                )
-              }}
+          <template #cell-serviceType="{ item }">
+            <span class="service-type-badge">
+              {{ serviceTypeLabel(item?.serviceType) }}
             </span>
           </template>
 
@@ -796,16 +599,9 @@ watch(
           <!-- PREVIEW DATE -->
           <!-- =================================================== -->
 
-          <template
-            v-if="!isPendingPage"
-            #cell-previewDate="{
-              item,
-            }"
-          >
+          <template v-if="!isPendingPage" #cell-previewDate="{ item }">
             <span>
-              {{
-                item?.previewDate || '-'
-              }}
+              {{ item?.previewDate || '-' }}
             </span>
           </template>
 
@@ -813,14 +609,9 @@ watch(
           <!-- TOTAL AREA -->
           <!-- =================================================== -->
 
-          <template
-            v-if="!isPendingPage"
-            #cell-totalArea="{ item }"
-          >
+          <template v-if="!isPendingPage" #cell-totalArea="{ item }">
             <span>
-              {{
-                item?.totalArea || '-'
-              }}
+              {{ item?.totalArea || '-' }}
             </span>
           </template>
 
@@ -828,14 +619,9 @@ watch(
           <!-- TOTAL PRICE -->
           <!-- =================================================== -->
 
-          <template
-            v-if="!isPendingPage"
-            #cell-totalPrice="{ item }"
-          >
+          <template v-if="!isPendingPage" #cell-totalPrice="{ item }">
             <span>
-              {{
-                item?.totalPrice || '-'
-              }}
+              {{ item?.totalPrice || '-' }}
             </span>
           </template>
 
@@ -843,26 +629,12 @@ watch(
           <!-- STATUS -->
           <!-- =================================================== -->
 
-          <template
-            #cell-status="{ item }"
-          >
-            <span
-              v-if="item.status"
-              class="status-badge"
-              :class="`status-${item.status}`"
-            >
-              {{
-                $t(
-                  getConvertStatusNameKey(
-                    item.status,
-                  ),
-                )
-              }}
+          <template #cell-status="{ item }">
+            <span v-if="item.status" class="status-badge" :class="`status-${item.status}`">
+              {{ $t(getConvertStatusNameKey(item.status)) }}
             </span>
 
-            <span v-else>
-              -
-            </span>
+            <span v-else> - </span>
           </template>
 
           <!-- =================================================== -->
@@ -874,32 +646,22 @@ watch(
               <!-- EXECUTION QUOTE -->
 
               <router-link
-                v-if="
-                  Number(
-                    item.serviceType,
-                  ) === 2
-                "
+                v-if="Number(item.serviceType) === 2"
                 class="action-btn execution-btn"
                 :to="
                   user?.isMaster
                     ? `/admin/execution-quotes/add?project_id=${item.id}`
                     : `/organization/execution-quotes/add?project_id=${item.id}`
                 "
-                :title="
-                  $t(
-                    'execution_quote.add',
-                  )
-                "
+                :title="$t('execution_quote.add')"
               >
-                <i
-                  class="pi pi-calculator"
-                ></i>
+                <i class="pi pi-calculator"></i>
               </router-link>
 
               <!-- SHOW -->
 
               <router-link
-                class="action-btn edit"
+                class="action-btn show"
                 :to="
                   user?.isMaster
                     ? `/admin/Project/show/${item.id}`
@@ -907,18 +669,14 @@ watch(
                 "
                 :title="$t('show')"
               >
-                <i
-                  class="pi pi-eye"
-                ></i>
+                <i class="pi pi-eye"></i>
               </router-link>
 
               <!-- EDIT -->
 
               <router-link
                 v-if="
-                  !hideEditAndDeleteActions &&
-                  item.status !==
-                    ConvertStatus.WAITING_PREVIEW_RESULT
+                  !hideEditAndDeleteActions && item.status !== ConvertStatus.WAITING_PREVIEW_RESULT
                 "
                 class="action-btn edit"
                 :to="
@@ -938,45 +696,23 @@ watch(
                   stroke-linecap="round"
                   stroke-linejoin="round"
                 >
-                  <path
-                    d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"
-                  />
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
 
-                  <path
-                    d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"
-                  />
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
                 </svg>
               </router-link>
 
               <!-- DELETE -->
 
               <DeleteDialog
-                v-if="
-                  !hideEditAndDeleteActions
-                "
-                :title="
-                  $t(
-                    'Are you sure you want to remove this project?',
-                  )
-                "
-                :message="
-                  $t(
-                    'This action cannot be undone.',
-                  )
-                "
+                v-if="!hideEditAndDeleteActions"
+                :title="$t('Are you sure you want to remove this project?')"
+                :message="$t('This action cannot be undone.')"
                 :hasbtn="true"
-                @delete="
-                  deleteProject(
-                    item.id!,
-                  )
-                "
+                @delete="deleteProject(item.id!)"
               >
                 <template #btn>
-                  <button
-                    type="button"
-                    class="action-btn delete"
-                    :title="$t('Delete')"
-                  >
+                  <button type="button" class="action-btn delete" :title="$t('Delete')">
                     <svg
                       width="15"
                       height="15"
@@ -987,17 +723,11 @@ watch(
                       stroke-linecap="round"
                       stroke-linejoin="round"
                     >
-                      <path
-                        d="M3 6h18"
-                      />
+                      <path d="M3 6h18" />
 
-                      <path
-                        d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"
-                      />
+                      <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
 
-                      <path
-                        d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"
-                      />
+                      <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
                     </svg>
                   </button>
                 </template>
@@ -1011,13 +741,9 @@ watch(
         <!-- ===================================================== -->
 
         <Pagination
-          :pagination="
-            controller.pagination.value
-          "
+          :pagination="controller.pagination.value"
           @change-page="onPageChange"
-          @count-per-page="
-            onPerPageChange
-          "
+          @count-per-page="onPerPageChange"
         />
       </template>
 
@@ -1027,51 +753,29 @@ watch(
 
       <template #empty>
         <div class="empty-state">
-          <template
-            v-if="isPendingPage"
-          >
+          <template v-if="isPendingPage">
             <h3>
-              {{
-                $t(
-                  'requests_empty_title',
-                )
-              }}
+              {{ $t('requests_empty_title') }}
             </h3>
 
             <p>
-              {{
-                $t(
-                  'requests_empty_description',
-                )
-              }}
+              {{ $t('requests_empty_description') }}
             </p>
           </template>
 
           <template v-else>
             <h3>
-              {{
-                $t(
-                  'project.empty_title',
-                )
-              }}
+              {{ $t('project.empty_title') }}
             </h3>
 
             <p>
-              {{
-                $t(
-                  'project.empty_description',
-                )
-              }}
+              {{ $t('project.empty_description') }}
             </p>
           </template>
 
           <router-link
             class="btn btn-primary"
-            :to="
-              user?.isMaster
-                ? '/admin/Project/add'
-                : '/organization/Project/add'
-            "
+            :to="user?.isMaster ? '/admin/Project/add' : '/organization/Project/add'"
           >
             {{ $t('Project.add') }}
           </router-link>
@@ -1096,170 +800,140 @@ watch(
 </template>
 
 <style scoped lang="scss">
-@use '../styles/project_status_badge'
-  as project-status-badge;
+  @use '../styles/project_status_badge' as project-status-badge;
 
-@include project-status-badge.project-status-badges;
+  @include project-status-badge.project-status-badges;
 
-/*
+  /*
 |--------------------------------------------------------------------------
 | Page
 |--------------------------------------------------------------------------
 */
 
-.Project-page {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
+  .Project-page {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
 
-/*
+  /*
 |--------------------------------------------------------------------------
 | Header Filters
 |--------------------------------------------------------------------------
 */
 
-.project-header-filters {
-  display: flex;
-  align-items: flex-end;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-}
-
-.service-type-filter {
-  min-width: 12rem;
-
-  :deep(.input-select) {
-    min-height: 2.75rem;
+  .project-header-filters {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.75rem;
+    flex-wrap: wrap;
   }
-}
 
-/*
+  .service-type-filter {
+    min-width: 12rem;
+
+    :deep(.input-select) {
+      min-height: 2.75rem;
+    }
+  }
+
+  /*
 |--------------------------------------------------------------------------
 | Service Type
 |--------------------------------------------------------------------------
 */
 
-.service-type-badge {
-  display: inline-flex;
-  width: fit-content;
-  padding: 0.3rem 0.6rem;
-  border-radius: var(--radius-full);
-  background: var(--PrimaryColor-light);
-  color: var(--PrimaryColor);
-  font-size: var(--xs-size);
-  font-weight: 700;
-}
+  .service-type-badge {
+    display: inline-flex;
+    width: fit-content;
+    padding: 0.3rem 0.6rem;
+    border-radius: var(--radius-full);
+    background: var(--PrimaryColor-light);
+    color: var(--PrimaryColor);
+    font-size: var(--xs-size);
+    font-weight: 700;
+  }
 
-/*
+  /*
 |--------------------------------------------------------------------------
 | Actions
 |--------------------------------------------------------------------------
 */
 
-.row-actions {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 1rem;
-}
-
-.action-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 34px;
-  height: 34px;
-  padding: 0;
-  border: 1px solid var(--border-weak);
-  border-radius: var(--radius-sm);
-  background: var(--bg-main);
-  color: var(--gray-400);
-  cursor: pointer;
-  text-decoration: none;
-
-  transition:
-    all 0.25s
-      cubic-bezier(
-        0.16,
-        1,
-        0.3,
-        1
-      );
-
-  &:hover {
-    transform: translateY(-2px);
+  .row-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 1rem;
   }
 
-  &.edit:hover {
-    border-color: var(--PrimaryColor);
-    color: var(--PrimaryColor);
-    background: var(--PrimaryColor-light);
-    box-shadow:
-      0 3px 10px
-        rgba(
-          99,
-          102,
-          241,
-          0.2
-        );
+  .action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    border: 1px solid var(--border-weak);
+    border-radius: var(--radius-sm);
+    background: var(--bg-main);
+    color: var(--gray-400);
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+
+    &:hover {
+      transform: translateY(-2px);
+    }
+
+    &.edit:hover {
+      border-color: var(--PrimaryColor);
+      color: var(--PrimaryColor);
+      background: var(--PrimaryColor-light);
+      box-shadow: 0 3px 10px rgba(99, 102, 241, 0.2);
+    }
+
+    &.delete:hover {
+      border-color: var(--Red);
+      color: var(--Red);
+      background: var(--danger-light);
+      box-shadow: 0 3px 10px rgba(220, 38, 38, 0.15);
+    }
+
+    &.execution-btn:hover {
+      border-color: var(--PrimaryColor);
+      color: var(--PrimaryColor);
+      background: var(--PrimaryColor-light);
+      box-shadow: 0 3px 10px rgba(99, 102, 241, 0.2);
+    }
   }
 
-  &.delete:hover {
-    border-color: var(--Red);
-    color: var(--Red);
-    background: var(--danger-light);
-    box-shadow:
-      0 3px 10px
-        rgba(
-          220,
-          38,
-          38,
-          0.15
-        );
-  }
-
-  &.execution-btn:hover {
-    border-color: var(--PrimaryColor);
-    color: var(--PrimaryColor);
-    background: var(--PrimaryColor-light);
-    box-shadow:
-      0 3px 10px
-        rgba(
-          99,
-          102,
-          241,
-          0.2
-        );
-  }
-}
-
-/*
+  /*
 |--------------------------------------------------------------------------
 | Empty
 |--------------------------------------------------------------------------
 */
 
-.empty-state {
-  padding: 3rem 1rem;
-  text-align: center;
+  .empty-state {
+    padding: 3rem 1rem;
+    text-align: center;
 
-  p {
-    color: var(--gray-5);
+    p {
+      color: var(--gray-5);
+    }
   }
-}
 
-/*
+  /*
 |--------------------------------------------------------------------------
 | Responsive
 |--------------------------------------------------------------------------
 */
 
-@media (max-width: 640px) {
-  .project-header-filters,
-  .search-field,
-  .service-type-filter {
-    width: 100%;
+  @media (max-width: 640px) {
+    .project-header-filters,
+    .search-field,
+    .service-type-filter {
+      width: 100%;
+    }
   }
-}
 </style>

@@ -121,6 +121,11 @@ describe('ProjectFloorForm', () => {
     await wrapper.get('.floor-card__actions .icon-btn').trigger('click');
 
     expect(wrapper.text()).toContain('Length must be positive');
+    expect(wrapper.text()).toContain('Site description is required');
+    expect(wrapper.get('textarea[aria-invalid="true"]').element).toHaveProperty(
+      'value',
+      'Current site description',
+    );
   });
 
   it('emits a valid floor payload without project_preview_id when no preview exists', async () => {

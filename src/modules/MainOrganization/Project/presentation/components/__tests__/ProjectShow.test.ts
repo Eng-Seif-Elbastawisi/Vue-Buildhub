@@ -1,7 +1,7 @@
 import { flushPromises, mount } from '@vue/test-utils';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
-import { nextTick } from 'vue';
+import { nextTick, ref, type Ref } from 'vue';
 import ProjectShowModel from '../../../core/models/project.show.model';
 import ProjectShow from '../ProjectShow.vue';
 
@@ -31,6 +31,7 @@ const projectResponse = ProjectShowModel.fromJson({
     },
   },
   service_type: 3,
+  with_preview: true,
   status: 1,
   convert_status: 4,
   title: [{ locale: 'en', title: 'test' }],
@@ -234,24 +235,23 @@ vi.mock('../../controllers/project.controller', () => ({
   },
 }));
 
-const mountProjectShow = () =>
+const mountProjectShow = (showLoader = false, breadcrumbLabel?: Ref<string | undefined>) =>
   mount(ProjectShow, {
     global: {
+      provide: breadcrumbLabel ? { 'dashboard-breadcrumb-current-label': breadcrumbLabel } : {},
       stubs: {
         RouterLink: {
           props: ['to'],
           template: '<a><slot /></a>',
         },
         DataStatusBuilder: {
-          template: '<div><slot name="success" /></div>',
+          template: showLoader
+            ? '<div><slot name="loader" /></div>'
+            : '<div><slot name="success" /></div>',
         },
         Image: {
           props: ['src', 'alt'],
           template: '<img :src="src" :alt="alt" />',
-        },
-        ProjectHeroBreadcrumb: {
-          props: ['currentLabel'],
-          template: '<nav>{{ currentLabel }}</nav>',
         },
         Accordion: {
           template: '<div class="p-accordion"><slot /></div>',
@@ -273,6 +273,26 @@ describe('ProjectShow', () => {
   beforeEach(() => {
     fetchOne.mockClear();
     changeProjectStatus.mockClear();
+  });
+
+  it('shares the loaded project title with the dashboard breadcrumb and clears it on exit', async () => {
+    const breadcrumbLabel = ref<string | undefined>();
+    const wrapper = mountProjectShow(false, breadcrumbLabel);
+    await nextTick();
+
+    expect(breadcrumbLabel.value).toBe('test');
+
+    wrapper.unmount();
+    expect(breadcrumbLabel.value).toBeUndefined();
+  });
+
+  it('uses the page-shaped skeleton in its loading slot', () => {
+    const wrapper = mountProjectShow(true);
+
+    expect(wrapper.find('.project-show-skeleton').exists()).toBe(true);
+    expect(wrapper.find('.project-command-hero').exists()).toBe(true);
+    expect(wrapper.find('.project-dashboard-grid').exists()).toBe(true);
+    expect(wrapper.find('.project-state-card').exists()).toBe(false);
   });
 
   it('fetches the project and renders show-project data from the same controller response', async () => {
@@ -321,7 +341,7 @@ describe('ProjectShow', () => {
     expect(wrapper.findAll('.project-section-disclosure > summary')).toHaveLength(5);
     expect(wrapper.findAll('.project-stats .project-stat-card')).toHaveLength(4);
     expect(wrapper.findAll('.project-info-summary-grid .project-info-field')).toHaveLength(8);
-    expect(wrapper.find('.project-floors-disclosure').attributes('open')).toBe('');
+    expect(wrapper.find('#project-floors.project-floors-card').exists()).toBe(true);
     expect(wrapper.find('.project-terms-disclosure').attributes('open')).toBeUndefined();
     expect(wrapper.find('.project-preview-illustration').exists()).toBe(true);
   });

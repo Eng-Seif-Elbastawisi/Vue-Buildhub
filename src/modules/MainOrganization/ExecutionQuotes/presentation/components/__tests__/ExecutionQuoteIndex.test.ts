@@ -2,7 +2,10 @@ import { flushPromises, mount } from '@vue/test-utils';
 import type * as VueRouterModule from 'vue-router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { DataInitial } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
+import {
+  DataInitial,
+  DataLoading,
+} from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
 import UpdatedCustomInputSelect from '@/shared/FormInputs/UpdatedCustomInputSelect.vue';
 
 import { QuoteStatusEnum } from '../../../core/constants/quote.status.enum';
@@ -112,6 +115,17 @@ describe('ExecutionQuoteIndex', () => {
     indexRequest.mockReset();
     statusRequest.mockReset();
     push.mockReset();
+  });
+
+  it('uses the BOQ measurement loader while the quotation list is loading', () => {
+    controller.setListState(new DataLoading());
+    // Keep the request pending while checking the real loading slot.
+    indexRequest.mockImplementation(() => new Promise(() => undefined));
+
+    const wrapper = mountIndex();
+
+    expect(wrapper.find('.boq-measurement-loader').exists()).toBe(true);
+    expect(wrapper.find('.spinner-loader').exists()).toBe(false);
   });
 
   it('shows the important execution quote fields returned by the index endpoint', async () => {

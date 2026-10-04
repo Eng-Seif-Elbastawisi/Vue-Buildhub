@@ -58,13 +58,6 @@
 </template>
 
 <style scoped lang="scss">
-  .item-crud-page {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
-
   .actions.disabled {
     pointer-events: none;
     opacity: 0.7;

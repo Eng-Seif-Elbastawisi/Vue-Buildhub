@@ -5,6 +5,8 @@
   export type ButtonType = 'button' | 'submit' | 'reset';
   export type ButtonSize = 'sm' | 'md' | 'lg';
   export type IconPosition = 'left' | 'right';
+  export type ActionTone =
+    'view' | 'edit' | 'delete' | 'approve' | 'download' | 'print' | 'archive';
 
   const props = withDefaults(
     defineProps<{
@@ -19,6 +21,7 @@
       block?: boolean;
       outline?: boolean;
       ghost?: boolean;
+      actionTone?: ActionTone;
       to?: string | object;
       href?: string;
       target?: string;
@@ -33,6 +36,7 @@
       block: false,
       outline: false,
       ghost: false,
+      actionTone: undefined,
     },
   );
 
@@ -68,6 +72,7 @@
     :class="[
       `btn-${theme}`,
       `btn--${size}`,
+      actionTone && `action--${actionTone}`,
       {
         'btn--block': block,
         'btn--icon-only': iconOnly,

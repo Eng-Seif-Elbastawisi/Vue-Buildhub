@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormSectionHeader from '@/shared/components/form/StandardFormSectionHeader.vue';
   import { onMounted, ref } from 'vue';
   import { useRoute } from 'vue-router';
   import AddClientSourceParams from '../../core/params/add.client.source.params.ts';
@@ -50,6 +51,7 @@
 <template>
   <div class="email-crud-example">
     <div class="email-form-card">
+      <StandardFormSectionHeader :title="$t('client_source')" icon="pi pi-share-alt" />
       <ClientSourceForm
         :client-source="controller.itemData.value!"
         :loading="loading"
