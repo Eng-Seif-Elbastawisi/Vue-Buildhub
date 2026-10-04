@@ -473,71 +473,6 @@
     linear-gradient(90deg, var(--auth-black-24), transparent 54%);
 }
 
-.auth-shell__command-visual {
-  position: absolute;
-  inset: 8% 50% auto auto;
-  width: min(40vw, 520px);
-  aspect-ratio: 1;
-  z-index: -1;
-  opacity: 0.78;
-}
-
-.auth-shell__command-ring,
-.auth-shell__command-node {
-  position: absolute;
-  border-radius: 50%;
-}
-
-.auth-shell__command-ring {
-  inset: 10%;
-  border: 1px solid var(--auth-admin-accent-16);
-  box-shadow:
-    inset 0 0 50px var(--auth-admin-accent-08),
-    0 0 42px var(--auth-admin-accent-08);
-  animation: auth-command-pulse 5s var(--auth-ease) infinite;
-}
-
-.auth-shell__command-ring--two {
-  inset: 25%;
-  border-color: var(--auth-copper-22);
-  animation-delay: 900ms;
-}
-
-.auth-shell__command-node {
-  width: 12px;
-  height: 12px;
-  background: var(--auth-admin-accent);
-  box-shadow: 0 0 24px var(--auth-admin-accent-30);
-}
-
-.auth-shell__command-node--one {
-  top: 23%;
-  left: 28%;
-}
-
-.auth-shell__command-node--two {
-  top: 52%;
-  right: 16%;
-}
-
-.auth-shell__command-node--three {
-  bottom: 20%;
-  left: 42%;
-  background: var(--auth-copper-3);
-}
-
-.auth-shell__command-shield {
-  position: absolute;
-  inset: 31% auto auto 35%;
-  width: 30%;
-  fill: none;
-  stroke: var(--auth-admin-accent);
-  stroke-width: 5;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  filter: drop-shadow(0 0 22px var(--auth-admin-accent-30));
-}
-
 .auth-shell__admin-dashboard {
   @include grid(1, 12px);
 
@@ -1178,19 +1113,6 @@
   to {
     opacity: 1;
     transform: translateX(0);
-  }
-}
-
-@keyframes auth-command-pulse {
-  0%,
-  100% {
-    transform: scale(0.98);
-    opacity: 0.58;
-  }
-
-  50% {
-    transform: scale(1.03);
-    opacity: 1;
   }
 }
 
