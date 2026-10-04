@@ -5,6 +5,7 @@ import { useRoute, useRouter } from 'vue-router';
 import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
 import IndexPageHeader from '@/shared/IndexPageHeader/IndexPageHeader.vue';
 import AppTable, { type TableHeader } from '@/shared/HelpersComponents/AppTable.vue';
+import { deleteSelectedRows } from '@/shared/HelpersComponents/deleteSelectedRows';
 import Pagination from '@/shared/HelpersComponents/Pagination.vue';
 import TableSkelaton from '@/shared/HelpersComponents/TableSkelaton.vue';
 import DeleteDialog from '@/base/Presentation/Dialogs/MainDialogs/DeleteDialog.vue';
@@ -81,6 +82,13 @@ const deleteAttachmentType = async (id: number) => {
   );
 };
 
+const deleteSelectedAttachmentTypes = (attachmentTypes: AttachmentTypeModel[]) =>
+  deleteSelectedRows(
+    attachmentTypes,
+    (id) => controller.delete(new DeleteAttachmentTypeParams(id)),
+    () => fetchAttachmentTypes(route.query.page ? Number(route.query.page) : 1, word.value),
+  );
+
 const routePrefix = computed(() =>
   user?.type === 1 ? '/admin' : '/organization',
 );
@@ -145,6 +153,7 @@ onMounted(async () => {
         <AppTable
           :headers="headers"
           :items="data as AttachmentTypeModel[]"
+          :bulk-delete="deleteSelectedAttachmentTypes"
           selectable
           show-index
           hoverable
