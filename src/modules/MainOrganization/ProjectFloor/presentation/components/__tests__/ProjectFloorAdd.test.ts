@@ -1,8 +1,10 @@
 import { flushPromises, mount } from '@vue/test-utils';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { defineComponent, ref } from 'vue';
 import AddProjectFloorParams from '../../../core/params/add.project.floor.params';
 import AddFinalProjectFloorResultParams from '../../../core/params/final.result.project.floor.params';
 import { NotificationType } from '../../../core/constants/notificationType.enum';
+import { FloorNumber } from '../../../core/constants/floor.number.enum';
 import { Status } from '../../../core/constants/status.enum';
 import ProjectFloorAdd from '../ProjectFloorAdd.vue';
 
@@ -105,6 +107,61 @@ describe('ProjectFloorAdd.vue', () => {
     expect(ProjectFloorAdd).toBeDefined();
   });
 
+  it('keeps the floor draft and skips refresh when the save is rejected', async () => {
+    const floorDraft = new AddProjectFloorParams({
+      project_id: 24,
+      project_preview_id: 15,
+      site_description: 'Existing site description',
+      technical_general_notes: 'Existing technical notes',
+      inspection_recommendations: 'Existing inspection recommendations',
+      floors: [
+        {
+          floor_number: FloorNumber.GROUND_FLOOR,
+          spaces: [{ space_id: 1, length: 12, width: 8, height: 3 }],
+        },
+      ],
+    });
+    const ProjectFloorFormStub = defineComponent({
+      emits: ['updateData'],
+      setup(_, { emit, expose }) {
+        const siteDescription = ref(floorDraft.site_description);
+
+        expose({
+          resetForm: () => {
+            siteDescription.value = '';
+          },
+        });
+
+        return {
+          siteDescription,
+          emitFloorDraft: () => emit('updateData', floorDraft),
+        };
+      },
+      template:
+        '<div><input v-model="siteDescription" data-test="site-description" /><button data-test="emit-floor-draft" type="button" @click="emitFloorDraft">draft</button></div>',
+    });
+    const wrapper = mount(ProjectFloorAdd, {
+      global: {
+        stubs: {
+          ProjectSteps: true,
+          ProjectFloorForm: ProjectFloorFormStub,
+          FinalResults: true,
+        },
+      },
+    });
+    await flushPromises();
+
+    await wrapper.get('[data-test="emit-floor-draft"]').trigger('click');
+    await wrapper.get('.btn-primary').trigger('click');
+    await flushPromises();
+
+    expect(mocks.create).toHaveBeenCalledWith(floorDraft, undefined, mocks.routeFullPath);
+    expect(mocks.fetchList).toHaveBeenCalledTimes(1);
+    expect(wrapper.get<HTMLInputElement>('[data-test="site-description"]').element.value).toBe(
+      'Existing site description',
+    );
+  });
+
   it('submits final result params without converting them to a plain object', async () => {
     const finalParams = new AddFinalProjectFloorResultParams({
       project_preview_id: 15,
@@ -146,6 +203,35 @@ describe('ProjectFloorAdd.vue', () => {
     expect(mocks.push).toHaveBeenCalledWith({
       path: '/organization/Project/show/24',
     });
+  });
+
+  it('saves not-ready status and returns to requests without floor validation', async () => {
+    const finalParams = new AddFinalProjectFloorResultParams({
+      project_preview_id: 15,
+      status: Status.NOT_READY_FOR_COMPLETION,
+    });
+
+    const wrapper = mount(ProjectFloorAdd, {
+      global: {
+        stubs: {
+          ProjectSteps: { template: '<div />' },
+          ProjectFloorForm: { template: '<div />' },
+          FinalResults: {
+            emits: ['submitFinalResult'],
+            props: ['projectId', 'projectPreviewId', 'loading'],
+            template:
+              '<button data-test="submit-not-ready" type="button" @click="$emit(\'submitFinalResult\', finalParams)">submit</button>',
+            setup: () => ({ finalParams }),
+          },
+        },
+      },
+    });
+
+    await wrapper.get('[data-test="submit-not-ready"]').trigger('click');
+    await flushPromises();
+
+    expect(mocks.getProject).toHaveBeenCalledWith(finalParams);
+    expect(mocks.push).toHaveBeenCalledWith({ name: 'project' });
   });
 
   it('supports direct entry with only project_id and does not render preview-only final results', async () => {
