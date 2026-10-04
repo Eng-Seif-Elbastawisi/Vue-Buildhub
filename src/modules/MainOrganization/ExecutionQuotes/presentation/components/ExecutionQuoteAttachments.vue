@@ -1,4 +1,9 @@
 <script setup lang="ts">
+  import Accordion from 'primevue/accordion';
+  import AccordionContent from 'primevue/accordioncontent';
+  import AccordionHeader from 'primevue/accordionheader';
+  import AccordionPanel from 'primevue/accordionpanel';
+  import { ref } from 'vue';
   import { useI18n } from 'vue-i18n';
   import {
     attachmentExtension,
@@ -10,6 +15,7 @@
 
   const props = defineProps<{ attachments: ExecutionQuoteAttachmentSummary[] }>();
   const { locale, t } = useI18n();
+  const expandedSection = ref('attachments');
   const galleryAttachments = () =>
     props.attachments.map((attachment) =>
       toGalleryAttachment({
@@ -40,94 +46,137 @@
 
 <template>
   <section class="quote-attachments">
-    <header class="quote-attachments__header">
-      <div class="quote-attachments__heading">
-        <span class="quote-attachments__heading-icon" aria-hidden="true">
-          <i class="pi pi-paperclip"></i>
-        </span>
-        <div>
-          <h2>{{ $t('execution_quote.show.attachments_section') }}</h2>
-          <p>{{ $t('execution_quote.show.attachments_section_hint') }}</p>
-        </div>
-      </div>
-
-      <span class="quote-attachments__count">
-        {{ $t('execution_quote.show.attachments_count', { count: attachments.length }) }}
-      </span>
-    </header>
-
-    <ul v-if="attachments.length" class="quote-attachments__grid">
-      <li
-        v-for="(attachment, attachmentIndex) in attachments"
-        :key="attachment.id ?? (attachmentSource(attachment) || `attachment-${attachmentIndex}`)"
-      >
-        <button
-          type="button"
-          class="quote-attachments__card"
-          :aria-label="
-            $t('execution_quote.show.preview_attachment', {
-              name: attachmentFileName(attachment, attachmentIndex),
-            })
-          "
-          @click="openPreview(attachmentIndex)"
-        >
-          <span class="quote-attachments__preview" aria-hidden="true">
-            <img
-              v-if="
-                attachmentKind(galleryAttachments()[attachmentIndex]!) === 'image' &&
-                attachmentSource(attachment)
-              "
-              :src="attachmentSource(attachment)"
-              alt=""
-              loading="lazy"
-            />
-            <i
-              v-else
-              :class="
-                attachmentKind(galleryAttachments()[attachmentIndex]!) === 'pdf'
-                  ? 'pi pi-file-pdf'
-                  : 'pi pi-file'
-              "
-            ></i>
-          </span>
-
-          <span class="quote-attachments__meta">
-            <strong>{{ attachmentFileName(attachment, attachmentIndex) }}</strong>
-            <span>
-              <small class="quote-attachments__type">{{ attachmentTypeLabel(attachment) }}</small>
-              <small v-if="attachment.fileSize">{{ attachment.fileSize }}</small>
-              <small v-if="attachment.createdAt">{{
-                formatAttachmentDate(attachment.createdAt)
-              }}</small>
+    <Accordion v-model:value="expandedSection" lazy class="quote-attachments__accordion">
+      <AccordionPanel value="attachments">
+        <AccordionHeader class="quote-attachments__header">
+          <template #toggleicon="{ active }">
+            <span class="quote-attachments__toggle" aria-hidden="true">
+              <i class="pi pi-chevron-down" :class="{ 'is-open': active }"></i>
             </span>
-          </span>
+          </template>
+          <div class="quote-attachments__heading">
+            <span class="quote-attachments__heading-icon" aria-hidden="true">
+              <i class="pi pi-paperclip"></i>
+            </span>
+            <div>
+              <h2>{{ $t('execution_quote.show.attachments_section') }}</h2>
+              <p>{{ $t('execution_quote.show.attachments_section_hint') }}</p>
+            </div>
+          </div>
 
-          <span class="quote-attachments__view" aria-hidden="true">
-            <i class="pi pi-eye"></i>
+          <span class="quote-attachments__count">
+            {{ $t('execution_quote.show.attachments_count', { count: attachments.length }) }}
           </span>
-        </button>
-      </li>
-    </ul>
+        </AccordionHeader>
 
-    <div v-else class="quote-attachments__empty">
-      <span aria-hidden="true"><i class="pi pi-folder-open"></i></span>
-      <div>
-        <strong>{{ $t('execution_quote.show.no_attachments') }}</strong>
-        <p>{{ $t('execution_quote.show.no_attachments_hint') }}</p>
-      </div>
-    </div>
+        <AccordionContent class="quote-attachments__content">
+          <ul v-if="attachments.length" class="quote-attachments__grid">
+            <li
+              v-for="(attachment, attachmentIndex) in attachments"
+              :key="
+                attachment.id ?? (attachmentSource(attachment) || `attachment-${attachmentIndex}`)
+              "
+            >
+              <button
+                type="button"
+                class="quote-attachments__card"
+                :aria-label="
+                  $t('execution_quote.show.preview_attachment', {
+                    name: attachmentFileName(attachment, attachmentIndex),
+                  })
+                "
+                @click="openPreview(attachmentIndex)"
+              >
+                <span class="quote-attachments__preview" aria-hidden="true">
+                  <img
+                    v-if="
+                      attachmentKind(galleryAttachments()[attachmentIndex]!) === 'image' &&
+                      attachmentSource(attachment)
+                    "
+                    :src="attachmentSource(attachment)"
+                    alt=""
+                    loading="lazy"
+                  />
+                  <i
+                    v-else
+                    :class="
+                      attachmentKind(galleryAttachments()[attachmentIndex]!) === 'pdf'
+                        ? 'pi pi-file-pdf'
+                        : 'pi pi-file'
+                    "
+                  ></i>
+                </span>
+
+                <span class="quote-attachments__meta">
+                  <strong>{{ attachmentFileName(attachment, attachmentIndex) }}</strong>
+                  <span>
+                    <small class="quote-attachments__type">{{
+                      attachmentTypeLabel(attachment)
+                    }}</small>
+                    <small v-if="attachment.fileSize">{{ attachment.fileSize }}</small>
+                    <small v-if="attachment.createdAt">{{
+                      formatAttachmentDate(attachment.createdAt)
+                    }}</small>
+                  </span>
+                </span>
+
+                <span class="quote-attachments__view" aria-hidden="true">
+                  <i class="pi pi-eye"></i>
+                </span>
+              </button>
+            </li>
+          </ul>
+
+          <div v-else class="quote-attachments__empty">
+            <span aria-hidden="true"><i class="pi pi-folder-open"></i></span>
+            <div>
+              <strong>{{ $t('execution_quote.show.no_attachments') }}</strong>
+              <p>{{ $t('execution_quote.show.no_attachments_hint') }}</p>
+            </div>
+          </div>
+        </AccordionContent>
+      </AccordionPanel>
+    </Accordion>
   </section>
 </template>
 
 <style scoped lang="scss">
   .quote-attachments {
-    display: grid;
-    gap: 1.25rem;
-    padding: 1.25rem;
+    overflow: hidden;
     border: 1px solid var(--border-weak);
     border-radius: var(--radius-md);
     background: var(--bg-card);
     box-shadow: var(--shadow-sm);
+  }
+
+  .quote-attachments :deep(.p-accordionpanel) {
+    border: 0;
+  }
+
+  .quote-attachments__accordion :deep(.p-collapsible-enter-active),
+  .quote-attachments__accordion :deep(.p-collapsible-leave-active) {
+    display: grid;
+    overflow: hidden;
+    transition:
+      grid-template-rows 320ms cubic-bezier(0.4, 0, 0.2, 1),
+      opacity 220ms ease;
+  }
+
+  .quote-attachments__accordion :deep(.p-collapsible-enter-from),
+  .quote-attachments__accordion :deep(.p-collapsible-leave-to) {
+    grid-template-rows: 0fr;
+    opacity: 0;
+  }
+
+  .quote-attachments__accordion :deep(.p-collapsible-enter-to),
+  .quote-attachments__accordion :deep(.p-collapsible-leave-from) {
+    grid-template-rows: 1fr;
+    opacity: 1;
+  }
+
+  .quote-attachments__accordion :deep(.p-accordioncontent-wrapper) {
+    min-height: 0;
+    overflow: hidden;
   }
 
   .quote-attachments__header,
@@ -141,10 +190,52 @@
   .quote-attachments__header {
     justify-content: space-between;
     gap: 1rem;
+    width: 100%;
+    padding: 1.25rem;
+    background: var(--bg-card);
+    text-align: start;
+    cursor: pointer;
+    transition: background-color var(--transition-fast);
+  }
+
+  .quote-attachments__header:hover {
+    background: var(--PrimaryColor-alpha-8);
+  }
+
+  .quote-attachments__header:focus-visible {
+    outline: 3px solid var(--PrimaryColor-alpha-20);
+    outline-offset: -3px;
+  }
+
+  .quote-attachments__toggle {
+    display: grid;
+    flex: 0 0 2.5rem;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border: 1px solid var(--PrimaryColor-alpha-20);
+    border-radius: var(--radius-full);
+    background: var(--bg-card);
+    color: var(--PrimaryColor);
+  }
+
+  .quote-attachments__toggle i {
+    transition: transform 220ms ease;
+  }
+
+  .quote-attachments__toggle i.is-open {
+    transform: rotate(180deg);
+  }
+
+  .quote-attachments__content :deep(.p-accordioncontent-content) {
+    padding: 0 1.25rem 1.25rem;
+    background: var(--bg-card);
   }
 
   .quote-attachments__heading {
+    flex: 1;
     gap: 0.75rem;
+    min-width: 0;
     text-align: start;
   }
 
@@ -301,16 +392,22 @@
 
   @media (max-width: 640px) {
     .quote-attachments__header {
-      align-items: stretch;
-      flex-direction: column;
+      flex-wrap: wrap;
     }
 
     .quote-attachments__count {
-      align-self: flex-start;
+      margin-inline-start: auto;
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
+    .quote-attachments__toggle i,
+    .quote-attachments__header,
+    .quote-attachments__accordion :deep(.p-collapsible-enter-active),
+    .quote-attachments__accordion :deep(.p-collapsible-leave-active) {
+      transition: none;
+    }
+
     .quote-attachments__card {
       transition: none;
     }

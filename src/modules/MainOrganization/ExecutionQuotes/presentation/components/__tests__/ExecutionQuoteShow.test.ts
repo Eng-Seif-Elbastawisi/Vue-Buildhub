@@ -289,7 +289,9 @@ describe('ExecutionQuoteShow', () => {
     expect(projectCard.text()).toContain('fwffefefe');
     expect(wrapper.text()).not.toContain('execution_quote.show.ownership_section');
 
-    const accordionHeaders = wrapper.findAll('.p-accordionheader');
+    const accordionHeaders = wrapper.findAll(
+      '.execution-quote-show__stages-header, .execution-quote-show__stage-accordion-header',
+    );
     expect(accordionHeaders).toHaveLength(2);
     expect(accordionHeaders[0].attributes('aria-expanded')).toBe('true');
     expect(accordionHeaders[1].attributes('aria-expanded')).toBe('true');
@@ -308,6 +310,30 @@ describe('ExecutionQuoteShow', () => {
 
     expect(accordionHeaders[0].attributes('aria-expanded')).toBe('false');
   });
+
+  it.each([null, undefined, []])(
+    'omits the attachment section when the API returns %s',
+    async (attachments) => {
+      showRequest.mockResolvedValue({
+        statusCode: 200,
+        data: {
+          status: true,
+          data: { ...itemQuoteResponse().data.data, attachments },
+        },
+      });
+
+      const wrapper = mount(ExecutionQuoteShow, {
+        global: {
+          mocks: { $t: (key: string) => key },
+          stubs: { RouterLink: routerLinkStub },
+        },
+      });
+      await flushPromises();
+
+      expect(wrapper.find('.quote-attachments').exists()).toBe(false);
+      expect(wrapper.find('.execution-quote-history').exists()).toBe(true);
+    },
+  );
 
   it('shows backend supervision percentage and price instead of lump-sum client price', async () => {
     showRequest.mockResolvedValue({

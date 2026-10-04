@@ -8,7 +8,7 @@ import QuoteStatusModel from '../../../core/models/quote.status.model';
 import ExecutionQuoteStatusHistory from '../ExecutionQuoteStatusHistory.vue';
 
 describe('ExecutionQuoteStatusHistory', () => {
-  it('renders the recorded transition, employee and note', () => {
+  it('keeps the recorded transition, employee and note when collapsed and expanded', async () => {
     const history = QuoteStatusModel.fromJson({
       id: 3,
       employee: { id: 1, name: 'Techlab Employee' },
@@ -35,5 +35,21 @@ describe('ExecutionQuoteStatusHistory', () => {
     expect(wrapper.text()).toContain('Techlab Employee');
     expect(wrapper.text()).toContain('Update the client price');
     expect(wrapper.get('time').attributes('datetime')).toBe('2026-09-30 07:50:08');
+
+    const sectionHeader = wrapper.get('.execution-quote-history__header');
+    expect(sectionHeader.attributes('aria-expanded')).toBe('true');
+
+    await sectionHeader.trigger('click');
+    expect(sectionHeader.attributes('aria-expanded')).toBe('false');
+    expect(wrapper.find('.execution-quote-history__timeline').exists()).toBe(false);
+    expect(wrapper.find('.execution-quote-history__content').exists()).toBe(false);
+    expect(sectionHeader.find('.execution-quote-history__icon').exists()).toBe(true);
+    expect(sectionHeader.get('.execution-quote-history__toggle i').classes()).not.toContain(
+      'is-open',
+    );
+
+    await sectionHeader.trigger('click');
+    expect(sectionHeader.attributes('aria-expanded')).toBe('true');
+    expect(wrapper.text()).toContain('Update the client price');
   });
 });

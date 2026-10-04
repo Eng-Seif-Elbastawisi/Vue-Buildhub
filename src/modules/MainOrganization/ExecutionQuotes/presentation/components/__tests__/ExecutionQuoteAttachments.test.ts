@@ -15,8 +15,21 @@ describe('ExecutionQuoteAttachments', () => {
   it('opens the clicked file at its position in the complete quote group', async () => {
     const wrapper = mount(ExecutionQuoteAttachments, { props: { attachments } });
 
+    const sectionHeader = wrapper.get('.quote-attachments__header');
+    expect(sectionHeader.attributes('aria-expanded')).toBe('true');
+
+    await sectionHeader.trigger('click');
+    expect(sectionHeader.attributes('aria-expanded')).toBe('false');
+    expect(wrapper.find('.quote-attachments__grid').exists()).toBe(false);
+    expect(wrapper.find('.quote-attachments__content').exists()).toBe(false);
+    expect(sectionHeader.get('.quote-attachments__toggle i').classes()).not.toContain('is-open');
+
+    await sectionHeader.trigger('click');
+    expect(sectionHeader.attributes('aria-expanded')).toBe('true');
+
     await wrapper.findAll('.quote-attachments__card')[1]?.trigger('click');
 
+    expect(sectionHeader.attributes('aria-expanded')).toBe('true');
     expect(attachmentGallery.visible.value).toBe(true);
     expect(attachmentGallery.activeIndex.value).toBe(1);
     expect(attachmentGallery.attachments.value.map((attachment) => attachment.url)).toEqual(

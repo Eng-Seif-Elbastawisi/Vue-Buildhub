@@ -452,6 +452,25 @@ body:has(.execution-quote-index) .p-select-overlay.p-anchored-overlay-leave-to {
   gap: 5px;
 }
 
+.execution-quote-index__date {
+  min-width: 10rem;
+  overflow: visible;
+  overflow-wrap: normal;
+  text-overflow: clip;
+  white-space: nowrap;
+}
+
+.execution-quote-index__date > .pi {
+  flex: 0 0 auto;
+}
+
+.execution-quote-date {
+  display: inline-block;
+  direction: ltr;
+  unicode-bidi: isolate;
+  white-space: nowrap;
+}
+
 .execution-quote-index__client-status {
   color: var(--quote-quiet-ink);
   font-size: 0.68rem;
@@ -514,9 +533,9 @@ body:has(.execution-quote-index) .p-select-overlay.p-anchored-overlay-leave-to {
 
 .execution-quote-index .execution-quote-index__row-actions .execution-quote-index__view-button {
   padding: 0 11px;
-  border: 1px solid var(--quote-copper-dark);
+  border: 1px solid var(--quote-copper-soft);
   color: var(--quote-paper);
-  background: var(--quote-copper-dark);
+  background: var(--white);
 }
 
 .execution-quote-index
