@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
 import { FloorNumber } from '../../../core/constants/floor.number.enum';
+import AddProjectFloorParams from '../../../core/params/add.project.floor.params';
 import EditProjectFloorParams from '../../../core/params/edit.project.floor.params';
 import ProjectFloorApiService from '../../../data/api/project.floor.api-service';
 import ProjectFloorController from '../project.floor.controller';
@@ -28,6 +29,36 @@ describe('ProjectFloorController', () => {
     const instance1 = ProjectFloorController.getInstance();
     const instance2 = ProjectFloorController.getInstance();
     expect(instance1).toBe(instance2);
+  });
+
+  it('keeps the assessment page open after a successful floor create', async () => {
+    vi.spyOn(ProjectFloorApiService.getInstance(), 'create').mockResolvedValue({
+      statusCode: 200,
+      data: { status: true, data: { id: 33, project_id: 24 } },
+    });
+    const params = new AddProjectFloorParams({
+      project_id: 24,
+      project_preview_id: 15,
+      site_description: 'Current site description',
+      technical_general_notes: 'Current technical notes',
+      inspection_recommendations: 'Current recommendations',
+      floors: [
+        {
+          floor_number: FloorNumber.GROUND_FLOOR,
+          spaces: [{ space_id: 8, length: 12.5, width: 8.25, height: 3.2 }],
+        },
+      ],
+    });
+
+    const result = await ProjectFloorController.getInstance().create(
+      params,
+      undefined,
+      'add-floor-form',
+    );
+
+    expect(result).toBeInstanceOf(DataSuccess);
+    expect(mocks.clearFormData).toHaveBeenCalledWith('add-floor-form');
+    expect(mocks.push).not.toHaveBeenCalled();
   });
 
   it('returns to the project show page after a successful floor update', async () => {

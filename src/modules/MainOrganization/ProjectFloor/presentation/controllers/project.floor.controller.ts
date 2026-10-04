@@ -15,7 +15,6 @@ import BaseController, {
 
 import router from '@/router';
 import { useFormsStore } from '@/stores/formsStore';
-import { useUserStore } from '@/stores/user';
 
 import type ProjectFloorModel from '../../core/models/project.floor.model';
 import type ProjectFloorShowModel from '../../core/models/project.floor.show.model';
@@ -94,9 +93,8 @@ export default class ProjectFloorController extends BaseController<
   }
 
   /**
-   * Create project floor.
-   *
-   * Existing behavior is preserved.
+   * Create a project floor without leaving the assessment page.
+   * The caller refreshes the saved floors so a final result can be selected.
    */
   async create(
     params: Params,
@@ -108,16 +106,8 @@ export default class ProjectFloorController extends BaseController<
       useJson: true,
     });
 
-    if (result instanceof DataSuccess) {
-      router.push(
-        useUserStore().user?.type === 1
-          ? '/mainportal/project'
-          : '/organization/project',
-      );
-
-      if (formKey) {
-        useFormsStore().clearFormData(formKey);
-      }
+    if (result instanceof DataSuccess && formKey) {
+      useFormsStore().clearFormData(formKey);
     }
 
     return result;
