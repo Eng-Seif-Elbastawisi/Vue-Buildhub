@@ -15,6 +15,7 @@ import ProjectController from '@/modules/MainOrganization/Project/presentation/c
 import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
 import UpdatedCustomInputSelect from '@/shared/FormInputs/UpdatedCustomInputSelect.vue';
 import AppButton from '@/shared/HelpersComponents/AppButton.vue';
+import PageHeaderIcon from '@/shared/FeatureHeader/PageHeaderIcon.vue';
 import AppTable, {
   type TableHeader,
 } from '@/shared/HelpersComponents/AppTable.vue';
@@ -505,19 +506,22 @@ const asExecutionQuotes = (
 
 <template>
   <section class="execution-quote-index">
-    <header class="execution-quote-index__masthead">
-      <div class="execution-quote-index__heading-copy">
-        <h1>
-          {{ $t('execution_quote.title') }}
-        </h1>
+    <header class="execution-quote-index__masthead page-header--animated">
+      <div class="execution-quote-index__identity">
+        <PageHeaderIcon kind="document" />
+        <div class="execution-quote-index__heading-copy">
+          <h1 class="page-header__title">
+            {{ $t('execution_quote.title') }}
+          </h1>
 
-        <p>
-          {{
-            $t(
-              'execution_quote.index_description',
-            )
-          }}
-        </p>
+          <p class="page-header__subtitle">
+            {{
+              $t(
+                'execution_quote.index_description',
+              )
+            }}
+          </p>
+        </div>
       </div>
 
       <div class="execution-quote-index__masthead-action">
@@ -563,7 +567,8 @@ const asExecutionQuotes = (
 
       <div class="execution-quote-index__filters-grid">
         <div class="execution-quote-index__filter-field">
-          <UpdatedCustomInputSelect id="execution-quote-source-filter" v-model="selectedQuoteSource"
+          <UpdatedCustomInputSelect
+id="execution-quote-source-filter" v-model="selectedQuoteSource"
             label="execution_quote.filters.source" :placeholder="$t(
               'execution_quote.filters.source_placeholder',
             )
@@ -572,7 +577,8 @@ const asExecutionQuotes = (
         </div>
 
         <div class="execution-quote-index__filter-field">
-          <UpdatedCustomInputSelect id="execution-quote-project-filter" v-model="selectedProject"
+          <UpdatedCustomInputSelect
+id="execution-quote-project-filter" v-model="selectedProject"
             label="execution_quote.filters.project" :placeholder="$t(
               'execution_quote.filters.project_placeholder',
             )
@@ -580,7 +586,8 @@ const asExecutionQuotes = (
         </div>
 
         <div class="execution-quote-index__filter-field">
-          <UpdatedCustomInputSelect id="execution-quote-client-filter" v-model="selectedClient"
+          <UpdatedCustomInputSelect
+id="execution-quote-client-filter" v-model="selectedClient"
             label="execution_quote.filters.client" :placeholder="$t(
               'execution_quote.filters.client_placeholder',
             )
@@ -588,7 +595,8 @@ const asExecutionQuotes = (
         </div>
 
         <div class="execution-quote-index__filter-field">
-          <UpdatedCustomInputSelect id="execution-quote-type-filter" v-model="selectedQuoteType"
+          <UpdatedCustomInputSelect
+id="execution-quote-type-filter" v-model="selectedQuoteType"
             label="execution_quote.filters.quote_type" :placeholder="$t(
               'execution_quote.filters.quote_type_placeholder',
             )
@@ -597,7 +605,8 @@ const asExecutionQuotes = (
         </div>
 
         <div class="execution-quote-index__filter-actions">
-          <AppButton class="execution-quote-index__filter-clear" theme="secondary" outline :disabled="selectedFilterCount === 0 &&
+          <AppButton
+class="execution-quote-index__filter-clear" theme="secondary" outline :disabled="selectedFilterCount === 0 &&
             activeFilterCount === 0
             " @click="clearFilters">
             {{
@@ -607,7 +616,8 @@ const asExecutionQuotes = (
             }}
           </AppButton>
 
-          <AppButton class="execution-quote-index__filter-apply" icon="right" :disabled="!filtersHaveChanges"
+          <AppButton
+class="execution-quote-index__filter-apply" icon="right" :disabled="!filtersHaveChanges"
             @click="applyFilters">
             <template #icon>
               <i class="pi pi-search" aria-hidden="true"></i>
@@ -664,16 +674,19 @@ const asExecutionQuotes = (
             </span>
           </header>
 
-          <AppTable :headers="headers" :items="asExecutionQuotes(quotes)
+          <AppTable
+:headers="headers" :items="asExecutionQuotes(quotes)
             " row-key="id" flush min-width="1210px" row-clickable striped hoverable
             empty-message="execution_quote.empty_quotes" @row-click="openShow">
             <template #cell-quoteSource="{ item }">
-              <span class="execution-quote-index__badge" :class="{
+              <span
+class="execution-quote-index__badge" :class="{
                 'execution-quote-index__badge--design':
                   item.quoteSource ===
                   QuoteSourceEnum.EXECUTION_FROM_DESIGN_QUOTE,
               }">
-                <i :class="item.quoteSource ===
+                <i
+:class="item.quoteSource ===
                     QuoteSourceEnum.EXECUTION_FROM_DESIGN_QUOTE
                     ? 'pi pi-file-check'
                     : 'pi pi-bolt'
@@ -710,7 +723,8 @@ const asExecutionQuotes = (
 
             <template #cell-client="{ item }">
               <div class="execution-quote-index__entity-cell">
-                <span class="execution-quote-index__entity-icon execution-quote-index__entity-icon--client"
+                <span
+class="execution-quote-index__entity-icon execution-quote-index__entity-icon--client"
                   aria-hidden="true">
                   <i class="pi pi-user"></i>
                 </span>
@@ -730,7 +744,8 @@ const asExecutionQuotes = (
                     }}
                   </small>
 
-                  <span v-if="
+                  <span
+v-if="
                     item.client?.status !==
                     undefined
                   " class="execution-quote-index__client-status" :class="{
@@ -751,12 +766,14 @@ const asExecutionQuotes = (
             </template>
 
             <template #cell-quoteType="{ item }">
-              <span class="execution-quote-index__type" :class="{
+              <span
+class="execution-quote-index__type" :class="{
                 'execution-quote-index__type--supervision':
                   item.quoteType?.id ===
                   ExecutionQuoteTypeEnum.SUPERVISION,
               }">
-                <i :class="item.quoteType?.id ===
+                <i
+:class="item.quoteType?.id ===
                     ExecutionQuoteTypeEnum.SUPERVISION
                     ? 'pi pi-eye'
                     : 'pi pi-calculator'
@@ -793,7 +810,8 @@ const asExecutionQuotes = (
                   }}
                 </strong>
 
-                <small v-if="
+                <small
+v-if="
                   item.totalQuotePrice !==
                   undefined
                 ">
@@ -812,7 +830,8 @@ const asExecutionQuotes = (
 
             <template #cell-quoteProgress="{ item }">
               <div class="execution-quote-index__progress">
-                <span class="execution-quote-index__progress-status"
+                <span
+class="execution-quote-index__progress-status"
                   :class="`execution-quote-index__progress-status--${quoteProgressState(item)}`">
                   <span aria-hidden="true"></span>
 
@@ -938,14 +957,16 @@ const asExecutionQuotes = (
           </AppTable>
         </section>
 
-        <Pagination :pagination="controller.pagination.value
+        <Pagination
+:pagination="controller.pagination.value
           " show-single-page @change-page="onPageChange" @count-per-page="
             onPerPageChange
           " />
       </template>
     </DataStatusBuilder>
 
-    <ExecutionQuoteStatusDialog v-model="statusDialogVisible" :current-status="statusQuote?.quoteStatus
+    <ExecutionQuoteStatusDialog
+v-model="statusDialogVisible" :current-status="statusQuote?.quoteStatus
       " :loading="statusChangeLoading" @submit="changeQuoteStatus" />
   </section>
 </template>

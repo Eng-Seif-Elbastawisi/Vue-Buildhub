@@ -128,6 +128,21 @@ describe('ExecutionQuoteIndex', () => {
     expect(wrapper.find('.spinner-loader').exists()).toBe(false);
   });
 
+  it('uses the shared drawable icon in the quotation list header', () => {
+    indexRequest.mockImplementation(() => new Promise(() => undefined));
+
+    const wrapper = mountIndex();
+
+    expect(
+      wrapper
+        .find('.execution-quote-index__masthead .page-header-icon[data-icon-kind="document"]')
+        .exists(),
+    ).toBe(true);
+    expect(
+      wrapper.find('.execution-quote-index__masthead .page-header-icon__accent').exists(),
+    ).toBe(false);
+  });
+
   it('shows the important execution quote fields returned by the index endpoint', async () => {
     indexRequest.mockResolvedValue(createIndexResponse(1, '007'));
 

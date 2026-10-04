@@ -1,5 +1,10 @@
 <script setup lang="ts">
   import { useI18n } from 'vue-i18n';
+  import {
+    attachmentExtension,
+    attachmentGallery,
+    toGalleryAttachment,
+  } from '@/shared/AttachmentGallery/attachmentGallery';
 
   import type AttachmentModel from '../../../core/models/attachment.model';
   import type ProductsShowModel from '../../../core/models/products.show.model';
@@ -18,19 +23,11 @@
   };
 
   const getFileName = (attachment: AttachmentModel) => {
-    const cleanPath = attachment.file.split('?')[0] ?? '';
-    const pathParts = cleanPath.split('/').filter(Boolean);
-    const fileName = pathParts[pathParts.length - 1];
-
-    return fileName ? decodeURIComponent(fileName) : '—';
+    return attachment.file ? toGalleryAttachment(attachment).name : '—';
   };
 
   const getFileType = (attachment: AttachmentModel) => {
-    const fileName = getFileName(attachment);
-    const fileNameParts = fileName.split('.');
-    const extension = fileName.includes('.') ? fileNameParts[fileNameParts.length - 1] : undefined;
-
-    return extension?.toUpperCase() || '—';
+    return attachmentExtension(getFileName(attachment)).toUpperCase() || '—';
   };
 </script>
 
@@ -121,7 +118,7 @@
 
       <div v-if="product.attachments.length" class="attachments-list">
         <article
-          v-for="attachment in product.attachments"
+          v-for="(attachment, index) in product.attachments"
           :key="attachment.id ?? attachment.file"
           class="attachment-row"
         >
@@ -144,26 +141,15 @@
             <span>{{ getFileType(attachment) }}</span>
           </div>
 
-          <a
-            class="download-btn action--download"
-            :href="attachment.file"
-            target="_blank"
-            rel="noopener noreferrer"
-            download
-            :title="$t('Products.show.download_attachment')"
-            :aria-label="$t('Products.show.download_attachment')"
+          <button
+            type="button"
+            class="attachment-view-btn"
+            :title="$t('preview_attachment')"
+            :aria-label="$t('preview_attachment')"
+            @click="attachmentGallery.open(product.attachments.map(toGalleryAttachment), index)"
           >
-            <svg
-              width="17"
-              height="17"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <path d="M12 3v12m0 0 4-4m-4 4-4-4M5 21h14" />
-            </svg>
-          </a>
+            <i class="pi pi-eye" aria-hidden="true" />
+          </button>
         </article>
       </div>
 
@@ -378,7 +364,7 @@
     }
   }
 
-  .download-btn {
+  .attachment-view-btn {
     display: grid;
     flex: 0 0 2.25rem;
     width: 2.25rem;

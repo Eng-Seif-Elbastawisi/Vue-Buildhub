@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { attachmentExtension, attachmentGallery, attachmentKind, toGalleryAttachment } from '@/shared/AttachmentGallery/attachmentGallery';
 import UpdatedCustomInputSelect from '@/shared/FormInputs/UpdatedCustomInputSelect.vue';
 import AttachmentTypeController from '@/modules/MainOrganization/AttachmentType/presentation/controllers/attachment.type.controller';
 import IndexAttachmentTypeParams from '@/modules/MainOrganization/AttachmentType/core/params/index.attachment.type.params';
@@ -71,44 +72,17 @@ const formatFileSize = (bytes: number): string => {
 const getFileExtension = (
   fileName?: string,
   fileUrl?: string,
-): string => {
-  const source = fileName || fileUrl || '';
-
-  const match = source.match(
-    /\.([a-zA-Z0-9]+)(?:\?|$)/,
-  );
-
-  return match ? match[1].toUpperCase() : 'FILE';
-};
+): string => attachmentExtension(fileName || '', fileUrl).toUpperCase() || 'FILE';
 
 const isPdf = (
   fileName?: string,
   fileUrl?: string,
-): boolean => {
-  return (
-    getFileExtension(fileName, fileUrl).toLowerCase() ===
-    'pdf'
-  );
-};
+): boolean => attachmentKind({ name: fileName || '', url: fileUrl || '' }) === 'pdf';
 
 const isImage = (
   fileName?: string,
   fileUrl?: string,
-): boolean => {
-  const extension = getFileExtension(
-    fileName,
-    fileUrl,
-  ).toLowerCase();
-
-  return [
-    'png',
-    'jpg',
-    'jpeg',
-    'webp',
-    'gif',
-    'svg',
-  ].includes(extension);
-};
+): boolean => attachmentKind({ name: fileName || '', url: fileUrl || '' }) === 'image';
 
 const getAttachmentName = (
   attachment: ProjectAttachmentItem,
@@ -285,7 +259,8 @@ const removeAttachment = (index: number) => {
           {{ $t('project.attachment_type') }}
         </label>
 
-        <UpdatedCustomInputSelect id="project_attachment_type" v-model="selectedType"
+        <UpdatedCustomInputSelect
+id="project_attachment_type" v-model="selectedType"
           :controller="attachmentTypeController" :params="indexAttachmentTypeParams" :placeholder="$t(
             'project.attachment_type_placeholder',
           )
@@ -298,14 +273,17 @@ const removeAttachment = (index: number) => {
           {{ $t('project.attachment_file') }}
         </label>
 
-        <input id="project_attachment_file" ref="fileInputRef" type="file" class="hidden-input" multiple
+        <input
+id="project_attachment_file" ref="fileInputRef" type="file" class="hidden-input" multiple
           :disabled="disabled" @change="stageSelectedFiles" />
 
-        <button type="button" class="upload-dropzone" :class="{
+        <button
+type="button" class="upload-dropzone" :class="{
           'has-files': stagedFiles.length > 0,
         }" :disabled="disabled" @click="triggerFileInput" @dragover.prevent @drop.prevent="stageDroppedFiles">
           <span class="upload-icon" aria-hidden="true">
-            <i :class="stagedFiles.length
+            <i
+:class="stagedFiles.length
                 ? 'pi pi-check'
                 : 'pi pi-cloud-upload'
               "></i>
@@ -371,31 +349,39 @@ const removeAttachment = (index: number) => {
       </div>
 
       <div class="staged-files">
-        <article v-for="file in stagedFiles" :key="file.id" class="staged-file-card">
-          <div class="staged-preview">
-            <img v-if="isImage(file.name, file.file)" :src="file.file" :alt="file.name" />
+        <article v-for="(file, index) in stagedFiles" :key="file.id" class="staged-file-card">
+          <button
+            type="button"
+            class="staged-file-card__open"
+            :aria-label="file.name"
+            @click="attachmentGallery.open(stagedFiles.map((staged) => ({ url: staged.file, name: staged.name, mimeType: staged.mimeType })), index)"
+          >
+            <div class="staged-preview">
+              <img v-if="isImage(file.name, file.file)" :src="file.file" :alt="file.name" />
 
-            <div v-else-if="isPdf(file.name)" class="preview-icon pdf">
-              <i class="pi pi-file-pdf"></i>
+              <div v-else-if="isPdf(file.name)" class="preview-icon pdf">
+                <i class="pi pi-file-pdf"></i>
+              </div>
+
+              <div v-else class="preview-icon">
+                {{ getFileExtension(file.name) }}
+              </div>
             </div>
 
-            <div v-else class="preview-icon">
-              {{ getFileExtension(file.name) }}
+            <div class="staged-file-info">
+              <strong :title="file.name">
+                {{ file.name }}
+              </strong>
+
+              <span>
+                {{ file.size }}
+              </span>
             </div>
-          </div>
 
-          <div class="staged-file-info">
-            <strong :title="file.name">
-              {{ file.name }}
-            </strong>
-
-            <span>
-              {{ file.size }}
-            </span>
-          </div>
-
-          <button type="button" class="staged-remove" :disabled="disabled" :aria-label="`Remove ${file.name}`"
-            @click="removeStagedFile(file.id)">
+          </button>
+          <button
+type="button" class="staged-remove" :disabled="disabled" :aria-label="$t('project.remove_attachment', { name: file.name })"
+            @click.stop="removeStagedFile(file.id)">
             <i class="pi pi-times"></i>
           </button>
         </article>
@@ -416,80 +402,89 @@ const removeAttachment = (index: number) => {
 
       <div class="attachments-list">
         <article v-for="(attachment, index) in modelValue" :key="`${attachment.file}-${index}`" class="attachment-card">
-          <div class="file-info">
-            <div class="file-icon-wrapper" :class="{
-              'is-pdf': isPdf(
-                attachment.name,
-                attachment.file,
-              ),
-              'is-img': isImage(
-                attachment.name,
-                attachment.file,
-              ),
-            }">
-              <img v-if="
-                isImage(
+          <button
+            type="button"
+            class="attachment-card__open"
+            :aria-label="getAttachmentName(attachment, index)"
+            @click="attachmentGallery.open(modelValue.map(toGalleryAttachment), index)"
+          >
+            <div class="file-info">
+              <div
+class="file-icon-wrapper" :class="{
+                'is-pdf': isPdf(
                   attachment.name,
                   attachment.file,
-                )
-              " :src="attachment.file" :alt="getAttachmentName(
-                  attachment,
-                  index,
-                )
-                  " />
-
-              <i v-else-if="
-                isPdf(
+                ),
+                'is-img': isImage(
                   attachment.name,
                   attachment.file,
-                )
-              " class="pi pi-file-pdf"></i>
-
-              <span v-else>
-                {{
-                  getFileExtension(
+                ),
+              }">
+                <img
+v-if="
+                  isImage(
                     attachment.name,
                     attachment.file,
                   )
-                }}
-              </span>
-            </div>
-
-            <div class="file-text">
-              <span class="file-name" :title="getAttachmentName(
-                attachment,
-                index,
-              )
-                ">
-                {{
-                  getAttachmentName(
+                " :src="attachment.file" :alt="getAttachmentName(
                     attachment,
                     index,
                   )
-                }}
-              </span>
+                    " />
 
-              <span v-if="attachment.size" class="file-size">
-                {{ attachment.size }}
-              </span>
+                <i
+v-else-if="
+                  isPdf(
+                    attachment.name,
+                    attachment.file,
+                  )
+                " class="pi pi-file-pdf"></i>
+
+                <span v-else>
+                  {{
+                    getFileExtension(
+                      attachment.name,
+                      attachment.file,
+                    )
+                  }}
+                </span>
+              </div>
+
+              <div class="file-text">
+                <span
+class="file-name" :title="getAttachmentName(
+                  attachment,
+                  index,
+                )
+                  ">
+                  {{
+                    getAttachmentName(
+                      attachment,
+                      index,
+                    )
+                  }}
+                </span>
+
+                <span v-if="attachment.size" class="file-size">
+                  {{ attachment.size }}
+                </span>
+              </div>
             </div>
-          </div>
 
-          <span v-if="attachment.typeName" class="type-badge">
-            <i class="pi pi-tag"></i>
-            {{ attachment.typeName }}
-          </span>
+            <span v-if="attachment.typeName" class="type-badge">
+              <i class="pi pi-tag"></i>
+              {{ attachment.typeName }}
+            </span>
 
-          <button type="button" class="remove-btn" :disabled="disabled" :title="$t(
-            'project.remove_attachment',
-            {
-              name: getAttachmentName(
-                attachment,
-                index,
-              ),
-            },
-          )
-            " @click="removeAttachment(index)">
+          </button>
+          <button
+            type="button"
+            class="remove-btn"
+            :disabled="disabled"
+            :aria-label="$t('project.remove_attachment', { name: getAttachmentName(attachment, index) })"
+            :title="$t('project.remove_attachment', { name: getAttachmentName(attachment, index) })"
+            @click.stop="removeAttachment(index)"
+          >
             <i class="pi pi-trash"></i>
           </button>
         </article>
@@ -792,6 +787,21 @@ const removeAttachment = (index: number) => {
   grid-template-columns: repeat(auto-fill,
       minmax(240px, 1fr));
   gap: 0.65rem;
+}
+
+.staged-file-card__open,
+.attachment-card__open {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  text-align: start;
+  cursor: pointer;
 }
 
 .staged-file-card {

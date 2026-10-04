@@ -1,3 +1,27 @@
 {
-  "buildPath": "code"
+  "buildPath": "code",
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "layout-transition",
+        "value": "*",
+        "files": [
+          "src/shared/ConstructionStates/AppLoadingDialog.vue"
+        ],
+        "createdAt": "2026-10-04T07:41:56.594Z",
+        "reason": "Agent: width and height at reported line are static; the loading motion uses transform only"
+      },
+      {
+        "rule": "layout-transition",
+        "value": "*",
+        "files": [
+          "src/base/Presentation/Dialogs/UnifiedDialog.vue"
+        ],
+        "createdAt": "2026-10-04T07:41:59.113Z",
+        "reason": "Agent: reported progress-fill width and height are static; its progress transition uses transform only"
+      }
+    ]
+  }
 }

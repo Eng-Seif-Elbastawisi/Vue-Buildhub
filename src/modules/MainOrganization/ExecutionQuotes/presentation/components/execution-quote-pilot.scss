@@ -28,6 +28,14 @@
   min-width: 0;
 }
 
+.execution-quote-index__identity {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
 .execution-quote-index__heading-copy h1 {
   margin: 0;
   color: var(--quote-ink);
@@ -480,7 +488,9 @@ body:has(.execution-quote-index) .p-select-overlay.p-anchored-overlay-leave-to {
   white-space: nowrap;
 }
 
-.execution-quote-index .execution-quote-index__row-actions .execution-quote-index__change-status-button {
+.execution-quote-index
+  .execution-quote-index__row-actions
+  .execution-quote-index__change-status-button {
   --quote-row-action-ink: var(--quote-neutral-ink);
 }
 
@@ -493,7 +503,9 @@ body:has(.execution-quote-index) .p-select-overlay.p-anchored-overlay-leave-to {
   --row-action-ink: var(--dashboard-action-view);
 }
 
-.execution-quote-index .execution-quote-index__row-actions .app-btn:hover:not(:disabled, [aria-disabled='true']) {
+.execution-quote-index
+  .execution-quote-index__row-actions
+  .app-btn:hover:not(:disabled, [aria-disabled='true']) {
   border-color: color-mix(in srgb, var(--quote-row-action-ink) 42%, var(--quote-paper));
   color: var(--quote-row-action-ink);
   background: color-mix(in srgb, var(--quote-row-action-ink) 16%, var(--quote-paper));
@@ -505,7 +517,9 @@ body:has(.execution-quote-index) .p-select-overlay.p-anchored-overlay-leave-to {
   outline-offset: 2px;
 }
 
-.execution-quote-index .execution-quote-index__row-actions .app-btn:is(:disabled, [aria-disabled='true']) {
+.execution-quote-index
+  .execution-quote-index__row-actions
+  .app-btn:is(:disabled, [aria-disabled='true']) {
   border-color: var(--quote-line);
   color: var(--quote-muted);
   background: var(--quote-canvas);

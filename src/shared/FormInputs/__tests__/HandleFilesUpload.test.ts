@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { mount } from '@vue/test-utils';
 import HandleFilesUpload from '../HandleFilesUpload.vue';
+import { attachmentGallery } from '@/shared/AttachmentGallery/attachmentGallery';
 
 const createWrapper = (props = {}) =>
   mount(HandleFilesUpload, {
@@ -72,17 +73,25 @@ describe('HandleFilesUpload', () => {
     expect(wrapper.findAll('.preview-item')).toHaveLength(1);
   });
 
-  it('renders multiple initial files', async () => {
+  it('opens the clicked preloaded file in its group and keeps delete separate', async () => {
     const wrapper = mount(HandleFilesUpload, {
       props: {
-        file: ['img1.jpg', 'img2.jpg'],
+        file: ['img1.jpg', 'img2.jpg?token=abc'],
         multiple: true,
       },
     });
 
     await wrapper.vm.$nextTick();
 
-    expect(wrapper.findAll('.preview-item')).toHaveLength(2);
+    await wrapper.findAll('.preview-open')[1]?.trigger('click');
+    expect(attachmentGallery.activeIndex.value).toBe(1);
+    expect(attachmentGallery.attachments.value).toHaveLength(2);
+    expect(attachmentGallery.current.value?.name).toBe('img2.jpg');
+    expect(wrapper.findAll('.preview-thumb')).toHaveLength(2);
+
+    attachmentGallery.close();
+    await wrapper.findAll('.remove-btn')[0]?.trigger('click');
+    expect(attachmentGallery.visible.value).toBe(false);
   });
 
   it('emits change event when a file is removed', async () => {
@@ -98,7 +107,7 @@ describe('HandleFilesUpload', () => {
     await removeBtn.trigger('click');
 
     expect(wrapper.emitted('change')).toBeTruthy();
-    expect(wrapper.emitted('change')![0][0]).toEqual([]);
+    expect(wrapper.emitted('change')?.[0]?.[0]).toEqual([]);
   });
 
   it('updates files dynamically when file prop changes', async () => {

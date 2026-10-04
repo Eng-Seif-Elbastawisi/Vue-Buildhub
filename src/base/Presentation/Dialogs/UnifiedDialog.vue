@@ -3,6 +3,8 @@
   import { useI18n } from 'vue-i18n';
   import { dialogManager } from './dialog.manager';
   import { DialogType, DIALOG_ICONS, DIALOG_COLORS } from './dialog.types';
+  import AppLoadingDialog from '@/shared/ConstructionStates/AppLoadingDialog.vue';
+  import AppDeleteStateDialog from '@/shared/ConstructionStates/AppDeleteStateDialog.vue';
 
   const { t, te } = useI18n();
 
@@ -17,6 +19,7 @@
   const isLoading = computed(() => dialogManager.isLoading.value);
   const loadingMessage = computed(() => dialogManager.loadingMessage.value);
   const loadingProgress = computed(() => dialogManager.loadingProgress.value);
+  const loadingKind = computed(() => dialogManager.loadingKind.value);
 
   // Local state
   const isVisible = ref(false);
@@ -53,6 +56,7 @@
 
   // Computed properties
   const dialogType = computed(() => currentDialog.value?.type || DialogType.INFO);
+  const constructionState = computed(() => currentDialog.value?.constructionState);
 
   const dialogIcon = computed(() => {
     return currentDialog.value?.icon || DIALOG_ICONS[dialogType.value];
@@ -93,6 +97,7 @@
     }
     return loadingProgress.value;
   });
+  const progressScale = computed(() => Math.min(100, Math.max(0, progressValue.value)) / 100);
 
   const showCloseButton = computed(() => {
     if (isLoading.value && !currentDialog.value) {
@@ -117,8 +122,7 @@
   }
 
   function handleAfterLeave() {
-    // isClosing.value = false;
-    // dialogManager.closeDialog();
+    if (currentDialog.value && !isVisible.value) dialogManager.closeDialog();
   }
 
   function handleClose() {
@@ -207,19 +211,12 @@
             role="dialog"
             aria-modal="true"
           >
-            <!-- Loading Spinner -->
-            <div v-if="isLoading && !currentDialog" class="dialog-loading">
-              <div class="loading-spinner"></div>
-              <p v-if="loadingMessage" class="loading-message">
-                {{ translateIfExists(loadingMessage) }}
-              </p>
-              <div v-if="showProgress" class="loading-progress">
-                <div class="progress-bar">
-                  <div class="progress-fill" :style="{ width: `${progressValue}%` }"></div>
-                </div>
-                <span class="progress-text">{{ Math.round(progressValue) }}%</span>
-              </div>
-            </div>
+            <AppLoadingDialog
+              v-if="isLoading && !currentDialog"
+              :message="translateIfExists(loadingMessage)"
+              :progress="progressValue"
+              :deleting="loadingKind === 'delete'"
+            />
 
             <!-- Dialog Content -->
             <template v-else-if="currentDialog">
@@ -234,7 +231,17 @@
               </button>
 
               <!-- Image -->
-              <div v-if="dialogImage" class="dialog-image-container">
+              <AppDeleteStateDialog
+                v-if="constructionState"
+                :state="constructionState === 'delete-error' ? 'error' : 'success'"
+                :title="
+                  constructionState === 'delete-error'
+                    ? $t('construction_states.delete_error')
+                    : $t('construction_states.delete_success')
+                "
+                :message="translateIfExists(dialogMessage)"
+              />
+              <div v-else-if="dialogImage" class="dialog-image-container">
                 <img :src="dialogImage" :alt="$t('dialog_image')" class="dialog-image" />
               </div>
 
@@ -244,12 +251,12 @@
               </div>
 
               <!-- Title -->
-              <h3 v-if="dialogTitle" class="dialog-title">
+              <h3 v-if="dialogTitle && !constructionState" class="dialog-title">
                 {{ translateIfExists(dialogTitle) }}
               </h3>
 
               <!-- Message -->
-              <p class="dialog-message">
+              <p v-if="!constructionState" class="dialog-message">
                 {{ translateIfExists(dialogMessage) }}
               </p>
 
@@ -259,7 +266,7 @@
                   <div
                     class="progress-fill"
                     :style="{
-                      width: `${progressValue}%`,
+                      transform: `scaleX(${progressScale})`,
                       backgroundColor: dialogColor,
                     }"
                   ></div>
@@ -278,6 +285,12 @@
                 >
                   <span v-if="action.loading" class="action-spinner"></span>
                   {{ translateIfExists(action.label) }}
+                </button>
+              </div>
+
+              <div v-else-if="constructionState" class="dialog-actions">
+                <button class="dialog-action dialog-action-primary" @click="handleClose">
+                  {{ $t('construction_states.ok') }}
                 </button>
               </div>
 
@@ -321,7 +334,7 @@
     width: 90%;
     max-width: 400px;
     padding: 2rem;
-    background: var(--bg-main);
+    background: var(--quote-paper, var(--bg-main));
     border-radius: 16px;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
     text-align: center;
@@ -390,8 +403,7 @@
   }
 
   /* Progress */
-  .dialog-progress,
-  .loading-progress {
+  .dialog-progress {
     margin-bottom: 1.5rem;
   }
 
@@ -403,10 +415,16 @@
   }
 
   .progress-fill {
+    width: 100%;
     height: 100%;
     background: var(--PrimaryColor);
     border-radius: 4px;
-    transition: width 0.3s ease;
+    transform-origin: left center;
+    transition: transform 0.3s ease;
+  }
+
+  :global([dir='rtl']) .progress-fill {
+    transform-origin: right center;
   }
 
   .progress-text {
@@ -480,27 +498,6 @@
     background: var(--gray-100);
   }
 
-  /* Loading */
-  .dialog-loading {
-    padding: 1rem;
-    text-align: center;
-  }
-
-  .loading-spinner {
-    width: 48px;
-    height: 48px;
-    margin: 0 auto 1rem;
-    border: 3px solid var(--gray-200);
-    border-top-color: var(--PrimaryColor);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-  }
-
-  .loading-message {
-    margin: 0 0 1rem;
-    color: var(--gray-500);
-  }
-
   .action-spinner {
     width: 16px;
     height: 16px;
@@ -536,6 +533,24 @@
   .dialog-zoom-leave-to {
     opacity: 0;
     transform: scale(0.9);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .progress-fill {
+      transition: none;
+    }
+
+    .dialog-fade-enter-active,
+    .dialog-fade-leave-active,
+    .dialog-zoom-enter-active,
+    .dialog-zoom-leave-active {
+      transition: none;
+    }
+
+    .dialog-zoom-enter-from,
+    .dialog-zoom-leave-to {
+      transform: none;
+    }
   }
 
   /* Dark mode support */
