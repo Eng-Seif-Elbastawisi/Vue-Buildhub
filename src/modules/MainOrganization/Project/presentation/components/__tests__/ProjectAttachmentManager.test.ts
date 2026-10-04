@@ -80,4 +80,43 @@ describe('ProjectAttachmentManager', () => {
       }),
     ]);
   });
+
+  it('groups added files by type and updates their descriptions', async () => {
+    const wrapper = mountAttachmentManager([
+      {
+        file: 'data:image/png;base64,front',
+        name: 'front.png',
+        typeId: 5,
+        typeName: 'Site photos',
+        alt: 'Front view',
+      },
+      {
+        file: 'data:image/jpeg;base64,side',
+        name: 'side.jpg',
+        typeId: 5,
+        typeName: 'Site photos',
+        alt: 'Side view',
+      },
+      {
+        file: 'data:application/pdf;base64,contract',
+        name: 'contract.pdf',
+        typeId: 2,
+        typeName: 'Contracts',
+        alt: 'Contract',
+      },
+    ]);
+
+    expect(wrapper.findAll('.attachment-group')).toHaveLength(2);
+    expect(wrapper.findAll('.attachment-card')).toHaveLength(3);
+    expect(wrapper.text()).toContain('Site photos');
+    expect(wrapper.text()).toContain('Contracts');
+
+    await wrapper.get('#project_attachment_alt_0').setValue('Main entrance');
+
+    expect(wrapper.emitted('update:modelValue')?.at(-1)?.[0]).toEqual([
+      expect.objectContaining({ alt: 'Main entrance', typeId: 5 }),
+      expect.objectContaining({ alt: 'Side view', typeId: 5 }),
+      expect.objectContaining({ alt: 'Contract', typeId: 2 }),
+    ]);
+  });
 });

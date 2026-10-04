@@ -1,5 +1,6 @@
 <script setup lang="ts">
   import { onMounted, onUnmounted, ref } from 'vue';
+  import ConstructionMotionAccent from '@/shared/DataStatues/ConstructionMotionAccent.vue';
 
   const loader = ref<HTMLElement | null>(null);
   const isVisible = ref(true);
@@ -56,7 +57,7 @@
           <span v-for="column in 5" :key="column" class="boq-measurement-loader__block" />
         </div>
 
-        <div class="boq-measurement-loader__sweep" />
+        <ConstructionMotionAccent variant="boq" class="boq-measurement-loader__sweep" />
       </div>
 
       <div class="boq-measurement-loader__footer">
@@ -135,7 +136,7 @@
     border-radius: 3px;
     background: var(--quote-field-line);
     opacity: 0.62;
-    animation: boq-measurement-breathe 2.4s ease-in-out infinite;
+    animation: boq-measurement-breathe var(--motion-loading-cycle, 1400ms) ease-in-out infinite;
   }
 
   .boq-measurement-loader__row--header .boq-measurement-loader__block {
@@ -163,30 +164,7 @@
   }
 
   .boq-measurement-loader__sweep {
-    position: absolute;
-    z-index: 1;
     inset: 40px 0 0;
-    border-inline-end: 2px solid var(--quote-copper);
-    pointer-events: none;
-    animation: boq-measurement-sweep-ltr 2.6s cubic-bezier(0.3, 0.1, 0.65, 1) infinite;
-  }
-
-  .boq-measurement-loader__sweep::after {
-    position: absolute;
-    inset-block: 0;
-    inset-inline-end: -5px;
-    width: 5px;
-    background: repeating-linear-gradient(
-      to bottom,
-      var(--quote-copper) 0 1px,
-      transparent 1px 18px
-    );
-    content: '';
-    opacity: 0.65;
-  }
-
-  [dir='rtl'] .boq-measurement-loader__sweep {
-    animation-name: boq-measurement-sweep-rtl;
   }
 
   .boq-measurement-loader__footer {
@@ -220,56 +198,12 @@
     border-radius: 5px;
     background: var(--quote-copper-soft);
     opacity: 0.68;
-    animation: boq-measurement-total 2.6s ease-in-out infinite;
+    animation: boq-measurement-total var(--motion-loading-cycle, 1400ms) ease-in-out infinite;
   }
 
   .boq-measurement-loader--paused .boq-measurement-loader__block,
-  .boq-measurement-loader--paused .boq-measurement-loader__sweep {
+  .boq-measurement-loader--paused .boq-measurement-loader__sweep :deep(*) {
     animation-play-state: paused;
-  }
-
-  @keyframes boq-measurement-sweep-ltr {
-    0% {
-      opacity: 0;
-      transform: translateX(-100%);
-    }
-
-    5% {
-      opacity: 0.7;
-    }
-
-    44% {
-      opacity: 0.7;
-      transform: translateX(0);
-    }
-
-    48%,
-    100% {
-      opacity: 0;
-      transform: translateX(0);
-    }
-  }
-
-  @keyframes boq-measurement-sweep-rtl {
-    0% {
-      opacity: 0;
-      transform: translateX(100%);
-    }
-
-    5% {
-      opacity: 0.7;
-    }
-
-    44% {
-      opacity: 0.7;
-      transform: translateX(0);
-    }
-
-    48%,
-    100% {
-      opacity: 0;
-      transform: translateX(0);
-    }
   }
 
   @keyframes boq-measurement-breathe {

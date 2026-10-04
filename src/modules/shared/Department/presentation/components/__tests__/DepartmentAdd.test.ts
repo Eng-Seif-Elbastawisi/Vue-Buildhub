@@ -45,23 +45,26 @@ describe('DepartmentAdd', () => {
     expect(wrapper.find('.department-form-stub').attributes('data-reset-key')).toBe('1');
   });
 
-  it.each([Type.DESIGN, Type.SUPERVISION])('keeps type %s in the shared inline form layout', (type) => {
-    const wrapper = mount(DepartmentAdd, {
-      props: { type },
-      global: {
-        mocks: { $t: (key: string) => key },
-        stubs: {
-          DepartmentForm: {
-            props: ['type'],
-            template: '<div class="department-form-stub" :data-type="type"></div>',
+  it.each([Type.DESIGN, Type.SUPERVISION])(
+    'keeps type %s in the shared inline form layout',
+    (type) => {
+      const wrapper = mount(DepartmentAdd, {
+        props: { type },
+        global: {
+          mocks: { $t: (key: string) => key },
+          stubs: {
+            DepartmentForm: {
+              props: ['type'],
+              template: '<div class="department-form-stub" :data-type="type"></div>',
+            },
+            AppButton: true,
           },
-          AppButton: true,
         },
-      },
-    });
+      });
 
-    expect(wrapper.get('section.department-inline-form').exists()).toBe(true);
-    expect(wrapper.find('section.department-page').exists()).toBe(false);
-    expect(wrapper.find('.department-form-stub').attributes('data-type')).toBe(String(type));
-  });
+      expect(wrapper.get('section.department-inline-form').exists()).toBe(true);
+      expect(wrapper.find('section.department-page').exists()).toBe(false);
+      expect(wrapper.find('.department-form-stub').attributes('data-type')).toBe(String(type));
+    },
+  );
 });

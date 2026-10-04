@@ -13,13 +13,7 @@ import {
 import { translate } from '@/locales/i18n';
 
 import { type ServiceType } from '@/modules/MainOrganization/Project/core/constants/serviceType.enum';
-
-export interface ProjectAttachmentParams {
-  file: string;
-  attachment_type_id?: number;
-  name?: string;
-  size?: number | string;
-}
+import { groupProjectAttachments, type ProjectAttachmentParams } from './add.project.params';
 
 export type WithPreviewValue = 0 | 1;
 
@@ -121,7 +115,7 @@ export default class EditProjectParams implements Params {
 
     client_phone?: string;
 
-    client_source_id?: number;
+    client_source?: number;
 
     project_type_id?: number;
 
@@ -229,7 +223,7 @@ export default class EditProjectParams implements Params {
 
       notes: this.notes,
 
-      attachments: this.attachments,
+      files: groupProjectAttachments(this.attachments),
 
       engineer_id: this.engineer_id,
 

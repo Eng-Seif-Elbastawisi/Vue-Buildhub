@@ -12,14 +12,14 @@
   import ProjectAttachmentManager, {
     type ProjectAttachmentItem,
   } from './ProjectAttachmentManager.vue';
+  import ProjectTermGallery from './ProjectTermGallery.vue';
   import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
 
   import { ServiceType } from '@/modules/MainOrganization/Project/core/constants/serviceType.enum';
 
   import type ProjectShowModel from '../../core/models/project.show.model';
   import AddProjectParams, {
-    type ProjectAttachmentFile,
-    type ProjectAttachmentGroup,
+    type ProjectAttachmentParams,
   } from '../../core/params/add.project.params';
 
   import IndexClientSourceParams from '@/modules/shared/ClientSource/core/params/index.client.source.params';
@@ -38,6 +38,7 @@
   import TermController from '@/modules/MainOrganization/Term/presentation/controllers/term.controller';
   import IndexTermParams from '@/modules/MainOrganization/Term/core/params/index.term.params';
   import type TermModel from '@/modules/MainOrganization/Term/core/models/term.model';
+  import { formatSelectedProjectTerms } from '../utils/project.term.formatter';
 
   const emit = defineEmits<{
     updateData: [params: AddProjectParams];
@@ -175,7 +176,6 @@
 */
 
   const filesItems = ref<ProjectAttachmentItem[]>([]);
-  const files = ref<ProjectAttachmentGroup[]>([]);
 
   /*
 |--------------------------------------------------------------------------
@@ -352,46 +352,21 @@
     return '';
   };
 
-  const normalizeInlineText = (text: string): string => {
-    return text.replace(/\s+/g, ' ').trim();
-  };
-
   /*
 |--------------------------------------------------------------------------
 | Attachments
 |--------------------------------------------------------------------------
 */
 
-  const mapAttachmentsToFiles = (items: ProjectAttachmentItem[]): ProjectAttachmentGroup[] => {
-    const groups = new Map<number, ProjectAttachmentGroup>();
-
-    items.forEach((item) => {
-      if (!item.typeId || !item.file) {
-        return;
-      }
-
-      const typeId = Number(item.typeId);
-
-      const attachment: ProjectAttachmentFile = {
-        file: item.file,
-        alt: item.name || '',
-        link: null,
-      };
-
-      const existingGroup = groups.get(typeId);
-
-      if (existingGroup) {
-        existingGroup.attachments.push(attachment);
-      } else {
-        groups.set(typeId, {
-          attachment_type_id: typeId,
-          attachments: [attachment],
-        });
-      }
-    });
-
-    return Array.from(groups.values());
-  };
+  const mapAttachmentItems = (items: ProjectAttachmentItem[]): ProjectAttachmentParams[] =>
+    items.map((attachment) => ({
+      file: attachment.file,
+      attachment_type_id: attachment.typeId,
+      alt: attachment.alt,
+      link: attachment.link,
+      name: attachment.name,
+      size: attachment.size,
+    }));
 
   /*
 |--------------------------------------------------------------------------
@@ -445,7 +420,7 @@
 
         service_type: selectedServiceType.value?.id as ServiceType | undefined,
 
-        files: filesItems.value.length ? mapAttachmentsToFiles(filesItems.value) : undefined,
+        attachments: filesItems.value.length ? mapAttachmentItems(filesItems.value) : undefined,
 
         notes: notes.value,
 
@@ -600,10 +575,8 @@
 |--------------------------------------------------------------------------
 */
 
-  const updatefilesItems = (items: ProjectAttachmentItem[]) => {
+  const updateAttachmentItems = (items: ProjectAttachmentItem[]) => {
     filesItems.value = items;
-
-    files.value = mapAttachmentsToFiles(items);
 
     updateData();
   };
@@ -640,33 +613,7 @@
       title: term.title,
     }));
 
-    termsText.value = selectedValues
-      .map((selectedItem) => {
-        const fullTerm = termOptions.value.find(
-          (term) => Number(term.id) === Number(selectedItem.id),
-        );
-
-        const title = normalizeInlineText(fullTerm?.title || selectedItem.title || '');
-
-        const description = normalizeInlineText(fullTerm?.description || '');
-
-        if (!title && !description) {
-          return '';
-        }
-
-        if (!description) {
-          return title;
-        }
-
-        return `
-        <p>
-          <strong>${title}</strong>
-        </p>
-        <p>${description}</p>
-      `;
-      })
-      .filter(Boolean)
-      .join('<p><br></p><p><br></p>');
+    termsText.value = formatSelectedProjectTerms(selectedValues, termOptions.value);
 
     updateData();
   };
@@ -702,7 +649,6 @@
         selectedTerm.value = [];
 
         filesItems.value = [];
-        files.value = [];
 
         updateData();
 
@@ -766,12 +712,12 @@
           typeId: att.attachment_type_id || att.attachment_type?.id,
 
           typeName: att.attachment_type?.name || att.attachment_type?.title,
-        }));
 
-        files.value = mapAttachmentsToFiles(filesItems.value);
+          alt: att.alt,
+          link: att.link,
+        }));
       } else {
         filesItems.value = [];
-        files.value = [];
       }
 
       /*
@@ -1168,6 +1114,12 @@
               :type="2"
               @update:model-value="updateTerms"
             />
+
+            <ProjectTermGallery
+              :model-value="selectedTerm"
+              :options="termOptions"
+              @update:model-value="updateTerms"
+            />
           </div>
 
           <!-- TERMS EDITOR -->
@@ -1349,7 +1301,7 @@
       <!-- ========================================================= -->
 
       <section id="attachments-field" class="form-section form-section--attachments">
-        <ProjectAttachmentManager v-model="filesItems" @change="updatefilesItems" />
+        <ProjectAttachmentManager v-model="filesItems" @change="updateAttachmentItems" />
       </section>
     </div>
   </div>

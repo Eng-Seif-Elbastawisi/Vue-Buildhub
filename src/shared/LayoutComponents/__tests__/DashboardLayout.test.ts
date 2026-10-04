@@ -44,7 +44,9 @@ describe('DashboardLayout.vue', () => {
     const markup = wrapper.html();
 
     expect(wrapper.findAllComponents(AnimatedBreadcrumb)).toHaveLength(1);
-    expect(markup.indexOf('desktop-navbar')).toBeLessThan(markup.indexOf('dashboard-breadcrumb-row'));
+    expect(markup.indexOf('desktop-navbar')).toBeLessThan(
+      markup.indexOf('dashboard-breadcrumb-row'),
+    );
     expect(markup.indexOf('dashboard-breadcrumb-row')).toBeLessThan(markup.indexOf('main-content'));
     expect(wrapper.find('.dashboard-route-accent').exists()).toBe(false);
   });

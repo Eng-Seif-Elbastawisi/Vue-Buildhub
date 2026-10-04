@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { flushPromises, mount } from '@vue/test-utils';
+import { defineComponent, h, inject } from 'vue';
 import AppTable from '../AppTable.vue';
 
 // Mock dialogManager
@@ -47,6 +48,28 @@ const createWrapper = (props = {}, slots = {}) =>
   });
 
 describe('AppTable', () => {
+  it('arms row removal only after a destructive confirmation', async () => {
+    const ConfirmRemoval = defineComponent({
+      setup() {
+        const arm = inject<(element: HTMLElement | null) => void>('dashboard-destructive-motion');
+        return () =>
+          h('button', {
+            class: 'confirm-removal',
+            onClick: (event: MouseEvent) => arm?.(event.currentTarget as HTMLElement),
+          });
+      },
+    });
+    const wrapper = createWrapper({}, { actions: () => h(ConfirmRemoval) });
+
+    expect(wrapper.find('tbody').classes()).not.toContain('is-destructive-removal');
+    await wrapper.findAll('.confirm-removal')[0].trigger('click');
+    expect(wrapper.find('tbody').classes()).toContain('is-destructive-removal');
+
+    await wrapper.setProps({ items: [mockItems[1]] });
+    expect(wrapper.findAll('tbody tr')).toHaveLength(1);
+    expect(wrapper.find('tbody tr').attributes('data-row-key')).toBe('2');
+  });
+
   it('renders without crashing', () => {
     const wrapper = createWrapper();
     expect(wrapper.exists()).toBe(true);

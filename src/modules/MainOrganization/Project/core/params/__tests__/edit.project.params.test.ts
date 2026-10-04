@@ -100,4 +100,41 @@ describe('EditProjectParams', () => {
       'location_id',
     ]);
   });
+
+  it('sends grouped files when editing attachments', () => {
+    const params = new EditProjectParams({
+      projectId: 123,
+      attachments: [
+        {
+          file: 'data:application/pdf;base64,contract',
+          attachment_type_id: 2,
+          alt: 'Contract',
+          link: 'https://example.com/contract',
+        },
+      ],
+    });
+
+    expect(params.toMap().files).toEqual([
+      {
+        attachment_type_id: 2,
+        attachments: [
+          {
+            file: 'data:application/pdf;base64,contract',
+            alt: 'Contract',
+            link: 'https://example.com/contract',
+          },
+        ],
+      },
+    ]);
+    expect(params.toMap()).not.toHaveProperty('attachments');
+  });
+
+  it('sends an empty files list when all attachments are removed', () => {
+    const params = new EditProjectParams({
+      projectId: 123,
+      attachments: [],
+    });
+
+    expect(params.toMap().files).toEqual([]);
+  });
 });

@@ -301,6 +301,25 @@ describe('ExecutionQuoteIndex', () => {
     });
   });
 
+  it('shows only the view action when a quote has been sent to the client', async () => {
+    indexRequest.mockResolvedValue(
+      createIndexResponse(1, 'Sent quote', 1, QuoteStatusEnum.SENT_TO_CLIENT),
+    );
+
+    const wrapper = mountIndex();
+    await flushPromises();
+
+    expect(wrapper.find('.execution-quote-index__add-stage-button').exists()).toBe(false);
+    expect(wrapper.find('.execution-quote-index__add-item-button').exists()).toBe(false);
+    expect(wrapper.find('.execution-quote-index__change-status-button').exists()).toBe(false);
+
+    await wrapper.get('.execution-quote-index__view-button').trigger('click');
+    expect(push).toHaveBeenLastCalledWith({
+      name: 'Show Execution Quote',
+      params: { id: '38' },
+    });
+  });
+
   it('applies and clears the supported API filters', async () => {
     indexRequest.mockResolvedValue(createIndexResponse(1, 'Filtered project'));
 

@@ -20,7 +20,7 @@ import { type ServiceType } from '@/modules/MainOrganization/Project/core/consta
 
 export interface ProjectAttachmentFile {
   file: string;
-  alt?: string;
+  alt: string | null;
   link?: string | null;
 }
 
@@ -29,7 +29,43 @@ export interface ProjectAttachmentGroup {
   attachments: ProjectAttachmentFile[];
 }
 
+export interface ProjectAttachmentParams {
+  file: string;
+  attachment_type_id?: number;
+  alt?: string | null;
+  link?: string | null;
+  name?: string;
+  size?: number | string;
+}
 
+export const groupProjectAttachments = (
+  attachments?: ProjectAttachmentParams[],
+): ProjectAttachmentGroup[] | undefined => {
+  if (!attachments) return undefined;
+
+  const groups = new Map<number, ProjectAttachmentFile[]>();
+
+  attachments.forEach((attachment) => {
+    const typeId = Number(attachment.attachment_type_id);
+
+    if (!Number.isInteger(typeId) || typeId <= 0) {
+      throw new TypeError('attachment_type_id is required for every project attachment');
+    }
+
+    const groupedAttachments = groups.get(typeId) ?? [];
+    groupedAttachments.push({
+      file: attachment.file,
+      alt: attachment.alt?.trim() || attachment.name?.trim() || null,
+      link: attachment.link?.trim() || null,
+    });
+    groups.set(typeId, groupedAttachments);
+  });
+
+  return Array.from(groups, ([attachment_type_id, groupedAttachments]) => ({
+    attachment_type_id,
+    attachments: groupedAttachments,
+  }));
+};
 
 export type WithPreviewValue = 0 | 1;
 
@@ -39,19 +75,6 @@ const hasText = (value?: string): boolean => Boolean(value?.trim());
 
 // const hasValidPhone = (value?: string): boolean =>
 //   Boolean(value?.trim() && PHONE_PATTERN.test(value.trim()));
-
-const hasValidUrl = (value?: string): boolean => {
-  if (!hasText(value)) return true;
-
-  try {
-    const url = new URL(value.trim());
-
-    return url.protocol === 'http:' || url.protocol === 'https:';
-  } catch {
-    return false;
-  }
-};
-
 
 const hasValidPhone = (value?: string): boolean =>
   Boolean(value?.trim() && PHONE_PATTERN.test(value.trim()));
@@ -79,7 +102,7 @@ export default class AddProjectParams implements Params {
 
   public notes?: string;
 
-  public files?: ProjectAttachmentGroup[];
+  public attachments?: ProjectAttachmentParams[];
 
   public engineer_id?: number;
 
@@ -101,7 +124,9 @@ export default class AddProjectParams implements Params {
       custom: (value?: TranslationParams) => {
         if (!hasTitleTranslation(value)) return translate('validation.title_required');
 
-        return true
+        return (
+          hasDescriptionTranslation(value) || translate('Project.validation.description_required')
+        );
       },
     },
 
@@ -130,33 +155,25 @@ export default class AddProjectParams implements Params {
 
     date: {
       required: true,
-      custom: (value?: string) =>
-        hasText(value) || translate('Project.validation.date_required'),
+      custom: (value?: string) => hasText(value) || translate('Project.validation.date_required'),
     },
 
     terms: {
       required: true,
-      custom: (value?: string) =>
-        hasText(value) || translate('Project.validation.terms_required'),
+      custom: (value?: string) => hasText(value) || translate('Project.validation.terms_required'),
     },
 
-    // files: {
-    //   custom: (value?: ProjectAttachmentGroup[]) =>
-    //     !value?.length ||
-    //     value.every(
-    //       (group) =>
-    //         Number.isInteger(Number(group.attachment_type_id)) &&
-    //         Number(group.attachment_type_id) > 0 &&
-    //         Array.isArray(group.attachments) &&
-    //         group.attachments.length > 0,
-    //         // group.attachments.every(
-    //         //   (attachment) =>
-    //         //     hasText(attachment.file),
-    //         // ),
-    //     ) ||
-    //     translate('Project.validation.attachment_incomplete'),
-    // },
-
+    attachments: {
+      custom: (value?: ProjectAttachmentParams[]) =>
+        !value?.length ||
+        value.every(
+          (attachment) =>
+            hasText(attachment.file) &&
+            Number.isInteger(Number(attachment.attachment_type_id)) &&
+            Number(attachment.attachment_type_id) > 0,
+        ) ||
+        translate('project.validation.attachment_type_required'),
+    },
   });
   constructor(data: {
     translations?: TranslationParams;
@@ -181,7 +198,7 @@ export default class AddProjectParams implements Params {
 
     notes?: string;
 
-    files?: ProjectAttachmentGroup[];
+    attachments?: ProjectAttachmentParams[];
 
     engineer_id?: number;
 
@@ -219,7 +236,7 @@ export default class AddProjectParams implements Params {
 
     this.notes = data.notes;
 
-    this.files = data.files;
+    this.attachments = data.attachments;
 
     this.engineer_id = data.engineer_id;
 
@@ -265,7 +282,7 @@ export default class AddProjectParams implements Params {
 
       notes: this.notes,
 
-      files: this.files,
+      files: groupProjectAttachments(this.attachments),
 
       engineer_id: this.engineer_id,
 
@@ -339,7 +356,6 @@ export default class AddProjectParams implements Params {
     //     message: translate('Project.validation.location_link_invalid'),
     //   });
     // }
-
 
     return errors;
   }

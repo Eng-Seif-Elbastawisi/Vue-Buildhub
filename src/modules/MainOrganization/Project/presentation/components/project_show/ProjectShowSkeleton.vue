@@ -1,3 +1,7 @@
+<script setup lang="ts">
+  import ConstructionMotionAccent from '@/shared/DataStatues/ConstructionMotionAccent.vue';
+</script>
+
 <template>
   <div
     class="project-pdf-content project-show-skeleton"
@@ -9,6 +13,7 @@
 
     <section class="project-command-hero" aria-hidden="true">
       <div class="project-hero project-show-skeleton__hero">
+        <ConstructionMotionAccent variant="building" class="project-show-skeleton__construction" />
         <div class="project-hero__inner">
           <span class="project-show-skeleton__bar project-show-skeleton__breadcrumb" />
 
@@ -163,7 +168,15 @@
     height: 10px;
     border-radius: 4px;
     background: var(--gray-200);
-    animation: project-show-skeleton-pulse 2.2s ease-in-out infinite;
+    animation: project-show-skeleton-pulse var(--motion-loading-cycle, 1400ms) ease-in-out infinite;
+  }
+
+  .project-show-skeleton__construction {
+    position: absolute;
+    z-index: 1;
+    inset-block-start: 1.5rem;
+    inset-inline-end: 1.5rem;
+    color: var(--quote-copper-light, var(--PrimaryColor-light));
   }
 
   .project-show-skeleton__hero {
@@ -393,6 +406,13 @@
   }
 
   @media (max-width: 680px) {
+    .project-show-skeleton__construction {
+      inset-block-start: 0.75rem;
+      inset-inline-end: 0.75rem;
+      transform: scale(0.75);
+      transform-origin: top right;
+    }
+
     .project-show-skeleton__hero-body {
       align-items: flex-start;
       flex-direction: column;
@@ -416,6 +436,10 @@
     .project-show-skeleton__field {
       border-inline-end: 0;
     }
+  }
+
+  :global([dir='rtl']) .project-show-skeleton__construction {
+    transform-origin: top left;
   }
 
   @media (prefers-reduced-motion: reduce) {

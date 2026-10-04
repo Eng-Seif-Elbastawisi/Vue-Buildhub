@@ -44,7 +44,7 @@
 
 <template>
   <div class="dashboard-breadcrumb">
-    <Transition name="dashboard-crumb-motion" :duration="{ enter: 530, leave: 120 }">
+    <Transition name="dashboard-crumb-motion" :duration="{ enter: 560, leave: 140 }">
       <Breadcrumb
         :key="navigationKey"
         :model="items"
@@ -155,7 +155,7 @@
 
   .dashboard-breadcrumb__link {
     text-decoration: none;
-    transition: color 150ms ease;
+    transition: color var(--motion-fast, 140ms) var(--motion-ease, ease-out);
   }
 
   .dashboard-breadcrumb__current::after {
@@ -206,8 +206,8 @@
   .dashboard-crumb-motion-enter-active,
   .dashboard-crumb-motion-leave-active {
     transition:
-      opacity 260ms ease-out,
-      transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
+      opacity var(--motion-slow, 280ms) var(--motion-ease, ease-out),
+      transform var(--motion-slow, 280ms) var(--motion-ease, ease-out);
   }
 
   .dashboard-crumb-motion-leave-active {
@@ -215,7 +215,7 @@
     inset-block-start: 0;
     inset-inline-start: 0;
     pointer-events: none;
-    transition-duration: 120ms;
+    transition-duration: var(--motion-fast, 140ms);
   }
 
   .dashboard-crumb-motion-enter-from {
@@ -229,7 +229,8 @@
   }
 
   .dashboard-crumb-motion-enter-active .dashboard-breadcrumb__current::after {
-    animation: dashboard-crumb-underline 260ms ease-out 260ms both;
+    animation: dashboard-crumb-underline var(--motion-slow, 280ms) var(--motion-ease, ease-out)
+      var(--motion-slow, 280ms) both;
   }
 
   @keyframes dashboard-crumb-underline {
@@ -245,7 +246,7 @@
   @media (prefers-reduced-motion: reduce) {
     .dashboard-crumb-motion-enter-active,
     .dashboard-crumb-motion-leave-active {
-      transition: opacity 100ms ease-out;
+      transition: opacity var(--motion-fast, 140ms) ease-out;
     }
 
     .dashboard-crumb-motion-enter-active .dashboard-breadcrumb__current::after {

@@ -446,22 +446,84 @@ body:has(.execution-quote-index) .p-select-overlay.p-anchored-overlay-leave-to {
 }
 
 .execution-quote-index__row-actions {
-  display: grid;
-  grid-template-columns: repeat(2, max-content);
-  gap: 5px;
+  display: inline-flex;
   align-items: center;
-}
-
-.execution-quote-index__row-actions .app-btn {
-  min-height: 27px;
-  padding: 3px 7px;
-  font-size: 0.68rem;
+  gap: 6px;
   white-space: nowrap;
 }
 
-.execution-quote-index__row-actions .execution-quote-index__progress-status,
-.execution-quote-index__row-actions .quote-status-badge {
-  align-self: center;
+.execution-quote-index__row-actions__button-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.execution-quote-index .execution-quote-index__row-actions .app-btn {
+  --quote-row-action-ink: var(--semantic-action-ink, var(--quote-neutral-ink));
+
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  box-sizing: border-box;
+  height: 36px;
+  min-height: 36px;
+  padding: 0 10px;
+  border: 1px solid color-mix(in srgb, var(--quote-row-action-ink) 20%, var(--quote-paper));
+  border-radius: 8px;
+  color: var(--quote-row-action-ink);
+  background: color-mix(in srgb, var(--quote-row-action-ink) 9%, var(--quote-paper));
+  box-shadow: none;
+  font-size: 0.75rem;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.execution-quote-index
+  .execution-quote-index__row-actions
+  .execution-quote-index__change-status-button {
+  --quote-row-action-ink: var(--quote-neutral-ink);
+}
+
+.execution-quote-index
+  .app-table-wrapper--standard
+  .app-table
+  .td-actions
+  .execution-quote-index__row-actions
+  .app-btn.action--view {
+  --row-action-ink: var(--dashboard-action-view);
+}
+
+.execution-quote-index
+  .execution-quote-index__row-actions
+  .app-btn:hover:not(:disabled, [aria-disabled='true']) {
+  border-color: color-mix(in srgb, var(--quote-row-action-ink) 42%, var(--quote-paper));
+  color: var(--quote-row-action-ink);
+  background: color-mix(in srgb, var(--quote-row-action-ink) 16%, var(--quote-paper));
+  box-shadow: none;
+}
+
+.execution-quote-index .execution-quote-index__row-actions .app-btn:focus-visible {
+  outline: 2px solid var(--quote-row-action-ink);
+  outline-offset: 2px;
+}
+
+.execution-quote-index
+  .execution-quote-index__row-actions
+  .app-btn:is(:disabled, [aria-disabled='true']) {
+  border-color: var(--quote-line);
+  color: var(--quote-muted);
+  background: var(--quote-canvas);
+  opacity: 0.55;
+}
+
+.execution-quote-index__row-actions .btn__icon--right {
+  margin-inline-start: 0;
+}
+
+.execution-quote-index__row-actions .btn__icon i {
+  font-size: 16px;
 }
 
 @keyframes quote-pilot-enter {

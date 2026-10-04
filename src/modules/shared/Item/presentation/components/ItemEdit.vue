@@ -1,15 +1,12 @@
 <script setup lang="ts">
   import { onMounted, ref } from 'vue';
-  import { useRoute, useRouter } from 'vue-router';
+  import { useRoute } from 'vue-router';
   import ItemController from '../controllers/Item.controller.ts';
   import ItemForm from './ItemForm.vue';
   import type AddItemParams from '../../core/params/add.Item.params.ts';
   import EditItemParams from '../../core/params/edit.Item.params.ts';
   import ShowItemParams from '../../core/params/show.Item.params.ts';
-  import { useUserStore } from '@/stores/user.ts';
   import { getItemServiceTypeFromQuery } from '../utils/itemRouteServiceType';
-  const userStore = useUserStore();
-  const router = useRouter();
   const controller = ItemController.getInstance();
   const route = useRoute();
   const formKey = route.fullPath;
@@ -37,7 +34,6 @@
     loading.value = true;
     try {
       await controller.update(params.value, undefined, formKey);
-      // router.push(userStore.user?.type === 1 ? '/mainportal/item' : '/organization/item');
     } finally {
       loading.value = false;
     }

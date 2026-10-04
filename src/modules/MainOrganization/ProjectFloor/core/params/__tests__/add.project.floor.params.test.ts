@@ -35,7 +35,7 @@ describe('AddProjectFloorParams', () => {
     });
   });
 
-  it('validates every required add field and accepts numeric floor enum values', () => {
+  it('validates required floor data and accepts numeric floor enum values', () => {
     const validParams = new AddProjectFloorParams({
       project_id: 10,
       project_preview_id: 15,
@@ -63,12 +63,26 @@ describe('AddProjectFloorParams', () => {
     expect(invalidParams.validate().errors.map((error) => error.field)).toEqual([
       'project_id',
       'project_preview_id',
-      'site_description',
-      'technical_general_notes',
-      'inspection_recommendations',
       'floors',
     ]);
     expect(invalidParams.toMap()).not.toHaveProperty('floors');
+  });
+
+  it('allows site recommendation fields to remain empty', () => {
+    const params = new AddProjectFloorParams({
+      project_id: 10,
+      site_description: '',
+      technical_general_notes: '',
+      inspection_recommendations: '',
+      floors: [
+        {
+          floor_number: FloorNumber.GROUND_FLOOR,
+          spaces: [{ space_id: 1, length: 12, width: 8, height: 3 }],
+        },
+      ],
+    });
+
+    expect(params.validate()).toEqual({ isValid: true, errors: [] });
   });
 
   it('omits nested undefined values while preserving backend null values', () => {

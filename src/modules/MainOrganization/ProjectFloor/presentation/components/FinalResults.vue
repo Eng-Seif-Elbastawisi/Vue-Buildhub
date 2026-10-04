@@ -1,235 +1,213 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
-import { useI18n } from 'vue-i18n';
-import { useRouter } from 'vue-router';
-import Dialog from 'primevue/dialog';
+  import { computed, onMounted, ref } from 'vue';
+  import { useI18n } from 'vue-i18n';
+  import { useRouter } from 'vue-router';
+  import Dialog from 'primevue/dialog';
 
-import type TitleInterface from '@/base/Data/Models/titleInterface';
-import UpdatedCustomInputSelect from '@/shared/FormInputs/UpdatedCustomInputSelect.vue';
-import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
+  import type TitleInterface from '@/base/Data/Models/titleInterface';
+  import UpdatedCustomInputSelect from '@/shared/FormInputs/UpdatedCustomInputSelect.vue';
+  import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
 
-import IndexEmployeeParams from '@/modules/MainOrganization/employee/core/params/index.employee.params';
-import EmployeeController from '@/modules/MainOrganization/employee/presentation/controllers/employee.controller';
+  import IndexEmployeeParams from '@/modules/MainOrganization/employee/core/params/index.employee.params';
+  import EmployeeController from '@/modules/MainOrganization/employee/presentation/controllers/employee.controller';
 
-import AddFinalProjectFloorResultParams from '../../core/params/final.result.project.floor.params';
-import { Status } from '../../core/constants/status.enum';
-import { NotificationType } from '../../core/constants/notificationType.enum';
+  import AddFinalProjectFloorResultParams from '../../core/params/final.result.project.floor.params';
+  import { Status } from '../../core/constants/status.enum';
+  import { NotificationType } from '../../core/constants/notificationType.enum';
 
-const emit = defineEmits<{
-  submitFinalResult: [params: AddFinalProjectFloorResultParams];
-  markNotReadyForCompletion: [projectPreviewId: number];
-}>();
+  const emit = defineEmits<{
+    submitFinalResult: [params: AddFinalProjectFloorResultParams];
+  }>();
 
-const props = defineProps<{
-  projectId?: number;
-  projectPreviewId: number;
-  loading?: boolean;
-}>();
+  const props = defineProps<{
+    projectId?: number;
+    projectPreviewId: number;
+    loading?: boolean;
+  }>();
 
-const { t } = useI18n();
-const router = useRouter();
+  const { t } = useI18n();
+  const router = useRouter();
 
-const employeeController = EmployeeController.getInstance();
+  const employeeController = EmployeeController.getInstance();
 
-const pricingResponsibleParams = new IndexEmployeeParams(
-  '',
-  1,
-  100,
-  0,
-  4,
-);
+  const pricingResponsibleParams = new IndexEmployeeParams('', 1, 100, 0, 4);
 
-const dialogVisible = ref(false);
+  const dialogVisible = ref(false);
 
-const selectedStatus = ref<TitleInterface<Status> | null>(null);
-const selectedPricingResponsible =
-  ref<TitleInterface<number> | null>(null);
-const selectedNotificationType =
-  ref<TitleInterface<NotificationType> | null>(null);
+  const selectedStatus = ref<TitleInterface<Status> | null>(null);
+  const selectedPricingResponsible = ref<TitleInterface<number> | null>(null);
+  const selectedNotificationType = ref<TitleInterface<NotificationType> | null>(null);
 
-const notificationMessage = ref('');
+  const notificationMessage = ref('');
 
-const statusOptions = computed<TitleInterface<Status>[]>(() => [
-  {
-    id: Status.READY_FOR_PRICING,
-    title: t('ProjectFloor.ready_for_pricing'),
-  },
-  {
-    id: Status.NEED_ADDITIONAL_VISIT,
-    title: t('ProjectFloor.need_additional_visit'),
-  },
-  {
-    id: Status.NOT_READY_FOR_COMPLETION,
-    title: t('ProjectFloor.not_ready_for_completion'),
-  },
-]);
-
-const notificationTypeOptions = computed<
-  TitleInterface<NotificationType>[]
->(() => [
-  {
-    id: NotificationType.NORMAL,
-    title: t('ProjectFloor.notification_normal'),
-  },
-  {
-    id: NotificationType.URGENT,
-    title: t('ProjectFloor.notification_urgent'),
-  },
-  {
-    id: NotificationType.LOW,
-    title: t('ProjectFloor.notification_low'),
-  },
-]);
-
-const pricingResponsibleOptions = computed<TitleInterface<number>[]>(() => {
-  const state = employeeController.listState.value as any;
-
-  const data =
-    state?.data?.data ??
-    state?.data ??
-    state?.response?.data?.data ??
-    state?.response?.data ??
-    [];
-
-  if (!Array.isArray(data)) {
-    return [];
-  }
-
-  return data.map((item) => ({
-    id: Number(item.id),
-    title: item.name ?? item.title ?? `#${item.id}`,
-  }));
-});
-
-const isReadyForPricing = computed(() => {
-  return selectedStatus.value?.id === Status.READY_FOR_PRICING;
-});
-
-const canSubmit = computed(() => {
-  return (
-    !!selectedStatus.value &&
-    selectedStatus.value.id === Status.READY_FOR_PRICING &&
-    !!selectedPricingResponsible.value &&
-    !!selectedNotificationType.value &&
-    notificationMessage.value.trim().length > 0
-  );
-});
-
-const resetDialogFields = () => {
-  selectedPricingResponsible.value = null;
-  selectedNotificationType.value = null;
-  notificationMessage.value = '';
-};
-
-const goBackToPreviewStep = async () => {
-  await router.push({
-    name: 'add-project_preview',
-    query: {
-      project_id: props.projectId,
+  const statusOptions = computed<TitleInterface<Status>[]>(() => [
+    {
+      id: Status.READY_FOR_PRICING,
+      title: t('ProjectFloor.ready_for_pricing'),
     },
+    {
+      id: Status.NEED_ADDITIONAL_VISIT,
+      title: t('ProjectFloor.need_additional_visit'),
+    },
+    {
+      id: Status.NOT_READY_FOR_COMPLETION,
+      title: t('ProjectFloor.not_ready_for_completion'),
+    },
+  ]);
+
+  const notificationTypeOptions = computed<TitleInterface<NotificationType>[]>(() => [
+    {
+      id: NotificationType.NORMAL,
+      title: t('ProjectFloor.notification_normal'),
+    },
+    {
+      id: NotificationType.URGENT,
+      title: t('ProjectFloor.notification_urgent'),
+    },
+    {
+      id: NotificationType.LOW,
+      title: t('ProjectFloor.notification_low'),
+    },
+  ]);
+
+  const pricingResponsibleOptions = computed<TitleInterface<number>[]>(() => {
+    const state = employeeController.listState.value as any;
+
+    const data =
+      state?.data?.data ??
+      state?.data ??
+      state?.response?.data?.data ??
+      state?.response?.data ??
+      [];
+
+    if (!Array.isArray(data)) {
+      return [];
+    }
+
+    return data.map((item) => ({
+      id: Number(item.id),
+      title: item.name ?? item.title ?? `#${item.id}`,
+    }));
   });
-};
 
-const updateStatus = async (
-  value: TitleInterface<Status>,
-) => {
-  selectedStatus.value = value;
+  const isReadyForPricing = computed(() => {
+    return selectedStatus.value?.id === Status.READY_FOR_PRICING;
+  });
 
-  /**
-   * READY FOR PRICING
-   *
-   * This flow requires:
-   * - pricing responsible
-   * - notification type
-   * - notification message
-   */
-  if (value.id === Status.READY_FOR_PRICING) {
-    resetDialogFields();
-    dialogVisible.value = true;
-    return;
-  }
+  const canSubmit = computed(() => {
+    return (
+      !!selectedStatus.value &&
+      selectedStatus.value.id === Status.READY_FOR_PRICING &&
+      !!selectedPricingResponsible.value &&
+      !!selectedNotificationType.value &&
+      notificationMessage.value.trim().length > 0
+    );
+  });
 
-  /**
-   * NEED ADDITIONAL VISIT
-   *
-   * Existing behavior: return to preview.
-   */
-  if (value.id === Status.NEED_ADDITIONAL_VISIT) {
-    await goBackToPreviewStep();
-    return;
-  }
+  const resetDialogFields = () => {
+    selectedPricingResponsible.value = null;
+    selectedNotificationType.value = null;
+    notificationMessage.value = '';
+  };
 
-  /**
-   * NOT READY FOR COMPLETION
-   *
-   * IMPORTANT:
-   * This status must NOT require any incomplete floor data,
-   * pricing responsible, notification type, or notification message.
-   *
-   * Send a separate event to the parent so the parent can call
-   * the appropriate API/use-case and save the status directly.
-   */
-  if (value.id === Status.NOT_READY_FOR_COMPLETION) {
+  const goBackToPreviewStep = async () => {
+    await router.push({
+      name: 'add-project_preview',
+      query: {
+        project_id: props.projectId,
+      },
+    });
+  };
+
+  const updateStatus = async (value: TitleInterface<Status>) => {
+    selectedStatus.value = value;
+
+    /**
+     * READY FOR PRICING
+     *
+     * This flow requires:
+     * - pricing responsible
+     * - notification type
+     * - notification message
+     */
+    if (value.id === Status.READY_FOR_PRICING) {
+      resetDialogFields();
+      dialogVisible.value = true;
+      return;
+    }
+
+    /**
+     * NEED ADDITIONAL VISIT
+     *
+     * Existing behavior: return to preview.
+     */
+    if (value.id === Status.NEED_ADDITIONAL_VISIT) {
+      await goBackToPreviewStep();
+      return;
+    }
+
+    /**
+     * NOT READY FOR COMPLETION
+     *
+     * IMPORTANT:
+     * This status must NOT require any incomplete floor data,
+     * pricing responsible, notification type, or notification message.
+     *
+     * Save the current assessment as-is and update only the status.
+     */
+    if (value.id === Status.NOT_READY_FOR_COMPLETION) {
+      emit(
+        'submitFinalResult',
+        new AddFinalProjectFloorResultParams({
+          project_preview_id: props.projectPreviewId,
+          status: Status.NOT_READY_FOR_COMPLETION,
+        }),
+      );
+
+      return;
+    }
+  };
+
+  const closeDialog = () => {
+    dialogVisible.value = false;
+  };
+
+  const submitFinalResult = () => {
+    /**
+     * This validation applies ONLY to READY_FOR_PRICING.
+     */
+    if (
+      selectedStatus.value?.id !== Status.READY_FOR_PRICING ||
+      !selectedPricingResponsible.value ||
+      !selectedNotificationType.value ||
+      !notificationMessage.value.trim()
+    ) {
+      return;
+    }
+
     emit(
-      'markNotReadyForCompletion',
-      props.projectPreviewId,
+      'submitFinalResult',
+      new AddFinalProjectFloorResultParams({
+        project_preview_id: props.projectPreviewId,
+        status: Status.READY_FOR_PRICING,
+        pricing_responsible_id: Number(selectedPricingResponsible.value.id),
+        notification_type: selectedNotificationType.value.id as NotificationType,
+        notification_message: notificationMessage.value.trim(),
+      }),
     );
 
-    return;
-  }
-};
+    dialogVisible.value = false;
+  };
 
-const closeDialog = () => {
-  dialogVisible.value = false;
-};
-
-const submitFinalResult = () => {
-  /**
-   * This validation applies ONLY to READY_FOR_PRICING.
-   */
-  if (
-    selectedStatus.value?.id !== Status.READY_FOR_PRICING ||
-    !selectedPricingResponsible.value ||
-    !selectedNotificationType.value ||
-    !notificationMessage.value.trim()
-  ) {
-    return;
-  }
-
-  emit(
-    'submitFinalResult',
-    new AddFinalProjectFloorResultParams({
-      project_preview_id: props.projectPreviewId,
-      status: Status.READY_FOR_PRICING,
-      pricing_responsible_id: Number(
-        selectedPricingResponsible.value.id,
-      ),
-      notification_type:
-        selectedNotificationType.value.id as NotificationType,
-      notification_message:
-        notificationMessage.value.trim(),
-    }),
-  );
-
-  dialogVisible.value = false;
-};
-
-onMounted(async () => {
-  await employeeController.fetchList(
-    pricingResponsibleParams,
-  );
-});
+  onMounted(async () => {
+    await employeeController.fetchList(pricingResponsibleParams);
+  });
 </script>
 
 <template>
-  <section
-    class="final-results-card"
-    :class="{ disabled: loading }"
-  >
+  <section class="final-results-card" :class="{ disabled: loading }">
     <div class="section-head">
-      <div class="section-head__icon">
-        ✅
-      </div>
+      <div class="section-head__icon">✅</div>
 
       <div>
         <h4>
@@ -296,11 +274,7 @@ onMounted(async () => {
             </h4>
 
             <p>
-              {{
-                $t(
-                  'ProjectFloor.ready_for_pricing_description',
-                )
-              }}
+              {{ $t('ProjectFloor.ready_for_pricing_description') }}
             </p>
           </div>
         </div>
@@ -310,30 +284,15 @@ onMounted(async () => {
         <div class="dialog-grid">
           <!-- Pricing Responsible -->
           <div class="dialog-field">
-            <span
-              class="field-help-label-row field-help-label-row--block"
-            >
+            <span class="field-help-label-row field-help-label-row--block">
               <label class="field-label">
-                <span
-                  class="required-indicator"
-                  aria-hidden="true"
-                >
-                  *
-                </span>
+                <span class="required-indicator" aria-hidden="true"> * </span>
 
-                {{
-                  $t(
-                    'ProjectFloor.pricing_responsible',
-                  )
-                }}
+                {{ $t('ProjectFloor.pricing_responsible') }}
               </label>
 
               <FieldHelpIcon
-                :label="
-                  $t(
-                    'ProjectFloor.pricing_responsible',
-                  )
-                "
+                :label="$t('ProjectFloor.pricing_responsible')"
                 field-name="engineer"
                 field-id="pricing_responsible_id"
               />
@@ -341,51 +300,23 @@ onMounted(async () => {
 
             <UpdatedCustomInputSelect
               id="pricing_responsible_id"
-              :model-value="
-                selectedPricingResponsible
-              "
-              :static-options="
-                pricingResponsibleOptions
-              "
-              :placeholder="
-                $t(
-                  'ProjectFloor.pricing_responsible_placeholder',
-                )
-              "
-              @update:model-value="
-                selectedPricingResponsible = $event
-              "
+              :model-value="selectedPricingResponsible"
+              :static-options="pricingResponsibleOptions"
+              :placeholder="$t('ProjectFloor.pricing_responsible_placeholder')"
+              @update:model-value="selectedPricingResponsible = $event"
             />
           </div>
 
           <!-- Notification Type -->
           <div class="dialog-field">
-            <span
-              class="field-help-label-row field-help-label-row--block"
-            >
+            <span class="field-help-label-row field-help-label-row--block">
               <label class="field-label">
-                <span
-                  class="required-indicator"
-                  aria-hidden="true"
-                >
-                  *
-                </span>
+                <span class="required-indicator" aria-hidden="true"> * </span>
 
-                {{
-                  $t(
-                    'ProjectFloor.notification_type',
-                  )
-                }}
+                {{ $t('ProjectFloor.notification_type') }}
               </label>
 
-              <FieldHelpIcon
-                :label="
-                  $t(
-                    'ProjectFloor.notification_type',
-                  )
-                "
-                field-name="type"
-              />
+              <FieldHelpIcon :label="$t('ProjectFloor.notification_type')" field-name="type" />
             </span>
 
             <div class="notification-tabs">
@@ -395,20 +326,14 @@ onMounted(async () => {
                 type="button"
                 class="notification-tab"
                 :class="{
-                  active:
-                    selectedNotificationType?.id ===
-                    option.id,
+                  active: selectedNotificationType?.id === option.id,
                 }"
-                @click="
-                  selectedNotificationType = option
-                "
+                @click="selectedNotificationType = option"
               >
                 {{
-                  option.id ===
-                  NotificationType.URGENT
+                  option.id === NotificationType.URGENT
                     ? '🚨'
-                    : option.id ===
-                        NotificationType.LOW
+                    : option.id === NotificationType.LOW
                       ? '⬇️'
                       : '🔔'
                 }}
@@ -423,33 +348,15 @@ onMounted(async () => {
 
         <!-- Notification Message -->
         <div class="dialog-field">
-          <span
-            class="field-help-label-row field-help-label-row--block"
-          >
-            <label
-              class="field-label"
-              for="notification_message"
-            >
-              <span
-                class="required-indicator"
-                aria-hidden="true"
-              >
-                *
-              </span>
+          <span class="field-help-label-row field-help-label-row--block">
+            <label class="field-label" for="notification_message">
+              <span class="required-indicator" aria-hidden="true"> * </span>
 
-              {{
-                $t(
-                  'ProjectFloor.notification_message',
-                )
-              }}
+              {{ $t('ProjectFloor.notification_message') }}
             </label>
 
             <FieldHelpIcon
-              :label="
-                $t(
-                  'ProjectFloor.notification_message',
-                )
-              "
+              :label="$t('ProjectFloor.notification_message')"
               field-name="notes"
               field-id="notification_message"
             />
@@ -459,11 +366,7 @@ onMounted(async () => {
             id="notification_message"
             v-model="notificationMessage"
             class="field-input field-textarea"
-            :placeholder="
-              $t(
-                'ProjectFloor.notification_message_placeholder',
-              )
-            "
+            :placeholder="$t('ProjectFloor.notification_message_placeholder')"
             required
             aria-required="true"
           />
@@ -472,11 +375,7 @@ onMounted(async () => {
 
       <template #footer>
         <div class="dialog-actions">
-          <button
-            type="button"
-            class="dialog-btn dialog-btn--secondary"
-            @click="closeDialog"
-          >
+          <button type="button" class="dialog-btn dialog-btn--secondary" @click="closeDialog">
             {{ $t('cancel') }}
           </button>
 
@@ -486,11 +385,7 @@ onMounted(async () => {
             :disabled="!canSubmit || loading"
             @click="submitFinalResult"
           >
-            {{
-              $t(
-                'ProjectFloor.send_to_pricing',
-              )
-            }}
+            {{ $t('ProjectFloor.send_to_pricing') }}
           </button>
         </div>
       </template>
@@ -499,246 +394,242 @@ onMounted(async () => {
 </template>
 
 <style scoped lang="scss">
-.final-results-card {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  padding: 1.15rem;
-  border: 1px solid rgba(148, 163, 184, 0.22);
-  border-radius: 26px;
-  background: rgba(255, 255, 255, 0.92);
-  box-shadow: 0 14px 35px rgba(15, 23, 42, 0.045);
+  .final-results-card {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1.15rem;
+    border: 1px solid rgba(148, 163, 184, 0.22);
+    border-radius: 26px;
+    background: rgba(255, 255, 255, 0.92);
+    box-shadow: 0 14px 35px rgba(15, 23, 42, 0.045);
 
-  &.disabled {
-    pointer-events: none;
-    opacity: 0.7;
-  }
-}
-
-.required-indicator {
-  color: var(--danger);
-}
-
-.section-head {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.85rem;
-
-  h4 {
-    margin: 0;
-    color: #111827;
-    font-family: 'Bold';
-    font-size: 1rem;
+    &.disabled {
+      pointer-events: none;
+      opacity: 0.7;
+    }
   }
 
-  p {
-    margin: 0.25rem 0 0;
-    color: #64748b;
-    font-size: var(--xs-size);
-    line-height: 1.7;
-  }
-}
-
-.section-head__icon,
-.dialog-header__icon {
-  display: inline-flex;
-  width: 42px;
-  min-width: 42px;
-  height: 42px;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid rgba(160, 98, 39, 0.14);
-  border-radius: 16px;
-  background: var(--PrimaryColor-light);
-  color: var(--PrimaryColor);
-}
-
-.result-tabs {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.85rem;
-}
-
-.result-tab {
-  display: flex;
-  min-height: 62px;
-  align-items: center;
-  justify-content: center;
-  gap: 0.55rem;
-  padding: 0.85rem 1rem;
-  border: 1px solid rgba(148, 163, 184, 0.22);
-  border-radius: 18px;
-  background: #fff;
-  color: #334155;
-  cursor: pointer;
-  font-family: 'Medium';
-  transition: all 0.25s ease;
-
-  &:hover:not(:disabled),
-  &.active {
-    border-color: var(--PrimaryColor);
-    background: var(--PrimaryColor-light);
-    color: var(--PrimaryColor);
-    box-shadow: 0 0 0 1px var(--PrimaryColor);
+  .required-indicator {
+    color: var(--danger);
   }
 
-  &:disabled {
-    cursor: not-allowed;
-    opacity: 0.65;
+  .section-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.85rem;
+
+    h4 {
+      margin: 0;
+      color: #111827;
+      font-family: 'Bold';
+      font-size: 1rem;
+    }
+
+    p {
+      margin: 0.25rem 0 0;
+      color: #64748b;
+      font-size: var(--xs-size);
+      line-height: 1.7;
+    }
   }
-}
 
-.result-tab__icon {
-  line-height: 1;
-}
-
-.dialog-header {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.85rem;
-
-  h4 {
-    margin: 0;
-    color: #111827;
-    font-family: 'Bold';
-  }
-
-  p {
-    margin: 0.25rem 0 0;
-    color: #64748b;
-    font-size: var(--xs-size);
-    line-height: 1.7;
-  }
-}
-
-.dialog-body {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  padding-top: 0.5rem;
-}
-
-.dialog-grid {
-  display: grid;
-  gap: 1rem;
-}
-
-.dialog-field {
-  display: flex;
-  flex-direction: column;
-  gap: 0.55rem;
-}
-
-.field-label {
-  color: #334155;
-  font-family: 'Medium';
-  font-size: var(--sm-size);
-}
-
-.field-input {
-  width: 100%;
-  min-height: 46px;
-  padding: 0.75rem 0.9rem;
-  border: 1px solid rgba(148, 163, 184, 0.26);
-  border-radius: 16px;
-  background: #fff;
-  outline: none;
-  transition: all 0.25s ease;
-  color: #111827;
-  font-family: 'Medium';
-  font-size: var(--sm-size);
-
-  &:focus {
-    border-color: var(--PrimaryColor);
-    box-shadow: 0 0 0 3px var(--PrimaryColor-light);
-  }
-}
-
-.field-textarea {
-  min-height: 150px;
-  resize: vertical;
-  line-height: 1.8;
-}
-
-.notification-tabs {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.65rem;
-}
-
-.notification-tab {
-  display: flex;
-  min-height: 46px;
-  align-items: center;
-  justify-content: center;
-  gap: 0.4rem;
-  border: 1px solid rgba(148, 163, 184, 0.22);
-  border-radius: 15px;
-  background: #fff;
-  color: #334155;
-  cursor: pointer;
-  font-family: 'Medium';
-  transition: all 0.25s ease;
-  font-size: var(--md-size);
-
-  &:hover,
-  &.active {
-    border-color: var(--PrimaryColor);
+  .section-head__icon,
+  .dialog-header__icon {
+    display: inline-flex;
+    width: 42px;
+    min-width: 42px;
+    height: 42px;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(160, 98, 39, 0.14);
+    border-radius: 16px;
     background: var(--PrimaryColor-light);
     color: var(--PrimaryColor);
   }
-}
 
-.dialog-actions {
-  display: flex;
-  width: 100%;
-  justify-content: flex-end;
-  gap: 0.75rem;
-}
-
-.dialog-btn {
-  min-height: 44px;
-  min-width: 130px;
-  padding: 0 1.15rem;
-  border: 0;
-  border-radius: 14px;
-  cursor: pointer;
-  font-family: 'Medium';
-  transition: all 0.25s ease;
-
-  &:disabled {
-    cursor: not-allowed;
-    opacity: 0.55;
+  .result-tabs {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.85rem;
   }
-}
 
-.dialog-btn--secondary {
-  background: #f8fafc;
-  color: #334155;
-}
+  .result-tab {
+    display: flex;
+    min-height: 62px;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
+    padding: 0.85rem 1rem;
+    border: 1px solid rgba(148, 163, 184, 0.22);
+    border-radius: 18px;
+    background: #fff;
+    color: #334155;
+    cursor: pointer;
+    font-family: 'Medium';
+    transition: all 0.25s ease;
 
-.dialog-btn--primary {
-  background: linear-gradient(
-    135deg,
-    var(--PrimaryColor),
-    #7a4318
-  );
-  color: #fff;
-}
+    &:hover:not(:disabled),
+    &.active {
+      border-color: var(--PrimaryColor);
+      background: var(--PrimaryColor-light);
+      color: var(--PrimaryColor);
+      box-shadow: 0 0 0 1px var(--PrimaryColor);
+    }
 
-@media (max-width: 768px) {
-  .result-tabs,
-  .dialog-grid,
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.65;
+    }
+  }
+
+  .result-tab__icon {
+    line-height: 1;
+  }
+
+  .dialog-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.85rem;
+
+    h4 {
+      margin: 0;
+      color: #111827;
+      font-family: 'Bold';
+    }
+
+    p {
+      margin: 0.25rem 0 0;
+      color: #64748b;
+      font-size: var(--xs-size);
+      line-height: 1.7;
+    }
+  }
+
+  .dialog-body {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding-top: 0.5rem;
+  }
+
+  .dialog-grid {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .dialog-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+  }
+
+  .field-label {
+    color: #334155;
+    font-family: 'Medium';
+    font-size: var(--sm-size);
+  }
+
+  .field-input {
+    width: 100%;
+    min-height: 46px;
+    padding: 0.75rem 0.9rem;
+    border: 1px solid rgba(148, 163, 184, 0.26);
+    border-radius: 16px;
+    background: #fff;
+    outline: none;
+    transition: all 0.25s ease;
+    color: #111827;
+    font-family: 'Medium';
+    font-size: var(--sm-size);
+
+    &:focus {
+      border-color: var(--PrimaryColor);
+      box-shadow: 0 0 0 3px var(--PrimaryColor-light);
+    }
+  }
+
+  .field-textarea {
+    min-height: 150px;
+    resize: vertical;
+    line-height: 1.8;
+  }
+
   .notification-tabs {
-    grid-template-columns: 1fr;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.65rem;
+  }
+
+  .notification-tab {
+    display: flex;
+    min-height: 46px;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    border: 1px solid rgba(148, 163, 184, 0.22);
+    border-radius: 15px;
+    background: #fff;
+    color: #334155;
+    cursor: pointer;
+    font-family: 'Medium';
+    transition: all 0.25s ease;
+    font-size: var(--md-size);
+
+    &:hover,
+    &.active {
+      border-color: var(--PrimaryColor);
+      background: var(--PrimaryColor-light);
+      color: var(--PrimaryColor);
+    }
   }
 
   .dialog-actions {
-    flex-direction: column;
+    display: flex;
+    width: 100%;
+    justify-content: flex-end;
+    gap: 0.75rem;
   }
 
   .dialog-btn {
-    width: 100%;
+    min-height: 44px;
+    min-width: 130px;
+    padding: 0 1.15rem;
+    border: 0;
+    border-radius: 14px;
+    cursor: pointer;
+    font-family: 'Medium';
+    transition: all 0.25s ease;
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.55;
+    }
   }
-}
+
+  .dialog-btn--secondary {
+    background: #f8fafc;
+    color: #334155;
+  }
+
+  .dialog-btn--primary {
+    background: linear-gradient(135deg, var(--PrimaryColor), #7a4318);
+    color: #fff;
+  }
+
+  @media (max-width: 768px) {
+    .result-tabs,
+    .dialog-grid,
+    .notification-tabs {
+      grid-template-columns: 1fr;
+    }
+
+    .dialog-actions {
+      flex-direction: column;
+    }
+
+    .dialog-btn {
+      width: 100%;
+    }
+  }
 </style>

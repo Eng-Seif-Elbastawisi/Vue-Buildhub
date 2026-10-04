@@ -55,15 +55,18 @@ describe('FeatureHeader.vue', () => {
     expect(title.text()).toContain('Feature');
   });
 
-  it('keeps the project show page header hidden while the layout supplies its breadcrumb', () => {
+  it('shows the shared page intro on Project Show', () => {
     mockRoute.name = 'show-project';
+    mockRoute.path = '/organization/project/show/24';
 
     const wrapper = mount(FeatureHeader, { global: globalConfig });
 
-    expect(wrapper.find('.feature-header-container').exists()).toBe(false);
+    expect(wrapper.find('.feature-header-container--page-intro').exists()).toBe(true);
+    expect(wrapper.find('.standard-form-header-icon .pi-building').exists()).toBe(true);
+    expect(wrapper.find('.standard-form-header-description').exists()).toBe(true);
   });
 
-  it('shows the shared form heading treatment only for normal Add/Edit routes', () => {
+  it('uses the same page intro treatment for normal and targeted specialized routes', () => {
     mockRoute.path = '/organization/stages/add';
     const formHeader = mount(FeatureHeader, { global: globalConfig });
 
@@ -71,8 +74,22 @@ describe('FeatureHeader.vue', () => {
     expect(formHeader.find('.standard-form-header-description').exists()).toBe(true);
 
     mockRoute.path = '/organization/execution-quotes/add';
+    mockRoute.name = 'Add Execution Quote';
     const specializedHeader = mount(FeatureHeader, { global: globalConfig });
 
-    expect(specializedHeader.find('.standard-form-header-icon').exists()).toBe(false);
+    expect(specializedHeader.find('.standard-form-header-icon .pi-file-edit').exists()).toBe(true);
+    expect(specializedHeader.find('.standard-form-header-description').exists()).toBe(true);
+
+    mockRoute.name = 'add-project';
+    mockRoute.path = '/organization/project/add';
+    const projectAddHeader = mount(FeatureHeader, { global: globalConfig });
+    expect(projectAddHeader.find('.standard-form-header-icon .pi-building').exists()).toBe(true);
+
+    mockRoute.name = 'edit-project';
+    mockRoute.path = '/organization/project/edit/24';
+    const projectEditHeader = mount(FeatureHeader, { global: globalConfig });
+    expect(projectEditHeader.find('.standard-form-header-icon .pi-pen-to-square').exists()).toBe(
+      true,
+    );
   });
 });

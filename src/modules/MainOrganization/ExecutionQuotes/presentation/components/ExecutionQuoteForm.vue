@@ -459,39 +459,26 @@
     }"
   >
     <template v-if="!isBuilderPage">
-      <header class="execution-quote__header">
-        <div class="execution-quote__heading">
-          <span class="execution-quote__brand">
-            <span class="execution-quote__brand-mark" aria-hidden="true">
-              <i class="pi pi-building"></i>
-            </span>
-            {{ $t('execution_quote.workspace') }}
-          </span>
-          <h1>{{ $t('execution_quote.title') }}</h1>
-          <p>{{ $t('execution_quote.subtitle') }}</p>
-        </div>
-
-        <div class="execution-quote__actions">
-          <AppButton class="execution-quote__new-button" icon="right" disabled>
-            <template #icon>
-              <i class="pi pi-plus" aria-hidden="true"></i>
-            </template>
-            {{ $t('execution_quote.new_quote') }}
-          </AppButton>
-          <AppButton
-            class="execution-quote__list-button"
-            theme="secondary"
-            icon="right"
-            outline
-            @click="showQuotes"
-          >
-            <template #icon>
-              <i class="pi pi-list" aria-hidden="true"></i>
-            </template>
-            {{ $t('execution_quote.view_quotes') }}
-          </AppButton>
-        </div>
-      </header>
+      <div class="execution-quote__actions">
+        <AppButton class="execution-quote__new-button" icon="right" disabled>
+          <template #icon>
+            <i class="pi pi-plus" aria-hidden="true"></i>
+          </template>
+          {{ $t('execution_quote.new_quote') }}
+        </AppButton>
+        <AppButton
+          class="execution-quote__list-button"
+          theme="secondary"
+          icon="right"
+          outline
+          @click="showQuotes"
+        >
+          <template #icon>
+            <i class="pi pi-list" aria-hidden="true"></i>
+          </template>
+          {{ $t('execution_quote.view_quotes') }}
+        </AppButton>
+      </div>
 
       <div class="execution-quote__top-grid">
         <section class="quote-hero">
@@ -884,43 +871,11 @@
     gap: 0.75rem;
   }
 
-  .execution-quote__header {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 1.5rem;
-    padding: 0.25rem 0.25rem 0.6rem;
-    border-bottom: 1px solid var(--border-weak);
-    animation: execution-quote-form-enter 340ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
-  }
-
-  .execution-quote__heading {
-    flex: 1;
-    text-align: start;
-  }
-
-  .execution-quote__heading h1,
-  .execution-quote__heading p,
   .build-path__heading h2,
   .section-title h2,
   .quote-hero__copy h2,
   .quote-hero__copy p {
     margin: 0;
-  }
-
-  .execution-quote__heading h1 {
-    margin-top: 0.5rem;
-    color: var(--title-card-color);
-    font-size: clamp(1.65rem, 3vw, 2.35rem);
-    line-height: 1.1;
-    letter-spacing: -0.03em;
-  }
-
-  .execution-quote__heading p {
-    margin-top: 0.35rem;
-    color: var(--subtitle-color);
-    font-size: 0.88rem;
-    font-weight: 700;
   }
 
   .section-title__badge,
@@ -935,29 +890,6 @@
     font-weight: 700;
   }
 
-  .execution-quote__brand {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.55rem;
-    color: var(--PrimaryColor);
-    font-size: 0.72rem;
-    font-weight: 800;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-
-  .execution-quote__brand-mark {
-    display: grid;
-    place-items: center;
-    width: 1.8rem;
-    height: 1.8rem;
-    border-radius: 0.55rem 0.55rem 0.2rem;
-    background: var(--PrimaryColor);
-    color: var(--white);
-    font-size: 0.62rem;
-    letter-spacing: 0;
-  }
-
   .quote-hero__badge {
     gap: 0.4rem;
     background: var(--btn-easy);
@@ -967,6 +899,7 @@
   .execution-quote__actions {
     display: flex;
     flex-wrap: wrap;
+    justify-content: flex-end;
     gap: 0.5rem;
   }
 
@@ -1565,11 +1498,6 @@
   }
 
   @media (max-width: 760px) {
-    .execution-quote__header {
-      align-items: stretch;
-      flex-direction: column;
-    }
-
     .execution-quote__actions,
     .execution-quote__actions button {
       width: 100%;
@@ -1624,7 +1552,6 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .execution-quote__header,
     .execution-quote__top-grid,
     .source-section,
     .quote-data,
