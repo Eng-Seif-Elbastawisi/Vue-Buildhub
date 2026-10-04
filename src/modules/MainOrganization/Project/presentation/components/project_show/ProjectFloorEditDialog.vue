@@ -375,7 +375,8 @@ const handleVisibilityChange = (visible: boolean): void => {
 </script>
 
 <template>
-  <Dialog :visible="modelValue" modal append-to="body" :closable="!updating" :dismissable-mask="!updating"
+  <Dialog
+:visible="modelValue" modal append-to="body" :closable="!updating" :dismissable-mask="!updating"
     :draggable="false" :style="{ width: '60rem', maxWidth: 'calc(100vw - 2rem)' }" class="project-floor-edit-dialog"
     @update:visible="handleVisibilityChange">
     <template #header>
@@ -394,7 +395,8 @@ const handleVisibilityChange = (visible: boolean): void => {
     </template>
 
     <form class="project-floor-edit-dialog__form" @submit.prevent="submitFloorUpdate">
-      <div v-if="
+      <div
+v-if="
         validationErrors.project_floor_id ||
         validationErrors.project_id ||
         validationErrors.project_preview_id
@@ -415,7 +417,8 @@ const handleVisibilityChange = (visible: boolean): void => {
           <p>{{ $t('ProjectFloor.no_spaces_found') }}</p>
         </div>
 
-        <article v-for="(space, spaceIndex) in spaces" :key="`${space.space_id}-${spaceIndex}`"
+        <article
+v-for="(space, spaceIndex) in spaces" :key="`${space.space_id}-${spaceIndex}`"
           class="project-floor-edit-dialog__space">
           <header class="project-floor-edit-dialog__space-header">
             <span>{{ spaceIndex + 1 }}</span>
@@ -432,13 +435,15 @@ const handleVisibilityChange = (visible: boolean): void => {
           <div class="project-floor-edit-dialog__fields">
             <label v-for="field in ['length', 'width', 'height'] as const" :key="field">
               <span>{{ $t(`ProjectFloor.${field}`) }}</span>
-              <input :id="`floor-space-${spaceIndex}-${field}`" class="project-floor-edit-dialog__input" type="number"
+              <input
+:id="`floor-space-${spaceIndex}-${field}`" class="project-floor-edit-dialog__input" type="number"
                 min="0.01" step="1" inputmode="decimal" :value="space[field] ?? ''" :disabled="updating"
                 :aria-invalid="Boolean(fieldError(spaceIndex, field))" :aria-describedby="fieldError(spaceIndex, field)
                     ? `floor-space-${spaceIndex}-${field}-error`
                     : undefined
                   " @input="updateDimension(spaceIndex, field, $event)" />
-              <small v-if="fieldError(spaceIndex, field)" :id="`floor-space-${spaceIndex}-${field}-error`"
+              <small
+v-if="fieldError(spaceIndex, field)" :id="`floor-space-${spaceIndex}-${field}-error`"
                 class="project-floor-edit-dialog__field-error">
                 {{ fieldError(spaceIndex, field) }}
               </small>
@@ -446,7 +451,8 @@ const handleVisibilityChange = (visible: boolean): void => {
 
             <label class="project-floor-edit-dialog__notes-field">
               <span>{{ $t('ProjectFloor.notes') }}</span>
-              <textarea v-model="space.notes" class="project-floor-edit-dialog__input" rows="3" :disabled="updating"
+              <textarea
+v-model="space.notes" class="project-floor-edit-dialog__input" rows="3" :disabled="updating"
                 :placeholder="$t('ProjectFloor.notes_placeholder')" />
             </label>
           </div>

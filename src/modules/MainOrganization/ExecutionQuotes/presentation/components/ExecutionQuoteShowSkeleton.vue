@@ -43,6 +43,22 @@
             </div>
           </div>
 
+          <div v-if="detailCardIndex === 1" class="execution-quote-show-skeleton__finance">
+            <div class="execution-quote-show-skeleton__section-title">
+              <Skeleton shape="circle" size="2.75rem" />
+              <div>
+                <Skeleton width="10rem" height="1rem" />
+                <Skeleton width="14rem" height="0.7rem" />
+              </div>
+            </div>
+            <div class="execution-quote-show-skeleton__finance-grid">
+              <div v-for="valueIndex in 2" :key="valueIndex">
+                <Skeleton width="55%" height="0.7rem" />
+                <Skeleton width="75%" height="1.4rem" />
+              </div>
+            </div>
+          </div>
+
           <div class="execution-quote-show-skeleton__fields">
             <article v-for="fieldIndex in 6" :key="fieldIndex">
               <Skeleton width="45%" height="0.65rem" />
@@ -79,6 +95,27 @@
         </div>
       </section>
 
+      <section class="execution-quote-show-skeleton__history">
+        <div class="execution-quote-show-skeleton__section-title">
+          <Skeleton shape="circle" size="2.75rem" />
+          <div>
+            <Skeleton width="10rem" height="1rem" />
+            <Skeleton width="14rem" height="0.7rem" />
+          </div>
+        </div>
+        <div
+          v-for="entryIndex in 2"
+          :key="entryIndex"
+          class="execution-quote-show-skeleton__history-entry"
+        >
+          <Skeleton shape="circle" size="0.9rem" />
+          <div>
+            <Skeleton width="min(20rem, 75%)" height="1rem" />
+            <Skeleton width="min(14rem, 55%)" height="0.7rem" />
+          </div>
+        </div>
+      </section>
+
       <section class="execution-quote-show-skeleton__stages">
         <div class="execution-quote-show-skeleton__section-title">
           <Skeleton shape="circle" size="2.75rem" />
@@ -110,7 +147,7 @@
               class="execution-quote-show-skeleton__table-row"
             >
               <Skeleton
-                v-for="tableCellIndex in 7"
+                v-for="tableCellIndex in 8"
                 :key="tableCellIndex"
                 :width="tableCellIndex === 1 ? '75%' : '58%'"
                 :height="tableRowIndex === 1 ? '0.7rem' : '0.9rem'"
@@ -124,6 +161,12 @@
 </template>
 
 <style scoped lang="scss">
+  .execution-quote-show-skeleton {
+    width: 100%;
+    min-width: 0;
+    min-height: calc(100dvh - 14rem);
+  }
+
   .execution-quote-show-skeleton__status {
     position: absolute;
     width: 1px;
@@ -189,6 +232,7 @@
 
   .execution-quote-show-skeleton__card,
   .execution-quote-show-skeleton__attachments,
+  .execution-quote-show-skeleton__history,
   .execution-quote-show-skeleton__stages {
     display: grid;
     gap: 1.25rem;
@@ -221,6 +265,40 @@
   .execution-quote-show-skeleton__fields {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+
+  .execution-quote-show-skeleton__finance {
+    display: grid;
+    gap: 1rem;
+    padding: 1rem;
+    border: 1px solid var(--border-weak);
+    border-radius: var(--radius-md);
+    background: var(--bg-section);
+  }
+
+  .execution-quote-show-skeleton__finance-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+
+  .execution-quote-show-skeleton__finance-grid > div,
+  .execution-quote-show-skeleton__history-entry > div {
+    display: grid;
+    gap: 0.65rem;
+  }
+
+  .execution-quote-show-skeleton__finance-grid > div {
+    padding: 0.9rem;
+    border-radius: var(--radius-sm);
+    background: var(--bg-card);
+  }
+
+  .execution-quote-show-skeleton__history-entry {
+    display: grid;
+    grid-template-columns: 0.9rem minmax(0, 1fr);
+    align-items: center;
     gap: 0.75rem;
   }
 
@@ -284,10 +362,10 @@
 
   .execution-quote-show-skeleton__table-row {
     display: grid;
-    grid-template-columns: 1.4fr repeat(6, minmax(5rem, 1fr));
+    grid-template-columns: 1.4fr repeat(7, minmax(5rem, 1fr));
     gap: 0.75rem;
     align-items: center;
-    min-width: 48rem;
+    min-width: 56rem;
     padding: 0.85rem;
     border-block-end: 1px solid var(--border-weak);
   }
@@ -319,7 +397,8 @@
   }
 
   @media (max-width: 520px) {
-    .execution-quote-show-skeleton__fields {
+    .execution-quote-show-skeleton__fields,
+    .execution-quote-show-skeleton__finance-grid {
       grid-template-columns: 1fr;
     }
 

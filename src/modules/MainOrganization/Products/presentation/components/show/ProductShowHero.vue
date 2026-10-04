@@ -1,6 +1,10 @@
 <script setup lang="ts">
   import { computed, ref, watch } from 'vue';
   import { useI18n } from 'vue-i18n';
+  import {
+    attachmentGallery,
+    toGalleryAttachment,
+  } from '@/shared/AttachmentGallery/attachmentGallery';
 
   import type ProductsShowModel from '../../../core/models/products.show.model';
 
@@ -23,6 +27,17 @@
   });
 
   const activeImage = ref('');
+  const openActiveImage = () => {
+    const sources = [
+      ...(props.product.image ? [toGalleryAttachment({ url: props.product.image })] : []),
+      ...props.product.attachments.map(toGalleryAttachment),
+    ];
+    const group = [...new Map(sources.map((attachment) => [attachment.url, attachment])).values()];
+    attachmentGallery.open(
+      group,
+      group.findIndex((attachment) => attachment.url === activeImage.value),
+    );
+  };
 
   watch(
     galleryImages,
@@ -53,7 +68,15 @@
   <section class="hero-card">
     <div class="gallery-panel">
       <div class="main-image">
-        <img v-if="activeImage" :src="activeImage" :alt="productTitle" />
+        <button
+          v-if="activeImage"
+          type="button"
+          class="main-image__open"
+          :aria-label="productTitle"
+          @click="openActiveImage"
+        >
+          <img :src="activeImage" :alt="productTitle" />
+        </button>
 
         <div v-else class="image-placeholder">
           <svg
@@ -205,6 +228,15 @@
     background: var(--gray-100);
     border-radius: var(--radius-md);
     place-items: center;
+
+    &__open {
+      width: 100%;
+      height: 100%;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      cursor: zoom-in;
+    }
 
     img {
       width: 100%;

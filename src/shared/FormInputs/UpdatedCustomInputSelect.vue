@@ -499,14 +499,16 @@ const handleAddClick = (): void => {
 </script>
 
 <template>
-  <div class="input-label flex justify-between w-full" :class="{
+  <div
+class="input-label flex justify-between w-full" :class="{
     'input-label--disabled': disabled,
   }">
     <slot v-if="!hasHeader">
       <div class="flex items-center">
         <slot name="reloadHeader" />
 
-        <span v-if="enableReload" class="reload-icon flex items-center gap-sm me-2 w-full" :class="{
+        <span
+v-if="enableReload" class="reload-icon flex items-center gap-sm me-2 w-full" :class="{
           'reload-icon--disabled': disabled,
           'cursor-pointer': !disabled,
         }" @click="reloadData">
@@ -517,14 +519,16 @@ const handleAddClick = (): void => {
       </div>
 
       <div class="flex items-center gap-2">
-        <div v-if="onclick" class="add-dialog" :class="{
+        <div
+v-if="onclick" class="add-dialog" :class="{
           'add-dialog--disabled': disabled,
         }" @click="handleAddClick">
           <PlusIcon />
         </div>
 
         <span class="field-help-label-row">
-          <label :class="{
+          <label
+:class="{
             required,
             'input-label__text--disabled': disabled,
           }" class="input-label">
@@ -542,13 +546,15 @@ const handleAddClick = (): void => {
   </div>
 
   <slot v-if="!hascontent">
-    <component :is="componentType" v-model="normalizedValue" :options="mergedOptions" :placeholder="placeholder"
+    <component
+:is="componentType" v-model="normalizedValue" :options="mergedOptions" :placeholder="placeholder"
       :disabled="disabled" class="input-select w-full" :class="{
         'input-select--disabled': disabled,
       }" option-label="title" v-bind="multiselectProps" filter :loading="loading" :empty-message="message"
       @selectall-change="toggleSelectAll">
       <template v-if="isMultiselect && showSelectAll" #header>
-        <button type="button" class="multiselect-select-all"
+        <button
+type="button" class="multiselect-select-all"
           :class="{ 'multiselect-select-all--selected': allVisibleOptionsSelected }"
           :aria-pressed="allVisibleOptionsSelected" :aria-label="selectAllLabel" :disabled="disabled ||
             (!allVisibleOptionsSelected &&
@@ -564,14 +570,16 @@ const handleAddClick = (): void => {
 
       <template v-if="isMultiselect && paginated && optionsLastPage > 1" #footer>
         <div class="multiselect-pagination" role="navigation" :aria-label="$t('options_pagination')">
-          <button type="button" class="multiselect-pagination__button" :disabled="loading || optionsPage <= 1"
+          <button
+type="button" class="multiselect-pagination__button" :disabled="loading || optionsPage <= 1"
             :aria-label="$t('prev')" @click.stop="changeOptionsPage(optionsPage - 1)">
             {{ $t('prev') }}
           </button>
           <span class="multiselect-pagination__status">
             {{ $t('page_of', { current: optionsPage, total: optionsLastPage }) }}
           </span>
-          <button type="button" class="multiselect-pagination__button"
+          <button
+type="button" class="multiselect-pagination__button"
             :disabled="loading || optionsPage >= optionsLastPage" :aria-label="$t('next')"
             @click.stop="changeOptionsPage(optionsPage + 1)">
             {{ $t('next') }}

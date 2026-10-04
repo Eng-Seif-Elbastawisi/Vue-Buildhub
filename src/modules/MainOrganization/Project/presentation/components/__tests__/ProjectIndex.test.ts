@@ -201,7 +201,9 @@ describe('ProjectIndex', () => {
     const wrapper = mountProjectIndex();
     await nextTick();
 
-    expect(wrapper.findAll('.table-header').map((header) => header.text())).toContain('Service type');
+    expect(wrapper.findAll('.table-header').map((header) => header.text())).toContain(
+      'Service type',
+    );
     expect(wrapper.get('.service-type-badge').text()).toBe('Design and Execution');
 
     await wrapper.get('.custom-service-type-select').trigger('click');
@@ -224,6 +226,29 @@ describe('ProjectIndex', () => {
       expect(wrapper.find('.service-type-filter').exists()).toBe(false);
     },
   );
+
+  it.each([
+    { page: 'offers-projects', rows: '10', pagination: true },
+    { page: 'project', rows: '5', pagination: false },
+  ])('sizes the $page loading table to its page', ({ page, rows, pagination }) => {
+    routeName = page;
+    const wrapper = mount(ProjectIndex, {
+      global: {
+        ...globalOptions,
+        stubs: {
+          ...globalOptions.stubs,
+          DataStatusBuilder: { template: '<div><slot name="loader" /></div>' },
+          TableSkelaton: {
+            props: ['rows'],
+            template: '<div class="table-skeleton-test" :data-rows="rows" />',
+          },
+        },
+      },
+    });
+
+    expect(wrapper.get('.table-skeleton-test').attributes('data-rows')).toBe(rows);
+    expect(wrapper.find('.project-offers-skeleton__pagination').exists()).toBe(pagination);
+  });
 
   it('omits invalid route service types from the list request', async () => {
     routeQuery.service_type = 'invalid';

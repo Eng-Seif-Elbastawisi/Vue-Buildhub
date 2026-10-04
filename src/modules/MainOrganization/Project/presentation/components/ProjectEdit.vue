@@ -144,10 +144,12 @@ onMounted(async () => {
       </legend>
 
       <div class="next-step-options">
-        <label class="next-step-option" :class="{
+        <label
+class="next-step-option" :class="{
           'next-step-option--selected': nextStep === 'preview',
         }" for="project-next-step-preview">
-          <RadioButton :model-value="nextStep" input-id="project-next-step-preview" name="project-next-step"
+          <RadioButton
+:model-value="nextStep" input-id="project-next-step-preview" name="project-next-step"
             value="preview" @update:model-value="updateNextStep" />
 
           <span>
@@ -155,10 +157,12 @@ onMounted(async () => {
           </span>
         </label>
 
-        <label class="next-step-option" :class="{
+        <label
+class="next-step-option" :class="{
           'next-step-option--selected': nextStep === 'floor',
         }" for="project-next-step-floor">
-          <RadioButton :model-value="nextStep" input-id="project-next-step-floor" name="project-next-step" value="floor"
+          <RadioButton
+:model-value="nextStep" input-id="project-next-step-floor" name="project-next-step" value="floor"
             @update:model-value="updateNextStep" />
 
           <span>
@@ -168,7 +172,8 @@ onMounted(async () => {
       </div>
     </fieldset>
 
-    <button class="btn btn-primary" :class="{ 'btn--loading': loading }" type="button" :disabled="loading"
+    <button
+class="btn btn-primary" :class="{ 'btn--loading': loading }" type="button" :disabled="loading"
       @click="saveProject">
       {{ $t('Project.update') }}
     </button>

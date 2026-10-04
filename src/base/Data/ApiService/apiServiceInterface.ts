@@ -98,7 +98,7 @@ export default abstract class ServicesInterface {
 
     // Show loading dialog if requested
     if (showLoadingDialog) {
-      dialogManager.loading('processing');
+      dialogManager.loading('processing', type === CrudType.DELETE ? 'delete' : 'default');
     }
 
     // Build network config
@@ -216,7 +216,12 @@ export default abstract class ServicesInterface {
 
       // Show error dialog if requested
       if (showErrorDialog) {
-        dialogManager.error(ErrorHandler.getUserMessage(apiError));
+        const message = ErrorHandler.getUserMessage(apiError);
+        if (type === CrudType.DELETE) {
+          dialogManager.deleteError(message);
+        } else {
+          dialogManager.error(message);
+        }
       }
 
       // Handle special cases

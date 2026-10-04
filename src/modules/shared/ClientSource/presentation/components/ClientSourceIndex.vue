@@ -249,3 +249,7 @@
     </DataStatusBuilder>
   </div>
 </template>
+
+<style lang="scss">
+  @use '../styles/client_source_index';
+</style>

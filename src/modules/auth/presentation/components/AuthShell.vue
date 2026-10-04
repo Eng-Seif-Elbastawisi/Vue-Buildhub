@@ -1,7 +1,8 @@
 <script setup lang="ts">
   import { computed } from 'vue';
-  import villaBackground from '@/assets/images/ChatGPT Image Jul 1, 2026, 11_19_16 AM.png';
   import floorPlanBackground from '@/assets/images/ChatGPT Image Jul 1, 2026, 11_19_11 AM.png';
+  import AdminEstimationVisual from './AdminEstimationVisual.vue';
+  import OrganizationConstructionVisual from './OrganizationConstructionVisual.vue';
 
   type LoginMode = 'organization' | 'admin';
 
@@ -31,7 +32,7 @@
         secondAccent: 'auth_organization_headline_second_accent',
       },
       description: 'auth_organization_description',
-      heroImage: `url("${villaBackground}")`,
+      heroImage: 'none',
       sideImage: `url("${floorPlanBackground}")`,
       cards: [
         { label: 'auth_organization_card_projects', value: '24', icon: 'project' },
@@ -83,20 +84,10 @@
     <div class="auth-shell__layout">
       <section class="auth-shell__hero" :aria-labelledby="`${mode}-login-title`">
         <div class="auth-shell__hero-image" aria-hidden="true"></div>
+        <OrganizationConstructionVisual v-if="mode === 'organization'" />
+        <AdminEstimationVisual v-if="mode === 'admin'" />
         <div class="auth-shell__hero-shade" aria-hidden="true"></div>
         <div class="auth-shell__blueprint" aria-hidden="true"></div>
-
-        <div v-if="mode === 'admin'" class="auth-shell__command-visual" aria-hidden="true">
-          <span class="auth-shell__command-ring auth-shell__command-ring--one"></span>
-          <span class="auth-shell__command-ring auth-shell__command-ring--two"></span>
-          <span class="auth-shell__command-node auth-shell__command-node--one"></span>
-          <span class="auth-shell__command-node auth-shell__command-node--two"></span>
-          <span class="auth-shell__command-node auth-shell__command-node--three"></span>
-          <svg class="auth-shell__command-shield" viewBox="0 0 160 180">
-            <path d="M80 14L136 36V82C136 121 113 154 80 169C47 154 24 121 24 82V36L80 14Z" />
-            <path d="M56 88L72 104L106 66" />
-          </svg>
-        </div>
 
         <div class="auth-shell__hero-content">
           <header class="auth-shell__brand">
@@ -123,7 +114,7 @@
             <p>{{ $t(content.description) }}</p>
           </div>
 
-          <div class="auth-shell__stats" :aria-label="$t('auth_login_modules_label')">
+          <!-- <div class="auth-shell__stats" :aria-label="$t('auth_login_modules_label')">
             <article
               v-for="(card, index) in content.cards"
               :key="card.label"
@@ -140,7 +131,7 @@
               <p>{{ $t(card.label) }}</p>
               <strong>{{ card.value }} <span aria-hidden="true">↗</span></strong>
             </article>
-          </div>
+          </div> -->
 
           <article v-if="mode === 'admin'" class="auth-shell__admin-dashboard">
             <div class="auth-shell__admin-dashboard-head">
@@ -166,3 +157,105 @@
     </div>
   </main>
 </template>
+
+<style scoped>
+  .auth-shell--organization .auth-shell__hero-image {
+    background: var(--auth-darker);
+    transform: none;
+    animation: none;
+  }
+
+  .auth-shell--organization .auth-shell__hero-shade {
+    z-index: 1;
+    background: linear-gradient(90deg, var(--auth-black-12), transparent 42%, var(--auth-black-36));
+  }
+
+  .auth-shell--organization .auth-shell__blueprint {
+    display: none;
+  }
+
+  .auth-shell--organization .auth-shell__hero-content {
+    position: relative;
+    z-index: 2;
+  }
+
+  .auth-shell--organization :deep(.login-form) {
+    width: min(100%, 525px);
+    gap: 34px;
+    padding: clamp(26px, 3vw, 36px);
+  }
+
+  .auth-shell--organization :deep(.inputs) {
+    gap: 18px;
+  }
+
+  .auth-shell--organization :deep(.input-wrapper) {
+    gap: 9px;
+  }
+
+  .auth-shell--organization :deep(.auth-input-wrap input) {
+    height: 56px;
+    border-color: color-mix(in sRGB, var(--auth-border) 72%, var(--gray-400));
+  }
+
+  .auth-shell--organization :deep(.btn.btn-primary) {
+    min-height: 56px;
+    box-shadow: 0 12px 28px var(--auth-copper-22);
+  }
+
+  .auth-shell--organization :deep(.btn.btn-primary:hover) {
+    box-shadow: 0 16px 32px var(--auth-copper-30);
+  }
+
+  @media (min-width: 2000px) and (min-height: 900px), (min-width: 1200px) and (min-height: 1200px) {
+    .auth-shell--organization .auth-shell__hero,
+    .auth-shell--organization .auth-shell__side {
+      padding-block-end: clamp(110px, 13vh, 200px);
+    }
+  }
+
+  @media (max-width: 900px) {
+    .auth-shell--organization :deep(.login-form) {
+      width: min(100%, 500px);
+    }
+  }
+
+  @media (max-width: 600px) {
+    .auth-shell--organization :deep(.login-form) {
+      gap: 40px;
+      padding: 22px 16px;
+    }
+
+    .auth-shell--organization :deep(.auth-input-wrap input) {
+      height: 54px;
+    }
+
+    .auth-shell--organization :deep(.btn.btn-primary) {
+      min-height: 54px;
+    }
+  }
+
+  .auth-shell--admin .auth-shell__hero-shade {
+    z-index: 1;
+    background: linear-gradient(
+      90deg,
+      transparent 0 28%,
+      var(--auth-black-36) 57%,
+      var(--auth-admin-bg) 100%
+    );
+  }
+
+  .auth-shell--admin .auth-shell__hero-content {
+    position: relative;
+    z-index: 2;
+  }
+
+  .auth-shell--admin .auth-shell__copy {
+    width: min(100%, 480px);
+    justify-self: start;
+  }
+
+  .auth-shell--admin .auth-shell__stat-card {
+    background: var(--auth-admin-card);
+  }
+</style>

@@ -2,6 +2,7 @@
   import { ref, onMounted, computed, watch } from 'vue';
 
   import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
+  import { attachmentExtension, attachmentGallery, attachmentKind } from '@/shared/AttachmentGallery/attachmentGallery';
 
   export interface UploadedFile {
     id: string;
@@ -142,16 +143,17 @@
     files.value = fileList.map((url, i) => {
       let name = 'file';
       let ext = '';
+      let dataMime = '';
       if (url.startsWith('data:')) {
         const match = url.match(/^data:([^;]+);/);
-        const mime = match ? match[1] : '';
-        ext = mime?.split('/').pop() ?? '';
+        dataMime = match?.[1] ?? '';
+        ext = dataMime.split('/').pop() ?? '';
         name = `file.${ext}`;
       } else {
-        name = url.split('/').pop() ?? 'file';
-        ext = name.split('.').pop()?.toLowerCase() ?? '';
+        name = url.split(/[?#]/)[0]?.split('/').pop() ?? 'file';
+        ext = attachmentExtension(name);
       }
-      const type = EXT_MIME_MAP[ext] ?? 'application/octet-stream';
+      const type = dataMime || EXT_MIME_MAP[ext] || 'application/octet-stream';
 
       return {
         id: Math.random().toString(36).substring(2),
@@ -211,23 +213,24 @@
   // ─── Helpers ──────────────────────────────────────────────────────────────
 
   const resolveMime = (name: string): string => {
-    const ext = name.split('.').pop()?.toLowerCase() ?? '';
+    const ext = attachmentExtension(name);
     return EXT_MIME_MAP[ext] ?? 'application/octet-stream';
   };
 
-  const isImage = (file: UploadedFile): boolean => file.type.startsWith('image/');
+  const isImage = (file: UploadedFile): boolean =>
+    attachmentKind({ url: file.url, name: file.name, mimeType: file.type }) === 'image';
 
   /** Returns an emoji icon or the uppercased extension label */
   const getFileIcon = (file: UploadedFile): string => {
-    const ext = file.name.split('.').pop()?.toLowerCase() ?? '';
+    const ext = attachmentExtension(file.name);
     return EXT_ICON_MAP[ext] ?? (ext.toUpperCase() || 'FILE');
   };
 
-  const downloadFile = (file: UploadedFile) => {
-    const a = document.createElement('a');
-    a.href = file.url;
-    a.download = file.name;
-    a.click();
+  const openFile = (index: number) => {
+    attachmentGallery.open(
+      files.value.map((file) => ({ url: file.url, name: file.name, mimeType: file.type })),
+      index,
+    );
   };
 
   const removeFile = (id: string) => {
@@ -303,28 +306,32 @@
 
     <div v-if="files.length && !hidepreview" class="preview-grid">
       <div
-        v-for="fileItem in files"
+        v-for="(fileItem, fileIndex) in files"
         :key="fileItem.id"
         class="preview-item"
-        :title="$t('click_to_download')"
-        @click="downloadFile(fileItem)"
+        :title="$t('attachments')"
       >
-        <template v-if="isImage(fileItem)">
-          <img :src="fileItem.url" :alt="fileItem.name" class="preview-thumb" />
-        </template>
+        <button
+          type="button"
+          class="preview-open"
+          :aria-label="fileItem.name"
+          @click="openFile(fileIndex)"
+        >
+          <template v-if="isImage(fileItem)">
+            <img :src="fileItem.url" :alt="fileItem.name" class="preview-thumb" />
+          </template>
 
-        <template v-else>
-          <div class="preview-icon">
-            {{ getFileIcon(fileItem) }}
+          <template v-else>
+            <div class="preview-icon">
+              {{ getFileIcon(fileItem) }}
+            </div>
+          </template>
+
+          <div class="preview-overlay">
+            <span class="preview-filename">{{ fileItem.name }}</span>
+            <span class="preview-size">{{ fileItem.size }}</span>
           </div>
-        </template>
-
-        <div class="preview-overlay">
-          <span class="preview-filename">{{ fileItem.name }}</span>
-          <span class="preview-size">{{ fileItem.size }}</span>
-        </div>
-
-        <div class="download-badge">↓</div>
+        </button>
 
         <button
           type="button"
@@ -340,6 +347,17 @@
 </template>
 
 <style scoped>
+  .preview-open {
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+  }
+
   .file-upload-wrapper {
     display: flex;
     flex-direction: column;
@@ -467,27 +485,6 @@
   .preview-size {
     font-size: 9px;
     color: var(--white-alpha-75);
-  }
-
-  .download-badge {
-    position: absolute;
-    bottom: 6px;
-    right: 6px;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: var(--PrimaryColor);
-    color: var(--BgWhite);
-    font-size: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    transition: opacity 0.15s;
-  }
-
-  .preview-item:hover .download-badge {
-    opacity: 1;
   }
 
   .remove-btn {

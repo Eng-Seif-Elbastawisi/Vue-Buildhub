@@ -105,6 +105,12 @@ const mountIndex = () =>
     },
   });
 
+const chooseRowMenuAction = async (wrapper: ReturnType<typeof mountIndex>, actionClass: string) => {
+  await wrapper.get('.execution-quote-index__more-button').trigger('click');
+  await flushPromises();
+  await wrapper.get(`${actionClass} .p-menu-item-link`).trigger('click');
+};
+
 describe('ExecutionQuoteIndex', () => {
   const controller = ExecutionQuoteController.getInstance();
   const indexRequest = vi.spyOn(ExecutionQuoteApiService.getInstance(), 'index');
@@ -117,15 +123,35 @@ describe('ExecutionQuoteIndex', () => {
     push.mockReset();
   });
 
-  it('uses the BOQ measurement loader while the quotation list is loading', () => {
+  it('fills the quotation table card with the shared table skeleton while loading', () => {
     controller.setListState(new DataLoading());
     // Keep the request pending while checking the real loading slot.
     indexRequest.mockImplementation(() => new Promise(() => undefined));
 
     const wrapper = mountIndex();
 
-    expect(wrapper.find('.boq-measurement-loader').exists()).toBe(true);
-    expect(wrapper.find('.spinner-loader').exists()).toBe(false);
+    const loadingCard = wrapper.get('.execution-quote-index__table-card--loading');
+
+    expect(wrapper.find('.boq-measurement-loader').exists()).toBe(false);
+    expect(loadingCard.get('.skeleton-table').exists()).toBe(true);
+    expect(loadingCard.findAll('.skeleton-table thead th')).toHaveLength(10);
+    expect(loadingCard.findAll('.skeleton-table tbody tr')).toHaveLength(20);
+    expect(loadingCard.find('.execution-quote-index__table-header').exists()).toBe(true);
+  });
+
+  it('uses the shared drawable icon in the quotation list header', () => {
+    indexRequest.mockImplementation(() => new Promise(() => undefined));
+
+    const wrapper = mountIndex();
+
+    expect(
+      wrapper
+        .find('.execution-quote-index__masthead .page-header-icon[data-icon-kind="document"]')
+        .exists(),
+    ).toBe(true);
+    expect(
+      wrapper.find('.execution-quote-index__masthead .page-header-icon__accent').exists(),
+    ).toBe(false);
   });
 
   it('shows the important execution quote fields returned by the index endpoint', async () => {
@@ -183,7 +209,7 @@ describe('ExecutionQuoteIndex', () => {
     const wrapper = mountIndex();
     await flushPromises();
 
-    await wrapper.get('.execution-quote-index__change-status-button').trigger('click');
+    await chooseRowMenuAction(wrapper, '.execution-quote-index__change-status-button');
     await wrapper.get('#execution-quote-status-note').setValue('Ready for validation');
     await wrapper.get('.execution-quote-status-dialog__submit').trigger('click');
     await flushPromises();
@@ -213,7 +239,7 @@ describe('ExecutionQuoteIndex', () => {
     const wrapper = mountIndex();
     await flushPromises();
 
-    await wrapper.get('.execution-quote-index__change-status-button').trigger('click');
+    await chooseRowMenuAction(wrapper, '.execution-quote-index__change-status-button');
     const options = wrapper.findAll('.execution-quote-status-dialog__option');
     await options[1].trigger('click');
     await wrapper.get('#execution-quote-status-note').setValue('Client-ready revision');
@@ -242,7 +268,7 @@ describe('ExecutionQuoteIndex', () => {
     const wrapper = mountIndex();
     await flushPromises();
 
-    await wrapper.get('.execution-quote-index__change-status-button').trigger('click');
+    await chooseRowMenuAction(wrapper, '.execution-quote-index__change-status-button');
     await wrapper.get('.execution-quote-status-dialog__submit').trigger('click');
     await flushPromises();
 
@@ -287,13 +313,13 @@ describe('ExecutionQuoteIndex', () => {
     const wrapper = mountIndex();
     await flushPromises();
 
-    await wrapper.get('.execution-quote-index__add-stage-button').trigger('click');
+    await chooseRowMenuAction(wrapper, '.execution-quote-index__add-stage-button');
     expect(push).toHaveBeenLastCalledWith({
       name: 'Build Execution Quote',
       query: { id: '38' },
     });
 
-    await wrapper.get('.execution-quote-index__add-item-button').trigger('click');
+    await chooseRowMenuAction(wrapper, '.execution-quote-index__add-item-button');
     expect(push).toHaveBeenLastCalledWith({
       name: 'Build Execution Quote',
       params: { stageId: '129' },
@@ -312,6 +338,7 @@ describe('ExecutionQuoteIndex', () => {
     expect(wrapper.find('.execution-quote-index__add-stage-button').exists()).toBe(false);
     expect(wrapper.find('.execution-quote-index__add-item-button').exists()).toBe(false);
     expect(wrapper.find('.execution-quote-index__change-status-button').exists()).toBe(false);
+    expect(wrapper.find('.execution-quote-index__more-button').exists()).toBe(false);
 
     await wrapper.get('.execution-quote-index__view-button').trigger('click');
     expect(push).toHaveBeenLastCalledWith({

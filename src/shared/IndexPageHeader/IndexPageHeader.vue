@@ -1,5 +1,8 @@
 <script setup lang="ts">
   import { computed, useSlots } from 'vue';
+  import { useRoute } from 'vue-router';
+  import PageHeaderIcon from '@/shared/FeatureHeader/PageHeaderIcon.vue';
+  import { getPageHeaderIcon } from '@/shared/FeatureHeader/pageHeaderIcon';
 
   withDefaults(
     defineProps<{
@@ -12,23 +15,28 @@
   );
 
   const slots = useSlots();
+  const route = useRoute();
 
   const hasToolbar = computed(() => Boolean(slots.search || slots.filters));
+  const resolvedIcon = computed(() => getPageHeaderIcon(route?.path ?? ''));
 </script>
 
 <template>
-  <div class="index-page-header">
+  <div class="index-page-header page-header--animated">
     <header class="index-page-heading">
-      <div class="index-page-heading__copy">
-        <slot name="eyebrow" />
-        <h1 class="index-page-heading__title">
-          {{ title }}
-        </h1>
-        <p v-if="subtitle" class="index-page-heading__subtitle">
-          {{ subtitle }}
-        </p>
-        <div v-if="$slots.meta" class="index-page-heading__meta">
-          <slot name="meta" />
+      <div :key="route?.path" class="index-page-heading__identity">
+        <PageHeaderIcon v-if="resolvedIcon" :kind="resolvedIcon" />
+        <div class="index-page-heading__copy">
+          <slot name="eyebrow" />
+          <h1 class="index-page-heading__title page-header__title">
+            {{ title }}
+          </h1>
+          <p v-if="subtitle" class="index-page-heading__subtitle page-header__subtitle">
+            {{ subtitle }}
+          </p>
+          <div v-if="$slots.meta" class="index-page-heading__meta">
+            <slot name="meta" />
+          </div>
         </div>
       </div>
       <div v-if="$slots.actions" class="index-page-heading__actions">
@@ -73,6 +81,14 @@
 
   .index-page-heading__copy {
     flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .index-page-heading__identity {
+    display: flex;
+    flex: 1 1 auto;
+    align-items: center;
+    gap: 14px;
     min-width: 0;
   }
 
@@ -229,7 +245,6 @@
       min-width: 0;
       max-width: none;
     }
-
   }
 
   @media (max-width: 479px) {

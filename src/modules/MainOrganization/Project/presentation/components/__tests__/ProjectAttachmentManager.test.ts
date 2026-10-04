@@ -1,5 +1,6 @@
-import { mount } from '@vue/test-utils';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { flushPromises, mount } from '@vue/test-utils';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { attachmentGallery } from '@/shared/AttachmentGallery/attachmentGallery';
 import ProjectAttachmentManager from '../ProjectAttachmentManager.vue';
 
 beforeEach(() => {
@@ -14,6 +15,8 @@ beforeEach(() => {
     },
   );
 });
+
+afterEach(() => attachmentGallery.close());
 
 const attachmentTypeSelectStub = {
   emits: ['update:modelValue'],
@@ -118,5 +121,39 @@ describe('ProjectAttachmentManager', () => {
       expect.objectContaining({ alt: 'Side view', typeId: 5 }),
       expect.objectContaining({ alt: 'Contract', typeId: 2 }),
     ]);
+  });
+
+  it('opens a grouped attachment at its original position in the full gallery', async () => {
+    const wrapper = mountAttachmentManager([
+      { file: 'data:image/png;base64,front', name: 'front.png', typeId: 5, typeName: 'Photos' },
+      { file: 'data:application/pdf;base64,plan', name: 'plan.pdf', typeId: 2, typeName: 'Plans' },
+      { file: 'data:image/png;base64,side', name: 'side.png', typeId: 5, typeName: 'Photos' },
+    ]);
+
+    await wrapper.findAll('.attachment-group')[1].get('.attachment-card__open').trigger('click');
+
+    expect(attachmentGallery.visible.value).toBe(true);
+    expect(attachmentGallery.activeIndex.value).toBe(1);
+    expect(attachmentGallery.attachments.value.map((attachment) => attachment.name)).toEqual([
+      'front.png',
+      'plan.pdf',
+      'side.png',
+    ]);
+  });
+
+  it('opens a staged file in the gallery before it is added', async () => {
+    const wrapper = mountAttachmentManager();
+    const firstFile = new File(['front'], 'front.png', { type: 'image/png' });
+    const secondFile = new File(['plan'], 'plan.pdf', { type: 'application/pdf' });
+
+    await wrapper.get('.upload-dropzone').trigger('drop', {
+      dataTransfer: { files: [firstFile, secondFile] },
+    });
+    await flushPromises();
+    await wrapper.findAll('.staged-file-card__open')[1].trigger('click');
+
+    expect(attachmentGallery.visible.value).toBe(true);
+    expect(attachmentGallery.current.value?.name).toBe('plan.pdf');
+    expect(attachmentGallery.attachments.value).toHaveLength(2);
   });
 });

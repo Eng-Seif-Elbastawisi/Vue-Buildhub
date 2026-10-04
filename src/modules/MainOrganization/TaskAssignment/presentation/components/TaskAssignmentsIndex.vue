@@ -34,10 +34,6 @@
       >
         <template #meta>
           <div class="task-assignment-page-header__content">
-            <span class="task-assignment-page-header__icon" aria-hidden="true">
-              <i class="pi pi-user-plus"></i>
-            </span>
-
             <div class="task-assignment-page-header__actions">
               <span class="task-assignment-page-header__count">
                 {{ tasksCount }} {{ $t('task_assignment.tasks_count') }}

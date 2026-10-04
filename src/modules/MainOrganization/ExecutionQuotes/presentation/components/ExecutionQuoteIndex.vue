@@ -15,7 +15,9 @@
   import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
   import UpdatedCustomInputSelect from '@/shared/FormInputs/UpdatedCustomInputSelect.vue';
   import AppButton from '@/shared/HelpersComponents/AppButton.vue';
+  import PageHeaderIcon from '@/shared/FeatureHeader/PageHeaderIcon.vue';
   import AppTable, { type TableHeader } from '@/shared/HelpersComponents/AppTable.vue';
+  import TableSkelaton from '@/shared/HelpersComponents/TableSkelaton.vue';
   import Pagination from '@/shared/HelpersComponents/Pagination.vue';
 
   import {
@@ -38,9 +40,9 @@
   import IndexExecutionQuoteParams from '../../core/params/index.execution.quote.params';
 
   import ExecutionQuoteController from '../controllers/execution.quote.controller';
-  import BoqMeasurementLoader from './BoqMeasurementLoader.vue';
   import QuoteStatusBadge from './QuoteStatusBadge.vue';
   import ExecutionQuoteStatusDialog from './ExecutionQuoteStatusDialog.vue';
+  import ExecutionQuoteRowActions from './ExecutionQuoteRowActions.vue';
 
   type FilterSelection = TitleInterface<string | number> | TitleInterface<string | number>[] | null;
 
@@ -391,15 +393,18 @@
 
 <template>
   <section class="execution-quote-index">
-    <header class="execution-quote-index__masthead">
-      <div class="execution-quote-index__heading-copy">
-        <h1>
-          {{ $t('execution_quote.title') }}
-        </h1>
+    <header class="execution-quote-index__masthead page-header--animated">
+      <div class="execution-quote-index__identity">
+        <PageHeaderIcon kind="document" />
+        <div class="execution-quote-index__heading-copy">
+          <h1 class="page-header__title">
+            {{ $t('execution_quote.title') }}
+          </h1>
 
-        <p>
-          {{ $t('execution_quote.index_description') }}
-        </p>
+          <p class="page-header__subtitle">
+            {{ $t('execution_quote.index_description') }}
+          </p>
+        </div>
       </div>
 
       <div class="execution-quote-index__masthead-action">
@@ -512,7 +517,27 @@
 
     <DataStatusBuilder :controller="state">
       <template #loader>
-        <BoqMeasurementLoader />
+        <section
+          class="execution-quote-index__table-card execution-quote-index__table-card--loading"
+          role="status"
+          :aria-label="$t('loading')"
+          aria-busy="true"
+        >
+          <header class="execution-quote-index__table-header">
+            <div>
+              <h2>{{ $t('execution_quote.table.title') }}</h2>
+              <p>{{ $t('execution_quote.table.description') }}</p>
+            </div>
+            <span class="execution-quote-index__result-count-placeholder" aria-hidden="true"></span>
+          </header>
+
+          <TableSkelaton
+            :rows="perPage"
+            :columns="headers.length"
+            :has-actions="true"
+            aria-hidden="true"
+          />
+        </section>
       </template>
 
       <template #success="{ data: quotes }">
@@ -718,76 +743,15 @@
             </template>
 
             <template #actions="{ item }">
-              <div class="execution-quote-index__row-actions">
-                <div
-                  v-if="canModifyQuote(item)"
-                  class="execution-quote-index__row-actions__button-group"
-                >
-                  <!-- Add Item -->
-                  <AppButton
-                    class="execution-quote-index__add-item-button"
-                    size="sm"
-                    theme="secondary"
-                    action-tone="edit"
-                    icon="right"
-                    @click.stop="openAddItem(item)"
-                  >
-                    <template #icon>
-                      <i class="pi pi-list" aria-hidden="true"></i>
-                    </template>
-
-                    {{ $t('execution_quote.table.add_item') }}
-                  </AppButton>
-
-                  <!-- Add Stage -->
-                  <AppButton
-                    class="execution-quote-index__add-stage-button"
-                    size="sm"
-                    theme="secondary"
-                    action-tone="edit"
-                    icon="right"
-                    @click.stop="openAddStage(item)"
-                  >
-                    <template #icon>
-                      <i class="pi pi-sitemap" aria-hidden="true"></i>
-                    </template>
-
-                    {{ $t('execution_quote.table.add_stage') }}
-                  </AppButton>
-
-                  <!-- Change Status -->
-                  <AppButton
-                    v-if="canUpdateQuoteStatus(item)"
-                    class="execution-quote-index__change-status-button"
-                    size="sm"
-                    theme="secondary"
-                    icon="right"
-                    @click.stop="openStatusDialog(item)"
-                  >
-                    <template #icon>
-                      <i class="pi pi-sync" aria-hidden="true"></i>
-                    </template>
-
-                    {{ $t('execution_quote.status.change_action') }}
-                  </AppButton>
-                </div>
-
-                <!-- Always show View -->
-                <AppButton
-                  class="execution-quote-index__view-button"
-                  action-tone="view"
-                  size="sm"
-                  theme="secondary"
-                  icon="right"
-                  @click.stop="openShow(item)"
-                >
-                  <template #icon>
-                    <i class="pi pi-eye" aria-hidden="true"></i>
-                  </template>
-
-                  {{ $t('execution_quote.show.action') }}
-                </AppButton>
-              </div>
+              <ExecutionQuoteRowActions
+                :available="Boolean(item.id)"
+                :can-modify="canModifyQuote(item)"
+                :can-change-status="canUpdateQuoteStatus(item)"
+                @view="openShow(item)"
+                @add-item="openAddItem(item)"
+                @add-stage="openAddStage(item)"
+                @change-status="openStatusDialog(item)"
+              />
             </template>
           </AppTable>
         </section>

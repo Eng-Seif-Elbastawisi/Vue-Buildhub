@@ -111,55 +111,9 @@
 </template>
 
 <style scoped lang="scss">
-  .email-form-card {
-    // display: flex;
-    // align-items: end;
-    display: grid;
-    grid-template-columns: 3fr 1fr;
-    align-items: end;
-    gap: 10px;
-    padding: 20px;
-  }
-
   .email-crud-example {
     padding: 0;
     padding-block: 20px;
-  }
-
-  :deep(.input-file) {
-    border: 1px solid var(--input-file-border) !important;
-    padding: 11px;
-    border-radius: 20px !important;
-    cursor: pointer;
-  }
-
-  .actions {
-    // padding: 0 0 10px 20px;
-    display: flex;
-    gap: 0.75rem;
-
-    .btn-save {
-      flex: 1;
-      border-radius: 20px;
-      border: 1px solid white;
-      padding: 11px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      font-weight: 600;
-      font-family: 'medium';
-
-      &:hover {
-        border: 1px solid var(--PrimaryColor);
-
-        .icon {
-          stroke: var(--PrimaryColor);
-        }
-      }
-    }
-
-    .btn-cancel {
-      flex: 0 0 auto;
-    }
   }
 
   .actions {

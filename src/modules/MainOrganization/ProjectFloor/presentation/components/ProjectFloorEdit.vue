@@ -271,7 +271,8 @@ onMounted(fetchProjectFloor);
     </div>
 
     <template v-else-if="projectFloor">
-      <ProjectFloorForm :project-floor="projectFloor" :project-id="projectId" :project-preview-id="projectPreviewId"
+      <ProjectFloorForm
+:project-floor="projectFloor" :project-id="projectId" :project-preview-id="projectPreviewId"
         :loading="saving" :is-edit="true" :validation-errors="validationErrors" @update-data="updateData" />
 
       <div class="btns form-action-pair">

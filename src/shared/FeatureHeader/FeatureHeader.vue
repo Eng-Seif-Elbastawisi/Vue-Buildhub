@@ -8,41 +8,11 @@
     type BreadcrumbItem,
   } from '../LayoutComponents/SubComponents/RouteHelper';
   import FeatureHeader from '@/assets/images/FeatureHeader.jpg';
+  import PageHeaderIcon from './PageHeaderIcon.vue';
+  import { getPageHeaderAction, getPageHeaderIcon } from './pageHeaderIcon';
   const route = useRoute();
   const router = useRouter();
   const { t, locale } = useI18n();
-
-  // Presentation metadata for the normal CRUD routes that use the shared form surface.
-  const standardFormIcons: Record<string, string> = {
-    admin: 'pi pi-user',
-    'attachment-types': 'pi pi-file-edit',
-    brand: 'pi pi-tag',
-    client: 'pi pi-users',
-    'client-source': 'pi pi-share-alt',
-    departments: 'pi pi-sitemap',
-    employee: 'pi pi-id-card',
-    item: 'pi pi-box',
-    item_types: 'pi pi-box',
-    labor: 'pi pi-users',
-    location: 'pi pi-map-marker',
-    'location-city': 'pi pi-map-marker',
-    'location-governorate': 'pi pi-map-marker',
-    material: 'pi pi-box',
-    measurement: 'pi pi-sliders-h',
-    organization: 'pi pi-building',
-    package: 'pi pi-box',
-    projectType: 'pi pi-sitemap',
-    'quote-types': 'pi pi-file-edit',
-    space: 'pi pi-clone',
-    specialization: 'pi pi-sitemap',
-    stages: 'pi pi-clone',
-    'sub-stages': 'pi pi-clone',
-    suppliers: 'pi pi-truck',
-    supply: 'pi pi-box',
-    term: 'pi pi-file-edit',
-    terms: 'pi pi-file-edit',
-    'invoice-payment': 'pi pi-wallet',
-  };
 
   const standardFormDetail = computed(() => {
     const [, ...parts] = route.path.split('/').filter(Boolean);
@@ -55,7 +25,7 @@
           ? parts[0]
           : undefined;
     const action = isNestedSubStage ? parts[3] : parts[1];
-    const icon = section ? standardFormIcons[section] : undefined;
+    const icon = section ? getPageHeaderIcon(route.path) : undefined;
     if (!icon) return undefined;
 
     const descriptionKey =
@@ -68,25 +38,25 @@
     switch (route.name) {
       case 'add-project':
         return {
-          icon: 'pi pi-building',
+          icon: 'project' as const,
           title: t('Project.add'),
           description: t('Project.form_description'),
         };
       case 'edit-project':
         return {
-          icon: 'pi pi-pen-to-square',
+          icon: 'project' as const,
           title: t('Project.edit'),
           description: t('standard_form.edit_description'),
         };
       case 'show-project':
         return {
-          icon: 'pi pi-building',
+          icon: 'project' as const,
           title: t('ProjectShow.project_details'),
           description: t('ProjectShow.project_information_summary'),
         };
       case 'Add Execution Quote':
         return {
-          icon: 'pi pi-file-edit',
+          icon: 'document' as const,
           title: t('execution_quote.title'),
           description: t('execution_quote.subtitle'),
         };
@@ -96,6 +66,8 @@
   });
 
   const pageIntroDetail = computed(() => specializedPageIntro.value ?? standardFormDetail.value);
+  const visibleIcon = computed(() => pageIntroDetail.value?.icon ?? getPageHeaderIcon(route.path));
+  const headerAction = computed(() => getPageHeaderAction(route.path));
 
   const items = computed(() => {
     void locale.value;
@@ -116,26 +88,47 @@
 
 <template>
   <div
-    class="feature-header-container"
-    :class="{ 'feature-header-container--page-intro': pageIntroDetail }"
+    class="feature-header-container page-header--animated"
+    :class="{
+      'feature-header-container--page-intro': pageIntroDetail,
+      'feature-header-container--entity': visibleIcon && !pageIntroDetail,
+    }"
   >
     <img class="header-img" :src="FeatureHeader" :alt="$t('feature_header_image_alt')" />
-    <div class="content" :class="{ 'content--standard-form': pageIntroDetail }">
-      <span v-if="pageIntroDetail" class="standard-form-header-icon" aria-hidden="true">
-        <i :class="pageIntroDetail.icon"></i>
-      </span>
-      <div v-if="pageIntroDetail" class="standard-form-header-copy">
-        <h1 class="title">
+    <div :key="route.path" class="content" :class="{ 'content--standard-form': pageIntroDetail }">
+      <PageHeaderIcon
+        v-if="visibleIcon"
+        :kind="visibleIcon"
+        :action="headerAction"
+        class="standard-form-header-icon"
+      />
+      <div v-if="visibleIcon" class="standard-form-header-copy">
+        <h1 class="title page-header__title">
           {{ specializedPageIntro?.title ?? getLabel(items[items.length - 1]) }}
         </h1>
-        <p v-if="pageIntroDetail.description" class="standard-form-header-description">
+        <p
+          v-if="pageIntroDetail?.description"
+          class="standard-form-header-description page-header__subtitle"
+        >
           {{ pageIntroDetail.description }}
         </p>
       </div>
-      <h1 v-else class="title">{{ getLabel(items[items.length - 1]) }}</h1>
+      <h1 v-else class="title page-header__title">{{ getLabel(items[items.length - 1]) }}</h1>
     </div>
     <div class="actions">
       <slot name="actions"></slot>
     </div>
   </div>
 </template>
+
+<style scoped>
+  .feature-header-container--entity .content {
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .feature-header-container--entity .standard-form-header-copy {
+    min-width: 0;
+  }
+</style>

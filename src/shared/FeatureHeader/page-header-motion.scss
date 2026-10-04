@@ -1,0 +1,110 @@
+.page-header--animated {
+  --page-header-ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  .page-header__title {
+    animation: page-header-text-enter 420ms var(--page-header-ease) 120ms backwards;
+  }
+
+  .page-header__subtitle {
+    animation: page-header-text-enter 420ms var(--page-header-ease) 200ms backwards;
+  }
+}
+
+.page-header-icon {
+  display: grid;
+  flex: 0 0 48px;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--control-radius);
+  background-color: var(--quote-copper-soft);
+  color: var(--quote-copper-dark);
+  animation: page-header-icon-enter 420ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
+
+  svg {
+    display: block;
+    width: 55%;
+    height: 55%;
+    overflow: visible;
+  }
+
+  .page-header-icon__path {
+    stroke-dasharray: 1;
+    animation: page-header-svg-draw 600ms cubic-bezier(0.22, 1, 0.36, 1) 80ms backwards;
+  }
+
+  .page-header-icon__accent {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: page-header-accent-enter 300ms cubic-bezier(0.22, 1, 0.36, 1) 350ms backwards;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .page-header-icon {
+    transition: transform 180ms ease;
+
+    &:hover {
+      transform: translateY(-2px) scale(1.015);
+    }
+  }
+}
+
+@keyframes page-header-icon-enter {
+  from {
+    opacity: 0;
+    transform: scale(0.88);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes page-header-svg-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes page-header-accent-enter {
+  from {
+    opacity: 0;
+    transform: scale(0.55);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes page-header-text-enter {
+  from {
+    opacity: 0;
+    transform: translateY(7px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-header--animated :is(.page-header__title, .page-header__subtitle),
+  .page-header-icon,
+  .page-header-icon:hover,
+  .page-header-icon :is(.page-header-icon__path, .page-header-icon__accent) {
+    animation: none;
+    transition: none;
+    transform: none;
+    opacity: 1;
+    stroke-dashoffset: 0;
+  }
+}

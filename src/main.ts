@@ -1,6 +1,7 @@
 import 'primeicons/primeicons.css';
 import './styles/main.min.css';
 import './styles/standard-crud-form.scss';
+import './styles/construction-states.scss';
 import { createApp } from 'vue';
 import PrimeVue from 'primevue/config';
 import { createPinia } from 'pinia';
