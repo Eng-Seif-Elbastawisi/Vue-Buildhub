@@ -5,51 +5,56 @@
   import Button from 'primevue/button';
   import { useToast } from 'primevue/usetoast';
   import { useI18n } from 'vue-i18n';
-  import {
-    attachmentExtension,
-    attachmentGallery,
-    attachmentKind,
-    downloadAttachment,
-  } from './attachmentGallery';
+
+  import { attachmentExtension, attachmentGallery, attachmentKind } from './attachmentGallery';
 
   const { t, locale } = useI18n();
   const toast = useToast();
+
   const { attachments, activeIndex, visible, current } = attachmentGallery;
+
   const isRtl = computed(() => locale.value === 'ar');
+
   const failedImages = ref(new Set<string>());
+
   const markImageFailed = (url: string) => {
     failedImages.value = new Set([...failedImages.value, url]);
   };
+
   const fileIcon = (kind: string) =>
     kind === 'pdf' ? 'pi pi-file-pdf' : kind === 'video' ? 'pi pi-video' : 'pi pi-file';
 
   const copyLink = async () => {
     if (!current.value?.url) return;
+
     try {
       await navigator.clipboard.writeText(current.value.url);
-      toast.add({ severity: 'success', summary: t('attachment_link_copied'), life: 3000 });
-    } catch {
-      toast.add({ severity: 'error', summary: t('attachment_copy_failed'), life: 3000 });
-    }
-  };
 
-  const downloadCurrent = async () => {
-    if (!current.value?.url) return;
-    try {
-      await downloadAttachment(current.value);
+      toast.add({
+        severity: 'success',
+        summary: t('attachment_link_copied'),
+        life: 3000,
+      });
     } catch {
-      toast.add({ severity: 'error', summary: t('attachment_download_failed'), life: 3000 });
+      toast.add({
+        severity: 'error',
+        summary: t('attachment_copy_failed'),
+        life: 3000,
+      });
     }
   };
 
   const previous = () => {
     activeIndex.value = Math.max(0, activeIndex.value - 1);
   };
+
   const next = () => {
     activeIndex.value = Math.min(attachments.value.length - 1, activeIndex.value + 1);
   };
+
   const onKeydown = (event: KeyboardEvent) => {
     if (!visible.value) return;
+
     if (event.key === 'ArrowLeft') {
       event.preventDefault();
       isRtl.value ? next() : previous();
@@ -58,6 +63,7 @@
       isRtl.value ? previous() : next();
     }
   };
+
   watch(
     visible,
     (opened) =>
@@ -66,6 +72,7 @@
         : window.removeEventListener('keydown', onKeydown),
     { immediate: true },
   );
+
   onUnmounted(() => window.removeEventListener('keydown', onKeydown));
 </script>
 
@@ -85,11 +92,13 @@
     <div class="attachment-gallery" :dir="isRtl ? 'rtl' : 'ltr'">
       <header class="attachment-gallery__toolbar">
         <div class="attachment-gallery__identity">
-          <strong :title="current?.name"
-            ><bdi>{{ current?.name }}</bdi></strong
-          >
-          <span dir="ltr">{{ activeIndex + 1 }} / {{ attachments.length }}</span>
+          <strong :title="current?.name">
+            <bdi>{{ current?.name }}</bdi>
+          </strong>
+
+          <span dir="ltr"> {{ activeIndex + 1 }} / {{ attachments.length }} </span>
         </div>
+
         <div class="attachment-gallery__tools">
           <Button
             icon="pi pi-copy"
@@ -99,14 +108,20 @@
             :disabled="!current?.url"
             @click="copyLink"
           />
-          <Button
-            icon="pi pi-download"
-            :label="$t('download')"
+
+          <a
+            v-if="current?.url"
+            :href="current.url"
+            :download="current.name || ''"
+            class="p-button p-component p-button-text"
             :aria-label="$t('download_attachment')"
-            text
-            :disabled="!current?.url"
-            @click="downloadCurrent"
-          />
+          >
+            <span class="p-button-icon pi pi-download"></span>
+            <span class="p-button-label">
+              {{ $t('download') }}
+            </span>
+          </a>
+
           <Button
             icon="pi pi-times"
             :aria-label="$t('close')"
@@ -116,6 +131,7 @@
           />
         </div>
       </header>
+
       <Galleria
         v-model:active-index="activeIndex"
         :value="attachments"
@@ -136,11 +152,13 @@
               :alt="slotProps.item.name"
               @error="markImageFailed(slotProps.item.url)"
             />
+
             <iframe
               v-else-if="attachmentKind(slotProps.item) === 'pdf' && slotProps.item.url"
               :src="slotProps.item.url"
               :title="slotProps.item.name"
             />
+
             <video
               v-else-if="attachmentKind(slotProps.item) === 'video' && slotProps.item.url"
               :src="slotProps.item.url"
@@ -148,19 +166,26 @@
               controls
               preload="metadata"
             />
+
             <div v-else class="attachment-gallery__fallback">
               <i :class="fileIcon(attachmentKind(slotProps.item))" aria-hidden="true" />
-              <strong
-                ><bdi>{{ slotProps.item.name }}</bdi></strong
-              >
-              <span>{{
-                attachmentExtension(slotProps.item.name, slotProps.item.url).toUpperCase() ||
-                $t('attachments')
-              }}</span>
+
+              <strong>
+                <bdi>{{ slotProps.item.name }}</bdi>
+              </strong>
+
+              <span>
+                {{
+                  attachmentExtension(slotProps.item.name, slotProps.item.url).toUpperCase() ||
+                  $t('attachments')
+                }}
+              </span>
+
               <p>{{ $t('preview_not_available') }}</p>
             </div>
           </div>
         </template>
+
         <template #thumbnail="slotProps">
           <div class="attachment-gallery__thumbnail" :title="slotProps.item.name">
             <img
@@ -173,10 +198,12 @@
               :alt="slotProps.item.name"
               @error="markImageFailed(slotProps.item.url)"
             />
+
             <i v-else :class="fileIcon(attachmentKind(slotProps.item))" aria-hidden="true" />
           </div>
         </template>
       </Galleria>
+
       <nav
         v-if="attachments.length > 1"
         class="attachment-gallery__navigation"
@@ -189,6 +216,7 @@
           :aria-label="$t('previous')"
           @click="previous"
         />
+
         <Button
           :icon="isRtl ? 'pi pi-chevron-left' : 'pi pi-chevron-right'"
           :label="$t('next')"
@@ -263,6 +291,17 @@
 
   .attachment-gallery__tools .p-button {
     color: inherit;
+  }
+
+  /* Make the <a download> look exactly like PrimeVue text buttons */
+  .attachment-gallery__tools a.p-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--p-button-gap, 0.5rem);
+    color: inherit;
+    text-decoration: none;
+    cursor: pointer;
   }
 
   .attachment-gallery > .p-galleria {
@@ -412,6 +451,12 @@
 
     .attachment-gallery__tools .p-button {
       width: 2.5rem;
+    }
+
+    .attachment-gallery__tools a.p-button {
+      width: 2.5rem;
+      min-width: 2.5rem;
+      padding-inline: 0;
     }
 
     .attachment-gallery__navigation {

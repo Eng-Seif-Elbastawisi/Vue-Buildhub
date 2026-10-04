@@ -183,6 +183,39 @@ describe('ExecutionQuoteIndex', () => {
     expect(wrapper.text()).not.toContain('#92');
   });
 
+  it('renders complete day/month/year dates in LTR without shifting backend days', async () => {
+    const response = createIndexResponse(1, 'Dated project');
+    Object.assign(response.data.data.data[0].project, { date: '2026-10-01' });
+    response.data.data.data.push({
+      ...response.data.data.data[0],
+      id: 39,
+      created_at: '2026-09-24T00:15:00+03:00',
+    });
+    indexRequest.mockResolvedValue(response);
+
+    const wrapper = mountIndex();
+    await flushPromises();
+
+    const dates = wrapper.findAll('time.execution-quote-index__date');
+    expect(dates.map((date) => date.get('.execution-quote-date').text())).toEqual([
+      '23/09/2026',
+      '24/09/2026',
+    ]);
+    expect(
+      dates.every((date) => date.get('.execution-quote-date').attributes('dir') === 'ltr'),
+    ).toBe(true);
+    expect(dates.map((date) => date.attributes('datetime'))).toEqual([
+      '2026-09-23 11:56:21',
+      '2026-09-24T00:15:00+03:00',
+    ]);
+
+    const projectDate = wrapper.get(
+      '.execution-quote-index__primary-cell small .execution-quote-date',
+    );
+    expect(projectDate.text()).toBe('01/10/2026');
+    expect(projectDate.attributes('dir')).toBe('ltr');
+  });
+
   it('renders a numeric-string revision status from the index endpoint', async () => {
     indexRequest.mockResolvedValue(
       createIndexResponse(1, 'Revision project', 1, String(QuoteStatusEnum.REVISION_REQUIRED)),

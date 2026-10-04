@@ -325,6 +325,7 @@
     {
       key: 'createdAt',
       label: 'execution_quote.table.created_at',
+      width: '184px',
     },
   ];
 
@@ -367,15 +368,16 @@
   const formatDate = (rawDate: string | undefined) => {
     if (!rawDate) return '—';
 
-    const date = new Date(rawDate.includes(' ') ? rawDate.replace(' ', 'T') : rawDate);
+    // Keep the calendar day supplied by the API, including timestamps with an offset.
+    const calendarDate = /^\d{4}-\d{2}-\d{2}(?=$|[T ])/.exec(rawDate)?.[0];
+    if (!calendarDate) return rawDate;
 
-    if (Number.isNaN(date.getTime())) {
+    const date = new Date(`${calendarDate}T00:00:00Z`);
+    if (Number.isNaN(date.getTime()) || date.toISOString().slice(0, 10) !== calendarDate) {
       return rawDate;
     }
 
-    return new Intl.DateTimeFormat(locale.value, {
-      dateStyle: 'medium',
-    }).format(date);
+    return `${calendarDate.slice(8, 10)}/${calendarDate.slice(5, 7)}/${calendarDate.slice(0, 4)}`;
   };
 
   const formatAmount = (amount: number | undefined) => {
@@ -607,7 +609,9 @@
                   </strong>
 
                   <small v-if="item.project?.date">
-                    {{ formatDate(item.project.date) }}
+                    <span class="execution-quote-date" dir="ltr">
+                      {{ formatDate(item.project.date) }}
+                    </span>
                   </small>
                 </div>
               </div>
@@ -738,7 +742,9 @@
               <time class="execution-quote-index__date" :datetime="item.createdAt">
                 <i class="pi pi-calendar" aria-hidden="true"></i>
 
-                {{ formatDate(item.createdAt) }}
+                <span class="execution-quote-date" dir="ltr">
+                  {{ formatDate(item.createdAt) }}
+                </span>
               </time>
             </template>
 

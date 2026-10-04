@@ -614,7 +614,10 @@
             </section>
           </div>
 
-          <ExecutionQuoteAttachments :attachments="quote.attachments" />
+          <ExecutionQuoteAttachments
+            v-if="quote.attachments?.length"
+            :attachments="quote.attachments"
+          />
 
           <ExecutionQuoteStatusHistory
             :state="statusHistoryState"

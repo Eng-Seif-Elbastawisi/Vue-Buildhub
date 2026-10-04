@@ -1,4 +1,9 @@
 <script setup lang="ts">
+  import Accordion from 'primevue/accordion';
+  import AccordionContent from 'primevue/accordioncontent';
+  import AccordionHeader from 'primevue/accordionheader';
+  import AccordionPanel from 'primevue/accordionpanel';
+  import { ref } from 'vue';
   import { useI18n } from 'vue-i18n';
 
   import type { DataState } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
@@ -17,6 +22,7 @@
   }>();
 
   const { locale, t } = useI18n();
+  const expandedSection = ref('history');
 
   const formatDateTime = (rawDate?: string) => {
     if (!rawDate) return '—';
@@ -33,97 +39,188 @@
 
 <template>
   <section class="execution-quote-history" aria-labelledby="execution-quote-history-title">
-    <header class="execution-quote-history__header">
-      <span class="execution-quote-history__icon" aria-hidden="true">
-        <i class="pi pi-history"></i>
-      </span>
-      <div>
-        <h2 id="execution-quote-history-title">
-          {{ t('execution_quote.show.status_history') }}
-        </h2>
-        <p>{{ t('execution_quote.show.status_history_hint') }}</p>
-      </div>
-    </header>
+    <Accordion v-model:value="expandedSection" lazy class="execution-quote-history__accordion">
+      <AccordionPanel value="history">
+        <AccordionHeader class="execution-quote-history__header">
+          <template #toggleicon="{ active }">
+            <span class="execution-quote-history__toggle" aria-hidden="true">
+              <i class="pi pi-chevron-down" :class="{ 'is-open': active }"></i>
+            </span>
+          </template>
+          <span class="execution-quote-history__icon" aria-hidden="true">
+            <i class="pi pi-history"></i>
+          </span>
+          <div class="execution-quote-history__heading">
+            <h2 id="execution-quote-history-title">
+              {{ t('execution_quote.show.status_history') }}
+            </h2>
+            <p>{{ t('execution_quote.show.status_history_hint') }}</p>
+          </div>
+        </AccordionHeader>
 
-    <DataStatusBuilder :controller="state" @retry="emit('retry')">
-      <template #success="{ data: histories }">
-        <ol v-if="histories?.length" class="execution-quote-history__timeline">
-          <li v-for="history in histories" :key="history.id ?? history.createdAt">
-            <span class="execution-quote-history__marker" aria-hidden="true"></span>
-            <div class="execution-quote-history__entry">
-              <div class="execution-quote-history__entry-header">
-                <div class="execution-quote-history__transition">
-                  <QuoteStatusBadge :status="history.fromStatus" />
-                  <i
-                    :class="locale.startsWith('ar') ? 'pi pi-arrow-left' : 'pi pi-arrow-right'"
-                    aria-hidden="true"
-                  ></i>
-                  <QuoteStatusBadge :status="history.toStatus" />
-                </div>
-                <div class="execution-quote-history__meta">
-                  <span v-if="history.employee?.name">
-                    <i class="pi pi-user" aria-hidden="true"></i>
-                    {{
-                      t('execution_quote.show.status_history_employee', {
-                        name: history.employee.name,
-                      })
-                    }}
-                  </span>
-                  <time :datetime="history.createdAt">
-                    {{ formatDateTime(history.createdAt) }}
-                  </time>
-                </div>
+        <AccordionContent class="execution-quote-history__content">
+          <DataStatusBuilder :controller="state" @retry="emit('retry')">
+            <template #success="{ data: histories }">
+              <ol v-if="histories?.length" class="execution-quote-history__timeline">
+                <li v-for="history in histories" :key="history.id ?? history.createdAt">
+                  <span class="execution-quote-history__marker" aria-hidden="true"></span>
+                  <div class="execution-quote-history__entry">
+                    <div class="execution-quote-history__entry-header">
+                      <div class="execution-quote-history__transition">
+                        <QuoteStatusBadge :status="history.fromStatus" />
+                        <i
+                          :class="
+                            locale.startsWith('ar') ? 'pi pi-arrow-left' : 'pi pi-arrow-right'
+                          "
+                          aria-hidden="true"
+                        ></i>
+                        <QuoteStatusBadge :status="history.toStatus" />
+                      </div>
+                      <div class="execution-quote-history__meta">
+                        <span v-if="history.employee?.name">
+                          <i class="pi pi-user" aria-hidden="true"></i>
+                          {{
+                            t('execution_quote.show.status_history_employee', {
+                              name: history.employee.name,
+                            })
+                          }}
+                        </span>
+                        <time :datetime="history.createdAt">
+                          {{ formatDateTime(history.createdAt) }}
+                        </time>
+                      </div>
+                    </div>
+                    <div v-if="history.note" class="execution-quote-history__note">
+                      <i class="pi pi-comment" aria-hidden="true"></i>
+                      <p>{{ history.note }}</p>
+                    </div>
+                  </div>
+                </li>
+              </ol>
+
+              <div v-else class="execution-quote-history__empty">
+                <i class="pi pi-clock" aria-hidden="true"></i>
+                <p>{{ t('execution_quote.show.status_history_empty') }}</p>
               </div>
-              <div v-if="history.note" class="execution-quote-history__note">
-                <i class="pi pi-comment" aria-hidden="true"></i>
-                <p>{{ history.note }}</p>
+            </template>
+
+            <template #loader>
+              <div class="execution-quote-history__loading" role="status" aria-busy="true">
+                <span></span>
+                <span></span>
+                <span></span>
               </div>
-            </div>
-          </li>
-        </ol>
+            </template>
 
-        <div v-else class="execution-quote-history__empty">
-          <i class="pi pi-clock" aria-hidden="true"></i>
-          <p>{{ t('execution_quote.show.status_history_empty') }}</p>
-        </div>
-      </template>
+            <template #initial>
+              <div class="execution-quote-history__loading" role="status" aria-busy="true">
+                <span></span>
+                <span></span>
+              </div>
+            </template>
 
-      <template #loader>
-        <div class="execution-quote-history__loading" role="status" aria-busy="true">
-          <span></span>
-          <span></span>
-          <span></span>
-        </div>
-      </template>
-
-      <template #initial>
-        <div class="execution-quote-history__loading" role="status" aria-busy="true">
-          <span></span>
-          <span></span>
-        </div>
-      </template>
-
-      <template #failed="{ error }">
-        <div class="execution-quote-history__error" role="alert">
-          <p>{{ error?.displayMessage ?? t('execution_quote.show.status_history_failed') }}</p>
-          <AppButton size="sm" theme="secondary" outline @click="emit('retry')">
-            {{ t('try_again') }}
-          </AppButton>
-        </div>
-      </template>
-    </DataStatusBuilder>
+            <template #failed="{ error }">
+              <div class="execution-quote-history__error" role="alert">
+                <p>
+                  {{ error?.displayMessage ?? t('execution_quote.show.status_history_failed') }}
+                </p>
+                <AppButton size="sm" theme="secondary" outline @click="emit('retry')">
+                  {{ t('try_again') }}
+                </AppButton>
+              </div>
+            </template>
+          </DataStatusBuilder>
+        </AccordionContent>
+      </AccordionPanel>
+    </Accordion>
   </section>
 </template>
 
 <style scoped lang="scss">
   .execution-quote-history {
-    display: grid;
-    gap: 1.25rem;
-    padding: 1.25rem;
+    overflow: hidden;
     border: 1px solid var(--border-weak);
     border-radius: var(--radius-md);
     background: var(--bg-card);
     box-shadow: var(--shadow-sm);
+  }
+
+  .execution-quote-history :deep(.p-accordionpanel) {
+    border: 0;
+  }
+
+  .execution-quote-history__accordion :deep(.p-collapsible-enter-active),
+  .execution-quote-history__accordion :deep(.p-collapsible-leave-active) {
+    display: grid;
+    overflow: hidden;
+    transition:
+      grid-template-rows 320ms cubic-bezier(0.4, 0, 0.2, 1),
+      opacity 220ms ease;
+  }
+
+  .execution-quote-history__accordion :deep(.p-collapsible-enter-from),
+  .execution-quote-history__accordion :deep(.p-collapsible-leave-to) {
+    grid-template-rows: 0fr;
+    opacity: 0;
+  }
+
+  .execution-quote-history__accordion :deep(.p-collapsible-enter-to),
+  .execution-quote-history__accordion :deep(.p-collapsible-leave-from) {
+    grid-template-rows: 1fr;
+    opacity: 1;
+  }
+
+  .execution-quote-history__accordion :deep(.p-accordioncontent-wrapper) {
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .execution-quote-history__header {
+    width: 98%;
+    padding: 1.25rem;
+    background: var(--bg-card);
+    text-align: start;
+    cursor: pointer;
+    transition: background-color var(--transition-fast);
+  }
+
+  .execution-quote-history__header:hover {
+    background: var(--PrimaryColor-alpha-8);
+  }
+
+  .execution-quote-history__header:focus-visible {
+    outline: 3px solid var(--PrimaryColor-alpha-20);
+    outline-offset: -3px;
+  }
+
+  .execution-quote-history__heading {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .execution-quote-history__toggle {
+    display: grid;
+    flex: 0 0 2.5rem;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border: 1px solid var(--PrimaryColor-alpha-20);
+    border-radius: var(--radius-full);
+    background: var(--bg-card);
+    color: var(--PrimaryColor);
+  }
+
+  .execution-quote-history__toggle i {
+    transition: transform 220ms ease;
+  }
+
+  .execution-quote-history__toggle i.is-open {
+    transform: rotate(180deg);
+  }
+
+  .execution-quote-history__content :deep(.p-accordioncontent-content) {
+    padding: 0 1.25rem 1.25rem;
+    background: var(--bg-card);
   }
 
   .execution-quote-history__header,
@@ -306,6 +403,13 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
+    .execution-quote-history__toggle i,
+    .execution-quote-history__header,
+    .execution-quote-history__accordion :deep(.p-collapsible-enter-active),
+    .execution-quote-history__accordion :deep(.p-collapsible-leave-active) {
+      transition: none;
+    }
+
     .execution-quote-history__loading span {
       animation: none;
     }
