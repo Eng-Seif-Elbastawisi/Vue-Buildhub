@@ -26,7 +26,7 @@
     ExecutionQuoteTypeEnum,
     type ExecutionQuoteType,
   } from '../../core/constants/execution.quote.type.enum';
-  import type { ExecutionQuoteStageSummary } from '../../core/models/execution.quote.show.model';
+  import type ExecutionQuoteStageModel from '../../core/models/execution.quote.stage.model';
   import AddExecutionQuoteParams, {
     type ExecutionQuoteAttachmentParams,
   } from '../../core/params/add.execution.quote.params';
@@ -55,7 +55,7 @@
       loading?: boolean;
       executionQuoteId?: number | null;
       initialQuoteType?: ExecutionQuoteType | null;
-      initialQuoteStages?: ExecutionQuoteStageSummary[];
+      initialQuoteStages?: ExecutionQuoteStageModel[];
       initialSupervisionPercentage?: number | null;
       initialTotalQuotePrice?: number;
       initialSupervisionFee?: number;

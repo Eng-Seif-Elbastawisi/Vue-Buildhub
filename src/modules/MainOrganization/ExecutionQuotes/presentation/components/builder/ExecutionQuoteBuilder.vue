@@ -19,10 +19,8 @@
     ExecutionQuoteItemSourceEnum,
     type ExecutionQuoteItemSource,
   } from '../../../core/constants/execution.quote.item.source.enum';
-  import type {
-    ExecutionQuoteStageItemSummary,
-    ExecutionQuoteStageSummary,
-  } from '../../../core/models/execution.quote.show.model';
+  import type ExecutionQuoteStageItemModel from '../../../core/models/execution.quote.stage-item.model';
+  import type ExecutionQuoteStageModel from '../../../core/models/execution.quote.stage.model';
   import StoreExecutionQuoteDetailsParams, {
     type ExecutionQuoteMorphItemRequest,
     type ExecutionQuoteStageRequest,
@@ -53,7 +51,7 @@
       modelValue: ExecutionQuoteType | null;
       enabled: boolean;
       executionQuoteId: number | null;
-      initialStages?: ExecutionQuoteStageSummary[];
+      initialStages?: ExecutionQuoteStageModel[];
       loading?: boolean;
     }>(),
     {
@@ -264,8 +262,8 @@
       : undefined;
 
   const persistedItemState = (
-    quoteStage: ExecutionQuoteStageSummary,
-    quoteItem: ExecutionQuoteStageItemSummary,
+    quoteStage: ExecutionQuoteStageModel,
+    quoteItem: ExecutionQuoteStageItemModel,
     itemIndex: number,
   ): ExecutionQuoteItemState | undefined => {
     const sourceType = itemSourceValue(quoteItem.itemType);
@@ -290,7 +288,7 @@
   };
 
   const persistedStageState = (
-    quoteStage: ExecutionQuoteStageSummary,
+    quoteStage: ExecutionQuoteStageModel,
     existingState?: ExecutionQuoteStageState,
   ): ExecutionQuoteStageState | undefined => {
     if (!quoteStage.stageId) return undefined;
@@ -432,7 +430,7 @@
   };
 
   const hydratedStagePricingValues = (
-    quoteStages: ExecutionQuoteStageSummary[],
+    quoteStages: ExecutionQuoteStageModel[],
   ): Record<string, number | null> =>
     Object.fromEntries(
       quoteStages.flatMap((quoteStage) => {
@@ -442,7 +440,7 @@
       }),
     );
 
-  const hydrateStoredStages = (quoteStages: ExecutionQuoteStageSummary[]) => {
+  const hydrateStoredStages = (quoteStages: ExecutionQuoteStageModel[]) => {
     const hydratedStates = quoteStages.reduce<Record<string, ExecutionQuoteStageState>>(
       (states, quoteStage) => {
         const stageState = persistedStageState(quoteStage, states[String(quoteStage.stageId)]);
