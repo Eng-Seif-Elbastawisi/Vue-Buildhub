@@ -1,5 +1,6 @@
 <script setup lang="ts">
   import { computed } from 'vue';
+  import { useI18n } from 'vue-i18n';
   import floorPlanBackground from '@/assets/images/ChatGPT Image Jul 1, 2026, 11_19_11 AM.png';
   import AdminEstimationVisual from './AdminEstimationVisual.vue';
   import OrganizationConstructionVisual from './OrganizationConstructionVisual.vue';
@@ -21,6 +22,8 @@
   const props = defineProps<{
     mode: LoginMode;
   }>();
+  const { locale } = useI18n({ useScope: 'global' });
+  const direction = computed(() => (locale.value === 'ar' ? 'rtl' : 'ltr'));
 
   const loginModeConfig = {
     organization: {
@@ -80,7 +83,7 @@
 </script>
 
 <template>
-  <main class="auth-shell" :class="`auth-shell--${mode}`" :style="shellStyle">
+  <main class="auth-shell" :class="`auth-shell--${mode}`" :style="shellStyle" :dir="direction">
     <div class="auth-shell__layout">
       <section class="auth-shell__hero" :aria-labelledby="`${mode}-login-title`">
         <div class="auth-shell__hero-image" aria-hidden="true"></div>
@@ -159,6 +162,12 @@
 </template>
 
 <style scoped>
+  .auth-shell[dir='ltr'],
+  .auth-shell[dir='ltr'] .auth-shell__hero-content,
+  .auth-shell[dir='ltr'] .auth-shell__side {
+    direction: ltr;
+  }
+
   .auth-shell--organization .auth-shell__hero-image {
     background: var(--auth-darker);
     transform: none;

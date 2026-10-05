@@ -4,11 +4,11 @@
   import LoginParams from '@/modules/MainAdmin/auth_admin/core/params/login.params';
   import CloseEyeIcon from '@/shared/icons/Login/CloseEyeIcon.vue';
   import OpenEyeIcon from '@/shared/icons/Login/OpenEyeIcon.vue';
-  // import ChangeLanguage from '@/shared/LayoutComponents/SubComponents/ChangeLanguage.vue';
   import LoadingIcon from '@/assets/images/loading.webp';
   import { useUserStore } from '@/stores/user';
   import { useRouter } from 'vue-router';
   import { UserType } from '@/modules/auth/core/constants/userType.enum';
+  import LoginLanguageSwitcher from '@/modules/auth/presentation/components/LoginLanguageSwitcher.vue';
   // import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
 
   withDefaults(
@@ -45,16 +45,9 @@
 
 <template>
   <form class="login-form" @submit.prevent="login">
-    <div class="lang-switcher">
-      <!-- <ChangeLanguage /> -->
-    </div>
-
     <div class="login-form__toolbar">
       <span class="login-form__badge">{{ badge }}</span>
-      <!-- <button type="button" class="login-form__language">
-        <span>{{ $t('auth_language_arabic') }}</span>
-        <span aria-hidden="true">⌄</span>
-      </button> -->
+      <LoginLanguageSwitcher />
     </div>
 
     <div class="title">

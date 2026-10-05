@@ -1,6 +1,5 @@
 <script lang="ts" setup>
   import { computed, onMounted, ref } from 'vue';
-  import { useI18n } from 'vue-i18n';
   import IconLogout from '@/shared/icons/IconLogout.vue';
   import { useUserStore } from '@/stores/user';
   import EmployeeImage from '@/assets/images/headerIMages/employee.jpg';
@@ -8,42 +7,25 @@
   import { UserType } from '@/modules/auth/core/constants/userType.enum';
   import { useSystemIdentityTheme } from '@/modules/shared/SystemIdentity/presentation/composables/useSystemIdentityTheme';
   import GlobalProjectSearch from '@/modules/MainOrganization/Project/presentation/components/GlobalProjectSearch.vue';
+  import { useLanguageSwitcher } from './useLanguageSwitcher';
 
   const userStore = useUserStore();
   const router = useRouter();
-  const { locale } = useI18n();
   const { currentPalette } = useSystemIdentityTheme();
   const user = computed(() => userStore.user);
 
-  type Language = 'ar' | 'en';
-
-  const languageStorageKey = 'locale';
-  const languageLabels: Record<Language, string> = {
+  const { currentLanguage, nextLanguage, setLanguage, toggleLanguage } = useLanguageSwitcher();
+  const languageLabels = {
     ar: 'Switch language to Arabic',
     en: 'Switch language to English',
   };
 
-  const currentLanguage = computed<Language>(() => (locale.value === 'ar' ? 'ar' : 'en'));
-  const nextLanguage = computed<Language>(() => (currentLanguage.value === 'ar' ? 'en' : 'ar'));
   const flagLabel = computed(() => languageLabels[nextLanguage.value]);
   const paletteStyle = computed(() => ({
     '--palette-primary': currentPalette.value.primary,
     '--palette-secondary': currentPalette.value.secondary,
     '--palette-accent': currentPalette.value.accent,
   }));
-
-  const setLanguage = (lang: Language) => {
-    locale.value = lang;
-    localStorage.setItem(languageStorageKey, lang);
-
-    document.documentElement.lang = lang;
-    document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
-    document.body.dir = lang === 'ar' ? 'rtl' : 'ltr';
-  };
-
-  const toggleLanguage = () => {
-    setLanguage(locale.value === 'ar' ? 'en' : 'ar');
-  };
 
   const currentRole = computed(() => {
     return user.value?.type === UserType.ADMIN ? 'mainportal' : 'organization';
@@ -64,7 +46,7 @@
   };
 
   onMounted(() => {
-    const savedLocale = localStorage.getItem(languageStorageKey);
+    const savedLocale = localStorage.getItem('locale');
     setLanguage(savedLocale === 'en' || savedLocale === 'ar' ? savedLocale : 'ar');
   });
 </script>

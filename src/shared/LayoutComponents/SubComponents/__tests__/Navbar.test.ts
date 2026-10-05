@@ -162,7 +162,7 @@ describe('Navbar.vue', () => {
   it('positions the mega menu with RTL-aware logical inset', () => {
     expect(headerStyles).toContain('inset-inline-end: 50px;');
     expect(headerStyles).not.toContain('right: 50px;');
-    expect(importedGlobalStyles).toContain('inset-inline-end: 50px;');
+    expect(importedGlobalStyles).toMatch(/inset-inline-end:\s*50px/);
   });
 
   it('renders the current user identity without duplicating the existing sidebar controls', () => {

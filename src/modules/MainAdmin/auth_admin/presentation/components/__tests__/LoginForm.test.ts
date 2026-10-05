@@ -62,6 +62,7 @@ describe('LoginForm.vue', () => {
     expect(wrapper.find('form.login-form').exists()).toBe(true);
     expect(wrapper.find('input#email').exists()).toBe(true);
     expect(wrapper.find('input#password').exists()).toBe(true);
+    expect(wrapper.find('button.login-form__language[type="button"]').exists()).toBe(true);
     expect(wrapper.find('button[type="submit"]').text()).toBe('Log In');
   });
 

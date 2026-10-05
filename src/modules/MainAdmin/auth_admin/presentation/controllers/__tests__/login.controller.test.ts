@@ -1,10 +1,12 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import LoginController from '@/modules/MainAdmin/auth_admin/presentation/controllers/login.controller';
+import { i18n } from '@/locales/i18n';
 
 // ── Hoisted mocks (must be declared before vi.mock factories run) ─────────────
-const { mockPush, mockLogin } = vi.hoisted(() => ({
+const { mockPush, mockLogin, mockHandleItemResponse } = vi.hoisted(() => ({
   mockPush: vi.fn(),
   mockLogin: vi.fn(),
+  mockHandleItemResponse: vi.fn(),
 }));
 const mockSetUser = vi.hoisted(() => vi.fn());
 
@@ -40,7 +42,9 @@ vi.mock('@/base/Presentation/Controller/baseController', () => {
   const BaseController = class {
     setItemLoading() {}
     setItemState() {}
-    handleItemResponse() {}
+    handleItemResponse(...args: unknown[]) {
+      mockHandleItemResponse(...args);
+    }
     handleErrorResponse() {}
     showLoadingDialog() {}
     hideLoadingDialog() {}
@@ -95,6 +99,24 @@ describe('LoginController', () => {
       await LoginController.getInstance().login(mockParams);
 
       expect(mockSetUser).toHaveBeenCalledWith(successResponse.data);
+    });
+
+    it('uses the selected language for the success message', async () => {
+      const originalLocale = i18n.global.locale;
+      i18n.global.locale = 'ar';
+      const successResponse = { data: { id: 1 }, isSuccess: true };
+      mockLogin.mockResolvedValue(successResponse);
+
+      try {
+        await LoginController.getInstance().login({ toMap: () => ({}) } as any);
+
+        expect(mockHandleItemResponse).toHaveBeenCalledWith(
+          successResponse,
+          'تم تسجيل الدخول بنجاح',
+        );
+      } finally {
+        i18n.global.locale = originalLocale;
+      }
     });
 
     it('should return a DataFailed response when repository throws', async () => {
