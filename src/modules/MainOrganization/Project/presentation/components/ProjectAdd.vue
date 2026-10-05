@@ -81,10 +81,10 @@
       @update-data="params = $event"
     />
 
-    <fieldset class="next-step-selector" :disabled="loading">
-      <legend>
+    <fieldset class="next-step-selector" aria-labelledby="project-next-step-title" :disabled="loading">
+      <h2 id="project-next-step-title" class="next-step-title">
         {{ $t('Project.next_step') }}
-      </legend>
+      </h2>
 
       <div class="next-step-options">
         <label
@@ -165,31 +165,36 @@
 
   .next-step-selector {
     min-width: 0;
-    margin: 0;
-    padding: 1rem;
+    margin-block: 0.25rem;
+    padding: 1.25rem;
     border: 1px solid var(--border-weak);
     border-radius: 18px;
     background: var(--white);
   }
 
-  .next-step-selector legend {
-    padding-inline: 0.5rem;
+  .next-step-title {
+    margin: 0 0 0.25rem;
     color: var(--gray-8);
     font-family: 'Bold';
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 1.4;
+    text-align: start;
   }
 
   .next-step-options {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.75rem;
+    gap: 0.875rem;
+    margin-block-start: 0.5rem;
   }
 
   .next-step-option {
     display: flex;
-    min-height: 56px;
+    min-height: 64px;
     align-items: center;
     gap: 0.75rem;
-    padding: 0.875rem 1rem;
+    padding: 1rem 1.125rem;
     border: 1px solid var(--border-weak);
     border-radius: 14px;
     color: var(--gray-6);
