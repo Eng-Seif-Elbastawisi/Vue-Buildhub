@@ -12,7 +12,7 @@
     type ExecutionQuoteType,
   } from '../../core/constants/execution.quote.type.enum';
   import type AddExecutionQuoteParams from '../../core/params/add.execution.quote.params';
-  import type { ExecutionQuoteStageSummary } from '../../core/models/execution.quote.show.model';
+  import type ExecutionQuoteStageModel from '../../core/models/execution.quote.stage.model';
   import ShowExecutionQuoteParams from '../../core/params/show.execution.quote.params';
   import type { ExecutionQuoteStagePricingDraft } from '../../core/params/set.execution.quote.stage.pricing.params';
   import type SetExecutionQuoteSupervisionPricingParams from '../../core/params/set.execution.quote.supervision.pricing.params';
@@ -31,7 +31,7 @@
   const supervisionPricing = ref<SetExecutionQuoteSupervisionPricingParams | null>(null);
   const supervisionPricingTouched = ref(false);
   const initialQuoteType = ref<ExecutionQuoteType | null>(null);
-  const initialQuoteStages = ref<ExecutionQuoteStageSummary[]>([]);
+  const initialQuoteStages = ref<ExecutionQuoteStageModel[]>([]);
   const initialSupervisionPercentage = ref<number | null>(null);
   const initialTotalQuotePrice = ref<number | undefined>();
   const initialSupervisionFee = ref<number | undefined>();

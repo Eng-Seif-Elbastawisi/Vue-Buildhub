@@ -6,7 +6,7 @@ import StageModel from '@/modules/shared/Stages/core/models/stage.model';
 
 import { ExecutionQuoteItemSourceEnum } from '../../../../core/constants/execution.quote.item.source.enum';
 import { ExecutionQuoteTypeEnum } from '../../../../core/constants/execution.quote.type.enum';
-import type { ExecutionQuoteStageSummary } from '../../../../core/models/execution.quote.show.model';
+import type ExecutionQuoteStageModel from '../../../../core/models/execution.quote.stage.model';
 import type StoreExecutionQuoteDetailsParams from '../../../../core/params/store.execution.quote.details.params';
 import type { ExecutionQuoteStagePricingDraft } from '../../../../core/params/set.execution.quote.stage.pricing.params';
 import ExecutionQuoteBuilder from '../ExecutionQuoteBuilder.vue';
@@ -108,7 +108,7 @@ const componentStubs = {
 
 interface BuilderMountOptions {
   modelValue?: (typeof ExecutionQuoteTypeEnum)[keyof typeof ExecutionQuoteTypeEnum] | null;
-  initialStages?: ExecutionQuoteStageSummary[];
+  initialStages?: ExecutionQuoteStageModel[];
   stubs?: Record<string, unknown>;
 }
 

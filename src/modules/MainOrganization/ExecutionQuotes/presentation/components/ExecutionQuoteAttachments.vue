@@ -11,9 +11,10 @@
     attachmentKind,
     toGalleryAttachment,
   } from '@/shared/AttachmentGallery/attachmentGallery';
-  import type { ExecutionQuoteAttachmentSummary } from '../../core/models/execution.quote.show.model';
 
-  const props = defineProps<{ attachments: ExecutionQuoteAttachmentSummary[] }>();
+  import type ExecutionQuoteAttachmentModel from '../../core/models/execution.quote.attachment.model';
+
+  const props = defineProps<{ attachments: ExecutionQuoteAttachmentModel[] }>();
   const { locale, t } = useI18n();
   const expandedSection = ref('attachments');
   const galleryAttachments = () =>
@@ -23,13 +24,13 @@
         url: attachment.file || attachment.link,
       }),
     );
-  const attachmentSource = (attachment: ExecutionQuoteAttachmentSummary) =>
+  const attachmentSource = (attachment: ExecutionQuoteAttachmentModel) =>
     attachment.file || attachment.link || '';
-  const attachmentFileName = (attachment: ExecutionQuoteAttachmentSummary, index: number) =>
+  const attachmentFileName = (attachment: ExecutionQuoteAttachmentModel, index: number) =>
     attachment.alt?.trim() ||
     galleryAttachments()[index]?.name ||
     t('execution_quote.show.attachment_number', { number: index + 1 });
-  const attachmentTypeLabel = (attachment: ExecutionQuoteAttachmentSummary) =>
+  const attachmentTypeLabel = (attachment: ExecutionQuoteAttachmentModel) =>
     attachmentExtension(
       attachmentFileName(attachment, 0),
       attachmentSource(attachment),
