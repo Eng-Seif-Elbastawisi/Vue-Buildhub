@@ -9,6 +9,7 @@ import {
 } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
 import { useUserStore } from '@/stores/user';
 import { type ErrorModel } from '@/base/Core/NetworkStructure/Resources/errors/errorModel';
+import { translate } from '@/locales/i18n';
 
 /**
  * Email Controller for managing employee emails
@@ -60,13 +61,13 @@ export default class LoginController extends BaseController<LoginModel, never> {
   async login(params: Params): Promise<DataState<LoginModel>> {
     this.setItemLoading();
     if (this.config.showLoadingDialog) {
-      this.showLoadingDialog('Logging in...');
+      this.showLoadingDialog(translate('auth_login_loading'));
     }
 
     try {
       const response = await this.repository.login(params);
       this.setItemState(response);
-      this.handleItemResponse(response, 'Logged in successfully');
+      this.handleItemResponse(response, translate('auth_login_success'));
       if (response.data) this.userStore.setUser(response.data);
       // const countryCode = router.currentRoute.value.params.country_code as string;
       // router.push({ name: '' });
