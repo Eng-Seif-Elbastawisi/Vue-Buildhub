@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import ExecutionQuoteForm from '../ExecutionQuoteForm.vue';
 import { QuoteSourceEnum } from '../../../core/constants/quote.source.enum';
 import { ExecutionQuoteTypeEnum } from '../../../core/constants/execution.quote.type.enum';
-import type { ExecutionQuoteStageSummary } from '../../../core/models/execution.quote.show.model';
+import type ExecutionQuoteStageModel from '../../../core/models/execution.quote.stage.model';
 import AddExecutionQuoteParams from '../../../core/params/add.execution.quote.params';
 import type SetExecutionQuoteSupervisionPricingParams from '../../../core/params/set.execution.quote.supervision.pricing.params';
 
@@ -89,7 +89,7 @@ const FieldHelpIconStub = {
 
 const mountForm = (
   executionQuoteId?: number,
-  initialQuoteStages: ExecutionQuoteStageSummary[] = [],
+  initialQuoteStages: ExecutionQuoteStageModel[] = [],
   initialQuoteType?: (typeof ExecutionQuoteTypeEnum)[keyof typeof ExecutionQuoteTypeEnum],
 ) =>
   mount(ExecutionQuoteForm, {
@@ -261,7 +261,7 @@ describe('ExecutionQuoteForm', () => {
     routeState.name = 'Build Execution Quote';
     routeState.params.stageId = '12';
 
-    const initialQuoteStages: ExecutionQuoteStageSummary[] = [
+    const initialQuoteStages: ExecutionQuoteStageModel[] = [
       { id: 5, stageId: 1, subStageId: 11, items: [] },
     ];
     const wrapper = mountForm(28, initialQuoteStages, ExecutionQuoteTypeEnum.SUPERVISION);

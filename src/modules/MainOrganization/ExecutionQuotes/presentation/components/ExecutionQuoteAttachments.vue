@@ -5,27 +5,27 @@
 
   import AppButton from '@/shared/HelpersComponents/AppButton.vue';
 
-  import type { ExecutionQuoteAttachmentSummary } from '../../core/models/execution.quote.show.model';
+  import type ExecutionQuoteAttachmentModel from '../../core/models/execution.quote.attachment.model';
 
   type AttachmentKind = 'image' | 'pdf' | 'file';
 
   defineProps<{
-    attachments: ExecutionQuoteAttachmentSummary[];
+    attachments: ExecutionQuoteAttachmentModel[];
   }>();
 
   const { locale, t } = useI18n();
   const previewVisible = ref(false);
-  const selectedAttachment = ref<ExecutionQuoteAttachmentSummary | null>(null);
+  const selectedAttachment = ref<ExecutionQuoteAttachmentModel | null>(null);
   const selectedAttachmentIndex = ref(0);
 
   const imageExtensions = new Set(['avif', 'bmp', 'gif', 'jpeg', 'jpg', 'png', 'svg', 'webp']);
 
-  const attachmentSource = (attachment: ExecutionQuoteAttachmentSummary | null) => {
+  const attachmentSource = (attachment: ExecutionQuoteAttachmentModel | null) => {
     const source = (attachment?.file || attachment?.link || '').trim();
     return /^(?:javascript|vbscript):/i.test(source) ? '' : source;
   };
 
-  const attachmentExtension = (attachment: ExecutionQuoteAttachmentSummary | null) => {
+  const attachmentExtension = (attachment: ExecutionQuoteAttachmentModel | null) => {
     const source = attachmentSource(attachment);
     const dataMime = source.match(/^data:([^;,]+)/i)?.[1]?.toLowerCase();
 
@@ -39,13 +39,13 @@
     return extension && extension.length <= 8 ? extension : undefined;
   };
 
-  const attachmentKind = (attachment: ExecutionQuoteAttachmentSummary | null): AttachmentKind => {
+  const attachmentKind = (attachment: ExecutionQuoteAttachmentModel | null): AttachmentKind => {
     const extension = attachmentExtension(attachment);
     if (extension === 'pdf') return 'pdf';
     return extension && imageExtensions.has(extension) ? 'image' : 'file';
   };
 
-  const attachmentFileName = (attachment: ExecutionQuoteAttachmentSummary, index: number) => {
+  const attachmentFileName = (attachment: ExecutionQuoteAttachmentModel, index: number) => {
     if (attachment.alt?.trim()) return attachment.alt.trim();
 
     const source = attachmentSource(attachment);
@@ -53,7 +53,7 @@
     return fileName || t('execution_quote.show.attachment_number', { number: index + 1 });
   };
 
-  const attachmentTypeLabel = (attachment: ExecutionQuoteAttachmentSummary) =>
+  const attachmentTypeLabel = (attachment: ExecutionQuoteAttachmentModel) =>
     attachmentExtension(attachment)?.toUpperCase() ?? t('execution_quote.show.file_type');
 
   const formatAttachmentDate = (rawDate: string | undefined) => {
@@ -65,7 +65,7 @@
     return new Intl.DateTimeFormat(locale.value, { dateStyle: 'medium' }).format(date);
   };
 
-  const openPreview = (attachment: ExecutionQuoteAttachmentSummary, attachmentIndex: number) => {
+  const openPreview = (attachment: ExecutionQuoteAttachmentModel, attachmentIndex: number) => {
     selectedAttachment.value = attachment;
     selectedAttachmentIndex.value = attachmentIndex;
     previewVisible.value = true;

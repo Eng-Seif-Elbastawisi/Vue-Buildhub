@@ -26,10 +26,8 @@
   } from '../../core/constants/execution.quote.type.enum';
   import { getQuoteSourceTitleKey } from '../../core/constants/quote.source.enum';
   import type ExecutionQuoteShowModel from '../../core/models/execution.quote.show.model';
-  import type {
-    ExecutionQuoteStageItemSummary,
-    ExecutionQuoteStageSummary,
-  } from '../../core/models/execution.quote.show.model';
+  import type ExecutionQuoteStageItemModel from '../../core/models/execution.quote.stage-item.model';
+  import type ExecutionQuoteStageModel from '../../core/models/execution.quote.stage.model';
   import DeleteExecutionQuoteItemParams from '../../core/params/delete.execution.quote.item.params';
   import FetchQuoteStatusHistoryParams from '../../core/params/fetch.quote.status.history.params';
   import ShowExecutionQuoteParams from '../../core/params/show.execution.quote.params';
@@ -54,8 +52,8 @@
   const quoteId = computed(() => Number(route.params.id));
   const activeShowSection = ref('stages');
   const activeQuoteStages = ref<string[]>(['0']);
-  const selectedQuoteItem = ref<ExecutionQuoteStageItemSummary | null>(null);
-  const selectedQuoteStage = ref<ExecutionQuoteStageSummary | null>(null);
+  const selectedQuoteItem = ref<ExecutionQuoteStageItemModel | null>(null);
+  const selectedQuoteStage = ref<ExecutionQuoteStageModel | null>(null);
   const showEditDialog = ref(false);
   const showDeleteDialog = ref(false);
   const editItemSource = ref<ExecutionQuoteItemSource | null>(null);
@@ -74,7 +72,7 @@
   }
 
   const quoteItemSource = (
-    quoteItem: ExecutionQuoteStageItemSummary,
+    quoteItem: ExecutionQuoteStageItemModel,
   ): ExecutionQuoteItemSource | null => {
     const itemSource = quoteItem.itemType as ExecutionQuoteItemSource | undefined;
     return itemSource && Object.values(ExecutionQuoteItemSourceEnum).includes(itemSource)
@@ -83,7 +81,7 @@
   };
 
   const quoteItemEditValues = (
-    quoteItem: ExecutionQuoteStageItemSummary,
+    quoteItem: ExecutionQuoteStageItemModel,
   ): QuoteItemEditValues | null => {
     const source = quoteItemSource(quoteItem);
     const sourceId = quoteItem.itemableId ?? quoteItem.itemable?.id;
@@ -113,7 +111,7 @@
 
   const toEditItemState = (
     editValues: QuoteItemEditValues,
-    quoteStage: ExecutionQuoteStageSummary,
+    quoteStage: ExecutionQuoteStageModel,
   ): ExecutionQuoteItemState => ({
     id: String(editValues.itemId),
     stage_id: quoteStage.stageId ?? quoteStage.id ?? 0,
@@ -197,7 +195,7 @@
     return titleKey ? t(titleKey) : '—';
   };
 
-  const itemSourceLabel = (quoteItem: ExecutionQuoteStageItemSummary) => {
+  const itemSourceLabel = (quoteItem: ExecutionQuoteStageItemModel) => {
     const itemSource = quoteItem.itemType as ExecutionQuoteItemSource | undefined;
     const isKnownSource =
       itemSource && Object.values(ExecutionQuoteItemSourceEnum).includes(itemSource);
@@ -216,12 +214,12 @@
     }).format(rawNumber);
   };
 
-  const itemTotal = (quoteItem: ExecutionQuoteStageItemSummary) => {
+  const itemTotal = (quoteItem: ExecutionQuoteStageItemModel) => {
     if (quoteItem.expectedPrice === undefined || quoteItem.quantity === undefined) return undefined;
     return quoteItem.expectedPrice * quoteItem.quantity;
   };
 
-  const stageTotal = (quoteStage: ExecutionQuoteStageSummary) => {
+  const stageTotal = (quoteStage: ExecutionQuoteStageModel) => {
     if (quoteStage.totalPrice !== undefined) return quoteStage.totalPrice;
 
     return quoteStage.items.reduce((total, quoteItem) => total + (itemTotal(quoteItem) ?? 0), 0);
@@ -247,8 +245,8 @@
   };
 
   const openEditDialog = (
-    quoteItem: ExecutionQuoteStageItemSummary,
-    quoteStage: ExecutionQuoteStageSummary,
+    quoteItem: ExecutionQuoteStageItemModel,
+    quoteStage: ExecutionQuoteStageModel,
   ) => {
     if (!quoteItem.id) return;
 
@@ -318,7 +316,7 @@
     await updateQuoteItem(params);
   };
 
-  const openDeleteDialog = (quoteItem: ExecutionQuoteStageItemSummary) => {
+  const openDeleteDialog = (quoteItem: ExecutionQuoteStageItemModel) => {
     if (!quoteItem.id || deletingQuoteItemId.value !== undefined) return;
 
     selectedQuoteItem.value = quoteItem;
