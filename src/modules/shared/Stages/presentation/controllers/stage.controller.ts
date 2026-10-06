@@ -12,6 +12,7 @@ import { useFormsStore } from '@/stores/formsStore';
 import { useUserStore } from '@/stores/user';
 
 import type StageModel from '../../core/models/stage.model';
+import IndexStageParams from '../../core/params/index.stage.params';
 import type ShowStageParams from '../../core/params/show.stage.params';
 import StageRepository from '../../data/repositories/stage.repository';
 import type AddStageParams from '../../core/params/add.stges.params';
@@ -107,6 +108,19 @@ export default class StageController extends BaseController<StageModel, StageMod
       ...options,
       useJson: true,
     });
+  }
+
+  async fetchAsOptions(params?: Params, options?: ApiCallOptions) {
+    if (!(params instanceof IndexStageParams) || params.parentId !== null) {
+      return super.fetchAsOptions(params, options);
+    }
+
+    const state = await this.fetchList(params, options);
+    if (!(state instanceof DataSuccess)) return [];
+
+    return (state.data ?? [])
+      .filter((stage) => stage.parentId === null)
+      .map((stage) => this.toTitleInterface(stage));
   }
 
   async fetchOne(params: Params, options?: ApiCallOptions) {

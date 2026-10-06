@@ -11,6 +11,8 @@ describe('page header icon routing', () => {
     ['/organization/stages/3/sub-stages/edit/4', 'hierarchy', 'edit'],
     ['/organization/invoice-payment', 'wallet', undefined],
     ['/organization/location-city/add', 'location', 'add'],
+    ['/organization/contractors/add', 'people', 'add'],
+    ['/organization/contractors/edit/9', 'people', 'edit'],
   ])('maps %s to its entity and action', (path, icon, action) => {
     expect(getPageHeaderIcon(path)).toBe(icon);
     expect(getPageHeaderAction(path)).toBe(action);

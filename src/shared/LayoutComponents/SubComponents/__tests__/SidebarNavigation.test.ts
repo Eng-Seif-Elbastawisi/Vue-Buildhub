@@ -263,7 +263,7 @@ describe('SidebarNavigation.vue', () => {
     expect(wrapper.findAll('.badge').some((badge) => badge.text() === '2')).toBe(true);
   });
 
-  it('does not request organization sidebar counts for admin users', async () => {
+  it('loads and refreshes admin sidebar badges', async () => {
     const userStore = useUserStore();
     userStore.user = new UserModel({
       id: 1,
@@ -272,10 +272,88 @@ describe('SidebarNavigation.vue', () => {
       type: UserType.ADMIN,
       WebSocketToken: '',
     });
+    sidebarCountsMocks.fetchSidebarCounts
+      .mockResolvedValueOnce({ data: { data: { packages_count: 4 } } })
+      .mockResolvedValueOnce({ data: { data: { packages_count: 5 } } });
 
-    mountSidebar();
+    const wrapper = mountSidebar();
     await flushPromises();
 
-    expect(sidebarCountsMocks.fetchSidebarCounts).not.toHaveBeenCalled();
+    expect(sidebarCountsMocks.fetchSidebarCounts).toHaveBeenCalledWith('admin');
+    expect(wrapper.findAll('.badge').some((badge) => badge.text() === '4')).toBe(true);
+
+    window.dispatchEvent(new Event(DATA_MUTATION_SUCCEEDED_EVENT));
+    await flushPromises();
+
+    expect(sidebarCountsMocks.fetchSidebarCounts).toHaveBeenCalledTimes(2);
+    expect(wrapper.findAll('.badge').some((badge) => badge.text() === '5')).toBe(true);
+  });
+
+  it('shows the Organization Contractor count beside its existing menu link', async () => {
+    routerMocks.useRoute.mockReturnValue(
+      reactive({
+        path: '/organization/contractors',
+        fullPath: '/organization/contractors',
+        params: {},
+        query: {},
+      }),
+    );
+    const userStore = useUserStore();
+    userStore.user = new UserModel({
+      id: 1,
+      name: 'Organization User',
+      email: 'test@example.com',
+      WebSocketToken: '',
+    });
+    sidebarCountsMocks.fetchSidebarCounts.mockResolvedValue({
+      data: { data: { contractors_count: 7 } },
+    });
+
+    const wrapper = mountSidebar();
+    await flushPromises();
+
+    expect(sidebarCountsMocks.fetchSidebarCounts).toHaveBeenCalledWith('organization');
+    expect(wrapper.get('a.menu-item[title="sidebar.contractors"] .badge').text()).toBe('7');
+  });
+
+  it('shows Admin counts beside their matching links and omits missing badges', async () => {
+    routerMocks.useRoute.mockReturnValue(
+      reactive({
+        path: '/admin/organization',
+        fullPath: '/admin/organization',
+        params: {},
+        query: {},
+      }),
+    );
+    const userStore = useUserStore();
+    userStore.user = new UserModel({
+      id: 1,
+      name: 'Admin User',
+      email: 'admin@example.com',
+      type: UserType.ADMIN,
+      WebSocketToken: '',
+    });
+    sidebarCountsMocks.fetchSidebarCounts.mockResolvedValue({
+      data: {
+        data: {
+          packages_count: 4,
+          subscriptions_count: 3,
+          organizations_count: 2,
+        },
+      },
+    });
+
+    const wrapper = mountSidebar();
+    await flushPromises();
+
+    const systemSection = wrapper.get('.section-toggle[title="sidebar.sys_config"]');
+    await systemSection.trigger('click');
+    expect(wrapper.get('a.menu-item[title="sidebar.packages"] .badge').text()).toBe('4');
+    expect(wrapper.get('a.menu-item[title="package.subscriptions"] .badge').text()).toBe('3');
+
+    await wrapper.get('.section-toggle[title="sidebar.organization"]').trigger('click');
+    expect(wrapper.get('a.menu-item[title="sidebar.organization"] .badge').text()).toBe('2');
+    expect(wrapper.find('a.menu-item[title="sidebar.admins"] .badge').exists()).toBe(false);
+    expect(wrapper.get('a.menu-item[title="sidebar.admins"]').exists()).toBe(true);
   });
 });

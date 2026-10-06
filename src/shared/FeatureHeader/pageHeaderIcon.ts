@@ -63,6 +63,9 @@ const sectionIcons: Record<string, PageHeaderIconKind> = {
 export function getPageHeaderIcon(path: string): PageHeaderIconKind | undefined {
   const [, section, ...remaining] = path.split('/').filter(Boolean);
   if (section === 'stages' && remaining.includes('sub-stages')) return sectionIcons['sub-stages'];
+  if (section === 'contractors' && (remaining[0] === 'add' || remaining[0] === 'edit')) {
+    return 'people';
+  }
   return sectionIcons[section ?? ''];
 }
 

@@ -64,8 +64,8 @@
     min-height: min(580px, 85vh);
   }
 
-  :global([dir='rtl']) .app-error-state--404,
-  :global([dir='rtl']) .app-error-state--500 {
+  :global([dir='rtl'] .app-error-state--404),
+  :global([dir='rtl'] .app-error-state--500) {
     flex-direction: row-reverse;
   }
 
@@ -169,8 +169,8 @@
       min-height: auto;
     }
 
-    :global([dir='rtl']) .app-error-state--404,
-    :global([dir='rtl']) .app-error-state--500 {
+    :global([dir='rtl'] .app-error-state--404),
+    :global([dir='rtl'] .app-error-state--500) {
       flex-direction: column;
     }
 

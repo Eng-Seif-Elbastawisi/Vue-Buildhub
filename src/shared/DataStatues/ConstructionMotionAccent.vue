@@ -60,7 +60,7 @@
     pointer-events: none;
   }
 
-  :global([dir='rtl']) .construction-motion-accent {
+  :global([dir='rtl'] .construction-motion-accent) {
     --construction-start: 100%;
     --construction-origin: right center;
   }

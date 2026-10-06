@@ -1,10 +1,13 @@
 import { BaseEndpoints } from '@/base/Data/Endpoints/BaseEndpoints';
-import { useUserStore } from '@/stores/user';
 
 export class SidebarCountsApiEndpoints extends BaseEndpoints {
-  protected get prefix(): string {
-    return useUserStore().user?.type === 1 ? 'mainportal/' : 'organization/';
-  }
+  protected readonly prefix = 'organization/';
 
   readonly organizationSidebarCounts = this.url('organization_sidebar_counts');
+}
+
+export class AdminSidebarCountsApiEndpoints extends BaseEndpoints {
+  protected readonly prefix = 'mainportal/';
+
+  readonly adminSidebarCounts = this.url('main_portal_sidebar_counts');
 }

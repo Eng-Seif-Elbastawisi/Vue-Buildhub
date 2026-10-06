@@ -80,6 +80,6 @@ describe('LoginForm.vue', () => {
     expect(mockLogin).toHaveBeenCalledTimes(1);
     const expectedParams = new LoginParams('test@example.com', 'password123');
     expect(mockLogin).toHaveBeenCalledWith(expectedParams);
-    expect(mockPush).toHaveBeenCalledWith({ name: 'Admin' });
+    expect(mockPush).toHaveBeenCalledWith({ name: 'dashboard' });
   });
 });

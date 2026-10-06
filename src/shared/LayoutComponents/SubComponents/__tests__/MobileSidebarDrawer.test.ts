@@ -84,7 +84,7 @@ describe('MobileSidebarDrawer', () => {
     expect(wrapper.emitted('update:open')?.[0]).toEqual([false]);
   });
 
-  it('does not request organization sidebar counts for admin users', async () => {
+  it('loads admin sidebar badges when opened', async () => {
     const userStore = useUserStore();
     userStore.user = new UserModel({
       id: 1,
@@ -93,8 +93,11 @@ describe('MobileSidebarDrawer', () => {
       type: UserType.ADMIN,
       WebSocketToken: '',
     });
+    sidebarCountsMocks.fetchSidebarCounts.mockResolvedValue({
+      data: { data: { packages_count: 3 } },
+    });
 
-    mount(MobileSidebarDrawer, {
+    const wrapper = mount(MobileSidebarDrawer, {
       props: {
         open: true,
       },
@@ -104,12 +107,16 @@ describe('MobileSidebarDrawer', () => {
         },
         stubs: {
           Teleport: true,
-          RouterLink: true,
+          RouterLink: {
+            template: '<a :href="to"><slot /></a>',
+            props: ['to'],
+          },
         },
       },
     });
     await flushPromises();
 
-    expect(sidebarCountsMocks.fetchSidebarCounts).not.toHaveBeenCalled();
+    expect(sidebarCountsMocks.fetchSidebarCounts).toHaveBeenCalledWith('admin');
+    expect(wrapper.findAll('.badge').some((badge) => badge.text() === '3')).toBe(true);
   });
 });

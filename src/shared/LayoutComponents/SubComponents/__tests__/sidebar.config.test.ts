@@ -285,6 +285,74 @@ describe('sidebarSections', () => {
     );
   });
 
+  it('maps admin-only entity counts to their existing menu items', () => {
+    const items = getSidebarSectionsWithCounts({
+      packages_count: 4,
+      subscriptions_count: 3,
+      organizations_count: 2,
+      admins_count: 1,
+    }).flatMap((section) => section.items);
+
+    expect(
+      ['/package', '/package/subscriptions', '/organization', '/admins'].map((path) => {
+        const item = items.find((candidate) => candidate.path === path);
+        return { countKey: item?.countKey, badge: item?.badge };
+      }),
+    ).toEqual([
+      { countKey: 'packages_count', badge: '4' },
+      { countKey: 'subscriptions_count', badge: '3' },
+      { countKey: 'organizations_count', badge: '2' },
+      { countKey: 'admins_count', badge: '1' },
+    ]);
+  });
+
+  it('shows Contractor only in the Organization menu', () => {
+    const contractor = sidebarSections
+      .flatMap((section) => section.items)
+      .find((sidebarItem) => sidebarItem.path === '/contractors');
+
+    expect(contractor).toEqual(
+      expect.objectContaining({
+        labelKey: 'sidebar.contractors',
+        roles: ['organization'],
+        countKey: 'contractors_count',
+      }),
+    );
+  });
+
+  it('uses the organization Contractor count for its badge, including zero and missing values', () => {
+    const contractorBadge = (counts: Parameters<typeof getSidebarSectionsWithCounts>[0]) =>
+      getSidebarSectionsWithCounts(counts)
+        .flatMap((section) => section.items)
+        .find((item) => item.path === '/contractors')?.badge;
+
+    expect(contractorBadge({ contractors_count: 7 })).toBe('7');
+    expect(contractorBadge({ contractors_count: 0 })).toBe('0');
+    expect(contractorBadge({})).toBeUndefined();
+    expect(
+      contractorBadge({ contractors_count: null } as unknown as Parameters<
+        typeof getSidebarSectionsWithCounts
+      >[0]),
+    ).toBeUndefined();
+  });
+
+  it('leaves an Admin menu item visible without a badge when its API key is missing', () => {
+    const items = getSidebarSectionsWithCounts({ organizations_count: 0 }).flatMap(
+      (section) => section.items,
+    );
+    const organization = items.find((item) => item.path === '/organization');
+    const admins = items.find((item) => item.path === '/admins');
+
+    expect(organization?.badge).toBe('0');
+    expect(admins).toEqual(
+      expect.objectContaining({
+        labelKey: 'sidebar.admins',
+        countKey: 'admins_count',
+        badge: undefined,
+      }),
+    );
+  });
+
   it('keeps execution quotes in a dedicated organization section', () => {
     const executionQuotesSection = sidebarSections.find(
       (section) => section.key === 'execution-quotes',
