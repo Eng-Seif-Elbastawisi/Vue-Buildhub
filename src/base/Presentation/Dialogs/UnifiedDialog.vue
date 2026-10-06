@@ -423,7 +423,7 @@
     transition: transform 0.3s ease;
   }
 
-  :global([dir='rtl']) .progress-fill {
+  :global([dir='rtl'] .progress-fill) {
     transform-origin: right center;
   }
 

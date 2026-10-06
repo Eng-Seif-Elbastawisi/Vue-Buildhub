@@ -70,7 +70,7 @@
     transition: transform 250ms ease;
   }
 
-  :global([dir='rtl']) .app-loading-dialog__track span {
+  :global([dir='rtl'] .app-loading-dialog__track span) {
     transform-origin: right center;
   }
 

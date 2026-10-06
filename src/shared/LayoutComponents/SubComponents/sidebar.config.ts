@@ -92,6 +92,10 @@ export interface SidebarProjectCounts {
 }
 
 export interface SidebarCountsPayload {
+  packages_count?: SidebarCountValue;
+  subscriptions_count?: SidebarCountValue;
+  organizations_count?: SidebarCountValue;
+  admins_count?: SidebarCountValue;
   projects_count?: SidebarCountValue;
   project_previews_count?: SidebarCountValue;
   departments_count?: SidebarCountValue;
@@ -107,6 +111,7 @@ export interface SidebarCountsPayload {
   clients_count?: SidebarCountValue;
   employees_count?: SidebarCountValue;
   specializations_count?: SidebarCountValue;
+  contractors_count?: SidebarCountValue;
   suppliers_count?: SidebarCountValue;
   invoices_count?: SidebarCountValue;
   invoice_payments_count?: SidebarCountValue;
@@ -134,6 +139,10 @@ export interface SidebarCountsApiResponse {
 }
 
 export type SidebarRootCountKey =
+  | 'packages_count'
+  | 'subscriptions_count'
+  | 'organizations_count'
+  | 'admins_count'
   | 'projects_count'
   | 'project_previews_count'
   | 'departments_count'
@@ -149,6 +158,7 @@ export type SidebarRootCountKey =
   | 'clients_count'
   | 'employees_count'
   | 'specializations_count'
+  | 'contractors_count'
   | 'suppliers_count'
   | 'invoices_count'
   | 'invoice_payments_count'
@@ -267,7 +277,7 @@ export const getSidebarSectionsWithCounts = (
 
       return {
         ...item,
-        badge: count ?? item.badge,
+        badge: count,
       };
     }),
   }));
@@ -533,6 +543,7 @@ export const sidebarSections: SidebarSectionConfig[] = [
         labelKey: 'sidebar.packages',
         icon: SidebarFullPackageIcon,
         roles: ['admin'],
+        countKey: 'packages_count',
       },
 
       {
@@ -540,6 +551,7 @@ export const sidebarSections: SidebarSectionConfig[] = [
         labelKey: 'package.subscriptions',
         icon: SidebarFullPackageIcon,
         roles: ['admin'],
+        countKey: 'subscriptions_count',
       },
 
       {
@@ -679,6 +691,13 @@ export const sidebarSections: SidebarSectionConfig[] = [
         countKey: 'specializations_count',
       },
       {
+        path: '/contractors',
+        labelKey: 'sidebar.contractors',
+        icon: SidebarSupplierIcon,
+        roles: ['organization'],
+        countKey: 'contractors_count',
+      },
+      {
         path: '/products',
         labelKey: 'sidebar.products',
         icon: SidebarItemIcon,
@@ -754,12 +773,14 @@ export const sidebarSections: SidebarSectionConfig[] = [
         labelKey: 'sidebar.organization',
         icon: SidebarOrganizationIcon,
         roles: ['admin'],
+        countKey: 'organizations_count',
       },
       {
         path: '/admins',
         labelKey: 'sidebar.admins',
         icon: SidebarAdminIcon,
         roles: ['admin'],
+        countKey: 'admins_count',
       },
     ],
   },

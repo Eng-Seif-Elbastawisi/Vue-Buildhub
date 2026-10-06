@@ -33,9 +33,9 @@
     await controller.login(params);
 
     if (useUserStore().user?.type === UserType.ADMIN) {
-      router.push({ name: 'Admin' });
+      router.push({ name: 'dashboard' });
     } else {
-      router.push({ name: 'Employee' });
+      router.push({ name: 'Organization App' });
     }
     loading.value = false;
   };

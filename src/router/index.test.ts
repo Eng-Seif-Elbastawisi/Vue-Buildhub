@@ -3,6 +3,13 @@ import router from './index';
 
 describe('dashboard route prefixes', () => {
   it.each([
+    ['dashboard', '/admin'],
+    ['Organization App', '/organization'],
+  ])('resolves the %s Home route to %s', (name, path) => {
+    expect(router.resolve({ name }).path).toBe(path);
+  });
+
+  it.each([
     ['/organization/project/add', 'add-project'],
     ['/organization/project_preview/add', 'add-project_preview'],
     ['/organization/project_floor/add', 'add-project_floor'],

@@ -68,10 +68,16 @@ describe('authGuard', () => {
     expect(authGuard(makeRoute('/mainportal/project/add'))).toBe('/organization');
   });
 
-  it('redirects authenticated users from login to their app', () => {
+  it('redirects authenticated users from login to Home without a loop', () => {
     authenticateAs(UserType.ADMIN);
 
     expect(authGuard(makeRoute('/login-admin'))).toBe('/admin');
+    expect(authGuard(makeRoute('/admin'))).toBe(true);
+
+    authenticateAs(UserType.ORGANIZATION);
+
+    expect(authGuard(makeRoute('/login-organization'))).toBe('/organization');
+    expect(authGuard(makeRoute('/organization'))).toBe(true);
   });
 
   it('rejects a persisted user that has no usable token', () => {
