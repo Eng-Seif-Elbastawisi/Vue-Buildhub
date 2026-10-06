@@ -4,6 +4,7 @@ import ChangeStageOrderParams from '../../../core/params/change.stage.order.para
 import StageRepository from '../../../data/repositories/stage.repository';
 import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
 import StageModel from '../../../core/models/stage.model';
+import IndexStageParams from '../../../core/params/index.stage.params';
 
 describe('StageController', () => {
   it('returns the same singleton instance', () => {
@@ -49,5 +50,20 @@ describe('StageController', () => {
     const result = await controller.changeOrder(params);
     expect(spy).toHaveBeenCalledWith(params, { useJson: true });
     expect(result).toBeInstanceOf(DataSuccess);
+  });
+
+  it('offers only stages with a null parent for a main-stage select', async () => {
+    const mainStage = StageModel.fromJson({ id: 1, title: 'Design', parent_id: null });
+    const childStage = StageModel.fromJson({ id: 2, title: 'Review', parent_id: 1 });
+    const index = vi.spyOn(StageRepository.getInstance(), 'index').mockResolvedValue(
+      new DataSuccess({ data: [mainStage, childStage] }),
+    );
+
+    const options = await StageController.getInstance().fetchAsOptions(
+      new IndexStageParams({ parentId: null, withPage: 0 }),
+    );
+
+    expect(options.map((option) => option.id)).toEqual([1]);
+    index.mockRestore();
   });
 });

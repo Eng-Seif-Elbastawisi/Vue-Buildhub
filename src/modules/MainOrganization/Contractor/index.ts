@@ -1,0 +1,9 @@
+export { default as ContractorModel } from './core/models/contractor.model';
+export { default as AddContractorParams } from './core/params/add.contractor.params';
+export { default as EditContractorParams } from './core/params/edit.contractor.params';
+export { default as ShowContractorParams } from './core/params/show.contractor.params';
+export { default as DeleteContractorParams } from './core/params/delete.contractor.params';
+export { default as IndexContractorParams } from './core/params/index.contractor.params';
+export { default as ContractorRepository } from './data/repositories/contractor.repository';
+export { default as ContractorController } from './presentation/controllers/contractor.controller';
+export { default as ContractorApiService } from './data/api/contractor.api-service';

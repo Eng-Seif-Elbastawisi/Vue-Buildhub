@@ -298,7 +298,7 @@ body:has(.standard-crud-page) .feature-header-container .breadcrumb-link:focus-v
   line-height: 1.5;
 }
 
-.main-content .standard-crud-page .form-fields {
+.main-content :where(.standard-crud-page .form-fields) {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 24px 26px;

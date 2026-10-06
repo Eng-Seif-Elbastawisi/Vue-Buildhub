@@ -438,7 +438,7 @@
     }
   }
 
-  :global([dir='rtl']) .project-show-skeleton__construction {
+  :global([dir='rtl'] .project-show-skeleton__construction) {
     transform-origin: top left;
   }
 

@@ -104,12 +104,6 @@
   });
 
   const loadSidebarCounts = async () => {
-    if (currentRole.value !== 'organization') {
-      sidebarCounts.value = null;
-      sidebarSectionsState.value = getSidebarSections();
-      return;
-    }
-
     if (!user.value?.id) {
       sidebarCounts.value = null;
       sidebarSectionsState.value = getSidebarSections();
@@ -117,7 +111,9 @@
     }
 
     try {
-      const response = await SidebarCountsApiService.getInstance().fetchSidebarCounts();
+      const response = await SidebarCountsApiService.getInstance().fetchSidebarCounts(
+        currentRole.value,
+      );
       const responseData: SidebarCountsPayload | undefined = response?.data?.data;
 
       sidebarCounts.value = responseData ?? null;
