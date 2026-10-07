@@ -413,4 +413,11 @@
       transition: none;
     }
   }
+  .p-accordionpanel:last-child.p-accordionpanel-active > .p-accordionheader{
+    width: 98% !important;
+  }
+.p-accordionpanel:last-child > .p-accordionheader{   
+   width: 98% !important;
+
+  }
 </style>

@@ -19,7 +19,6 @@
   import DeleteContractorStageParams from '../../core/params/delete.contractor.stage.params';
   import IndexContractorParams from '../../core/params/index.contractor.params';
   import ContractorController from '../controllers/contractor.controller';
-
   const controller = ContractorController.getInstance();
   const { locale } = useI18n();
   const state = computed(() => controller.listState.value);
