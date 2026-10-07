@@ -1,5 +1,6 @@
 import BaseApiService, { type ApiEndpoints } from '@/base/Data/ApiService/baseApiService';
 import { ContractorApiEndpoints } from './contractor.api.endpoints';
+import type DeleteContractorStageParams from '../../core/params/delete.contractor.stage.params';
 
 export default class ContractorApiService extends BaseApiService {
   private static instance: ContractorApiService;
@@ -20,5 +21,9 @@ export default class ContractorApiService extends BaseApiService {
       update: this.contractorEndpoints.update,
       delete: this.contractorEndpoints.delete,
     };
+  }
+
+  deleteStage(params: DeleteContractorStageParams) {
+    return this.customPost(this.contractorEndpoints.deleteStage, params, { useJson: true });
   }
 }

@@ -1,6 +1,10 @@
 import type Params from '@/base/Core/Params/params';
 import type { DataState } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
-import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
+import {
+  DataFailed,
+  DataSuccess,
+} from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
+import { ErrorModel, ErrorType } from '@/base/Core/NetworkStructure/Resources/errors/errorModel';
 import type { ApiCallOptions } from '@/base/Data/ApiService/baseApiService';
 import BaseController, {
   type ControllerConfig,
@@ -8,6 +12,7 @@ import BaseController, {
 import router from '@/router';
 import { useFormsStore } from '@/stores/formsStore';
 import type ContractorModel from '../../core/models/contractor.model';
+import type DeleteContractorStageParams from '../../core/params/delete.contractor.stage.params';
 import ContractorRepository from '../../data/repositories/contractor.repository';
 
 export default class ContractorController extends BaseController<
@@ -63,5 +68,21 @@ export default class ContractorController extends BaseController<
 
   async fetchList(params: Params, options?: ApiCallOptions): Promise<DataState<ContractorModel[]>> {
     return super.fetchList(params, { ...options, useJson: true });
+  }
+
+  async deleteStage(params: DeleteContractorStageParams): Promise<DataState<void>> {
+    params.validateOrThrow();
+    const deletionState = await this.repository.deleteStage(params);
+    if (deletionState instanceof DataSuccess) {
+      this.showSuccessToast(deletionState.message || 'construction_states.delete_success');
+      return deletionState;
+    }
+
+    this.handleErrorResponse(deletionState);
+    return deletionState instanceof DataFailed
+      ? deletionState
+      : new DataFailed<void>({
+          error: deletionState.error ?? new ErrorModel('error.unexpected', ErrorType.unknown),
+        });
   }
 }

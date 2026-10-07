@@ -2973,6 +2973,9 @@
   "Contractor.update": "تحديث المقاول",
   "Contractor.show": "عرض",
   "Contractor.delete_confirm": "هل أنت متأكد من حذف هذا المقاول؟",
+  "Contractor.remove_stage_title": "إزالة مرحلة المقاول",
+  "Contractor.remove_stage_confirm": "هل تريد إزالة {stage} من {contractor}؟ ستتم إزالة هذه المرحلة فقط من المقاول.",
+  "Contractor.remove_stage": "إزالة {stage}",
   "Contractor.empty_title": "لا يوجد مقاولون بعد",
   "Contractor.empty_description": "أضف أول مقاول لتحديد المراحل الرئيسية"
 }
