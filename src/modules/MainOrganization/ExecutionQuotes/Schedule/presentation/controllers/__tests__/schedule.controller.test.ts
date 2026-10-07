@@ -2,6 +2,7 @@ import ExecutionQuoteApiService from '../../../../data/api/execution.quote.api-s
 import { beforeEach, expect, it, vi } from 'vitest';
 import {
   DataSuccess,
+  DataLoading,
   DataCancelled,
   DataFailed,
 } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
@@ -207,6 +208,7 @@ it('does not let an old-owner mutation reset the new-owner busy state', async ()
   finishOld(new DataSuccess({ data: groupFixture() }));
   await oldSave;
   expect(controller.busy.value).toBe(true);
+  expect(controller.mutationState.value).toBeInstanceOf(DataLoading);
   finishNew(new DataSuccess({ data: groupFixture(202) }));
   await newSave;
   expect(controller.busy.value).toBe(false);
@@ -286,4 +288,21 @@ it('uses QuoteStage IDs and existing SubStage IDs rather than shared Stage IDs',
   expect(controller.lookups.value.get(null)?.data?.[0]?.id).toBe(103);
   expect(controller.lookups.value.get(103)?.data?.[0]?.id).toBe(12);
   expect(controller.lookups.value.get(null)?.data?.[0]?.id).not.toBe(500);
+});
+
+it('preserves the loaded Edit detail when BaseController update returns validation errors', async () => {
+  controller.activate(101, 201);
+  const group = groupFixture();
+  controller.itemState.value = new DataSuccess({ data: group });
+  const loadedDetail = controller.itemState.value;
+  const failure = new DataFailed<ReturnType<typeof groupFixture>>({
+    error: new ErrorModel('Title rejected', ErrorType.validation),
+  });
+  vi.spyOn(repository, 'update').mockResolvedValue(failure);
+  const params = form();
+  params.groupId = 201;
+  expect(await controller.update(params)).toBe(failure);
+  expect(controller.itemState.value).toBe(loadedDetail);
+  expect(controller.mutationState.value.error?.displayMessage).toBe('Title rejected');
+  expect(controller.busy.value).toBe(false);
 });

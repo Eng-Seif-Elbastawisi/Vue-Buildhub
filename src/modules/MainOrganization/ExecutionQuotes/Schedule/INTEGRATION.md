@@ -124,3 +124,9 @@ Real-checkout verification:
 - `npx stylelint 'src/modules/MainOrganization/ExecutionQuotes/Schedule/**/*.{vue,scss}' 'src/views/MainOrganization/ExecutionQuotes/Schedule/**/*.vue' src/modules/MainOrganization/ExecutionQuotes/presentation/components/ExecutionQuoteShow.vue`: passed.
 
 The real checkout's unrelated untracked `bnlg` item was untouched. No push, live backend call or mutation was performed. The Codex worktree and its reference files remain in place.
+
+## Controller CRUD simplification
+
+Create, Update and Delete delegate to `BaseController` through `super.create()`, `super.update()` and `super.delete()`. The callback-based Schedule `mutate()` runner was removed. Schedule retains only scoped save setup/completion around inherited CRUD, plus domain-specific reads and ordering/settings actions. Loaded Edit detail stays separate from save state so failed updates preserve the form. The protected BaseController `captureMutationScope()` hook defaults to accepting responses for existing controllers; Schedule captures its owner/group generation to cancel stale mutations before state assignment, dialogs or global success events. Neither controller nor API automatically retries Create.
+
+Refactor verification: combined Schedule/navigation/BaseController tests report 146 passed and four existing Stage-selection params failures (150 total). The user's subsequent commit intentionally removed those validation checks; that code and its tests remain unchanged. Root `npm run type-check` passes. Explicit app checking still reports baseline diagnostics, including the unused `validId` import left by that validation change; none concern the controller refactor. Focused ESLint reports only existing BaseController `any` warnings. No backend contract guard or test was disabled to accommodate this refactor.

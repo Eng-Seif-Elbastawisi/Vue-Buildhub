@@ -62,6 +62,20 @@ export default class ScheduleController extends BaseController<ScheduleGroupMode
     return ScheduleRepository.getInstance();
   }
 
+  protected captureMutationScope() {
+    const epoch = this.epoch;
+    return () => epoch === this.epoch;
+  }
+  // Base CRUD feedback belongs to the save state; keep the loaded Edit detail intact.
+  setItemLoading() {
+    if (this.busy.value) this.mutationState.value = new DataLoading();
+    else super.setItemLoading();
+  }
+  setItemState(state: DataState<ScheduleGroupModel>) {
+    if (this.busy.value) this.mutationState.value = state;
+    else super.setItemState(state);
+  }
+
   activate(quoteId: number, groupId: number | null = null) {
     if (!validId(quoteId) || (groupId !== null && !validId(groupId)))
       throw new Error('schedule.invalid_ids');
@@ -265,7 +279,9 @@ export default class ScheduleController extends BaseController<ScheduleGroupMode
       !this.knownSelectionsValid(params)
     )
       return this.validationFailure<ScheduleGroupModel>();
-    return this.mutate(params, () => this.repository.create(params));
+    const epoch = this.startSave(params);
+    if (epoch === null) return new DataCancelled<ScheduleGroupModel>();
+    return this.finishSave(await super.create(params), params.quoteId, epoch);
   }
   async update(params?: Params) {
     if (
@@ -275,20 +291,30 @@ export default class ScheduleController extends BaseController<ScheduleGroupMode
       !this.knownSelectionsValid(params)
     )
       return this.validationFailure<ScheduleGroupModel>();
-    return this.mutate(params, () => this.repository.update(params));
+    const epoch = this.startSave(params);
+    if (epoch === null) return new DataCancelled<ScheduleGroupModel>();
+    return this.finishSave(await super.update(params), params.quoteId, epoch);
   }
   async delete(params?: Params) {
     if (!(params instanceof ScheduleOwnerParams) || !validId(params.groupId ?? 0))
       return new DataCancelled<void>();
-    return this.mutate(params, () => this.repository.delete(params));
+    const epoch = this.startSave(params);
+    if (epoch === null) return new DataCancelled<void>();
+    return this.finishSave(await super.delete(params), params.quoteId, epoch);
   }
   async saveSettings(params: ScheduleSettingsParams) {
-    const epoch = this.epoch;
-    return this.mutate(
-      params,
-      () => this.repository.saveSettings(params),
-      () => this.refreshAfterMutation(params.quoteId, epoch),
-    );
+    const epoch = this.startSave(params);
+    if (epoch === null) return new DataCancelled<void>();
+    try {
+      return await this.finishSave(
+        await this.repository.saveSettings(params),
+        params.quoteId,
+        epoch,
+        'settings',
+      );
+    } finally {
+      if (epoch === this.epoch) this.busy.value = false;
+    }
   }
   canMove(groupId: number, direction: -1 | 1) {
     const groups = this.listState.value.data;
@@ -320,50 +346,54 @@ export default class ScheduleController extends BaseController<ScheduleGroupMode
     )
       return new DataCancelled<void>();
     const params = new ChangeProjectTimelineOrderParams(projectTimelineId, destinationOrder);
-    // The owner scopes the request lifecycle but is deliberately absent from its wire body.
-    return this.mutate(new ScheduleOwnerParams(this.owner), () =>
-      this.repository.changeProjectTimelineOrder(params),
-    );
-  }
-  private validationFailure<T>(): DataState<T> {
-    return new DataFailed({ error: new ErrorModel('schedule.invalid_form', ErrorType.validation) });
-  }
-  private async mutate<T>(
-    params: ScheduleOwnerParams,
-    request: () => Promise<DataState<T>>,
-    refresh?: () => Promise<void>,
-  ): Promise<DataState<T>> {
-    if (!this.scoped(params) || this.busy.value) return new DataCancelled();
-    if (!params.validate().isValid) return this.validationFailure();
-    const epoch = this.epoch;
-    this.busy.value = true;
-    this.refreshFailed.value = false;
-    this.mutationState.value = new DataLoading();
+    // Scope locally; quote_id is absent from the reorder request body.
+    const quoteId = this.owner;
+    const epoch = this.startSave(new ScheduleOwnerParams(quoteId));
+    if (epoch === null) return new DataCancelled<void>();
     try {
-      const mutationState = await request();
-      if (epoch !== this.epoch) return new DataCancelled();
-      this.mutationState.value = mutationState;
-      if (mutationState instanceof DataSuccess) {
-        if (refresh) await refresh();
-        else await this.refreshOrder(params.quoteId, epoch);
-      }
-      return epoch === this.epoch ? mutationState : new DataCancelled();
+      return await this.finishSave(
+        await this.repository.changeProjectTimelineOrder(params),
+        quoteId,
+        epoch,
+      );
     } finally {
       if (epoch === this.epoch) this.busy.value = false;
     }
   }
-  private async refreshOrder(quoteId: number, epoch: number) {
-    this.itemState.value = new DataInitial();
-    const state = await this.fetchList(new ScheduleOwnerParams(quoteId));
-    if (epoch === this.epoch) this.refreshFailed.value = !(state instanceof DataSuccess);
+  private validationFailure<T>(): DataState<T> {
+    return new DataFailed({ error: new ErrorModel('schedule.invalid_form', ErrorType.validation) });
   }
-  private async refreshAfterMutation(quoteId: number, epoch: number) {
-    this.itemState.value = new DataInitial();
-    const refreshStates = await Promise.all([
-      this.fetchList(new ScheduleOwnerParams(quoteId)),
-      this.readSettings(new ScheduleOwnerParams(quoteId)),
-    ]);
-    if (epoch === this.epoch)
-      this.refreshFailed.value = refreshStates.some((state) => !(state instanceof DataSuccess));
+  private startSave(params: ScheduleOwnerParams): number | null {
+    if (!this.scoped(params) || this.busy.value) return null;
+    this.busy.value = true;
+    this.refreshFailed.value = false;
+    this.mutationState.value = new DataLoading();
+    return this.epoch;
+  }
+  private async finishSave<T>(
+    state: DataState<T> | undefined,
+    quoteId: number,
+    epoch: number,
+    resource: 'timeline' | 'settings' = 'timeline',
+  ): Promise<DataState<T>> {
+    if (epoch !== this.epoch) return new DataCancelled();
+    const result = state ?? this.validationFailure<T>();
+    this.mutationState.value = result;
+    try {
+      if (result instanceof DataSuccess) {
+        const list = await this.fetchList(new ScheduleOwnerParams(quoteId));
+        if (epoch !== this.epoch) return new DataCancelled();
+        this.itemState.value = new DataInitial();
+        this.refreshFailed.value = !(list instanceof DataSuccess);
+        if (resource === 'settings') {
+          const settings = await this.readSettings(new ScheduleOwnerParams(quoteId));
+          if (epoch !== this.epoch) return new DataCancelled();
+          this.refreshFailed.value ||= !(settings instanceof DataSuccess);
+        }
+      }
+      return result;
+    } finally {
+      if (epoch === this.epoch) this.busy.value = false;
+    }
   }
 }
