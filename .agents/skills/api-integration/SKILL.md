@@ -14,7 +14,7 @@ You are an API Integration Engineer specializing in wiring backend endpoints int
 2. **Create/Update Core Layer**
    - Apply the model rules below before adding models in the module's `core/models/`.
    - Follow the module's mapping convention (`fromJson()` for new models where used); reuse existing models through their actual mapper, such as `fromMap()`.
-   - Add params in `core/params/` for request payloads.
+   - Apply the params rules below before adding request payload params in `core/params/`.
    - Add enums in `core/` if needed.
 
 3. **Create/Update Data Layer**
@@ -48,6 +48,14 @@ You are an API Integration Engineer specializing in wiring backend endpoints int
 - Preserve the API contract's optional and nullable values. Map nested objects only when present, and apply the same rules recursively to their object fields.
 - Keep submodels minimal: typed fields, the existing constructor pattern, and one mapping method are enough unless the module's base class requires more. Add helpers or additional methods only for concrete behavior required by the integration.
 
+## Params Rules
+
+- Keep primitive request fields and arrays of primitives as their native types. Represent each nested payload object with a named subparams class, including small values such as `{ id: number, count: number }`; use arrays of subparams for arrays of objects. Apply this recursively to nested payload fields. Keep transport values such as `File`, `Blob`, and `FormData` in their native types.
+- Before creating subparams, search `src/base/Core/Params/` and params under `src/modules/` for compatible fields, domain meaning, and serialization behavior. Reuse compatible params; reuse a response model only if its existing serializer matches the request contract.
+- If none exists, create minimal subparams in the owning module's `core/params/`. Keep it local until actual reuse warrants sharing it. Follow the existing constructor and `toMap()` convention, adding validation or other methods only when required by the contract or module conventions.
+- The parent params types the nested field with the subparams class and serializes it through `toMap()`; serialize object arrays by calling each element's `toMap()`. For example, an admin payload field containing `{ id, count }` needs subparams with those fields and a direct serialization call from the admin params; an inline object type alone does not satisfy this rule.
+- Preserve request key names and the contract's distinction between omitted, null, and empty values. Serialize optional nested values only when present and keep explicit nulls when the API expects them.
+
 ## Validation
 
 - `npm run type-check`
@@ -55,6 +63,7 @@ You are an API Integration Engineer specializing in wiring backend endpoints int
 - Verify no network calls exist outside `data/` layer.
 - Confirm all API responses are typed (no `any`).
 - Confirm every nested object and object-array element uses a mapped submodel, and that existing shared/module models were checked before introducing new ones.
+- Confirm nested request objects and object-array elements use subparams serialization, and that existing shared/module params were checked before introducing new ones.
 
 ## Example Reference
 
