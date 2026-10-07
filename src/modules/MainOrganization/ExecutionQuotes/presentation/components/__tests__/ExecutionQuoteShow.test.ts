@@ -4,8 +4,13 @@ import type * as VueRouterModule from 'vue-router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import NetworkService from '@/base/Core/NetworkStructure/networking/networkService';
-import { DataInitial } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
+import {
+  DataInitial,
+  DataFailed,
+} from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
 
+import ScheduleController from '../../../Schedule/presentation/controllers/schedule.controller';
+import ScheduleRepository from '../../../Schedule/data/repositories/schedule.repository';
 import ExecutionQuoteApiService from '../../../data/api/execution.quote.api-service';
 import ExecutionQuoteController from '../../controllers/execution.quote.controller';
 import ExecutionQuoteShow from '../ExecutionQuoteShow.vue';
@@ -87,6 +92,10 @@ describe('ExecutionQuoteShow', () => {
   const postRequest = vi.spyOn(NetworkService.instance, 'post');
 
   beforeEach(() => {
+    ScheduleController.getInstance().release();
+    vi.spyOn(ScheduleRepository.getInstance(), 'readOverview').mockResolvedValue(
+      new DataFailed({}),
+    );
     controller.setItemState(new DataInitial());
     controller.quoteStatusHistoryState.value = new DataInitial([]);
     historyRequest.mockReset();

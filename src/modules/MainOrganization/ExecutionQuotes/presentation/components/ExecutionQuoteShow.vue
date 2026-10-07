@@ -13,6 +13,7 @@
   import { dialogManager } from '@/base/Presentation/Dialogs/dialog.manager';
   import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
   import AppButton from '@/shared/HelpersComponents/AppButton.vue';
+  import ScheduleShortcut from '../../Schedule/presentation/components/ScheduleShortcut.vue';
 
   import {
     ExecutionQuoteItemSourceEnum,
@@ -396,6 +397,7 @@
     <DataStatusBuilder :controller="state" :on-retry="fetchQuote">
       <template #success="{ data: quote }">
         <div class="execution-quote-show__content">
+          <ScheduleShortcut :quote-id="quoteId" />
           <section class="execution-quote-show__hero">
             <div class="execution-quote-show__hero-copy">
               <div class="execution-quote-show__badges">
