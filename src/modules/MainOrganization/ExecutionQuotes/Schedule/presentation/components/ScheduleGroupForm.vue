@@ -33,7 +33,8 @@
   const saveError = ref(false);
   const saved = ref(false);
   async function save() {
-    if (controller.busy.value || saved.value) return;
+    // if (controller.busy.value || saved.value) return;
+
     const params = new ScheduleGroupParams({
       quoteId: props.quoteId,
       groupId: props.group?.id,
@@ -45,7 +46,11 @@
           new ProjectTimelineStageParams(selection.quoteStageId, [...selection.children]),
       ),
     });
+    console.log('stages.value', params);
+
     errors.value = params.validate().errors;
+
+    console.log('params.validate().errors', errors.value);
     if (errors.value.length) return;
     saveError.value = false;
     const saveState = props.group

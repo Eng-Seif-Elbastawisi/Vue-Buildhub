@@ -1,0 +1,42 @@
+[33mcommit 587d4f63d31c89654a393f94b733dc90a3eaa7d8[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfeat/schedule[m[33m)[m
+Author: Sayed2210 <eh600039@gmail.com>
+Date:   Wed Oct 7 16:41:28 2026 +0300
+
+    refact: stageModel
+
+ BuildHub_Project_Schedule_API_Contract_v0.2.0.json                  |  704 [32m+++++++++[m
+ BuildHub_Schedule_Implementation_Plan_v1.0.md                       |  359 [32m+++++[m
+ .../core/models/__tests__/execution.quote.show.model.test.ts        |    2 [32m+[m
+ .../core/models/__tests__/execution.quote.stage.model.test.ts       |   76 [32m+[m[31m-[m
+ .../core/models/__tests__/execution.quote.sub.stage.model.test.ts   |   39 [32m+[m
+ .../ExecutionQuotes/core/models/execution.quote.show.model.ts       |   21 [32m+[m[31m-[m
+ .../ExecutionQuotes/core/models/execution.quote.stage.model.ts      |   71 [32m+[m[31m-[m
+ .../ExecutionQuotes/core/models/execution.quote.sub.stage.model.ts  |   54 [32m+[m
+ .../ExecutionQuotes/presentation/components/ExecutionQuoteShow.vue  |   40 [32m+[m[31m-[m
+ .../presentation/components/__tests__/ExecutionQuoteShow.test.ts    |   30 [32m+[m
+ .../constants/__tests__/execution.quote.item.source.enum.test.ts    |   20 [31m-[m
+ .../core/constants/__tests__/execution.quote.type.enum.test.ts      |   16 [31m-[m
+ .../core/constants/__tests__/quote.source.enum.test.ts              |    9 [31m-[m
+ .../core/constants/execution.quote.item.source.enum.ts              |   34 [31m-[m
+ .../ExecutionQuotes1/core/constants/execution.quote.type.enum.ts    |   31 [31m-[m
+ .../ExecutionQuotes1/core/constants/quote.source.enum.ts            |    6 [31m-[m
+ .../core/models/__tests__/execution.quote.model.test.ts             |   35 [31m-[m
+ .../ExecutionQuotes1/core/models/execution.quote.model.ts           |  157 [31m--[m
+ .../core/params/__tests__/add.execution.quote.params.test.ts        |  122 [31m--[m
+ .../ExecutionQuotes1/core/params/add.execution.quote.params.ts      |  172 [31m---[m
+ .../data/api/__tests__/execution.quote.api-service.test.ts          |    8 [31m-[m
+ .../data/api/__tests__/execution.quote.api.endpoints.test.ts        |   14 [31m-[m
+ .../ExecutionQuotes1/data/api/execution.quote.api-service.ts        |   25 [31m-[m
+ .../ExecutionQuotes1/data/api/execution.quote.api.endpoints.ts      |   14 [31m-[m
+ .../data/repositories/__tests__/execution.quote.repository.test.ts  |    8 [31m-[m
+ .../data/repositories/execution.quote.repository.ts                 |   50 [31m-[m
+ src/modules/MainOrganization/ExecutionQuotes1/index.ts              |   14 [31m-[m
+ .../ExecutionQuotes1/presentation/components/ExecutionQuoteAdd.vue  |   79 [31m-[m
+ .../ExecutionQuotes1/presentation/components/ExecutionQuoteForm.vue | 2270 [31m-----------------------------[m
+ .../presentation/components/ExecutionQuoteIndex.vue                 |  118 [31m--[m
+ .../presentation/components/__tests__/ExecutionQuoteAdd.test.ts     |   36 [31m-[m
+ .../presentation/components/__tests__/ExecutionQuoteForm.test.ts    |  107 [31m--[m
+ .../presentation/components/__tests__/ExecutionQuoteIndex.test.ts   |   27 [31m-[m
+ .../controllers/__tests__/execution.quote.controller.test.ts        |    8 [31m-[m
+ .../presentation/controllers/execution.quote.controller.ts          |   77 [31m-[m
+ 35 files changed, 1322 insertions(+), 3531 deletions(-)

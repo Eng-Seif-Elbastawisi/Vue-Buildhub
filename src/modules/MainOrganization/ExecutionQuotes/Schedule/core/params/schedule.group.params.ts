@@ -16,16 +16,7 @@ export default class ScheduleGroupParams extends ScheduleOwnerParams {
     },
     stages: {
       required: true,
-      custom: (selections: ProjectTimelineStageParams[]) =>
-        selections.every(
-          (selection) =>
-            validId(selection.quoteStageId) &&
-            selection.children.every(validId) &&
-            new Set(selection.children).size === selection.children.length,
-        ) &&
-        new Set(selections.map((selection) => selection.quoteStageId)).size === selections.length &&
-        new Set(selections.flatMap((selection) => selection.children)).size ===
-          selections.flatMap((selection) => selection.children).length,
+
     },
   });
   public title: string;
