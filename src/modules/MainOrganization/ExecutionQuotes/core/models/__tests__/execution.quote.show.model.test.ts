@@ -124,6 +124,8 @@ describe('ExecutionQuoteShowModel', () => {
           id: 94,
           stageId: 129,
           subStageId: 150,
+          totalPrice: 819,
+          clientPrice: null,
           items: [
             expect.objectContaining({
               id: 176,

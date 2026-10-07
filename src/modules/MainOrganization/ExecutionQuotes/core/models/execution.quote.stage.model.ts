@@ -1,6 +1,7 @@
 import TitleInterface from '@/base/Data/Models/titleInterface';
 
 import ExecutionQuoteStageItemModel from './execution.quote.stage-item.model';
+import ExecutionQuoteSubStageModel from './execution.quote.sub.stage.model';
 
 export default class ExecutionQuoteStageModel {
   public readonly id?: number;
@@ -9,8 +10,7 @@ export default class ExecutionQuoteStageModel {
   public readonly stageId?: number;
   public readonly subStageId?: number;
   public readonly stage?: TitleInterface<number>;
-  public readonly subStage?: TitleInterface<number>;
-  public readonly items: ExecutionQuoteStageItemModel[];
+  public readonly subStage?: ExecutionQuoteSubStageModel[];
   public readonly clientPrice?: number;
   public readonly percentage?: number;
   public readonly totalPrice?: number;
@@ -23,8 +23,7 @@ export default class ExecutionQuoteStageModel {
     stageId?: number;
     subStageId?: number;
     stage?: TitleInterface<number>;
-    subStage?: TitleInterface<number>;
-    items?: ExecutionQuoteStageItemModel[];
+    subStage?: ExecutionQuoteSubStageModel[];
     clientPrice?: number;
     percentage?: number;
     totalPrice?: number;
@@ -37,7 +36,6 @@ export default class ExecutionQuoteStageModel {
     this.subStageId = data.subStageId;
     this.stage = data.stage;
     this.subStage = data.subStage;
-    this.items = data.items ?? [];
     this.clientPrice = data.clientPrice;
     this.percentage = data.percentage;
     this.totalPrice = data.totalPrice;
@@ -47,58 +45,31 @@ export default class ExecutionQuoteStageModel {
   }
 
   static fromJson(
-    quoteStage: Record<string, unknown>,
-    stageGroup: Record<string, unknown> = quoteStage,
+    data: Record<string, unknown | null | undefined | number | Record<string, unknown>[] | Record<string, unknown>>,
   ): ExecutionQuoteStageModel {
-    const stage = quoteStage.stage as Record<string, unknown> | undefined;
-    const subStage = (stageGroup.sub_stage ?? quoteStage.sub_stage) as
-      Record<string, unknown> | undefined;
-    const items = Array.isArray(stageGroup.items ?? quoteStage.items)
-      ? ((stageGroup.items ?? quoteStage.items) as Record<string, unknown>[])
-      : [];
-    const stageId = stage?.id ?? quoteStage.stage_id;
-    const subStageId = subStage?.id ?? stageGroup.sub_stage_id ?? quoteStage.sub_stage_id;
-    const clientPrice = stageGroup.client_price ?? quoteStage.client_price;
-    const percentage = stageGroup.percentage ?? quoteStage.percentage;
+    const stage = data.stage as Record<string, unknown> | undefined;
+    const subStages = data.sub_stages as Record<string, unknown>[];
 
     return new ExecutionQuoteStageModel({
-      id: quoteStage.id == null ? undefined : Number(quoteStage.id),
-      quoteId: quoteStage.quote_id == null ? undefined : Number(quoteStage.quote_id),
-      projectId: quoteStage.project_id == null ? undefined : Number(quoteStage.project_id),
-      stageId: stageId == null ? undefined : Number(stageId),
-      subStageId: subStageId == null ? undefined : Number(subStageId),
+      id: data.id == null ? undefined : Number(data.id),
+      quoteId: data.quote_id == null ? undefined : Number(data.quote_id),
+      projectId: data.project_id == null ? undefined : Number(data.project_id),
+      stageId: data.stage_id == null ? undefined : Number(data.stage_id),
+      subStageId: data.sub_stage_id == null ? undefined : Number(data.sub_stage_id),
       stage: stage
         ? new TitleInterface<number>({
-            id: Number(stage.id),
-            title: stage.title as string | undefined,
-          })
+          id: Number(stage.id),
+          title: stage.title as string | undefined,
+        })
         : undefined,
-      subStage: subStage
-        ? new TitleInterface<number>({
-            id: Number(subStage.id),
-            title: subStage.title as string | undefined,
-          })
-        : undefined,
-      items: items.map(ExecutionQuoteStageItemModel.fromJson),
-      clientPrice: clientPrice == null ? undefined : Number(clientPrice),
-      percentage: percentage == null ? undefined : Number(percentage),
-      totalPrice: stageGroup.total_price == null ? undefined : Number(stageGroup.total_price),
-      createdAt: (stageGroup.created_at ?? quoteStage.created_at) as string | undefined,
+      subStage: subStages.length > 0
+        ? subStages.map((subStage) => ExecutionQuoteSubStageModel.fromJson(subStage))
+        : [],
+      clientPrice: data.client_price as number | undefined,
+      percentage: data.percentage as number | undefined,
+      totalPrice: data.total_price as number | undefined,
+      createdAt: data.created_at as string | undefined,
     });
   }
 
-  static fromList(rawStages: unknown): ExecutionQuoteStageModel[] {
-    if (!Array.isArray(rawStages)) return [];
-
-    return (rawStages as Record<string, unknown>[]).flatMap((quoteStage) => {
-      const stageGroups =
-        Array.isArray(quoteStage.sub_stages) && quoteStage.sub_stages.length
-          ? (quoteStage.sub_stages as Record<string, unknown>[])
-          : [quoteStage];
-
-      return stageGroups.map((stageGroup) =>
-        ExecutionQuoteStageModel.fromJson(quoteStage, stageGroup),
-      );
-    });
-  }
 }

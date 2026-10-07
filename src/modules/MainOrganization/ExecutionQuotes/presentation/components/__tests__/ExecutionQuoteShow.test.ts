@@ -112,6 +112,36 @@ describe('ExecutionQuoteShow', () => {
     expect(wrapper.get('[role="status"]').attributes('aria-busy')).toBe('true');
   });
 
+  it('shows an unset stage client price as a placeholder', async () => {
+    const response = itemQuoteResponse();
+    showRequest.mockResolvedValue({
+      ...response,
+      data: {
+        ...response.data,
+        data: {
+          ...response.data.data,
+          quote_stages: response.data.data.quote_stages.map((quoteStage) => ({
+            ...quoteStage,
+            client_price: null,
+          })),
+        },
+      },
+    });
+
+    const wrapper = mount(ExecutionQuoteShow, {
+      global: {
+        mocks: { $t: (key: string) => key },
+        stubs: { RouterLink: routerLinkStub },
+      },
+    });
+    await flushPromises();
+
+    const clientPriceBadge = wrapper
+      .findAll('.execution-quote-show__stage-badge')
+      .find((badge) => badge.text().includes('execution_quote.client_stage_price'));
+    expect(clientPriceBadge?.get('strong').text()).toBe('—');
+  });
+
   it('shows the quote returned by the show endpoint', async () => {
     historyRequest.mockResolvedValue({
       statusCode: 200,
