@@ -8,4 +8,5 @@ export class ContractorApiEndpoints extends BaseEndpoints {
   readonly store = this.url('store_contractor');
   readonly update = this.url('update_contractor');
   readonly delete = this.url('delete_contractor');
+  readonly deleteStage = this.url('delete_contractor_stage');
 }

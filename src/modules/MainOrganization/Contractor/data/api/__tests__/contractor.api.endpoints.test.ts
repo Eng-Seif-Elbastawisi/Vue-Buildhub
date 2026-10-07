@@ -10,6 +10,7 @@ describe('ContractorApiEndpoints', () => {
       endpoints.update,
       endpoints.show,
       endpoints.delete,
+      endpoints.deleteStage,
     ]).toEqual(
       [
         'fetch_contractors',
@@ -17,6 +18,7 @@ describe('ContractorApiEndpoints', () => {
         'update_contractor',
         'show_contractor',
         'delete_contractor',
+        'delete_contractor_stage',
       ].map((path) => expect.stringContaining(`/organization/${path}`)),
     );
   });

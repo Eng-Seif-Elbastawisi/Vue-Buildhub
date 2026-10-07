@@ -2977,6 +2977,9 @@
   "Contractor.update": "Update contractor",
   "Contractor.show": "Show",
   "Contractor.delete_confirm": "Are you sure you want to remove this contractor?",
+  "Contractor.remove_stage_title": "Remove contractor stage",
+  "Contractor.remove_stage_confirm": "Remove {stage} from {contractor}? Only this stage will be removed from the contractor.",
+  "Contractor.remove_stage": "Remove {stage}",
   "Contractor.empty_title": "No contractors yet",
   "Contractor.empty_description": "Add the first contractor to assign main stages"
 }
