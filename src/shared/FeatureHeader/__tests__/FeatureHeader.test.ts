@@ -1,5 +1,6 @@
 import { beforeEach, describe, it, expect, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
+import ar from '@/locales/ar.json';
 import FeatureHeader from '../FeatureHeader.vue';
 
 const { featureRoute, mockRoute } = vi.hoisted(() => {
@@ -39,6 +40,9 @@ const globalConfig = {
 
 describe('FeatureHeader.vue', () => {
   beforeEach(() => {
+    featureRoute.name = 'some-route';
+    featureRoute.path = '/feature';
+    featureRoute.meta.breadcrumb = 'Feature';
     mockRoute.name = 'some-route';
     mockRoute.path = '/feature';
   });
@@ -115,5 +119,21 @@ describe('FeatureHeader.vue', () => {
     expect(wrapper.find('.page-header-icon__accent').exists()).toBe(true);
     expect(wrapper.find('.page-header__title').exists()).toBe(true);
     expect(wrapper.find('.page-header__subtitle').exists()).toBe(true);
+  });
+
+  it('uses the shared animated box icon and add accent on Add Warehouse', () => {
+    featureRoute.name = 'Add Warehouse';
+    featureRoute.path = '/organization/warehouse/add';
+    featureRoute.meta.breadcrumb = 'Add Warehouse';
+    mockRoute.name = 'Add Warehouse';
+    mockRoute.path = '/organization/warehouse/add';
+
+    const wrapper = mount(FeatureHeader, { global: globalConfig });
+
+    expect(wrapper.find('.feature-header-container--page-intro').exists()).toBe(true);
+    expect(wrapper.find('.standard-form-header-icon[data-icon-kind="box"]').exists()).toBe(true);
+    expect(wrapper.find('.page-header-icon__accent').exists()).toBe(true);
+    expect(wrapper.find('.page-header__title').text()).toBe('Add warehouse');
+    expect(ar['Add Warehouse']).toBe('إضافة مستودع');
   });
 });

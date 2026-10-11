@@ -320,6 +320,16 @@ describe('sidebarSections', () => {
     );
   });
 
+  it('shows Warehouse only in the Organization menu', () => {
+    const warehouse = sidebarSections
+      .flatMap((section) => section.items)
+      .find((sidebarItem) => sidebarItem.path === '/warehouse');
+
+    expect(warehouse).toEqual(
+      expect.objectContaining({ labelKey: 'sidebar.warehouse', roles: ['organization'] }),
+    );
+  });
+
   it('uses the organization Contractor count for its badge, including zero and missing values', () => {
     const contractorBadge = (counts: Parameters<typeof getSidebarSectionsWithCounts>[0]) =>
       getSidebarSectionsWithCounts(counts)
