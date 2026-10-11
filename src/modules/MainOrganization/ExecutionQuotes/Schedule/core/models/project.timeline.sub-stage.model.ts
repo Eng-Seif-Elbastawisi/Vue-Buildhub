@@ -35,8 +35,8 @@ export default class ProjectTimelineSubStageModel {
     const payload = responseObject(value);
     const subStage = mappedLabel(payload.sub_stage);
     if (
-      typeof payload.id !== 'number' ||
-      !validId(payload.id) ||
+      typeof payload.quote_sub_stage_id !== 'number' ||
+      !validId(payload.quote_sub_stage_id) ||
       !subStage ||
       typeof subStage.title !== 'string' ||
       (payload.created_at !== undefined &&
@@ -45,7 +45,7 @@ export default class ProjectTimelineSubStageModel {
     )
       throw new Error('schedule.invalid_response');
     return new ProjectTimelineSubStageModel({
-      subStageId: payload.id,
+      subStageId: payload.quote_sub_stage_id,
       title: subStage.title,
       subStage,
       stage: mappedLabel(payload.stage),

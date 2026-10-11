@@ -28,8 +28,8 @@ export default class ProjectTimelineStageModel {
     const payload = responseObject(value);
     const label = mappedLabel(payload.stage);
     if (
-      typeof payload.id !== 'number' ||
-      !validId(payload.id) ||
+      typeof payload.quote_stage_id !== 'number' ||
+      !validId(payload.quote_stage_id) ||
       !label ||
       typeof label.title !== 'string' ||
       !Array.isArray(payload.children) ||
@@ -40,7 +40,7 @@ export default class ProjectTimelineStageModel {
       throw new Error('schedule.invalid_response');
     // Use the QuoteStage association ID, rather than the nested master Stage ID.
     return new ProjectTimelineStageModel({
-      quoteStageId: payload.id,
+      quoteStageId: payload.quote_stage_id,
       title: label.title,
       stage: label,
       subStage: mappedLabel(payload.sub_stage),
