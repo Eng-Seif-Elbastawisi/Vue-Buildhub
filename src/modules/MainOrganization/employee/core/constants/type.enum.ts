@@ -8,6 +8,8 @@ export const EmployeeType = {
   PRICING_RESPONSIBLE: 4,
   REVIEWER: 5,
   TEAM_LEADER: 6,
+  SITE_ENGINEER : 7,
+  PROJECT_MANAGER: 8
 } as const;
 
 export type EmployeeType = (typeof EmployeeType)[keyof typeof EmployeeType];

@@ -36,6 +36,9 @@
     new TitleInterface<EmployeeType>({ id: EmployeeType.PRICING_RESPONSIBLE, title: t('employee.pricing_responsible') }),
     new TitleInterface<EmployeeType>({ id: EmployeeType.REVIEWER, title: t('employee.reviewer') }),
     new TitleInterface<EmployeeType>({ id: EmployeeType.TEAM_LEADER, title: t('employee.team_leader') }),
+    new TitleInterface<EmployeeType>({ id: EmployeeType.SITE_ENGINEER, title: t('employee.site_engineer') }),
+    new TitleInterface<EmployeeType>({ id: EmployeeType.PROJECT_MANAGER, title: t('employee.project_manager') }),
+
   ]);
   const selectedEmployeeType = ref<TitleInterface<EmployeeType> | null>(
     new TitleInterface<EmployeeType>({

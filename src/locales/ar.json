@@ -2245,6 +2245,8 @@
   "employee.pricing_responsible": "مسؤول التسعير",
   "employee.seller": "البائع",
   "employee.engineer": "المهندس",
+  "employee.site_engineer": "مهندس موقع",
+  "employee.project_manager": "مدير مشروع",
   "employee.employee": "الموظف",
   "employee.form_title": "نموذج الموظف",
   "employee.form_description": "وصف نموذج الموظف",
