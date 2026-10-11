@@ -176,7 +176,7 @@ it('rejects known QuoteStage/SubStage mismatches', async () => {
       {
         id: 20,
         stage: { id: 99, title: 'Master Stage' },
-        sub_stages: [{ sub_stage: { id: 11, title: 'Child' } }],
+        sub_stages: [{ id: 11, sub_stage: { id: 99, title: 'Child' } }],
       },
     ],
   });
@@ -271,7 +271,7 @@ it('does not assign an old-owner overview or report a stale reorder success', as
   expect(controller.mutationState.value.data).toBeNull();
   expect(move).toHaveBeenCalledOnce();
 });
-it('uses QuoteStage IDs and existing SubStage IDs rather than shared Stage IDs', async () => {
+it('uses direct QuoteStage and child record IDs while displaying master labels', async () => {
   const owner = ExecutionQuoteShowModel.fromJson({
     id: 101,
     quote_stages: [
@@ -286,7 +286,9 @@ it('uses QuoteStage IDs and existing SubStage IDs rather than shared Stage IDs',
   await controller.lookup(null);
   await controller.lookup(103);
   expect(controller.lookups.value.get(null)?.data?.[0]?.id).toBe(103);
-  expect(controller.lookups.value.get(103)?.data?.[0]?.id).toBe(12);
+  expect(controller.lookups.value.get(103)?.data?.[0]?.id).toBe(987);
+  expect(controller.lookups.value.get(103)?.data?.[0]?.title).toBe('First Fix');
+  expect(controller.childLabels.value.has(12)).toBe(false);
   expect(controller.lookups.value.get(null)?.data?.[0]?.id).not.toBe(500);
 });
 

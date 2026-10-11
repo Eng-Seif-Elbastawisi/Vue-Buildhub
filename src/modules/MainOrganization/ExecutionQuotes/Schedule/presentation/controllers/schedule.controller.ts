@@ -246,13 +246,12 @@ export default class ScheduleController extends BaseController<ScheduleGroupMode
         );
       else if (association.id === parentId) {
         for (const child of association.subStage ?? []) {
-          const subStage = child.subStage;
-          if (subStage?.id === undefined || !validId(subStage.id)) continue;
+          if (child.id === undefined || !validId(child.id)) continue;
           labels.set(
-            subStage.id,
-            TitleModel.fromMap({ id: subStage.id, title: subStage.title ?? '' }),
+            child.id,
+            TitleModel.fromMap({ id: child.id, title: child.subStage?.title ?? '' }),
           );
-          this.childParents.set(subStage.id, association.id);
+          this.childParents.set(child.id, association.id);
         }
       }
     }
