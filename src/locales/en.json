@@ -3032,7 +3032,7 @@
     "owner_error": "Could not load this Quote.",
     "unauthorized": "You do not have access to this Quote or Schedule.",
     "saved_refresh_failed": "Saved successfully, but the refreshed schedule could not be loaded. Reload the saved data before making another change.",
-    "weekday_0": "Sunday",
+    "weekday_7": "Sunday",
     "weekday_1": "Monday",
     "weekday_2": "Tuesday",
     "weekday_3": "Wednesday",

@@ -25,7 +25,7 @@ All requests use existing base URL, organization/mainportal prefixes, authentica
 
 `ProjectTimelineStageParams.toMap()` serializes `{ quote_stage_id: this.quoteStageId, children: [...this.children] }`. The parent serializes each nested selection through `toMap()`. Update submits the complete editable form without an ordering field. The group has one duration. `TaskDurationType` from TaskAssignment is reused: DAY=1, WEEK=2, MONTH=3, YEAR=4. The supplied value 4 therefore displays the existing Year label; no Schedule-specific enum or hour conversion exists.
 
-`holidays` accepts zero, one or two unique weekday values. At the limit, selected options remain enabled. Empty selections remain explicit `[]`. Requests contain no `planned_start_date`, `days_off` or `working_days`. Dates remain date-only input strings; no default date/weekend, timezone conversion or calendar calculation is introduced.
+`holidays` accepts zero, one or two unique weekday values using the confirmed backend mapping: Monday=1, Tuesday=2, Wednesday=3, Thursday=4, Friday=5, Saturday=6, Sunday=7. Zero is not a weekday value. At the limit, selected options remain enabled. Empty selections remain explicit `[]`. Requests contain no `planned_start_date`, `days_off` or `working_days`. Dates remain date-only input strings; no default date/weekend, timezone conversion or calendar calculation is introduced.
 
 ## Response mapping and live wiring
 

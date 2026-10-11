@@ -1,5 +1,6 @@
 import { ClassValidation } from '@/base/Presentation/Utils/classValidation';
 import ScheduleOwnerParams from './schedule.owner.params';
+import { weekdays } from '../constants/schedule.constants';
 
 export function validDateOnly(date: string): boolean {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return false;
@@ -13,7 +14,7 @@ export default class ScheduleSettingsParams extends ScheduleOwnerParams {
       custom: (days: number[]) =>
         days.length <= 2 &&
         new Set(days).size === days.length &&
-        days.every((day) => Number.isInteger(day) && day >= 0 && day <= 6),
+        days.every((day) => weekdays.some((weekday) => weekday === day)),
     },
   });
   public startDate: string;

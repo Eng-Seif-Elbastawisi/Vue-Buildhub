@@ -6,7 +6,8 @@ export const durationTypes = Object.values(TaskDurationType);
 export function isDurationType(value: unknown): value is TaskDurationType {
   return typeof value === 'number' && durationTypes.some((unit) => unit === value);
 }
-export const weekdays = [0, 1, 2, 3, 4, 5, 6] as const;
+// Backend weekday values: Monday=1 through Sunday=7.
+export const weekdays = [1, 2, 3, 4, 5, 6, 7] as const;
 export function validId(id: number): boolean {
   return Number.isSafeInteger(id) && id > 0;
 }

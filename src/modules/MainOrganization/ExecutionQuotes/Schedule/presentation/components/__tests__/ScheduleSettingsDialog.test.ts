@@ -1,8 +1,19 @@
 import { flushPromises, mount } from '@vue/test-utils';
-import { expect, it } from 'vitest';
+import { afterEach, beforeEach, expect, it, vi } from 'vitest';
+import NetworkService from '@/base/Core/NetworkStructure/networking/networkService';
+import { transportProbe } from '../../../data/api/__tests__/schedule.transport.fixtures';
 import ScheduleSettingsDialog from '../ScheduleSettingsDialog.vue';
 import ScheduleSettingsModel from '../../../core/models/schedule.settings.model';
 import ScheduleController from '../../controllers/schedule.controller';
+beforeEach(() => {
+  const response = transportProbe();
+  response.data = { status: false, message: 'Save rejected' };
+  vi.spyOn(NetworkService.instance, 'post').mockResolvedValue(response);
+});
+afterEach(() => {
+  ScheduleController.getInstance().release();
+  vi.restoreAllMocks();
+});
 const globals = {
   mocks: { $t: (key: string) => key },
   stubs: { Dialog: { template: '<section><slot /></section>' } },
@@ -17,9 +28,11 @@ it('keeps selected weekdays enabled at the limit and allows deselection and zero
     global: globals,
   });
   const checkboxes = wrapper.findAll<HTMLInputElement>('input[type="checkbox"]');
-  const sunday = wrapper.get<HTMLInputElement>('input[value="0"]');
+  const sunday = wrapper.get<HTMLInputElement>('input[value="7"]');
   const friday = wrapper.get<HTMLInputElement>('input[value="5"]');
   const saturday = wrapper.get<HTMLInputElement>('input[value="6"]');
+  expect(wrapper.find('input[value="0"]').exists()).toBe(false);
+  expect(sunday.element.closest('label')?.textContent).toContain('schedule.weekday_7');
   expect(sunday.element.disabled).toBe(true);
   expect(friday.element.disabled).toBe(false);
   await friday.setValue(false);

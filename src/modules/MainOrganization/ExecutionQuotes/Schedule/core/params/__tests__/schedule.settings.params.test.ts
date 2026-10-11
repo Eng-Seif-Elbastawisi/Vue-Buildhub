@@ -1,6 +1,6 @@
 import { expect, it } from 'vitest';
 import ScheduleSettingsParams from '../schedule.settings.params';
-it.each([[], [5], [5, 6]].map((days) => [days]))(
+it.each([[], [1], [2], [3], [4], [5], [6], [7], [5, 6], [1, 7]].map((days) => [days]))(
   'accepts zero to two days off and sends no working_days: %j',
   (days) => {
     const params = new ScheduleSettingsParams(101, '2026-10-09', days);
@@ -12,7 +12,7 @@ it.each([[], [5], [5, 6]].map((days) => [days]))(
     });
   },
 );
-it.each([[1, 2, 3], [5, 5], [-1], [7], [1.5]].map((days) => [days]))(
+it.each([[1, 2, 3], [5, 5], [7, 7], [-1], [0], [8], [1.5]].map((days) => [days]))(
   'rejects invalid days off without truncating: %j',
   (days) => {
     const params = new ScheduleSettingsParams(101, '2026-10-09', days);
