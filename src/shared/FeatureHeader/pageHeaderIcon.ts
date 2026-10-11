@@ -58,6 +58,7 @@ const sectionIcons: Record<string, PageHeaderIconKind> = {
   term: 'document',
   terms: 'document',
   'task-assignment': 'document',
+  warehouse: 'box',
 };
 
 export function getPageHeaderIcon(path: string): PageHeaderIconKind | undefined {

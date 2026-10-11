@@ -4,6 +4,7 @@ import { SuppliersRoutes } from './Suppliers';
 import { ClientRoutes } from './client';
 import { EmployeeRoutes } from './employee';
 import { SpecializationRoutes } from './specialization';
+import { WarehouseRoutes } from './warehouse';
 import { ContractorRoutes } from './contractor';
 import { TermRoutes } from './term';
 import { ProjectRoutes } from './project';
@@ -29,6 +30,7 @@ export const dashboardRoutes: RouteRecordRaw[] = [
   ...ClientRoutes,
   ...EmployeeRoutes,
   ...SpecializationRoutes,
+  ...WarehouseRoutes,
   ...ContractorRoutes,
   ...TermRoutes,
   ...ProjectRoutes,

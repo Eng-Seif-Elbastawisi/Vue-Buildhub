@@ -13,6 +13,7 @@ describe('page header icon routing', () => {
     ['/organization/location-city/add', 'location', 'add'],
     ['/organization/contractors/add', 'people', 'add'],
     ['/organization/contractors/edit/9', 'people', 'edit'],
+    ['/organization/warehouse/add', 'box', 'add'],
   ])('maps %s to its entity and action', (path, icon, action) => {
     expect(getPageHeaderIcon(path)).toBe(icon);
     expect(getPageHeaderAction(path)).toBe(action);
