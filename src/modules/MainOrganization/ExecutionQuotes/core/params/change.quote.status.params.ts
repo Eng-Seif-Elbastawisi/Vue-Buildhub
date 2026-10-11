@@ -1,7 +1,6 @@
 import type Params from '@/base/Core/Params/params';
 import {
   ClassValidation,
-  type ValidationResult,
   ValidationError,
 } from '@/base/Presentation/Utils/classValidation';
 import { type QuoteStatusEnum } from '../constants/quote.status.enum';
@@ -33,7 +32,7 @@ export default class ChangeQuoteStatusParams implements Params {
     };
   }
 
-  validate(): ValidationResult {
+  validate() {
     return ChangeQuoteStatusParams.validation.validate(this);
   }
 
