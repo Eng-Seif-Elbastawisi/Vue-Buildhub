@@ -2,6 +2,7 @@ import type { Ref, ComputedRef } from 'vue';
 import { ref, computed } from 'vue';
 import {
   DataFailed,
+  DataCancelled,
   DataEmpty,
   DataInitial,
   DataLoading,
@@ -315,6 +316,11 @@ export default abstract class BaseController<T, TList = T[]> {
     return this.fetchList();
   }
 
+  // Scoped controllers override this to reject stale mutation responses before state or feedback changes.
+  protected captureMutationScope(): () => boolean {
+    return () => true;
+  }
+
   // =========================================================================
   // SINGLE ITEM OPERATIONS (show, create, update, delete)
   // =========================================================================
@@ -354,6 +360,7 @@ export default abstract class BaseController<T, TList = T[]> {
    * Create new item.
    */
   async create(params: Params, options?: ApiCallOptions): Promise<DataState<T> | undefined> {
+    const isCurrent = this.captureMutationScope();
     this._lastOperation = { type: 'create', params, options };
 
     // console.log("[Controller] Creating item with params:", params);
@@ -376,6 +383,7 @@ export default abstract class BaseController<T, TList = T[]> {
         this.mergeOptions(options),
         this.config.autoRetry,
       );
+      if (!isCurrent()) return new DataCancelled();
       this.setItemState(result);
 
       this.handleItemResponse(result, 'Created successfully');
@@ -384,12 +392,13 @@ export default abstract class BaseController<T, TList = T[]> {
       }
       return result;
     } catch (error: any) {
+      if (!isCurrent()) return new DataCancelled();
       const failed = new DataFailed<T>({ error });
       this.setItemState(failed);
       this.handleErrorResponse(failed);
       return failed;
     } finally {
-      this.hideLoadingDialog();
+      if (isCurrent()) this.hideLoadingDialog();
     }
   }
 
@@ -397,6 +406,7 @@ export default abstract class BaseController<T, TList = T[]> {
    * Update existing item.
    */
   async update(params?: Params, options?: ApiCallOptions): Promise<DataState<T> | undefined> {
+    const isCurrent = this.captureMutationScope();
     this._lastOperation = { type: 'update', params, options };
 
     this.setItemLoading();
@@ -417,6 +427,7 @@ export default abstract class BaseController<T, TList = T[]> {
         this.mergeOptions(options),
         this.config.autoRetry,
       );
+      if (!isCurrent()) return new DataCancelled();
       this.setItemState(result);
       this.handleItemResponse(result, 'Updated successfully');
       if (result instanceof DataSuccess) {
@@ -424,12 +435,13 @@ export default abstract class BaseController<T, TList = T[]> {
       }
       return result;
     } catch (error: any) {
+      if (!isCurrent()) return new DataCancelled();
       const failed = new DataFailed<T>({ error });
       this.setItemState(failed);
       this.handleErrorResponse(failed);
       return failed;
     } finally {
-      this.hideLoadingDialog();
+      if (isCurrent()) this.hideLoadingDialog();
     }
   }
 
@@ -437,6 +449,7 @@ export default abstract class BaseController<T, TList = T[]> {
    * Delete item by ID.
    */
   async delete(params?: Params, options?: ApiCallOptions): Promise<DataState<void> | undefined> {
+    const isCurrent = this.captureMutationScope();
     this._lastOperation = { type: 'delete', params, options };
 
     this.setItemLoading();
@@ -452,6 +465,7 @@ export default abstract class BaseController<T, TList = T[]> {
     }
     try {
       const result = await this.repository.delete(params, this.mergeOptions(options));
+      if (!isCurrent()) return new DataCancelled();
       const errorHandled =
         result instanceof DataFailed &&
         notifyDeleteOutcome({
@@ -468,6 +482,7 @@ export default abstract class BaseController<T, TList = T[]> {
         if (notifyDeleteOutcome({ status: 'success' })) {
           await new Promise<void>((resolve) => setTimeout(resolve, deleteSuccessMotionDuration()));
         }
+        if (!isCurrent()) return new DataCancelled();
         if (this.config.showSuccessDialog) {
           dialogManager.deleteSuccess(result.message || 'construction_states.delete_success');
         }
@@ -487,6 +502,7 @@ export default abstract class BaseController<T, TList = T[]> {
 
       return result;
     } catch (error: any) {
+      if (!isCurrent()) return new DataCancelled();
       const failed = new DataFailed<void>({ error });
       const errorHandled = notifyDeleteOutcome({
         status: 'error',
@@ -495,7 +511,7 @@ export default abstract class BaseController<T, TList = T[]> {
       if (!errorHandled) this.handleErrorResponse(failed);
       return failed;
     } finally {
-      if (displayGlobalLoading) this.hideLoadingDialog();
+      if (displayGlobalLoading && isCurrent()) this.hideLoadingDialog();
     }
   }
 

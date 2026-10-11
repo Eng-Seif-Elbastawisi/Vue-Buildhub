@@ -1,0 +1,6 @@
+interface:
+  display_name: 'BuildHub Design System'
+  short_description: 'Default BuildHub controls and employee CRUD patterns'
+  default_prompt: "Use $buildhub-design-system to apply BuildHub's default controls, form cards, headers and base CRUD patterns."
+policy:
+  allow_implicit_invocation: true

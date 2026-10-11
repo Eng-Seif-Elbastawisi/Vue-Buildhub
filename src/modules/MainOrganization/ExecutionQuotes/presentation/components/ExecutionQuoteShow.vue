@@ -13,6 +13,7 @@
   import { dialogManager } from '@/base/Presentation/Dialogs/dialog.manager';
   import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
   import AppButton from '@/shared/HelpersComponents/AppButton.vue';
+  import ScheduleShortcut from '../../Schedule/presentation/components/ScheduleShortcut.vue';
 
   import {
     ExecutionQuoteItemSourceEnum,
@@ -205,8 +206,8 @@
       : (quoteItem.itemableType ?? '—');
   };
 
-  const formatNumber = (rawNumber: number | undefined) => {
-    if (rawNumber === undefined) return '—';
+  const formatNumber = (rawNumber: number | null | undefined) => {
+    if (rawNumber == null) return '—';
 
     return new Intl.NumberFormat(locale.value, {
       minimumFractionDigits: 0,
@@ -396,6 +397,7 @@
     <DataStatusBuilder :controller="state" :on-retry="fetchQuote">
       <template #success="{ data: quote }">
         <div class="execution-quote-show__content">
+          <ScheduleShortcut :quote-id="quoteId" />
           <section class="execution-quote-show__hero">
             <div class="execution-quote-show__hero-copy">
               <div class="execution-quote-show__badges">
@@ -667,6 +669,7 @@
                   </AppButton>
                 </div>
 
+                <!-- {{ console.log(quote.quoteStages) }} -->
                 <Accordion
                   v-if="quote.quoteStages.length"
                   v-model:value="activeQuoteStages"
@@ -697,7 +700,7 @@
                               {{ $t('execution_quote.show.sub_stage') }}:
                             </span>
                             <strong class="execution-quote-show__stage-badge-value">
-                              {{ stage.subStage?.title }}
+                              {{ stage.subStage?.map((item) => item.subStage?.title).join(', ') }}
                             </strong>
                           </span>
                           <span
@@ -734,7 +737,11 @@
                       </div>
                     </AccordionHeader>
 
-                    <AccordionContent class="execution-quote-show__stage-content">
+                    <AccordionContent
+                      class="execution-quote-show__stage-content"
+                      v-for="sub in stage.subStage"
+                      :key="sub.id"
+                    >
                       <div class="execution-quote-show__stage-actions">
                         <AppButton
                           class="execution-quote-show__add-item-button"
@@ -749,7 +756,13 @@
                         </AppButton>
                       </div>
 
-                      <div v-if="stage.items.length" class="execution-quote-show__items-table-wrap">
+                      <div class="execution-quote-show__sub-stage-header">
+                        <div>
+                          <span>{{ $t('execution_quote.show.sub_stage') }}</span>
+                          <h3>{{ sub.subStage?.title }}</h3>
+                        </div>
+                      </div>
+                      <div v-if="sub.items.length" class="execution-quote-show__items-table-wrap">
                         <table class="execution-quote-show__items-table">
                           <thead>
                             <tr>
@@ -765,11 +778,11 @@
                           </thead>
                           <tbody>
                             <tr
-                              v-for="quoteItem in stage.items"
+                              v-for="quoteItem in sub.items"
                               :key="quoteItem.id ?? quoteItem.itemableId"
                             >
                               <td>
-                                <strong>{{ quoteItem.itemable?.title ?? '—' }}</strong>
+                                {{ quoteItem.itemable?.title ?? '—' }}
                               </td>
                               <td>
                                 {{ itemSourceLabel(quoteItem) }}
@@ -1106,6 +1119,15 @@
     border-color: var(--PrimaryColor-alpha-30);
     box-shadow: var(--shadow-md);
     transform: translateY(-2px);
+  }
+
+  .execution-quote-show__sub-stage-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+    border-block-end: 1px solid var(--border-weak);
+    background: var(--bg-section);
   }
 
   .execution-quote-show__grid {
@@ -1568,12 +1590,6 @@
     background: var(--bg-section);
     color: var(--subtitle-color);
     font-size: var(--xs-size);
-  }
-
-  .execution-quote-show__items-table td:first-child {
-    display: grid;
-    gap: 0.25rem;
-    white-space: normal;
   }
 
   .execution-quote-show__items-table tbody td {

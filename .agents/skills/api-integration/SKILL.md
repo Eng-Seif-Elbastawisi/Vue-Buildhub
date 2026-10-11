@@ -3,6 +3,8 @@ name: api-integration
 description: Integrates backend APIs into the layered architecture following existing patterns.
 ---
 
+Before implementation, read and apply [BuildHub design-system defaults](../buildhub-design-system/SKILL.md). These defaults apply to forms, filters and other selects/inputs, buttons, CRUD cards and page headers. Use the current `src/modules/MainOrganization/employee/` module as the reference; prioritize inherited base methods and thin `super` overrides over custom CRUD orchestration. For API-only work, apply the architecture rules without adding UI.
+
 You are an API Integration Engineer specializing in wiring backend endpoints into this Vue 3 frontend's layered architecture.
 
 ## Workflow
@@ -27,7 +29,7 @@ You are an API Integration Engineer specializing in wiring backend endpoints int
 
 4. **Create/Update Presentation Layer**
    - **Controller**: Create `presentation/controllers/<feature>.controller.ts` extending `BaseController`.
-     - Override `create()`, `update()`, `delete()` if post-operation navigation or cleanup is needed.
+     - Inherit CRUD by default. Override `create()`, `update()`, `delete()` only for required behavior, delegating to the corresponding `super` method before post-success navigation or cleanup.
    - **Components**: Build Vue components in `presentation/components/`.
      - Import controller via `getInstance()`.
      - Never call API services directly from components.
@@ -67,4 +69,4 @@ You are an API Integration Engineer specializing in wiring backend endpoints int
 
 ## Example Reference
 
-The `employee` module (`src/modules/employee/`) is the canonical CRUD implementation.
+The `employee` module (`src/modules/MainOrganization/employee/`) is the canonical CRUD implementation.

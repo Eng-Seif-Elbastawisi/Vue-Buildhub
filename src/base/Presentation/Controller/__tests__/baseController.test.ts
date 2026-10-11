@@ -1,6 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   DataEmpty,
+  DataCancelled,
+  DataLoading,
   DataFailed,
   DataSuccess,
   type DataState,
@@ -78,6 +80,13 @@ class TestLoadingMutationController extends TestMutationController {
   }
 }
 
+class ScopedMutationController extends TestMutationController {
+  scopeCurrent = true;
+  protected captureMutationScope() {
+    return () => this.scopeCurrent;
+  }
+}
+
 const validParams: Params = {
   toMap: () => ({}),
   validate: () => ({ isValid: true, errors: [] }),
@@ -148,6 +157,19 @@ describe('BaseController mutation notifications', () => {
     expect(mutationListener).toHaveBeenCalledTimes(3);
     expect(deleteOutcomes).toEqual([{ status: 'success' }]);
   });
+
+  it.each(['create', 'update', 'delete'] as const)(
+    'discards a stale %s before assigning state or notifying subscribers',
+    async (operation) => {
+      const controller = new ScopedMutationController(new DataSuccess({ data: { id: 1 } }));
+      const request = controller[operation](validParams);
+      controller.scopeCurrent = false;
+      expect(await request).toBeInstanceOf(DataCancelled);
+      expect(controller.itemState.value).toBeInstanceOf(DataLoading);
+      expect(mutationListener).not.toHaveBeenCalled();
+      expect(deleteOutcomes).toEqual([]);
+    },
+  );
 
   it('does not notify subscribers when a mutation fails', async () => {
     const controller = new TestMutationController(

@@ -4,8 +4,13 @@ import type * as VueRouterModule from 'vue-router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import NetworkService from '@/base/Core/NetworkStructure/networking/networkService';
-import { DataInitial } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
+import {
+  DataInitial,
+  DataFailed,
+} from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
 
+import ScheduleController from '../../../Schedule/presentation/controllers/schedule.controller';
+import ScheduleRepository from '../../../Schedule/data/repositories/schedule.repository';
 import ExecutionQuoteApiService from '../../../data/api/execution.quote.api-service';
 import ExecutionQuoteController from '../../controllers/execution.quote.controller';
 import ExecutionQuoteShow from '../ExecutionQuoteShow.vue';
@@ -87,6 +92,10 @@ describe('ExecutionQuoteShow', () => {
   const postRequest = vi.spyOn(NetworkService.instance, 'post');
 
   beforeEach(() => {
+    ScheduleController.getInstance().release();
+    vi.spyOn(ScheduleRepository.getInstance(), 'readOverview').mockResolvedValue(
+      new DataFailed({}),
+    );
     controller.setItemState(new DataInitial());
     controller.quoteStatusHistoryState.value = new DataInitial([]);
     historyRequest.mockReset();
@@ -110,6 +119,36 @@ describe('ExecutionQuoteShow', () => {
 
     expect(wrapper.text()).toContain('execution_quote.show.title');
     expect(wrapper.get('[role="status"]').attributes('aria-busy')).toBe('true');
+  });
+
+  it('shows an unset stage client price as a placeholder', async () => {
+    const response = itemQuoteResponse();
+    showRequest.mockResolvedValue({
+      ...response,
+      data: {
+        ...response.data,
+        data: {
+          ...response.data.data,
+          quote_stages: response.data.data.quote_stages.map((quoteStage) => ({
+            ...quoteStage,
+            client_price: null,
+          })),
+        },
+      },
+    });
+
+    const wrapper = mount(ExecutionQuoteShow, {
+      global: {
+        mocks: { $t: (key: string) => key },
+        stubs: { RouterLink: routerLinkStub },
+      },
+    });
+    await flushPromises();
+
+    const clientPriceBadge = wrapper
+      .findAll('.execution-quote-show__stage-badge')
+      .find((badge) => badge.text().includes('execution_quote.client_stage_price'));
+    expect(clientPriceBadge?.get('strong').text()).toBe('—');
   });
 
   it('shows the quote returned by the show endpoint', async () => {

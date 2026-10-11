@@ -163,15 +163,19 @@ export default abstract class BaseRepository<T, TList = T[]> {
   /**
    * Fetch single item by ID.
    */
-  async show(params?: Params, options?: ApiCallOptions , isAutoRetry?: boolean): Promise<DataState<T>> {
+  async show(
+    params?: Params,
+    options?: ApiCallOptions,
+    isAutoRetry?: boolean,
+  ): Promise<DataState<T>> {
     if (options?.useStaticData ?? env.useStaticData) {
       return new DataSuccess<T>({ data: this.mockItem });
     }
 
-    const retryFn = () => this.show(params, options , isAutoRetry);
+    const retryFn = () => this.show(params, options, isAutoRetry);
 
     try {
-      const httpResponse = await this.apiService.show(params, options ,isAutoRetry);
+      const httpResponse = await this.apiService.show(params, options, isAutoRetry);
       return this.processItemResponse(httpResponse, retryFn);
     } catch (error) {
       return this.handleError(error, retryFn);
@@ -428,7 +432,7 @@ export default abstract class BaseRepository<T, TList = T[]> {
   /**
    * Process response for void operations (delete).
    */
-  private processVoidResponse(httpResponse: ApiResponse): DataState<void> {
+  protected processVoidResponse(httpResponse: ApiResponse): DataState<void> {
     const isSuccess = this.isSuccessStatus(httpResponse.statusCode, httpResponse.data);
 
     if (isSuccess) {
