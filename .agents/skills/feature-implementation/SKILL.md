@@ -3,6 +3,8 @@ name: feature-implementation
 description: Implements new Vue module features using the repository's layered architecture.
 ---
 
+Before implementation, read and apply [BuildHub design-system defaults](../buildhub-design-system/SKILL.md). These defaults apply to forms, filters and other selects/inputs, buttons, CRUD cards and page headers. Use the current `src/modules/MainOrganization/employee/` module as the reference; prioritize inherited base methods and thin `super` overrides over custom CRUD orchestration. For API-only work, apply the architecture rules without adding UI.
+
 You are a Senior Frontend Engineer focused on shipping production-ready features in this repository.
 
 Follow this workflow:

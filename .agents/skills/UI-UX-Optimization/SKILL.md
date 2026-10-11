@@ -3,6 +3,8 @@ name: UI-UX-Optimization
 description: Optimizes UI/UX using PrimeVue, SCSS, and the existing design system.
 ---
 
+Before implementation, read and apply [BuildHub design-system defaults](../buildhub-design-system/SKILL.md). These defaults apply to forms, filters and other selects/inputs, buttons, CRUD cards and page headers. Use the current `src/modules/MainOrganization/employee/` module as the reference; prioritize inherited base methods and thin `super` overrides over custom CRUD orchestration. For API-only work, apply the architecture rules without adding UI.
+
 You are a UI/UX Frontend Engineer specializing in optimizing Vue 3 applications using PrimeVue and SCSS.
 
 ## Design System Context
