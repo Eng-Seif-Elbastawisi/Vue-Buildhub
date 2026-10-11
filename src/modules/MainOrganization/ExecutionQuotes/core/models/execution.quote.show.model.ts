@@ -62,10 +62,7 @@ export default class ExecutionQuoteShowModel {
         .filter((stageId): stageId is number => stageId !== undefined),
     );
     this.quoteStagesCount = mainStageIds.size || this.quoteStages.length;
-    this.quoteItemsCount = this.quoteStages.reduce(
-      (itemsTotal, quoteStage) => itemsTotal + quoteStage.items.length,
-      0,
-    );
+    this.quoteItemsCount = 0;
     this.attachments = data.attachments ?? [];
     this.totalQuotePrice = data.totalQuotePrice;
     this.clientQuotePrice = data.clientQuotePrice;
@@ -107,18 +104,22 @@ export default class ExecutionQuoteShowModel {
         : undefined,
       quoteType: Number.isFinite(quoteTypeId)
         ? new TitleInterface<number>({
-            id: quoteTypeId,
-            title: quoteType?.title as string | undefined,
-          })
+          id: quoteTypeId,
+          title: quoteType?.title as string | undefined,
+        })
         : undefined,
       priceEmployee: json.price_employee
         ? EmployeeModel.fromJson(json.price_employee as Record<string, unknown>)
         : undefined,
-      quoteStages: ExecutionQuoteStageModel.fromList(json.quote_stages),
+      quoteStages: json.quote_stages
+        ? (json.quote_stages as Record<string, unknown>[]).map((quoteStage) =>
+          ExecutionQuoteStageModel.fromJson(quoteStage),
+        )
+        : [],
       attachments: Array.isArray(json.attachments)
         ? (json.attachments as Record<string, unknown>[]).map(
-            ExecutionQuoteAttachmentModel.fromJson,
-          )
+          ExecutionQuoteAttachmentModel.fromJson,
+        )
         : [],
       totalQuotePrice: json.total_quote_price == null ? undefined : Number(json.total_quote_price),
       clientQuotePrice: clientQuotePrice == null ? undefined : Number(clientQuotePrice),

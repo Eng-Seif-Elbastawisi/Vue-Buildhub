@@ -40,3 +40,27 @@ describe('execution quote routes', () => {
     expect(resolvedRoute.params.id).toBe('28');
   });
 });
+
+for (const prefix of ['organization', 'mainportal']) {
+  const scheduleRouter = createRouter({
+    history: createMemoryHistory(),
+    routes: [
+      {
+        path: `/${prefix}`,
+        component: { template: '<router-view />' },
+        children: executionQuoteRoutes,
+      },
+    ],
+  });
+  it.each([
+    ['/schedule', 'Quote Schedule', undefined],
+    ['/schedule/add', 'Add Schedule Group', undefined],
+    ['/schedule/201', 'Show Schedule Group', '201'],
+    ['/schedule/201/edit', 'Edit Schedule Group', '201'],
+  ])(`preserves owner/group params under ${prefix}: %s`, (suffix, name, groupId) => {
+    const route = scheduleRouter.resolve(`/${prefix}/execution-quotes/show/101${suffix}`);
+    expect(route.name).toBe(name);
+    expect(route.params.id).toBe('101');
+    expect(route.params.groupId).toBe(groupId);
+  });
+}

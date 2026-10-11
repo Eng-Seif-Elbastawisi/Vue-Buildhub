@@ -29,7 +29,8 @@
 - Feature modules live in `src/modules/**` and should keep data flow layered: presentation -> repository -> api service (`core/`, `data/`, `presentation/`; some modules also have `domain/` + `useCase/`).
 - Reuse the singleton pattern used across controllers/repositories/api services (`getInstance()`), not ad-hoc new instances.
 - Keep API/network logic out of Vue components; place it in module `data/` layer.
-- `employee` module is the canonical reference implementation for new CRUD modules.
+- `src/modules/MainOrganization/employee/` is the canonical reference for all feature modules and API integrations. Prioritize inherited BaseApiService, BaseRepository and BaseController methods; use thin `super` overrides only when required.
+- Before implementing features, API-connected UI, forms or filters, read [.agents/skills/buildhub-design-system/SKILL.md](.agents/skills/buildhub-design-system/SKILL.md). Defaults: UpdatedCustomInputSelect for selects, `input-wrapper` for inputs, `btn-primary` for primary buttons, `standard-crud-page` for form cards, and the existing `feature-header-container` design.
 
 ## i18n + Styling Constraints From Repo Rules
 

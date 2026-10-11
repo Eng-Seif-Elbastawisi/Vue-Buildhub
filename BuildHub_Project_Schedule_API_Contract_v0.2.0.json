@@ -1,0 +1,704 @@
+{
+  "contract": {
+    "name": "BuildHub Project Schedule (existing Quote module) - API Request Contract",
+    "version": "0.2.0",
+    "status": "draft_for_backend_review",
+    "purpose": "Agree all request payloads for Schedule Group CRUD, sorting and Schedule Settings before frontend integration.",
+    "format": "Human-readable JSON request contract, not an OpenAPI document or Postman collection.",
+    "backend_approval_recorded": false,
+    "scope_owner": "Quote",
+    "owning_frontend_module_observed": "src/modules/MainOrganization/ExecutionQuotes/",
+    "proposed_feature_location": "src/modules/MainOrganization/ExecutionQuotes/Schedule/",
+    "scope_key": "quote_id",
+    "scope_correction": "User clarification: Quote is the Project in this application, not a separate entity linked to it. Project is the business/workspace terminology and Quote is the existing module terminology. The proposed quote_id identifies that same record. This clarification does not introduce another Project or ExecutionProject entity, a second owner ID, or a conversion step for Schedule.",
+    "new_request_count": 8,
+    "source_priority": "Latest user clarifications override the HTML prototype. Proposed transport details are not treated as backend facts.",
+    "reading_instructions": "Only request.body is the payload sent to the API. Contract metadata, field rules and examples are documentation. Example IDs are illustrative, not real records.",
+    "terminology": {
+      "business_name": "Project",
+      "existing_module_name": "Quote",
+      "same_entity": true,
+      "proposed_request_identifier": "quote_id",
+      "identifier_meaning": "ID of the same existing record referred to as both Project and Quote.",
+      "identifier_status": "Retained from the previous draft; exact transport naming remains subject to backend approval.",
+      "scope_limit": "Clarifies this Schedule integration only; does not rename or refactor other existing modules."
+    },
+    "revision_note": "Schedule Settings revision following the latest user agreement: keep planned_start_date as a separate date field; replace the working_days request field with days_off. Allow zero, one or two distinct weekly days off. The other seven operation request bodies and all eight proposed endpoint names and methods are unchanged. Backend approval of transport, enums, response shapes and remaining policies has not been recorded.",
+    "confirmed_settings_decision": {
+      "planned_start_date_retained": true,
+      "weekly_selection": "days_off",
+      "minimum_days_off": 0,
+      "maximum_days_off": 2,
+      "unique_days_required": true,
+      "limit_is_not_an_exact_required_count": true,
+      "keep_entered_planned_date_when_it_is_a_day_off": true
+    }
+  },
+  "scope": {
+    "included": [
+      "Schedule Group index",
+      "Schedule Group show",
+      "Schedule Group create",
+      "Schedule Group update",
+      "Schedule Group delete",
+      "Schedule Group sort",
+      "Schedule Settings read",
+      "Schedule Settings update"
+    ],
+    "excluded": [
+      "Project creation/conversion",
+      "Quote CRUD changes",
+      "Stage CRUD changes",
+      "Per-quotation-item durations",
+      "Client send/approval workflow",
+      "Publish/start-execution workflow",
+      "Tasks, progress reports and all other execution features"
+    ],
+    "existing_dependency": "Reuse the existing Stage module to resolve parent/child records. Selection does not create new stages."
+  },
+  "transport": {
+    "status": "Proposed for these new endpoints, aligned with inspected frontend conventions.",
+    "method": "POST",
+    "method_reason": "The existing BaseApiService defaults CRUD operations, including index/show/delete, to POST with IDs in Params bodies.",
+    "url_template": "{{base_url}}{{scope_prefix}}{{endpoint}}",
+    "variables": {
+      "base_url": "Use the existing application API base URL, including its trailing slash. No production host is embedded in this file.",
+      "scope_prefix": {
+        "observed_frontend_values": [
+          "organization/",
+          "mainportal/"
+        ],
+        "note": "The inspected Quote endpoints select the prefix from the logged-in user type. Backend must confirm which prefixes expose the new Schedule endpoints."
+      }
+    },
+    "headers": {
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    },
+    "authentication": "Reuse existing authenticated API infrastructure. No token or credentials are stored in this contract.",
+    "encoding": "JSON body; preserve nested stages as an array of objects and child as an array of numbers.",
+    "frontend_option": "Use the existing JSON request option where required; do not flatten nested objects or serialize child as a comma-separated string.",
+    "context_rule": "Every new Schedule request includes the proposed quote_id key, identifying the same existing Project/Quote record. Resolve tenant/user authorization on the server; clients do not choose an organization_id in these examples."
+  },
+  "field_contracts": {
+    "quote_id": {
+      "type": "integer",
+      "meaning": "The existing Project/Quote record that owns the schedule; Quote and Project refer to the same entity here.",
+      "status": "Same-entity meaning confirmed by the user. The quote_id wire key is retained from the previous draft and remains subject to backend contract approval.",
+      "proposed_validation": "Required, positive, existing, and accessible to the authenticated caller.",
+      "note": "This identifies the Project as represented by the existing Quote module. It is not a reference to a second quotation alongside another project. The proposed requests use one owner key, quote_id; do not add a separate project_id or execution_project_id for the same owner."
+    },
+    "schedule_group_id": {
+      "type": "integer",
+      "meaning": "The persisted Schedule Group identifier, not a Stage identifier.",
+      "status": "Proposed request key; backend confirmation required.",
+      "proposed_validation": "Required for show/update/delete/sort; must belong to quote_id."
+    },
+    "title": {
+      "type": "string",
+      "meaning": "The Schedule Group title.",
+      "status": "Field name and type confirmed by the user.",
+      "proposed_validation": "Required after trimming whitespace. Maximum length is not specified."
+    },
+    "stages": {
+      "type": "array<object>",
+      "meaning": "Selections from the existing Stage module, not quotation items or new Stage records.",
+      "status": "Object structure and exact stage/child keys confirmed by the user.",
+      "items": {
+        "stage": {
+          "type": "integer",
+          "meaning": "Existing parent Stage ID.",
+          "proposed_validation": "Required and positive; backend verifies access and the selected parent."
+        },
+        "child": {
+          "type": "array<integer>",
+          "meaning": "Selected existing child Stage IDs belonging to this parent.",
+          "proposed_validation": "Key required; positive IDs, no duplicate IDs, and each child belongs to stage.",
+          "empty_array_policy": "Unresolved. Do not interpret [] as all children, parent-only, omitted, or null without agreement."
+        }
+      },
+      "proposed_validation": "At least one selection; consolidate repeated parent selections within one group.",
+      "cross_group_reuse_policy": "Unresolved, including the same parent with different selected children.",
+      "quote_scope_policy": "Backend must confirm whether selections are restricted to stages attached to this quote or can use any accessible Stage records."
+    },
+    "duration": {
+      "type": "number",
+      "meaning": "The duration of the entire group, shared by its selected stages.",
+      "status": "Group-level placement, field name, and type confirmed by the user.",
+      "proposed_validation": "Required, finite, and greater than zero. Decimal precision/step is not agreed.",
+      "note": "Do not send a duration inside stages[] or for each child."
+    },
+    "duration_type": {
+      "type": "string enum",
+      "meaning": "The unit of the group duration.",
+      "status": "An enum is confirmed; this field name and its wire representation are proposed.",
+      "proposed_values": [
+        "hours",
+        "days",
+        "weeks"
+      ],
+      "source": "The prototype uses hours/days/weeks for durationUnit; this contract proposes duration_type for the revised group payload.",
+      "note": "No numeric enum mapping has been supplied. Backend must approve these strings or provide its actual mapping."
+    },
+    "order": {
+      "type": "integer",
+      "meaning": "Destination position for the moved group in this quote schedule.",
+      "status": "Proposed, following the existing Stage reorder request style.",
+      "proposed_validation": "One-based; between 1 and the total number of current groups. This is persisted execution order, not a table sort."
+    },
+    "planned_start_date": {
+      "type": "string|null",
+      "format": "YYYY-MM-DD when set",
+      "meaning": "The overall start date used by this quote schedule.",
+      "status": "Retaining planned_start_date as a separate date-only setting is confirmed by the user. Nullable clearing and whether the field is required at first save remain proposals for backend agreement.",
+      "proposed_validation": "A real calendar date or explicit null to clear it. Empty string is not part of the proposed request contract.",
+      "note": "Date-only value; do not convert it into a timezone-bearing timestamp."
+    },
+    "days_off": {
+      "type": "array<integer>",
+      "meaning": "Weekly nonworking days for the entire Project/Quote schedule, not working-day selections.",
+      "status": "days_off selection, distinct values and a maximum of two are agreed with the user. The integer weekday wire representation below is retained as a backend-review proposal; it is not an approved enum.",
+      "min_items": 0,
+      "max_items": 2,
+      "unique_items": true,
+      "proposed_values": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "proposed_labels": {
+        "0": "Sunday",
+        "1": "Monday",
+        "2": "Tuesday",
+        "3": "Wednesday",
+        "4": "Thursday",
+        "5": "Friday",
+        "6": "Saturday"
+      },
+      "confirmed_rules": [
+        "Accept zero, one or two distinct weekday selections; two is a maximum, not a requirement.",
+        "Reject duplicate values and arrays containing more than two entries.",
+        "Preserve [] as no weekly days off; never replace it with a default weekend.",
+        "Frontend disables unselected weekdays after two selections, but selected weekdays remain deselectable.",
+        "Backend must enforce the limit even when the request bypasses the frontend.",
+        "Working weekdays are the complement of days_off across the seven weekdays."
+      ],
+      "backend_review": "Approve the weekday mapping and initial-settings behavior. No default weekend is prescribed.",
+      "note": "Send days_off only, not a second working_days field. These values are weekdays, not dates or a duration."
+    },
+    "with_pagination": {
+      "type": "integer enum",
+      "proposed_values": [
+        0,
+        1
+      ],
+      "status": "Existing IndexParams request key; support on the new endpoint is proposed.",
+      "meaning": "0 requests the full board; 1 requests a paginated list."
+    },
+    "page": {
+      "type": "integer",
+      "status": "Existing IndexParams request key; support on the new endpoint is proposed.",
+      "proposed_validation": "Positive; default 1. Ignore when with_pagination is 0."
+    },
+    "per_page": {
+      "type": "integer",
+      "status": "Existing IndexParams request key; support on the new endpoint is proposed.",
+      "proposed_validation": "Positive; examples use 20. Backend limit is not specified. Ignore when with_pagination is 0."
+    }
+  },
+  "requests": [
+    {
+      "operation_id": "SCH-01",
+      "name": "Index Schedule Groups",
+      "endpoint_status": "proposed_not_verified_on_backend",
+      "request": {
+        "method": "POST",
+        "url_template": "{{base_url}}{{scope_prefix}}fetch_quote_schedule_groups",
+        "body": {
+          "quote_id": 101,
+          "with_pagination": 0,
+          "page": 1,
+          "per_page": 20
+        }
+      },
+      "required_body_fields": [
+        "quote_id"
+      ],
+      "optional_body_fields": [
+        "with_pagination",
+        "page",
+        "per_page"
+      ],
+      "contract_behavior_for_review": [
+        "Return only groups owned by this quote, in persisted execution order.",
+        "The board uses with_pagination=0 so Earlier/Later operate on the complete sequence.",
+        "Pagination is an optional endpoint capability; the example field names match existing IndexParams.",
+        "An empty quote schedule returns an empty collection, not fabricated groups."
+      ],
+      "response_needed_for_frontend": "An ordered group collection with identifiers, titles, selections, durations and duration types. Supply actual response envelope and pagination examples before integration.",
+      "additional_request_examples": [
+        {
+          "name": "Optional paginated list",
+          "status": "proposed",
+          "body": {
+            "quote_id": 101,
+            "with_pagination": 1,
+            "page": 1,
+            "per_page": 20
+          }
+        }
+      ]
+    },
+    {
+      "operation_id": "SCH-02",
+      "name": "Show Schedule Group",
+      "endpoint_status": "proposed_not_verified_on_backend",
+      "request": {
+        "method": "POST",
+        "url_template": "{{base_url}}{{scope_prefix}}show_quote_schedule_group",
+        "body": {
+          "quote_id": 101,
+          "schedule_group_id": 201
+        }
+      },
+      "required_body_fields": [
+        "quote_id",
+        "schedule_group_id"
+      ],
+      "optional_body_fields": [],
+      "contract_behavior_for_review": [
+        "Check that the group belongs to this quote.",
+        "Read-only operation; used both for details and to restore an edit form."
+      ],
+      "response_needed_for_frontend": "The saved group and its selected parent/child IDs. Confirm whether Stage details are expanded objects or resolved through the existing Stage lookup."
+    },
+    {
+      "operation_id": "SCH-03",
+      "name": "Create Schedule Group",
+      "endpoint_status": "proposed_not_verified_on_backend",
+      "request": {
+        "method": "POST",
+        "url_template": "{{base_url}}{{scope_prefix}}store_quote_schedule_group",
+        "body": {
+          "quote_id": 101,
+          "title": "First Fix Works",
+          "stages": [
+            {
+              "stage": 10,
+              "child": [
+                11,
+                12
+              ]
+            },
+            {
+              "stage": 20,
+              "child": [
+                21
+              ]
+            }
+          ],
+          "duration": 6,
+          "duration_type": "days"
+        }
+      },
+      "required_body_fields": [
+        "quote_id",
+        "title",
+        "stages",
+        "duration",
+        "duration_type"
+      ],
+      "optional_body_fields": [],
+      "contract_behavior_for_review": [
+        "Create one group and its selections together.",
+        "Append the new group to the end of this quote schedule; the client does not submit an order during creation.",
+        "Reuse existing Stage records; do not create stages or alter the quotation source.",
+        "Duration belongs to the group, not to individual selections.",
+        "Prototype-derived proposal: allow saving a group before a planned start date is set; calculated dates remain unavailable."
+      ],
+      "response_needed_for_frontend": "The generated group ID and the persisted group values. Confirm how authoritative schedule dates and summary are refreshed after creation."
+    },
+    {
+      "operation_id": "SCH-04",
+      "name": "Update Schedule Group",
+      "endpoint_status": "proposed_not_verified_on_backend",
+      "request": {
+        "method": "POST",
+        "url_template": "{{base_url}}{{scope_prefix}}update_quote_schedule_group",
+        "body": {
+          "quote_id": 101,
+          "schedule_group_id": 201,
+          "title": "Updated First Fix Works",
+          "stages": [
+            {
+              "stage": 10,
+              "child": [
+                11
+              ]
+            },
+            {
+              "stage": 20,
+              "child": [
+                21
+              ]
+            }
+          ],
+          "duration": 8,
+          "duration_type": "days"
+        }
+      },
+      "required_body_fields": [
+        "quote_id",
+        "schedule_group_id",
+        "title",
+        "stages",
+        "duration",
+        "duration_type"
+      ],
+      "optional_body_fields": [],
+      "contract_behavior_for_review": [
+        "Proposed full-form update: title, stages, duration and duration_type are all supplied.",
+        "Replace this group's stage selections with the submitted collection; do not silently merge removed children back in.",
+        "Keep the same group ID, owning quote and position. Reordering is a separate operation.",
+        "Recalculate current schedule dates when selections or duration affect the schedule."
+      ],
+      "response_needed_for_frontend": "The updated group, plus either refreshed schedule data or a documented instruction to reload the index/settings."
+    },
+    {
+      "operation_id": "SCH-05",
+      "name": "Delete Schedule Group",
+      "endpoint_status": "proposed_not_verified_on_backend",
+      "request": {
+        "method": "POST",
+        "url_template": "{{base_url}}{{scope_prefix}}delete_quote_schedule_group",
+        "body": {
+          "quote_id": 101,
+          "schedule_group_id": 201
+        }
+      },
+      "required_body_fields": [
+        "quote_id",
+        "schedule_group_id"
+      ],
+      "optional_body_fields": [],
+      "contract_behavior_for_review": [
+        "Remove the group from this quote's current schedule after ownership validation.",
+        "Do not delete the Quote, parent Stage records or child Stage records.",
+        "Close any gap in group order and recalculate following dates.",
+        "Preserve historical/approved schedule data where applicable; physical deletion versus soft deletion remains a backend decision."
+      ],
+      "response_needed_for_frontend": "A documented success/error result. Frontend reloads the current quote schedule after successful removal unless a refreshed schedule is returned."
+    },
+    {
+      "operation_id": "SCH-06",
+      "name": "Sort / Move Schedule Group",
+      "endpoint_status": "proposed_not_verified_on_backend",
+      "request": {
+        "method": "POST",
+        "url_template": "{{base_url}}{{scope_prefix}}change_quote_schedule_group_order",
+        "body": {
+          "quote_id": 101,
+          "schedule_group_id": 201,
+          "order": 2
+        }
+      },
+      "required_body_fields": [
+        "quote_id",
+        "schedule_group_id",
+        "order"
+      ],
+      "optional_body_fields": [],
+      "contract_behavior_for_review": [
+        "Proposed single-group move, matching the existing Stage reorder request style but targeting Schedule Groups.",
+        "order is the one-based destination position, not a duration or Stage ID.",
+        "Move the group, shift other affected groups, and save the resulting sequence together.",
+        "Preserve group identities and durations; recalculate affected dates.",
+        "Do not call change_stage_order for this operation: that would reorder the Stage module itself.",
+        "Reject positions outside the complete quote schedule and groups owned by a different quote."
+      ],
+      "response_needed_for_frontend": "The authoritative saved order or a success response after which the frontend reloads all groups.",
+      "move_example": {
+        "before_group_ids": [
+          201,
+          202,
+          203
+        ],
+        "request_body": {
+          "quote_id": 101,
+          "schedule_group_id": 201,
+          "order": 2
+        },
+        "after_group_ids": [
+          202,
+          201,
+          203
+        ]
+      }
+    },
+    {
+      "operation_id": "SCH-07",
+      "name": "Read Schedule Settings",
+      "endpoint_status": "proposed_not_verified_on_backend",
+      "request": {
+        "method": "POST",
+        "url_template": "{{base_url}}{{scope_prefix}}show_quote_schedule_settings",
+        "body": {
+          "quote_id": 101
+        }
+      },
+      "required_body_fields": [
+        "quote_id"
+      ],
+      "optional_body_fields": [],
+      "contract_behavior_for_review": [
+        "Read the schedule-level settings for this quote.",
+        "No Schedule Group ID is needed.",
+        "Backend must define the read result when no settings have been saved yet; do not infer a start date from today."
+      ],
+      "response_needed_for_frontend": "The persisted planned_start_date and days_off, with exact response shape and missing-settings behavior. Do not treat missing settings as an explicitly saved empty days_off array."
+    },
+    {
+      "operation_id": "SCH-08",
+      "name": "Update Schedule Settings",
+      "endpoint_status": "proposed_not_verified_on_backend",
+      "request": {
+        "method": "POST",
+        "url_template": "{{base_url}}{{scope_prefix}}update_quote_schedule_settings",
+        "body": {
+          "quote_id": 101,
+          "planned_start_date": "2026-10-05",
+          "days_off": [
+            5,
+            6
+          ]
+        }
+      },
+      "required_body_fields": [
+        "quote_id",
+        "planned_start_date",
+        "days_off"
+      ],
+      "optional_body_fields": [],
+      "contract_behavior_for_review": [
+        "Proposed full settings save for the same Project/Quote record; no per-group calendar is introduced.",
+        "Confirmed selection rule: accept zero, one or two distinct days off, and reject more than two or duplicates.",
+        "An empty days_off array explicitly means all seven weekdays are working days; it is not a missing value.",
+        "Weekday encoding Sunday=0 through Saturday=6 is proposed and still requires backend approval.",
+        "Do not accept or send working_days alongside days_off in this revised draft.",
+        "Retain planned_start_date as the entered calendar date. If it is a day off, the first calculated group start moves to the next working day without overwriting the entered date.",
+        "Proposed date clearing: explicit null clears the planned start. Nullability/clear behavior still requires backend agreement; do not coerce missing fields into null.",
+        "Recalculate current group dates after a start-date or days-off change; return saved settings or document the required refresh sequence.",
+        "Backend must define first-save creation and the read result before settings exist. Do not invent a weekend or a current-date start."
+      ],
+      "response_needed_for_frontend": "Saved planned_start_date and days_off, plus recalculated schedule data or the documented index refresh flow. Success and validation/error response bodies have not yet been provided.",
+      "additional_request_examples": [
+        {
+          "name": "One weekly day off",
+          "status": "weekday_encoding_proposed_count_rule_confirmed",
+          "body": {
+            "quote_id": 101,
+            "planned_start_date": "2026-10-05",
+            "days_off": [
+              5
+            ]
+          }
+        },
+        {
+          "name": "No weekly days off",
+          "status": "zero_selections_allowed_by_agreed_limit",
+          "body": {
+            "quote_id": 101,
+            "planned_start_date": "2026-10-05",
+            "days_off": []
+          }
+        },
+        {
+          "name": "Clear planned start while retaining the days-off selection",
+          "status": "proposed_null_semantics_require_backend_approval",
+          "body": {
+            "quote_id": 101,
+            "planned_start_date": null,
+            "days_off": [
+              5,
+              6
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "existing_stage_lookup_requests": {
+    "status": "Observed frontend endpoint/params patterns, not live backend verification. These are dependencies, not new Schedule endpoints.",
+    "note": "The inspected IndexStageParams does not define quote_id. Do not silently add a quote filter to these existing requests; agree how quote-specific eligibility will be resolved.",
+    "requests": [
+      {
+        "name": "Read root stages",
+        "request": {
+          "method": "POST",
+          "url_template": "{{base_url}}{{scope_prefix}}fetch_stages",
+          "body": {
+            "with_pagination": 0,
+            "page": 1,
+            "per_page": 20,
+            "parent_id": null
+          }
+        },
+        "note": "The frontend serializer preserves parent_id=null. Verify that the backend uses it to return roots."
+      },
+      {
+        "name": "Read children of a selected parent stage",
+        "request": {
+          "method": "POST",
+          "url_template": "{{base_url}}{{scope_prefix}}fetch_stages",
+          "body": {
+            "with_pagination": 0,
+            "page": 1,
+            "per_page": 20,
+            "parent_id": 10
+          }
+        },
+        "note": "Reuse the existing Stage model and its actual mapper. These are existing Stage IDs, not quote-stage or quotation-item association IDs."
+      }
+    ]
+  },
+  "shared_behavior_for_backend_review": {
+    "request_value_semantics": "Required fields cannot be omitted. Optional fields are omitted when unused. Only explicitly nullable fields accept null. Empty arrays are not rewritten or expanded automatically.",
+    "ownership_and_access": "Check quote access on every request and verify group ownership against the supplied quote_id. Validate Stage access and child-parent relationships on write.",
+    "source_records": "Group edits, deletes and sorting affect schedule associations only, never the Stage master records or Quote source quantities/prices.",
+    "calculated_values": {
+      "status": "Proposed server-authoritative calculation; backend agreement required.",
+      "not_accepted_in_group_write_bodies": [
+        "calculated_start_date",
+        "calculated_finish_date",
+        "working_duration",
+        "stage_title",
+        "child_title"
+      ],
+      "sequencing": "Groups run sequentially. All selected scope in a group shares its explicit duration. The next group starts on the next working day after the prior group finishes.",
+      "working_day_count": "Prototype behavior counts the first working date as day 1 and advances a non-working planned start to the next working day.",
+      "prototype_unit_rules_to_confirm": {
+        "days": "Round up positive duration to whole working days.",
+        "hours": "Divide by 8 and round up to whole working days; this is not an hourly timeline.",
+        "weeks": "Prototype rule to confirm: multiply duration by the number of working weekdays. Under the new days-off setting this count is 7 minus the number of distinct days_off, then round up to whole working days."
+      },
+      "adaptation_note": "These calculations are derived from the prototype but applied to a group duration per the user correction. They are not a confirmed backend algorithm.",
+      "unset_start": "Proposed behavior: groups remain editable, calculated dates stay unavailable, and no synthetic current-date start is introduced.",
+      "empty_schedule": "After the last group is removed, clear the calculated finish rather than leaving a stale date.",
+      "weekly_calendar": "Use all seven weekdays except the saved days_off values. [] means seven working weekdays. The maximum of two days off leaves at least five working weekdays; do not apply the prototype six-day fallback.",
+      "planned_vs_calculated_start": "Keep the saved planned_start_date unchanged. When it falls on a day off, the calculated first-group start is the next working day."
+    },
+    "atomicity": "Proposed: save group fields/selections together, save reorder shifts together, and do not expose partially applied mutations.",
+    "history": "Retain applicable audit/version history; modifying the current plan must not overwrite an existing frozen original schedule.",
+    "write_retries": "Do not automatically retry non-idempotent creates without an agreed backend deduplication policy. No new idempotency field is assumed.",
+    "cross_quote_ui_state": "After successful mutations, refresh data for the same quote. Responses from a previously selected quote must not replace the current quote schedule."
+  },
+  "frontend_integration_rules": {
+    "reference": "User-supplied updated api-integration skill in this conversation.",
+    "layering": "Component -> BaseController -> BaseRepository -> BaseApiService -> backend. Endpoints and network calls remain in data/.",
+    "request_mapping": "After searching for compatible existing params, map each stages[] object through a named ScheduleStageParams subparams class and its toMap(); child remains number[].",
+    "response_mapping": "Use named mapped submodels for nested response objects and object arrays. Reuse existing models only when their fields, meaning and mapping behavior match.",
+    "stage_reuse": "Reuse src/modules/shared/Stages/ and its actual mapper; do not substitute the Stage reorder endpoint for Schedule Group sorting.",
+    "public_integration": "Follow existing Quote routing/view wrappers, module exports, constructor and singleton patterns.",
+    "validation_before_completion": [
+      "npm run type-check",
+      "npm run test:run",
+      "Inspect network payloads against the approved contract"
+    ],
+    "current_delivery": "Revised request contract and implementation plan only. No application module has been changed, no live backend requests executed, and no application build/type-check/tests run for this delivery.",
+    "settings_mapping": "Serialize planned_start_date and days_off through Schedule Settings params. days_off remains a primitive weekday array, not subparams objects; stages[] uses subparams. Validate at most two distinct days off in frontend and backend."
+  },
+  "backend_confirmation_required": [
+    {
+      "id": "DEC-01",
+      "topic": "Endpoint names and transport",
+      "question": "Approve or replace the eight endpoint names, POST method, JSON encoding, supported prefixes and proposed identifier keys."
+    },
+    {
+      "id": "DEC-02",
+      "topic": "Duration enum",
+      "question": "Confirm duration_type and hours/days/weeks string values, or provide the actual numeric/string enum. Also define accepted duration precision."
+    },
+    {
+      "id": "DEC-03",
+      "topic": "Stage selection semantics",
+      "question": "What does child:[] mean, including a parent with no children? Can a parent or child appear in multiple groups? Do not infer answers from the prototype quotation-item rules."
+    },
+    {
+      "id": "DEC-04",
+      "topic": "Eligible Quote/Stage scope",
+      "question": "Which Quote states/versions permit Schedule operations, and must selected stages belong to that quote? Specify how the existing Stage lookup resolves any quote-specific eligibility."
+    },
+    {
+      "id": "DEC-05",
+      "topic": "Settings wire representation and first-save behavior",
+      "question": "Approve days_off integer weekday mapping (proposed Sunday=0 through Saturday=6), date null-to-clear policy, date requiredness at first save, one settings resource per Project/Quote, and missing/read/first-save behavior. Provide any intended default explicitly; this contract does not prescribe a weekend.",
+      "agreed_with_user": "Keep planned_start_date separately. Select days_off, allowing 0 to 2 distinct values. Keep the entered planned date even when calculated work starts on a later working day."
+    },
+    {
+      "id": "DEC-06",
+      "topic": "Update and sort semantics",
+      "question": "Approve full-form group replacement and single-group one-based move with atomic shifting. Define how stale concurrent writes/reorders are handled; no revision field has been invented."
+    },
+    {
+      "id": "DEC-07",
+      "topic": "Date calculation and history",
+      "question": "Confirm calculation ownership, rounding/calendar rules, behavior without a start date, and protection of existing frozen schedules when current groups/settings are changed."
+    },
+    {
+      "id": "DEC-08",
+      "topic": "Responses and errors",
+      "question": "Provide success and failure examples for all eight operations, including list pagination, expanded versus ID-only stages, validation paths, authorization, missing records and conflict responses. This file defines requests; response wire schemas are not yet agreed."
+    }
+  ],
+  "sources": [
+    {
+      "id": "USER-SCOPE",
+      "kind": "user_clarification",
+      "detail": "Latest user clarification: \"quote is project i mean this\". Project and Quote refer to the same existing entity for this feature, not two separate owners."
+    },
+    {
+      "id": "USER-GROUP",
+      "kind": "user_clarification",
+      "detail": "Schedule Group contains title:string, stages:[{stage:number, child:number[]}], duration:number, and an enum duration type. Stages come from the existing module."
+    },
+    {
+      "id": "USER-SETTINGS",
+      "kind": "user_clarification",
+      "detail": "User agreed to retain planned_start_date as a separate date field and change the weekday control to days_off, with a maximum of two distinct selections (zero, one or two allowed). The UI retains the entered planned date and calculates the next working start when necessary."
+    },
+    {
+      "id": "PROTOTYPE",
+      "kind": "uploaded_file",
+      "file": "BuildHub_Business_Complete_Prototype_v7_GROUP_SCHEDULE_BUILDER.html",
+      "locations": [
+        "ensureScheduleCore; lines 100-113",
+        "durationToDays/calculateSchedule; lines 127-132",
+        "group builder; lines 138-140",
+        "Schedule index; line 188",
+        "group save/sort/delete/settings; lines 209-212"
+      ],
+      "limit": "The prototype calls the workspace Project and assigns durations to quotation items. The user clarified that Quote is this Project in the existing app and replaced the selection payload with existing Stage parent/child IDs and one group-level duration. The prototype contains no verified backend Schedule endpoints. The prototype selects working days; the latest user agreement replaces that UI/request with days_off, maximum two. The weekday transport mapping and hour/week conversion policy remain proposals."
+    },
+    {
+      "id": "CODEBASE",
+      "kind": "inspected_archive_files",
+      "file": "buildhub.zip",
+      "paths": [
+        "src/base/Data/ApiService/baseApiService.ts",
+        "src/base/Data/Endpoints/BaseEndpoints.ts",
+        "src/base/Core/Params/indexParams.ts",
+        "src/modules/MainOrganization/ExecutionQuotes/data/api/execution.quote.api.endpoints.ts",
+        "src/modules/MainOrganization/ExecutionQuotes/core/params/show.execution.quote.params.ts",
+        "src/modules/shared/Stages/data/api/stage.api.endpoints.ts",
+        "src/modules/shared/Stages/core/params/index.stage.params.ts",
+        "src/modules/shared/Stages/core/params/change.stage.order.params.ts",
+        "src/modules/shared/Stages/core/models/stage.model.ts"
+      ],
+      "limit": "Source inspection only; no live endpoint availability or backend response behavior was tested."
+    }
+  ]
+}

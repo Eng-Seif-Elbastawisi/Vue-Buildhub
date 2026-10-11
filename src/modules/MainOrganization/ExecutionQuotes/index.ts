@@ -28,3 +28,5 @@ export { default as ExecutionQuoteRepository } from './data/repositories/executi
 export { default as ExecutionQuoteApiService } from './data/api/execution.quote.api-service';
 export { default as ExecutionQuoteController } from './presentation/controllers/execution.quote.controller';
 export { default as ExecutionQuoteShow } from './presentation/components/ExecutionQuoteShow.vue';
+
+export * from './Schedule';
