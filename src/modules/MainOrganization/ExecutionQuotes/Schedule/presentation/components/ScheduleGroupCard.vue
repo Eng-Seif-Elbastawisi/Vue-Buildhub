@@ -20,11 +20,22 @@
       }}</span>
     </div>
     <h3>{{ group.title }}</h3>
+    <dl class="schedule__card-dates">
+      <div>
+        <dt>{{ $t('schedule.start') }}</dt>
+        <dd>{{ group.startDate ?? $t('schedule.not_available') }}</dd>
+      </div>
+      <i class="pi pi-arrow-right" aria-hidden="true"></i>
+      <div>
+        <dt>{{ $t('schedule.finish') }}</dt>
+        <dd>{{ group.finishDate ?? $t('schedule.not_available') }}</dd>
+      </div>
+    </dl>
     <p class="schedule__duration">
-      <span>{{ $t('schedule.duration') }}</span
-      ><strong>{{ group.duration }} {{ $t(getTypeNameKey(group.durationType)) }}</strong>
+      <span>{{ $t('schedule.duration') }}</span>
+      <strong>{{ group.duration }} {{ $t(getTypeNameKey(group.durationType)) }}</strong>
     </p>
-    <ul>
+    <ul class="schedule__scope">
       <li v-for="stage in group.stages" :key="stage.quoteStageId">
         {{ stage.title }}
         <ul>
@@ -33,26 +44,23 @@
       </li>
     </ul>
     <p class="schedule__scope-count">
+      <i class="pi pi-sitemap" aria-hidden="true"></i>
       {{ $t('schedule.stage_count', { count: group.stages.length }) }}
-    </p>
-    <p>
-      {{ $t('schedule.start') }}: {{ group.startDate ?? $t('schedule.not_available') }} ·
-      {{ $t('schedule.finish') }}: {{ group.finishDate ?? $t('schedule.not_available') }}
     </p>
     <div class="schedule__actions">
       <AppButton :to="`${basePath}/${group.id}`" :disabled="busy">{{
         $t('schedule.show')
       }}</AppButton>
-      <AppButton :to="`${basePath}/${group.id}/edit`" :disabled="busy">{{
+      <AppButton :to="`${basePath}/${group.id}/edit`" theme="secondary" :disabled="busy">{{
         $t('schedule.edit')
       }}</AppButton>
       <AppButton theme="danger" :disabled="busy" @click="$emit('delete')">{{
         $t('schedule.delete')
       }}</AppButton>
-      <AppButton :disabled="busy || !earlier" @click="$emit('move', -1)">{{
+      <AppButton theme="secondary" :disabled="busy || !earlier" @click="$emit('move', -1)">{{
         $t('schedule.earlier')
       }}</AppButton>
-      <AppButton :disabled="busy || !later" @click="$emit('move', 1)">{{
+      <AppButton theme="secondary" :disabled="busy || !later" @click="$emit('move', 1)">{{
         $t('schedule.later')
       }}</AppButton>
     </div>

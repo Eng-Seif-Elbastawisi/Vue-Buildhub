@@ -96,7 +96,8 @@
 <template>
   <section class="schedule" :class="{ 'standard-crud-page': mode === 'add' || mode === 'edit' }">
     <header class="schedule__header">
-      <div>
+      <div class="schedule__owner">
+        <i class="pi pi-building" aria-hidden="true"></i>
         <p>
           {{ $t('schedule.quote_context', { id: quoteId }) }} {{ ownerState.data?.project?.title }}
         </p>
@@ -128,13 +129,16 @@
         <AppButton @click="load">{{ $t('schedule.reload') }}</AppButton>
       </p>
       <template v-if="mode === 'index'">
-        <div class="schedule__actions">
+        <div class="schedule__actions schedule__tools">
           <AppButton :to="`${indexRoute}/add`" :disabled="controller.busy.value">{{
             $t('schedule.create')
           }}</AppButton>
-          <AppButton :disabled="controller.busy.value" @click="showSettings = true">{{
-            $t('schedule.settings')
-          }}</AppButton>
+          <AppButton
+            theme="secondary"
+            :disabled="controller.busy.value"
+            @click="showSettings = true"
+            >{{ $t('schedule.settings') }}</AppButton
+          >
         </div>
         <dl class="schedule__summary">
           <div>
@@ -170,7 +174,9 @@
           {{ $t(pageState.error.displayMessage) }}
           <AppButton @click="load">{{ $t('schedule.retry') }}</AppButton>
         </p>
-        <p v-else-if="groups?.length === 0">{{ $t('schedule.empty') }}</p>
+        <p v-else-if="groups?.length === 0" class="schedule__empty">
+          <i class="pi pi-calendar-plus" aria-hidden="true"></i>{{ $t('schedule.empty') }}
+        </p>
         <template v-if="groups">
           <ScheduleSequenceBoard
             :groups="groups"
@@ -204,7 +210,7 @@
       <p v-else-if="mode === 'edit' && group" role="alert">
         {{ $t('schedule.selection_identity_pending') }}
       </p>
-      <article v-else-if="mode === 'show' && group" class="schedule__panel">
+      <article v-else-if="mode === 'show' && group" class="schedule__panel schedule__detail">
         <h2>{{ group.title }}</h2>
         <p>{{ group.duration }} {{ $t(getTypeNameKey(group.durationType)) }}</p>
         <ul>

@@ -29,7 +29,13 @@
   }
 </script>
 <template>
-  <Dialog :visible="true" modal :header="$t('schedule.settings')" @update:visible="emit('close')">
+  <Dialog
+    class="schedule-settings"
+    :visible="true"
+    modal
+    :header="$t('schedule.settings')"
+    @update:visible="emit('close')"
+  >
     <form class="schedule__form" @submit.prevent="save">
       <!-- dsaasd -->
       <div class="field-group input-wrapper">

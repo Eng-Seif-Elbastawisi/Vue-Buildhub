@@ -69,73 +69,79 @@
   }
 </script>
 <template>
-  <section
-    class="schedule__board"
-    :aria-label="$t('schedule.sequence')"
-    :aria-busy="controller.busy.value"
-  >
-    <p v-if="controller.busy.value" class="schedule__board-status" role="status">
-      {{ $t('schedule.saving_order') }}
-    </p>
-    <p v-if="announcement" class="schedule__board-status" role="status">
-      {{ $t('schedule.order_saved') }}
-    </p>
-    <template v-for="(entry, position) in displayed" :key="entry.id">
+  <section class="schedule__sequence">
+    <header class="schedule__section-heading">
+      <h2>{{ $t('schedule.sequence') }}</h2>
+      <i class="pi pi-sort-alt" aria-hidden="true"></i>
+    </header>
+    <div
+      class="schedule__board"
+      :aria-label="$t('schedule.sequence')"
+      :aria-busy="controller.busy.value"
+    >
+      <p v-if="controller.busy.value" class="schedule__board-status" role="status">
+        {{ $t('schedule.saving_order') }}
+      </p>
+      <p v-if="announcement" class="schedule__board-status" role="status">
+        {{ $t('schedule.order_saved') }}
+      </p>
+      <template v-for="(entry, position) in displayed" :key="entry.id">
+        <div
+          class="schedule__drop-slot"
+          :class="{ 'schedule__drop-slot--active': draggedId !== null && insertion === position }"
+          :data-slot="position"
+          @dragover.prevent="insertion = position"
+          @drop.prevent="drop(position)"
+        >
+          <span v-if="draggedId !== null && insertion === position">{{
+            $t('schedule.drop_here')
+          }}</span>
+        </div>
+        <div
+          class="schedule__board-card"
+          :class="{ 'schedule__board-card--dragging': draggedId === entry.id }"
+          @dragover.prevent="insertion = position + 1"
+          @drop.prevent="drop(position + 1)"
+        >
+          <ScheduleGroupCard
+            :group="entry"
+            :sequence="position + 1"
+            :base-path="basePath"
+            :busy="controller.busy.value"
+            :earlier="controller.canMove(entry.id, -1)"
+            :later="controller.canMove(entry.id, 1)"
+            @move="step(entry.id, $event)"
+            @delete="$emit('delete', entry.id)"
+          >
+            <template #handle>
+              <button
+                type="button"
+                class="schedule__drag-handle"
+                :draggable="controller.completeSequence.value && !controller.busy.value"
+                :disabled="!controller.completeSequence.value || controller.busy.value"
+                :aria-label="$t('schedule.reorder_label', { title: entry.title })"
+                @dragstart="start(entry.id, $event)"
+                @dragend="finish"
+              >
+                <i class="pi pi-bars" aria-hidden="true"></i>
+              </button>
+            </template>
+          </ScheduleGroupCard>
+        </div>
+      </template>
       <div
         class="schedule__drop-slot"
-        :class="{ 'schedule__drop-slot--active': draggedId !== null && insertion === position }"
-        :data-slot="position"
-        @dragover.prevent="insertion = position"
-        @drop.prevent="drop(position)"
+        :data-slot="displayed.length"
+        :class="{
+          'schedule__drop-slot--active': draggedId !== null && insertion === displayed.length,
+        }"
+        @dragover.prevent="insertion = displayed.length"
+        @drop.prevent="drop(displayed.length)"
       >
-        <span v-if="draggedId !== null && insertion === position">{{
+        <span v-if="draggedId !== null && insertion === displayed.length">{{
           $t('schedule.drop_here')
         }}</span>
       </div>
-      <div
-        class="schedule__board-card"
-        :class="{ 'schedule__board-card--dragging': draggedId === entry.id }"
-        @dragover.prevent="insertion = position + 1"
-        @drop.prevent="drop(position + 1)"
-      >
-        <ScheduleGroupCard
-          :group="entry"
-          :sequence="position + 1"
-          :base-path="basePath"
-          :busy="controller.busy.value"
-          :earlier="controller.canMove(entry.id, -1)"
-          :later="controller.canMove(entry.id, 1)"
-          @move="step(entry.id, $event)"
-          @delete="$emit('delete', entry.id)"
-        >
-          <template #handle>
-            <button
-              type="button"
-              class="schedule__drag-handle"
-              :draggable="controller.completeSequence.value && !controller.busy.value"
-              :disabled="!controller.completeSequence.value || controller.busy.value"
-              :aria-label="$t('schedule.reorder_label', { title: entry.title })"
-              @dragstart="start(entry.id, $event)"
-              @dragend="finish"
-            >
-              <i class="pi pi-bars" aria-hidden="true"></i>
-            </button>
-          </template>
-        </ScheduleGroupCard>
-      </div>
-    </template>
-    <div
-      class="schedule__drop-slot"
-      :data-slot="displayed.length"
-      :class="{
-        'schedule__drop-slot--active': draggedId !== null && insertion === displayed.length,
-      }"
-      @dragover.prevent="insertion = displayed.length"
-      @drop.prevent="drop(displayed.length)"
-    >
-      <span v-if="draggedId !== null && insertion === displayed.length">{{
-        $t('schedule.drop_here')
-      }}</span>
     </div>
   </section>
 </template>

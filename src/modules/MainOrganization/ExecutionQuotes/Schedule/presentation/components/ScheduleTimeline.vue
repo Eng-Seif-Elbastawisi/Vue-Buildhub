@@ -3,8 +3,11 @@
   defineProps<{ groups: ScheduleGroupModel[] }>();
 </script>
 <template>
-  <section class="schedule__panel" :aria-label="$t('schedule.timeline')">
-    <h2>{{ $t('schedule.timeline') }}</h2>
+  <section class="schedule__timeline-section" :aria-label="$t('schedule.timeline')">
+    <header class="schedule__section-heading">
+      <h2>{{ $t('schedule.timeline') }}</h2>
+      <i class="pi pi-calendar" aria-hidden="true"></i>
+    </header>
     <ol class="schedule__timeline">
       <li v-for="group in groups" :key="group.id">
         <strong>{{ group.title }}</strong>
