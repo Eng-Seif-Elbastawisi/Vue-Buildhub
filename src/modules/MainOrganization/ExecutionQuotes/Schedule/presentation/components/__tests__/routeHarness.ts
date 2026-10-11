@@ -1,6 +1,7 @@
 import PrimeVue from 'primevue/config';
 import { flushPromises, mount } from '@vue/test-utils';
 import type { Component } from 'vue';
+import { createI18n } from 'vue-i18n';
 import { createMemoryHistory, createRouter } from 'vue-router';
 import { afterEach, vi } from 'vitest';
 import ExecutionQuoteApiService from '../../../../data/api/execution.quote.api-service';
@@ -30,11 +31,13 @@ export async function mountScheduleRoute(component: Component, path: string) {
   });
   vi.spyOn(ScheduleApiService.getInstance(), 'show').mockResolvedValue({
     statusCode: 200,
-    data: { ...timelineResponse(), id: 201 },
+    data: { data: { ...timelineResponse(), id: 201 } },
   });
   vi.spyOn(ScheduleApiService.getInstance(), 'settings').mockResolvedValue({
     statusCode: 200,
-    data: {},
+    data: {
+      data: { id: 1, start_date: '2026-10-29', holidays: [4], created_at: '2026-10-11 08:17:42' },
+    },
   });
   const router = createRouter({
     history: createMemoryHistory(),
@@ -49,9 +52,16 @@ export async function mountScheduleRoute(component: Component, path: string) {
   await router.isReady();
   const wrapper = mount(component, {
     global: {
-      plugins: [router, PrimeVue],
+      plugins: [
+        router,
+        PrimeVue,
+        createI18n({ legacy: false, locale: 'en', missingWarn: false, fallbackWarn: false }),
+      ],
       mocks: { $t: (key: string) => key },
-      stubs: { ScheduleStageSelector: true, Dialog: { template: '<section><slot /></section>' } },
+      stubs: {
+        ScheduleStageSelector: true,
+        Dialog: { template: '<section><slot /><slot name="footer" /></section>' },
+      },
     },
   });
   await flushPromises();

@@ -4,7 +4,6 @@ import ProjectTimelineStageModel from './project.timeline.stage.model';
 import { mappedLabel } from './project.timeline.sub-stage.model';
 import { responseObject } from './schedule.response';
 import type { TaskDurationType } from '../constants/schedule.constants';
-// The Fetch/Show item shape is supplied by the backend example. Selection identity remains separate.
 export default class ScheduleGroupModel {
   public readonly id: number;
   public readonly title: string;
@@ -70,6 +69,7 @@ export default class ScheduleGroupModel {
       employee: mappedLabel(payload.employee),
       createdAt: payload.created_at,
       stages: payload.stages.map((stage: unknown) => ProjectTimelineStageModel.fromJson(stage)),
+      selectionsAvailable: true,
       startDate: payload.start_date ?? undefined,
       finishDate: payload.finish_date ?? undefined,
     });

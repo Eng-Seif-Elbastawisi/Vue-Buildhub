@@ -17,8 +17,7 @@ export default class ScheduleOwnerParams implements Params {
   }
   toMap(): Record<string, unknown> {
     return {
-      quote_id: this.quoteId,
-      ...(this.groupId === undefined ? {} : { project_timeline_id: this.groupId }),
+      ...(this.groupId === undefined ? { quote_id: this.quoteId } : { project_timeline_id: this.groupId }),
       ...(this.order === undefined ? {} : { order: this.order }),
     };
   }

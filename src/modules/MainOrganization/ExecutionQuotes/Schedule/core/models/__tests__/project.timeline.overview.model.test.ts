@@ -15,7 +15,7 @@ it('maps the actual basicData/list envelope recursively using the existing Title
   expect(timeline?.durationType).toBe(TaskDurationType.YEAR);
   expect(timeline?.employee?.title).toBe('Techlab Employee');
   expect(timeline?.stages?.[0]?.subStage).toBeNull();
-  expect(timeline?.stages?.[0]?.children?.[0]?.subStageId).toBe(149);
+  expect(timeline?.stages?.[0]?.children?.[0]?.subStageId).toBe(4);
   expect(mapper).toHaveBeenCalledWith({ id: 1, name: 'Techlab Employee' });
   mapper.mockRestore();
 });

@@ -3054,6 +3054,8 @@
     "invalid_response": "The Schedule response does not match the supported schema",
     "selection_identity_pending": "Editing is unavailable until the returned QuoteStage and SubStage identifiers are confirmed",
     "holidays": "Weekly days off",
+    "configuration": "Project Configuration",
+    "no_holidays": "No weekly days off",
     "holidays_hint": "Choose zero, one or two days off",
     "substage_id": "SubStage #{id}",
     "load_error": "Could not load the project timeline"

@@ -12,10 +12,9 @@ import ScheduleGroupModel from '../../core/models/schedule.group.model';
 import { responseObject } from '../../core/models/schedule.response';
 import ProjectTimelineOverviewModel from '../../core/models/project.timeline.overview.model';
 import type ChangeProjectTimelineOrderParams from '../../core/params/change.project.timeline.order.params';
-import type ScheduleSettingsModel from '../../core/models/schedule.settings.model';
+import ScheduleSettingsModel from '../../core/models/schedule.settings.model';
 import type ScheduleSettingsParams from '../../core/params/schedule.settings.params';
 import ScheduleApiService from '../api/schedule.api-service';
-import { scheduleContractError } from '../../core/constants/schedule.constants';
 
 export default class ScheduleRepository extends BaseRepository<ScheduleGroupModel> {
   private static instance: ScheduleRepository;
@@ -87,14 +86,18 @@ export default class ScheduleRepository extends BaseRepository<ScheduleGroupMode
         return new DataFailed({
           error: new ErrorModel('schedule.invalid_form', ErrorType.validation),
         });
-      await this.apiService.settings(params);
-      // The Configuration response example is still missing; do not fabricate saved settings.
-      return new DataFailed({
-        error: new ErrorModel(scheduleContractError, ErrorType.serviceSide, {
-          details: 'configuration_envelope_schema, missing_configuration',
-        }),
-      });
+      const response = await this.apiService.settings(params);
+      if (response.statusCode !== 200)
+        return new DataFailed({
+          error: new ErrorModel('schedule.load_error', ErrorType.dataDirty),
+        });
+      const envelope = responseObject(response.data);
+      return new DataSuccess({ data: ScheduleSettingsModel.fromJson(envelope.data) });
     } catch (error: unknown) {
+      if (error instanceof Error && error.message === 'schedule.invalid_response')
+        return new DataFailed({
+          error: new ErrorModel('schedule.invalid_response', ErrorType.dataDirty),
+        });
       return this.handleError(error);
     }
   }

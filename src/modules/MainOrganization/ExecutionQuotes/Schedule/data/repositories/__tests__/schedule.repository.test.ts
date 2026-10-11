@@ -1,3 +1,4 @@
+import NetworkService from '@/base/Core/NetworkStructure/networking/networkService';
 import { afterEach, expect, it, vi } from 'vitest';
 import {
   DataSuccess,
@@ -88,7 +89,7 @@ it('maps a returned Create timeline through the inherited repository parser', as
   });
   const state = await ScheduleRepository.getInstance().create(groupParams());
   expect(state.data?.id).toBe(2);
-  expect(state.data?.stages[0]?.children[0]?.subStageId).toBe(149);
+  expect(state.data?.stages[0]?.children[0]?.subStageId).toBe(4);
 });
 it.each(['create', 'update', 'delete', 'saveSettings', 'sort'] as const)(
   'preserves backend rejection for %s rather than reporting success',
@@ -115,3 +116,31 @@ it.each(['create', 'update', 'delete', 'saveSettings', 'sort'] as const)(
     expect(state.error?.displayMessage).toBe('Not allowed');
   },
 );
+
+it('reads the supplied configuration envelope through the real API service', async () => {
+  const { transportProbe } = await import('../../api/__tests__/schedule.transport.fixtures');
+  vi.spyOn(NetworkService.instance, 'post').mockResolvedValue({
+    ...transportProbe(),
+    data: {
+      data: { id: 1, start_date: '2026-10-29', holidays: [4], created_at: '2026-10-11 08:17:42' },
+    },
+  });
+  const state = await ScheduleRepository.getInstance().readSettings(new ScheduleOwnerParams(140));
+  expect(state).toBeInstanceOf(DataSuccess);
+  expect(state.data?.startDate).toBe('2026-10-29');
+  expect(state.data?.holidays).toEqual([4]);
+});
+it.each([
+  { statusCode: 200, data: {} },
+  { statusCode: 200, data: { data: null } },
+  { statusCode: 200, data: { data: { start_date: '2026-10-29', holidays: ['4'] } } },
+  { statusCode: 500, data: {} },
+])('reports an unsuccessful configuration read %j', async (response) => {
+  vi.spyOn(ScheduleApiService.getInstance(), 'settings').mockResolvedValue(response);
+  const state = await ScheduleRepository.getInstance().readSettings(new ScheduleOwnerParams(140));
+  expect(state).toBeInstanceOf(DataFailed);
+  expect(state.data).toBeNull();
+  expect(state.error?.displayMessage).toBe(
+    response.statusCode === 200 ? 'schedule.invalid_response' : 'schedule.load_error',
+  );
+});

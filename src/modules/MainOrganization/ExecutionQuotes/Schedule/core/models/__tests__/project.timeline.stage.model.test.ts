@@ -7,13 +7,13 @@ it('maps dedicated QuoteStage/SubStage response models and converts IDs into sub
   expect(stage.quoteStageId).toBe(3);
   expect(stage.title).toBe('منعم');
   expect(stage.subStage).toBeNull();
-  expect(stage.children[0].subStageId).toBe(149);
+  expect(stage.children[0].subStageId).toBe(4);
   expect(stage.children[0].title).toBe('sub stage');
   const params = new ProjectTimelineStageParams(
     stage.quoteStageId,
     stage.children.map((child) => child.subStageId),
   );
-  expect(params.toMap()).toEqual({ quote_stage_id: 3, children: [149] });
+  expect(params.toMap()).toEqual({ quote_stage_id: 3, children: [4] });
 });
 it('preserves an explicit empty selection without expanding it to all children', () => {
   const stage = ProjectTimelineStageModel.fromJson({

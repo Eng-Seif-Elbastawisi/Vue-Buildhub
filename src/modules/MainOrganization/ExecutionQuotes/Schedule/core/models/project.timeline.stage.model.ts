@@ -38,7 +38,7 @@ export default class ProjectTimelineStageModel {
         typeof payload.created_at !== 'string')
     )
       throw new Error('schedule.invalid_response');
-    // Provisional semantic association: returned id -> QuoteStage ID. Edit remains guarded until backend confirmation.
+    // Use the QuoteStage association ID, rather than the nested master Stage ID.
     return new ProjectTimelineStageModel({
       quoteStageId: payload.id,
       title: label.title,

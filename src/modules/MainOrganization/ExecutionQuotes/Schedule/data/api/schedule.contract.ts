@@ -8,6 +8,6 @@ export const scheduleContractGaps: Record<ScheduleOperation, readonly string[]> 
   update: ['mutation_success_validation_errors'],
   delete: ['mutation_success_errors'],
   sort: ['mutation_success_errors'],
-  settings: ['configuration_envelope_schema', 'missing_configuration'],
+  settings: ['missing_configuration'],
   saveSettings: ['mutation_success_validation_errors'],
 };

@@ -128,7 +128,7 @@
       </div>
       <!-- asd -->
       <ScheduleStageSelector v-model="stages" :disabled="controller.busy.value || saved" />
-      <ul v-if="errors.length" role="alert">
+      <ul v-if="errors.length" class="form-errors" role="alert">
         <li v-for="error in errors" :key="`${error.field}:${error.message}`">
           {{ error.message }}
         </li>

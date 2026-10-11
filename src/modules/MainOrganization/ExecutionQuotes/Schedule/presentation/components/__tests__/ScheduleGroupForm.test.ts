@@ -6,7 +6,8 @@ import NetworkService from '@/base/Core/NetworkStructure/networking/networkServi
 import { transportProbe } from '../../../data/api/__tests__/schedule.transport.fixtures';
 import ScheduleGroupForm from '../ScheduleGroupForm.vue';
 import ScheduleController from '../../controllers/schedule.controller';
-import { groupFixture } from '../../controllers/__tests__/fixtures';
+import ScheduleGroupModel from '../../../core/models/schedule.group.model';
+import { timelineResponse } from '../../../core/models/__tests__/backend.fixtures';
 beforeEach(() => {
   vi.stubGlobal(
     'matchMedia',
@@ -32,16 +33,17 @@ it('restores edit IDs absent from lookup pages and preserves all values after a 
   const controller = ScheduleController.getInstance();
   controller.release();
   controller.activate(101, 201);
+  const group = ScheduleGroupModel.fromJson({ ...timelineResponse(), id: 201, duration: 6 });
   const wrapper = mount(ScheduleGroupForm, {
-    props: { quoteId: 101, group: groupFixture() },
+    props: { quoteId: 101, group },
     global: globals,
   });
   expect(wrapper.findComponent({ name: 'ScheduleStageSelector' }).props('modelValue')).toEqual([
-    expect.objectContaining({ quoteStageId: 10, children: [11] }),
+    expect.objectContaining({ quoteStageId: 3, children: [4] }),
   ]);
   const unitSelect = wrapper.getComponent(UpdatedCustomInputSelect);
   expect(wrapper.find('select').exists()).toBe(false);
-  expect(unitSelect.props('modelValue')?.id).toBe(groupFixture().durationType);
+  expect(unitSelect.props('modelValue')?.id).toBe(group.durationType);
   const monthOption = unitSelect.props('staticOptions')?.find((option) => option.id === 3);
   if (!monthOption) throw new Error('Missing numeric month option');
   unitSelect.vm.$emit('update:modelValue', monthOption);
@@ -54,7 +56,7 @@ it('restores edit IDs absent from lookup pages and preserves all values after a 
   expect(unitSelect.props('modelValue')?.id).toBe(3);
   expect(vi.mocked(NetworkService.instance.post).mock.calls[0]?.[0]?.data).toMatchObject({
     duration_type: 3,
-    stages: [{ quote_stage_id: 10, children: [11] }],
+    stages: [{ quote_stage_id: 3, children: [4] }],
   });
   expect(wrapper.text()).toContain('Save rejected');
   wrapper.unmount();
