@@ -106,7 +106,7 @@ it('requires a complete sequence and persists a one-based move before authoritat
   await controller.fetchList(new ScheduleOwnerParams(101));
   expect(controller.canMove(201, -1)).toBe(false);
   expect(controller.canMove(202, 1)).toBe(false);
-  await controller.move(201, 1);
+  await controller.changeProjectTimelineOrder(201, 2);
   expect(sort.mock.calls[0]?.[0].toMap()).toEqual({
     project_timeline_id: 201,
     order: 2,

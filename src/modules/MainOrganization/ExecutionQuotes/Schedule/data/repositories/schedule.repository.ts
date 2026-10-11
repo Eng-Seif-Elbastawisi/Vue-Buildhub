@@ -1,4 +1,5 @@
 import BaseRepository from '@/base/Domain/Repositories/baseRepository';
+import type { ApiCallOptions } from '@/base/Data/ApiService/baseApiService';
 import ScheduleOwnerParams from '../../core/params/schedule.owner.params';
 import type Params from '@/base/Core/Params/params';
 import {
@@ -12,9 +13,9 @@ import { responseObject } from '../../core/models/schedule.response';
 import ProjectTimelineOverviewModel from '../../core/models/project.timeline.overview.model';
 import type ChangeProjectTimelineOrderParams from '../../core/params/change.project.timeline.order.params';
 import type ScheduleSettingsModel from '../../core/models/schedule.settings.model';
+import type ScheduleSettingsParams from '../../core/params/schedule.settings.params';
 import ScheduleApiService from '../api/schedule.api-service';
 import { scheduleContractError } from '../../core/constants/schedule.constants';
-import { scheduleContractGaps, type ScheduleOperation } from '../api/schedule.contract';
 
 export default class ScheduleRepository extends BaseRepository<ScheduleGroupModel> {
   private static instance: ScheduleRepository;
@@ -33,22 +34,8 @@ export default class ScheduleRepository extends BaseRepository<ScheduleGroupMode
   protected parseList(response: unknown): ScheduleGroupModel[] {
     return ProjectTimelineOverviewModel.fromJson(response).projectTimelines;
   }
-  // Block before transport: an unparseable successful mutation must never encourage duplicate submissions.
-  private blocked<T>(operation: ScheduleOperation): Promise<DataState<T>> {
-    return Promise.resolve(
-      new DataFailed<T>({
-        error: new ErrorModel(scheduleContractError, ErrorType.serviceSide, {
-          details: `${operation}: ${scheduleContractGaps[operation].join(', ')}`,
-        }),
-      }),
-    );
-  }
-  async index(params?: Params): Promise<DataState<ScheduleGroupModel[]>> {
-    if (!params) return this.blocked('index');
-    const state = await this.readOverview(params);
-    return state instanceof DataSuccess && state.data
-      ? new DataSuccess({ data: state.data.projectTimelines })
-      : new DataFailed({ error: state.error });
+  index(params?: Params, options?: ApiCallOptions) {
+    return super.index(params, { ...options, useStaticData: false }, false);
   }
   async show(params?: Params): Promise<DataState<ScheduleGroupModel>> {
     try {
@@ -84,30 +71,46 @@ export default class ScheduleRepository extends BaseRepository<ScheduleGroupMode
       return this.handleError(error);
     }
   }
-  async create(_params: Params): Promise<DataState<ScheduleGroupModel>> {
-    return this.blocked('create');
+  create(params: Params, options?: ApiCallOptions) {
+    return super.create(params, { ...options, useStaticData: false }, false);
   }
-  async update(_params?: Params): Promise<DataState<ScheduleGroupModel>> {
-    return this.blocked('update');
+  update(params?: Params, options?: ApiCallOptions) {
+    return super.update(params, { ...options, useStaticData: false }, false);
   }
-  async delete(_params?: Params): Promise<DataState<void>> {
-    return this.blocked('delete');
+  delete(params?: Params, options?: ApiCallOptions) {
+    return super.delete(params, { ...options, useStaticData: false });
   }
   async readSettings(params: Params): Promise<DataState<ScheduleSettingsModel>> {
     try {
-      if (!(params instanceof ScheduleOwnerParams)) return this.blocked('settings');
+      if (!(params instanceof ScheduleOwnerParams))
+        return new DataFailed({
+          error: new ErrorModel('schedule.invalid_form', ErrorType.validation),
+        });
       await this.apiService.settings(params);
-      return this.blocked('settings');
+      // The Configuration response example is still missing; do not fabricate saved settings.
+      return new DataFailed({
+        error: new ErrorModel(scheduleContractError, ErrorType.serviceSide, {
+          details: 'configuration_envelope_schema, missing_configuration',
+        }),
+      });
     } catch (error: unknown) {
       return this.handleError(error);
     }
   }
-  async saveSettings(_params: Params): Promise<DataState<void>> {
-    return this.blocked('saveSettings');
+  async saveSettings(params: ScheduleSettingsParams): Promise<DataState<void>> {
+    try {
+      return this.processVoidResponse(await this.apiService.saveSettings(params));
+    } catch (error: unknown) {
+      return this.handleError(error);
+    }
   }
   async changeProjectTimelineOrder(
-    _params: ChangeProjectTimelineOrderParams,
+    params: ChangeProjectTimelineOrderParams,
   ): Promise<DataState<void>> {
-    return this.blocked('sort');
+    try {
+      return this.processVoidResponse(await this.apiService.sort(params));
+    } catch (error: unknown) {
+      return this.handleError(error);
+    }
   }
 }

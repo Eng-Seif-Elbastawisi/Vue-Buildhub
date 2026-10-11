@@ -327,11 +327,6 @@ export default class ScheduleController extends BaseController<ScheduleGroupMode
       position + direction < (groups?.length ?? 0)
     );
   }
-  async move(groupId: number, direction: -1 | 1) {
-    if (!this.canMove(groupId, direction)) return new DataCancelled<void>();
-    const position = (this.listState.value.data ?? []).findIndex((group) => group.id === groupId);
-    return this.changeProjectTimelineOrder(groupId, position + direction + 1);
-  }
   async changeProjectTimelineOrder(projectTimelineId: number, destinationOrder: number) {
     const groups = this.listState.value.data ?? [];
     if (
