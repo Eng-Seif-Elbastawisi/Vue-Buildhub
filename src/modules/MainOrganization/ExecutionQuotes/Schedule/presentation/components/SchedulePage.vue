@@ -222,7 +222,7 @@
         :key="quoteId"
         :quote-id="quoteId"
         :settings="settings"
-        :readable="controller.settingsState.value instanceof DataSuccess"
+        :readable="true"
         @close="showSettings = false"
       />
       <Dialog

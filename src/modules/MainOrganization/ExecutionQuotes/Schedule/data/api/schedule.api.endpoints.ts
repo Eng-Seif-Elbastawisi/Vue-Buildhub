@@ -21,7 +21,7 @@ export class ScheduleEndpoints extends BaseEndpoints {
     return this.url('delete_project_timeline');
   }
   get sort() {
-    return this.url('change_projecttimeline_order');
+    return this.url('change_project_timeline_order');
   }
   get settings() {
     return this.url('show_project_configuration');

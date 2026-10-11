@@ -145,6 +145,7 @@
             controller.childLabels.value.get(childId)?.title ||
             $t('schedule.substage_id', { id: childId })
           }}</span>
+
           <AppButton
             :disabled="disabled"
             theme="secondary"

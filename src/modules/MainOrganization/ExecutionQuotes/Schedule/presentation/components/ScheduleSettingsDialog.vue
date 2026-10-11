@@ -31,6 +31,7 @@
 <template>
   <Dialog :visible="true" modal :header="$t('schedule.settings')" @update:visible="emit('close')">
     <form class="schedule__form" @submit.prevent="save">
+      <!-- dsaasd -->
       <div class="field-group input-wrapper">
         <label class="label" for="schedule-start">{{ $t('schedule.planned_start') }}</label>
         <input
@@ -60,6 +61,8 @@
       <p v-if="failed" role="alert">
         {{ $t(controller.mutationState.value.error?.displayMessage ?? 'schedule.save_error') }}
       </p>
+      <!-- {{ readable }} -->
+      <!-- asd -->
       <div class="schedule__actions">
         <AppButton type="submit" :disabled="!readable" :loading="controller.busy.value">{{
           $t('schedule.save')

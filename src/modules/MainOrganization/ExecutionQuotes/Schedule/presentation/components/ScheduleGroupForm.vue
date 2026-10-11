@@ -61,11 +61,11 @@
           new ProjectTimelineStageParams(selection.quoteStageId, [...selection.children]),
       ),
     });
-    console.log('stages.value', params);
+    // console.log('stages.value', params);
 
     errors.value = params.validate().errors;
 
-    console.log('params.validate().errors', errors.value);
+    // console.log('params.validate().errors', errors.value);
     if (errors.value.length) return;
     saveError.value = false;
     const saveState = props.group
@@ -126,6 +126,7 @@
           />
         </div>
       </div>
+      {{ stages }}
       <ScheduleStageSelector v-model="stages" :disabled="controller.busy.value || saved" />
       <ul v-if="errors.length" role="alert">
         <li v-for="error in errors" :key="`${error.field}:${error.message}`">
