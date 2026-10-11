@@ -19,6 +19,9 @@ Follow this workflow:
    - Keep API/network calls in `data/` services or repositories.
    - Keep UI and orchestration in `presentation/` controllers/components.
    - Reuse singleton style (`getInstance()`) when existing code uses it.
+   - For modules with index, add, edit, and show screens, split their content into dedicated presentation components. Keep shared context loading, route validation, and navigation in a shared page shell; each screen owns its content and resource loading.
+   - Use `src/shared/DataStatues/DataStatusBuilder.vue` for quote/context and page data states, with success/empty slots and retry callbacks. The add screen can use the shell's context state before rendering its form; edit and show screens also handle their item state, and index handles its list state.
+   - Use `src/modules/MainOrganization/ExecutionQuotes/Schedule/presentation/components/` as the page-splitting reference: `ScheduleIndex`, `ScheduleGroupAdd`, `ScheduleGroupEdit`, and `ScheduleGroupShow` own their screen content, while `SchedulePage` serves as the shared shell. Preserve direct navigation, route-change request isolation, form values during save failures, and spacing inside state wrappers.
 
 3. Enforce product constraints:
    - Add user-facing text to both `src/locales/en.json` and `src/locales/ar.json`.
