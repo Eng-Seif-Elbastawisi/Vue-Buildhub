@@ -43,8 +43,8 @@ export default class ScheduleRepository extends BaseRepository<ScheduleGroupMode
         return new DataFailed({
           error: new ErrorModel('schedule.load_error', ErrorType.dataDirty),
         });
-      // console.log('response.data', response.data);
-      return new DataSuccess({ data: this.parseItem(response.data?.data as unknown) });
+      const envelope = responseObject(response.data);
+      return new DataSuccess({ data: this.parseItem(envelope.data) });
     } catch (error: unknown) {
       return this.handleError(error);
     }

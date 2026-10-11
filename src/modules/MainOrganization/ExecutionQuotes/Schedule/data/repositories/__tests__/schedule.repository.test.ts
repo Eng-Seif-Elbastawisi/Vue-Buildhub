@@ -33,6 +33,35 @@ it('maps a supplied direct Show item body without inventing an envelope', async 
   const state = await ScheduleRepository.getInstance().show(new ScheduleOwnerParams(140, 2));
   expect(state.data?.title).toBe('Main Execution Timeline');
 });
+it('reads a timeline from the Show envelope through the real API service', async () => {
+  const { transportProbe } = await import('../../api/__tests__/schedule.transport.fixtures');
+  vi.spyOn(NetworkService.instance, 'post').mockResolvedValue({
+    ...transportProbe(),
+    data: {
+      data: {
+        id: 2,
+        title: 'Main Execution Timeline',
+        duration: 1,
+        duration_type: 4,
+        stages: [],
+      },
+    },
+  });
+  const state = await ScheduleRepository.getInstance().show(new ScheduleOwnerParams(140, 2));
+  expect(state).toBeInstanceOf(DataSuccess);
+  expect(state.data?.id).toBe(2);
+  expect(state.data?.title).toBe('Main Execution Timeline');
+});
+it.each([null, [], 'invalid body'])('rejects a malformed Show envelope %j', async (body) => {
+  const { transportProbe } = await import('../../api/__tests__/schedule.transport.fixtures');
+  vi.spyOn(NetworkService.instance, 'post').mockResolvedValue({
+    ...transportProbe(),
+    data: body,
+  });
+  const state = await ScheduleRepository.getInstance().show(new ScheduleOwnerParams(140, 2));
+  expect(state).toBeInstanceOf(DataFailed);
+  expect(state.data).toBeNull();
+});
 it('rejects missing, failed and malformed Fetch envelopes rather than creating an empty schedule', async () => {
   const index = vi.spyOn(ScheduleApiService.getInstance(), 'index');
   for (const response of [

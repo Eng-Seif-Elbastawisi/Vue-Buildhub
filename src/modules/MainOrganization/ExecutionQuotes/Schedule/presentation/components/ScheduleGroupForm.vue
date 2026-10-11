@@ -128,11 +128,13 @@
       </div>
       <!-- asd -->
       <ScheduleStageSelector v-model="stages" :disabled="controller.busy.value || saved" />
-      <ul v-if="errors.length" class="form-errors" role="alert">
-        <li v-for="error in errors" :key="`${error.field}:${error.message}`">
-          {{ error.message }}
-        </li>
-      </ul>
+      <div v-if="errors.length" role="alert" aria-live="assertive">
+        <ul class="form-errors">
+          <li v-for="error in errors" :key="`${error.field}:${error.message}`">
+            {{ error.message }}
+          </li>
+        </ul>
+      </div>
       <p v-if="saveError" role="alert">
         {{ $t(controller.mutationState.value.error?.displayMessage ?? 'schedule.save_error') }}
       </p>

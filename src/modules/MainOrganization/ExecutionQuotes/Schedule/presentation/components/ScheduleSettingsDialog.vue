@@ -61,9 +61,11 @@
         </label>
       </fieldset>
       <p v-if="!readable" role="alert">{{ $t('schedule.integration_pending') }}</p>
-      <ul v-if="errors.length" role="alert">
-        <li v-for="error in errors" :key="error">{{ error }}</li>
-      </ul>
+      <div v-if="errors.length" role="alert" aria-live="assertive">
+        <ul class="form-errors">
+          <li v-for="error in errors" :key="error">{{ error }}</li>
+        </ul>
+      </div>
       <p v-if="failed" role="alert">
         {{ $t(controller.mutationState.value.error?.displayMessage ?? 'schedule.save_error') }}
       </p>
