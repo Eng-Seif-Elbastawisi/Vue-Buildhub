@@ -74,17 +74,17 @@
       <h2>{{ $t('schedule.sequence') }}</h2>
       <i class="pi pi-sort-alt" aria-hidden="true"></i>
     </header>
+    <p v-if="controller.busy.value" class="schedule__board-status" role="status">
+      {{ $t('schedule.saving_order') }}
+    </p>
+    <p v-if="announcement" class="schedule__board-status" role="status">
+      {{ $t('schedule.order_saved') }}
+    </p>
     <div
       class="schedule__board"
       :aria-label="$t('schedule.sequence')"
       :aria-busy="controller.busy.value"
     >
-      <p v-if="controller.busy.value" class="schedule__board-status" role="status">
-        {{ $t('schedule.saving_order') }}
-      </p>
-      <p v-if="announcement" class="schedule__board-status" role="status">
-        {{ $t('schedule.order_saved') }}
-      </p>
       <template v-for="(entry, position) in displayed" :key="entry.id">
         <div
           class="schedule__drop-slot"

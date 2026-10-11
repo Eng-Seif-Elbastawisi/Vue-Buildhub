@@ -94,13 +94,14 @@
   });
 </script>
 <template>
-  <section class="schedule" :class="{ 'standard-crud-page': mode === 'add' || mode === 'edit' }">
+  <section
+    class="schedule standard-crud-page"
+    :class="{ 'standard-crud-page': mode === 'add' || mode === 'edit' }"
+  >
     <header class="schedule__header">
       <div class="schedule__owner">
         <i class="pi pi-building" aria-hidden="true"></i>
-        <p>
-          {{ $t('schedule.quote_context', { id: quoteId }) }} {{ ownerState.data?.project?.title }}
-        </p>
+        <p>{{ $t('schedule.quote_context') }} {{ ownerState.data?.project?.title }}</p>
       </div>
       <div class="schedule__actions">
         <AppButton :to="quotePath(route.path, quoteId)" theme="secondary">{{

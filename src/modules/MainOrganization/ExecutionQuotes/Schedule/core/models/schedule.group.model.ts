@@ -53,7 +53,13 @@ export default class ScheduleGroupModel {
       !Array.isArray(payload.stages) ||
       (payload.created_at !== undefined &&
         payload.created_at !== null &&
-        typeof payload.created_at !== 'string')
+        typeof payload.created_at !== 'string') ||
+      (payload.start_date !== undefined &&
+        payload.start_date !== null &&
+        typeof payload.start_date !== 'string') ||
+      (payload.finish_date !== undefined &&
+        payload.finish_date !== null &&
+        typeof payload.finish_date !== 'string')
     )
       throw new Error('schedule.invalid_response');
     return new ScheduleGroupModel({
@@ -64,6 +70,8 @@ export default class ScheduleGroupModel {
       employee: mappedLabel(payload.employee),
       createdAt: payload.created_at,
       stages: payload.stages.map((stage: unknown) => ProjectTimelineStageModel.fromJson(stage)),
+      startDate: payload.start_date ?? undefined,
+      finishDate: payload.finish_date ?? undefined,
     });
   }
 }
