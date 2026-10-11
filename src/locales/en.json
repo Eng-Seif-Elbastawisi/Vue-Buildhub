@@ -2235,6 +2235,8 @@
   "employee.pricing_responsible": "Pricing Responsible",
   "employee.seller": "Seller",
   "employee.engineer": "Engineer",
+  "employee.site_engineer": "Site Engineer",
+  "employee.project_manager": "Project Manager",
   "employee.employee": "Employee",
   "employee.form_title": "Employee form",
   "employee.form_description": "Employee form description",
