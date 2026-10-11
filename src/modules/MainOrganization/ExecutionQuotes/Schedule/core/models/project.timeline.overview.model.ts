@@ -23,6 +23,7 @@ export default class ProjectTimelineOverviewModel {
   static fromJson(value: unknown): ProjectTimelineOverviewModel {
     const payload = responseObject(value);
     if (!Array.isArray(payload.data)) throw new Error('schedule.invalid_response');
+    console.log('payload', payload);
     return new ProjectTimelineOverviewModel(
       ProjectTimelineBasicDataModel.fromJson(payload.basicData),
       payload.data.map((timeline: unknown) => ScheduleGroupModel.fromJson(timeline)),
