@@ -2983,6 +2983,7 @@
   "Contractor.empty_title": "No contractors yet",
   "Contractor.empty_description": "Add the first contractor to assign main stages",
   "schedule": {
+    "form_description": "Choose the timeline scope and set one duration for the whole group.",
     "title": "Schedule",
     "integration_pending": "This operation awaits its backend response contract",
     "invalid_ids": "Invalid Quote or Schedule Group ID.",

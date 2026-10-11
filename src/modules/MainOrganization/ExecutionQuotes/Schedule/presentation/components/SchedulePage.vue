@@ -94,10 +94,9 @@
   });
 </script>
 <template>
-  <section class="schedule">
+  <section class="schedule" :class="{ 'standard-crud-page': mode === 'add' || mode === 'edit' }">
     <header class="schedule__header">
       <div>
-        <h1>{{ $t('schedule.title') }}</h1>
         <p>
           {{ $t('schedule.quote_context', { id: quoteId }) }} {{ ownerState.data?.project?.title }}
         </p>

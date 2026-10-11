@@ -31,16 +31,19 @@
 <template>
   <Dialog :visible="true" modal :header="$t('schedule.settings')" @update:visible="emit('close')">
     <form class="schedule__form" @submit.prevent="save">
-      <label for="schedule-start">{{ $t('schedule.planned_start') }}</label>
-      <input
-        id="schedule-start"
-        v-model="startDate"
-        type="date"
-        :disabled="controller.busy.value"
-      />
-      <fieldset>
+      <div class="field-group input-wrapper">
+        <label class="label" for="schedule-start">{{ $t('schedule.planned_start') }}</label>
+        <input
+          id="schedule-start"
+          v-model="startDate"
+          class="input"
+          type="date"
+          :disabled="controller.busy.value"
+        />
+      </div>
+      <fieldset class="schedule__holidays" aria-describedby="schedule-holidays-hint">
         <legend>{{ $t('schedule.holidays') }}</legend>
-        <p>{{ $t('schedule.holidays_hint') }}</p>
+        <p id="schedule-holidays-hint">{{ $t('schedule.holidays_hint') }}</p>
         <label v-for="day in weekdays" :key="day" class="schedule__row">
           <input
             v-model="holidays"

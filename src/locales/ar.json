@@ -2979,6 +2979,7 @@
   "Contractor.empty_title": "لا يوجد مقاولون بعد",
   "Contractor.empty_description": "أضف أول مقاول لتحديد المراحل الرئيسية",
   "schedule": {
+    "form_description": "اختر نطاق الجدول وحدد مدة واحدة للمجموعة بالكامل.",
     "title": "الجدول الزمني",
     "integration_pending": "هذه العملية تنتظر عقد استجابة الخادم",
     "invalid_ids": "معرّف عرض السعر أو مجموعة الجدول غير صالح.",

@@ -1,9 +1,18 @@
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import PrimeVue from 'primevue/config';
 import { flushPromises, mount } from '@vue/test-utils';
 import { computed, ref } from 'vue';
 import IndexStageParams from '@/modules/shared/Stages/core/params/index.stage.params';
 import PaginationModel from '@/base/Core/Models/paginationModel';
 import UpdatedCustomInputSelect from '../UpdatedCustomInputSelect.vue';
+
+beforeEach(() => {
+  vi.stubGlobal(
+    'matchMedia',
+    vi.fn(() => ({ matches: false, addEventListener: vi.fn(), removeEventListener: vi.fn() })),
+  );
+});
+afterEach(() => vi.unstubAllGlobals());
 
 // Stubs
 const MultiSelectStub = {
@@ -252,3 +261,24 @@ describe('UpdatedCustomInputSelect', () => {
     ]);
   });
 });
+
+it.each([1, 2])(
+  'gives the rendered selection control an accessible name and input ID in mode %s',
+  (type) => {
+    const wrapper = mount(UpdatedCustomInputSelect, {
+      props: {
+        modelValue: type === 2 ? [] : null,
+        type,
+        id: 'schedule-unit',
+        placeholder: 'Choose a unit',
+        staticOptions: [{ id: 1, title: 'Day' }],
+        reload: false,
+      },
+      global: { plugins: [PrimeVue] },
+    });
+    expect(wrapper.get('label').attributes('for')).toBe('schedule-unit');
+    expect(wrapper.get('[role="combobox"]').attributes('id')).toBe('schedule-unit');
+    expect(wrapper.get('[role="combobox"]').attributes('aria-label')).toBe('Choose a unit');
+    wrapper.unmount();
+  },
+);

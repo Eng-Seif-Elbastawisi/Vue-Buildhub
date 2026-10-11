@@ -192,3 +192,71 @@
     transform: none;
   }
 }
+
+/* The dashboard supplies FeatureHeader; this toolbar carries only owner/actions. */
+.schedule.standard-crud-page > .schedule__header,
+.schedule.standard-crud-page > [role='alert'],
+.schedule.standard-crud-page > [role='status'] {
+  margin: 0;
+  padding: 1.25rem 2rem;
+}
+
+.schedule__form .document-form-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-block-end: 1.5rem;
+}
+
+.schedule__form .document-form-header .pi {
+  color: var(--PrimaryColor);
+  font-size: 1.5rem;
+}
+
+.schedule__form .document-form-header :is(h2, p) {
+  margin: 0;
+}
+
+.schedule__form .document-form-header p {
+  margin-block-start: 0.5rem;
+  color: var(--subtitle-color);
+}
+
+.schedule__form .schedule__panels {
+  margin-block-start: 1.5rem;
+}
+
+.schedule__form-actions {
+  justify-content: flex-end;
+  padding: 1.25rem 2rem;
+  border-block-start: 1px solid var(--border-weak);
+  background: var(--bg-section);
+}
+
+.schedule__holidays {
+  min-width: 0;
+  padding: 1rem;
+  border: 1px solid var(--border-weak);
+  border-radius: var(--radius-md);
+}
+
+@media (max-width: 600px) {
+  .schedule.standard-crud-page > .schedule__header,
+  .schedule__form-actions {
+    padding: 1rem;
+  }
+
+  .schedule__form-actions .app-btn {
+    flex: 1;
+  }
+}
+
+.schedule.standard-crud-page .schedule__form > .document-form-card {
+  padding: 2rem;
+}
+
+@media (max-width: 600px) {
+  .schedule.standard-crud-page .schedule__form > .document-form-card {
+    padding: 1rem;
+  }
+}

@@ -1,4 +1,5 @@
 import PrimeVue from 'primevue/config';
+import UpdatedCustomInputSelect from '@/shared/FormInputs/UpdatedCustomInputSelect.vue';
 import { flushPromises, mount } from '@vue/test-utils';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import NetworkService from '@/base/Core/NetworkStructure/networking/networkService';
@@ -7,6 +8,11 @@ import ScheduleGroupForm from '../ScheduleGroupForm.vue';
 import ScheduleController from '../../controllers/schedule.controller';
 import { groupFixture } from '../../controllers/__tests__/fixtures';
 beforeEach(() => {
+  vi.stubGlobal(
+    'matchMedia',
+    vi.fn(() => ({ matches: false, addEventListener: vi.fn(), removeEventListener: vi.fn() })),
+  );
+
   ScheduleController.getInstance().release();
   const response = transportProbe();
   response.data = { status: false, message: 'Save rejected' };
@@ -15,6 +21,7 @@ beforeEach(() => {
 afterEach(() => {
   ScheduleController.getInstance().release();
   vi.restoreAllMocks();
+  vi.unstubAllGlobals();
 });
 const globals = {
   plugins: [PrimeVue],
@@ -32,12 +39,23 @@ it('restores edit IDs absent from lookup pages and preserves all values after a 
   expect(wrapper.findComponent({ name: 'ScheduleStageSelector' }).props('modelValue')).toEqual([
     expect.objectContaining({ quoteStageId: 10, children: [11] }),
   ]);
+  const unitSelect = wrapper.getComponent(UpdatedCustomInputSelect);
+  expect(wrapper.find('select').exists()).toBe(false);
+  expect(unitSelect.props('modelValue')?.id).toBe(groupFixture().durationType);
+  const monthOption = unitSelect.props('staticOptions')?.find((option) => option.id === 3);
+  if (!monthOption) throw new Error('Missing numeric month option');
+  unitSelect.vm.$emit('update:modelValue', monthOption);
   await wrapper.find('#schedule-title').setValue('Changed title');
   await wrapper.find('form').trigger('submit');
   await flushPromises();
   expect(wrapper.find<HTMLInputElement>('#schedule-title').element.value).toBe('Changed title');
   expect(wrapper.find<HTMLInputElement>('#schedule-duration').element.value).toBe('6');
   expect(wrapper.emitted('saved')).toBeUndefined();
+  expect(unitSelect.props('modelValue')?.id).toBe(3);
+  expect(vi.mocked(NetworkService.instance.post).mock.calls[0]?.[0]?.data).toMatchObject({
+    duration_type: 3,
+    stages: [{ quote_stage_id: 10, children: [11] }],
+  });
   expect(wrapper.text()).toContain('Save rejected');
   wrapper.unmount();
   controller.release();

@@ -12,10 +12,15 @@ import {
 } from '../../../core/models/__tests__/backend.fixtures';
 afterEach(() => {
   vi.restoreAllMocks();
+  vi.unstubAllGlobals();
   ScheduleController.getInstance().release();
 });
 export async function mountScheduleRoute(component: Component, path: string) {
   ScheduleController.getInstance().release();
+  vi.stubGlobal(
+    'matchMedia',
+    vi.fn(() => ({ matches: false, addEventListener: vi.fn(), removeEventListener: vi.fn() })),
+  );
   const quoteRequest = vi
     .spyOn(ExecutionQuoteApiService.getInstance(), 'show')
     .mockResolvedValue({ statusCode: 200, data: { status: true, data: { id: 101 } } });
