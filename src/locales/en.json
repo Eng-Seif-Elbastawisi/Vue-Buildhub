@@ -3249,5 +3249,9 @@
   "work_items.not_recorded": "Not recorded",
   "validation.fields.versionNumber": "Version Number",
   "validation.fields.projectTimelineStageIds": "Main Timeline Stages",
-  "work_items.main_stages": "Main Timeline Stages"
+  "work_items.main_stages": "Main Timeline Stages",
+  "work_items.view_image": "View image",
+  "work_items.image_unavailable": "Image unavailable",
+  "work_items.preview_drawing": "Preview {name}",
+  "work_items.view_attachment": "View attachment"
 }

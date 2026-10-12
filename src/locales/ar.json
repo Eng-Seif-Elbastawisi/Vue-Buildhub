@@ -3244,5 +3244,9 @@
   "work_items.not_recorded": "غير مسجل",
   "validation.fields.versionNumber": "رقم الإصدار",
   "validation.fields.projectTimelineStageIds": "مراحل الجدول الزمني الرئيسية",
-  "work_items.main_stages": "مراحل الجدول الزمني الرئيسية"
+  "work_items.main_stages": "مراحل الجدول الزمني الرئيسية",
+  "work_items.view_image": "عرض الصورة",
+  "work_items.image_unavailable": "الصورة غير متاحة",
+  "work_items.preview_drawing": "معاينة {name}",
+  "work_items.view_attachment": "عرض المرفق"
 }

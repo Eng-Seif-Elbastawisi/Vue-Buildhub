@@ -13,7 +13,7 @@
   const emit = defineEmits<{ retry: [] }>();
 </script>
 <template>
-  <details open class="work-items-section" :aria-label="title" :aria-busy="loading">
+  <details class="work-items-section" :aria-label="title" :aria-busy="loading">
     <summary class="work-items-section-header">
       <div class="work-items-section-title">
         <i v-if="icon" :class="icon" aria-hidden="true"></i>
