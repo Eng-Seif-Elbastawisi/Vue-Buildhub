@@ -3,6 +3,8 @@
   import AppButton from '@/shared/HelpersComponents/AppButton.vue';
   defineProps<{
     title: string;
+    icon?: string;
+    count?: number;
     loading: boolean;
     error?: string;
     empty: boolean;
@@ -13,7 +15,16 @@
 <template>
   <section class="work-items-section" :aria-label="title" :aria-busy="loading">
     <header>
-      <h2>{{ title }}</h2>
+      <div class="work-items-section-title">
+        <i v-if="icon" :class="icon" aria-hidden="true"></i>
+        <h2>{{ title }}</h2>
+      </div>
+      <span
+        v-if="!loading && !error && count !== undefined"
+        class="work-items-section-count"
+        :aria-label="`${title}: ${count}`"
+        >{{ count }}</span
+      >
       <slot name="actions" />
     </header>
     <slot name="filters" />

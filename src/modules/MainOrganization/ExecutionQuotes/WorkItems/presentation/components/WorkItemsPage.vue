@@ -86,6 +86,8 @@
     <template v-else>
       <WorkItemSection
         :title="$t('work_items.tasks')"
+        icon="pi pi-check-square"
+        :count="controller.tasksState.value.data?.length"
         :loading="tasksLoading"
         :error="
           controller.tasksState.value.error
@@ -123,6 +125,8 @@
       </WorkItemSection>
       <WorkItemSection
         :title="$t('work_items.reports')"
+        icon="pi pi-file-edit"
+        :count="controller.reportsState.value.data?.length"
         :loading="reportsLoading"
         :error="
           controller.reportsState.value.error
@@ -156,6 +160,8 @@
       </WorkItemSection>
       <WorkItemSection
         :title="$t('work_items.activities')"
+        icon="pi pi-comments"
+        :count="controller.activitiesState.value.data ? activities.length : undefined"
         :loading="activitiesLoading"
         :error="
           controller.activitiesState.value.error
@@ -183,7 +189,9 @@
           <li v-for="activity in activities" :key="activity.id">
             <div class="work-items-record-heading">
               <h3>{{ activity.title }}</h3>
-              <span class="work-items-badge">{{ $t(`work_items.type_${activity.type}`) }}</span>
+              <span class="work-items-badge" :class="`work-items-type-${activity.type}`">{{
+                $t(`work_items.type_${activity.type}`)
+              }}</span>
             </div>
             <p class="work-items-stage-label">{{ stageLabel(activity.projectTimelineStageId) }}</p>
             <p v-if="activity.type !== WorkActivityType.Meeting" class="work-items-notes">

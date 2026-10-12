@@ -21,3 +21,24 @@ it('renders recoverable error and emits retry, then renders empty/read state', a
   expect(wrapper.attributes('aria-busy')).toBe('true');
   wrapper.unmount();
 });
+
+it('shows a real zero count but hides counts while loading or failed', async () => {
+  const wrapper = mount(WorkItemSection, {
+    props: {
+      title: 'Tasks',
+      icon: 'pi pi-check-square',
+      count: 0,
+      loading: false,
+      empty: true,
+      emptyMessage: 'Create a task',
+    },
+    global: { mocks: { $t: (key: string) => key } },
+  });
+  expect(wrapper.get('.work-items-section-count').text()).toBe('0');
+  expect(wrapper.get('.work-items-section-count').attributes('aria-label')).toBe('Tasks: 0');
+  await wrapper.setProps({ loading: true });
+  expect(wrapper.find('.work-items-section-count').exists()).toBe(false);
+  await wrapper.setProps({ loading: false, error: 'Network error' });
+  expect(wrapper.find('.work-items-section-count').exists()).toBe(false);
+  wrapper.unmount();
+});
