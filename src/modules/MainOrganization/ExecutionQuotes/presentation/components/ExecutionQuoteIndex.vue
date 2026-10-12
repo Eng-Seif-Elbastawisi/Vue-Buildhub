@@ -15,7 +15,7 @@
   import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
   import UpdatedCustomInputSelect from '@/shared/FormInputs/UpdatedCustomInputSelect.vue';
   import AppButton from '@/shared/HelpersComponents/AppButton.vue';
-  import PageHeaderIcon from '@/shared/FeatureHeader/PageHeaderIcon.vue';
+  import IndexPageHeader from '@/shared/IndexPageHeader/IndexPageHeader.vue';
   import AppTable, { type TableHeader } from '@/shared/HelpersComponents/AppTable.vue';
   import TableSkelaton from '@/shared/HelpersComponents/TableSkelaton.vue';
   import Pagination from '@/shared/HelpersComponents/Pagination.vue';
@@ -395,21 +395,11 @@
 
 <template>
   <section class="execution-quote-index">
-    <header class="execution-quote-index__masthead page-header--animated">
-      <div class="execution-quote-index__identity">
-        <PageHeaderIcon kind="document" />
-        <div class="execution-quote-index__heading-copy">
-          <h1 class="page-header__title">
-            {{ $t('execution_quote.title') }}
-          </h1>
-
-          <p class="page-header__subtitle">
-            {{ $t('execution_quote.index_description') }}
-          </p>
-        </div>
-      </div>
-
-      <div class="execution-quote-index__masthead-action">
+    <IndexPageHeader
+      :title="$t('execution_quote.title')"
+      :subtitle="$t('execution_quote.index_description')"
+    >
+      <template #actions>
         <AppButton icon="right" @click="openAdd">
           <template #icon>
             <i class="pi pi-plus" aria-hidden="true"></i>
@@ -417,8 +407,8 @@
 
           {{ $t('execution_quote.new_quote') }}
         </AppButton>
-      </div>
-    </header>
+      </template>
+    </IndexPageHeader>
 
     <section class="execution-quote-index__filters" aria-labelledby="execution-quote-filters-title">
       <header class="execution-quote-index__filters-heading">

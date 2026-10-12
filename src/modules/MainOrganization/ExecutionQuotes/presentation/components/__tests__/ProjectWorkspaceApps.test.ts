@@ -47,6 +47,7 @@ it.each(['en', 'ar'])(
     expect(links.map((link) => link.attributes('href'))).toEqual([
       '/organization/execution-quotes/show/140/schedule',
       '/organization/execution-quotes/show/140/site-team',
+      '/organization/execution-quotes/show/140/work-items',
     ]);
     expect(
       wrapper

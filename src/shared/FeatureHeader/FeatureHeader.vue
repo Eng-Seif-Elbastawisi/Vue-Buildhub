@@ -121,14 +121,193 @@
   </div>
 </template>
 
-<style scoped>
-  .feature-header-container--entity .content {
-    flex-direction: row;
+<style scoped lang="scss">
+  .feature-header-container.feature-header-container {
+    --quote-copper-soft: var(--PrimaryColor-light);
+    --quote-copper-dark: var(--PrimaryColor);
+
+    display: flex;
     align-items: center;
-    gap: 12px;
+    justify-content: space-between;
+    gap: 1.5rem;
+    min-height: 112px;
+    margin-block: 1rem 1.5rem;
+    padding: 1.5rem 1.75rem;
+    overflow: visible;
+    color: var(--secondary-text-color, var(--white));
+    background: var(--SecondaryColor);
+    border: 1px solid
+      color-mix(in sRGB, var(--SecondaryColor), var(--secondary-text-color, var(--white)) 20%);
+    border-radius: var(--radius-md, 14px);
+    box-shadow: none;
+    animation: none;
+
+    &::after,
+    .header-img {
+      display: none;
+    }
+
+    > .content {
+      display: flex;
+      flex: 1;
+      flex-direction: row;
+      align-items: center;
+      gap: 1.25rem;
+      min-width: 0;
+      padding: 0;
+      background: transparent;
+      animation: none;
+    }
+
+    .standard-form-header-copy {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      min-width: 0;
+      text-align: start;
+    }
+
+    .title {
+      margin: 0;
+      color: var(--secondary-text-color, var(--white));
+      font-size: clamp(1.5rem, 2.4vw, 2.2rem);
+      font-weight: 700;
+      line-height: 1.25;
+      text-transform: none;
+      text-wrap: balance;
+      overflow-wrap: anywhere;
+      animation: none;
+    }
+
+    .standard-form-header-description {
+      max-width: 65ch;
+      margin: 0;
+      color: var(--secondary-text-color, var(--white));
+      font-size: 1rem;
+      line-height: 1.5;
+      text-transform: none;
+      overflow-wrap: anywhere;
+      animation: none;
+    }
+
+    .standard-form-header-icon {
+      display: grid;
+      flex: 0 0 64px;
+      place-items: center;
+      width: 64px;
+      height: 64px;
+      color: color-mix(in sRGB, var(--PrimaryColor), var(--secondary-text-color, var(--white)) 65%);
+      background: color-mix(
+        in sRGB,
+        var(--SecondaryColor),
+        var(--secondary-text-color, var(--white)) 10%
+      );
+      border: 1px solid var(--PrimaryColor);
+      border-radius: var(--radius-md, 14px);
+      animation: none;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 0.75rem;
+      min-width: 0;
+
+      &:empty {
+        display: none;
+      }
+    }
+
+    :deep(.btn) {
+      min-height: 44px;
+      font-size: 0.85rem;
+      text-transform: none;
+      transition:
+        background-color 180ms ease,
+        border-color 180ms ease;
+    }
+
+    :deep(.btn-primary) {
+      color: var(--button-primary-color, var(--white));
+      background: var(--PrimaryColor);
+      border: 1px solid var(--PrimaryColor);
+      box-shadow: none;
+    }
+
+    :deep(.btn-primary:hover:not(:disabled)) {
+      background: color-mix(in sRGB, var(--PrimaryColor), var(--SecondaryColor) 15%);
+    }
+
+    :deep(.btn-secondary) {
+      color: var(--secondary-text-color, var(--white));
+      background: transparent;
+      border: 1px solid
+        color-mix(in sRGB, var(--secondary-text-color, var(--white)), var(--SecondaryColor) 25%);
+      box-shadow: none;
+    }
+
+    :deep(.btn-secondary:hover:not(:disabled)) {
+      background: color-mix(
+        in sRGB,
+        var(--SecondaryColor),
+        var(--secondary-text-color, var(--white)) 10%
+      );
+    }
+
+    :deep(:is(a, button):focus-visible) {
+      outline: 2px solid var(--PrimaryColor);
+      outline-offset: 4px;
+    }
+
+    &::selection,
+    :deep(::selection) {
+      color: var(--SecondaryColor);
+      background: color-mix(
+        in sRGB,
+        var(--PrimaryColor),
+        var(--secondary-text-color, var(--white)) 65%
+      );
+    }
   }
 
-  .feature-header-container--entity .standard-form-header-copy {
-    min-width: 0;
+  @media (max-width: 680px) {
+    .feature-header-container.feature-header-container {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 1.25rem;
+      min-height: 0;
+      padding: 1.25rem;
+
+      > .content {
+        align-items: flex-start;
+        gap: 0.875rem;
+      }
+
+      .title {
+        font-size: 1.5rem;
+      }
+
+      .standard-form-header-description {
+        font-size: 0.88rem;
+      }
+
+      .standard-form-header-icon {
+        flex-basis: 48px;
+        width: 48px;
+        height: 48px;
+      }
+
+      .actions {
+        justify-content: flex-start;
+      }
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .feature-header-container.feature-header-container :deep(.btn) {
+      transition: none;
+    }
   }
 </style>

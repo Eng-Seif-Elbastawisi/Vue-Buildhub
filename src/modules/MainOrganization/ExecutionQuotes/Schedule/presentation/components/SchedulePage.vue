@@ -61,7 +61,7 @@
   });
 </script>
 <template>
-  <section class="schedule standard-crud-page">
+  <section class="schedule">
     <ProjectWorkspaceNav :quote-id="quoteId" active="schedule" />
     <header class="schedule__header">
       <div class="schedule__owner">

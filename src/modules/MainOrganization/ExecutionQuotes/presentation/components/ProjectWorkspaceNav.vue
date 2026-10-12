@@ -3,7 +3,8 @@
   import { useRoute } from 'vue-router';
   import { quotePath, schedulePath } from '../../Schedule/presentation/schedule.routes';
   import { siteTeamPath } from '../../SiteTeam/presentation/site-team.routes';
-  const props = defineProps<{ quoteId: number; active: 'schedule' | 'site-team' }>();
+  import { workItemsPath } from '../../WorkItems/presentation/work-items.routes';
+  const props = defineProps<{ quoteId: number; active: 'schedule' | 'site-team' | 'work-items' }>();
   const route = useRoute();
   const validQuote = computed(() => Number.isInteger(props.quoteId) && props.quoteId > 0);
 </script>
@@ -25,6 +26,11 @@
     >
       <i class="pi pi-map-marker" aria-hidden="true"></i>{{ $t('site_team.title') }}
     </RouterLink>
+    <RouterLink
+      :to="workItemsPath(route.path, quoteId)"
+      :aria-current="active === 'work-items' ? 'page' : undefined"
+      ><i class="pi pi-list-check" aria-hidden="true"></i>{{ $t('work_items.title') }}</RouterLink
+    >
   </nav>
 </template>
 <style scoped lang="scss">
@@ -56,12 +62,12 @@
 
   .workspace-nav a:hover {
     background: var(--bg-section);
-    color: var(--title-card-color);
+    color: color-mix(in sRGB, var(--SecondaryColor) 20%, var(--gray-800));
   }
 
   .workspace-nav a[aria-current='page'] {
     background: var(--PrimaryColor-alpha-8);
-    color: var(--title-card-color);
+    color: color-mix(in sRGB, var(--SecondaryColor) 20%, var(--gray-800));
   }
 
   .workspace-nav a:focus-visible {

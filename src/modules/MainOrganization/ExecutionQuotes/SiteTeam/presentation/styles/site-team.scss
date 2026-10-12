@@ -1,6 +1,6 @@
 .site-team,
 .site-team-dialog {
-  color: var(--title-card-color);
+  color: color-mix(in sRGB, var(--SecondaryColor) 20%, var(--gray-800));
   accent-color: var(--PrimaryColor);
 }
 
@@ -26,6 +26,7 @@
 }
 
 .site-team-project-title {
+  color: color-mix(in sRGB, var(--SecondaryColor) 20%, var(--gray-800));
   margin-block: 0 0.5rem;
   font-size: clamp(1.25rem, 2vw, 1.5rem);
 }
@@ -56,6 +57,7 @@
 }
 
 .site-team-section-heading h2 {
+  color: color-mix(in sRGB, var(--SecondaryColor) 20%, var(--gray-800));
   flex: 1;
   margin: 0;
   font-size: 1.05rem;
@@ -408,5 +410,5 @@
 .site-team-badge,
 .site-team-avatar,
 .site-team-member-avatar {
-  color: var(--title-card-color);
+  color: color-mix(in sRGB, var(--SecondaryColor) 20%, var(--gray-800));
 }
