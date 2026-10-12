@@ -1,0 +1,247 @@
+.work-items-page {
+  display: grid;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  color: var(--title-card-color);
+}
+
+.work-items-header {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.work-items-header h1 {
+  margin: 0 0 0.5rem;
+  font-size: 1.75rem;
+}
+
+.work-items-header p {
+  margin: 0;
+  color: var(--subtitle-color);
+  max-width: 65ch;
+}
+
+.work-items-actions {
+  display: flex;
+  justify-content: end;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+.work-items-section {
+  padding: 1.5rem;
+  border: 1px solid var(--border-weak);
+  border-radius: 14px;
+  background: var(--bg-card);
+  min-width: 0;
+}
+
+.work-items-section > header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-block-end: 1rem;
+}
+
+.work-items-section h2 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.work-items-records {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.work-items-records li {
+  padding-block: 1.2rem;
+  border-block-start: 1px solid var(--border-weak);
+  overflow-wrap: anywhere;
+}
+
+.work-items-records li:first-child {
+  border-block-start: 0;
+  padding-block-start: 0;
+}
+
+.work-items-records h3 {
+  font-size: 1rem;
+  margin: 0;
+  font-weight: 600;
+}
+
+.work-items-record-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 1rem;
+}
+
+.work-items-stage-label {
+  margin-block: 0.4rem 1rem;
+  color: var(--subtitle-color);
+  font-size: 0.9rem;
+}
+
+.work-items-records dl {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr));
+  gap: 1rem;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.work-items-records dt {
+  color: var(--subtitle-color);
+  margin-block-end: 0.2rem;
+}
+
+.work-items-records dd {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.work-items-notes {
+  white-space: pre-wrap;
+  line-height: 1.65;
+  max-width: 70ch;
+}
+
+.work-items-badge {
+  flex-shrink: 0;
+  padding: 0.3rem 0.65rem;
+  border-radius: 9999px;
+  background: var(--bg-section);
+  font-size: 0.8rem;
+  color: var(--title-card-color);
+}
+
+.work-items-safety-3 {
+  color: var(--danger-color, var(--title-card-color));
+}
+
+.work-items-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-block-end: 1.5rem;
+}
+
+.work-items-filters button {
+  border: 1px solid var(--border-weak);
+  border-radius: 8px;
+  padding: 0.5rem 0.8rem;
+  background: var(--bg-card);
+  color: var(--title-card-color);
+  cursor: pointer;
+}
+
+.work-items-filters button[aria-pressed='true'] {
+  background: var(--bg-section);
+  border-color: var(--PrimaryColor);
+  font-weight: 600;
+}
+
+.work-items-filters button:hover {
+  background: var(--bg-section);
+}
+
+.work-items-filters button:focus-visible {
+  outline: 2px solid var(--PrimaryColor);
+  outline-offset: 3px;
+}
+
+.work-items-empty {
+  padding: 1.5rem 0;
+  color: var(--subtitle-color);
+}
+
+.work-items-skeleton {
+  display: grid;
+  gap: 1rem;
+}
+
+.work-items-dialog {
+  width: min(36rem, calc(100vw - 2rem));
+}
+
+.work-items-form {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.work-items-form small,
+.work-items-error {
+  color: var(--danger-color, var(--title-card-color));
+}
+
+.work-items-form .input {
+  width: 100%;
+}
+
+.work-items-page h1,
+.work-items-page h2,
+.work-items-page h3,
+.work-items-page p {
+  text-transform: none;
+}
+
+@media (max-width: 600px) {
+  .work-items-page {
+    padding: 1rem;
+  }
+
+  .work-items-section {
+    padding: 1rem;
+  }
+
+  .work-items-header .work-items-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+  }
+
+  .work-items-record-heading {
+    flex-wrap: wrap;
+  }
+}
+
+.work-items-form .input-wrapper {
+  padding-inline-end: 0;
+  gap: 0.5rem;
+}
+
+.work-items-form .input-wrapper .label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--title-card-color);
+  text-transform: none;
+}
+
+.work-items-form .input-wrapper .input {
+  min-height: 2.75rem;
+  padding: 0.65rem 0.8rem;
+  font-size: 0.95rem;
+  font-weight: 400;
+  cursor: text;
+}
+
+.work-items-form .input-wrapper .input:focus-visible {
+  outline: 2px solid var(--PrimaryColor);
+  outline-offset: 2px;
+  box-shadow: none;
+}
+
+.work-items-form .input-wrapper .input:disabled {
+  opacity: 0.65;
+  cursor: default;
+}
+
+.work-items-form .input-wrapper .input[aria-invalid='true'] {
+  border-color: var(--danger-color, var(--title-card-color));
+}

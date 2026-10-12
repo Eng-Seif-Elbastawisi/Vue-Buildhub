@@ -12,7 +12,11 @@
 </script>
 <template>
   <RouterLink :to="to" class="project-shortcut">
-    <div class="project-shortcut__visual" aria-hidden="true">
+    <div
+      v-if="icon.includes('calendar') || icon.includes('map-marker')"
+      class="project-shortcut__visual"
+      aria-hidden="true"
+    >
       <svg v-if="icon.includes('calendar')" viewBox="0 0 480 160" fill="none">
         <path
           class="project-shortcut__guide"

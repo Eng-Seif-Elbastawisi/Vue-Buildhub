@@ -1,6 +1,7 @@
 <script setup lang="ts">
   import ScheduleShortcut from '../../Schedule/presentation/components/ScheduleShortcut.vue';
   import SiteTeamShortcut from '../../SiteTeam/presentation/components/SiteTeamShortcut.vue';
+  import WorkItemsShortcut from '../../WorkItems/presentation/components/WorkItemsShortcut.vue';
   defineProps<{ quoteId: number }>();
 </script>
 <template>
@@ -15,6 +16,7 @@
     <div class="workspace-apps__grid">
       <ScheduleShortcut :quote-id="quoteId" compact />
       <SiteTeamShortcut :quote-id="quoteId" />
+      <WorkItemsShortcut :quote-id="quoteId" />
     </div>
   </section>
 </template>
