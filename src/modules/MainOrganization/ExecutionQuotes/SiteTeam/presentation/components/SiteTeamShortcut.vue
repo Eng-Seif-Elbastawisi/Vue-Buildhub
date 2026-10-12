@@ -16,7 +16,7 @@
           { label: t('site_team.floors'), value: controller.floorsState.value.data?.length },
           {
             label: t('site_team.engineers'),
-            value: controller.engineersState.value.data?.employee.length,
+            value: controller.engineersState.value.data?.length,
           },
         ]
       : [],

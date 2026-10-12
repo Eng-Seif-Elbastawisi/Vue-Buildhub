@@ -14,16 +14,18 @@ One `WorkItemsApiService`, `WorkItemsRepository`, and `WorkItemsController` exte
 
 - Schedule: `ScheduleRepository.readOverview()`, `ScheduleOwnerParams`, `ScheduleGroupModel`, `ProjectTimelineStageModel`. Selection uses `ProjectTimelineStageModel.id`, never its `quoteStageId` or nested master-stage ID. Only explicitly available parent timeline stages are offered; child-stage identifiers are not guessed.
 - Employee: `EmployeeRepository`, `IndexEmployeeParams`, and `EmployeeModel`. The existing search/page request mechanism and shared selector pagination are retained without an invented role filter.
-- Workspace: `ProjectWorkspaceApps`, `ProjectWorkspaceNav`, `ProjectManagementShortcut`, and `quotePath` prefix resolution. Existing diagrams remain limited to Schedule and Site & Team; Work Items adds no drawing illustration.
+- Workspace: `ProjectWorkspaceApps`, `ProjectWorkspaceNav`, `ProjectManagementShortcut`, and `quotePath` prefix resolution. Schedule and Site & Team keep their existing diagrams; Work Items uses a decorative checklist SVG for its `pi-list-check` shortcut.
 - Forms: `UpdatedCustomInputSelect`, `AppButton`, PrimeVue `Dialog` and `Skeleton`, and `input-wrapper` styles.
 
-`WorkItemStageSelect` shares the stage options, loading/retry/unavailable behavior across the three forms. `WorkItemSection` shares section loading, error/retry, and empty-state rendering across the three lists. Record-specific markup and the three focused forms remain explicit.
+`WorkItemStageSelect` shares the stage options, loading/retry/unavailable behavior across the three forms. `EngineerTasksList`, `DailyReportsList` and `WorkActivitiesList` own their record-specific presentation. Their props are respectively `DataState<WorkTaskModel[]>`, `DataState<DailyReportModel[]>` and `DataState<WorkActivityModel[]>`, plus `stageLabel: (id: number) => string`. They emit `retry`; `WorkItemsPage` connects it to `loadTasks()`, `loadReports()` and `loadActivities()` on the controller. The extracted components do not fetch or mutate data.
+
+`WorkItemSection` shares loading, error/retry and empty-state rendering inside a native `details`/`summary` accordion. Each section starts expanded and toggles independently with native keyboard support. Collapsing keeps its body mounted, preserving the activity filter. The three focused forms and network layer are unchanged by this refactor.
 
 ## Behavior
 
 Separate list and submission states prevent one operation from overwriting another. Quote activation clears owned state and increments the request epoch; per-resource request counters prevent earlier reads from overwriting newer reads. Saving checks stage membership in the currently loaded Quote. Late mutation results cannot refresh a different Quote or close its form. Submission stays disabled through the authoritative affected-list refresh. Mutations have automatic retry disabled.
 
-Successful explicit backend confirmation triggers feedback, refresh, and dialog closure. A failed response preserves the form and shows the error. A refresh failure after confirmed creation is shown in the list; it does not fabricate the newly created record or retry the mutation. Activity filters operate on the one fetched collection.
+Successful explicit backend confirmation triggers feedback, refresh, and dialog closure. A failed response preserves the form and shows the error. A refresh failure after confirmed creation is shown in the list; it does not fabricate the newly created record or retry the mutation. Activity filters operate on the one fetched collection. The activity header count describes the full collection rather than the filtered records, so it remains truthful while the filter is hidden in a collapsed section. Counts disappear during loading, error or unavailable data; loaded empty collections show zero. Each list is keyed by Quote ID, so owner changes remount the lists, reset the activity filter to All and start the sections expanded.
 
 English and Arabic labels are provided. Date inputs serialize their original `YYYY-MM-DD` strings without timezone conversion. Responsive metadata and action grids use logical layout properties. Drawings & Revisions, quantities, approval, progress, Start Item, editing/deletion, and task transitions are outside this integration.
 
@@ -49,14 +51,14 @@ Added within this directory:
 - `presentation/controllers/work-items.controller.ts`; `presentation/work-items.routes.ts`.
 - `presentation/components/WorkItemsPage.vue`, `WorkItemsShortcut.vue`, `WorkItemStageSelect.vue`, `WorkItemSection.vue`, `TaskFormDialog.vue`, `DailyReportFormDialog.vue`, `MeetingIssueFormDialog.vue`.
 - `presentation/styles/_work-items.scss`, `index.ts`, this integration note, and `DESIGN_REVIEW.md`.
-- Companion tests under each affected layer's `__tests__/` directory.
+- Companion tests under each affected layer's `__tests__/` directory. The accordion extraction adds `EngineerTasksList.test.ts`, `DailyReportsList.test.ts` and `WorkActivitiesList.test.ts` in `presentation/components/__tests__/`; existing section and page tests cover shared states and Quote navigation.
 
 Added view: `src/views/MainOrganization/ExecutionQuotes/WorkItems/WorkItemsIndex.vue`.
 
 Changed existing integration files:
 
 - `ExecutionQuotes/presentation/components/ProjectWorkspaceApps.vue`, `ProjectWorkspaceNav.vue`, and their companion tests.
-- `ExecutionQuotes/Schedule/presentation/components/ProjectManagementShortcut.vue`: only limits existing decorative diagrams to their corresponding apps.
+- `ExecutionQuotes/Schedule/presentation/components/ProjectManagementShortcut.vue`: selects the corresponding calendar, floor-plan, or checklist visual for each app.
 - `src/router/routes/modules/execution_quotes.ts` and its companion test.
 - `src/locales/en.json` and `src/locales/ar.json`: Work Items content and missing validation field labels.
 
@@ -64,7 +66,17 @@ The supplied endpoint document remains unchanged. Development-only visual eviden
 
 ## Validation results
 
-- Focused feature, launcher, navigation, shortcut, and route tests: **102 passed across 25 files**. The latest test review replaced internal repository stubs with network-boundary mocks and added employee lookup coverage; all affected tests were rerun afterward.
+Current accordion refactor:
+
+- Focused tests: **82 passed across 24 files**, recorded in `/tmp/work-items-accordion-tests-final.log`. This is a different focused scope from the earlier feature validation below.
+- `npm run type-check`, focused ESLint and Stylelint: passed. Logs are `/tmp/work-items-accordion-types.log`, `/tmp/work-items-accordion-lint-final.log` and `/tmp/work-items-accordion-style-final.log`.
+- Six captures in `.impeccable/review/work-items-accordion/` cover expanded and collapsed desktop, mobile and Arabic layouts. `/tmp/work-items-accordion-browser-final.log` records no page errors or horizontal overflow, three sections starting expanded, independent collapse and preserved activity filters.
+- Independent finish review: **ship**, no material fixes. `/tmp/work-items-accordion-detect.json` has no primary findings; its nine advisories concern existing local typography/radius choices recorded in `DESIGN_REVIEW.md`. Root design documents remain unchanged.
+- New companion tests cover task/report presentation and activity-filter persistence across collapse/reopen, including the full-collection count. Existing page coverage checks the filter resets after Quote navigation. Source and documentation were checked together.
+
+Historical feature validation (not rerun as a full baseline for this refactor):
+
+- Original focused feature, launcher, navigation, shortcut, and route tests: **102 passed across 25 files**. That feature test review replaced internal repository stubs with network-boundary mocks and added employee lookup coverage; all affected tests were rerun afterward.
 - `npm run test:run -- --maxWorkers=4`: **2,439 passed, 167 failed across 995 files** (140 failed files, 855 passed). The baseline run had 2,360 passed and the same 167 failed tests; normalized failure entries match exactly. The full run precedes the final test-only guard refinements described above.
 - `npm run type-check`: passed. The stricter `npx vue-tsc --noEmit -p tsconfig.app.json` reports **213 diagnostics**, identical to baseline after normalizing line numbers; no Work Items diagnostics remain.
 - Focused ESLint and Stylelint: clean. `git diff --check`: clean. All new production TS/Vue files have companion tests; both locales have the same 53 Work Items keys.

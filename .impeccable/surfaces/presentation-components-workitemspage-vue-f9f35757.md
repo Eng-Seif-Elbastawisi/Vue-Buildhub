@@ -19,6 +19,6 @@ STORY: Staff select an existing timeline stage, record one item and see the auth
 
 FIRST VIEWPORT: Shared app navigation, compact title and four named creation actions, then task records under an ink section header with a truthful loaded count and a tonal assignment-metadata band. Reports and activities follow with a compact type filter.
 
-FORM: Precise user-specified local extension, code-led; no new visual world or concept seed. Three focused dialogs protect form context; restrained focus and high-contrast selected-filter feedback. Page header, navigation, forms and API behavior stay intact.
+FORM: Precise user-specified local extension, code-led; no new visual world or concept seed. Three focused dialogs protect form context; restrained focus and high-contrast selected-filter feedback. Page header, navigation, forms and API behavior stay intact. Each list now has its own presentational component inside an independent native details/summary accordion. Sections start expanded; keyboard toggling preserves activity filters. Counts describe the full loaded collection, including while collapsed.
 
 FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance

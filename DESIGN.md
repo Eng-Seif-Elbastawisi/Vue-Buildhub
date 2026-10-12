@@ -73,7 +73,7 @@ components:
 
 This is a scoped record of the existing BuildHub identity as used by Quote Show, Schedule, and Site & Team. It extends the authenticated dashboard's ink, copper, warm canvas, and established controls. It does not define a replacement theme for unrelated modules.
 
-The shell uses warm paper and charcoal with copper accents. Workspace content combines that shell identity with the existing white cards, slate text, and legacy primary tokens. Architectural SVG geometry distinguishes the two app entries: stepped timeline bars for Schedule and a floor plan for Site & Team. These illustrations are code assets, not raster images.
+The shell uses warm paper and charcoal with copper accents. Workspace content combines that shell identity with the existing white cards, slate text, and legacy primary tokens. SVG geometry distinguishes the app entries: stepped timeline bars for Schedule, a floor plan for Site & Team, and a checklist for Work Items. These illustrations are code assets, not raster images.
 
 Key characteristics:
 

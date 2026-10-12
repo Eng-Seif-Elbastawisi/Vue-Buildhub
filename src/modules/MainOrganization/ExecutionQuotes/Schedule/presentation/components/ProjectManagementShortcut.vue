@@ -13,7 +13,7 @@
 <template>
   <RouterLink :to="to" class="project-shortcut">
     <div
-      v-if="icon.includes('calendar') || icon.includes('map-marker')"
+      v-if="icon.includes('calendar') || icon.includes('map-marker') || icon.includes('list-check')"
       class="project-shortcut__visual"
       aria-hidden="true"
     >
@@ -27,7 +27,7 @@
         <rect x="215" y="70" width="100" height="20" rx="5" />
         <rect x="315" y="107" width="95" height="20" rx="5" />
       </svg>
-      <svg v-else viewBox="0 0 480 160" fill="none">
+      <svg v-else-if="icon.includes('map-marker')" viewBox="0 0 480 160" fill="none">
         <path
           class="project-shortcut__guide"
           d="M105 17H375V143H105ZM195 17V91H105M195 91H275V143M275 17V77H375M275 77V91H195"
@@ -37,6 +37,16 @@
           d="M105 143V17H375V143H105M195 17V91H275V143M275 17V77H375"
         />
         <path d="M120 32H180V76H120ZM290 32H360V62H290ZM290 106H360V128H290Z" />
+      </svg>
+      <svg v-else viewBox="0 0 480 160" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <path class="project-shortcut__guide" d="M180 54H350M180 96H350M180 138H300" />
+        <rect x="125" y="25" width="28" height="28" rx="5" />
+        <rect x="125" y="67" width="28" height="28" rx="5" />
+        <rect x="125" y="109" width="28" height="28" rx="5" />
+        <path
+          class="project-shortcut__line"
+          d="M132 38L139 45L150 32M132 80L139 87L150 74M180 39H350M180 81H350M180 123H300"
+        />
       </svg>
     </div>
     <div class="project-shortcut__heading">
