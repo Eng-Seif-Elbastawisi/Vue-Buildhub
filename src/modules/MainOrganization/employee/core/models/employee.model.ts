@@ -43,7 +43,7 @@ export default class EmployeeModel {
       employee_type:
         json.employee_type !== undefined && json.employee_type !== null
           ? (Number(json.employee_type) as EmployeeType)
-          : undefined,
+          : json.type as EmployeeType | undefined,
     });
   }
 

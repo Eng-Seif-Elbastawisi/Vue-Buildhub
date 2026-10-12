@@ -3156,5 +3156,14 @@
   "validation.fields.siteCondition": "Site condition",
   "validation.fields.length": "Length",
   "validation.fields.width": "Width",
-  "validation.fields.height": "Height"
+  "validation.fields.height": "Height",
+  "project.status.employees": "Employee",
+  "project.status.engineer": "Engineer",
+  "project.status.seller": "Seller",
+  "project.status.pricing_responsible": "Pricing Responsible",
+  "project.status.delivery_date": "Delivery Date",
+  "project.status.project_manager": "Project Manager",
+  "project.status.site_engineer": "Site Engineer",
+  "project.status.team_leader": "Team Leader",
+  "project.status.reviewer": "Reviewer"
 }

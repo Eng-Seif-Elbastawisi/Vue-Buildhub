@@ -3152,5 +3152,13 @@
   "validation.fields.siteCondition": "حالة الموقع",
   "validation.fields.length": "الطول",
   "validation.fields.width": "العرض",
-  "validation.fields.height": "الارتفاع"
+  "validation.fields.height": "الارتفاع",
+  "project.status.engineer": "مهندس",
+  "project.status.seller": "مندوب المبيعات",
+  "project.status.pricing_responsible": "مسؤول عن التسعير",
+  "project.status.delivery_date": "تاريخ التسليم",
+  "project.status.project_manager": "مدير المشروع",
+  "project.status.site_engineer": "مهندس الموقع",
+  "project.status.team_leader": "قائد الفريق",
+  "project.status.reviewer": "المُراجع"
 }

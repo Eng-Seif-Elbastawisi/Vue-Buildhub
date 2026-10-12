@@ -195,15 +195,17 @@
 .site-team-avatar-group {
   display: flex;
   gap: 0.35rem;
+
   margin-block: 0.75rem;
+  flex-wrap: wrap;
 }
 
 .site-team-avatar {
   display: grid;
-  flex: 0 0 2.5rem;
+  // flex: 0 0 2.5rem;
+  padding: 0.35rem 0.75rem;
   place-items: center;
-  width: 2.5rem;
-  height: 2.5rem;
+  width: fit-content;
   border: 1px solid var(--border-weak);
   border-radius: var(--radius-full);
   background: var(--PrimaryColor-alpha-8);

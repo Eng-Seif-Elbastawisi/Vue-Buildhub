@@ -17,6 +17,7 @@
   import EngineerSelectionDialog from './EngineerSelectionDialog.vue';
   import AddProjectSpacesDialog from './AddProjectSpacesDialog.vue';
   import '../styles/site-team.scss';
+  import { getStatusNameKey } from '@/modules/MainOrganization/employee/core/constants/type.enum.ts';
   const route = useRoute();
   const { locale } = useI18n();
   const controller = SiteTeamController.getInstance();
@@ -152,9 +153,9 @@
                 <span
                   v-for="employee in engineers.data?.slice(0, 4)"
                   :key="employee.id"
-                  class="site-team-avatar"
                   :title="employee.name"
-                  >{{ employee.name.slice(0, 1) }}</span
+                  class="site-team-avatar"
+                  >{{ employee.name }} - {{ getStatusNameKey(employee.employee_type!) }}</span
                 >
               </div>
               <AppButton theme="secondary" size="sm" @click="engineerDialog = true">{{
