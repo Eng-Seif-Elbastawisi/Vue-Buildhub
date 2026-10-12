@@ -8,7 +8,7 @@ export const EmployeeType = {
   PRICING_RESPONSIBLE: 4,
   REVIEWER: 5,
   TEAM_LEADER: 6,
-  SITE_ENGINEER : 7,
+  SITE_ENGINEER: 7,
   PROJECT_MANAGER: 8
 } as const;
 
@@ -18,18 +18,27 @@ export type EmployeeType = (typeof EmployeeType)[keyof typeof EmployeeType];
  * Get i18n key for email type display name
  * Use this with $t() in components to get localized display names
  */
+
+import { translate } from '@/locales/i18n';
+
 export function getStatusNameKey(type: EmployeeType): string {
   switch (type) {
     case EmployeeType.EMPLOYEE:
-      return 'project.status.employee';
+      return translate('project.status.employee');
     case EmployeeType.ENGINEER:
-      return 'project.status.engineer';
+      return translate('project.status.engineer');
     case EmployeeType.SELLER:
-      return 'project.status.seller';
+      return translate('project.status.seller');
     case EmployeeType.PRICING_RESPONSIBLE:
-      return 'project.status.pricing_responsible';
+      return translate('project.status.pricing_responsible');
     case EmployeeType.REVIEWER:
-      return 'project.status.reviewer';
+      return translate('project.status.reviewer');
+    case EmployeeType.TEAM_LEADER:
+      return translate('project.status.team_leader');
+    case EmployeeType.SITE_ENGINEER:
+      return translate('project.status.site_engineer');
+    case EmployeeType.PROJECT_MANAGER:
+      return translate('project.status.project_manager');
     default:
       return 'unknown';
   }

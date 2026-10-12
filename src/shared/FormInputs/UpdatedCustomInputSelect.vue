@@ -600,7 +600,7 @@
         </button>
       </template>
 
-      <template v-if="isMultiselect && paginated && optionsLastPage > 1" #footer>
+      <template v-if="paginated && optionsLastPage > 1" #footer>
         <div
           class="multiselect-pagination"
           role="navigation"

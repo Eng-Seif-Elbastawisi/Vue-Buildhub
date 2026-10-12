@@ -691,3 +691,66 @@ body .p-dialog.schedule-settings .p-dialog-header {
     display: none;
   }
 }
+
+/* Workspace surfaces retain existing Schedule interactions and tokens. */
+.main-content > .schedule.standard-crud-page {
+  padding: clamp(1rem, 2vw, 2rem);
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.schedule__header {
+  padding: 1.25rem 0;
+}
+
+.schedule__summary {
+  padding-block: 1.5rem;
+  background: var(--schedule-paper);
+  border-radius: 14px;
+}
+
+.schedule__panel {
+  padding: clamp(1.25rem, 2vw, 2rem);
+}
+
+.schedule__timeline-card {
+  border-radius: 14px;
+}
+
+.schedule__timeline-card:focus-within {
+  background: var(--schedule-accent-soft);
+}
+
+.schedule__summary {
+  background: var(--title-card-color);
+}
+
+.schedule__summary dt {
+  color: var(--white-alpha-75);
+}
+
+.schedule__summary dd {
+  color: var(--white);
+  font-size: 1.2rem;
+}
+
+.schedule__summary > div + div {
+  border-color: var(--white-alpha-20);
+}
+
+.schedule__scope {
+  padding: 1rem;
+  border-radius: 10px;
+  background: var(--schedule-canvas);
+}
+
+.schedule :is(p, h2, h3, dt, dd) {
+  text-transform: none;
+}
+
+@media (max-width: 700px) {
+  .schedule__summary {
+    padding-inline: 1rem;
+  }
+}

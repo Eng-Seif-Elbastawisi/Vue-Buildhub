@@ -53,6 +53,7 @@ for (const prefix of ['organization', 'mainportal']) {
     ],
   });
   it.each([
+    ['/site-team', 'Quote Site Team', undefined],
     ['/schedule', 'Quote Schedule', undefined],
     ['/schedule/add', 'Add Schedule Group', undefined],
     ['/schedule/201', 'Show Schedule Group', '201'],

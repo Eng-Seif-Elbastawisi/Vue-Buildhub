@@ -1,3 +1,9 @@
+import {
+  mockNetwork,
+  response,
+} from '@/modules/MainOrganization/ExecutionQuotes/SiteTeam/__tests__/network';
+import AddProjectFloorSpaceParams from '../../../core/params/add.project.floor.space.params';
+import AddProjectFloorSpacesParams from '../../../core/params/add.project.floor.spaces.params';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
@@ -108,4 +114,13 @@ describe('ProjectFloorController', () => {
     expect(result).toBeInstanceOf(DataSuccess);
     expect(mocks.push).not.toHaveBeenCalled();
   });
+});
+
+it('reports only explicitly acknowledged space additions', async () => {
+  const post = mockNetwork();
+  post.mockResolvedValue(response({ status: true }));
+  const result = await ProjectFloorController.getInstance().addSpaces(
+    new AddProjectFloorSpacesParams(23, [new AddProjectFloorSpaceParams(13, 6, 4, 3.2, '')]),
+  );
+  expect(result).toBeInstanceOf(DataSuccess);
 });
