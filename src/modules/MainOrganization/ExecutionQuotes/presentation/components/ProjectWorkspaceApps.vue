@@ -35,7 +35,7 @@
 
   .workspace-apps__header h2 {
     margin: 0 0 0.5rem;
-    color: var(--title-card-color);
+    color: color-mix(in sRGB, var(--SecondaryColor) 20%, var(--gray-800));
     font-size: 1.5rem;
     font-weight: 600;
   }

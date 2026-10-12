@@ -23,6 +23,26 @@ describe('useSystemIdentityTheme', () => {
     expect(window.localStorage.getItem('systemIdentityPalette')).toContain('Test Palette');
   });
 
+  it.each([
+    ['#111827', '#FFFFFF'],
+    ['#F1F5F9', '#101418'],
+  ])('supplies readable header and sidebar text for secondary %s', (secondary, foreground) => {
+    theme.applyPalette({
+      name: 'Theme contrast',
+      primary: '#2563EB',
+      secondary,
+      accent: '#14B8A6',
+    });
+
+    expect(document.documentElement.style.getPropertyValue('--SecondaryColor')).toBe(secondary);
+    expect(document.documentElement.style.getPropertyValue('--secondary-text-color')).toBe(
+      foreground,
+    );
+    expect(document.documentElement.style.getPropertyValue('--button-primary-color')).toBe(
+      '#FFFFFF',
+    );
+  });
+
   it('keeps the active logo in the shared identity palette', () => {
     theme.applyPalette({
       name: 'Logo Identity',

@@ -90,7 +90,7 @@
     border: 1px solid var(--border-weak);
     border-radius: 16px;
     background: var(--bg-card);
-    color: var(--title-card-color);
+    color: color-mix(in sRGB, var(--SecondaryColor) 20%, var(--gray-800));
     text-decoration: none;
     transition:
       border-color 220ms ease,
@@ -221,7 +221,7 @@
     margin-block-start: auto;
     padding: 1rem 1.5rem;
     border-block-start: 1px solid var(--border-weak);
-    color: var(--title-card-color);
+    color: color-mix(in sRGB, var(--SecondaryColor) 20%, var(--gray-800));
     font-size: 0.85rem;
     font-weight: 600;
   }

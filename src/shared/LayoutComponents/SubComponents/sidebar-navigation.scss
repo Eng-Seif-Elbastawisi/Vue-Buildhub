@@ -1,4 +1,52 @@
 .sidebar-shell {
+  --quote-graphite: var(--SecondaryColor);
+  --quote-graphite-line: color-mix(
+    in srgb,
+    var(--SecondaryColor),
+    var(--secondary-text-color, var(--white)) 20%
+  );
+  --quote-graphite-text: var(--secondary-text-color, var(--white));
+  --quote-graphite-heading: var(--secondary-text-color, var(--white));
+  --quote-graphite-danger: var(--secondary-text-color, var(--white));
+  --quote-graphite-muted: color-mix(
+    in srgb,
+    var(--secondary-text-color, var(--white)),
+    var(--SecondaryColor) 15%
+  );
+  --quote-graphite-hover: color-mix(
+    in srgb,
+    var(--SecondaryColor),
+    var(--secondary-text-color, var(--white)) 10%
+  );
+  --quote-graphite-raised: color-mix(
+    in srgb,
+    var(--SecondaryColor),
+    var(--secondary-text-color, var(--white)) 10%
+  );
+  --quote-graphite-input: color-mix(
+    in srgb,
+    var(--SecondaryColor),
+    var(--secondary-text-color, var(--white)) 10%
+  );
+  --quote-graphite-input-line: color-mix(
+    in srgb,
+    var(--SecondaryColor),
+    var(--secondary-text-color, var(--white)) 20%
+  );
+  --quote-graphite-copper: color-mix(in srgb, var(--PrimaryColor) 20%, var(--SecondaryColor));
+  --quote-graphite-copper-line: var(--PrimaryColor);
+  --quote-graphite-active: var(--PrimaryColor);
+  --quote-graphite-active-text: var(--button-primary-color, var(--white));
+  --quote-copper: var(--PrimaryColor);
+  --quote-copper-dark: var(--PrimaryColor-hover);
+  --quote-copper-line: var(--PrimaryColor);
+  --quote-copper-light: color-mix(
+    in srgb,
+    var(--PrimaryColor),
+    var(--secondary-text-color, var(--white)) 65%
+  );
+  --quote-copper-pale-text: var(--secondary-text-color, var(--white));
+  --quote-focus-dark: var(--PrimaryColor);
   --sidebar-pane-bg: var(--quote-graphite);
   --sidebar-line: var(--quote-graphite-line);
   --sidebar-text: var(--quote-graphite-text);
@@ -369,7 +417,7 @@
 }
 
 .menu-item.active:hover {
-  background: var(--quote-copper-dark);
+  background: color-mix(in srgb, var(--PrimaryColor), var(--SecondaryColor) 15%);
 }
 
 .item-icon {
@@ -410,7 +458,7 @@
 .menu-item.active .badge {
   border-color: var(--quote-copper-light);
   color: var(--quote-graphite-active-text);
-  background: var(--quote-copper-dark);
+  background: color-mix(in srgb, var(--PrimaryColor), var(--SecondaryColor) 15%);
 }
 
 .arrow {
@@ -469,7 +517,7 @@
 .menu-item.danger {
   min-height: 44px;
   border-color: var(--quote-graphite-copper-line);
-  color: var(--quote-graphite-danger);
+  color: var(--secondary-text-color, var(--white));
   background: var(--quote-graphite-copper);
 }
 

@@ -1,9 +1,22 @@
+.execution-quote-index,
+.execution-quote-index__actions-menu,
+body:has(.execution-quote-index) .p-select-overlay {
+  --quote-ink: color-mix(in sRGB, var(--SecondaryColor) 20%, var(--gray-800));
+  --quote-copper: var(--PrimaryColor);
+  --quote-copper-dark: var(--PrimaryColor);
+  --quote-copper-soft: var(--PrimaryColor-light);
+  --quote-copper-pressed: color-mix(in sRGB, var(--PrimaryColor), var(--SecondaryColor) 15%);
+  --quote-copper-border: var(--PrimaryColor);
+  --quote-copper-hover: var(--PrimaryColor-alpha-8);
+}
+
 .execution-quote-index {
   width: 100%;
   max-width: none;
   min-width: 0;
   margin: 0;
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   row-gap: max(20px, var(--page-section-gap));
   color: var(--quote-ink);
   font-family: 'Medium', 'Segoe UI', sans-serif;
@@ -12,61 +25,6 @@
 
 .project-workflow-view.project-workflow-view--index.execution-quote-index {
   padding-block-start: max(24px, var(--page-section-gap));
-}
-
-.execution-quote-index__masthead {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-  min-width: 0;
-  min-height: 64px;
-}
-
-.execution-quote-index__heading-copy {
-  flex: 1 1 auto;
-  min-width: 0;
-}
-
-.execution-quote-index__identity {
-  display: flex;
-  flex: 1 1 auto;
-  align-items: center;
-  gap: 14px;
-  min-width: 0;
-}
-
-.execution-quote-index__heading-copy h1 {
-  margin: 0;
-  color: var(--quote-ink);
-  font-family: 'Bold', 'Segoe UI', sans-serif;
-  font-size: 1.7rem;
-  font-weight: 700;
-  line-height: 1.35;
-}
-
-.execution-quote-index__heading-copy p {
-  margin: 6px 0 0;
-  color: var(--quote-muted);
-  font-size: 0.84rem;
-  line-height: 1.5;
-}
-
-.execution-quote-index__masthead-action {
-  flex: 0 0 auto;
-}
-
-.execution-quote-index .execution-quote-index__masthead-action .app-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  min-height: 42px;
-  padding-inline: 18px;
-}
-
-.execution-quote-index__masthead-action .btn__icon--right {
-  margin-inline-start: 0;
 }
 
 .execution-quote-index :is(button, a, [tabindex]):focus-visible {
@@ -91,7 +49,7 @@
 
 .execution-quote-index .btn-primary {
   border-color: var(--quote-copper-dark);
-  color: var(--quote-paper);
+  color: var(--button-primary-color, var(--white));
   background: var(--quote-copper-dark);
 }
 
@@ -652,22 +610,6 @@ body:has(.execution-quote-index) .p-select-overlay.p-anchored-overlay-leave-to {
 
   .execution-quote-index {
     row-gap: var(--page-section-gap);
-  }
-
-  .execution-quote-index__masthead {
-    align-items: stretch;
-    flex-direction: column;
-    gap: var(--page-section-gap);
-    min-height: 0;
-  }
-
-  .execution-quote-index__heading-copy h1 {
-    font-size: 1.45rem;
-  }
-
-  .execution-quote-index__masthead-action .app-btn {
-    width: 100%;
-    justify-content: center;
   }
 
   .execution-quote-index__filters {

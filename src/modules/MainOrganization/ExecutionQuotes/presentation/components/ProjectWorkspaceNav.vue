@@ -62,12 +62,12 @@
 
   .workspace-nav a:hover {
     background: var(--bg-section);
-    color: var(--title-card-color);
+    color: color-mix(in sRGB, var(--SecondaryColor) 20%, var(--gray-800));
   }
 
   .workspace-nav a[aria-current='page'] {
     background: var(--PrimaryColor-alpha-8);
-    color: var(--title-card-color);
+    color: color-mix(in sRGB, var(--SecondaryColor) 20%, var(--gray-800));
   }
 
   .workspace-nav a:focus-visible {

@@ -847,9 +847,9 @@
     flex-direction: column;
     gap: 1rem;
     width: 100%;
-    max-width: 96rem;
+    // max-width: 96rem;
     margin-inline: auto;
-    padding: clamp(0.75rem, 2vw, 1.5rem);
+    // padding: clamp(0.75rem, 2vw, 1.5rem);
     color: var(--title-card-color);
 
     &--loading {

@@ -14,6 +14,7 @@
   import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
   import AppButton from '@/shared/HelpersComponents/AppButton.vue';
   import ProjectWorkspaceApps from './ProjectWorkspaceApps.vue';
+  import PageHeaderIcon from '@/shared/FeatureHeader/PageHeaderIcon.vue';
 
   import {
     ExecutionQuoteItemSourceEnum,
@@ -395,20 +396,27 @@
         <div class="execution-quote-show__content">
           <section class="execution-quote-show__hero">
             <div class="execution-quote-show__hero-copy">
+              <h2>{{ quote.project?.title ?? $t('execution_quote.show.project_fallback') }}</h2>
               <div class="execution-quote-show__badges">
                 <span>
                   <i class="pi pi-file" aria-hidden="true"></i>
                   {{ $t('execution_quote.show.eyebrow') }}
                 </span>
-                <span> {{ quoteSourceLabel(quote) }} </span>
+                <span>{{ quoteSourceLabel(quote) }}</span>
               </div>
-
-              <h2>{{ quote.project?.title ?? $t('execution_quote.show.project_fallback') }}</h2>
-              <p>
-                {{ quote.client?.name ?? '—' }}
-                <span aria-hidden="true">•</span>
-                {{ quote.organization?.name ?? '—' }}
-              </p>
+              <dl class="execution-quote-show__hero-parties">
+                <div>
+                  <dt>{{ $t('execution_quote.fields.client') }}</dt>
+                  <dd>{{ quote.client?.name ?? '—' }}</dd>
+                </div>
+                <div>
+                  <dt>{{ $t('Organization') }}</dt>
+                  <dd>{{ quote.organization?.name ?? '—' }}</dd>
+                </div>
+              </dl>
+            </div>
+            <div class="execution-quote-show__hero-mark" aria-hidden="true">
+              <PageHeaderIcon kind="project" />
             </div>
           </section>
 
@@ -1018,8 +1026,8 @@
     padding: 1.25rem;
     border-radius: inherit;
     cursor: pointer;
-    background: var(--quote-ink, var(--title-card-color));
-    color: var(--white);
+    background: var(--SecondaryColor);
+    color: var(--secondary-text-color, var(--white));
     font-size: 1.25rem;
     font-weight: 600;
     list-style: none;
@@ -1027,7 +1035,11 @@
   }
 
   .workspace-project-details > summary:hover {
-    background: var(--quote-graphite-hover, var(--title-card-color));
+    background: color-mix(
+      in sRGB,
+      var(--SecondaryColor),
+      var(--secondary-text-color, var(--white)) 10%
+    );
   }
 
   .workspace-project-details > summary::-webkit-details-marker {
@@ -1039,9 +1051,9 @@
     place-items: center;
     flex: 0 0 2.75rem;
     height: 2.75rem;
-    border: 1px solid var(--quote-copper-line, var(--PrimaryColor));
+    border: 1px solid var(--PrimaryColor);
     border-radius: var(--radius-sm, 8px);
-    color: var(--quote-copper-light, var(--white));
+    color: color-mix(in sRGB, var(--PrimaryColor), var(--secondary-text-color, var(--white)) 65%);
   }
 
   .workspace-project-details__title {
@@ -1052,7 +1064,7 @@
   .workspace-project-details__toggle {
     margin-inline-start: auto;
     flex-shrink: 0;
-    color: var(--quote-copper-light, var(--white));
+    color: color-mix(in sRGB, var(--PrimaryColor), var(--secondary-text-color, var(--white)) 65%);
     transition: transform 220ms ease;
   }
 
@@ -1067,7 +1079,8 @@
   }
 
   .workspace-project-details > summary:focus-visible {
-    outline: 2px solid var(--quote-copper-light, var(--PrimaryColor));
+    outline: 2px solid
+      color-mix(in sRGB, var(--PrimaryColor), var(--secondary-text-color, var(--white)) 65%);
     outline-offset: -4px;
   }
 
@@ -1101,59 +1114,116 @@
   .execution-quote-show__hero {
     position: relative;
     display: flex;
-    align-items: flex-end;
+    align-items: center;
     justify-content: space-between;
     gap: 2rem;
     overflow: hidden;
     min-height: 11rem;
-    padding: clamp(1.25rem, 3vw, 2rem);
-    border-radius: var(--radius-md);
-    background: var(--title-card-color);
-    color: var(--white);
-    box-shadow: var(--shadow-md);
-    transition: box-shadow var(--transition-fast);
-  }
-
-  .execution-quote-show__hero:hover {
-    box-shadow: var(--shadow-xl);
+    padding: 2rem;
+    border: 1px solid
+      color-mix(in sRGB, var(--SecondaryColor), var(--secondary-text-color, var(--white)) 20%);
+    border-radius: var(--radius-md, 14px);
+    background: var(--SecondaryColor);
+    color: var(--secondary-text-color, var(--white));
   }
 
   .execution-quote-show__hero-copy {
     position: relative;
-    z-index: 1;
-  }
-
-  .execution-quote-show__hero-copy {
     display: grid;
-    gap: 1rem;
+    flex: 1;
+    min-width: 0;
+    gap: 1.25rem;
   }
 
-  .execution-quote-show__badges,
-  .execution-quote-show__created {
+  .execution-quote-show__hero .execution-quote-show__badges {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: 0.5rem;
   }
 
-  .execution-quote-show__badges span {
+  .execution-quote-show__hero .execution-quote-show__badges span {
     display: inline-flex;
     align-items: center;
-    gap: 0.4rem;
-    padding: 0.35rem 0.7rem;
-    border-radius: var(--radius-full);
-    background: var(--white-alpha-15);
-    color: var(--white);
-    font-size: var(--xs-size);
+    gap: 0.5rem;
+    padding: 0.4rem 0.75rem;
+    border: 1px solid var(--PrimaryColor);
+    border-radius: var(--radius-full, 9999px);
+    color: var(--secondary-text-color, var(--white));
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+
+  .execution-quote-show__hero .execution-quote-show__badges span:first-child {
+    background: var(--PrimaryColor);
+    color: var(--button-primary-color, var(--white));
+  }
+
+  .execution-quote-show .execution-quote-show__hero h2 {
+    max-width: 24ch;
+    margin: 0;
+    color: var(--secondary-text-color, var(--white));
+    font-size: 2.5rem;
     font-weight: 700;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+    text-wrap: balance;
   }
 
-  .execution-quote-show__hero h2 {
-    font-size: clamp(1.5rem, 3vw, 2.5rem);
+  .execution-quote-show__hero-parties {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem 2rem;
+    max-width: 65ch;
+    margin: 0;
+    padding-block-start: 1.25rem;
+    border-block-start: 1px solid
+      color-mix(in sRGB, var(--SecondaryColor), var(--secondary-text-color, var(--white)) 20%);
   }
 
-  .execution-quote-show__hero-copy > p {
-    color: var(--white-alpha-75);
+  .execution-quote-show__hero-parties > div {
+    min-width: 0;
+  }
+
+  .execution-quote-show .execution-quote-show__hero .execution-quote-show__hero-parties dt {
+    margin-block-end: 0.4rem;
+    color: color-mix(in sRGB, var(--PrimaryColor), var(--secondary-text-color, var(--white)) 65%);
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+
+  .execution-quote-show .execution-quote-show__hero .execution-quote-show__hero-parties dd {
+    margin: 0;
+    color: var(--secondary-text-color, var(--white));
+    font-weight: 600;
+    overflow-wrap: anywhere;
+  }
+
+  .execution-quote-show__hero-mark {
+    display: grid;
+    place-items: center;
+    flex: 0 0 104px;
+    height: 104px;
+    border: 1px solid var(--PrimaryColor);
+    border-radius: var(--radius-md, 14px);
+    background: color-mix(
+      in sRGB,
+      var(--SecondaryColor),
+      var(--secondary-text-color, var(--white)) 10%
+    );
+  }
+
+  .execution-quote-show__hero-mark :deep(.page-header-icon) {
+    flex: none;
+    width: 84px;
+    height: 84px;
+    background: transparent;
+    color: color-mix(in sRGB, var(--PrimaryColor), var(--secondary-text-color, var(--white)) 65%);
+    animation: none;
+  }
+
+  .execution-quote-show__hero-mark :deep(.page-header-icon__path) {
+    animation: none;
   }
 
   .workspace-project-meta {
@@ -1179,8 +1249,16 @@
       padding: 1.25rem;
     }
 
-    .execution-quote-show__hero h2 {
-      font-size: 1.5rem;
+    .execution-quote-show .execution-quote-show__hero h2 {
+      font-size: 1.75rem;
+    }
+
+    .execution-quote-show__hero-parties {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .execution-quote-show__hero-mark {
+      display: none;
     }
 
     .execution-quote-show__header-actions {
@@ -1236,7 +1314,7 @@
   }
 
   .execution-quote-show__section-title h2 {
-    color: var(--title-card-color);
+    color: color-mix(in sRGB, var(--SecondaryColor) 20%, var(--gray-800));
     font-size: 1.05rem;
   }
 
@@ -1324,11 +1402,11 @@
     width: 2.5rem;
     height: 2.5rem;
     background: var(--PrimaryColor);
-    color: var(--white);
+    color: var(--button-primary-color, var(--white));
   }
 
   .execution-quote-show__finance-header h3 {
-    color: var(--title-card-color);
+    color: color-mix(in sRGB, var(--SecondaryColor) 20%, var(--gray-800));
     font-size: 0.95rem;
   }
 
@@ -1396,7 +1474,7 @@
 
   .execution-quote-show__finance-value--highlight .execution-quote-show__finance-value-icon {
     background: var(--PrimaryColor);
-    color: var(--white);
+    color: var(--button-primary-color, var(--white));
   }
 
   .execution-quote-show__finance-value dt {
@@ -1412,7 +1490,7 @@
   }
 
   .execution-quote-show__finance-value strong {
-    color: var(--title-card-color);
+    color: color-mix(in sRGB, var(--SecondaryColor) 20%, var(--gray-800));
     font-size: clamp(1.2rem, 2.5vw, 1.6rem);
     font-weight: 900;
     line-height: 1.2;
@@ -1435,7 +1513,7 @@
 
   .execution-quote-show dd {
     overflow-wrap: anywhere;
-    color: var(--title-card-color);
+    color: color-mix(in sRGB, var(--SecondaryColor) 20%, var(--gray-800));
     font-weight: 700;
   }
 
@@ -1519,7 +1597,7 @@
     .execution-quote-show__accordion-toggle {
     border-color: var(--PrimaryColor);
     background: var(--PrimaryColor);
-    color: var(--white);
+    color: var(--button-primary-color, var(--white));
     transform: translateY(-1px);
   }
 
@@ -1586,7 +1664,7 @@
     min-height: 5.5rem;
     padding: 1rem 1.15rem;
     background: var(--bg-section);
-    color: var(--title-card-color);
+    color: color-mix(in sRGB, var(--SecondaryColor) 20%, var(--gray-800));
     cursor: pointer;
     transition:
       color var(--transition-fast),
@@ -1739,7 +1817,7 @@
 
   .execution-quote-show__edit-dialog-header h2 {
     margin: 0;
-    color: var(--title-card-color);
+    color: color-mix(in sRGB, var(--SecondaryColor) 20%, var(--gray-800));
     font-size: 1.1rem;
   }
 
@@ -1755,7 +1833,7 @@
     border: 1px solid var(--border-weak);
     border-radius: var(--radius-sm);
     background: var(--bg-section);
-    color: var(--title-card-color);
+    color: color-mix(in sRGB, var(--SecondaryColor) 20%, var(--gray-800));
   }
 
   .execution-quote-show__itemable-type span {
@@ -1885,7 +1963,7 @@
 
   .workspace-project-details .workspace-project-meta dd,
   .workspace-project-details .execution-quote-show__details dd {
-    color: var(--quote-ink, var(--title-card-color));
+    color: color-mix(in sRGB, var(--SecondaryColor) 20%, var(--gray-800));
     font-weight: 600;
     overflow-wrap: anywhere;
   }
@@ -1899,13 +1977,13 @@
   }
 
   .workspace-project-details .execution-quote-show__section-title h2 {
-    color: var(--quote-ink, var(--title-card-color));
+    color: color-mix(in sRGB, var(--SecondaryColor) 20%, var(--gray-800));
     font-size: 1.25rem;
   }
 
   .workspace-project-details .execution-quote-show__section-icon {
-    background: var(--quote-ink, var(--title-card-color));
-    color: var(--quote-copper-light, var(--white));
+    background: var(--SecondaryColor);
+    color: color-mix(in sRGB, var(--PrimaryColor), var(--secondary-text-color, var(--white)) 65%);
   }
 
   .workspace-project-details .execution-quote-show__details > div {
