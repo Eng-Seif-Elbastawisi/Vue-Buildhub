@@ -415,8 +415,16 @@
           <ProjectWorkspaceApps :quote-id="quoteId" />
           <details class="workspace-project-details">
             <summary>
-              <i class="pi pi-file" aria-hidden="true"></i>{{ $t('project_workspace.details')
-              }}<i class="pi pi-chevron-down" aria-hidden="true"></i>
+              <span class="workspace-project-details__icon" aria-hidden="true"
+                ><i class="pi pi-file"></i
+              ></span>
+              <span class="workspace-project-details__title">{{
+                $t('project_workspace.details')
+              }}</span>
+              <i
+                class="pi pi-chevron-down workspace-project-details__toggle"
+                aria-hidden="true"
+              ></i>
             </summary>
             <dl class="workspace-project-meta">
               <div>
@@ -629,7 +637,7 @@
 
             <Accordion
               v-model:value="activeShowSection"
-              class="execution-quote-show__stages-accordion"
+              class="execution-quote-show__stages-accordion mt-2"
             >
               <AccordionPanel value="stages" class="execution-quote-show__stages-panel">
                 <AccordionHeader class="execution-quote-show__stages-header">
@@ -993,44 +1001,83 @@
   }
 
   .workspace-project-details {
-    border-block-start: 1px solid var(--border-weak);
-    padding-block: 1.25rem;
+    border: 1px solid var(--quote-line, var(--border-weak));
+    border-radius: var(--radius-md, 14px);
+    background: var(--quote-paper, var(--bg-card));
+    padding-block-end: 1.25rem;
+  }
+
+  .workspace-project-details:not([open]) {
+    padding-block-end: 0;
   }
 
   .workspace-project-details > summary {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 1rem;
+    padding: 1.25rem;
+    border-radius: inherit;
     cursor: pointer;
-    color: var(--title-card-color);
+    background: var(--quote-ink, var(--title-card-color));
+    color: var(--white);
+    font-size: 1.25rem;
     font-weight: 600;
     list-style: none;
+    transition: background-color 220ms ease;
+  }
+
+  .workspace-project-details > summary:hover {
+    background: var(--quote-graphite-hover, var(--title-card-color));
   }
 
   .workspace-project-details > summary::-webkit-details-marker {
     display: none;
   }
 
-  .workspace-project-details > summary .pi:last-child {
+  .workspace-project-details__icon {
+    display: grid;
+    place-items: center;
+    flex: 0 0 2.75rem;
+    height: 2.75rem;
+    border: 1px solid var(--quote-copper-line, var(--PrimaryColor));
+    border-radius: var(--radius-sm, 8px);
+    color: var(--quote-copper-light, var(--white));
+  }
+
+  .workspace-project-details__title {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .workspace-project-details__toggle {
     margin-inline-start: auto;
+    flex-shrink: 0;
+    color: var(--quote-copper-light, var(--white));
     transition: transform 220ms ease;
   }
 
   .workspace-project-details[open] > summary {
     margin-block-end: 1.5rem;
+    border-end-start-radius: 0;
+    border-end-end-radius: 0;
   }
 
-  .workspace-project-details[open] > summary .pi:last-child {
+  .workspace-project-details[open] .workspace-project-details__toggle {
     transform: rotate(180deg);
   }
 
   .workspace-project-details > summary:focus-visible {
-    outline: 2px solid var(--PrimaryColor);
-    outline-offset: 6px;
+    outline: 2px solid var(--quote-copper-light, var(--PrimaryColor));
+    outline-offset: -4px;
+  }
+
+  .workspace-project-details > :not(summary) {
+    margin-inline: 1.25rem;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .workspace-project-details > summary .pi:last-child {
+    .workspace-project-details > summary,
+    .workspace-project-details__toggle {
       transition: none;
     }
   }
@@ -1819,6 +1866,70 @@
       flex: 1;
       padding: 0.65rem 0.75rem;
       font-size: 0.75rem;
+    }
+  }
+
+  .workspace-project-details .workspace-project-meta {
+    gap: 1rem 3rem;
+    padding-block-end: 1.25rem;
+    margin-block-end: 1.25rem;
+    border-block-end: 1px solid var(--quote-line, var(--border-weak));
+  }
+
+  .workspace-project-details .workspace-project-meta dt,
+  .workspace-project-details .execution-quote-show__details dt {
+    color: var(--quote-muted, var(--subtitle-color));
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+
+  .workspace-project-details .workspace-project-meta dd,
+  .workspace-project-details .execution-quote-show__details dd {
+    color: var(--quote-ink, var(--title-card-color));
+    font-weight: 600;
+    overflow-wrap: anywhere;
+  }
+
+  .workspace-project-details .execution-quote-show__card {
+    align-content: start;
+    border-color: var(--quote-line, var(--border-weak));
+    background: var(--bg-card);
+    box-shadow: none;
+    transform: none;
+  }
+
+  .workspace-project-details .execution-quote-show__section-title h2 {
+    color: var(--quote-ink, var(--title-card-color));
+    font-size: 1.25rem;
+  }
+
+  .workspace-project-details .execution-quote-show__section-icon {
+    background: var(--quote-ink, var(--title-card-color));
+    color: var(--quote-copper-light, var(--white));
+  }
+
+  .workspace-project-details .execution-quote-show__details > div {
+    padding: 0.75rem 0;
+    border: 0;
+    border-block-end: 1px solid var(--quote-line, var(--border-weak));
+    border-radius: 0;
+    background: transparent;
+    transform: none;
+  }
+
+  @media (max-width: 640px) {
+    .workspace-project-details > summary {
+      gap: 0.75rem;
+      padding: 1rem;
+      font-size: 1.1rem;
+    }
+
+    .workspace-project-details > :not(summary) {
+      margin-inline: 1rem;
+    }
+
+    .workspace-project-details .execution-quote-show__section-title h2 {
+      font-size: 1.1rem;
     }
   }
 </style>
