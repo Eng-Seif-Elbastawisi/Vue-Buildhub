@@ -1,3 +1,4 @@
+import type AddProjectFloorSpacesParams from '../../core/params/add.project.floor.spaces.params';
 import type Params from '@/base/Core/Params/params';
 import type {
   DataState,
@@ -242,6 +243,10 @@ export default class ProjectFloorController extends BaseController<
   /**
    * Get project.
    */
+  async addSpaces(params: AddProjectFloorSpacesParams): Promise<DataState<void>> {
+    return this.repository.addSpaces(params);
+  }
+
   async getProject(params?: Params) {
     return await this.repository.getProject(
       params,

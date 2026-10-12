@@ -37,6 +37,12 @@ export const executionQuoteRoutes: RouteRecordRaw[] = [
     },
   },
   {
+    path: 'execution-quotes/show/:id(\\d+)/site-team',
+    name: 'Quote Site Team',
+    component: () => import('@/views/MainOrganization/ExecutionQuotes/SiteTeam/SiteTeamIndex.vue'),
+    meta: { breadcrumb: 'site_team.title', parent: 'execution_quote.show.title' },
+  },
+  {
     path: 'execution-quotes/show/:id(\\d+)/schedule',
     name: 'Quote Schedule',
     component: () => import('@/views/MainOrganization/ExecutionQuotes/Schedule/ScheduleIndex.vue'),

@@ -1,6 +1,7 @@
 <script setup lang="ts">
   defineProps<{
     title: string;
+    openLabel?: string;
     description: string;
     icon: string;
     to: string;
@@ -39,7 +40,7 @@
       </div>
     </dl>
     <span class="project-shortcut__cta"
-      >{{ $t('schedule.open') }} <i class="pi pi-arrow-up-right" aria-hidden="true"></i
+      >{{ openLabel || $t('schedule.open') }} <i class="pi pi-arrow-up-right" aria-hidden="true"></i
     ></span>
   </RouterLink>
 </template>
