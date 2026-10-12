@@ -117,7 +117,7 @@ describe('ExecutionQuoteShow', () => {
       },
     });
 
-    expect(wrapper.text()).toContain('execution_quote.show.title');
+    expect(wrapper.text()).toContain('project_workspace.title');
     expect(wrapper.get('[role="status"]').attributes('aria-busy')).toBe('true');
   });
 

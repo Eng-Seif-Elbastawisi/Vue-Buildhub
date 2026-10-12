@@ -3160,5 +3160,10 @@
   "project.status.project_manager": "مدير المشروع",
   "project.status.site_engineer": "مهندس الموقع",
   "project.status.team_leader": "قائد الفريق",
-  "project.status.reviewer": "المُراجع"
+  "project.status.reviewer": "المُراجع",
+  "project_workspace.title": "مساحة عمل المشروع",
+  "project_workspace.apps": "تطبيقات المشروع",
+  "project_workspace.description": "مشروعك، في مساحة واحدة. افتح تطبيقاً لتخطيط الأعمال أو تنسيق الموقع والفريق.",
+  "project_workspace.details": "تفاصيل المشروع وعرض التنفيذ",
+  "project_workspace.navigation": "التنقل بين تطبيقات المشروع"
 }

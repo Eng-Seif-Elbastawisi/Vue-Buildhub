@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import ProjectWorkspaceNav from '../../../presentation/components/ProjectWorkspaceNav.vue';
   import { computed, onBeforeUnmount, ref, watch } from 'vue';
   import { useRoute } from 'vue-router';
   import { useI18n } from 'vue-i18n';
@@ -17,7 +18,6 @@
   import EngineerSelectionDialog from './EngineerSelectionDialog.vue';
   import AddProjectSpacesDialog from './AddProjectSpacesDialog.vue';
   import '../styles/site-team.scss';
-  import { getStatusNameKey } from '@/modules/MainOrganization/employee/core/constants/type.enum.ts';
   const route = useRoute();
   const { locale } = useI18n();
   const controller = SiteTeamController.getInstance();
@@ -50,6 +50,7 @@
 </script>
 <template>
   <section class="site-team standard-crud-page" :dir="locale === 'ar' ? 'rtl' : 'ltr'">
+    <ProjectWorkspaceNav :quote-id="quoteId" active="site-team" />
     <header class="site-team-header">
       <div>
         <h2 class="site-team-project-title">
@@ -155,7 +156,7 @@
                   :key="employee.id"
                   :title="employee.name"
                   class="site-team-avatar"
-                  >{{ employee.name }} - {{ getStatusNameKey(employee.employee_type!) }}</span
+                  >{{ employee.name }}</span
                 >
               </div>
               <AppButton theme="secondary" size="sm" @click="engineerDialog = true">{{
@@ -235,6 +236,31 @@
                 <p v-else class="site-team-empty">{{ $t('site_team.space_empty') }}</p>
               </details>
             </template>
+          </DataStatusBuilder>
+        </section>
+        <section class="site-team-card" aria-labelledby="site-team-members-title">
+          <div class="site-team-section-heading">
+            <i class="pi pi-users" aria-hidden="true"></i>
+            <h2 id="site-team-members-title">{{ $t('site_team.assigned_engineers') }}</h2>
+          </div>
+          <DataStatusBuilder :controller="engineers" :on-retry="() => controller.loadEngineers()">
+            <template #success>
+              <p v-if="!engineers.data?.length" class="site-team-empty">
+                {{ $t('site_team.engineer_empty') }}
+              </p>
+              <ul v-else class="site-team-member-list">
+                <li v-for="employee in engineers.data" :key="employee.id">
+                  <span class="site-team-member-avatar" aria-hidden="true">{{
+                    employee.name?.slice(0, 1)
+                  }}</span>
+                  <div>
+                    <strong>{{ employee.name }}</strong>
+                    <p v-if="employee.email">{{ employee.email }}</p>
+                  </div>
+                </li>
+              </ul>
+            </template>
+            <template #loader><Skeleton height="5rem" /></template>
           </DataStatusBuilder>
         </section>
       </div>

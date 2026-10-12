@@ -3165,5 +3165,10 @@
   "project.status.project_manager": "Project Manager",
   "project.status.site_engineer": "Site Engineer",
   "project.status.team_leader": "Team Leader",
-  "project.status.reviewer": "Reviewer"
+  "project.status.reviewer": "Reviewer",
+  "project_workspace.title": "Project workspace",
+  "project_workspace.apps": "Project apps",
+  "project_workspace.description": "Your project, connected. Open an app to plan the work or coordinate your site and team.",
+  "project_workspace.details": "Project details & quote",
+  "project_workspace.navigation": "Project app navigation"
 }

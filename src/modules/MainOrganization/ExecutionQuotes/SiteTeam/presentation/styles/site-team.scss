@@ -195,7 +195,6 @@
 .site-team-avatar-group {
   display: flex;
   gap: 0.35rem;
-
   margin-block: 0.75rem;
   flex-wrap: wrap;
 }
@@ -309,4 +308,105 @@
 .site-team :is(p, dd),
 .site-team-dialog :is(input, textarea) {
   text-transform: none;
+}
+
+.site-team-header {
+  padding-block: 1rem 1.5rem;
+}
+
+.site-team-project-title {
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
+  font-weight: 600;
+}
+
+.site-team-card {
+  border-radius: 16px;
+  box-shadow: none;
+  transition: border-color 220ms ease;
+}
+
+.site-team-card:hover {
+  border-color: var(--PrimaryColor-alpha-20);
+}
+
+.site-team-summary .site-team-section-heading {
+  padding-block-end: 1rem;
+  border-block-end: 1px solid var(--border-weak);
+}
+
+.site-team-section-heading > .pi {
+  font-size: 1.25rem;
+}
+
+.site-team-floor summary {
+  transition: background-color 180ms ease;
+}
+
+.site-team-floor summary:hover {
+  background: var(--PrimaryColor-alpha-8);
+}
+
+.site-team-floor[open] summary {
+  background: var(--PrimaryColor-alpha-8);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-team-card,
+  .site-team-floor summary {
+    transition: none;
+  }
+}
+
+.site-team-summary {
+  grid-template-columns: minmax(0, 1.35fr) repeat(2, minmax(0, 1fr));
+}
+
+.site-team-member-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.site-team-member-list li {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding-block: 1rem;
+}
+
+.site-team-member-list li + li {
+  border-block-start: 1px solid var(--border-weak);
+}
+
+.site-team-member-list li > div {
+  min-width: 0;
+}
+
+.site-team-member-list p {
+  margin: 0.3rem 0 0;
+  font-size: 0.8rem;
+}
+
+.site-team-member-avatar {
+  display: grid;
+  flex: 0 0 2.75rem;
+  place-items: center;
+  height: 2.75rem;
+  border-radius: var(--radius-full);
+  background: var(--PrimaryColor-alpha-8);
+  color: var(--PrimaryColor);
+  font-weight: 600;
+}
+
+@media (max-width: 900px) {
+  .site-team-summary {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.site-team a,
+.site-team-badge,
+.site-team-avatar,
+.site-team-member-avatar {
+  color: var(--title-card-color);
 }
