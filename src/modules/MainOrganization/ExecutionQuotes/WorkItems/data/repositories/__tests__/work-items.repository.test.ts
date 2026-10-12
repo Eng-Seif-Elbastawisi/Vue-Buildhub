@@ -5,6 +5,7 @@ import {
 } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
 import WorkItemsRepository from '../work-items.repository';
 import FetchWorkItemsParams from '../../../core/params/fetch.work-items.params';
+import StoreShopDrawingQuoteParams from '../../../core/params/store.shop-drawing.params';
 import StoreTaskParams from '../../../core/params/store.task.params';
 import { mockNetwork, response } from '../../../../SiteTeam/__tests__/network';
 let post: ReturnType<typeof mockNetwork>;
@@ -64,4 +65,33 @@ it('retains one shared collection of all activity types', async () => {
 it('surfaces unauthorized/network failures', async () => {
   post.mockRejectedValue(new Error('Unauthorized'));
   expect(await repo.fetchReports(new FetchWorkItemsParams(140))).toBeInstanceOf(DataFailed);
+});
+
+it.each([
+  { status: true, data: [] },
+  { status: true, data: {} },
+  { status: true },
+  { status: false, data: [] },
+])('drawing fetch distinguishes real empty results from invalid responses %j', async (body) => {
+  post.mockResolvedValue(response(body));
+  const drawings = await repo.fetchDrawings(new FetchWorkItemsParams(140));
+  if (body.status && Array.isArray(body.data)) {
+    expect(drawings).toBeInstanceOf(DataSuccess);
+    expect(drawings.data).toEqual([]);
+  } else expect(drawings).toBeInstanceOf(DataFailed);
+});
+it('drawing Store does not fabricate success when the response omits status', async () => {
+  post.mockResolvedValue(response({ data: { id: 1 } }));
+  expect(
+    await repo.storeDrawing(
+      new StoreShopDrawingQuoteParams({
+        quoteId: 140,
+        title: 'MEP',
+        date: null,
+        versionNumber: 'V1',
+        file: null,
+        projectTimelineStageIds: [7],
+      }),
+    ),
+  ).toBeInstanceOf(DataFailed);
 });

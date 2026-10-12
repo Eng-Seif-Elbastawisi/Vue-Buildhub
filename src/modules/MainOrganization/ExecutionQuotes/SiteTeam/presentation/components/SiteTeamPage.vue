@@ -49,7 +49,7 @@
   onBeforeUnmount(() => controller.release());
 </script>
 <template>
-  <section class="site-team standard-crud-page" :dir="locale === 'ar' ? 'rtl' : 'ltr'">
+  <section class="site-team" :dir="locale === 'ar' ? 'rtl' : 'ltr'">
     <ProjectWorkspaceNav :quote-id="quoteId" active="site-team" />
     <header class="site-team-header">
       <div>

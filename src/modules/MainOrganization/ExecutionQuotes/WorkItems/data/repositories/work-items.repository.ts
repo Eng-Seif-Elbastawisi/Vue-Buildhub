@@ -12,6 +12,8 @@ import type FetchWorkItemsParams from '../../core/params/fetch.work-items.params
 import type StoreTaskParams from '../../core/params/store.task.params';
 import type StoreReportParams from '../../core/params/store.report.params';
 import type StoreActivityParams from '../../core/params/store.activity.params';
+import ShopDrawingQuoteModel from '../../core/models/shop-drawing.model';
+import type StoreShopDrawingQuoteParams from '../../core/params/store.shop-drawing.params';
 import WorkItemsApiService from '../api/work-items.api-service';
 export default class WorkItemsRepository extends BaseRepository<WorkTaskModel> {
   private static instance: WorkItemsRepository;
@@ -59,6 +61,15 @@ export default class WorkItemsRepository extends BaseRepository<WorkTaskModel> {
     } catch (error: unknown) {
       return this.handleError(error);
     }
+  }
+  fetchDrawings(params: FetchWorkItemsParams) {
+    return this.readList(
+      () => this.apiService.fetchDrawings(params),
+      ShopDrawingQuoteModel.fromJson,
+    );
+  }
+  storeDrawing(params: StoreShopDrawingQuoteParams) {
+    return this.store(() => this.apiService.storeDrawing(params));
   }
   fetchTasks(params: FetchWorkItemsParams) {
     return this.readList(() => this.apiService.fetchTasks(params), WorkTaskModel.fromJson);

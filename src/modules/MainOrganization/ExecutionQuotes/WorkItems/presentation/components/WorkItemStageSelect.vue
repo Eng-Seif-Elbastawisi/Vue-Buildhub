@@ -4,9 +4,11 @@
   import type TitleInterface from '@/base/Data/Models/titleInterface';
   import WorkItemsController from '../controllers/work-items.controller';
   import { DataLoading } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
-  defineProps<{
+  const props = defineProps<{
     modelValue: TitleInterface<string | number> | TitleInterface<string | number>[] | null;
     disabled?: boolean;
+    mainOnly?: boolean;
+    multiple?: boolean;
     error?: string;
     id: string;
   }>();
@@ -16,15 +18,18 @@
     ];
   }>();
   const controller = WorkItemsController.getInstance();
-  const options = computed(() => controller.stages.value);
+  const options = computed(() =>
+    props.mainOnly ? controller.drawingStages.value : controller.stages.value,
+  );
   const loading = computed(() => controller.stagesState.value instanceof DataLoading);
 </script>
 <template>
   <div class="work-items-stage">
     <UpdatedCustomInputSelect
       :id="id"
+      :type="multiple ? 2 : 1"
       :model-value="modelValue"
-      label="work_items.stage"
+      :label="mainOnly ? 'work_items.main_stages' : 'work_items.stage'"
       :placeholder="$t('work_items.select_stage')"
       :static-options="options"
       :disabled="disabled || loading || !options.length"
@@ -44,6 +49,8 @@
         {{ $t('work_items.retry') }}
       </button>
     </div>
-    <p v-else-if="!options.length">{{ $t('work_items.no_stages') }}</p>
+    <p v-else-if="!options.length">
+      {{ $t(mainOnly ? 'work_items.main_stages_unavailable' : 'work_items.no_stages') }}
+    </p>
   </div>
 </template>

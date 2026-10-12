@@ -36,3 +36,47 @@ it('offers timeline stage ID with label rather than QuoteStage or master ID', ()
   expect(controller.stages.value[0]?.title).toBe('Main · Electrical');
   wrapper.unmount();
 });
+
+it('drawing multi-selection excludes children and stages without verified parent information', () => {
+  controller.stagesState.value = new DataSuccess({
+    data: [
+      new ScheduleGroupModel({
+        id: 2,
+        title: 'Main',
+        duration: 1,
+        durationType: 4,
+        stages: [
+          new ProjectTimelineStageModel({
+            id: 7,
+            quoteStageId: 999,
+            title: 'Eligible',
+            children: [],
+            parentId: null,
+          }),
+          new ProjectTimelineStageModel({
+            id: 8,
+            quoteStageId: 998,
+            title: 'Child',
+            children: [],
+            parentId: 7,
+          }),
+          new ProjectTimelineStageModel({
+            id: 9,
+            quoteStageId: 997,
+            title: 'Unverified',
+            children: [],
+          }),
+        ],
+      }),
+    ],
+  });
+  const wrapper = mountDialog(WorkItemStageSelect, {
+    id: 'drawing-stage',
+    modelValue: [],
+    mainOnly: true,
+    multiple: true,
+  });
+  expect(controller.drawingStages.value.map((stage) => stage.id)).toEqual([7]);
+  expect(wrapper.get('[role="combobox"]').attributes('aria-label')).toBe('Main Timeline Stages');
+  wrapper.unmount();
+});

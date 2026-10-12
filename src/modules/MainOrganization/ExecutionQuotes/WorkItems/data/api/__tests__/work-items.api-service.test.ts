@@ -1,6 +1,7 @@
 import { beforeEach, expect, it } from 'vitest';
 import WorkItemsApiService from '../work-items.api-service';
 import FetchWorkItemsParams from '../../../core/params/fetch.work-items.params';
+import StoreShopDrawingQuoteParams from '../../../core/params/store.shop-drawing.params';
 import StoreTaskParams from '../../../core/params/store.task.params';
 import StoreReportParams from '../../../core/params/store.report.params';
 import StoreActivityParams from '../../../core/params/store.activity.params';
@@ -11,6 +12,33 @@ beforeEach(() => {
 });
 const api = WorkItemsApiService.getInstance();
 it.each([
+  [
+    'fetch_shop_drawing_quotes',
+    () => api.fetchDrawings(new FetchWorkItemsParams(140)),
+    { quote_id: 140 },
+  ],
+  [
+    'store_shop_drawing_quote',
+    () =>
+      api.storeDrawing(
+        new StoreShopDrawingQuoteParams({
+          quoteId: 140,
+          title: 'MEP',
+          date: null,
+          versionNumber: 'V1',
+          file: null,
+          projectTimelineStageIds: [7, 17],
+        }),
+      ),
+    {
+      quote_id: 140,
+      title: 'MEP',
+      date: null,
+      version_number: 'V1',
+      file: null,
+      project_timeline_stage_ids: [7, 17],
+    },
+  ],
   [
     'fetch_project_timeline_stage_tasks',
     () => api.fetchTasks(new FetchWorkItemsParams(140)),

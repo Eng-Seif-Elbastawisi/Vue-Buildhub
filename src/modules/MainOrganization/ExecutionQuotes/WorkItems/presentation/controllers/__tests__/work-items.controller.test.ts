@@ -9,6 +9,7 @@ import {
 import WorkItemsController from '../work-items.controller';
 import ScheduleGroupModel from '../../../../Schedule/core/models/schedule.group.model';
 import ProjectTimelineStageModel from '../../../../Schedule/core/models/project.timeline.stage.model';
+import StoreShopDrawingQuoteParams from '../../../core/params/store.shop-drawing.params';
 import StoreTaskParams from '../../../core/params/store.task.params';
 import IndexEmployeeParams from '@/modules/MainOrganization/employee/core/params/index.employee.params';
 import { mockNetwork, response } from '../../../../SiteTeam/__tests__/network';
@@ -187,4 +188,134 @@ it('employee lookup sends supported search/page and ignores stale owner response
   pending.resolve(response({ status: true, data: [{ id: 7, name: 'Old' }] }));
   expect(await old).toEqual([]);
   expect(controller.employeesState.value.data).toBeNull();
+});
+
+it('drawing creation accepts only explicit main stages owned by current Quote and refreshes on success', async () => {
+  post.mockResolvedValue(response({ status: true, data: [] }));
+  const params = new StoreShopDrawingQuoteParams({
+    quoteId: 140,
+    title: 'MEP',
+    date: null,
+    versionNumber: 'V1',
+    file: null,
+    projectTimelineStageIds: [18],
+  });
+  expect(await controller.saveDrawing(params)).toBeInstanceOf(DataFailed);
+  expect(post).not.toHaveBeenCalled();
+  const group = controller.stagesState.value.data?.[0];
+  if (!group) throw new Error('Missing test stage group');
+  controller.stagesState.value = new DataSuccess({
+    data: [
+      new ScheduleGroupModel({
+        ...group,
+        stages: [
+          new ProjectTimelineStageModel({
+            id: 18,
+            quoteStageId: 999,
+            title: 'Main',
+            children: [],
+            parentId: null,
+          }),
+          new ProjectTimelineStageModel({
+            id: 19,
+            quoteStageId: 888,
+            title: 'Child',
+            children: [],
+            parentId: 18,
+          }),
+        ],
+      }),
+    ],
+  });
+  expect(controller.drawingStages.value.map((stage) => stage.id)).toEqual([18]);
+  expect(
+    await controller.saveDrawing(
+      new StoreShopDrawingQuoteParams({ ...params.fields, quoteId: 141 }),
+    ),
+  ).toBeInstanceOf(DataFailed);
+  expect(
+    await controller.saveDrawing(
+      new StoreShopDrawingQuoteParams({ ...params.fields, projectTimelineStageIds: [19] }),
+    ),
+  ).toBeInstanceOf(DataFailed);
+  expect(await controller.saveDrawing(params)).toBeInstanceOf(DataSuccess);
+  expect(post.mock.calls.map((call) => call[0].url.split('/').pop())).toEqual([
+    'store_shop_drawing_quote',
+    'fetch_shop_drawing_quotes',
+  ]);
+});
+it('late drawing fetch and save cannot overwrite the new Quote', async () => {
+  const pending = deferred();
+  post.mockReturnValueOnce(pending.promise);
+  const read = controller.loadDrawings();
+  controller.activate(141);
+  pending.resolve(response({ status: true, data: [] }));
+  await read;
+  expect(controller.drawingsState.value.data).toBeNull();
+});
+it('drawing fetch rejects records belonging to a different Quote', async () => {
+  post.mockResolvedValue(
+    response({
+      status: true,
+      data: [
+        {
+          id: 1,
+          employee: { id: 1, name: 'Creator', type: 1 },
+          quote_id: 140,
+          project_id: 86,
+          title: 'MEP',
+          date: null,
+          version_number: 'V1',
+          file: 'https://example.test/drawing.pdf',
+          custom_number: 1,
+          stages: [{ id: 7, stage: { id: 129, title: 'Main' }, sub_stage: null }],
+          created_at: null,
+        },
+      ],
+    }),
+  );
+  controller.activate(141);
+  await controller.loadDrawings();
+  expect(controller.drawingsState.value).toBeInstanceOf(DataFailed);
+});
+
+it('drawing save blocks duplicates, keeps independent state and ignores late success after Quote switch', async () => {
+  controller.stagesState.value = new DataSuccess({
+    data: [
+      new ScheduleGroupModel({
+        id: 2,
+        title: 'Main',
+        duration: 1,
+        durationType: 4,
+        stages: [
+          new ProjectTimelineStageModel({
+            id: 7,
+            quoteStageId: 999,
+            title: 'Main',
+            children: [],
+            parentId: null,
+          }),
+        ],
+      }),
+    ],
+  });
+  const params = new StoreShopDrawingQuoteParams({
+    quoteId: 140,
+    title: 'MEP',
+    date: null,
+    versionNumber: 'V1',
+    file: null,
+    projectTimelineStageIds: [7],
+  });
+  const pending = deferred();
+  post.mockReturnValueOnce(pending.promise);
+  const saving = controller.saveDrawing(params);
+  expect(controller.drawingsSaveState.value).toBeInstanceOf(DataLoading);
+  expect(controller.tasksSaveState.value).not.toBeInstanceOf(DataLoading);
+  expect(await controller.saveDrawing(params)).toBeInstanceOf(DataCancelled);
+  controller.activate(141);
+  pending.resolve(response({ status: true }));
+  expect(await saving).toBeInstanceOf(DataCancelled);
+  expect(post).toHaveBeenCalledTimes(1);
+  expect(controller.drawingsState.value.data).toBeNull();
 });

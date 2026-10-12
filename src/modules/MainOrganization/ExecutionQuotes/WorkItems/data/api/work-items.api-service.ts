@@ -6,6 +6,7 @@ import type FetchWorkItemsParams from '../../core/params/fetch.work-items.params
 import type StoreTaskParams from '../../core/params/store.task.params';
 import type StoreReportParams from '../../core/params/store.report.params';
 import type StoreActivityParams from '../../core/params/store.activity.params';
+import type StoreShopDrawingQuoteParams from '../../core/params/store.shop-drawing.params';
 import { WorkItemsEndpoints } from './work-items.api.endpoints';
 export default class WorkItemsApiService extends BaseApiService {
   private static instance: WorkItemsApiService;
@@ -31,6 +32,12 @@ export default class WorkItemsApiService extends BaseApiService {
       { useJson: true, auth: true, enableRetry: false, useStaticData: false },
       false,
     );
+  }
+  fetchDrawings(params: FetchWorkItemsParams) {
+    return this.request(this.workItemsEndpoints.fetchDrawings, params);
+  }
+  storeDrawing(params: StoreShopDrawingQuoteParams) {
+    return this.request(this.workItemsEndpoints.storeDrawing, params);
   }
   fetchTasks(params: FetchWorkItemsParams) {
     return this.request(this.workItemsEndpoints.fetchTasks, params);

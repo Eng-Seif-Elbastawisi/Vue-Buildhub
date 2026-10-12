@@ -25,6 +25,8 @@ import type StoreTaskParams from '../../core/params/store.task.params';
 import type StoreReportParams from '../../core/params/store.report.params';
 import type StoreActivityParams from '../../core/params/store.activity.params';
 import { positiveId } from '../../core/constants/work-items.constants';
+import type ShopDrawingQuoteModel from '../../core/models/shop-drawing.model';
+import type StoreShopDrawingQuoteParams from '../../core/params/store.shop-drawing.params';
 import WorkItemsRepository from '../../data/repositories/work-items.repository';
 export default class WorkItemsController extends BaseController<WorkTaskModel> {
   private static instance: WorkItemsController;
@@ -46,6 +48,16 @@ export default class WorkItemsController extends BaseController<WorkTaskModel> {
     isListSuccess: () => this.employeesState.value instanceof DataSuccess,
     pagination: computed(() => this.employeesState.value.pagination),
   };
+  readonly drawingStages = computed(() =>
+    (this.stagesState.value.data ?? []).flatMap((group) =>
+      group.stages
+        .map(
+          (stage) => new TitleInterface({ id: stage.id, title: `${group.title} · ${stage.title}` }),
+        ),
+    ),
+  );
+  readonly drawingsState = shallowRef<DataState<ShopDrawingQuoteModel[]>>(new DataInitial());
+  readonly drawingsSaveState = shallowRef<DataState<void>>(new DataInitial());
   readonly tasksState = shallowRef<DataState<WorkTaskModel[]>>(new DataInitial());
   readonly tasksSaveState = shallowRef<DataState<void>>(new DataInitial());
   readonly reportsState = shallowRef<DataState<DailyReportModel[]>>(new DataInitial());
@@ -74,6 +86,8 @@ export default class WorkItemsController extends BaseController<WorkTaskModel> {
     this.requests.clear();
     this.stagesState.value = new DataInitial();
     this.employeesState.value = new DataInitial();
+    this.drawingsState.value = new DataInitial();
+    this.drawingsSaveState.value = new DataInitial();
     this.tasksState.value = new DataInitial();
     this.tasksSaveState.value = new DataInitial();
     this.reportsState.value = new DataInitial();
@@ -89,6 +103,7 @@ export default class WorkItemsController extends BaseController<WorkTaskModel> {
   }
   async load() {
     await Promise.all([
+      this.loadDrawings(),
       this.loadTasks(),
       this.loadReports(),
       this.loadActivities(),
@@ -130,6 +145,43 @@ export default class WorkItemsController extends BaseController<WorkTaskModel> {
     return new DataFailed<void>({
       error: new ErrorModel('work_items.invalid_stage', ErrorType.validation),
     });
+  }
+  async loadDrawings() {
+    if (this.quoteId.value === null) return;
+    const current = this.requestScope('drawings');
+    const quoteId = this.quoteId.value;
+    this.drawingsState.value = new DataLoading();
+    const records = await this.repository.fetchDrawings(new FetchWorkItemsParams(quoteId));
+    if (!current()) return;
+    this.drawingsState.value = records.data?.some((drawing) => drawing.quoteId !== quoteId)
+      ? new DataFailed({
+        error: new ErrorModel('work_items.invalid_response', ErrorType.validation),
+      })
+      : records;
+  }
+  async saveDrawing(params: StoreShopDrawingQuoteParams): Promise<DataState<void>> {
+    if (this.drawingsSaveState.value instanceof DataLoading) return new DataCancelled();
+    const ids = params.fields.projectTimelineStageIds;
+    if (
+      params.fields.quoteId !== this.quoteId.value ||
+      !ids.length ||
+      ids.some((id) => !this.drawingStages.value.some((stage) => stage.id === id))
+    ) {
+      const failure = this.invalidStage();
+      this.drawingsSaveState.value = failure;
+      return failure;
+    }
+    const epoch = this.epoch;
+    this.drawingsSaveState.value = new DataLoading();
+    const saved = await this.repository.storeDrawing(params);
+    if (epoch !== this.epoch) return new DataCancelled();
+    if (saved instanceof DataSuccess) {
+      await this.loadDrawings();
+      if (epoch !== this.epoch) return new DataCancelled();
+      this.showSuccessToast('work_items.drawing_saved');
+    }
+    this.drawingsSaveState.value = saved;
+    return saved;
   }
   async loadTasks() {
     if (this.quoteId.value === null) return;
