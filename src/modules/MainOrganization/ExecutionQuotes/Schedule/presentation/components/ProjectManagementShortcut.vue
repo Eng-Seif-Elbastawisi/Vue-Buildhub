@@ -47,11 +47,12 @@
   .project-shortcut {
     display: grid;
     gap: 1.25rem;
-    padding: 1.5rem;
-    border: 1px solid var(--border-weak);
-    border-radius: var(--radius-md);
-    background: var(--bg-card);
-    color: var(--title-card-color);
+    min-width: 0;
+    padding: clamp(1rem, 2vw, 1.5rem);
+    border: 1px solid var(--schedule-line);
+    border-radius: 16px;
+    background: var(--schedule-paper);
+    color: var(--schedule-ink);
     text-decoration: none;
     box-shadow: var(--shadow-sm);
     transition:
@@ -62,13 +63,13 @@
 
   .project-shortcut:hover {
     text-decoration: none;
-    transform: translateY(-2px);
-    border-color: var(--PrimaryColor-alpha-20);
+    transform: translateY(-1px);
+    border-color: var(--schedule-accent);
     box-shadow: var(--shadow-md);
   }
 
   .project-shortcut:focus-visible {
-    outline: 3px solid var(--PrimaryColor-alpha-20);
+    outline: 2px solid var(--schedule-accent);
     outline-offset: 3px;
   }
 
@@ -77,6 +78,11 @@
     align-items: center;
     flex-wrap: wrap;
     gap: 1rem;
+  }
+
+  .project-shortcut__heading > div {
+    min-width: 0;
+    flex: 1 1 12rem;
   }
 
   .project-shortcut h3,
@@ -92,7 +98,7 @@
 
   .project-shortcut p,
   .project-shortcut dt {
-    color: var(--subtitle-color);
+    color: var(--schedule-muted);
     font-size: var(--xs-size);
   }
 
@@ -101,25 +107,34 @@
     flex: 0 0 3rem;
     place-items: center;
     height: 3rem;
-    border-radius: var(--radius-sm);
-    background: var(--PrimaryColor-alpha-8);
-    color: var(--PrimaryColor);
+    border: 1px solid var(--schedule-line);
+    border-radius: 12px;
+    background: var(--schedule-accent-soft);
+    color: var(--schedule-accent-dark);
     font-size: 1.3rem;
   }
 
   .project-shortcut__badge {
-    margin-inline-start: auto;
     padding: 0.35rem 0.75rem;
-    border: 1px solid var(--border-weak);
+    border: 1px solid var(--schedule-line);
     border-radius: var(--radius-full);
-    color: var(--PrimaryColor);
+    background: var(--schedule-accent-soft);
+    color: var(--schedule-accent-dark);
     font-size: var(--xs-size);
   }
 
   .project-shortcut__metrics {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr));
+    gap: 0.75rem;
+  }
+
+  .project-shortcut__metrics > div {
+    min-width: 0;
+    padding: 0.875rem;
+    border: 1px solid var(--schedule-line);
+    border-radius: 10px;
+    background: var(--schedule-canvas);
   }
 
   .project-shortcut dd {
@@ -127,6 +142,7 @@
     font-weight: 700;
     font-variant-numeric: tabular-nums;
     overflow-wrap: anywhere;
+    color: var(--schedule-accent-dark);
   }
 
   .project-shortcut__cta {
@@ -134,14 +150,8 @@
     align-items: center;
     justify-content: flex-end;
     gap: 0.5rem;
-    color: var(--PrimaryColor);
+    color: var(--schedule-accent-dark);
     font-weight: 700;
-  }
-
-  @media (max-width: 640px) {
-    .project-shortcut__metrics {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
   }
 
   @media (prefers-reduced-motion: reduce) {

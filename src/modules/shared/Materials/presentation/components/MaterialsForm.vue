@@ -59,6 +59,7 @@ const measurementParams = new IndexMeasurementParams('', 1, 100, 0);
 const itemTypeParams = new IndexItemTypesParams('', 1, 100, 0);
 const translations = ref<Record<string, string>>({});
 const price = ref<number>();
+const quantity = ref<number>();
 const status = ref(true);
 
 const brand = ref<TitleInterface<string | number> | null>(null);
@@ -141,6 +142,7 @@ watch(
     };
 
     price.value = material.price;
+    quantity.value = material.quantity;
     status.value = material.status;
 
     brand.value = toSelectOption(material.brand);
@@ -166,6 +168,7 @@ watch(
 const updateData = () => {
   const materialData = {
     price: price.value,
+    quantity: typeof quantity.value === 'number' ? quantity.value : undefined,
     brandId: brand.value?.id,
     measurementId: measurement.value?.id,
     itemTypeId: itemType.value?.id,
@@ -242,6 +245,15 @@ onMounted(() => {
             :placeholder="$t('material.price_placeholder')" @input="updateData" />
           <!-- step="1" -->
 
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="material-quantity">{{ $t('material.quantity') }}</label>
+        <div class="input-wrap">
+          <input
+            id="material-quantity" v-model.number="quantity" class="field-input" type="number"
+            @input="updateData" />
         </div>
       </div>
 

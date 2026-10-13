@@ -9,12 +9,14 @@ describe('MaterialsShowModel', () => {
       id: 2,
       brand,
       price: 90,
+      quantity: '10',
       unit: 1,
       title: [{ locale: 'en', title: 'Steel' }],
       status: 0,
     });
 
     expect(model.id).toBe(2);
+    expect(model.quantity).toBe(10);
     expect(model.brand).toMatchObject({ id: brand.id, title: brand.title });
     expect(model.translations.title).toEqual({ en: 'Steel' });
     expect(model.status).toBe(false);

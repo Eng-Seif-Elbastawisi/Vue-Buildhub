@@ -13,4 +13,10 @@ describe('EditProductsParams', () => {
 
     expect(params.toMap()).toMatchObject({ product_id: 6, sortings: [], is_active: false });
   });
+
+  it('sends quantity under its API field name, including zero', () => {
+    const params = new EditProductsParams({ productsId: 6, quantity: 0 });
+
+    expect(params.toMap()).toMatchObject({ product_id: 6, quantity: 0 });
+  });
 });

@@ -6,6 +6,7 @@ import { translate } from '@/locales/i18n';
 export default class EditMaterialParams implements Params {
   public material_id?: number;
   public price?: number;
+  public quantity?: number;
   public brandId?: number;
   public measurementId?: number;
   public translations?: { title: Record<string, string> };
@@ -27,6 +28,7 @@ export default class EditMaterialParams implements Params {
   constructor(data: {
     material_id?: number;
     price?: number;
+    quantity?: number;
     brandId?: number;
     measurementId?: number;
     translations?: { title: Record<string, string> };
@@ -37,6 +39,7 @@ export default class EditMaterialParams implements Params {
   }) {
     this.material_id = data.material_id;
     this.price = data.price;
+    this.quantity = data.quantity;
     this.brandId = data.brandId;
     this.measurementId = data.measurementId;
     this.translations = data.translations;
@@ -50,6 +53,7 @@ export default class EditMaterialParams implements Params {
     const map: Record<string, unknown> = {
       material_id: this.material_id,
       price: this.price,
+      quantity: this.quantity,
       brand_id: this.brandId,
       measurement_unit_id: this.measurementId,
       translations: this.translations,

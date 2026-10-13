@@ -10,6 +10,8 @@
   import ScheduleController from '../controllers/schedule.controller';
   import { schedulePath } from '../schedule.routes';
   import ProjectManagementShortcut from './ProjectManagementShortcut.vue';
+  import ScheduleStageTable from './ScheduleStageTable.vue';
+  import '../styles/schedule.scss';
   const props = defineProps<{ quoteId: number }>();
   const route = useRoute();
   const { t } = useI18n();
@@ -54,9 +56,42 @@
               : 'unavailable'
       "
     />
+    <section
+      v-if="state instanceof DataSuccess && state.data?.projectTimelines.length"
+      class="schedule-shortcuts__timeline"
+      :aria-label="$t('schedule.timeline')"
+    >
+      <header class="schedule__section-heading">
+        <span class="schedule__heading-icon"><i class="pi pi-file" aria-hidden="true"></i></span>
+        <h3>{{ $t('schedule.timeline') }}</h3>
+      </header>
+      <details
+        v-for="(group, index) in state.data.projectTimelines"
+        :key="group.id"
+        class="schedule__overview-group"
+        open
+      >
+        <summary>
+          <span class="schedule__sequence-number">{{ String(index + 1).padStart(2, '0') }}</span>
+          <strong>{{ group.title }}</strong>
+          <span class="schedule__overview-dates"
+            >{{ group.startDate ?? $t('schedule.not_available') }} —
+            {{ group.finishDate ?? $t('schedule.not_available') }}</span
+          >
+          <i class="pi pi-chevron-down" aria-hidden="true"></i>
+        </summary>
+        <ScheduleStageTable :stages="group.stages" />
+      </details>
+    </section>
   </section>
 </template>
 <style scoped lang="scss">
+  .schedule-shortcuts {
+    display: grid;
+    gap: 1.25rem;
+    min-width: 0;
+  }
+
   .schedule-shortcuts h2 {
     margin-block: 0 1rem;
     color: var(--title-card-color);

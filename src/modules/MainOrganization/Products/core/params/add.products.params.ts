@@ -18,6 +18,7 @@ export default class AddProductsParams implements Params {
   public measurementUnitId?: number;
 
   public expectedPrice?: number;
+  public quantity?: number;
 
   public image?: string;
 
@@ -62,6 +63,7 @@ export default class AddProductsParams implements Params {
     itemTypeId?: number;
     measurementUnitId?: number;
     expectedPrice?: number;
+    quantity?: number;
     image?: string;
     stageIds?: number[];
     sortings?: AddProductsSortingParams[];
@@ -72,6 +74,7 @@ export default class AddProductsParams implements Params {
     this.itemTypeId = data.itemTypeId;
     this.measurementUnitId = data.measurementUnitId;
     this.expectedPrice = data.expectedPrice;
+    this.quantity = data.quantity;
     this.image = data.image;
     this.stageIds = data.stageIds;
     this.sortings = data.sortings;
@@ -85,6 +88,7 @@ export default class AddProductsParams implements Params {
       item_type_id: this.itemTypeId,
       measurement_unit_id: this.measurementUnitId,
       expected_price: this.expectedPrice,
+      quantity: this.quantity,
       image: this.image,
       stage_ids: this.stageIds,
       sortings: this.sortings?.map((sorting) => sorting.toMap()),

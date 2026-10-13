@@ -14,6 +14,7 @@ interface ApiRelation {
 interface MaterialsShowResponse {
   id?: number;
   price?: number | string | null;
+  quantity?: number | string | null;
   title?: unknown;
   status?: boolean | number | string | null;
   brand?: ApiRelation;
@@ -27,6 +28,7 @@ interface MaterialsShowResponse {
 export default class MaterialsShowModel {
   public readonly id?: number;
   public readonly price?: number;
+  public readonly quantity?: number;
   public readonly title?: string;
   public readonly status: boolean;
 
@@ -47,6 +49,7 @@ export default class MaterialsShowModel {
   constructor(data: {
     id?: number;
     price?: number;
+    quantity?: number;
     title?: string;
     status?: boolean;
 
@@ -66,6 +69,7 @@ export default class MaterialsShowModel {
   }) {
     this.id = data.id;
     this.price = data.price;
+    this.quantity = data.quantity;
     this.title = data.title;
     this.status = data.status ?? false;
 
@@ -103,6 +107,7 @@ export default class MaterialsShowModel {
       id: json.id,
 
       price: json.price !== null && json.price !== undefined ? Number(json.price) : undefined,
+      quantity: json.quantity != null ? Number(json.quantity) : undefined,
 
       title: translations.en ?? translations.ar,
       status: json.status === true || Number(json.status) === 1,

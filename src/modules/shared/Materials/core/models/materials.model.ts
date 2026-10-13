@@ -7,6 +7,7 @@ export default class MaterialsModel {
   public readonly id?: number;
   public readonly brandId?: number;
   public readonly price: number;
+  public readonly quantity?: number;
   public readonly title: string;
   public readonly unit: UnitTypeEnum;
   public readonly translations: { title: Record<string, string> };
@@ -24,6 +25,7 @@ export default class MaterialsModel {
     unit: UnitTypeEnum;
     title: string;
     price: number;
+    quantity?: number;
     brandId?: number;
     itemType?: ItemTypesModel;
     measurementUnit?: MeasurementModel;
@@ -37,6 +39,7 @@ export default class MaterialsModel {
     this.translations = data.translations;
     this.unit = data.unit;
     this.price = data.price;
+    this.quantity = data.quantity;
     this.brandId = data.brandId;
     this.title = data.title;
     this.itemType = data.itemType;
@@ -76,6 +79,7 @@ export default class MaterialsModel {
       unit: json.unit as UnitTypeEnum,
       title: json.title as string,
       price: Number(json.price),
+      quantity: json.quantity != null ? Number(json.quantity) : undefined,
       brandId: (json.brandId ?? json.brand_id) as number | undefined,
       itemType: ItemTypesModel.fromJson(json.item_type ?? {}),
       measurementUnit: json.measurement_unit

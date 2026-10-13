@@ -13,7 +13,7 @@ it.each([undefined, null, 0, -1, 1.5, '4'])(
     expect(() =>
       ProjectTimelineSubStageModel.fromJson({
         ...timelineResponse().stages[0].children[0],
-        id,
+        quote_sub_stage_id: id,
       }),
     ).toThrow('schedule.invalid_response');
   },

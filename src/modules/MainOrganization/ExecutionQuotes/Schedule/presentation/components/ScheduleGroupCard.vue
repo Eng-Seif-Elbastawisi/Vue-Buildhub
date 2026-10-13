@@ -2,6 +2,7 @@
   import AppButton from '@/shared/HelpersComponents/AppButton.vue';
   import { getTypeNameKey } from '../../core/constants/schedule.constants';
   import type ScheduleGroupModel from '../../core/models/schedule.group.model';
+  import ScheduleStageTable from './ScheduleStageTable.vue';
   defineProps<{
     group: ScheduleGroupModel;
     sequence: number;
@@ -15,38 +16,37 @@
 <template>
   <article class="schedule__panel schedule__timeline-card">
     <div class="schedule__card-heading">
-      <slot name="handle" /><span class="schedule__sequence-number">{{
-        String(sequence).padStart(2, '0')
-      }}</span>
+      <div class="schedule__card-identity">
+        <span class="schedule__sequence-number">{{ String(sequence).padStart(2, '0') }}</span>
+        <h3>{{ group.title }}</h3>
+      </div>
+      <slot name="handle" />
     </div>
-    <h3>{{ group.title }}</h3>
-    <dl class="schedule__card-dates">
-      <div>
-        <dt>{{ $t('schedule.start') }}</dt>
-        <dd>{{ group.startDate ?? $t('schedule.not_available') }}</dd>
-      </div>
-      <i class="pi pi-arrow-right" aria-hidden="true"></i>
-      <div>
-        <dt>{{ $t('schedule.finish') }}</dt>
-        <dd>{{ group.finishDate ?? $t('schedule.not_available') }}</dd>
-      </div>
-    </dl>
-    <p class="schedule__duration">
-      <span>{{ $t('schedule.duration') }}</span>
-      <strong>{{ group.duration }} {{ $t(getTypeNameKey(group.durationType)) }}</strong>
-    </p>
-    <ul class="schedule__scope">
-      <li v-for="stage in group.stages" :key="stage.quoteStageId">
-        {{ stage.title }}
-        <ul>
-          <li v-for="child in stage.children" :key="child.subStageId">{{ child.title }}</li>
-        </ul>
-      </li>
-    </ul>
-    <p class="schedule__scope-count">
-      <i class="pi pi-sitemap" aria-hidden="true"></i>
-      {{ $t('schedule.stage_count', { count: group.stages.length }) }}
-    </p>
+    <details class="schedule__group-details" open>
+      <summary>
+        <span
+          ><i class="pi pi-sitemap" aria-hidden="true"></i
+          >{{ $t('schedule.stage_count', { count: group.stages.length }) }}</span
+        >
+        <i class="pi pi-chevron-down" aria-hidden="true"></i>
+      </summary>
+      <dl class="schedule__card-dates">
+        <div>
+          <dt>{{ $t('schedule.start') }}</dt>
+          <dd>{{ group.startDate ?? $t('schedule.not_available') }}</dd>
+        </div>
+        <i class="pi pi-arrow-right" aria-hidden="true"></i>
+        <div>
+          <dt>{{ $t('schedule.finish') }}</dt>
+          <dd>{{ group.finishDate ?? $t('schedule.not_available') }}</dd>
+        </div>
+      </dl>
+      <p class="schedule__duration">
+        <span>{{ $t('schedule.duration') }}</span>
+        <strong>{{ group.duration }} {{ $t(getTypeNameKey(group.durationType)) }}</strong>
+      </p>
+      <ScheduleStageTable :stages="group.stages" />
+    </details>
     <div class="schedule__actions">
       <AppButton :to="`${basePath}/${group.id}`" :disabled="busy">{{
         $t('schedule.show')

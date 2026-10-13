@@ -38,6 +38,7 @@ export default class ProductsModel {
   public readonly measurementUnitTitle?: string;
 
   public readonly expectedPrice?: number;
+  public readonly quantity?: number;
   public readonly isActive?: boolean;
 
   public readonly stageIds: number[];
@@ -57,6 +58,7 @@ export default class ProductsModel {
     measurementUnitId?: number;
     measurementUnitTitle?: string;
     expectedPrice?: number;
+    quantity?: number;
     isActive?: boolean;
     stageIds?: number[];
     sortings?: ProductSorting[];
@@ -75,6 +77,7 @@ export default class ProductsModel {
     this.measurementUnitTitle = data.measurementUnitTitle;
 
     this.expectedPrice = data.expectedPrice;
+    this.quantity = data.quantity;
     this.isActive = data.isActive;
 
     this.stageIds = data.stageIds ?? [];
@@ -176,6 +179,7 @@ export default class ProductsModel {
       measurementUnitTitle: ProductsModel.extractTitle(measurementUnit),
 
       expectedPrice: data.expected_price != null ? Number(data.expected_price) : undefined,
+      quantity: data.quantity != null ? Number(data.quantity) : undefined,
 
       isActive:
         data.is_active != null ? data.is_active === true || Number(data.is_active) === 1 : true,
