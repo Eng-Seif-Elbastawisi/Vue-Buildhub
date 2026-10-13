@@ -48,6 +48,7 @@ it.each(['en', 'ar'])(
       '/organization/execution-quotes/show/140/schedule',
       '/organization/execution-quotes/show/140/site-team',
       '/organization/execution-quotes/show/140/work-items',
+      '/organization/execution-quotes/show/140/procurement',
     ]);
     expect(
       wrapper

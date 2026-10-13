@@ -1,0 +1,206 @@
+.procurement,
+.procurement-dialog {
+  color: color-mix(in srgb, var(--SecondaryColor) 20%, var(--gray-800));
+  accent-color: var(--PrimaryColor);
+}
+
+.procurement {
+  display: grid;
+  gap: 1.5rem;
+  padding: clamp(1rem, 2vw, 2rem);
+}
+
+.procurement-header,
+.procurement-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.procurement h1,
+.procurement h2,
+.procurement-form h2 {
+  margin-block: 0 1rem;
+}
+
+.procurement h1 {
+  font-size: clamp(1.3rem, 2vw, 1.7rem);
+}
+
+.procurement h2,
+.procurement-form h2 {
+  font-size: 1.1rem;
+}
+
+.procurement p,
+.procurement-form p,
+.procurement-form small {
+  color: var(--subtitle-color);
+  overflow-wrap: anywhere;
+}
+
+.procurement-panel,
+.procurement-item {
+  min-width: 0;
+  padding: 1.25rem;
+  border: 1px solid var(--border-weak);
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+}
+
+.procurement-table-scroll {
+  overflow-x: auto;
+}
+
+.procurement-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.procurement-table :is(th, td) {
+  padding: 0.9rem 0.75rem;
+  border-block-end: 1px solid var(--border-weak);
+  text-align: start;
+  vertical-align: top;
+}
+
+.procurement-table thead {
+  background: var(--bg-section);
+}
+
+.procurement-table a {
+  color: var(--PrimaryColor);
+}
+
+.procurement-status {
+  display: inline-flex;
+  padding: 0.25rem 0.6rem;
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+  background: var(--warning-light);
+  color: var(--warning-dark);
+}
+
+.procurement-status--2 {
+  background: var(--danger-light);
+  color: var(--danger-dark);
+}
+
+.procurement-status--3 {
+  background: var(--success-light);
+  color: var(--success-dark);
+}
+
+.procurement-empty {
+  padding: 2rem 1rem;
+  text-align: center;
+}
+
+.procurement-details {
+  padding: 1rem;
+  background: var(--bg-section);
+}
+
+.procurement-metadata,
+.procurement-fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  gap: 1rem;
+}
+
+.procurement-metadata dt {
+  color: var(--subtitle-color);
+}
+
+.procurement-metadata dd {
+  margin: 0.35rem 0 0;
+  overflow-wrap: anywhere;
+}
+
+.procurement-dialog {
+  width: min(1000px, calc(100vw - 2rem));
+  max-height: calc(100dvh - 2rem);
+}
+
+.procurement-form,
+.procurement-form > section,
+.procurement-form .field-group {
+  display: grid;
+  gap: 1rem;
+}
+
+.procurement-form > section {
+  padding-block-end: 1rem;
+  border-block-end: 1px solid var(--border-weak);
+}
+
+.procurement-item > legend {
+  padding-inline: 0.5rem;
+  font-weight: 600;
+}
+
+.procurement-item > .btn {
+  margin-block-start: 1rem;
+}
+
+.procurement-type {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  min-width: 0;
+  margin: 0;
+  padding: 0.5rem 0;
+  border: 0;
+}
+
+.procurement-type label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+}
+
+.procurement-form .procurement-error {
+  color: var(--danger-dark);
+}
+
+.procurement-actions {
+  justify-content: flex-end;
+}
+
+.procurement :is(a, summary):focus-visible {
+  outline: 2px solid var(--PrimaryColor);
+  outline-offset: 3px;
+}
+
+.procurement summary {
+  padding-block: 0.5rem;
+  cursor: pointer;
+}
+
+.procurement-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+
+@media (max-width: 600px) {
+  .procurement {
+    padding-inline: 0.75rem;
+  }
+
+  .procurement-panel,
+  .procurement-item {
+    padding: 0.75rem;
+  }
+
+  .procurement-actions .btn {
+    width: 100%;
+  }
+}

@@ -2,6 +2,7 @@
   import ScheduleShortcut from '../../Schedule/presentation/components/ScheduleShortcut.vue';
   import SiteTeamShortcut from '../../SiteTeam/presentation/components/SiteTeamShortcut.vue';
   import WorkItemsShortcut from '../../WorkItems/presentation/components/WorkItemsShortcut.vue';
+  import ProcurementShortcut from '../../Procurement/presentation/components/ProcurementShortcut.vue';
   defineProps<{ quoteId: number }>();
 </script>
 <template>
@@ -17,6 +18,7 @@
       <ScheduleShortcut :quote-id="quoteId" compact />
       <SiteTeamShortcut :quote-id="quoteId" />
       <WorkItemsShortcut :quote-id="quoteId" />
+      <ProcurementShortcut :quote-id="quoteId" />
     </div>
   </section>
 </template>

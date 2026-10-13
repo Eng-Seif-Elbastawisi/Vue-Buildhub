@@ -55,6 +55,7 @@ for (const prefix of ['organization', 'mainportal']) {
   it.each([
     ['/site-team', 'Quote Site Team', undefined],
     ['/work-items', 'Quote Work Items', undefined],
+    ['/procurement', 'Quote Procurement', undefined],
     ['/schedule', 'Quote Schedule', undefined],
     ['/schedule/add', 'Add Schedule Group', undefined],
     ['/schedule/201', 'Show Schedule Group', '201'],
