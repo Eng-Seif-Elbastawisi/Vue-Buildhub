@@ -3,6 +3,8 @@ import ProjectTimelineSubStageModel, { mappedLabel } from './project.timeline.su
 import { responseObject } from './schedule.response';
 import { validId } from '../constants/schedule.constants';
 export default class ProjectTimelineStageModel {
+  readonly parentId?: number | null;
+  readonly id: number;
   readonly quoteStageId: number;
   readonly title: string;
   readonly children: ProjectTimelineSubStageModel[];
@@ -10,6 +12,8 @@ export default class ProjectTimelineStageModel {
   readonly subStage?: TitleModel | null;
   readonly createdAt?: string | null;
   constructor(stage: {
+    parentId?: number | null;
+    id: number;
     quoteStageId: number;
     title: string;
     children: ProjectTimelineSubStageModel[];
@@ -17,6 +21,8 @@ export default class ProjectTimelineStageModel {
     subStage?: TitleModel | null;
     createdAt?: string | null;
   }) {
+    this.parentId = stage.parentId;
+    this.id = stage.id;
     this.quoteStageId = stage.quoteStageId;
     this.title = stage.title;
     this.children = stage.children;
@@ -28,6 +34,11 @@ export default class ProjectTimelineStageModel {
     const payload = responseObject(value);
     const label = mappedLabel(payload.stage);
     if (
+      (payload.parent_id !== undefined &&
+        payload.parent_id !== null &&
+        (typeof payload.parent_id !== 'number' || !validId(payload.parent_id))) ||
+      typeof payload.id !== 'number' ||
+      !validId(payload.id) ||
       typeof payload.quote_stage_id !== 'number' ||
       !validId(payload.quote_stage_id) ||
       !label ||
@@ -40,6 +51,8 @@ export default class ProjectTimelineStageModel {
       throw new Error('schedule.invalid_response');
     // Use the QuoteStage association ID, rather than the nested master Stage ID.
     return new ProjectTimelineStageModel({
+      parentId: payload.parent_id as number | null | undefined,
+      id: payload.id,
       quoteStageId: payload.quote_stage_id,
       title: label.title,
       stage: label,

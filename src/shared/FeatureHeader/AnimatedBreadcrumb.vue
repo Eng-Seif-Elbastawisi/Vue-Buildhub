@@ -135,7 +135,7 @@
     gap: 6px;
     max-width: 38ch;
     overflow: hidden;
-    color: var(--quote-muted, var(--gray-500));
+    color: var(--gray-600);
     font-family: 'Medium', var(--font-family);
     font-size: 15px;
     font-style: normal;
@@ -163,7 +163,7 @@
     inset-block-end: 0;
     inset-inline: 0;
     height: 3px;
-    background: var(--quote-copper, var(--PrimaryColor));
+    background: var(--PrimaryColor);
     clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%);
     content: '';
     transform-origin: var(--breadcrumb-underline-origin);
@@ -171,17 +171,17 @@
 
   .dashboard-breadcrumb__link:hover,
   .dashboard-breadcrumb__link:focus-visible {
-    color: var(--quote-copper-dark, var(--PrimaryColor));
+    color: var(--PrimaryColor);
   }
 
   .dashboard-breadcrumb__link:focus-visible {
     border-radius: 3px;
-    outline: 2px solid var(--quote-copper, var(--PrimaryColor));
+    outline: 2px solid var(--PrimaryColor);
     outline-offset: 2px;
   }
 
   .dashboard-breadcrumb__current {
-    color: var(--quote-ink, var(--gray-600));
+    color: color-mix(in sRGB, var(--SecondaryColor) 20%, var(--gray-800));
     font-family: 'Bold', var(--font-family);
     font-size: 17px;
     font-weight: 700;
@@ -190,7 +190,7 @@
 
   .dashboard-breadcrumb__current:focus-visible {
     border-radius: 3px;
-    outline: 2px solid var(--quote-copper, var(--PrimaryColor));
+    outline: 2px solid var(--PrimaryColor);
     outline-offset: 2px;
   }
 
@@ -198,7 +198,7 @@
     width: 11px;
     height: 11px;
     flex: 0 0 auto;
-    color: var(--quote-muted, var(--gray-400));
+    color: var(--gray-600);
     opacity: 0.55;
     transform: scaleX(var(--breadcrumb-chevron-direction));
   }

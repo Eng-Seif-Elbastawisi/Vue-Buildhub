@@ -1,0 +1,107 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-12T08:48:52.067181+00:00",
+  "title": "Design System: BuildHub project workspace",
+  "extensions": {
+    "motion": [
+      {
+        "name": "app-trace",
+        "value": "700ms cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Decorative app line tracing on hover and focus; disabled for reduced motion."
+      },
+      {
+        "name": "app-scale",
+        "value": "500ms cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Small SVG hover scale; removed for reduced motion."
+      },
+      {
+        "name": "navigation-state",
+        "value": "180ms ease",
+        "purpose": "Navigation background and text feedback; disabled for reduced motion."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "navigation-mobile",
+        "value": "600px"
+      },
+      {
+        "name": "quote-header-mobile",
+        "value": "640px"
+      },
+      {
+        "name": "summary-inset",
+        "value": "700px"
+      },
+      {
+        "name": "site-team-summary-stack",
+        "value": "900px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Workspace app link",
+      "kind": "custom",
+      "refersTo": "workspace-app",
+      "description": "Router-link presentation with decorative timeline geometry and an ink action footer.",
+      "html": "<a class=\"ds-app\" href=\"#schedule\"><div class=\"ds-app-visual\" aria-hidden=\"true\"><svg viewBox=\"0 0 480 160\" fill=\"none\"><path class=\"ds-guide\" d=\"M40 30H440M40 80H440M40 130H440M100 16V144M200 16V144M300 16V144M400 16V144\"/><path class=\"ds-line\" d=\"M65 43H215V80H315V117H410\"/><rect x=\"65\" y=\"33\" width=\"150\" height=\"20\" rx=\"5\"/><rect x=\"215\" y=\"70\" width=\"100\" height=\"20\" rx=\"5\"/><rect x=\"315\" y=\"107\" width=\"95\" height=\"20\" rx=\"5\"/></svg></div><div class=\"ds-app-heading\"><h3>Schedule</h3><p>Project schedule</p></div><span class=\"ds-app-cta\">Open Schedule <svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" aria-hidden=\"true\"><path d=\"M6 18 18 6M6 6h12v12\"/></svg></span></a>",
+      "css": ".ds-app{font-family:var(--font-family, 'Medium', 'Segoe UI', sans-serif);display:flex;flex-direction:column;border:1px solid var(--border-weak,#e2e8f0);border-radius:16px;overflow:hidden;background:var(--bg-card,#fff);color:var(--title-card-color,rgba(17,24,39,1));text-decoration:none;transition:border-color 220ms ease,background-color 220ms ease}.ds-app:hover{border-color:var(--PrimaryColor,#c47a35)}.ds-app:focus-visible{outline:2px solid var(--PrimaryColor,#c47a35);outline-offset:4px}.ds-app-visual{height:10rem;background:var(--PrimaryColor-alpha-8,rgba(79,175,124,.08));color:var(--PrimaryColor,#c47a35)}.ds-app-visual svg{width:100%;height:100%;stroke:currentColor;stroke-width:1.5;transition:transform 500ms cubic-bezier(.16,1,.3,1)}.ds-app-visual rect{fill:var(--bg-card,#fff);stroke-width:2}.ds-guide{opacity:.3}.ds-line{stroke-width:2.5;stroke-dasharray:1100}.ds-app:hover .ds-line,.ds-app:focus-visible .ds-line{animation:ds-trace 700ms cubic-bezier(.16,1,.3,1)}.ds-app:hover .ds-app-visual svg{transform:scale(1.035)}.ds-app-heading{padding:1.5rem 1.5rem 1rem}.ds-app h3{margin:0 0 .4rem;font-size:1.25rem;font-weight:600}.ds-app p{margin:0;color:var(--subtitle-color,#64748b);font-size:.8rem;line-height:1.65}.ds-app-cta{display:flex;justify-content:space-between;padding:1rem 1.5rem;border-top:1px solid var(--border-weak,#e2e8f0);font-size:.85rem;font-weight:600}@keyframes ds-trace{from{stroke-dashoffset:1100}to{stroke-dashoffset:0}}@media(prefers-reduced-motion:reduce){.ds-app,.ds-app-visual svg{transition:none}.ds-app:hover .ds-app-visual svg{transform:none}.ds-app:hover .ds-line,.ds-app:focus-visible .ds-line{animation:none}}"
+    },
+    {
+      "name": "Workspace navigation",
+      "kind": "nav",
+      "refersTo": "workspace-navigation",
+      "description": "Quote-owned app navigation with an active-page fill.",
+      "html": "<nav class=\"ds-nav\" aria-label=\"Project apps\"><a class=\"ds-home\" href=\"#apps\">Apps</a><span class=\"ds-divider\" aria-hidden=\"true\"></span><a href=\"#schedule\" aria-current=\"page\">Schedule</a><a href=\"#site-team\">Site &amp; Team</a></nav>",
+      "css": ".ds-nav{font-family:var(--font-family, 'Medium', 'Segoe UI', sans-serif);display:flex;align-items:center;flex-wrap:wrap;gap:.4rem;padding:.5rem;border:1px solid var(--border-weak,#e2e8f0);border-radius:14px;background:var(--bg-card,#fff)}.ds-nav a{padding:.75rem 1rem;border-radius:10px;color:var(--subtitle-color,#64748b);font-size:.85rem;font-weight:600;text-decoration:none;transition:background-color 180ms ease,color 180ms ease}.ds-nav a:hover{background:var(--bg-section,#f8fafc);color:var(--title-card-color,rgba(17,24,39,1))}.ds-nav a[aria-current=\"page\"]{background:var(--PrimaryColor-alpha-8,rgba(79,175,124,.08));color:var(--title-card-color,rgba(17,24,39,1))}.ds-nav a:focus-visible{outline:2px solid var(--PrimaryColor,#c47a35);outline-offset:2px}.ds-divider{width:1px;height:1.5rem;background:var(--border-weak,#e2e8f0)}@media(max-width:600px){.ds-home{width:100%}.ds-divider{display:none}.ds-nav a{padding:.65rem .8rem}}@media(prefers-reduced-motion:reduce){.ds-nav a{transition:none}}"
+    },
+    {
+      "name": "Project details disclosure",
+      "kind": "custom",
+      "description": "Initially closed native disclosure retaining the project details.",
+      "html": "<details class=\"ds-details\"><summary>Project details <svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" aria-hidden=\"true\"><path d=\"m6 9 6 6 6-6\"/></svg></summary><p>Quote type and creation date</p></details>",
+      "css": ".ds-details{font-family:var(--font-family, 'Medium', 'Segoe UI', sans-serif);border-top:1px solid var(--border-weak,#e2e8f0);padding-block:1.25rem;color:var(--title-card-color,rgba(17,24,39,1))}.ds-details summary{display:flex;align-items:center;gap:.75rem;cursor:pointer;font-weight:600;list-style:none}.ds-details summary::-webkit-details-marker{display:none}.ds-details summary svg{margin-inline-start:auto;transition:transform 220ms ease}.ds-details[open] summary{margin-block-end:1.5rem}.ds-details[open] summary svg{transform:rotate(180deg)}.ds-details summary:focus-visible{outline:2px solid var(--PrimaryColor,#c47a35);outline-offset:6px}@media(prefers-reduced-motion:reduce){.ds-details summary svg{transition:none}}"
+    },
+    {
+      "name": "Site & Team initials",
+      "kind": "chip",
+      "description": "Noninteractive member initials marker with ink text.",
+      "html": "<span class=\"ds-initials\" aria-label=\"Member initials\">AB</span>",
+      "css": ".ds-initials{font-family:var(--font-family, 'Medium', 'Segoe UI', sans-serif);display:grid;place-items:center;width:2.75rem;height:2.75rem;border-radius:var(--radius-full,9999px);background:var(--PrimaryColor-alpha-8,rgba(79,175,124,.08));color:var(--title-card-color,rgba(17,24,39,1));font-weight:600}"
+    },
+    {
+      "name": "Schedule timeline card",
+      "kind": "card",
+      "refersTo": "schedule-card",
+      "description": "Warm task card with accent border and soft focus fill.",
+      "html": "<article class=\"ds-timeline\"><h3>Schedule group</h3><a href=\"#group\">Open group</a></article>",
+      "css": ".ds-timeline{font-family:var(--font-family, 'Medium', 'Segoe UI', sans-serif);display:flex;flex-direction:column;gap:1.25rem;padding:clamp(1.25rem,2vw,2rem);border:1px solid var(--quote-line,#e7e1da);border-radius:14px;background:var(--quote-paper,#fffdfa);color:var(--quote-ink,#272a2b);transition:border-color 180ms ease,background-color 180ms ease}.ds-timeline:hover,.ds-timeline:focus-within{border-color:var(--quote-copper,#a45e39)}.ds-timeline:focus-within{background:var(--quote-copper-soft,#f4e8df)}.ds-timeline h3{margin:0;font-size:1.25rem;font-weight:600;line-height:1.4}.ds-timeline a{color:var(--quote-copper-dark,#854725)}.ds-timeline a:focus-visible{outline:2px solid var(--quote-copper,#a45e39);outline-offset:4px}@media(prefers-reduced-motion:reduce){.ds-timeline{transition:opacity 100ms ease,border-color 100ms ease}}"
+    }
+  ],
+  "narrative": {
+    "overview": "Scoped incumbent identity for Quote Show, Schedule, and Site & Team. The warm ink/copper dashboard surrounds legacy white task surfaces; this record does not replace other BuildHub modules' design rules.",
+    "keyCharacteristics": [
+      "Architectural inline SVG app illustrations",
+      "Flat rounded task surfaces",
+      "Bilingual incumbent typography",
+      "Visible focus and reduced-motion handling"
+    ],
+    "rules": [
+      {
+        "name": "Source precedence",
+        "body": "Shell quote tokens and legacy module tokens coexist. Read the final matching declarations and imported styles before changing values.",
+        "section": "colors"
+      }
+    ],
+    "dos": [
+      "Do preserve real routes and quote ownership.",
+      "Do keep native disclosures, logical spacing, translations, and keyboard focus."
+    ],
+    "donts": [
+      "Don't impose the launcher composition on unrelated screens.",
+      "Don't reinterpret the green legacy alpha family as copper.",
+      "Don't invent metrics or raster imagery."
+    ]
+  }
+}

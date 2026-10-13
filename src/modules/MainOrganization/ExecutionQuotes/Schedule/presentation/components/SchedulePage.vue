@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import ProjectWorkspaceNav from '../../../presentation/components/ProjectWorkspaceNav.vue';
   import { computed, onBeforeUnmount, watch } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
@@ -60,7 +61,8 @@
   });
 </script>
 <template>
-  <section class="schedule standard-crud-page">
+  <section class="schedule">
+    <ProjectWorkspaceNav :quote-id="quoteId" active="schedule" />
     <header class="schedule__header">
       <div class="schedule__owner">
         <i class="pi pi-building" aria-hidden="true"></i>

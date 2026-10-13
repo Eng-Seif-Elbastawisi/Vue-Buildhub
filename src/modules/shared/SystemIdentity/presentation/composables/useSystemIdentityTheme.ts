@@ -179,6 +179,7 @@ const setCssVariables = (palette: SystemIdentityPalette) => {
     '--sidebar-active-color': primaryText,
     '--button-primary-bg': normalized.primary,
     '--button-primary-color': primaryText,
+    '--secondary-text-color': getReadableTextColor(normalized.secondary),
     '--PrimaryColor': normalized.primary,
     '--PrimaryColor-hover': normalized.secondary,
     '--PrimaryColor-active': normalized.accent,

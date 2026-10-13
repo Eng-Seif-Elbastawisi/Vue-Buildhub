@@ -10,9 +10,7 @@
   import ScheduleController from '../controllers/schedule.controller';
   import { schedulePath } from '../schedule.routes';
   import ProjectManagementShortcut from './ProjectManagementShortcut.vue';
-  import ScheduleStageTable from './ScheduleStageTable.vue';
-  import '../styles/schedule.scss';
-  const props = defineProps<{ quoteId: number }>();
+  const props = defineProps<{ quoteId: number; compact?: boolean }>();
   const route = useRoute();
   const { t } = useI18n();
   const controller = ScheduleController.getInstance();
@@ -38,7 +36,7 @@
 </script>
 <template>
   <section class="schedule-shortcuts" :aria-label="$t('schedule.workspace')">
-    <h2>{{ $t('schedule.workspace') }}</h2>
+    <h2 v-if="!compact">{{ $t('schedule.workspace') }}</h2>
     <ProjectManagementShortcut
       :title="$t('schedule.title')"
       :description="$t('schedule.shortcut_description')"

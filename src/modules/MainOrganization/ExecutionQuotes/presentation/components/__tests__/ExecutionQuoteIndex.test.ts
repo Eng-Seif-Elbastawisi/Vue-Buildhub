@@ -12,6 +12,7 @@ import { QuoteStatusEnum } from '../../../core/constants/quote.status.enum';
 import ExecutionQuoteApiService from '../../../data/api/execution.quote.api-service';
 import ExecutionQuoteController from '../../controllers/execution.quote.controller';
 import ExecutionQuoteIndex from '../ExecutionQuoteIndex.vue';
+import IndexPageHeader from '@/shared/IndexPageHeader/IndexPageHeader.vue';
 
 const { push } = vi.hoisted(() => ({ push: vi.fn() }));
 
@@ -24,6 +25,7 @@ const DialogStub = {
 vi.mock('vue-router', async (importOriginal) => ({
   ...(await importOriginal<typeof VueRouterModule>()),
   useRouter: () => ({ push }),
+  useRoute: () => ({ path: '/organization/execution-quotes' }),
 }));
 
 const createIndexResponse = (
@@ -139,19 +141,23 @@ describe('ExecutionQuoteIndex', () => {
     expect(loadingCard.find('.execution-quote-index__table-header').exists()).toBe(true);
   });
 
-  it('uses the shared drawable icon in the quotation list header', () => {
+  it('uses the shared index header and preserves New Quote navigation', async () => {
     indexRequest.mockImplementation(() => new Promise(() => undefined));
 
     const wrapper = mountIndex();
 
+    expect(wrapper.getComponent(IndexPageHeader).props()).toMatchObject({
+      title: 'execution_quote.title',
+      subtitle: 'execution_quote.index_description',
+    });
+
     expect(
-      wrapper
-        .find('.execution-quote-index__masthead .page-header-icon[data-icon-kind="document"]')
-        .exists(),
+      wrapper.find('.index-page-header .page-header-icon[data-icon-kind="document"]').exists(),
     ).toBe(true);
-    expect(
-      wrapper.find('.execution-quote-index__masthead .page-header-icon__accent').exists(),
-    ).toBe(false);
+    expect(wrapper.find('.index-page-header .page-header-icon__accent').exists()).toBe(false);
+
+    await wrapper.get('.index-page-heading__actions button').trigger('click');
+    expect(push).toHaveBeenCalledWith({ name: 'Add Execution Quote' });
   });
 
   it('shows the important execution quote fields returned by the index endpoint', async () => {

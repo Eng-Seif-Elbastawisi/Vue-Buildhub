@@ -376,8 +376,8 @@
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
-    max-width: calc(96rem - 3rem);
-    width: calc(100% - 3rem);
+    /* max-width: calc(96rem - 3rem); */
+    width: 100%;
     margin-inline: auto;
     padding: 0.85rem 0.9rem;
     border: 1px solid var(--border-weak);

@@ -9,3 +9,5 @@ export { default as AddFinalProjectFloorResultParams } from './core/params/final
 export { default as ProjectFloorRepository } from './data/repositories/project.floor.repository';
 export { default as ProjectFloorController } from './presentation/controllers/project.floor.controller';
 export { default as ProjectFloorApiService } from './data/api/project.floor.api-service';
+export { default as AddProjectFloorSpaceParams } from './core/params/add.project.floor.space.params';
+export { default as AddProjectFloorSpacesParams } from './core/params/add.project.floor.spaces.params';

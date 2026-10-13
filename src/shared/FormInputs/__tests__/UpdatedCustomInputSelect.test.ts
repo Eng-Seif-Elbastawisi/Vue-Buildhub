@@ -1,3 +1,10 @@
+import SiteTeamController from '@/modules/MainOrganization/ExecutionQuotes/SiteTeam/presentation/controllers/site-team.controller';
+import IndexSpaceParams from '@/modules/shared/Space/core/params/index.space.params';
+import TitleInterface from '@/base/Data/Models/titleInterface';
+import {
+  mockNetwork,
+  response,
+} from '@/modules/MainOrganization/ExecutionQuotes/SiteTeam/__tests__/network';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import PrimeVue from 'primevue/config';
 import { flushPromises, mount } from '@vue/test-utils';
@@ -31,7 +38,7 @@ const MultiSelectStub = {
 };
 const SelectStub = {
   name: 'Select',
-  template: '<div class="select-stub" />',
+  template: '<div class="select-stub"><slot name="footer" /></div>',
   props: ['modelValue', 'options', 'placeholder', 'loading', 'emptyMessage'],
   emits: ['update:modelValue'],
 };
@@ -282,3 +289,33 @@ it.each([1, 2])(
     wrapper.unmount();
   },
 );
+
+it('pages single Space options while retaining a saved selection outside the current page', async () => {
+  const post = mockNetwork();
+  const controller = SiteTeamController.getInstance();
+  controller.activate(140);
+  post.mockImplementation(async (request) =>
+    response({
+      status: true,
+      data: {
+        data: [{ id: Number(request.data.page) + 20, title: 'Other space' }],
+        meta: { current_page: request.data.page, last_page: 2, total: 11, per_page: 10 },
+      },
+    }),
+  );
+  const saved = new TitleInterface({ id: 13, title: 'Living Room' });
+  const wrapper = createWrapper({
+    type: 1,
+    modelValue: saved,
+    controller: controller.spaceOptions,
+    params: new IndexSpaceParams(),
+    paginated: true,
+  });
+  await flushPromises();
+  await wrapper.findAll('.multiselect-pagination__button')[1].trigger('click');
+  await flushPromises();
+  expect(post.mock.calls[1]?.[0].data.page).toBe(2);
+  expect(wrapper.findComponent(SelectStub).props('modelValue')).toEqual(saved);
+  expect(wrapper.emitted('update:modelValue')).toBeUndefined();
+  wrapper.unmount();
+});

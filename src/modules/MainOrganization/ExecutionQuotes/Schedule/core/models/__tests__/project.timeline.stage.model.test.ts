@@ -31,3 +31,10 @@ it.each([null, undefined])('does not fabricate a child collection for %j', (chil
     ProjectTimelineStageModel.fromJson({ ...timelineResponse().stages[0], children }),
   ).toThrow('schedule.invalid_response');
 });
+
+it('retains explicit main-stage parent information without inferring it when omitted', () => {
+  const fields = { id: 7, quote_stage_id: 55, stage: { id: 129, title: 'Main' }, children: [] };
+  expect(ProjectTimelineStageModel.fromJson({ ...fields, parent_id: null }).parentId).toBeNull();
+  expect(ProjectTimelineStageModel.fromJson({ ...fields, parent_id: 18 }).parentId).toBe(18);
+  expect(ProjectTimelineStageModel.fromJson(fields).parentId).toBeUndefined();
+});

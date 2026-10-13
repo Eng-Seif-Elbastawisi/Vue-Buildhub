@@ -1,3 +1,4 @@
+import { mockNetwork } from '@/modules/MainOrganization/ExecutionQuotes/SiteTeam/__tests__/network';
 import { describe, expect, it, vi } from 'vitest';
 import { ProjectFloorApiEndpoints } from '../project.floor.api.endpoints';
 
@@ -15,4 +16,11 @@ describe('ProjectFloorApiEndpoints', () => {
     expect(endpoints.update).toContain('mainportal/update_project_floor');
     expect(endpoints.delete).toContain('mainportal/delete_project_floor');
   });
+});
+
+it('keeps floor fetch and new add-space endpoint in the same workspace', () => {
+  mockNetwork();
+  const endpoints = new ProjectFloorApiEndpoints();
+  expect(endpoints.index).toContain('mainportal/fetch_project_floors');
+  expect(endpoints.addSpaces).toContain('mainportal/add_project_floor_spaces');
 });

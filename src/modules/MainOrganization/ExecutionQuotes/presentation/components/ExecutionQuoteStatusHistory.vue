@@ -38,7 +38,7 @@
 </script>
 
 <template>
-  <section class="execution-quote-history" aria-labelledby="execution-quote-history-title">
+  <section class="execution-quote-history mt-2" aria-labelledby="execution-quote-history-title">
     <Accordion v-model:value="expandedSection" lazy class="execution-quote-history__accordion">
       <AccordionPanel value="history">
         <AccordionHeader class="execution-quote-history__header">

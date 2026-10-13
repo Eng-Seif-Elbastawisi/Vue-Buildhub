@@ -1,15 +1,13 @@
 .schedule,
-.schedule-settings,
-.schedule-configuration-dialog,
-.schedule-shortcuts {
-  --schedule-ink: var(--quote-ink, var(--p-text-color));
+.schedule-settings {
+  --schedule-ink: color-mix(in sRGB, var(--SecondaryColor) 20%, var(--gray-800));
   --schedule-muted: var(--quote-muted, var(--subtitle-color));
   --schedule-line: var(--quote-line, var(--border-weak));
   --schedule-paper: var(--quote-paper, var(--bg-card));
   --schedule-canvas: var(--quote-canvas, var(--bg-section));
-  --schedule-accent: var(--quote-copper, var(--PrimaryColor));
-  --schedule-accent-dark: var(--quote-copper-dark, var(--PrimaryColor));
-  --schedule-accent-soft: var(--quote-copper-soft, var(--PrimaryColor-alpha-8));
+  --schedule-accent: var(--PrimaryColor);
+  --schedule-accent-dark: var(--PrimaryColor);
+  --schedule-accent-soft: var(--PrimaryColor-light);
   --schedule-ease: cubic-bezier(0.16, 1, 0.3, 1);
 
   color: var(--schedule-ink);
@@ -73,6 +71,7 @@
 .schedule__section-heading h2,
 .schedule__timeline-card h3,
 .schedule__detail h2 {
+  color: var(--schedule-ink);
   margin: 0;
   font-weight: 600;
   text-wrap: balance;
@@ -1118,5 +1117,72 @@ body .p-dialog.schedule-configuration-dialog .schedule__summary ul {
 @media (pointer: coarse) {
   .schedule .schedule__drag-handle {
     display: none;
+  }
+}
+
+/* Workspace surfaces retain existing Schedule interactions and tokens. */
+.main-content > .schedule.standard-crud-page {
+  padding: clamp(1rem, 2vw, 2rem);
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.schedule__header {
+  padding: 1.25rem 0;
+}
+
+.schedule__summary {
+  padding-block: 1.5rem;
+  background: var(--schedule-paper);
+  border-radius: 14px;
+}
+
+.schedule__panel {
+  padding: clamp(1.25rem, 2vw, 2rem);
+}
+
+.schedule__timeline-card {
+  border-radius: 14px;
+}
+
+.schedule__timeline-card:focus-within {
+  background: var(--schedule-accent-soft);
+}
+
+.schedule__summary {
+  background: var(--SecondaryColor);
+}
+
+.schedule__summary dt {
+  color: color-mix(in sRGB, var(--secondary-text-color, var(--white)), var(--SecondaryColor) 15%);
+}
+
+.schedule__summary dd {
+  color: var(--secondary-text-color, var(--white));
+  font-size: 1.2rem;
+}
+
+.schedule__summary > div + div {
+  border-color: color-mix(
+    in sRGB,
+    var(--SecondaryColor),
+    var(--secondary-text-color, var(--white)) 20%
+  );
+}
+
+.schedule__scope {
+  padding: 1rem;
+  border-radius: 10px;
+  background: var(--schedule-canvas);
+}
+
+.schedule :is(p, h2, h3, dt, dd) {
+  text-transform: none;
+}
+
+@media (max-width: 700px) {
+  .schedule__summary {
+    padding-inline: 1rem;
   }
 }
