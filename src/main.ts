@@ -7,7 +7,7 @@ import PrimeVue from 'primevue/config';
 import { createPinia } from 'pinia';
 import router from './router';
 import App from './App.vue';
-import Aura from '@primeuix/themes/aura';
+import systemIdentityPreset from './styles/primevue/systemIdentityPreset';
 import i18n from './locales/i18n';
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate';
 import ToastService from 'primevue/toastservice';
@@ -20,7 +20,7 @@ const pinia = createPinia();
 const app = createApp(App)
   .use(PrimeVue, {
     theme: {
-      preset: Aura,
+      preset: systemIdentityPreset,
       options: {
         darkModeSelector: '.dark',
       },

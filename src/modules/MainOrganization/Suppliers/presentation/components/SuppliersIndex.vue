@@ -381,8 +381,8 @@
 
   .save_button {
     button {
-      background-color: #2563eb;
-      color: white;
+      background-color: var(--PrimaryColor);
+      color: var(--button-primary-color);
       padding: 1rem;
       border-radius: var(--xl-size-3);
     }

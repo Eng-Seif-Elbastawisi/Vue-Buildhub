@@ -142,9 +142,10 @@
     gap: 12px;
     width: 100%;
     padding: 12px;
+    margin-block-start: 12px;
     border: 1px solid var(--border-strong);
     border-block-start: 0;
-    border-radius: 0 0 var(--card-radius, 14px) var(--card-radius, 14px);
+    border-radius: var(--card-radius, 14px);
     background-color: var(--bg-card);
     box-shadow: none;
   }

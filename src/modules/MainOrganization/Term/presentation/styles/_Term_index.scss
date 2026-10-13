@@ -114,10 +114,10 @@
     width: 52px;
     height: 52px;
     border-radius: var(--radius-md);
-    background: linear-gradient(135deg, var(--PrimaryColor-light), rgba(238, 242, 255, 0.5));
+    background: linear-gradient(135deg, var(--PrimaryColor-light), var(--PrimaryColor-alpha-8));
     color: var(--PrimaryColor);
     box-shadow:
-      0 2px 8px rgba(99, 102, 241, 0.15),
+      0 2px 8px color-mix(in srgb, var(--PrimaryColor) 15%, transparent),
       inset 0 1px 0 rgba(255, 255, 255, 0.6);
     flex-shrink: 0;
   }
@@ -151,7 +151,7 @@
         border-radius: var(--radius-full);
         font-size: 0.75rem;
         font-weight: 700;
-        box-shadow: 0 2px 6px rgba(99, 102, 241, 0.3);
+        box-shadow: 0 2px 6px color-mix(in srgb, var(--PrimaryColor) 30%, transparent);
       }
     }
   }
@@ -172,7 +172,7 @@ background: var(--PrimaryColor);
     white-space: nowrap;
     border: none;
     box-shadow:
-      0 3px 10px rgba(99, 102, 241, 0.35),
+      0 3px 10px color-mix(in srgb, var(--PrimaryColor) 35%, transparent),
       inset 0 1px 0 rgba(255, 255, 255, 0.15);
     transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     position: relative;
@@ -192,7 +192,7 @@ background: var(--PrimaryColor);
     &:hover {
       transform: translateY(-2px);
       box-shadow:
-        0 6px 20px rgba(99, 102, 241, 0.45),
+        0 6px 20px color-mix(in srgb, var(--PrimaryColor) 45%, transparent),
         inset 0 1px 0 rgba(255, 255, 255, 0.2);
 
       &::before {
@@ -202,7 +202,7 @@ background: var(--PrimaryColor);
 
     &:active {
       transform: translateY(0);
-      box-shadow: 0 2px 6px rgba(99, 102, 241, 0.3);
+      box-shadow: 0 2px 6px color-mix(in srgb, var(--PrimaryColor) 30%, transparent);
     }
 
     &.empty-cta {
@@ -296,7 +296,7 @@ background: var(--PrimaryColor);
       border-color: var(--PrimaryColor);
       color: var(--PrimaryColor);
       background: var(--PrimaryColor-light);
-      box-shadow: 0 3px 10px rgba(99, 102, 241, 0.2);
+      box-shadow: 0 3px 10px color-mix(in srgb, var(--PrimaryColor) 20%, transparent);
     }
 
     &.delete:hover {

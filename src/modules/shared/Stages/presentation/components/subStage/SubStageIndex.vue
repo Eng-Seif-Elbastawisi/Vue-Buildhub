@@ -303,9 +303,9 @@ width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" str
 
 .btn-back-step {
   border: 1px solid var(--gray-2) !important;
-  background-color: #101418 !important;
+  background-color: var(--SecondaryColor) !important;
   font-size: var(--xs-size);
-  color: white !important;
+  color: var(--secondary-text-color) !important;
   height: 40px !important;
   border-radius: 50px !important;
   // padding: 0 10px;

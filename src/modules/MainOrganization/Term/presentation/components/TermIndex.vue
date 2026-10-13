@@ -372,11 +372,11 @@
   /* ================= EDIT ================= */
 
   .action-btn.edit {
-    color: var(--primary-color, #3b82f6);
+    color: var(--PrimaryColor);
   }
 
   .action-btn.edit:hover {
-    background-color: rgba(59, 130, 246, 0.1);
+    background-color: var(--PrimaryColor-alpha-10);
   }
 
   /* ================= DELETE ================= */
