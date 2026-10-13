@@ -160,7 +160,7 @@
 
 <template>
   <div class="form-fields">
-    <div class="field-group col-span-2" :class="{ disabled: loading }">
+    <div class="field-group" :class="{ disabled: loading }">
       <MultiLangInput
         field-key="title"
         :label="$t('title')"
@@ -194,9 +194,9 @@
     padding: 20px;
   }
 
-  .col-span-2 {
-    grid-column: span 2;
-  }
+  // .col-span-2 {
+  //   grid-column: span 2;
+  // }
 
   .field-group {
     min-width: 0;
@@ -208,11 +208,11 @@
     }
   }
 
-  .field-group--stage {
-    grid-column: 1 / -1;
-    justify-self: start;
-    width: min(100%, 720px);
-  }
+  // .field-group--stage {
+  //   grid-column: 1 / -1;
+  //   justify-self: start;
+  //   width: min(100%, 720px);
+  // }
 
   @media (max-width: 768px) {
     .form-fields {
