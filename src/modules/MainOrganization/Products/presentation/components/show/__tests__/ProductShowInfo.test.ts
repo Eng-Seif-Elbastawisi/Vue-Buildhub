@@ -21,6 +21,7 @@ describe('ProductShowInfo', () => {
   it('opens the product attachment in the shared gallery', async () => {
     const product = new ProductsShowModel({
       code: 'P-009',
+      quantity: 10,
       attachments: [
         new AttachmentModel({
           id: 3,
@@ -36,6 +37,8 @@ describe('ProductShowInfo', () => {
     });
 
     expect(wrapper.text()).toContain('#P-009');
+    expect(wrapper.text()).toContain('Products.form.quantity');
+    expect(wrapper.text()).toContain('10');
     expect(wrapper.text()).toContain('specification.pdf');
     await wrapper.get('.attachment-view-btn').trigger('click');
     expect(attachmentGallery.current.value?.url).toBe('https://assets.test/specification.pdf');

@@ -146,6 +146,7 @@ const itemTypeId = ref<number | undefined>();
 const measurementUnitId = ref<number | undefined>();
 
 const expectedPrice = ref<number | undefined>();
+const quantity = ref<number | undefined>();
 
 const isActive = ref(true);
 const gradesEnabled = ref(true);
@@ -348,6 +349,7 @@ const updateData = () => {
       itemTypeId: itemTypeId.value,
       measurementUnitId: measurementUnitId.value,
       expectedPrice: expectedPrice.value,
+      quantity: typeof quantity.value === 'number' ? quantity.value : undefined,
 
       image: image,
       stageIds: [...selectedStageIds.value],
@@ -363,6 +365,7 @@ const updateData = () => {
       itemTypeId: itemTypeId.value,
       measurementUnitId: measurementUnitId.value,
       expectedPrice: expectedPrice.value,
+      quantity: typeof quantity.value === 'number' ? quantity.value : undefined,
 
       image: image,
       stageIds: [...selectedStageIds.value],
@@ -444,6 +447,7 @@ watch(
     }
 
     expectedPrice.value = product.expectedPrice;
+    quantity.value = product.quantity;
 
     isActive.value = product.isActive ?? true;
     gradesEnabled.value = Boolean(product.image || product.sortings?.length);
@@ -475,6 +479,7 @@ watch(
     itemTypeId,
     measurementUnitId,
     expectedPrice,
+    quantity,
     isActive,
     gradesEnabled,
     imageBase64,
@@ -656,6 +661,12 @@ onMounted(async () => {
               <UpdatedCustomInputSelect id="material-measurement" v-model="measurement"
                 :controller="measurementController" :label="$t('measurement')" :params="measurementParams"
                 :placeholder="$t('measurement.unit_placeholder')" required />
+            </div>
+
+            <div class="field">
+              <label for="product-quantity">{{ $t('Products.form.quantity') }}</label>
+              <input
+                id="product-quantity" v-model.number="quantity" type="number" class="field-input" />
             </div>
           </div>
 

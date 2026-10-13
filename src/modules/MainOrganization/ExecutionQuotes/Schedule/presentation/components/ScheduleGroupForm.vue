@@ -86,7 +86,9 @@
   <form class="schedule__form" @submit.prevent="save">
     <div class="document-form-card">
       <header class="document-form-header">
-        <i class="pi pi-calendar" aria-hidden="true"></i>
+        <span class="schedule__heading-icon"
+          ><i class="pi pi-calendar-plus" aria-hidden="true"></i
+        ></span>
         <div>
           <h2>{{ $t(group ? 'schedule.edit' : 'schedule.create') }}</h2>
           <p>{{ $t('schedule.form_description') }}</p>
@@ -126,7 +128,6 @@
           />
         </div>
       </div>
-      <!-- asd -->
       <ScheduleStageSelector v-model="stages" :disabled="controller.busy.value || saved" />
       <div v-if="errors.length" role="alert" aria-live="assertive">
         <ul class="form-errors">

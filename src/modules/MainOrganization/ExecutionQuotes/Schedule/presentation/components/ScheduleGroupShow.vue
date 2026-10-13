@@ -7,6 +7,7 @@
   import ScheduleController from '../controllers/schedule.controller';
   import SchedulePage from './SchedulePage.vue';
   import ScheduleTimeline from './ScheduleTimeline.vue';
+  import ScheduleStageTable from './ScheduleStageTable.vue';
 
   const controller = ScheduleController.getInstance();
   const state = computed(() => controller.itemState.value);
@@ -22,16 +23,16 @@
       <DataStatusBuilder :controller="state" :on-retry="reload">
         <template #success>
           <article v-if="group" class="schedule__panel schedule__detail">
-            <h2>{{ group.title }}</h2>
-            <p>{{ group.duration }} {{ $t(getTypeNameKey(group.durationType)) }}</p>
-            <ul>
-              <li v-for="stage in group.stages" :key="stage.quoteStageId">
-                {{ stage.title }}
-                <ul>
-                  <li v-for="child in stage.children" :key="child.subStageId">{{ child.title }}</li>
-                </ul>
-              </li>
-            </ul>
+            <header class="schedule__detail-heading">
+              <span class="schedule__heading-icon"
+                ><i class="pi pi-calendar" aria-hidden="true"></i
+              ></span>
+              <div>
+                <h2>{{ group.title }}</h2>
+                <p>{{ group.duration }} {{ $t(getTypeNameKey(group.durationType)) }}</p>
+              </div>
+            </header>
+            <ScheduleStageTable :stages="group.stages" />
             <ScheduleTimeline :groups="[group]" />
           </article>
         </template>

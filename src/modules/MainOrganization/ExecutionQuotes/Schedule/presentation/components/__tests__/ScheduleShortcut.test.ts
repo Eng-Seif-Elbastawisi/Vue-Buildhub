@@ -44,6 +44,9 @@ it('uses a cached owner-safe overview and navigates to the same Quote in mainpor
   );
   expect(wrapper.text()).toContain('2026-10-10');
   expect(wrapper.text()).toContain('schedule.not_available');
+  expect(wrapper.get('.schedule__overview-group strong').text()).toBe('Main Execution Timeline');
+  expect(wrapper.get('.schedule__overview-group tbody th').text()).toBe('منعم');
+  expect(wrapper.get('.schedule__overview-group tbody td').text()).toBe('sub stage');
   await wrapper.get('a').trigger('click');
   await flushPromises();
   expect(router.currentRoute.value.path).toBe('/mainportal/execution-quotes/show/140/schedule');

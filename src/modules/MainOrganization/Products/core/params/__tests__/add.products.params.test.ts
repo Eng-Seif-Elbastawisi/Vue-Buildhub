@@ -8,9 +8,10 @@ describe('AddProductsParams', () => {
     const params = new AddProductsParams({
       translations: new TranslationParams({ title: { en: 'Door' } }),
       isActive: true,
+      quantity: 10,
     });
 
-    expect(params.toMap()).toMatchObject({ is_active: true });
+    expect(params.toMap()).toMatchObject({ is_active: true, quantity: 10 });
   });
 
   it('requires a sorting entry only when product grades are enabled', () => {

@@ -21,6 +21,7 @@ interface ApiProductsShowResponse {
   item_type?: Record<string, unknown>;
   measurement_unit?: Record<string, unknown>;
   expected_price?: number | string | null;
+  quantity?: number | string | null;
   expectedPrice?: number;
   stages?: Record<string, unknown>[];
   stageIds?: number[];
@@ -45,6 +46,7 @@ export default class ProductsShowModel {
   public readonly measurementUnit?: MeasurementModel;
 
   public readonly expectedPrice?: number;
+  public readonly quantity?: number;
 
   public readonly isActive?: boolean;
 
@@ -70,6 +72,7 @@ export default class ProductsShowModel {
     measurementUnit?: MeasurementModel;
 
     expectedPrice?: number;
+    quantity?: number;
 
     isActive?: boolean;
 
@@ -94,6 +97,7 @@ export default class ProductsShowModel {
     this.measurementUnit = data.measurementUnit;
 
     this.expectedPrice = data.expectedPrice;
+    this.quantity = data.quantity;
 
     this.isActive = data.isActive;
 
@@ -233,6 +237,7 @@ export default class ProductsShowModel {
       measurementUnit,
 
       expectedPrice,
+      quantity: data.quantity != null ? Number(data.quantity) : undefined,
 
       isActive,
 

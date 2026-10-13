@@ -161,6 +161,11 @@
     min-width: 0;
   }
 
+  .project-shortcut__heading > div {
+    min-width: 0;
+    flex: 1 1 12rem;
+  }
+
   .project-shortcut h3,
   .project-shortcut p,
   .project-shortcut dl {
@@ -211,6 +216,7 @@
     font-size: 0.85rem;
     font-variant-numeric: tabular-nums;
     overflow-wrap: anywhere;
+    color: var(--schedule-accent-dark);
   }
 
   .project-shortcut__cta {

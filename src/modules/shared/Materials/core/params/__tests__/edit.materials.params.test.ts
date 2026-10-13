@@ -7,6 +7,7 @@ describe('EditMaterialParams', () => {
     const params = new EditMaterialParams({
       material_id: 9,
       price: 20,
+      quantity: 0,
       brandId: 4,
       measurementId: 3,
       translations,
@@ -18,6 +19,7 @@ describe('EditMaterialParams', () => {
     expect(params.toMap()).toEqual({
       material_id: 9,
       price: 20,
+      quantity: 0,
       brand_id: 4,
       measurement_unit_id: 3,
       translations,

@@ -29,37 +29,42 @@
   }
 </script>
 <template>
-  <Dialog
-    class="schedule-settings"
-    :visible="true"
-    modal
-    :header="$t('schedule.settings')"
-    @update:visible="emit('close')"
-  >
-    <form class="schedule__form" @submit.prevent="save">
-      <!-- dsaasd -->
-      <div class="field-group input-wrapper">
-        <label class="label" for="schedule-start">{{ $t('schedule.planned_start') }}</label>
-        <input
-          id="schedule-start"
-          v-model="startDate"
-          class="input"
-          type="date"
-          :disabled="controller.busy.value"
-        />
+  <Dialog class="schedule-settings" :visible="true" modal @update:visible="emit('close')">
+    <template #header>
+      <div class="schedule__dialog-heading">
+        <span class="schedule__heading-icon"><i class="pi pi-cog" aria-hidden="true"></i></span>
+        <div>
+          <h2>{{ $t('schedule.settings') }}</h2>
+        </div>
       </div>
-      <fieldset class="schedule__holidays" aria-describedby="schedule-holidays-hint">
-        <legend>{{ $t('schedule.holidays') }}</legend>
-        <p id="schedule-holidays-hint">{{ $t('schedule.holidays_hint') }}</p>
-        <label v-for="day in weekdays" :key="day" class="schedule__row">
+    </template>
+    <form class="schedule__form" @submit.prevent="save">
+      <section class="schedule__settings-section">
+        <div class="field-group input-wrapper">
+          <label class="label" for="schedule-start">{{ $t('schedule.planned_start') }}</label>
           <input
-            v-model="holidays"
-            type="checkbox"
-            :value="day"
-            :disabled="controller.busy.value || dayOptionDisabled(holidays, day)"
-          />{{ $t(`schedule.weekday_${day}`) }}
-        </label>
-      </fieldset>
+            id="schedule-start"
+            v-model="startDate"
+            class="input"
+            type="date"
+            :disabled="controller.busy.value"
+          />
+        </div>
+      </section>
+      <section class="schedule__settings-section">
+        <fieldset class="schedule__holidays" aria-describedby="schedule-holidays-hint">
+          <legend>{{ $t('schedule.holidays') }}</legend>
+          <p id="schedule-holidays-hint">{{ $t('schedule.holidays_hint') }}</p>
+          <label v-for="day in weekdays" :key="day" class="schedule__row">
+            <input
+              v-model="holidays"
+              type="checkbox"
+              :value="day"
+              :disabled="controller.busy.value || dayOptionDisabled(holidays, day)"
+            />{{ $t(`schedule.weekday_${day}`) }}
+          </label>
+        </fieldset>
+      </section>
       <p v-if="!readable" role="alert">{{ $t('schedule.integration_pending') }}</p>
       <div v-if="errors.length" role="alert" aria-live="assertive">
         <ul class="form-errors">
@@ -69,9 +74,7 @@
       <p v-if="failed" role="alert">
         {{ $t(controller.mutationState.value.error?.displayMessage ?? 'schedule.save_error') }}
       </p>
-      <!-- {{ readable }} -->
-      <!-- asd -->
-      <div class="schedule__actions">
+      <div class="schedule__actions schedule__dialog-actions">
         <AppButton type="submit" :disabled="!readable" :loading="controller.busy.value">{{
           $t('schedule.save')
         }}</AppButton>
