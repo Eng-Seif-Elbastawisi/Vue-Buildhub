@@ -714,7 +714,7 @@
                 required
               />
             </div>
-
+            <!-- 
             <div class="field">
               <label for="product-quantity">{{ $t('Products.form.quantity') }}</label>
               <input
@@ -724,7 +724,7 @@
                 type="number"
                 class="field-input"
               />
-            </div>
+            </div> -->
           </div>
 
           <div id="description-field" class="description-field">
