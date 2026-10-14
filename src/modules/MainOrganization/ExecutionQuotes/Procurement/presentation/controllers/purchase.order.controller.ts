@@ -43,10 +43,9 @@ export default class PurchaseOrderController extends BaseController<PurchaseOrde
         )
       : undefined;
   });
-  readonly canIssue = computed(
+  readonly canStore = computed(
     () =>
       this.request.value?.status === 1 &&
-      this.fetchState.value instanceof DataSuccess &&
       !this.fetchState.value.data &&
       !this.isIssuing.value &&
       !this.blocked.has(this.ownerKey()) &&
@@ -73,6 +72,9 @@ export default class PurchaseOrderController extends BaseController<PurchaseOrde
   }
   private ownerKey() {
     return `${this.quoteId.value}:${this.purchaseRequestId.value}`;
+  }
+  isStoreBlocked(quoteId: number, purchaseRequestId: number) {
+    return this.blocked.has(`${quoteId}:${purchaseRequestId}`);
   }
   activate(quoteId: number, purchaseRequestId: number) {
     this.release();
@@ -142,17 +144,19 @@ export default class PurchaseOrderController extends BaseController<PurchaseOrde
         })
       : offers;
   }
-  async refresh() {
+  async refreshForStore() {
     const current = this.captureMutationScope();
-    // A safe read retry never replays Store, including after uncertain transport failures.
-    await PurchaseRequestController.getInstance().fetchList();
-    if (!current()) return;
-    await this.fetchOne();
-    if (current()) await this.loadOffers();
+    // The Store path refreshes request status and offers, never Purchase Order details.
+    const requests = await PurchaseRequestController.getInstance().fetchList();
+    if (!current()) return false;
+    await this.loadOffers();
+    return (
+      current() && requests instanceof DataSuccess && this.offersState.value instanceof DataSuccess
+    );
   }
   async create(params: Params, options?: ApiCallOptions) {
     if (
-      !this.canIssue.value ||
+      !this.canStore.value ||
       !(params instanceof StorePurchaseOrderParams) ||
       params.purchaseRequestId !== this.purchaseRequestId.value ||
       !params.validate().isValid
@@ -162,12 +166,11 @@ export default class PurchaseOrderController extends BaseController<PurchaseOrde
     const key = this.ownerKey();
     this.isIssuing.value = true;
     try {
-      // Recheck authoritative status/order/offers immediately before this non-idempotent write.
-      await this.refresh();
+      // Recheck request ownership/status and the selected offer before this non-idempotent write.
+      await this.refreshForStore();
       if (
         !current() ||
         this.request.value?.status !== 1 ||
-        !(this.fetchState.value instanceof DataSuccess) ||
         this.fetchState.value.data ||
         !(this.offersState.value instanceof DataSuccess) ||
         !this.offersState.value.data?.some(
@@ -184,7 +187,7 @@ export default class PurchaseOrderController extends BaseController<PurchaseOrde
       if (result instanceof DataSuccess) {
         this.issued.value = true;
         this.refreshRequired.value = true;
-        await this.refresh();
+        if (await this.refreshForStore()) this.refreshRequired.value = false;
       } else {
         // Validation failures keep the draft; uncertain outcomes require read-only verification.
         const type = result?.error?.type;
@@ -197,7 +200,9 @@ export default class PurchaseOrderController extends BaseController<PurchaseOrde
     }
   }
   async retryLastOperation() {
-    await this.refresh();
-    return this.fetchState.value;
+    if (await this.refreshForStore()) {
+      if (this.issued.value) this.refreshRequired.value = false;
+    }
+    return this.itemState.value;
   }
 }

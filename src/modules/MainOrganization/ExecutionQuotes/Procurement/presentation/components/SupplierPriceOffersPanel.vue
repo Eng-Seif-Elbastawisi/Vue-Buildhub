@@ -5,9 +5,38 @@
   import { DataLoading } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
   import { getDurationTypeNameKey } from '@/modules/shared/Package/core/constants/duration.type.enum';
   import PurchaseRequestPricesController from '../controllers/purchase-request-prices.controller';
+  import PurchaseOrderController from '../controllers/purchase.order.controller';
+  import type PurchaseRequestPriceModel from '../../core/models/purchase-request.price.model';
   import SupplierPriceOffersDialog from './SupplierPriceOffersDialog.vue';
   const props = defineProps<{ quoteId: number; purchaseRequestId: number }>();
+  const emit = defineEmits<{
+    storeOrder: [purchaseRequestId: number, purchaseRequestPriceId?: number];
+  }>();
   const controller = PurchaseRequestPricesController.getInstance();
+  const orders = PurchaseOrderController.getInstance();
+  const showStoreActions = computed(() => !controller.readOnly.value);
+  const canOpenStore = computed(
+    () =>
+      showStoreActions.value &&
+      controller.loaded.value &&
+      !controller.refreshRequired.value &&
+      !controller.isSyncing.value &&
+      !orders.isIssuing.value &&
+      !orders.isStoreBlocked(props.quoteId, props.purchaseRequestId),
+  );
+  async function refreshAfterOrder() {
+    await controller.fetchList();
+  }
+  async function storeOrder(offer: PurchaseRequestPriceModel) {
+    if (
+      !canOpenStore.value ||
+      !offer.supplier ||
+      offer.purchaseRequestId !== props.purchaseRequestId ||
+      !(await requestClose())
+    )
+      return;
+    emit('storeOrder', offer.purchaseRequestId, offer.id);
+  }
   const editorVisible = ref(false);
   const editor = ref<InstanceType<typeof SupplierPriceOffersDialog> | null>(null);
   const filter = ref('');
@@ -21,7 +50,9 @@
       .slice()
       .sort((a, b) => (a.supplier?.name ?? '').localeCompare(b.supplier?.name ?? '')),
   );
-  if (controller.activate(props.quoteId, props.purchaseRequestId)) void controller.fetchList();
+  if (controller.activate(props.quoteId, props.purchaseRequestId)) {
+    void controller.fetchList();
+  }
   function closeEditor() {
     controller.discardDraft();
     editorVisible.value = false;
@@ -30,7 +61,7 @@
     return editor.value ? editor.value.requestClose() : Promise.resolve(!saving.value);
   }
   onBeforeUnmount(() => controller.release());
-  defineExpose({ requestClose });
+  defineExpose({ requestClose, refreshAfterOrder });
 </script>
 <template>
   <section
@@ -45,23 +76,32 @@
           </h2>
           <p>{{ $t('procurement.prices_help') }}</p>
         </div>
-        <AppButton
-          type="button"
-          :disabled="
-            controller.readOnly.value ||
-            !controller.loaded.value ||
-            saving ||
-            controller.refreshRequired.value
-          "
-          @click="editorVisible = true"
-          >{{
-            $t(
-              controller.savedOffers.value.length
-                ? 'procurement.offers.manage'
-                : 'procurement.add_prices',
-            )
-          }}</AppButton
-        >
+        <div class="procurement-actions">
+          <AppButton
+            type="button"
+            :disabled="
+              controller.readOnly.value ||
+              !controller.loaded.value ||
+              saving ||
+              controller.refreshRequired.value
+            "
+            @click="editorVisible = true"
+            >{{
+              $t(
+                controller.savedOffers.value.length
+                  ? 'procurement.offers.manage'
+                  : 'procurement.add_prices',
+              )
+            }}</AppButton
+          >
+          <AppButton
+            v-if="showStoreActions"
+            type="button"
+            :disabled="!canOpenStore || !offers.length"
+            @click="emit('storeOrder', purchaseRequestId)"
+            >{{ $t('procurement.orders.store') }}</AppButton
+          >
+        </div>
       </header>
       <p v-if="controller.readOnly.value" role="status">
         {{ $t('procurement.orders.offers_locked') }}
@@ -124,11 +164,12 @@
                 <th scope="col">{{ $t('procurement.offers.price') }}</th>
                 <th scope="col">{{ $t('procurement.offers.duration') }}</th>
                 <th scope="col">{{ $t('procurement.created_at') }}</th>
+                <th v-if="showStoreActions" scope="col">{{ $t('procurement.actions') }}</th>
               </tr>
             </thead>
             <tbody>
               <tr v-if="!offers.length">
-                <td colspan="4" class="procurement-empty">
+                <td :colspan="showStoreActions ? 5 : 4" class="procurement-empty">
                   {{ $t(filter ? 'procurement.no_matching_prices' : 'procurement.offers.empty') }}
                 </td>
               </tr>
@@ -144,6 +185,16 @@
                   }}
                 </td>
                 <td>{{ offer.createdAt ?? $t('procurement.unavailable') }}</td>
+                <td v-if="showStoreActions">
+                  <AppButton
+                    type="button"
+                    theme="secondary"
+                    size="sm"
+                    :disabled="!canOpenStore || !offer.supplier"
+                    @click="storeOrder(offer)"
+                    >{{ $t('procurement.orders.store') }}</AppButton
+                  >
+                </td>
               </tr>
             </tbody>
           </table>

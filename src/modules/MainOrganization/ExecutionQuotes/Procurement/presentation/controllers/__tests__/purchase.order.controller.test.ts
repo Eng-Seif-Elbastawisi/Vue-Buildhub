@@ -56,27 +56,27 @@ afterEach(() => {
 });
 const params = () => new Params(id, 15, 'Note', null, '2026-10-14');
 it.each([1, 2, 3])(
-  'permits issuing only pending requests after checking absence: status %s',
+  'allows Store only for Pending requests independently of Order Fetch: status %s',
   async (value) => {
     requests.listState.value = new DataSuccess({
       data: [RequestModel.fromJson({ ...requestRecord(), id, status: value })],
     });
-    expect(controller.canIssue.value).toBe(false);
+    expect(controller.canStore.value).toBe(value === 1);
     await controller.fetchOne();
-    expect(controller.canIssue.value).toBe(value === 1);
+    expect(controller.canStore.value).toBe(value === 1);
   },
 );
 it('uses the offer record ID, refreshes authoritative state and blocks a second order', async () => {
-  await controller.fetchOne();
   await controller.loadOffers();
   expect(await controller.create(new Params(id, 3, null, null, '2026-10-14'))).toBeInstanceOf(
     DataCancelled,
   );
   expect(post.mock.calls.some((call) => call[0].url.endsWith('/store_purchase_order'))).toBe(false);
   expect(await controller.create(params())).toBeInstanceOf(DataSuccess);
-  expect(controller.fetchState.value.data?.purchaseRequestPrice.id).toBe(15);
+  expect(controller.fetchState.value.data).toBeNull();
+  expect(post.mock.calls.some((call) => call[0].url.endsWith('/fetch_purchase_order'))).toBe(false);
   expect(requests.listState.value.data?.[0]?.status).toBe(3);
-  expect(controller.canIssue.value).toBe(false);
+  expect(controller.canStore.value).toBe(false);
   await controller.create(params());
   const stores = post.mock.calls.filter((call) => call[0].url.endsWith('/store_purchase_order'));
   expect(stores).toHaveLength(1);
@@ -90,7 +90,7 @@ it('uses the offer record ID, refreshes authoritative state and blocks a second 
 it('existing order disables issue even if the request list is stale pending', async () => {
   stored = true;
   await controller.fetchOne();
-  expect(controller.canIssue.value).toBe(false);
+  expect(controller.canStore.value).toBe(false);
 });
 it('rejects an offer belonging to a different request', async () => {
   const normal = post.getMockImplementation();
@@ -139,18 +139,18 @@ it('prevents double submissions while preflight or Store is in flight', async ()
     post.mock.calls.filter((call) => call[0].url.endsWith('/store_purchase_order')),
   ).toHaveLength(1);
 });
-it('keeps successful Store separate from a failed Fetch and read retry never reissues', async () => {
+it('keeps successful Store separate from a failed request refresh and retry never fetches orders or reissues', async () => {
   const normal = post.getMockImplementation();
   if (!normal) throw new Error('Missing network mock');
   post.mockImplementation((request) =>
-    request.url.endsWith('/fetch_purchase_order') && stored
+    request.url.endsWith('/fetch_purchase_requests') && stored
       ? Promise.resolve(response({ status: false, message: 'Details unavailable' }))
       : normal(request),
   );
-  await controller.fetchOne();
   expect(await controller.create(params())).toBeInstanceOf(DataSuccess);
   expect(controller.issued.value).toBe(true);
-  expect(controller.fetchState.value.hasError).toBe(true);
+  expect(requests.listState.value.hasError).toBe(true);
+  expect(post.mock.calls.some((call) => call[0].url.endsWith('/fetch_purchase_order'))).toBe(false);
   expect(controller.itemState.value).toBeInstanceOf(DataSuccess);
   await controller.retryLastOperation();
   await controller.create(params());
@@ -170,9 +170,9 @@ it('does not replay an unverified Store envelope even after reopening', async ()
   await controller.create(params());
   expect(controller.refreshRequired.value).toBe(true);
   controller.activate(140, id);
-  await controller.refresh();
+  await controller.refreshForStore();
   await controller.create(params());
-  expect(controller.canIssue.value).toBe(false);
+  expect(controller.canStore.value).toBe(false);
   expect(
     post.mock.calls.filter((call) => call[0].url.endsWith('/store_purchase_order')),
   ).toHaveLength(1);
@@ -237,7 +237,7 @@ it('keeps the Store lock across request switches and discards its late result', 
   expect(controller.itemState.value.data).toBeNull();
   controller.activate(140, id);
   await controller.fetchOne();
-  expect(controller.canIssue.value).toBe(false);
+  expect(controller.canStore.value).toBe(false);
 });
 
 it('discards stale offer reads when switching requests', async () => {

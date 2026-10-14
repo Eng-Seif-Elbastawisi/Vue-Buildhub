@@ -3459,7 +3459,7 @@
   "procurement.orders.empty": "No confirmed purchase order exists yet.",
   "procurement.orders.locked": "Issuing an order is unavailable for this request.",
   "procurement.orders.offers_locked": "Supplier offers are read-only after request confirmation or rejection.",
-  "procurement.orders.created": "Purchase order creation confirmed. If details cannot be refreshed, retry loading details; do not issue another order.",
+  "procurement.orders.created": "Purchase order created. View its details from the Purchase Requests list.",
   "procurement.orders.unconfirmed_store": "The order may have been created, or the request status changed. Refresh details to verify; do not submit another order.",
   "procurement.orders.fetch_failed": "Purchase order details could not be loaded.",
   "procurement.orders.invalid_response": "The purchase order response does not match this request.",
@@ -3468,5 +3468,8 @@
   "attachment_processing": "Processing attachment…",
   "attachment_conversion_failed": "Could not process the attachment. Choose it again.",
   "validation.fields.purchaseRequestPriceId": "Supplier Price Offer",
-  "validation.fields.note": "Notes"
+  "validation.fields.note": "Notes",
+  "procurement.orders.retry_check": "Retry Purchase Order Check",
+  "procurement.orders.issue_from_prices": "To store a purchase order, open Supplier Prices and select one saved offer.",
+  "procurement.orders.store": "Store Purchase Order"
 }

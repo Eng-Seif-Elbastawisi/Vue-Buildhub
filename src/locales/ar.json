@@ -3454,7 +3454,7 @@
   "procurement.orders.empty": "لا يوجد أمر شراء مؤكد حتى الآن.",
   "procurement.orders.locked": "إصدار أمر شراء غير متاح لهذا الطلب.",
   "procurement.orders.offers_locked": "عروض الموردين للقراءة فقط بعد تأكيد الطلب أو رفضه.",
-  "procurement.orders.created": "تم تأكيد إصدار أمر الشراء. إذا تعذر تحديث التفاصيل أعد تحميلها؛ لا تصدر أمراً آخر.",
+  "procurement.orders.created": "تم حفظ أمر الشراء. اعرض تفاصيله من قائمة طلبات الشراء.",
   "procurement.orders.unconfirmed_store": "ربما تم إصدار الأمر أو تغيرت حالة الطلب. حدّث التفاصيل للتحقق؛ لا ترسل أمراً آخر.",
   "procurement.orders.fetch_failed": "تعذر تحميل تفاصيل أمر الشراء.",
   "procurement.orders.invalid_response": "استجابة أمر الشراء لا تطابق هذا الطلب.",
@@ -3463,5 +3463,8 @@
   "attachment_processing": "جارٍ معالجة المرفق…",
   "attachment_conversion_failed": "تعذرت معالجة المرفق. اختره مجدداً.",
   "validation.fields.purchaseRequestPriceId": "عرض سعر المورد",
-  "validation.fields.note": "ملاحظات"
+  "validation.fields.note": "ملاحظات",
+  "procurement.orders.retry_check": "إعادة التحقق من أمر الشراء",
+  "procurement.orders.issue_from_prices": "لحفظ أمر شراء، افتح أسعار الموردين واختر عرضاً محفوظاً واحداً.",
+  "procurement.orders.store": "حفظ أمر شراء"
 }

@@ -15,7 +15,15 @@
   import StorePurchaseOrderParams from '../../core/params/store.purchase.order.params';
   import PurchaseOrderController from '../controllers/purchase.order.controller';
   import PurchaseOrderDetails from './PurchaseOrderDetails.vue';
-  const props = defineProps<{ quoteId: number; purchaseRequestId: number }>();
+  const props = withDefaults(
+    defineProps<{
+      quoteId: number;
+      purchaseRequestId: number;
+      purchaseRequestPriceId?: number;
+      allowIssue?: boolean;
+    }>(),
+    { purchaseRequestPriceId: undefined, allowIssue: true },
+  );
   const emit = defineEmits<{ close: [] }>();
   const controller = PurchaseOrderController.getInstance();
   const selectedId = ref<number | null>(null);
@@ -34,22 +42,30 @@
     offersState.value.data?.find((offer) => offer.id === selectedId.value),
   );
   watch(
-    () => [props.quoteId, props.purchaseRequestId],
+    () => [props.quoteId, props.purchaseRequestId, props.purchaseRequestPriceId, props.allowIssue],
     async () => {
-      selectedId.value = null;
+      selectedId.value = props.purchaseRequestPriceId ?? null;
       date.value = '';
       note.value = '';
       files.value = [];
       attempted.value = false;
-      if (controller.activate(props.quoteId, props.purchaseRequestId)) {
-        await controller.fetchOne();
-        if (controller.canIssue.value) await controller.loadOffers();
+      const quoteId = props.quoteId;
+      const requestId = props.purchaseRequestId;
+      if (controller.activate(quoteId, requestId)) {
+        if (props.allowIssue) await controller.loadOffers();
+        else await controller.fetchOne();
       }
     },
     { immediate: true },
   );
   async function submit() {
-    if (saving.value || processing.value || attachmentError.value || !controller.canIssue.value)
+    if (
+      !props.allowIssue ||
+      saving.value ||
+      processing.value ||
+      attachmentError.value ||
+      !controller.canStore.value
+    )
       return;
     const params = new StorePurchaseOrderParams(
       props.purchaseRequestId,
@@ -63,6 +79,10 @@
     attempted.value = true;
     await controller.create(params);
   }
+  async function retryOrder() {
+    if (props.allowIssue) await controller.retryLastOperation();
+    else await controller.fetchOne();
+  }
   function close() {
     if (!saving.value && !processing.value) emit('close');
   }
@@ -72,7 +92,7 @@
   <Dialog
     :visible="true"
     modal
-    :header="$t('procurement.orders.title')"
+    :header="$t(allowIssue ? 'procurement.orders.store' : 'procurement.orders.title')"
     :style="{ width: '52rem', maxWidth: '96vw' }"
     :closable="!saving && !processing"
     :close-on-escape="!saving && !processing"
@@ -81,7 +101,7 @@
   >
     <div :dir="$i18n.locale === 'ar' ? 'rtl' : 'ltr'">
       <p>{{ $t('procurement.offers.request_reference', { id: purchaseRequestId }) }}</p>
-      <Skeleton v-if="fetchState instanceof DataLoading" height="6rem" />
+      <Skeleton v-if="!allowIssue && fetchState instanceof DataLoading" height="6rem" />
       <div v-if="controller.issued.value || controller.refreshRequired.value" role="status">
         <p>
           {{
@@ -93,34 +113,43 @@
           }}
         </p>
       </div>
-      <div v-if="fetchState.hasError" role="alert">
+      <div v-if="!allowIssue && fetchState.hasError" role="alert">
         <p>{{ $t(fetchState.error?.title || 'procurement.orders.fetch_failed') }}</p>
       </div>
       <AppButton
-        v-if="fetchState.hasError || controller.refreshRequired.value"
+        v-if="(!allowIssue && fetchState.hasError) || controller.refreshRequired.value"
         type="button"
         theme="secondary"
         :disabled="saving"
-        @click="controller.refresh()"
+        @click="retryOrder"
         >{{ $t('procurement.offers.retry_fetch') }}</AppButton
       >
-      <PurchaseOrderDetails v-if="fetchState.data" :order="fetchState.data" />
-      <template v-else-if="fetchState instanceof DataSuccess">
+      <PurchaseOrderDetails v-if="!allowIssue && fetchState.data" :order="fetchState.data" />
+      <template v-else-if="!allowIssue && fetchState instanceof DataSuccess">
         <p>{{ $t('procurement.orders.empty') }}</p>
-        <p v-if="!controller.canIssue.value && !saving">{{ $t('procurement.orders.locked') }}</p>
+        <p v-if="!allowIssue && controller.request.value?.status === 1">
+          {{ $t('procurement.orders.issue_from_prices') }}
+        </p>
+        <p v-if="allowIssue && !controller.canStore.value && !saving">
+          {{ $t('procurement.orders.locked') }}
+        </p>
       </template>
+      <p v-if="allowIssue && !controller.canStore.value && !controller.issued.value && !saving">
+        {{ $t('procurement.orders.locked') }}
+      </p>
       <form
         v-if="
+          allowIssue &&
           !fetchState.data &&
-          (controller.canIssue.value || saving || attempted) &&
+          (controller.canStore.value || saving || attempted) &&
           !controller.issued.value
         "
         class="standard-crud-page purchase-order-form"
         novalidate
         @submit.prevent="submit"
       >
-        <h2>{{ $t('procurement.orders.issue') }}</h2>
-        <fieldset :disabled="saving || processing || !controller.canIssue.value">
+        <h2>{{ $t('procurement.orders.store') }}</h2>
+        <fieldset :disabled="saving || processing || !controller.canStore.value">
           <legend>{{ $t('procurement.supplier_prices') }}</legend>
           <Skeleton v-if="offersState instanceof DataLoading" height="5rem" />
           <div v-if="offersState.hasError" role="alert">
@@ -224,11 +253,11 @@
               saving ||
               processing ||
               attachmentError ||
-              !controller.canIssue.value ||
+              !controller.canStore.value ||
               !(offersState instanceof DataSuccess) ||
               !selected
             "
-            >{{ $t('procurement.orders.issue') }}</AppButton
+            >{{ $t('procurement.orders.store') }}</AppButton
           >
         </footer>
       </form>

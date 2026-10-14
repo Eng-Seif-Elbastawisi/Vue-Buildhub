@@ -104,7 +104,13 @@ it.each(['en', 'ar'])(
       date: '2026-10-14',
     });
     expect(wrapper.find('form').exists()).toBe(false);
-    expect(wrapper.text()).toContain('Techlab Employee');
+    expect(wrapper.text()).toContain(
+      locale === 'ar' ? 'تم حفظ أمر الشراء' : 'Purchase order created',
+    );
+    expect(wrapper.text()).not.toContain('Techlab Employee');
+    expect(post.mock.calls.some((call) => call[0].url.endsWith('/fetch_purchase_order'))).toBe(
+      false,
+    );
     wrapper.unmount();
   },
 );

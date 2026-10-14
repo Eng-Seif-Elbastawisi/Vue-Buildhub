@@ -25,11 +25,24 @@
   const state = computed(() => controller.listState.value);
   const formVisible = ref(false);
   const orderRequestId = ref<number | null>(null);
+  const orderOfferId = ref<number | null>(null);
+  const orderIssueMode = ref(false);
   const orders = PurchaseOrderController.getInstance();
-  async function openOrder(id: number) {
+  async function openOrder(id: number, priceId?: number, issuing = false) {
     if (orders.isIssuing.value || !(await canNavigate())) return;
-    offersRequestId.value = null;
+    orderIssueMode.value = issuing;
+    orderOfferId.value = priceId ?? null;
     orderRequestId.value = id;
+  }
+  async function openStoreOrder(id: number, priceId?: number) {
+    await openOrder(id, priceId, true);
+  }
+  async function closeOrder() {
+    orderRequestId.value = null;
+    orderOfferId.value = null;
+    orderIssueMode.value = false;
+    await nextTick();
+    await offersPanel.value?.refreshAfterOrder();
   }
   const offersRequestId = ref<number | null>(null);
   const offersPanel = ref<InstanceType<typeof SupplierPriceOffersPanel> | null>(null);
@@ -51,6 +64,8 @@
     (id) => {
       formVisible.value = false;
       orderRequestId.value = null;
+      orderOfferId.value = null;
+      orderIssueMode.value = false;
       orders.release();
       offersRequestId.value = null;
       expandedRequestId.value = null;
@@ -201,19 +216,12 @@
                           >{{ $t('procurement.view_prices') }}</AppButton
                         >
                         <AppButton
-                          v-if="request.status !== 2"
                           type="button"
                           theme="secondary"
                           size="sm"
                           :disabled="orders.isIssuing.value"
                           @click="openOrder(request.id)"
-                          >{{
-                            $t(
-                              request.status === 3
-                                ? 'procurement.orders.view'
-                                : 'procurement.orders.review',
-                            )
-                          }}</AppButton
+                          >{{ $t('procurement.orders.view') }}</AppButton
                         >
                       </div>
                     </td>
@@ -255,13 +263,16 @@
         ref="offersPanel"
         :quote-id="quoteId"
         :purchase-request-id="offersRequestId"
+        @store-order="openStoreOrder"
       />
       <PurchaseOrderForm
         v-if="orderRequestId != null"
-        :key="`${quoteId}:${orderRequestId}`"
+        :key="`${quoteId}:${orderRequestId}:${orderOfferId}:${orderIssueMode}`"
         :quote-id="quoteId"
         :purchase-request-id="orderRequestId"
-        @close="orderRequestId = null"
+        :purchase-request-price-id="orderOfferId ?? undefined"
+        :allow-issue="orderIssueMode"
+        @close="closeOrder"
       />
       <PurchaseRequestFormDialog v-if="formVisible" v-model:visible="formVisible" />
     </template>
