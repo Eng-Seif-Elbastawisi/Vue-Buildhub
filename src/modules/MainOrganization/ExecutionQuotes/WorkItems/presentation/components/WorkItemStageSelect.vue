@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
   import { computed } from 'vue';
   import UpdatedCustomInputSelect from '@/shared/FormInputs/UpdatedCustomInputSelect.vue';
   import type TitleInterface from '@/base/Data/Models/titleInterface';
@@ -24,7 +25,7 @@
   const loading = computed(() => controller.stagesState.value instanceof DataLoading);
 </script>
 <template>
-  <div class="work-items-stage">
+  <div class="field-group work-items-stage">
     <UpdatedCustomInputSelect
       :id="id"
       :type="multiple ? 2 : 1"
@@ -35,7 +36,17 @@
       :disabled="disabled || loading || !options.length"
       :required="true"
       @update:model-value="emit('update:modelValue', $event)"
-    />
+    >
+      <template #LabelHeader>
+        <span class="field-help-label-row">
+          <FieldHelpIcon
+            :label="$t(mainOnly ? 'work_items.main_stages' : 'work_items.stage')"
+            field-name="stage"
+            :field-id="id"
+            :help-text="$t('field_help.execution_fields.stage')"
+          />
+        </span> </template
+    ></UpdatedCustomInputSelect>
     <small v-if="error" role="alert">{{ error }}</small>
     <p v-if="loading" role="status">{{ $t('work_items.loading_stages') }}</p>
     <div v-else-if="controller.stagesState.value.hasError" role="alert">

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
   import { computed, ref } from 'vue';
   import { useI18n } from 'vue-i18n';
   import TitleInterface from '@/base/Data/Models/titleInterface';
@@ -96,7 +97,17 @@
       </header>
       <div class="form-fields">
         <div class="field-group input-wrapper standard-form-field--full">
-          <label class="label" for="schedule-title">{{ $t('schedule.group_title') }}</label>
+          <span class="field-help-label-row field-help-label-row--block"
+            ><label class="field-label label" for="schedule-title">{{
+              $t('schedule.group_title')
+            }}</label>
+            <FieldHelpIcon
+              :label="$t('schedule.group_title')"
+              field-name="group_title"
+              field-id="schedule-title"
+              :help-text="$t('field_help.execution_fields.group_title')"
+            />
+          </span>
           <input
             id="schedule-title"
             v-model="title"
@@ -106,7 +117,17 @@
           />
         </div>
         <div class="field-group input-wrapper">
-          <label class="label" for="schedule-duration">{{ $t('schedule.duration') }}</label>
+          <span class="field-help-label-row field-help-label-row--block"
+            ><label class="field-label label" for="schedule-duration">{{
+              $t('schedule.duration')
+            }}</label>
+            <FieldHelpIcon
+              :label="$t('schedule.duration')"
+              field-name="duration"
+              field-id="schedule-duration"
+              :help-text="$t('field_help.execution_fields.duration')"
+            />
+          </span>
           <input
             id="schedule-duration"
             v-model.number="duration"
@@ -125,7 +146,17 @@
             :placeholder="$t('schedule.choose_unit')"
             :reload="false"
             :disabled="controller.busy.value || saved"
-          />
+          >
+            <template #LabelHeader>
+              <span class="field-help-label-row">
+                <FieldHelpIcon
+                  :label="$t('schedule.unit')"
+                  field-name="unit"
+                  field-id="schedule-unit"
+                  :help-text="$t('field_help.execution_fields.unit')"
+                />
+              </span> </template
+          ></UpdatedCustomInputSelect>
         </div>
       </div>
       <ScheduleStageSelector v-model="stages" :disabled="controller.busy.value || saved" />

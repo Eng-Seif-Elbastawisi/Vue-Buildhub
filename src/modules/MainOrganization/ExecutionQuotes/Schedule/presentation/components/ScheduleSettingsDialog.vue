@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
   import { ref } from 'vue';
   import Dialog from 'primevue/dialog';
   import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
@@ -41,7 +42,17 @@
     <form class="schedule__form" @submit.prevent="save">
       <section class="schedule__settings-section">
         <div class="field-group input-wrapper">
-          <label class="label" for="schedule-start">{{ $t('schedule.planned_start') }}</label>
+          <span class="field-help-label-row field-help-label-row--block"
+            ><label class="field-label label" for="schedule-start">{{
+              $t('schedule.planned_start')
+            }}</label>
+            <FieldHelpIcon
+              :label="$t('schedule.planned_start')"
+              field-name="planned_start"
+              field-id="schedule-start"
+              :help-text="$t('field_help.execution_fields.planned_start')"
+            />
+          </span>
           <input
             id="schedule-start"
             v-model="startDate"
@@ -52,8 +63,18 @@
         </div>
       </section>
       <section class="schedule__settings-section">
-        <fieldset class="schedule__holidays" aria-describedby="schedule-holidays-hint">
-          <legend>{{ $t('schedule.holidays') }}</legend>
+        <fieldset class="field-group schedule__holidays" aria-describedby="schedule-holidays-hint">
+          <legend>
+            <span class="field-help-label-row"
+              >{{ $t('schedule.holidays')
+              }}<FieldHelpIcon
+                :label="$t('schedule.holidays')"
+                field-name="holidays"
+                field-id="schedule-holidays"
+                :help-text="$t('field_help.execution_fields.holidays')"
+              />
+            </span>
+          </legend>
           <p id="schedule-holidays-hint">{{ $t('schedule.holidays_hint') }}</p>
           <label v-for="day in weekdays" :key="day" class="schedule__row">
             <input

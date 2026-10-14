@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
   import { computed, ref, watch } from 'vue';
   import { useI18n } from 'vue-i18n';
   import Dialog from 'primevue/dialog';
@@ -175,6 +176,7 @@
     @update:visible="!busy && emit('update:visible', $event)"
   >
     <form class="procurement-form" novalidate @submit.prevent="save">
+      <p>{{ $t('procurement.request_form_help') }}</p>
       <section aria-labelledby="requirement-general">
         <h2 id="requirement-general">{{ $t('procurement.general_information') }}</h2>
         <div class="procurement-fields">
@@ -191,7 +193,17 @@
               paginated
               required
               @update:model-value="employee = single($event)"
-            />
+            >
+              <template #LabelHeader>
+                <span class="field-help-label-row">
+                  <FieldHelpIcon
+                    :label="$t('procurement.assigned_employee')"
+                    field-name="assigned_employee"
+                    field-id="requirement-employee"
+                    :help-text="$t('field_help.execution_fields.assigned_employee')"
+                  />
+                </span> </template
+            ></UpdatedCustomInputSelect>
             <small v-if="error('employeeId')" class="procurement-error" role="alert">{{
               error('employeeId')
             }}</small>
@@ -207,7 +219,17 @@
               :reload="false"
               required
               @update:model-value="supply = single($event)"
-            /><small v-if="error('supplyResponsibility')" class="procurement-error" role="alert">{{
+            >
+              <template #LabelHeader>
+                <span class="field-help-label-row">
+                  <FieldHelpIcon
+                    :label="$t('procurement.supply_responsibility')"
+                    field-name="supply_responsibility"
+                    field-id="requirement-supply"
+                    :help-text="$t('field_help.execution_fields.supply_responsibility')"
+                  />
+                </span> </template></UpdatedCustomInputSelect
+            ><small v-if="error('supplyResponsibility')" class="procurement-error" role="alert">{{
               error('supplyResponsibility')
             }}</small>
           </div>
@@ -222,7 +244,17 @@
               :reload="false"
               required
               @update:model-value="priority = single($event)"
-            /><small v-if="error('priority')" class="procurement-error" role="alert">{{
+            >
+              <template #LabelHeader>
+                <span class="field-help-label-row">
+                  <FieldHelpIcon
+                    :label="$t('procurement.priority')"
+                    field-name="priority"
+                    field-id="requirement-priority"
+                    :help-text="$t('field_help.execution_fields.priority')"
+                  />
+                </span> </template></UpdatedCustomInputSelect
+            ><small v-if="error('priority')" class="procurement-error" role="alert">{{
               error('priority')
             }}</small>
           </div>
@@ -230,26 +262,38 @@
       </section>
       <section aria-labelledby="requirement-scope-heading">
         <h2 id="requirement-scope-heading">{{ $t('procurement.scope') }}</h2>
-        <fieldset class="procurement-type">
-          <legend class="procurement-sr-only">{{ $t('procurement.scope') }}</legend>
-          <label for="requirement-all-project"
-            ><RadioButton
-              v-model="allProject"
-              input-id="requirement-all-project"
-              name="requirement-scope"
-              :value="true"
-              :disabled="busy"
-            />{{ $t('procurement.entire_project') }}</label
-          >
-          <label for="requirement-specific-space"
-            ><RadioButton
-              v-model="allProject"
-              input-id="requirement-specific-space"
-              name="requirement-scope"
-              :value="false"
-              :disabled="busy || !controller.projectId.value"
-            />{{ $t('procurement.specific_space') }}</label
-          >
+        <fieldset class="field-group procurement-type">
+          <legend>
+            <span class="field-help-label-row"
+              >{{ $t('procurement.scope')
+              }}<FieldHelpIcon
+                :label="$t('procurement.scope')"
+                field-name="scope"
+                field-id="requirement-scope"
+                :help-text="$t('field_help.execution_fields.scope')"
+              />
+            </span>
+          </legend>
+          <div class="procurement-type-options">
+            <label for="requirement-all-project"
+              ><RadioButton
+                v-model="allProject"
+                input-id="requirement-all-project"
+                name="requirement-scope"
+                :value="true"
+                :disabled="busy"
+              />{{ $t('procurement.entire_project') }}</label
+            >
+            <label for="requirement-specific-space"
+              ><RadioButton
+                v-model="allProject"
+                input-id="requirement-specific-space"
+                name="requirement-scope"
+                :value="false"
+                :disabled="busy || !controller.projectId.value"
+              />{{ $t('procurement.specific_space') }}</label
+            >
+          </div>
         </fieldset>
         <p v-if="!controller.projectId.value && !loadingFloors" role="status">
           {{ $t('procurement.project_missing') }}
@@ -275,7 +319,17 @@
               :reload="false"
               required
               @update:model-value="floor = single($event)"
-            />
+            >
+              <template #LabelHeader>
+                <span class="field-help-label-row">
+                  <FieldHelpIcon
+                    :label="$t('procurement.floor')"
+                    field-name="floor"
+                    field-id="requirement-floor"
+                    :help-text="$t('field_help.execution_fields.floor')"
+                  />
+                </span> </template
+            ></UpdatedCustomInputSelect>
           </div>
           <div class="field-group">
             <UpdatedCustomInputSelect
@@ -288,7 +342,17 @@
               :reload="false"
               required
               @update:model-value="space = single($event)"
-            /><small v-if="error('projectFloorSpaceId')" class="procurement-error" role="alert">{{
+            >
+              <template #LabelHeader>
+                <span class="field-help-label-row">
+                  <FieldHelpIcon
+                    :label="$t('procurement.space')"
+                    field-name="space"
+                    field-id="requirement-space"
+                    :help-text="$t('field_help.execution_fields.space')"
+                  />
+                </span> </template></UpdatedCustomInputSelect
+            ><small v-if="error('projectFloorSpaceId')" class="procurement-error" role="alert">{{
               error('projectFloorSpaceId')
             }}</small>
             <p v-if="floor && !spaceOptions.length">{{ $t('procurement.no_spaces') }}</p>

@@ -34,13 +34,13 @@ const MultiSelectStub = {
     'selectionLimit',
     'showToggleAll',
   ],
-  emits: ['update:modelValue'],
+  emits: ['update:modelValue', 'filter'],
 };
 const SelectStub = {
   name: 'Select',
   template: '<div class="select-stub"><slot name="footer" /></div>',
   props: ['modelValue', 'options', 'placeholder', 'loading', 'emptyMessage'],
-  emits: ['update:modelValue'],
+  emits: ['update:modelValue', 'filter'],
 };
 const IconBackStageStub = {
   name: 'IconBackStage',
@@ -317,5 +317,19 @@ it('pages single Space options while retaining a saved selection outside the cur
   expect(post.mock.calls[1]?.[0].data.page).toBe(2);
   expect(wrapper.findComponent(SelectStub).props('modelValue')).toEqual(saved);
   expect(wrapper.emitted('update:modelValue')).toBeUndefined();
+  wrapper.unmount();
+});
+
+it('forwards dropdown search without changing the selected supplier', async () => {
+  const selected = new TitleInterface({ id: 3, title: 'ABC Supplier' });
+  const wrapper = createWrapper({ modelValue: selected, staticOptions: [selected] });
+  await flushPromises();
+  wrapper.findComponent({ name: 'Select' }).vm.$emit('filter', { value: 'ABC' });
+  expect(wrapper.emitted('search')).toEqual([['ABC']]);
+  expect(wrapper.emitted('update:modelValue')).toBeUndefined();
+  expect(wrapper.findComponent({ name: 'Select' }).props('modelValue')).toMatchObject({
+    id: 3,
+    title: 'ABC Supplier',
+  });
   wrapper.unmount();
 });

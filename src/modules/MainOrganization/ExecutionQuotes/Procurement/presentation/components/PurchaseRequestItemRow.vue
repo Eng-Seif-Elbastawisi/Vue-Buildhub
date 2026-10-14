@@ -10,6 +10,7 @@
   }
 </script>
 <script setup lang="ts">
+  import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
   import { computed, ref, watch } from 'vue';
   import RadioButton from 'primevue/radiobutton';
   import UpdatedCustomInputSelect from '@/shared/FormInputs/UpdatedCustomInputSelect.vue';
@@ -86,33 +87,55 @@
           :reload="false"
           required
           @update:model-value="select('stage', $event)"
-        />
+        >
+          <template #LabelHeader>
+            <span class="field-help-label-row">
+              <FieldHelpIcon
+                :label="$t('procurement.timeline_stage')"
+                field-name="timeline_stage"
+                :field-id="`${prefix}-stage`"
+                :help-text="$t('field_help.execution_fields.timeline_stage')"
+              />
+            </span> </template
+        ></UpdatedCustomInputSelect>
         <small v-if="error('projectTimelineStageId')" class="procurement-error" role="alert">{{
           error('projectTimelineStageId')
         }}</small>
       </div>
-      <fieldset class="procurement-type">
-        <legend>{{ $t('procurement.item_type') }}</legend>
-        <label :for="`${prefix}-material`"
-          ><RadioButton
-            :input-id="`${prefix}-material`"
-            :name="`${prefix}-type`"
-            :model-value="modelValue.itemableType"
-            value="material"
-            :disabled="disabled"
-            @update:model-value="changeType('material')"
-          />{{ $t('procurement.material') }}</label
-        >
-        <label :for="`${prefix}-product`"
-          ><RadioButton
-            :input-id="`${prefix}-product`"
-            :name="`${prefix}-type`"
-            :model-value="modelValue.itemableType"
-            value="product"
-            :disabled="disabled"
-            @update:model-value="changeType('product')"
-          />{{ $t('procurement.product') }}</label
-        >
+      <fieldset class="field-group procurement-type">
+        <legend>
+          <span class="field-help-label-row"
+            >{{ $t('procurement.item_type')
+            }}<FieldHelpIcon
+              :label="$t('procurement.item_type')"
+              field-name="item_type"
+              :field-id="`${prefix}-type`"
+              :help-text="$t('field_help.execution_fields.item_type')"
+            />
+          </span>
+        </legend>
+        <div class="procurement-type-options">
+          <label :for="`${prefix}-material`"
+            ><RadioButton
+              :input-id="`${prefix}-material`"
+              :name="`${prefix}-type`"
+              :model-value="modelValue.itemableType"
+              value="material"
+              :disabled="disabled"
+              @update:model-value="changeType('material')"
+            />{{ $t('procurement.material') }}</label
+          >
+          <label :for="`${prefix}-product`"
+            ><RadioButton
+              :input-id="`${prefix}-product`"
+              :name="`${prefix}-type`"
+              :model-value="modelValue.itemableType"
+              value="product"
+              :disabled="disabled"
+              @update:model-value="changeType('product')"
+            />{{ $t('procurement.product') }}</label
+          >
+        </div>
       </fieldset>
       <div class="field-group">
         <UpdatedCustomInputSelect
@@ -128,13 +151,33 @@
           paginated
           required
           @update:model-value="select('itemable', $event)"
-        />
+        >
+          <template #LabelHeader>
+            <span class="field-help-label-row">
+              <FieldHelpIcon
+                :label="$t(`procurement.${modelValue.itemableType}`)"
+                field-name="catalog"
+                :field-id="`${prefix}-catalog`"
+                :help-text="$t('field_help.execution_fields.catalog')"
+              />
+            </span> </template
+        ></UpdatedCustomInputSelect>
         <small v-if="error('itemableId')" class="procurement-error" role="alert">{{
           error('itemableId')
         }}</small>
       </div>
-      <div class="input-wrapper">
-        <label class="label" :for="`${prefix}-quantity`">{{ $t('procurement.quantity') }}</label>
+      <div class="field-group input-wrapper">
+        <span class="field-help-label-row field-help-label-row--block"
+          ><label class="field-label label" :for="`${prefix}-quantity`">{{
+            $t('procurement.quantity')
+          }}</label>
+          <FieldHelpIcon
+            :label="$t('procurement.quantity')"
+            field-name="quantity"
+            :field-id="`${prefix}-quantity`"
+            :help-text="$t('field_help.execution_fields.quantity')"
+          />
+        </span>
         <input
           :id="`${prefix}-quantity`"
           :value="modelValue.quantity"

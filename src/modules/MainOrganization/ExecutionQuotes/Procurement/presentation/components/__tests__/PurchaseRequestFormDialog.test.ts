@@ -205,7 +205,7 @@ it('retains at least one item and keeps the entire-project flow usable without a
   const wrapper = mountDialog(PurchaseRequestFormDialog);
   const remove = wrapper.findAll('button').find((button) => button.text() === 'Remove');
   expect(remove?.attributes('disabled')).toBeDefined();
-  expect(wrapper.text()).toContain('Entire-project requirements remain available');
+  expect(wrapper.text()).toContain('You can still request items for the entire project');
   await fill(wrapper);
   await wrapper.get('form').trigger('submit');
   await flushPromises();

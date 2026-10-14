@@ -1,6 +1,6 @@
 <script setup lang="ts">
-  import { computed, ref, watch, onBeforeUnmount } from 'vue';
-  import { useRoute } from 'vue-router';
+  import { computed, ref, watch, onBeforeUnmount, nextTick } from 'vue';
+  import { useRoute, onBeforeRouteLeave, onBeforeRouteUpdate } from 'vue-router';
   import Skeleton from 'primevue/skeleton';
   import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
   import AppButton from '@/shared/HelpersComponents/AppButton.vue';
@@ -15,17 +15,32 @@
   import PurchaseRequestController from '../controllers/purchase-request.controller';
   import PurchaseRequestFormDialog from './PurchaseRequestFormDialog.vue';
   import PurchaseRequestDetails from './PurchaseRequestDetails.vue';
+  import SupplierPriceOffersPanel from './SupplierPriceOffersPanel.vue';
   import '../styles/procurement.scss';
   const route = useRoute();
   const controller = PurchaseRequestController.getInstance();
   const quoteId = computed(() => Number(route.params.id));
   const state = computed(() => controller.listState.value);
   const formVisible = ref(false);
+  const offersRequestId = ref<number | null>(null);
+  const offersPanel = ref<InstanceType<typeof SupplierPriceOffersPanel> | null>(null);
+  async function openOffers(id: number) {
+    if (offersPanel.value && !(await offersPanel.value.requestClose())) return;
+    offersRequestId.value = null;
+    await nextTick();
+    offersRequestId.value = id;
+  }
+  async function canNavigate() {
+    return offersPanel.value ? offersPanel.value.requestClose() : true;
+  }
+  onBeforeRouteLeave(canNavigate);
+  onBeforeRouteUpdate(canNavigate);
   const expandedRequestId = ref<number | null>(null);
   watch(
     quoteId,
     (id) => {
       formVisible.value = false;
+      offersRequestId.value = null;
       expandedRequestId.value = null;
       controller.activate(id);
       if (validId(id)) void controller.load();
@@ -47,14 +62,29 @@
             $t('procurement.back_to_project')
           }}</RouterLink>
         </div>
-        <AppButton type="button" :disabled="controller.isStoring.value" @click="formVisible = true"
-          ><i class="pi pi-plus" aria-hidden="true" />{{
-            $t('procurement.new_requirement')
-          }}</AppButton
-        >
       </header>
+      <ol class="procurement-workflow" :aria-label="$t('procurement.workflow')">
+        <li>
+          <strong>{{ $t('procurement.create_request_step') }}</strong
+          ><span>{{ $t('procurement.create_request_help') }}</span>
+        </li>
+        <li>
+          <strong>{{ $t('procurement.add_prices_step') }}</strong
+          ><span>{{ $t('procurement.add_prices_help') }}</span>
+        </li>
+      </ol>
       <section class="procurement-panel" aria-labelledby="procurement-requirements">
-        <h2 id="procurement-requirements">{{ $t('procurement.requirements') }}</h2>
+        <header class="procurement-header">
+          <h2 id="procurement-requirements">{{ $t('procurement.requirements') }}</h2>
+          <AppButton
+            type="button"
+            :disabled="controller.isStoring.value"
+            @click="formVisible = true"
+            ><i class="pi pi-plus" aria-hidden="true" />{{
+              $t('procurement.new_requirement')
+            }}</AppButton
+          >
+        </header>
         <DataStatusBuilder
           :controller="state"
           :on-retry="
@@ -88,7 +118,7 @@
                     <th scope="col">{{ $t('procurement.item_count') }}</th>
                     <th scope="col">{{ $t('procurement.created_at') }}</th>
                     <th scope="col">{{ $t('procurement.status') }}</th>
-                    <th scope="col">{{ $t('procurement.details') }}</th>
+                    <th scope="col">{{ $t('procurement.actions') }}</th>
                   </tr>
                 </thead>
                 <tbody v-for="request in state.data" :key="request.id">
@@ -136,6 +166,16 @@
                         "
                         >{{ $t('procurement.view_details') }}</AppButton
                       >
+                      <AppButton
+                        type="button"
+                        theme="secondary"
+                        size="sm"
+                        :aria-label="$t('procurement.offers.manage_request', { id: request.id })"
+                        :aria-pressed="offersRequestId === request.id"
+                        :aria-controls="'purchase-request-prices'"
+                        @click="openOffers(request.id)"
+                        >{{ $t('procurement.view_prices') }}</AppButton
+                      >
                     </td>
                   </tr>
                   <tr v-if="expandedRequestId === request.id">
@@ -151,6 +191,31 @@
           </template>
         </DataStatusBuilder>
       </section>
+      <section
+        v-if="offersRequestId == null"
+        id="purchase-request-prices"
+        class="procurement-panel procurement-empty"
+        aria-labelledby="supplier-prices-heading"
+      >
+        <h2 id="supplier-prices-heading">{{ $t('procurement.supplier_prices') }}</h2>
+        <p>
+          {{
+            $t(
+              state.data?.length
+                ? 'procurement.select_request_prices'
+                : 'procurement.create_before_prices',
+            )
+          }}
+        </p>
+      </section>
+      <SupplierPriceOffersPanel
+        v-else
+        id="purchase-request-prices"
+        :key="offersRequestId"
+        ref="offersPanel"
+        :quote-id="quoteId"
+        :purchase-request-id="offersRequestId"
+      />
       <PurchaseRequestFormDialog v-if="formVisible" v-model:visible="formVisible" />
     </template>
   </section>

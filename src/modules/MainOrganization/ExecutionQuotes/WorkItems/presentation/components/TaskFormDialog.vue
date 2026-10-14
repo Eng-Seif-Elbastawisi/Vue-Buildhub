@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
   import { computed, ref, watch } from 'vue';
   import Dialog from 'primevue/dialog';
   import AppButton from '@/shared/HelpersComponents/AppButton.vue';
@@ -77,9 +78,19 @@
         :disabled="busy"
         :error="fieldError('projectTimelineStageId')"
       />
-      <div class="input-wrapper">
-        <label for="task-title" class="label">{{ $t('work_items.task_title') }}</label
-        ><input
+      <div class="field-group input-wrapper">
+        <span class="field-help-label-row field-help-label-row--block"
+          ><label for="task-title" class="field-label label">{{
+            $t('work_items.task_title')
+          }}</label>
+          <FieldHelpIcon
+            :label="$t('work_items.task_title')"
+            field-name="task_title"
+            field-id="task-title"
+            :help-text="$t('field_help.execution_fields.task_title')"
+          />
+        </span>
+        <input
           id="task-title"
           v-model="title"
           class="input"
@@ -91,21 +102,44 @@
         /><small id="task-title-error" role="alert">{{ fieldError('title') }}</small>
       </div>
       <div>
-        <UpdatedCustomInputSelect
-          id="task-employee"
-          v-model="employee"
-          label="work_items.assigned_employee"
-          :placeholder="$t('work_items.select_employee')"
-          :controller="controller.employeeOptions"
-          :params="employeeParams"
-          paginated
-          optional
-          :disabled="busy"
-        /><small v-if="fieldError('employeeId')" role="alert">{{ fieldError('employeeId') }}</small>
+        <div class="field-group">
+          <UpdatedCustomInputSelect
+            id="task-employee"
+            v-model="employee"
+            label="work_items.assigned_employee"
+            :placeholder="$t('work_items.select_employee')"
+            :controller="controller.employeeOptions"
+            :params="employeeParams"
+            paginated
+            optional
+            :disabled="busy"
+          >
+            <template #LabelHeader>
+              <span class="field-help-label-row">
+                <FieldHelpIcon
+                  :label="$t('work_items.assigned_employee')"
+                  field-name="assigned_employee"
+                  field-id="task-employee"
+                  :help-text="$t('field_help.execution_fields.assigned_employee')"
+                />
+              </span> </template
+          ></UpdatedCustomInputSelect>
+        </div>
+        <small v-if="fieldError('employeeId')" role="alert">{{ fieldError('employeeId') }}</small>
       </div>
-      <div class="input-wrapper">
-        <label for="task-endDate" class="label">{{ $t('work_items.end_date') }}</label
-        ><input
+      <div class="field-group input-wrapper">
+        <span class="field-help-label-row field-help-label-row--block"
+          ><label for="task-endDate" class="field-label label">{{
+            $t('work_items.end_date')
+          }}</label>
+          <FieldHelpIcon
+            :label="$t('work_items.end_date')"
+            field-name="end_date"
+            field-id="task-endDate"
+            :help-text="$t('field_help.execution_fields.end_date')"
+          />
+        </span>
+        <input
           id="task-endDate"
           v-model="endDate"
           class="input"

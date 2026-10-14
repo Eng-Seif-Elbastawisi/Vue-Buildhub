@@ -84,6 +84,7 @@
     ];
 
     'update:slot': [];
+    search: [word: string];
   }>();
 
   const { t } = useI18n();
@@ -576,6 +577,7 @@
       filter
       :loading="loading"
       :empty-message="message"
+      @filter="emit('search', $event.value)"
       @selectall-change="toggleSelectAll"
     >
       <template v-if="isMultiselect && showSelectAll" #header>
@@ -692,16 +694,6 @@
   .input-label__text--disabled {
     cursor: not-allowed;
     color: var(--gray-4);
-  }
-
-  .input-select {
-    width: 100%;
-    border-radius: 50px;
-    background-color: transparent;
-
-    &:focus {
-      border: 1px solid #d9dbe9 !important;
-    }
   }
 
   .input-select--disabled {

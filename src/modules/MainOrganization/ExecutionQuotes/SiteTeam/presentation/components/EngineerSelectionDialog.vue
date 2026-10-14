@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
   import { computed, ref, watch } from 'vue';
   import Dialog from 'primevue/dialog';
   import AppButton from '@/shared/HelpersComponents/AppButton.vue';
@@ -69,16 +70,28 @@
     <form class="site-team-form" @submit.prevent="save">
       <p>{{ $t('site_team.assignment_help') }}</p>
 
-      <UpdatedCustomInputSelect
-        id="site-engineers"
-        v-model="selected"
-        :type="2"
-        label="site_team.employees"
-        :placeholder="$t('site_team.select_employees')"
-        :controller="controller.employeeOptions"
-        :params="params"
-        :disabled="busy"
-      />
+      <div class="field-group">
+        <UpdatedCustomInputSelect
+          id="site-engineers"
+          v-model="selected"
+          :type="2"
+          label="site_team.employees"
+          :placeholder="$t('site_team.select_employees')"
+          :controller="controller.employeeOptions"
+          :params="params"
+          :disabled="busy"
+        >
+          <template #LabelHeader>
+            <span class="field-help-label-row">
+              <FieldHelpIcon
+                :label="$t('site_team.employees')"
+                field-name="employees"
+                field-id="site-engineers"
+                :help-text="$t('field_help.execution_fields.employees')"
+              />
+            </span> </template
+        ></UpdatedCustomInputSelect>
+      </div>
       <p class="site-team-badge" role="status">
         {{ $t('site_team.selected_count', { count: ids.length }) }}
       </p>

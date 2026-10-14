@@ -47,10 +47,9 @@ export default class PurchaseRequestController extends BaseController<
   readonly projectId = computed(() => this.ownerState.value.data?.project?.id);
   readonly mainStages = computed(() =>
     (this.stagesState.value.data ?? []).flatMap((group) =>
-      group.stages
-        .map(
-          (stage) => new TitleInterface({ id: stage.id, title: `${group.title} · ${stage.title}` }),
-        ),
+      group.stages.map(
+        (stage) => new TitleInterface({ id: stage.id, title: `${group.title} · ${stage.title}` }),
+      ),
     ),
   );
   private constructor() {
