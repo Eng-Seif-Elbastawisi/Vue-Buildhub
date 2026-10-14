@@ -152,3 +152,11 @@ Schedule preserves existing task controls, timeline cards, and settings dialog. 
 - **Don't** treat this surface composition as a required layout for unrelated BuildHub screens.
 - **Don't** replace the incumbent palette, fonts, or shared controls while extending these surfaces.
 - **Don't** invent metrics or raster assets where the implementation uses loaded data and SVG geometry.
+
+## Procurement refinement
+
+Procurement extends this workspace with a charcoal introduction, warm paper panels and copper selection accents. Colors are module-local aliases of existing quote tokens; the existing DIN font and shared controls remain in use. Bordered, shadow-free panels and tabular prices establish hierarchy. A compact three-step guide connects requirements, supplier prices and storing an order.
+
+Purchase Requests provide local text search and all/pending/confirmed/rejected filters. The result count describes the filtered collection against the full loaded collection. Filters reset on quote changes and never trigger additional API calls. Supplier Prices retains its local supplier filter. Mobile tables scroll inside their named, keyboard-focusable regions; filters, dialog fields and actions adapt to narrow screens. Logical spacing and an explicit locale direction support Arabic RTL. Reduced-motion rules remove decorative transitions.
+
+Order creation remains in Supplier Prices, using the selected saved price-record ID. Order viewing remains in Purchase Requests. The refinement preserves shared attachment input/preview, backend status authority and the existing Store/Fetch separation. No raster assets ship with this change. Mocked desktop, mobile and RTL browser captures and validation limits are recorded in Procurement's DESIGN_REVIEW.md.

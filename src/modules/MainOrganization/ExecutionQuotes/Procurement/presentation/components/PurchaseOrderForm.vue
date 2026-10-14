@@ -7,6 +7,7 @@
   import Skeleton from 'primevue/skeleton';
   import HandleFilesUpload, { type UploadedFile } from '@/shared/FormInputs/HandleFilesUpload.vue';
   import AppButton from '@/shared/HelpersComponents/AppButton.vue';
+  import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
   import {
     DataSuccess,
     DataLoading,
@@ -91,6 +92,7 @@
 <template>
   <Dialog
     :visible="true"
+    class="procurement-dialog procurement-order-dialog"
     modal
     :header="$t(allowIssue ? 'procurement.orders.store' : 'procurement.orders.title')"
     :style="{ width: '52rem', maxWidth: '96vw' }"
@@ -148,7 +150,6 @@
         novalidate
         @submit.prevent="submit"
       >
-        <h2>{{ $t('procurement.orders.store') }}</h2>
         <fieldset :disabled="saving || processing || !controller.canStore.value">
           <legend>{{ $t('procurement.supplier_prices') }}</legend>
           <Skeleton v-if="offersState instanceof DataLoading" height="5rem" />
@@ -165,6 +166,7 @@
             v-for="offer in offersState.data"
             :key="offer.id"
             class="purchase-order-offer"
+            :class="{ 'is-selected': selectedId === offer.id }"
             :for="`order-offer-${offer.id}`"
           >
             <RadioButton
@@ -185,29 +187,44 @@
               }}</span
             >
           </label>
-          <p v-if="selected">
+          <p v-if="selected" class="purchase-order-selection" role="status">
             <strong>{{ $t('procurement.orders.selected_offer') }}</strong
             >: {{ selected.supplier?.name }} · {{ selected.price }} · {{ selected.duration }}
             {{
               selected.durationType == null ? '' : $t(getDurationTypeNameKey(selected.durationType))
             }}
           </p>
-          <div class="field-group input-wrapper">
-            <label class="field-label label" for="purchase-order-date"
-              >{{ $t('procurement.orders.date') }} *</label
-            ><InputText
-              id="purchase-order-date"
-              v-model="date"
-              class="input"
-              type="date"
-              required
-            />
-          </div>
-          <div class="field-group input-wrapper">
-            <label class="field-label label" for="purchase-order-note">{{
-              $t('procurement.orders.notes')
-            }}</label
-            ><Textarea id="purchase-order-note" v-model="note" class="input" rows="3" />
+          <div class="purchase-order-fields">
+            <div class="field-group input-wrapper">
+              <span class="field-help-label-row field-help-label-row--block">
+                <label class="field-label label" for="purchase-order-date"
+                  >{{ $t('procurement.orders.date') }} *</label
+                >
+                <FieldHelpIcon
+                  :label="$t('procurement.orders.date')"
+                  field-name="date"
+                  field-id="purchase-order-date"
+                /> </span
+              ><InputText
+                id="purchase-order-date"
+                v-model="date"
+                class="input"
+                type="date"
+                required
+              />
+            </div>
+            <div class="field-group input-wrapper">
+              <span class="field-help-label-row field-help-label-row--block">
+                <label class="field-label label" for="purchase-order-note">{{
+                  $t('procurement.orders.notes')
+                }}</label>
+                <FieldHelpIcon
+                  :label="$t('procurement.orders.notes')"
+                  field-name="notes"
+                  field-id="purchase-order-note"
+                /> </span
+              ><Textarea id="purchase-order-note" v-model="note" class="input" rows="3" />
+            </div>
           </div>
           <HandleFilesUpload
             :label="$t('procurement.orders.attachment')"
@@ -267,20 +284,88 @@
 <style scoped lang="scss">
   .purchase-order-form fieldset {
     min-width: 0;
-    border: 0;
     padding: 0;
+    border: 0;
+
+    legend {
+      margin-block-end: 1rem;
+      color: var(--procurement-ink);
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
   }
 
   .purchase-order-offer {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    padding: 1rem;
-    margin-block: 0.5rem;
-    border: 1px solid var(--border-weak);
-    border-radius: var(--radius-sm);
-    background: var(--bg-card);
+    gap: 0.875rem;
+    padding: 1rem 1.25rem;
+    margin-block: 0.625rem;
+    border: 1px solid var(--procurement-line, var(--border-weak));
+    border-radius: 12px;
+    background: var(--procurement-paper, var(--bg-card));
+    color: var(--procurement-muted, var(--subtitle-color));
+    font-size: 0.8125rem;
+    line-height: 1.75;
     cursor: pointer;
     overflow-wrap: anywhere;
+    transition:
+      border-color 180ms ease,
+      background-color 180ms ease;
+
+    > span {
+      min-width: 0;
+    }
+
+    strong {
+      color: var(--procurement-ink, var(--title-card-color));
+      font-size: 0.9375rem;
+    }
+
+    &:hover,
+    &:focus-within {
+      border-color: var(--procurement-copper, var(--PrimaryColor));
+    }
+
+    &.is-selected {
+      border-color: var(--procurement-copper, var(--PrimaryColor));
+      background: var(--procurement-soft, var(--bg-section));
+    }
+  }
+
+  .purchase-order-selection {
+    overflow-wrap: anywhere;
+    line-height: 1.65;
+    padding-block: 0.75rem;
+    margin-block: 0.5rem 1rem;
+    color: var(--procurement-ink, var(--title-card-color));
+    font-size: 0.8125rem;
+    border-block-end: 1px solid var(--procurement-line, var(--border-weak));
+  }
+
+  .purchase-order-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    margin-block-end: 1rem;
+  }
+
+  .procurement-actions {
+    padding-block-start: 1rem;
+    margin-block-start: 1rem;
+    border-block-start: 1px solid var(--procurement-line, var(--border-weak));
+  }
+
+  @media (max-width: 600px) {
+    .purchase-order-fields {
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .purchase-order-offer {
+      transition: none;
+    }
   }
 </style>

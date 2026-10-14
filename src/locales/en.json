@@ -3471,5 +3471,11 @@
   "validation.fields.note": "Notes",
   "procurement.orders.retry_check": "Retry Purchase Order Check",
   "procurement.orders.issue_from_prices": "To store a purchase order, open Supplier Prices and select one saved offer.",
-  "procurement.orders.store": "Store Purchase Order"
+  "procurement.orders.store": "Store Purchase Order",
+  "procurement.all_requests": "All requests",
+  "procurement.filter_status": "Filter requests by status",
+  "procurement.search_requests": "Search request or employee…",
+  "procurement.request_results": "{count} of {total} requests",
+  "procurement.no_matching_requests": "No requests match your filters",
+  "procurement.clear_filters": "Clear filters"
 }
