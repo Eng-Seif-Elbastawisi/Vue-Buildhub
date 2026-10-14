@@ -14,6 +14,7 @@ import {
   type SupplyResponsibility,
 } from '../constants/purchase-request.constants';
 import PurchaseRequestItemModel from './purchase-request.item.model';
+import PurchaseRequestProjectFloorSpaceModel from './purchase-request.project-floor-space.model';
 
 export default class PurchaseRequestModel {
   readonly id: number;
@@ -23,8 +24,7 @@ export default class PurchaseRequestModel {
   readonly projectId: number;
   readonly isAllProject: boolean;
   readonly projectFloorSpaceId: number | null;
-  // The non-null relation schema is undocumented; preserve it without guessing display fields.
-  readonly projectFloorSpace: unknown;
+  readonly projectFloorSpace: PurchaseRequestProjectFloorSpaceModel | null;
   readonly supplyResponsibility: SupplyResponsibility;
   readonly priority: PurchaseRequestPriority;
   readonly status: PurchaseRequestStatus;
@@ -38,7 +38,7 @@ export default class PurchaseRequestModel {
     projectId: number;
     isAllProject: boolean;
     projectFloorSpaceId: number | null;
-    projectFloorSpace: unknown;
+    projectFloorSpace: PurchaseRequestProjectFloorSpaceModel | null;
     supplyResponsibility: SupplyResponsibility;
     priority: PurchaseRequestPriority;
     status: PurchaseRequestStatus;
@@ -78,7 +78,10 @@ export default class PurchaseRequestModel {
       isAllProject: record.is_all_project,
       projectFloorSpaceId:
         record.project_floor_space_id == null ? null : responseId(record.project_floor_space_id),
-      projectFloorSpace: record.project_floor_space,
+      projectFloorSpace:
+        record.project_floor_space == null
+          ? null
+          : PurchaseRequestProjectFloorSpaceModel.fromJson(record.project_floor_space),
       supplyResponsibility: record.supply_responsibility,
       priority: record.priority,
       status: record.status,

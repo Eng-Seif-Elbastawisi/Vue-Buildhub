@@ -14,12 +14,12 @@ export default class PurchaseRequestSupplierReferenceModel {
       typeof record.id !== 'number' ||
       !Number.isSafeInteger(record.id) ||
       record.id <= 0 ||
-      (record.name != null && typeof record.name !== 'string')
+      (record.title != null && typeof record.title !== 'string')
     )
       throw new Error('procurement.offers.invalid_response');
     return new PurchaseRequestSupplierReferenceModel(
       record.id,
-      (record.name as string | null | undefined) ?? null,
+      (record.title as string | null | undefined) ?? null,
     );
   }
 }

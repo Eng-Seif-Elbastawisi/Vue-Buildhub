@@ -525,7 +525,7 @@
         </span>
       </div>
 
-      <div class="flex items-center gap-2">
+      <div class="label-container">
         <div
           v-if="onclick"
           class="add-dialog"
@@ -540,19 +540,17 @@
         <span class="field-help-label-row">
           <label
             :class="{
-              required,
               'input-label__text--disabled': disabled,
             }"
             :for="id"
             class="input-label"
           >
-            <span v-if="required" class="text-red-500"> * </span>
-
             {{ $t(label ?? '') }}
           </label>
         </span>
 
         <slot name="LabelHeader" />
+        <span v-if="required" class="required-indicator text-red-500" aria-hidden="true">*</span>
       </div>
     </slot>
 
@@ -565,6 +563,7 @@
       v-model="normalizedValue"
       :input-id="id"
       :aria-label="label ? t(label) : placeholder"
+      :aria-required="required"
       :options="mergedOptions"
       :placeholder="placeholder"
       :disabled="disabled"
@@ -655,8 +654,8 @@
 </template>
 
 <style scoped lang="scss">
-  .required span {
-    color: red;
+  .required-indicator {
+    color: var(--danger-dark);
   }
 
   .reload-icon {
@@ -784,5 +783,11 @@
   :deep(.p-select.p-disabled .p-select-dropdown),
   :deep(.p-multiselect.p-disabled .p-multiselect-dropdown) {
     pointer-events: none;
+  }
+
+  .label-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
   }
 </style>

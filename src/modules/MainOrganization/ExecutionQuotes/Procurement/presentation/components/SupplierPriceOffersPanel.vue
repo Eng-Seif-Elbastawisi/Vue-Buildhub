@@ -90,7 +90,7 @@
         {{ $t('procurement.offers.saved') }}
       </p>
       <template v-if="controller.loaded.value || controller.savedOffers.value.length">
-        <div v-if="controller.savedOffers.value.length" class="field-group input-wrapper">
+        <!-- <div v-if="controller.savedOffers.value.length" class="field-group input-wrapper">
           <span class="field-help-label-row field-help-label-row--block"
             ><label class="field-label label" for="supplier-comparison-filter">{{
               $t('procurement.offers.filter_supplier')
@@ -103,7 +103,7 @@
             />
           </span>
           <input id="supplier-comparison-filter" v-model="filter" class="input" type="search" />
-        </div>
+        </div> -->
         <div class="procurement-table-scroll">
           <table class="procurement-table">
             <caption class="procurement-sr-only">

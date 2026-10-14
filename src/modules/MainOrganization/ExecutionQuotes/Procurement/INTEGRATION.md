@@ -8,6 +8,9 @@ The Quote Show app shortcut and shared workspace navigation retain the same Quot
 
 - `POST fetch_purchase_requests`: sends only `quote_id`; maps the unpaginated
   `data` array to `PurchaseRequestModel` and `PurchaseRequestItemModel`.
+- Fetched `project_floor_space` maps to `PurchaseRequestProjectFloorSpaceModel`
+  with an association `id` and a nested `space` (`TitleModel` with `id`/`title`).
+  Null or absent relations map to `null`; association and space IDs stay separate.
 - `POST store_purchase_request`: sends `quote_id`, `employee_id`, `is_all_project`,
   `supply_responsibility`, `priority`, and `items`. A specific-space request also
   sends `project_floor_space_id`; entire-project requests omit that field.
@@ -56,10 +59,7 @@ remain authoritative.
    no saved record is synthesized. Missing/ambiguous confirmation keeps the form
    open and tells the user to check Requirements before resubmitting. Confirm this
    success/error envelope against the implemented endpoint before live acceptance.
-2. The non-null `project_floor_space` relation in Fetch is undocumented. The model
-   preserves it as opaque `unknown` data; list/details display the confirmed
-   association ID, without guessing nested floor/space titles.
-3. Schedule maps `parent_id` as optional. Procurement only permits a stage whose
+2. Schedule maps `parent_id` as optional. Procurement only permits a stage whose
    data explicitly has `parent_id = null` and no sub-stage. Omitted eligibility
    leaves that stage unavailable. The overview must include timeline association
    IDs and parent eligibility for creation to work; no ID transformation or
@@ -79,8 +79,10 @@ Added in this module:
 - `core/constants/purchase-request.constants.ts`
 - `core/models/__tests__/purchase-request.item.model.test.ts`
 - `core/models/__tests__/purchase-request.model.test.ts`
+- `core/models/__tests__/purchase-request.project-floor-space.model.test.ts`
 - `core/models/purchase-request.item.model.ts`
 - `core/models/purchase-request.model.ts`
+- `core/models/purchase-request.project-floor-space.model.ts`
 - `core/params/__tests__/fetch.purchase-requests.params.test.ts`
 - `core/params/__tests__/purchase-request.item.params.test.ts`
 - `core/params/__tests__/store.purchase-request.params.test.ts`

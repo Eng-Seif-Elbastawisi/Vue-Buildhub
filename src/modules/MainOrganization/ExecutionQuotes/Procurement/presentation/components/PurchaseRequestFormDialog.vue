@@ -401,9 +401,11 @@
           @update:model-value="rows[index] = $event"
           @remove="rows.length > 1 && rows.splice(index, 1)"
         />
-        <AppButton type="button" theme="secondary" :disabled="busy" @click="addRow">{{
-          $t('procurement.add_item')
-        }}</AppButton>
+        <div class="action-row">
+          <AppButton type="button" theme="secondary" :disabled="busy" @click="addRow">{{
+            $t('procurement.add_item')
+          }}</AppButton>
+        </div>
       </section>
       <p v-if="failure" class="procurement-error" role="alert">{{ $t(failure) }}</p>
       <ul v-if="backendErrors.length" class="procurement-error" role="alert">

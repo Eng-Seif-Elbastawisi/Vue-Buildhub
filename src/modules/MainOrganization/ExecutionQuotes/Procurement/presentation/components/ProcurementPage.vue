@@ -130,8 +130,12 @@
                         $t(
                           request.isAllProject
                             ? 'procurement.entire_project'
-                            : 'procurement.specific_space_id',
-                          { id: request.projectFloorSpaceId ?? $t('procurement.unavailable') },
+                            : 'procurement.specific_space',
+                          {
+                            id:
+                              request.projectFloorSpace?.space?.title ??
+                              $t('procurement.unavailable'),
+                          },
                         )
                       }}
                     </td>
@@ -155,27 +159,29 @@
                       >
                     </td>
                     <td>
-                      <AppButton
-                        type="button"
-                        theme="secondary"
-                        size="sm"
-                        :aria-expanded="expandedRequestId === request.id"
-                        :aria-controls="`requirement-details-${request.id}`"
-                        @click="
-                          expandedRequestId = expandedRequestId === request.id ? null : request.id
-                        "
-                        >{{ $t('procurement.view_details') }}</AppButton
-                      >
-                      <AppButton
-                        type="button"
-                        theme="secondary"
-                        size="sm"
-                        :aria-label="$t('procurement.offers.manage_request', { id: request.id })"
-                        :aria-pressed="offersRequestId === request.id"
-                        :aria-controls="'purchase-request-prices'"
-                        @click="openOffers(request.id)"
-                        >{{ $t('procurement.view_prices') }}</AppButton
-                      >
+                      <div class="row-actions">
+                        <AppButton
+                          type="button"
+                          theme="secondary"
+                          size="sm"
+                          :aria-expanded="expandedRequestId === request.id"
+                          :aria-controls="`requirement-details-${request.id}`"
+                          @click="
+                            expandedRequestId = expandedRequestId === request.id ? null : request.id
+                          "
+                          >{{ $t('procurement.view_details') }}</AppButton
+                        >
+                        <AppButton
+                          type="button"
+                          theme="secondary"
+                          size="sm"
+                          :aria-label="$t('procurement.offers.manage_request', { id: request.id })"
+                          :aria-pressed="offersRequestId === request.id"
+                          :aria-controls="'purchase-request-prices'"
+                          @click="openOffers(request.id)"
+                          >{{ $t('procurement.view_prices') }}</AppButton
+                        >
+                      </div>
                     </td>
                   </tr>
                   <tr v-if="expandedRequestId === request.id">

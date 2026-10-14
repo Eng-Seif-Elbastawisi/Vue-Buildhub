@@ -3,6 +3,7 @@ export { default as PurchaseRequestRepository } from './data/repositories/purcha
 export { default as PurchaseRequestApiService } from './data/api/purchase-request.api-service';
 export { default as PurchaseRequestModel } from './core/models/purchase-request.model';
 export { default as PurchaseRequestItemModel } from './core/models/purchase-request.item.model';
+export { default as PurchaseRequestProjectFloorSpaceModel } from './core/models/purchase-request.project-floor-space.model';
 export { default as StorePurchaseRequestParams } from './core/params/store.purchase-request.params';
 export { default as FetchPurchaseRequestsParams } from './core/params/fetch.purchase-requests.params';
 export { default as PurchaseRequestItemParams } from './core/params/purchase-request.item.params';

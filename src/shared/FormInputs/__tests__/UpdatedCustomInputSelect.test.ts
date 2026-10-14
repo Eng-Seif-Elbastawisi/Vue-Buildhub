@@ -57,8 +57,9 @@ vi.mock('@/base/Presentation/Utils/validationService', () => ({
 
 const makeTitleInterface = (id: number, title: string) => ({ id, title });
 
-const createWrapper = (props: Record<string, unknown> = {}) =>
+const createWrapper = (props: Record<string, unknown> = {}, slots: Record<string, string> = {}) =>
   mount(UpdatedCustomInputSelect, {
+    slots,
     props: {
       modelValue: null,
       placeholder: 'Select...',
@@ -178,9 +179,17 @@ describe('UpdatedCustomInputSelect', () => {
     expect(wrapper.text()).toContain('My Label');
   });
 
-  it('shows required asterisk when required is true', () => {
-    const wrapper = createWrapper({ required: true, label: 'Name' });
-    expect(wrapper.find('.text-red-500').exists()).toBe(true);
+  it('places the required asterisk after field help and marks the control as required', () => {
+    const wrapper = createWrapper(
+      { required: true, label: 'Name' },
+      { LabelHeader: '<button type="button" aria-label="Show field help">Help</button>' },
+    );
+    const help = wrapper.get('button[aria-label="Show field help"]');
+    const marker = wrapper.get('.text-red-500');
+    expect(help.element.nextElementSibling).toBe(marker.element);
+    expect(wrapper.get('label').text()).toBe('Name');
+    expect(wrapper.get('.select-stub').attributes('aria-required')).toBe('true');
+    wrapper.unmount();
   });
 
   it('does not show required asterisk when required is false', () => {
