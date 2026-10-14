@@ -263,7 +263,7 @@
           <!-- step="1" -->
         </div>
       </div>
-
+      <!-- 
       <div class="field-group">
         <label class="field-label" for="material-quantity">{{ $t('material.quantity') }}</label>
         <div class="input-wrap">
@@ -276,7 +276,7 @@
             @input="updateData"
           />
         </div>
-      </div>
+      </div> -->
 
       <div class="field-group">
         <UpdatedCustomInputSelect
