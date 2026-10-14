@@ -16,7 +16,10 @@
   }
 </script>
 <template>
-  <section class="procurement-panel" :dir="$i18n.locale === 'ar' ? 'rtl' : 'ltr'">
+  <section
+    class="procurement-panel purchase-order-details"
+    :dir="$i18n.locale === 'ar' ? 'rtl' : 'ltr'"
+  >
     <header class="procurement-header">
       <h2>{{ $t('procurement.orders.reference', { id: order.id }) }}</h2>
       <span class="procurement-status procurement-status--3">{{
@@ -76,17 +79,34 @@
   </section>
 </template>
 <style scoped lang="scss">
+  .purchase-order-details {
+    padding: 0;
+    border: 0;
+    background: transparent;
+  }
+
   .purchase-order-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
-    gap: 1rem;
+    gap: 1.5rem;
+    padding-block: 1.25rem;
+    border-block: 1px solid var(--procurement-line, var(--border-weak));
+
+    > div {
+      min-width: 0;
+    }
 
     dt {
-      color: var(--subtitle-color);
+      color: var(--procurement-muted, var(--subtitle-color));
+      font-size: 0.75rem;
     }
 
     dd {
-      margin-inline-start: 0;
+      margin: 0.375rem 0 0;
+      color: var(--procurement-ink, var(--title-card-color));
+      font-size: 0.9375rem;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
       overflow-wrap: anywhere;
     }
   }

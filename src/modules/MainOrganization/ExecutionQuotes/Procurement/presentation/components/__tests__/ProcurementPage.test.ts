@@ -318,3 +318,71 @@ it('creates the Purchase Request first, then saves supplier prices for that save
   expect(wrapper.get('#purchase-request-prices table').text()).toContain('10.25');
   wrapper.unmount();
 });
+
+it('filters requests by status and search locally while preserving the complete request owner state', async () => {
+  const post = mockNetwork();
+  post.mockImplementation(async (request) =>
+    response(
+      request.url.includes('fetch_purchase_requests')
+        ? {
+            status: true,
+            data: [1, 2, 3].map((status) => ({
+              ...requestRecord(),
+              id: status,
+              status,
+              assigned_employee: {
+                id: status + 10,
+                name: status === 1 ? 'Omar Hassan' : 'Sara Ahmed',
+                type: 2,
+              },
+            })),
+          }
+        : request.url.includes('fetch_project_timelines')
+          ? overviewRecord()
+          : { status: true, data: { id: 140 } },
+    ),
+  );
+  const router = createRouter({
+    history: createMemoryHistory(),
+    routes: [
+      {
+        path: '/organization/execution-quotes/show/:id/procurement',
+        component: { template: '<div />' },
+      },
+    ],
+  });
+  await router.push('/organization/execution-quotes/show/140/procurement');
+  const wrapper = mount(ProcurementPage, {
+    global: {
+      plugins: [router, PrimeVue],
+      stubs: { Dialog: { template: '<section><slot /></section>' } },
+    },
+  });
+  try {
+    await flushPromises();
+    const readCount = post.mock.calls.length;
+    const pending = wrapper
+      .findAll('.procurement-status-filters button')
+      .find((button) => button.text() === 'Pending');
+    if (!pending) throw new Error('Missing pending filter');
+    await pending.trigger('click');
+    expect(pending.attributes('aria-pressed')).toBe('true');
+    expect(wrapper.findAll('.procurement-table tbody')).toHaveLength(1);
+    expect(wrapper.get('.procurement-table').text()).toContain('Omar Hassan');
+    await wrapper.get('#procurement-request-search').setValue('no matching employee');
+    expect(wrapper.text()).toContain('No requests match your filters');
+    const clear = wrapper.findAll('button').find((button) => button.text() === 'Clear filters');
+    if (!clear) throw new Error('Missing clear filters action');
+    await clear.trigger('click');
+    expect(wrapper.findAll('.procurement-table tbody')).toHaveLength(3);
+    await wrapper.get('#procurement-request-search').setValue('Omar');
+    expect(wrapper.findAll('.procurement-table tbody')).toHaveLength(1);
+    expect(PurchaseRequestController.getInstance().listState.value.data).toHaveLength(3);
+    expect(post.mock.calls).toHaveLength(readCount);
+    expect(post.mock.calls.some((call) => call[0].url.endsWith('/fetch_purchase_order'))).toBe(
+      false,
+    );
+  } finally {
+    wrapper.unmount();
+  }
+});

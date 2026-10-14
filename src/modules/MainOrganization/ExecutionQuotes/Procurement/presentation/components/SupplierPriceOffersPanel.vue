@@ -69,16 +69,18 @@
     :dir="$i18n.locale === 'ar' ? 'rtl' : 'ltr'"
   >
     <section aria-labelledby="supplier-comparison-heading">
-      <header class="procurement-header">
+      <header class="procurement-header procurement-section-header">
         <div>
           <h2 id="supplier-comparison-heading">
-            {{ $t('procurement.prices_for_request', { id: purchaseRequestId }) }}
+            <i class="pi pi-tags" aria-hidden="true" />
+            <span>{{ $t('procurement.prices_for_request', { id: purchaseRequestId }) }}</span>
           </h2>
           <p>{{ $t('procurement.prices_help') }}</p>
         </div>
         <div class="procurement-actions">
           <AppButton
             type="button"
+            theme="secondary"
             :disabled="
               controller.readOnly.value ||
               !controller.loaded.value ||
@@ -99,7 +101,9 @@
             type="button"
             :disabled="!canOpenStore || !offers.length"
             @click="emit('storeOrder', purchaseRequestId)"
-            >{{ $t('procurement.orders.store') }}</AppButton
+            ><i class="pi pi-file-edit" aria-hidden="true" />{{
+              $t('procurement.orders.store')
+            }}</AppButton
           >
         </div>
       </header>
@@ -137,21 +141,12 @@
         {{ $t('procurement.offers.saved') }}
       </p>
       <template v-if="controller.loaded.value || controller.savedOffers.value.length">
-        <!-- <div v-if="controller.savedOffers.value.length" class="field-group input-wrapper">
-          <span class="field-help-label-row field-help-label-row--block"
-            ><label class="field-label label" for="supplier-comparison-filter">{{
-              $t('procurement.offers.filter_supplier')
-            }}</label>
-            <FieldHelpIcon
-              :label="$t('procurement.offers.filter_supplier')"
-              field-name="filter_supplier"
-              field-id="supplier-comparison-filter"
-              :help-text="$t('field_help.execution_fields.filter_supplier')"
-            />
-          </span>
-          <input id="supplier-comparison-filter" v-model="filter" class="input" type="search" />
-        </div> -->
-        <div class="procurement-table-scroll">
+        <div
+          class="procurement-table-scroll"
+          tabindex="0"
+          role="region"
+          :aria-label="$t('procurement.offers.saved_offers')"
+        >
           <table class="procurement-table">
             <caption class="procurement-sr-only">
               {{
@@ -175,7 +170,9 @@
               </tr>
               <tr v-for="offer in offers" :key="offer.id">
                 <th scope="row">{{ offer.supplier?.name ?? $t('procurement.unavailable') }}</th>
-                <td>{{ offer.price ?? $t('procurement.unavailable') }}</td>
+                <td class="procurement-price">
+                  {{ offer.price ?? $t('procurement.unavailable') }}
+                </td>
                 <td>
                   {{ offer.duration ?? $t('procurement.unavailable') }}
                   {{

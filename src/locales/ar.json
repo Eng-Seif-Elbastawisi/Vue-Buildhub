@@ -3466,5 +3466,11 @@
   "validation.fields.note": "ملاحظات",
   "procurement.orders.retry_check": "إعادة التحقق من أمر الشراء",
   "procurement.orders.issue_from_prices": "لحفظ أمر شراء، افتح أسعار الموردين واختر عرضاً محفوظاً واحداً.",
-  "procurement.orders.store": "حفظ أمر شراء"
+  "procurement.orders.store": "حفظ أمر شراء",
+  "procurement.all_requests": "كل الطلبات",
+  "procurement.filter_status": "تصفية الطلبات حسب الحالة",
+  "procurement.search_requests": "ابحث عن طلب أو موظف…",
+  "procurement.request_results": "{count} من {total} طلبات",
+  "procurement.no_matching_requests": "لا توجد طلبات تطابق عوامل التصفية",
+  "procurement.clear_filters": "مسح عوامل التصفية"
 }
