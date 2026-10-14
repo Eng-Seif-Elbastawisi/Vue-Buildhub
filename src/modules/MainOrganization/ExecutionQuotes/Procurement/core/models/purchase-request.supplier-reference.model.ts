@@ -6,20 +6,11 @@ export default class PurchaseRequestSupplierReferenceModel {
     this.id = id;
     this.name = name;
   }
-  static fromJson(payload: unknown) {
-    if (!payload || typeof payload !== 'object' || Array.isArray(payload))
-      throw new Error('procurement.offers.invalid_response');
-    const record = payload as Record<string, unknown>;
-    if (
-      typeof record.id !== 'number' ||
-      !Number.isSafeInteger(record.id) ||
-      record.id <= 0 ||
-      (record.title != null && typeof record.title !== 'string')
-    )
-      throw new Error('procurement.offers.invalid_response');
+  static fromJson(payload: Record<string, number | string | null | undefined>): PurchaseRequestSupplierReferenceModel {
+
     return new PurchaseRequestSupplierReferenceModel(
-      record.id,
-      (record.title as string | null | undefined) ?? null,
+      payload.id as number,
+      (payload.title as string | null | undefined) ?? null,
     );
   }
 }

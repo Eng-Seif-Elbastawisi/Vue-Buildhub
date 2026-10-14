@@ -33,7 +33,11 @@
   const state = computed(() => controller.listState.value);
   const saving = computed(() => controller.isSyncing.value);
   const locked = computed(
-    () => saving.value || controller.confirmationVisible.value || controller.refreshRequired.value,
+    () =>
+      controller.readOnly.value ||
+      saving.value ||
+      controller.confirmationVisible.value ||
+      controller.refreshRequired.value,
   );
   const storeError = computed(() => controller.itemState.value.error);
   function requestClose(): Promise<boolean> {

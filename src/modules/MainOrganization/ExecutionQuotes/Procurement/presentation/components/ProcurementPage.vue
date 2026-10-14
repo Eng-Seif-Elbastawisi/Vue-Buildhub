@@ -16,12 +16,21 @@
   import PurchaseRequestFormDialog from './PurchaseRequestFormDialog.vue';
   import PurchaseRequestDetails from './PurchaseRequestDetails.vue';
   import SupplierPriceOffersPanel from './SupplierPriceOffersPanel.vue';
+  import PurchaseOrderForm from './PurchaseOrderForm.vue';
+  import PurchaseOrderController from '../controllers/purchase.order.controller';
   import '../styles/procurement.scss';
   const route = useRoute();
   const controller = PurchaseRequestController.getInstance();
   const quoteId = computed(() => Number(route.params.id));
   const state = computed(() => controller.listState.value);
   const formVisible = ref(false);
+  const orderRequestId = ref<number | null>(null);
+  const orders = PurchaseOrderController.getInstance();
+  async function openOrder(id: number) {
+    if (orders.isIssuing.value || !(await canNavigate())) return;
+    offersRequestId.value = null;
+    orderRequestId.value = id;
+  }
   const offersRequestId = ref<number | null>(null);
   const offersPanel = ref<InstanceType<typeof SupplierPriceOffersPanel> | null>(null);
   async function openOffers(id: number) {
@@ -31,6 +40,7 @@
     offersRequestId.value = id;
   }
   async function canNavigate() {
+    if (orders.isIssuing.value) return false;
     return offersPanel.value ? offersPanel.value.requestClose() : true;
   }
   onBeforeRouteLeave(canNavigate);
@@ -40,6 +50,8 @@
     quoteId,
     (id) => {
       formVisible.value = false;
+      orderRequestId.value = null;
+      orders.release();
       offersRequestId.value = null;
       expandedRequestId.value = null;
       controller.activate(id);
@@ -47,7 +59,10 @@
     },
     { immediate: true },
   );
-  onBeforeUnmount(() => controller.release());
+  onBeforeUnmount(() => {
+    controller.release();
+    orders.release();
+  });
 </script>
 <template>
   <section class="procurement">
@@ -71,6 +86,10 @@
         <li>
           <strong>{{ $t('procurement.add_prices_step') }}</strong
           ><span>{{ $t('procurement.add_prices_help') }}</span>
+        </li>
+        <li>
+          <strong>{{ $t('procurement.orders.issue') }}</strong
+          ><span>{{ $t('procurement.orders.workflow_help') }}</span>
         </li>
       </ol>
       <section class="procurement-panel" aria-labelledby="procurement-requirements">
@@ -181,6 +200,21 @@
                           @click="openOffers(request.id)"
                           >{{ $t('procurement.view_prices') }}</AppButton
                         >
+                        <AppButton
+                          v-if="request.status !== 2"
+                          type="button"
+                          theme="secondary"
+                          size="sm"
+                          :disabled="orders.isIssuing.value"
+                          @click="openOrder(request.id)"
+                          >{{
+                            $t(
+                              request.status === 3
+                                ? 'procurement.orders.view'
+                                : 'procurement.orders.review',
+                            )
+                          }}</AppButton
+                        >
                       </div>
                     </td>
                   </tr>
@@ -221,6 +255,13 @@
         ref="offersPanel"
         :quote-id="quoteId"
         :purchase-request-id="offersRequestId"
+      />
+      <PurchaseOrderForm
+        v-if="orderRequestId != null"
+        :key="`${quoteId}:${orderRequestId}`"
+        :quote-id="quoteId"
+        :purchase-request-id="orderRequestId"
+        @close="orderRequestId = null"
       />
       <PurchaseRequestFormDialog v-if="formVisible" v-model:visible="formVisible" />
     </template>

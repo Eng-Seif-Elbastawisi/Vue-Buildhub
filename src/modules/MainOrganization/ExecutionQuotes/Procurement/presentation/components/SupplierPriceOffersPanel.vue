@@ -1,5 +1,4 @@
 <script setup lang="ts">
-  import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
   import { computed, ref, onBeforeUnmount } from 'vue';
   import Skeleton from 'primevue/skeleton';
   import AppButton from '@/shared/HelpersComponents/AppButton.vue';
@@ -48,7 +47,12 @@
         </div>
         <AppButton
           type="button"
-          :disabled="!controller.loaded.value || saving || controller.refreshRequired.value"
+          :disabled="
+            controller.readOnly.value ||
+            !controller.loaded.value ||
+            saving ||
+            controller.refreshRequired.value
+          "
           @click="editorVisible = true"
           >{{
             $t(
@@ -59,6 +63,9 @@
           }}</AppButton
         >
       </header>
+      <p v-if="controller.readOnly.value" role="status">
+        {{ $t('procurement.orders.offers_locked') }}
+      </p>
       <Skeleton v-if="state instanceof DataLoading" height="5rem" />
       <div v-else-if="state.hasError && !controller.loaded.value" role="alert">
         <p>{{ $t(state.error?.title ?? 'procurement.offers.fetch_failed') }}</p>

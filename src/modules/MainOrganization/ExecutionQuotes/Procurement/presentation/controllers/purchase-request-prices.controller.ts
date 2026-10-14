@@ -41,7 +41,7 @@ export default class PurchaseRequestPricesController extends BaseController<
   private rowKey = 0;
   private baseline = shallowRef('');
   private confirmationSignature: string | null = null;
-  private quoteId: number | null = null;
+  private readonly quoteId = shallowRef<number | null>(null);
   readonly purchaseRequestId = shallowRef<number | null>(null);
   readonly savedOffers = shallowRef<PurchaseRequestPriceModel[]>([]);
   readonly draft = shallowRef<SupplierOfferDraft[]>([]);
@@ -56,9 +56,25 @@ export default class PurchaseRequestPricesController extends BaseController<
     const ids = new Set(this.draft.value.map((row) => Number(row.supplier?.id)));
     return this.savedOffers.value.filter((offer) => offer.supplier && !ids.has(offer.supplier.id));
   });
+  readonly readOnly = computed(() => {
+    const requests = PurchaseRequestController.getInstance();
+    return (
+      requests.quoteId.value !== this.quoteId.value ||
+      !requests.listState.value.data?.some(
+        (request) =>
+          request.id === this.purchaseRequestId.value &&
+          request.quoteId === this.quoteId.value &&
+          request.status === 1,
+      )
+    );
+  });
   readonly canSave = computed(
     () =>
-      this.loaded.value && !this.isSyncing.value && !this.refreshRequired.value && this.dirty.value,
+      !this.readOnly.value &&
+      this.loaded.value &&
+      !this.isSyncing.value &&
+      !this.refreshRequired.value &&
+      this.dirty.value,
   );
   private constructor() {
     super();
@@ -78,10 +94,10 @@ export default class PurchaseRequestPricesController extends BaseController<
   private ownsRequest() {
     const requests = PurchaseRequestController.getInstance();
     return (
-      requests.quoteId.value === this.quoteId &&
+      requests.quoteId.value === this.quoteId.value &&
       requests.listState.value.data?.some(
         (request) =>
-          request.id === this.purchaseRequestId.value && request.quoteId === this.quoteId,
+          request.id === this.purchaseRequestId.value && request.quoteId === this.quoteId.value,
       ) === true
     );
   }
@@ -91,7 +107,7 @@ export default class PurchaseRequestPricesController extends BaseController<
   }
   activate(quoteId: number, purchaseRequestId: number) {
     this.release();
-    this.quoteId = quoteId;
+    this.quoteId.value = quoteId;
     this.purchaseRequestId.value = purchaseRequestId;
     if (!this.ownsRequest()) {
       this.release();
@@ -102,7 +118,7 @@ export default class PurchaseRequestPricesController extends BaseController<
   release() {
     this.epoch++;
     this.sequence++;
-    this.quoteId = null;
+    this.quoteId.value = null;
     this.purchaseRequestId.value = null;
     this.draft.value = [];
     this.savedOffers.value = [];
@@ -159,6 +175,7 @@ export default class PurchaseRequestPricesController extends BaseController<
   }
   addSupplier() {
     if (
+      this.readOnly.value ||
       !this.loaded.value ||
       this.isSyncing.value ||
       this.confirmationVisible.value ||
@@ -171,7 +188,12 @@ export default class PurchaseRequestPricesController extends BaseController<
     ];
   }
   updateRow(key: number, fields: Partial<SupplierOfferDraft>) {
-    if (this.isSyncing.value || this.confirmationVisible.value || this.refreshRequired.value)
+    if (
+      this.readOnly.value ||
+      this.isSyncing.value ||
+      this.confirmationVisible.value ||
+      this.refreshRequired.value
+    )
       return;
     if (
       fields.supplier &&
@@ -190,7 +212,12 @@ export default class PurchaseRequestPricesController extends BaseController<
     );
   }
   removeSupplier(key: number) {
-    if (this.isSyncing.value || this.confirmationVisible.value || this.refreshRequired.value)
+    if (
+      this.readOnly.value ||
+      this.isSyncing.value ||
+      this.confirmationVisible.value ||
+      this.refreshRequired.value
+    )
       return;
     this.draft.value = this.draft.value.filter((row) => row.key !== key);
     this.errors.value = [];
