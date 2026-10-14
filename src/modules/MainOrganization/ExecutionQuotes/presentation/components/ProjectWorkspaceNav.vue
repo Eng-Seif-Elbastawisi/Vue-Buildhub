@@ -4,7 +4,11 @@
   import { quotePath, schedulePath } from '../../Schedule/presentation/schedule.routes';
   import { siteTeamPath } from '../../SiteTeam/presentation/site-team.routes';
   import { workItemsPath } from '../../WorkItems/presentation/work-items.routes';
-  const props = defineProps<{ quoteId: number; active: 'schedule' | 'site-team' | 'work-items' }>();
+  import { procurementPath } from '../../Procurement/presentation/procurement.routes';
+  const props = defineProps<{
+    quoteId: number;
+    active: 'schedule' | 'site-team' | 'work-items' | 'procurement';
+  }>();
   const route = useRoute();
   const validQuote = computed(() => Number.isInteger(props.quoteId) && props.quoteId > 0);
 </script>
@@ -30,6 +34,12 @@
       :to="workItemsPath(route.path, quoteId)"
       :aria-current="active === 'work-items' ? 'page' : undefined"
       ><i class="pi pi-list-check" aria-hidden="true"></i>{{ $t('work_items.title') }}</RouterLink
+    >
+    <RouterLink
+      :to="procurementPath(route.path, quoteId)"
+      :aria-current="active === 'procurement' ? 'page' : undefined"
+      ><i class="pi pi-shopping-cart" aria-hidden="true"></i
+      >{{ $t('procurement.title') }}</RouterLink
     >
   </nav>
 </template>

@@ -5,6 +5,7 @@ import { translate } from '@/locales/i18n';
 
 export default class AddMaterialsParams implements Params {
   public price?: number;
+  public quantity?: number;
   public brandId?: number;
   public measurementId?: number;
   public translations?: { title: Record<string, string> };
@@ -24,6 +25,7 @@ export default class AddMaterialsParams implements Params {
   });
   constructor(data: {
     price?: number;
+    quantity?: number;
     brandId?: number;
     measurementId?: number;
     translations?: { title: Record<string, string> };
@@ -33,6 +35,7 @@ export default class AddMaterialsParams implements Params {
     status?: boolean;
   }) {
     this.price = data.price;
+    this.quantity = data.quantity;
     this.brandId = data.brandId;
     this.measurementId = data.measurementId;
     this.translations = data.translations;
@@ -44,6 +47,7 @@ export default class AddMaterialsParams implements Params {
   toMap(): Record<string, unknown> {
     return {
       price: this.price,
+      quantity: this.quantity,
       brand_id: this.brandId,
       measurement_unit_id: this.measurementId,
       translations: this.translations,

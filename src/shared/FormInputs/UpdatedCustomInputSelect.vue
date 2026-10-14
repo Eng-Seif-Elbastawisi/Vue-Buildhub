@@ -84,6 +84,7 @@
     ];
 
     'update:slot': [];
+    search: [word: string];
   }>();
 
   const { t } = useI18n();
@@ -524,7 +525,7 @@
         </span>
       </div>
 
-      <div class="flex items-center gap-2">
+      <div class="label-container">
         <div
           v-if="onclick"
           class="add-dialog"
@@ -539,19 +540,17 @@
         <span class="field-help-label-row">
           <label
             :class="{
-              required,
               'input-label__text--disabled': disabled,
             }"
             :for="id"
             class="input-label"
           >
-            <span v-if="required" class="text-red-500"> * </span>
-
             {{ $t(label ?? '') }}
           </label>
         </span>
 
         <slot name="LabelHeader" />
+        <span v-if="required" class="required-indicator text-red-500" aria-hidden="true">*</span>
       </div>
     </slot>
 
@@ -564,6 +563,7 @@
       v-model="normalizedValue"
       :input-id="id"
       :aria-label="label ? t(label) : placeholder"
+      :aria-required="required"
       :options="mergedOptions"
       :placeholder="placeholder"
       :disabled="disabled"
@@ -576,6 +576,7 @@
       filter
       :loading="loading"
       :empty-message="message"
+      @filter="emit('search', $event.value)"
       @selectall-change="toggleSelectAll"
     >
       <template v-if="isMultiselect && showSelectAll" #header>
@@ -653,8 +654,8 @@
 </template>
 
 <style scoped lang="scss">
-  .required span {
-    color: red;
+  .required-indicator {
+    color: var(--danger-dark);
   }
 
   .reload-icon {
@@ -692,16 +693,6 @@
   .input-label__text--disabled {
     cursor: not-allowed;
     color: var(--gray-4);
-  }
-
-  .input-select {
-    width: 100%;
-    border-radius: 50px;
-    background-color: transparent;
-
-    &:focus {
-      border: 1px solid #d9dbe9 !important;
-    }
   }
 
   .input-select--disabled {
@@ -792,5 +783,11 @@
   :deep(.p-select.p-disabled .p-select-dropdown),
   :deep(.p-multiselect.p-disabled .p-multiselect-dropdown) {
     pointer-events: none;
+  }
+
+  .label-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
   }
 </style>

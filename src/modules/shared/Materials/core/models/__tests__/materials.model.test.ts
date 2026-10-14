@@ -32,6 +32,7 @@ describe('MaterialsModel', () => {
         },
       ],
       price: '125',
+      quantity: '10',
       unit: UnitTypeEnum.bag,
       translations: [
         { locale: 'en', title: 'Cement' },
@@ -61,6 +62,7 @@ describe('MaterialsModel', () => {
         title: 'Excavation',
       },
       price: 125,
+      quantity: 10,
       unit: UnitTypeEnum.bag,
       translations: { title: { en: 'Cement', ar: 'Cement AR' } },
       status: true,

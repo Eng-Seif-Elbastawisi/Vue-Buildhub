@@ -298,8 +298,8 @@ v-model="status" input-id="measurement-status" :disabled="loading"
   }
 
   &:focus {
-    border-color: var(--primary-color, #b28f57);
-    box-shadow: 0 0 0 3px rgba(178, 143, 87, 0.1);
+    border-color: var(--PrimaryColor);
+    box-shadow: 0 0 0 3px var(--PrimaryColor-alpha-10);
   }
 
   &:disabled {

@@ -2,7 +2,11 @@
   import { ref, onMounted, computed, watch } from 'vue';
 
   import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
-  import { attachmentExtension, attachmentGallery, attachmentKind } from '@/shared/AttachmentGallery/attachmentGallery';
+  import {
+    attachmentExtension,
+    attachmentGallery,
+    attachmentKind,
+  } from '@/shared/AttachmentGallery/attachmentGallery';
 
   export interface UploadedFile {
     id: string;
@@ -71,9 +75,13 @@
 
   const emit = defineEmits<{
     change: [files: UploadedFile[]];
+    processing: [active: boolean];
+    error: [];
   }>();
 
   const files = ref<UploadedFile[]>([]);
+  const processing = ref(false);
+  const conversionFailed = ref(false);
 
   // ─── MIME type map for preloaded files (by extension) ──────────────────────
   const EXT_MIME_MAP: Record<string, string> = {
@@ -185,29 +193,39 @@
 
   const handleFileUpload = async (event: Event) => {
     const input = event.target as HTMLInputElement;
-    if (!input.files?.length) return;
+    if (processing.value || !input.files?.length) return;
+    processing.value = true;
+    conversionFailed.value = false;
+    emit('processing', true);
+    try {
+      const remaining = props.maxFiles - files.value.length;
+      const incoming = Array.from(input.files).slice(0, remaining);
 
-    const remaining = props.maxFiles - files.value.length;
-    const incoming = Array.from(input.files).slice(0, remaining);
+      const newFiles: UploadedFile[] = await Promise.all(
+        incoming.map(async (file) => {
+          const base64 = await fileToBase64(file);
+          return {
+            id: Math.random().toString(36).substring(2),
+            name: file.name,
+            type: file.type || resolveMime(file.name), // fallback for OS edge cases
+            size: formatFileSize(file.size),
+            url: URL.createObjectURL(file),
+            base64,
+            file,
+          };
+        }),
+      );
 
-    const newFiles: UploadedFile[] = await Promise.all(
-      incoming.map(async (file) => {
-        const base64 = await fileToBase64(file);
-        return {
-          id: Math.random().toString(36).substring(2),
-          name: file.name,
-          type: file.type || resolveMime(file.name), // fallback for OS edge cases
-          size: formatFileSize(file.size),
-          url: URL.createObjectURL(file),
-          base64,
-          file,
-        };
-      }),
-    );
-
-    files.value = [...files.value, ...newFiles];
-    emit('change', files.value);
-    input.value = '';
+      files.value = [...files.value, ...newFiles];
+      emit('change', files.value);
+    } catch {
+      conversionFailed.value = true;
+      emit('error');
+    } finally {
+      input.value = '';
+      processing.value = false;
+      emit('processing', false);
+    }
   };
 
   // ─── Helpers ──────────────────────────────────────────────────────────────
@@ -281,7 +299,7 @@
         :id="inputId"
         type="file"
         :accept="accept"
-        :disabled="isMaxReached"
+        :disabled="isMaxReached || processing"
         :multiple="multiple"
         :required="required"
         :aria-required="required || undefined"
@@ -295,7 +313,7 @@
         :id="inputId"
         type="file"
         :accept="accept"
-        :disabled="isMaxReached"
+        :disabled="isMaxReached || processing"
         :multiple="multiple"
         :required="required"
         :aria-required="required || undefined"
@@ -304,6 +322,8 @@
       />
     </label>
 
+    <p v-if="processing" role="status">{{ $t('attachment_processing') }}</p>
+    <p v-if="conversionFailed" role="alert">{{ $t('attachment_conversion_failed') }}</p>
     <div v-if="files.length && !hidepreview" class="preview-grid">
       <div
         v-for="(fileItem, fileIndex) in files"

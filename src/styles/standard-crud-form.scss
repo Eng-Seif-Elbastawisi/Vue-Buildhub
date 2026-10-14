@@ -7,9 +7,9 @@ body:has(.standard-crud-page) {
   --standard-form-muted: #666b6c;
   --standard-form-line: #e4ded7;
   --standard-form-field-line: #cbc5bd;
-  --standard-form-copper: #a45e39;
-  --standard-form-copper-dark: #854725;
-  --standard-form-copper-soft: #f4e8df;
+  --standard-form-copper: var(--PrimaryColor);
+  --standard-form-copper-dark: color-mix(in srgb, var(--PrimaryColor) 80%, var(--Black));
+  --standard-form-copper-soft: var(--PrimaryColor-alpha-12);
   --standard-form-danger: #9b4238;
   --standard-form-danger-soft: #fbefec;
   --standard-form-disabled: #f1eeea;
@@ -761,10 +761,10 @@ body .main-content .standard-crud-page .form-fields > .all_inputs {
   height: 56px !important;
   min-height: 56px !important;
   padding: 0 24px;
-  border: 1px solid var(--standard-form-copper-dark);
+  border: 1px solid var(--PrimaryColor);
   border-radius: 10px;
-  background: var(--standard-form-copper-dark);
-  color: var(--standard-form-paper);
+  background: var(--PrimaryColor);
+  color: var(--button-primary-color);
   font-size: 1rem;
   font-weight: 700;
   transition:
@@ -776,9 +776,9 @@ body .main-content .standard-crud-page .form-fields > .all_inputs {
 
 .standard-crud-page :is(.actions, .form-actions, .form-footer) .btn-primary:hover:not(:disabled),
 .standard-crud-page > .btn-primary:hover:not(:disabled) {
-  border-color: var(--standard-form-copper);
-  background: var(--standard-form-copper);
-  color: var(--standard-form-paper);
+  border-color: var(--SecondaryColor);
+  background: var(--SecondaryColor);
+  color: var(--secondary-text-color);
   box-shadow: 0 5px 14px var(--standard-form-copper-soft);
 }
 
@@ -802,17 +802,17 @@ body .main-content .standard-crud-page .form-fields > .all_inputs {
 .standard-crud-page
   :is(.actions, .form-actions, .form-footer)
   :is(.btn-secondary, .back-button, .btn-cancel) {
-  border-color: var(--standard-form-line);
+  border-color: var(--SecondaryColor);
   background: var(--standard-form-paper);
-  color: var(--standard-form-ink);
+  color: var(--SecondaryColor);
 }
 
 .standard-crud-page
   :is(.actions, .form-actions, .form-footer)
   :is(.btn-secondary, .back-button, .btn-cancel):hover:not(:disabled) {
-  border-color: var(--standard-form-field-line);
-  background: var(--standard-form-footer);
-  color: var(--standard-form-ink);
+  border-color: var(--SecondaryColor);
+  background: var(--SecondaryColor);
+  color: var(--secondary-text-color);
   box-shadow: none;
 }
 

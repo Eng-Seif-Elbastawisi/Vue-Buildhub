@@ -34,13 +34,13 @@ const MultiSelectStub = {
     'selectionLimit',
     'showToggleAll',
   ],
-  emits: ['update:modelValue'],
+  emits: ['update:modelValue', 'filter'],
 };
 const SelectStub = {
   name: 'Select',
   template: '<div class="select-stub"><slot name="footer" /></div>',
   props: ['modelValue', 'options', 'placeholder', 'loading', 'emptyMessage'],
-  emits: ['update:modelValue'],
+  emits: ['update:modelValue', 'filter'],
 };
 const IconBackStageStub = {
   name: 'IconBackStage',
@@ -57,8 +57,9 @@ vi.mock('@/base/Presentation/Utils/validationService', () => ({
 
 const makeTitleInterface = (id: number, title: string) => ({ id, title });
 
-const createWrapper = (props: Record<string, unknown> = {}) =>
+const createWrapper = (props: Record<string, unknown> = {}, slots: Record<string, string> = {}) =>
   mount(UpdatedCustomInputSelect, {
+    slots,
     props: {
       modelValue: null,
       placeholder: 'Select...',
@@ -178,9 +179,17 @@ describe('UpdatedCustomInputSelect', () => {
     expect(wrapper.text()).toContain('My Label');
   });
 
-  it('shows required asterisk when required is true', () => {
-    const wrapper = createWrapper({ required: true, label: 'Name' });
-    expect(wrapper.find('.text-red-500').exists()).toBe(true);
+  it('places the required asterisk after field help and marks the control as required', () => {
+    const wrapper = createWrapper(
+      { required: true, label: 'Name' },
+      { LabelHeader: '<button type="button" aria-label="Show field help">Help</button>' },
+    );
+    const help = wrapper.get('button[aria-label="Show field help"]');
+    const marker = wrapper.get('.text-red-500');
+    expect(help.element.nextElementSibling).toBe(marker.element);
+    expect(wrapper.get('label').text()).toBe('Name');
+    expect(wrapper.get('.select-stub').attributes('aria-required')).toBe('true');
+    wrapper.unmount();
   });
 
   it('does not show required asterisk when required is false', () => {
@@ -317,5 +326,19 @@ it('pages single Space options while retaining a saved selection outside the cur
   expect(post.mock.calls[1]?.[0].data.page).toBe(2);
   expect(wrapper.findComponent(SelectStub).props('modelValue')).toEqual(saved);
   expect(wrapper.emitted('update:modelValue')).toBeUndefined();
+  wrapper.unmount();
+});
+
+it('forwards dropdown search without changing the selected supplier', async () => {
+  const selected = new TitleInterface({ id: 3, title: 'ABC Supplier' });
+  const wrapper = createWrapper({ modelValue: selected, staticOptions: [selected] });
+  await flushPromises();
+  wrapper.findComponent({ name: 'Select' }).vm.$emit('filter', { value: 'ABC' });
+  expect(wrapper.emitted('search')).toEqual([['ABC']]);
+  expect(wrapper.emitted('update:modelValue')).toBeUndefined();
+  expect(wrapper.findComponent({ name: 'Select' }).props('modelValue')).toMatchObject({
+    id: 3,
+    title: 'ABC Supplier',
+  });
   wrapper.unmount();
 });

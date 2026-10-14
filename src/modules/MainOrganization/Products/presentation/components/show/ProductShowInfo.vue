@@ -82,6 +82,11 @@
           </dd>
         </div>
 
+        <div v-if="product.quantity != null" class="data-row">
+          <dt>{{ $t('Products.form.quantity') }}</dt>
+          <dd>{{ formatPrice(product.quantity) }}</dd>
+        </div>
+
         <div class="data-row">
           <dt>{{ $t('Products.form.status') }}</dt>
           <dd>

@@ -75,6 +75,7 @@ describe('MaterialsForm', () => {
 
     await wrapper.find('.translation-input').trigger('click');
     await wrapper.find<HTMLInputElement>('#material-price').setValue('125');
+    await wrapper.find<HTMLInputElement>('#material-quantity').setValue('10');
     await wrapper.find('.material-brand').trigger('click');
     await wrapper.find('.material-measurement').trigger('click');
 
@@ -83,6 +84,7 @@ describe('MaterialsForm', () => {
     expect(params).toBeInstanceOf(AddMaterialsParams);
     expect(params.toMap()).toMatchObject({
       price: 125,
+      quantity: 10,
       brand_id: 7,
       measurement_unit_id: 2,
       translations: { title: { en: 'Cement', ar: 'Cement AR' } },
@@ -98,6 +100,7 @@ describe('MaterialsForm', () => {
         material: new MaterialsShowModel({
           id: 9,
           price: 100,
+          quantity: 8,
           brand: new BrandModel({
             id: 2,
             title: 'Brand',
@@ -127,8 +130,10 @@ describe('MaterialsForm', () => {
 
     const params = wrapper.emitted('updateData')?.at(-1)?.[0] as EditMaterialParams;
     expect(params).toBeInstanceOf(EditMaterialParams);
+    expect(wrapper.get<HTMLInputElement>('#material-quantity').element.value).toBe('8');
     expect(params.toMap()).toMatchObject({
       material_id: 9,
+      quantity: 8,
       brand_id: 2,
       measurement_unit_id: 3,
       item_type_id: 4,
@@ -136,6 +141,10 @@ describe('MaterialsForm', () => {
       sub_stage_ids: [6],
       status: false,
     });
+
+    await wrapper.get('#material-quantity').setValue('');
+    const clearedParams = wrapper.emitted('updateData')?.at(-1)?.[0] as EditMaterialParams;
+    expect(clearedParams.toMap().quantity).toBeUndefined();
   });
 
   it('filters sub-stages by the selected stage and clears the previous sub-stage', async () => {

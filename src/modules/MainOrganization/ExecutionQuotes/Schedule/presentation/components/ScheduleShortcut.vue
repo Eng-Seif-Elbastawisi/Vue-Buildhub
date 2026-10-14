@@ -57,6 +57,12 @@
   </section>
 </template>
 <style scoped lang="scss">
+  .schedule-shortcuts {
+    display: grid;
+    gap: 1.25rem;
+    min-width: 0;
+  }
+
   .schedule-shortcuts h2 {
     margin-block: 0 1rem;
     color: var(--title-card-color);

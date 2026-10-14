@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
 import HandleFilesUpload from '../HandleFilesUpload.vue';
 import { attachmentGallery } from '@/shared/AttachmentGallery/attachmentGallery';
@@ -127,4 +127,47 @@ describe('HandleFilesUpload', () => {
     expect(wrapper.findAll('.preview-item')).toHaveLength(1);
     expect(wrapper.find('.preview-filename').text()).toBe('dynamic.jpg');
   });
+});
+
+it('emits processing state and the complete Base64 payload using its existing reader', async () => {
+  const wrapper = createWrapper({ maxFiles: 1 });
+  const input = wrapper.get('input[type="file"]');
+  Object.defineProperty(input.element, 'files', {
+    value: [new File(['a'], 'order.txt', { type: 'text/plain' })],
+  });
+  const original = URL.createObjectURL;
+  URL.createObjectURL = () => 'blob:order';
+  try {
+    await input.trigger('change');
+    expect(wrapper.emitted('processing')?.[0]).toEqual([true]);
+    await vi.waitFor(() => expect(wrapper.emitted('change')).toBeTruthy());
+    expect(wrapper.emitted('processing')?.at(-1)).toEqual([false]);
+    expect(wrapper.emitted('change')?.[0]?.[0]).toMatchObject([
+      { name: 'order.txt', type: 'text/plain', base64: 'data:text/plain;base64,YQ==' },
+    ]);
+  } finally {
+    URL.createObjectURL = original;
+    wrapper.unmount();
+  }
+});
+
+it('reports conversion failure without clearing existing attachments', async () => {
+  const reader = vi.spyOn(FileReader.prototype, 'readAsDataURL').mockImplementation(function () {
+    this.dispatchEvent(new Event('error'));
+  });
+  const wrapper = createWrapper({ file: 'https://example.com/existing.txt' });
+  const input = wrapper.get('input[type="file"]');
+  Object.defineProperty(input.element, 'files', {
+    value: [new File(['a'], 'new.txt', { type: 'text/plain' })],
+  });
+  try {
+    await input.trigger('change');
+    await vi.waitFor(() => expect(wrapper.emitted('error')).toBeTruthy());
+    expect(wrapper.emitted('processing')?.at(-1)).toEqual([false]);
+    expect(wrapper.get('.preview-grid').text()).toContain('existing.txt');
+    expect(wrapper.emitted('change')).toBeUndefined();
+  } finally {
+    reader.mockRestore();
+    wrapper.unmount();
+  }
 });

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
   import { computed, onMounted, ref } from 'vue';
   import {
     DataLoading,
@@ -52,8 +53,16 @@
 </script>
 <template>
   <div class="schedule__panels">
-    <section class="schedule__panel" :aria-label="$t('schedule.available')">
-      <h3>{{ $t('schedule.available') }}</h3>
+    <section class="field-group schedule__panel" :aria-label="$t('schedule.available')">
+      <span class="field-help-label-row"
+        ><h3>{{ $t('schedule.available') }}</h3>
+        <FieldHelpIcon
+          :label="$t('schedule.available')"
+          field-name="stage"
+          field-id="schedule-stages"
+          :help-text="$t('field_help.execution_fields.schedule_stages')"
+        />
+      </span>
       <p v-if="rootState instanceof DataLoading" role="status">{{ $t('schedule.loading') }}</p>
       <template v-else-if="rootState instanceof DataSuccess">
         <p v-if="!rootState.data?.length">{{ $t('schedule.no_stages') }}</p>
@@ -145,7 +154,6 @@
             controller.childLabels.value.get(childId)?.title ||
             $t('schedule.substage_id', { id: childId })
           }}</span>
-
           <AppButton
             :disabled="disabled"
             theme="secondary"

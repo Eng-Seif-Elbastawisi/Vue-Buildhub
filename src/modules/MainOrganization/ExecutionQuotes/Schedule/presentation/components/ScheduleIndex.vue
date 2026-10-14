@@ -48,23 +48,41 @@
 <template>
   <SchedulePage mode="index" @ready="load" @reset="reset">
     <template #default="{ quoteId, indexRoute, reload }">
+      <header class="schedule__page-title">
+        <span class="schedule__heading-icon"
+          ><i class="pi pi-calendar" aria-hidden="true"></i
+        ></span>
+        <h1>{{ $t('schedule.title') }}</h1>
+      </header>
       <div class="schedule__actions schedule__tools">
-        <AppButton :to="`${indexRoute}/add`" :disabled="controller.busy.value">{{
-          $t('schedule.create')
-        }}</AppButton>
-        <AppButton theme="secondary" :disabled="!settings" @click="showConfiguration = true">{{
-          $t('schedule.configuration')
-        }}</AppButton>
+        <AppButton :to="`${indexRoute}/add`" :disabled="controller.busy.value" icon="left">
+          <template #icon><i class="pi pi-plus" aria-hidden="true"></i></template>
+          {{ $t('schedule.create') }}
+        </AppButton>
         <AppButton
           theme="secondary"
+          :disabled="!settings"
+          icon="left"
+          @click="showConfiguration = true"
+        >
+          <template #icon><i class="pi pi-sliders-h" aria-hidden="true"></i></template>
+          {{ $t('schedule.configuration') }}
+        </AppButton>
+        <AppButton
+          theme="secondary"
+          icon="left"
           :disabled="controller.busy.value || controller.settingsState.value instanceof DataLoading"
           @click="showSettings = true"
-          >{{ $t('schedule.settings') }}</AppButton
         >
+          <template #icon><i class="pi pi-cog" aria-hidden="true"></i></template>
+          {{ $t('schedule.settings') }}
+        </AppButton>
       </div>
       <dl class="schedule__summary">
         <div>
-          <dt>{{ $t('schedule.planned_start') }}</dt>
+          <dt>
+            <i class="pi pi-calendar" aria-hidden="true"></i>{{ $t('schedule.planned_start') }}
+          </dt>
           <dd>
             {{
               settings?.startDate ??
@@ -74,11 +92,11 @@
           </dd>
         </div>
         <div>
-          <dt>{{ $t('schedule.finish') }}</dt>
+          <dt><i class="pi pi-flag" aria-hidden="true"></i>{{ $t('schedule.finish') }}</dt>
           <dd>{{ controller.calculatedFinish.value ?? $t('schedule.not_available') }}</dd>
         </div>
         <div>
-          <dt>{{ $t('schedule.group_count') }}</dt>
+          <dt><i class="pi pi-sitemap" aria-hidden="true"></i>{{ $t('schedule.group_count') }}</dt>
           <dd>
             {{
               controller.overviewState.value.data?.count ??

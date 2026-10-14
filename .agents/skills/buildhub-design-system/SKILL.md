@@ -1,6 +1,6 @@
 ---
 name: buildhub-design-system
-description: Apply BuildHub's default select, input, button, form-card and header design when building or changing forms, filters, feature screens or API-connected UI. Use employee as the module reference and prefer inherited base CRUD methods.
+description: Apply BuildHub's default field-group, FieldHelpIcon, select, input, button, form-card and header design when building or changing forms, filters, feature screens or API-connected UI. Use employee as the module reference and prefer inherited base CRUD methods.
 ---
 
 # BuildHub defaults
@@ -22,6 +22,30 @@ Read the component and `src/modules/MainOrganization/employee/presentation/compo
 - Convert selected option IDs to the endpoint's params at the form boundary. Do not send option objects, labels or a nested master-record ID in place of the required association ID. Preserve empty, omitted and null values according to the contract.
 
 If the wrapper cannot represent a required control or accessible interaction, inspect its extension points and make the smallest compatible improvement. Explain any necessary exception rather than adding a parallel design system.
+
+## Field groups and help
+
+Wrap each editable field in `field-group`, including fields in dialogs and filters. For ordinary inputs and textareas, also use `input-wrapper`. Put the translated label and `src/shared/components/form/FieldHelpIcon.vue` beside each other in a span:
+
+```vue
+<div class="field-group input-wrapper">
+  <span class="field-help-label-row field-help-label-row--block">
+    <label class="field-label label" for="supplier-phone">{{ $t('supplier.phone') }}</label>
+    <FieldHelpIcon
+      :label="$t('supplier.phone')"
+      field-name="phone"
+      field-id="supplier-phone"
+    />
+  </span>
+  <input id="supplier-phone" v-model="phone" class="input" type="tel" />
+</div>
+```
+
+Import the help component explicitly. Keep its button beside the label, outside the label element. Match `field-id` to the control ID and use a stable semantic `field-name`. Include a row key in repeated control IDs.
+
+For `UpdatedCustomInputSelect`, retain its own label and insert the help span through `#LabelHeader` inside the select. Keep the select inside `field-group`; preserve its required marker and accessible name. For radio and checkbox groups, put help beside the group legend or heading rather than inside option labels.
+
+Check `src/shared/formHelp/fieldHelpRegistry.ts` for a suitable registered field name. Unregistered fields render no icon without explicit content: provide translated `:help-text` for those fields and for specialized guidance, with keys in both EN/AR locales. Execution Quotes examples use `field_help.execution_fields.*`. Verify help opens without submitting the form or changing the selected value, and retain existing errors, help descriptions and disabled states.
 
 ## Inputs and buttons
 

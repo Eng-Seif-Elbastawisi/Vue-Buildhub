@@ -12,9 +12,16 @@
     :visible="true"
     modal
     class="schedule-configuration-dialog"
-    :header="$t('schedule.configuration')"
     @update:visible="emit('close')"
   >
+    <template #header>
+      <div class="schedule__dialog-heading">
+        <span class="schedule__heading-icon"
+          ><i class="pi pi-sliders-h" aria-hidden="true"></i
+        ></span>
+        <h2>{{ $t('schedule.configuration') }}</h2>
+      </div>
+    </template>
     <dl class="schedule__summary">
       <div>
         <dt>{{ $t('schedule.planned_start') }}</dt>
@@ -37,9 +44,3 @@
     </template>
   </Dialog>
 </template>
-
-<style scoped lang="scss">
-  .schedule-configuration-dialog {
-    width: min(32rem, calc(100vw - 2rem));
-  }
-</style>

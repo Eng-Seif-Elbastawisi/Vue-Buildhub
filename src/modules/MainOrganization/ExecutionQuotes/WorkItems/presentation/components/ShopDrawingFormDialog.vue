@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
   import { computed, ref, watch, onBeforeUnmount } from 'vue';
   import Dialog from 'primevue/dialog';
   import AppButton from '@/shared/HelpersComponents/AppButton.vue';
@@ -124,9 +125,19 @@
     @update:visible="emit('update:visible', $event)"
   >
     <form class="work-items-form" @submit.prevent="save">
-      <div class="input-wrapper">
-        <label class="label" for="drawing-title">{{ $t('work_items.drawing_title') }} *</label
-        ><input
+      <div class="field-group input-wrapper">
+        <span class="field-help-label-row field-help-label-row--block"
+          ><label class="field-label label" for="drawing-title"
+            >{{ $t('work_items.drawing_title') }} *</label
+          >
+          <FieldHelpIcon
+            :label="$t('work_items.drawing_title')"
+            field-name="drawing_title"
+            field-id="drawing-title"
+            :help-text="$t('field_help.execution_fields.drawing_title')"
+          />
+        </span>
+        <input
           id="drawing-title"
           v-model="title"
           class="input"
@@ -137,9 +148,19 @@
           aria-describedby="drawing-title-error"
         /><small id="drawing-title-error" role="alert">{{ fieldError('title') }}</small>
       </div>
-      <div class="input-wrapper">
-        <label class="label" for="drawing-date">{{ $t('work_items.drawing_date') }}</label
-        ><input
+      <div class="field-group input-wrapper">
+        <span class="field-help-label-row field-help-label-row--block"
+          ><label class="field-label label" for="drawing-date">{{
+            $t('work_items.drawing_date')
+          }}</label>
+          <FieldHelpIcon
+            :label="$t('work_items.drawing_date')"
+            field-name="drawing_date"
+            field-id="drawing-date"
+            :help-text="$t('field_help.execution_fields.drawing_date')"
+          />
+        </span>
+        <input
           id="drawing-date"
           v-model="date"
           class="input"
@@ -149,9 +170,19 @@
           aria-describedby="drawing-date-error"
         /><small id="drawing-date-error" role="alert">{{ fieldError('date') }}</small>
       </div>
-      <div class="input-wrapper">
-        <label class="label" for="drawing-version">{{ $t('work_items.version_number') }} *</label
-        ><input
+      <div class="field-group input-wrapper">
+        <span class="field-help-label-row field-help-label-row--block"
+          ><label class="field-label label" for="drawing-version"
+            >{{ $t('work_items.version_number') }} *</label
+          >
+          <FieldHelpIcon
+            :label="$t('work_items.version_number')"
+            field-name="version_number"
+            field-id="drawing-version"
+            :help-text="$t('field_help.execution_fields.version_number')"
+          />
+        </span>
+        <input
           id="drawing-version"
           v-model="version"
           class="input"
@@ -170,9 +201,19 @@
         :disabled="busy"
         :error="fieldError('projectTimelineStageIds')"
       />
-      <div class="input-wrapper">
-        <label class="label" for="drawing-file">{{ $t('work_items.drawing_file') }}</label
-        ><input
+      <div class="field-group input-wrapper">
+        <span class="field-help-label-row field-help-label-row--block"
+          ><label class="field-label label" for="drawing-file">{{
+            $t('work_items.drawing_file')
+          }}</label>
+          <FieldHelpIcon
+            :label="$t('work_items.drawing_file')"
+            field-name="drawing_file"
+            field-id="drawing-file"
+            :help-text="$t('field_help.execution_fields.drawing_file')"
+          />
+        </span>
+        <input
           id="drawing-file"
           class="input"
           type="file"
@@ -187,8 +228,8 @@
           {{ $t('work_items.file_processing_error') }}
         </p>
         <div v-if="filename" class="work-items-file-selection">
-          <i :class="fileIcon" aria-hidden="true" /><span>{{ filename }}</span
-          ><AppButton type="button" theme="secondary" :disabled="busy" @click="clearFile">{{
+          <i :class="fileIcon" aria-hidden="true" /><span>{{ filename }}</span>
+          <AppButton type="button" theme="secondary" :disabled="busy" @click="clearFile">{{
             $t('work_items.remove_file')
           }}</AppButton>
         </div>

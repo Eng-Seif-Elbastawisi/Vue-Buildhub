@@ -2,7 +2,7 @@ import { mount } from '@vue/test-utils';
 import { expect, it } from 'vitest';
 import ScheduleGroupCard from '../ScheduleGroupCard.vue';
 import { groupFixture } from '../../controllers/__tests__/fixtures';
-it('shows one group duration, unavailable dates and sorting boundaries', () => {
+it('keeps all group actions available while its stage details are collapsed', async () => {
   const wrapper = mount(ScheduleGroupCard, {
     props: {
       group: groupFixture(),
@@ -19,6 +19,11 @@ it('shows one group duration, unavailable dates and sorting boundaries', () => {
   });
   expect(wrapper.text()).toContain('6 task_assignment.duration_types.day');
   expect(wrapper.text()).toContain('schedule.not_available');
+  expect(wrapper.get('tbody th').text()).toBe('Stage');
+  await wrapper.get('summary').trigger('click');
+  expect(wrapper.get('details').element.open).toBe(false);
+  expect(wrapper.findAll('.schedule__actions a')).toHaveLength(2);
+  expect(wrapper.findAll('.schedule__actions button')).toHaveLength(3);
   for (const action of ['schedule.earlier', 'schedule.later'])
     expect(
       wrapper

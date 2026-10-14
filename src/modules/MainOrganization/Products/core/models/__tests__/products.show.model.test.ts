@@ -2,6 +2,10 @@ import { describe, expect, it } from 'vitest';
 import ProductsShowModel from '../products.show.model';
 
 describe('ProductsShowModel', () => {
+  it('maps a returned quantity for edit and show', () => {
+    expect(ProductsShowModel.fromJson({ quantity: '10' }).quantity).toBe(10);
+  });
+
   it.each([
     [1, true],
     ['1', true],

@@ -6,6 +6,7 @@ describe('AddMaterialsParams', () => {
     const translations = { title: { en: 'Cement', ar: 'Cement AR' } };
     const params = new AddMaterialsParams({
       price: 12,
+      quantity: 10,
       brandId: 3,
       measurementId: 2,
       translations,
@@ -16,6 +17,7 @@ describe('AddMaterialsParams', () => {
     });
     expect(params.toMap()).toEqual({
       price: 12,
+      quantity: 10,
       brand_id: 3,
       measurement_unit_id: 2,
       translations,

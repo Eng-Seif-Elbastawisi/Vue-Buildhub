@@ -88,6 +88,7 @@ describe('ProductsForm', () => {
     await flushPromises();
 
     await wrapper.get('#product-status').trigger('click');
+    await wrapper.get('#product-quantity').setValue('10');
     await flushPromises();
 
     expect(wrapper.find('.image-card').exists()).toBe(true);
@@ -95,7 +96,7 @@ describe('ProductsForm', () => {
 
     const params = wrapper.emitted('updateData')?.at(-1)?.[0] as AddProductsParams;
     expect(params).toBeInstanceOf(AddProductsParams);
-    expect(params.toMap()).toMatchObject({ is_active: false });
+    expect(params.toMap()).toMatchObject({ is_active: false, quantity: 10 });
   });
 
   it('uses a separate grades toggle to hide image and sorting fields', async () => {
@@ -140,6 +141,20 @@ describe('ProductsForm', () => {
       sortings: [expect.objectContaining({ price: 50 })],
       is_active: false,
     });
+  });
+
+  it('prefills returned quantity and sends it in edit params', async () => {
+    route.params = { products_id: '9' };
+    const wrapper = mountForm(new ProductsShowModel({ id: 9, quantity: 8 }));
+    await flushPromises();
+
+    expect(wrapper.get<HTMLInputElement>('#product-quantity').element.value).toBe('8');
+    const params = wrapper.emitted('updateData')?.at(-1)?.[0] as EditProductsParams;
+    expect(params.toMap()).toMatchObject({ product_id: 9, quantity: 8 });
+
+    await wrapper.get('#product-quantity').setValue('');
+    const clearedParams = wrapper.emitted('updateData')?.at(-1)?.[0] as EditProductsParams;
+    expect(clearedParams.toMap()).not.toHaveProperty('quantity');
   });
 
   it('selects and deselects every sub-stage from the main stage header', async () => {

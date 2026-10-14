@@ -13,9 +13,9 @@ body:has(.dashboard-shell) {
   --quote-line: #e7e1da;
   --quote-paper: #fffdfa;
   --quote-canvas: #f5f3f0;
-  --quote-copper: #a45e39;
-  --quote-copper-dark: #854725;
-  --quote-copper-soft: #f4e8df;
+  --quote-copper: var(--PrimaryColor);
+  --quote-copper-dark: color-mix(in srgb, var(--PrimaryColor) 80%, var(--Black));
+  --quote-copper-soft: var(--PrimaryColor-alpha-12);
   --quote-graphite: #242728;
   --quote-graphite-deep: #1c1f20;
   --quote-graphite-line: #383c3d;
@@ -38,11 +38,11 @@ body:has(.dashboard-shell) {
   --quote-graphite-active-icon: #714d3b;
   --quote-graphite-danger: #f0b5a9;
   --quote-warm-white: #faf8f5;
-  --quote-copper-border-hover: #cbab94;
-  --quote-copper-pressed: #713a1c;
+  --quote-copper-border-hover: var(--PrimaryColor-alpha-50);
+  --quote-copper-pressed: var(--SecondaryColor);
   --quote-button-line: #d8cec4;
-  --quote-copper-border: #c9aa94;
-  --quote-copper-hover: #faf4ee;
+  --quote-copper-border: var(--PrimaryColor-alpha-40);
+  --quote-copper-hover: var(--PrimaryColor-alpha-4);
   --quote-field-line: #d9d2ca;
   --quote-neutral-soft: #e9eceb;
   --quote-neutral-ink: #405150;
@@ -59,6 +59,27 @@ body:has(.dashboard-shell) {
   --quote-drawer-muted: #b9bebd;
   --quote-focus-dark: #e0a778;
   --quote-overlay: rgb(19 21 22 / 56%);
+}
+
+body:has(.dashboard-shell) .btn.btn-primary:not(.btn--outline, .btn--ghost) {
+  color: var(--button-primary-color);
+}
+
+body:has(.dashboard-shell) .btn.btn-primary:not(.btn--outline, .btn--ghost):hover:not(:disabled) {
+  border-color: var(--SecondaryColor);
+  color: var(--secondary-text-color);
+  background-color: var(--SecondaryColor);
+}
+
+body:has(.dashboard-shell) .btn.btn-secondary {
+  border-color: var(--SecondaryColor);
+  color: var(--SecondaryColor);
+}
+
+body:has(.dashboard-shell) .btn.btn-secondary:hover:not(:disabled) {
+  border-color: var(--SecondaryColor);
+  color: var(--secondary-text-color);
+  background-color: var(--SecondaryColor);
 }
 
 .dashboard-shell {

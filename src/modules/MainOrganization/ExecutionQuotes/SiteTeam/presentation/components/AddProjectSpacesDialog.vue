@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
   import { computed, ref, watch } from 'vue';
   import { useI18n } from 'vue-i18n';
   import Dialog from 'primevue/dialog';
@@ -101,16 +102,28 @@
   >
     <form class="site-team-form" @submit.prevent="save">
       <h3>{{ $t('site_team.select_floor') }}</h3>
-      <UpdatedCustomInputSelect
-        id="site-floor"
-        v-model="floor"
-        label="site_team.project_floor"
-        :placeholder="$t('site_team.select_floor')"
-        :static-options="floorOptions"
-        :disabled="busy"
-      />
+      <div class="field-group">
+        <UpdatedCustomInputSelect
+          id="site-floor"
+          v-model="floor"
+          label="site_team.project_floor"
+          :placeholder="$t('site_team.select_floor')"
+          :static-options="floorOptions"
+          :disabled="busy"
+        >
+          <template #LabelHeader>
+            <span class="field-help-label-row">
+              <FieldHelpIcon
+                :label="$t('site_team.project_floor')"
+                field-name="project_floor"
+                field-id="site-floor"
+                :help-text="$t('field_help.execution_fields.project_floor')"
+              />
+            </span> </template
+        ></UpdatedCustomInputSelect>
+      </div>
       <p v-if="submitted && !floor" role="alert">{{ $t('site_team.floor_required') }}</p>
-     
+
       <fieldset
         v-for="(row, index) in rows"
         :key="row.key"
@@ -118,15 +131,27 @@
         :disabled="busy"
       >
         <legend>{{ $t('site_team.space_row', { number: index + 1 }) }}</legend>
-        <UpdatedCustomInputSelect
-          :id="`space-${row.key}`"
-          v-model="row.space"
-          label="site_team.space_type"
-          :placeholder="$t('site_team.select_space')"
-          :controller="controller.spaceOptions"
-          :params="params"
-          :disabled="busy"
-        />
+        <div class="field-group">
+          <UpdatedCustomInputSelect
+            :id="`space-${row.key}`"
+            v-model="row.space"
+            label="site_team.space_type"
+            :placeholder="$t('site_team.select_space')"
+            :controller="controller.spaceOptions"
+            :params="params"
+            :disabled="busy"
+          >
+            <template #LabelHeader>
+              <span class="field-help-label-row">
+                <FieldHelpIcon
+                  :label="$t('site_team.space_type')"
+                  field-name="space_type"
+                  :field-id="`space-${row.key}`"
+                  :help-text="$t('field_help.execution_fields.space_type')"
+                />
+              </span> </template
+          ></UpdatedCustomInputSelect>
+        </div>
         <small v-if="invalidField(row, 'spaceId')" role="alert">{{
           $t('site_team.space_required')
         }}</small>
@@ -134,11 +159,19 @@
           <div
             v-for="dimension in ['length', 'width', 'height'] as const"
             :key="dimension"
-            class="input-wrapper"
+            class="field-group input-wrapper"
           >
-            <label :for="`${dimension}-${row.key}`" class="label">{{
-              $t(`site_team.${dimension}`)
-            }}</label>
+            <span class="field-help-label-row field-help-label-row--block"
+              ><label :for="`${dimension}-${row.key}`" class="field-label label">{{
+                $t(`site_team.${dimension}`)
+              }}</label>
+              <FieldHelpIcon
+                :label="$t(`site_team.${dimension}`)"
+                field-name="dimension"
+                :field-id="`${dimension}-${row.key}`"
+                :help-text="$t('field_help.execution_fields.dimension')"
+              />
+            </span>
             <input
               :id="`${dimension}-${row.key}`"
               v-model="row[dimension]"
@@ -156,8 +189,18 @@
             >
           </div>
         </div>
-        <div class="input-wrapper">
-          <label :for="`notes-${row.key}`" class="label">{{ $t('site_team.notes') }}</label>
+        <div class="field-group input-wrapper">
+          <span class="field-help-label-row field-help-label-row--block"
+            ><label :for="`notes-${row.key}`" class="field-label label">{{
+              $t('site_team.notes')
+            }}</label>
+            <FieldHelpIcon
+              :label="$t('site_team.notes')"
+              field-name="notes"
+              :field-id="`notes-${row.key}`"
+              :help-text="$t('field_help.execution_fields.notes')"
+            />
+          </span>
           <textarea :id="`notes-${row.key}`" v-model="row.notes" rows="2" class="input"></textarea>
         </div>
         <AppButton

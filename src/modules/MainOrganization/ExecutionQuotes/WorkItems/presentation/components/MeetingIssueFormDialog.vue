@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
   import { computed, ref, watch } from 'vue';
   import { useI18n } from 'vue-i18n';
   import Dialog from 'primevue/dialog';
@@ -93,18 +94,41 @@
         :disabled="busy"
         :error="fieldError('projectTimelineStageId')"
       />
-      <UpdatedCustomInputSelect
-        id="activity-type"
-        v-model="type"
-        label="work_items.type"
-        :placeholder="$t('work_items.type')"
-        :static-options="typeOptions"
-        :disabled="busy"
-        required
-      /><small v-if="fieldError('type')" role="alert">{{ fieldError('type') }}</small>
-      <div class="input-wrapper">
-        <label for="activity-title" class="label">{{ $t('work_items.record_title') }}</label
-        ><input
+      <div class="field-group">
+        <UpdatedCustomInputSelect
+          id="activity-type"
+          v-model="type"
+          label="work_items.type"
+          :placeholder="$t('work_items.type')"
+          :static-options="typeOptions"
+          :disabled="busy"
+          required
+        >
+          <template #LabelHeader>
+            <span class="field-help-label-row">
+              <FieldHelpIcon
+                :label="$t('work_items.type')"
+                field-name="type"
+                field-id="activity-type"
+                :help-text="$t('field_help.execution_fields.type')"
+              />
+            </span> </template
+        ></UpdatedCustomInputSelect>
+      </div>
+      <small v-if="fieldError('type')" role="alert">{{ fieldError('type') }}</small>
+      <div class="field-group input-wrapper">
+        <span class="field-help-label-row field-help-label-row--block"
+          ><label for="activity-title" class="field-label label">{{
+            $t('work_items.record_title')
+          }}</label>
+          <FieldHelpIcon
+            :label="$t('work_items.record_title')"
+            field-name="record_title"
+            field-id="activity-title"
+            :help-text="$t('field_help.execution_fields.record_title')"
+          />
+        </span>
+        <input
           id="activity-title"
           v-model="title"
           class="input"
@@ -115,9 +139,19 @@
           aria-describedby="activity-title-error"
         /><small id="activity-title-error" role="alert">{{ fieldError('title') }}</small>
       </div>
-      <div v-if="isMeeting" class="input-wrapper">
-        <label for="activity-date" class="label">{{ $t('work_items.meeting_date') }}</label
-        ><input
+      <div v-if="isMeeting" class="field-group input-wrapper">
+        <span class="field-help-label-row field-help-label-row--block"
+          ><label for="activity-date" class="field-label label">{{
+            $t('work_items.meeting_date')
+          }}</label>
+          <FieldHelpIcon
+            :label="$t('work_items.meeting_date')"
+            field-name="meeting_date"
+            field-id="activity-date"
+            :help-text="$t('field_help.execution_fields.meeting_date')"
+          />
+        </span>
+        <input
           id="activity-date"
           v-model="date"
           class="input"
@@ -128,11 +162,19 @@
           aria-describedby="activity-date-error"
         /><small id="activity-date-error" role="alert">{{ fieldError('date') }}</small>
       </div>
-      <div v-else class="input-wrapper">
-        <label for="activity-description" class="label">{{
-          $t('work_items.record_description')
-        }}</label
-        ><textarea
+      <div v-else class="field-group input-wrapper">
+        <span class="field-help-label-row field-help-label-row--block"
+          ><label for="activity-description" class="field-label label">{{
+            $t('work_items.record_description')
+          }}</label>
+          <FieldHelpIcon
+            :label="$t('work_items.record_description')"
+            field-name="record_description"
+            field-id="activity-description"
+            :help-text="$t('field_help.execution_fields.record_description')"
+          />
+        </span>
+        <textarea
           id="activity-description"
           v-model="description"
           class="input"
@@ -141,17 +183,30 @@
         ></textarea>
       </div>
       <div v-if="!isMeeting">
-        <UpdatedCustomInputSelect
-          id="activity-employee"
-          v-model="employee"
-          label="work_items.assigned_employee"
-          :placeholder="$t('work_items.select_employee')"
-          :controller="controller.employeeOptions"
-          :params="employeeParams"
-          paginated
-          optional
-          :disabled="busy"
-        /><small v-if="fieldError('employeeId')" role="alert">{{ fieldError('employeeId') }}</small>
+        <div class="field-group">
+          <UpdatedCustomInputSelect
+            id="activity-employee"
+            v-model="employee"
+            label="work_items.assigned_employee"
+            :placeholder="$t('work_items.select_employee')"
+            :controller="controller.employeeOptions"
+            :params="employeeParams"
+            paginated
+            optional
+            :disabled="busy"
+          >
+            <template #LabelHeader>
+              <span class="field-help-label-row">
+                <FieldHelpIcon
+                  :label="$t('work_items.assigned_employee')"
+                  field-name="assigned_employee"
+                  field-id="activity-employee"
+                  :help-text="$t('field_help.execution_fields.assigned_employee')"
+                />
+              </span> </template
+          ></UpdatedCustomInputSelect>
+        </div>
+        <small v-if="fieldError('employeeId')" role="alert">{{ fieldError('employeeId') }}</small>
       </div>
       <p v-if="failure" class="work-items-error" role="alert">{{ $t(failure) }}</p>
       <div class="work-items-actions">

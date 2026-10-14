@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
   import { computed, ref, watch } from 'vue';
   import { useI18n } from 'vue-i18n';
   import Dialog from 'primevue/dialog';
@@ -84,9 +85,19 @@
         :disabled="busy"
         :error="fieldError('projectTimelineStageId')"
       />
-      <div class="input-wrapper">
-        <label for="report-date" class="label">{{ $t('work_items.report_date') }}</label
-        ><input
+      <div class="field-group input-wrapper">
+        <span class="field-help-label-row field-help-label-row--block"
+          ><label for="report-date" class="field-label label">{{
+            $t('work_items.report_date')
+          }}</label>
+          <FieldHelpIcon
+            :label="$t('work_items.report_date')"
+            field-name="report_date"
+            field-id="report-date"
+            :help-text="$t('field_help.execution_fields.report_date')"
+          />
+        </span>
+        <input
           id="report-date"
           v-model="date"
           class="input"
@@ -97,9 +108,17 @@
           aria-describedby="report-date-error"
         /><small id="report-date-error" role="alert">{{ fieldError('date') }}</small>
       </div>
-      <div class="input-wrapper">
-        <label for="report-notes" class="label">{{ $t('work_items.notes') }}</label
-        ><textarea
+      <div class="field-group input-wrapper">
+        <span class="field-help-label-row field-help-label-row--block"
+          ><label for="report-notes" class="field-label label">{{ $t('work_items.notes') }}</label>
+          <FieldHelpIcon
+            :label="$t('work_items.notes')"
+            field-name="notes"
+            field-id="report-notes"
+            :help-text="$t('field_help.execution_fields.notes')"
+          />
+        </span>
+        <textarea
           id="report-notes"
           v-model="notes"
           class="input"
@@ -107,15 +126,28 @@
           :disabled="busy"
         ></textarea>
       </div>
-      <UpdatedCustomInputSelect
-        id="report-safety"
-        v-model="safety"
-        label="work_items.safety"
-        :placeholder="$t('work_items.safety')"
-        :static-options="safetyOptions"
-        :disabled="busy"
-        required
-      /><small v-if="fieldError('siteSafetyStatus')" role="alert">{{
+      <div class="field-group">
+        <UpdatedCustomInputSelect
+          id="report-safety"
+          v-model="safety"
+          label="work_items.safety"
+          :placeholder="$t('work_items.safety')"
+          :static-options="safetyOptions"
+          :disabled="busy"
+          required
+        >
+          <template #LabelHeader>
+            <span class="field-help-label-row">
+              <FieldHelpIcon
+                :label="$t('work_items.safety')"
+                field-name="safety"
+                field-id="report-safety"
+                :help-text="$t('field_help.execution_fields.safety')"
+              />
+            </span> </template
+        ></UpdatedCustomInputSelect>
+      </div>
+      <small v-if="fieldError('siteSafetyStatus')" role="alert">{{
         fieldError('siteSafetyStatus')
       }}</small>
       <p v-if="failure" class="work-items-error" role="alert">{{ $t(failure) }}</p>

@@ -6,12 +6,12 @@ export const timelineResponse = () => ({
   duration_type: 4,
   stages: [
     {
-      id: 3,
+      quote_stage_id: 3,
       stage: { id: 129, title: 'منعم' },
       sub_stage: null,
       children: [
         {
-          id: 4,
+          quote_sub_stage_id: 4,
           stage: { id: 129, title: 'منعم' },
           sub_stage: { id: 149, title: 'sub stage' },
           created_at: '2026-10-07 12:08:40',
