@@ -21,6 +21,7 @@ it.each(['/organization', '/mainportal'])(
       `${prefix}/execution-quotes/show/140/site-team`,
       `${prefix}/execution-quotes/show/140/work-items`,
       `${prefix}/execution-quotes/show/140/procurement`,
+      `${prefix}/execution-quotes/show/140/warehouse/material-receipt`,
     ]);
     expect(wrapper.get('[aria-current="page"]').text()).toBe('site_team.title');
     await wrapper.get('a[href$="/schedule"]').trigger('click');
