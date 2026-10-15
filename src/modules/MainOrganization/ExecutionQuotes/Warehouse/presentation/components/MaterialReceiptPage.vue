@@ -309,7 +309,6 @@
                   <table class="material-receipt__table material-receipt__table--history">
                     <thead>
                       <tr>
-      
                         <th scope="col">{{ $t('material_receipt.receipt_date') }}</th>
                         <th scope="col">{{ $t('material_receipt.receiving_employee') }}</th>
                         <th scope="col">{{ $t('material_receipt.recorded_by') }}</th>
@@ -321,7 +320,6 @@
                     </thead>
                     <tbody>
                       <tr v-for="receipt in history" :key="receipt.id">
-                    
                         <td>{{ receipt.date }}</td>
                         <td>{{ receipt.employee?.name ?? $t('procurement.unavailable') }}</td>
                         <td>{{ receipt.organizationEmployee.name }}</td>
