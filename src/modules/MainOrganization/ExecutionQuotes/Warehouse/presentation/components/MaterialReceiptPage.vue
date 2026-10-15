@@ -38,7 +38,6 @@
   );
   const quantities = ref<Record<number, string>>({});
   const formError = ref('');
-  const activeTab = ref('requests');
   const receiptDialogVisible = ref(false);
   const detailReceiptId = ref<number | null>(null);
   const employeeController = EmployeeController.getInstance();
@@ -95,18 +94,10 @@
     formError.value = '';
     controller.selectRequest(selected.value ? Number(selected.value.id) : null);
   }
-  function openReceipt(requestId?: number) {
+  function openReceipt() {
     if (controller.isStoring.value) return;
     resetEntry();
-    const request = requests.value.find((entry) => entry.id === requestId);
-    selectRequest(
-      request
-        ? new TitleInterface({
-            id: request.id,
-            title: t('material_receipt.request_number', { id: request.id }),
-          })
-        : null,
-    );
+    selectRequest(null);
     receiptDialogVisible.value = true;
   }
   function closeReceipt() {
@@ -160,7 +151,6 @@
     (id) => {
       selected.value = null;
       resetEntry();
-      activeTab.value = 'requests';
       receiptDialogVisible.value = false;
       detailReceiptId.value = null;
       controller.activate(id);
@@ -183,93 +173,18 @@
             <i class="pi pi-arrow-left" aria-hidden="true" />{{ $t('material_receipt.back') }}
           </RouterLink>
         </div>
-        <AppButton
-          type="button"
-          :disabled="controller.isStoring.value || !requests.length"
-          @click="openReceipt()"
-        >
+        <AppButton type="button" :disabled="controller.isStoring.value" @click="openReceipt()">
           <i class="pi pi-plus" aria-hidden="true" />{{ $t('material_receipt.new_receipt') }}
         </AppButton>
       </header>
 
-      <Tabs v-model:value="activeTab" class="material-receipt__tabs">
+      <Tabs value="history" class="material-receipt__tabs">
         <TabList>
           <Tab value="history"
             ><i class="pi pi-history" aria-hidden="true" />{{ $t('material_receipt.history') }}</Tab
           >
         </TabList>
         <TabPanels>
-          <TabPanel value="requests">
-            <section class="material-receipt__panel" aria-labelledby="receipt-requests-heading">
-              <header class="material-receipt__panel-header">
-                <div>
-                  <h2 id="receipt-requests-heading">
-                    {{ $t('material_receipt.purchase_requests_tab') }}
-                  </h2>
-                  <p>{{ $t('material_receipt.requests_hint') }}</p>
-                </div>
-                <span v-if="requests.length" class="material-receipt__count">{{
-                  requests.length
-                }}</span>
-              </header>
-              <div class="material-receipt__panel-body">
-                <Skeleton
-                  v-if="controller.requestsState.value instanceof DataLoading"
-                  height="7rem"
-                />
-                <template v-else-if="controller.requestsState.value.hasError">
-                  <p role="alert">
-                    {{ displayError(controller.requestsState.value.error?.displayMessage) }}
-                  </p>
-                  <AppButton type="button" theme="secondary" @click="controller.loadRequests()">{{
-                    $t('material_receipt.retry')
-                  }}</AppButton>
-                </template>
-                <div v-else-if="!requests.length" class="material-receipt__empty">
-                  <i class="pi pi-inbox" aria-hidden="true" />
-                  <h3>{{ $t('material_receipt.no_requests') }}</h3>
-                  <p>{{ $t('material_receipt.no_requests_hint') }}</p>
-                </div>
-                <div
-                  v-else
-                  class="material-receipt__scroll"
-                  role="region"
-                  tabindex="0"
-                  :aria-label="$t('material_receipt.purchase_requests_tab')"
-                >
-                  <table class="material-receipt__table material-receipt__table--requests">
-                    <thead>
-                      <tr>
-                        <th scope="col">{{ $t('material_receipt.purchase_request') }}</th>
-                        <th scope="col">{{ $t('procurement.item_count') }}</th>
-                        <th scope="col">{{ $t('procurement.created_at') }}</th>
-                        <th scope="col">{{ $t('material_receipt.action') }}</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr v-for="request in requests" :key="request.id">
-                        <th scope="row">
-                          <span class="material-receipt__reference">#{{ request.id }}</span>
-                        </th>
-                        <td>{{ request.items.length }}</td>
-                        <td>{{ request.createdAt ?? $t('procurement.unavailable') }}</td>
-                        <td>
-                          <AppButton
-                            type="button"
-                            theme="secondary"
-                            size="sm"
-                            :disabled="controller.isStoring.value"
-                            @click="openReceipt(request.id)"
-                            >{{ $t('material_receipt.receive_action') }}</AppButton
-                          >
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </section>
-          </TabPanel>
           <TabPanel value="history">
             <section class="material-receipt__panel" aria-labelledby="receipt-history-heading">
               <header class="material-receipt__panel-header">
@@ -374,6 +289,19 @@
       >
         <form class="material-receipt__form" novalidate @submit.prevent="save">
           <p class="material-receipt__form-intro">{{ $t('material_receipt.request_help') }}</p>
+          <Skeleton v-if="controller.requestsState.value instanceof DataLoading" height="4rem" />
+          <template v-else-if="controller.requestsState.value.hasError">
+            <p role="alert">
+              {{ displayError(controller.requestsState.value.error?.displayMessage) }}
+            </p>
+            <AppButton type="button" theme="secondary" @click="controller.loadRequests()">{{
+              $t('material_receipt.retry')
+            }}</AppButton>
+          </template>
+          <div v-else-if="!requests.length" class="material-receipt__empty">
+            <h2>{{ $t('material_receipt.no_requests') }}</h2>
+            <p>{{ $t('material_receipt.no_requests_hint') }}</p>
+          </div>
           <div class="field-group">
             <UpdatedCustomInputSelect
               id="receipt-purchase-request"
@@ -617,14 +545,7 @@
       >
         <div v-if="detailReceipt" class="material-receipt__details">
           <div class="material-receipt__details-meta">
-            <div>
-              <span>{{ $t('material_receipt.receipt_id') }}</span
-              ><strong>#{{ detailReceipt.id }}</strong>
-            </div>
-            <div>
-              <span>{{ $t('material_receipt.purchase_request') }}</span
-              ><strong>#{{ detailReceipt.purchaseRequestId }}</strong>
-            </div>
+         
             <div>
               <span>{{ $t('material_receipt.receipt_date') }}</span
               ><strong>{{ detailReceipt.date }}</strong>
@@ -832,10 +753,6 @@
     font-variant-numeric: tabular-nums;
   }
 
-  .material-receipt__table--requests {
-    min-width: 520px;
-  }
-
   .material-receipt__table--history {
     min-width: 1050px;
   }
@@ -856,10 +773,6 @@
 
   .material-receipt__table tbody tr:last-child > * {
     border-block-end: 0;
-  }
-
-  .material-receipt__reference {
-    font-weight: 700;
   }
 
   .material-receipt__status {

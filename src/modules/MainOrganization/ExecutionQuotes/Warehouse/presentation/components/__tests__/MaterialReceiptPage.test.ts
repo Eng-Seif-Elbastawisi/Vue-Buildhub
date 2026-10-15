@@ -136,7 +136,10 @@ it('selects a Purchase Request first, submits only its positive item quantity, a
     .mockResolvedValue(new DataSuccess<void>({ message: 'Saved' }));
   const wrapper = await mountPage('en');
   expect(wrapper.find('#receive-1').exists()).toBe(false);
-  expect(wrapper.text()).toContain('Purchase Requests');
+  expect(wrapper.findAll('[role="tab"]')).toHaveLength(1);
+  expect(wrapper.get('[role="tab"]').text()).toContain('Receiving History');
+  expect(wrapper.get('[role="tab"]').attributes('aria-selected')).toBe('true');
+  expect(wrapper.text()).toContain('Recorder');
   await wrapper
     .findAll('button')
     .find((button) => button.text().includes('New Receipt'))
@@ -163,10 +166,6 @@ it('selects a Purchase Request first, submits only its positive item quantity, a
   await wrapper
     .findAll('button')
     .find((button) => button.text() === 'Close')
-    ?.trigger('click');
-  await wrapper
-    .findAll('[role="tab"]')
-    .find((tab) => tab.text().includes('Receiving History'))
     ?.trigger('click');
   expect(wrapper.text()).toContain('Recorder');
   expect(wrapper.text()).toContain('Partially Received');
@@ -203,15 +202,17 @@ it('renders Arabic RTL and keeps completed rows disabled', async () => {
   expect(wrapper.text()).toContain('تم استلام جميع أصناف هذا الطلب بالكامل');
   wrapper.unmount();
 });
-it('opens a request from its row and keeps quote-wide history in a separate tab', async () => {
+it('opens the receipt dialog from history and keeps history visible afterward', async () => {
   mockData();
   const summary = vi.mocked(MaterialReceiptRepository.getInstance().index);
   const wrapper = await mountPage('en');
   expect(summary).not.toHaveBeenCalled();
   await wrapper
     .findAll('button')
-    .find((button) => button.text() === 'Receive Materials')
+    .find((button) => button.text().includes('New Receipt'))
     ?.trigger('click');
+  expect(summary).not.toHaveBeenCalled();
+  await wrapper.get('#receipt-purchase-request').trigger('click');
   await flushPromises();
   expect(MaterialReceiptController.getInstance().purchaseRequestId.value).toBe(1);
   expect(summary.mock.calls[0]?.[0]?.toMap()).toEqual({ purchase_request_id: 1 });
@@ -220,11 +221,25 @@ it('opens a request from its row and keeps quote-wide history in a separate tab'
     .findAll('button')
     .find((button) => button.text() === 'Close')
     ?.trigger('click');
-  await wrapper
-    .findAll('[role="tab"]')
-    .find((tab) => tab.text().includes('Receiving History'))
-    ?.trigger('click');
   expect(MaterialReceiptController.getInstance().purchaseRequestId.value).toBeNull();
   expect(wrapper.text()).toContain('Recorder');
+  wrapper.unmount();
+});
+it('keeps history available when there are no purchase requests to receive', async () => {
+  vi.spyOn(PurchaseRequestRepository.getInstance(), 'index').mockResolvedValue(
+    new DataSuccess({ data: [] }),
+  );
+  vi.spyOn(MaterialReceiptHistoryRepository.getInstance(), 'show').mockResolvedValue(
+    new DataSuccess({ data: [] }),
+  );
+  const wrapper = await mountPage('en');
+  expect(wrapper.get('[role="tab"]').attributes('aria-selected')).toBe('true');
+  expect(wrapper.text()).toContain('No Receipts');
+  await wrapper
+    .findAll('button')
+    .find((button) => button.text().includes('New Receipt'))
+    ?.trigger('click');
+  expect(wrapper.text()).toContain('No purchase requests yet');
+  expect(wrapper.find('#receive-1').exists()).toBe(false);
   wrapper.unmount();
 });
