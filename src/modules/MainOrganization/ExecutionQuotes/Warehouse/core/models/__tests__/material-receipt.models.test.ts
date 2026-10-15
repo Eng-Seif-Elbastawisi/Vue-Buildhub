@@ -19,7 +19,7 @@ const receipt = (id: number, status: 1 | 2) => ({
   organization_employee: { id: 1, name: 'Recorder', type: 1 },
   status,
   date: '2026-10-15',
-  items: [{ id, purchase_request_item_id: 1, quantity: '1.00' }],
+  items: [{ id, purchase_request_item: requestRecord().items[0], quantity: '1.00' }],
   created_at: '2026-10-15 08:06:17',
 });
 describe('receiving response models', () => {
@@ -40,10 +40,10 @@ describe('receiving response models', () => {
     const first = PurchaseRequestReceiptModel.fromJson(receipt(3, 1));
     const later = PurchaseRequestReceiptModel.fromJson(receipt(5, 2));
     expect(first.items[0]?.id).toBe(3);
-    expect(first.items[0]?.purchaseRequestItemId).toBe(1);
+    expect(first.items[0]?.purchaseRequestItem.id).toBe(1);
     expect(first.employee?.name).toBe('Receiver');
     expect(first.organizationEmployee.name).toBe('Recorder');
     expect([first.status, later.status]).toEqual([1, 2]);
-    expect([first, later].map((record) => record.items[0]?.purchaseRequestItemId)).toEqual([1, 1]);
+    expect([first, later].map((record) => record.items[0]?.purchaseRequestItem.id)).toEqual([1, 1]);
   });
 });

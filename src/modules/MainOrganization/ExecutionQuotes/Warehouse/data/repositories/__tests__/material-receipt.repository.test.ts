@@ -50,13 +50,13 @@ it('maps a direct flat history array without merging repeated purchase request i
           ...base,
           id: 3,
           status: 2,
-          items: [{ id: 5, purchase_request_item_id: 1, quantity: '1.00' }],
+          items: [{ id: 5, purchase_request_item: requestRecord().items[0], quantity: '1.00' }],
         },
         {
           ...base,
           id: 2,
           status: 1,
-          items: [{ id: 4, purchase_request_item_id: 1, quantity: '2.00' }],
+          items: [{ id: 4, purchase_request_item: requestRecord().items[0], quantity: '2.00' }],
         },
       ],
     }),
@@ -67,7 +67,7 @@ it('maps a direct flat history array without merging repeated purchase request i
   expect(result).toBeInstanceOf(DataSuccess);
   expect(result.data?.map((entry) => entry.status)).toEqual([2, 1]);
   expect(result.data?.map((entry) => entry.items[0]?.id)).toEqual([5, 4]);
-  expect(result.data?.map((entry) => entry.items[0]?.purchaseRequestItemId)).toEqual([1, 1]);
+  expect(result.data?.map((entry) => entry.items[0]?.purchaseRequestItem.id)).toEqual([1, 1]);
 });
 it('treats empty direct arrays as successful empty lists', async () => {
   post.mockResolvedValue(response({ status: true, data: [] }));

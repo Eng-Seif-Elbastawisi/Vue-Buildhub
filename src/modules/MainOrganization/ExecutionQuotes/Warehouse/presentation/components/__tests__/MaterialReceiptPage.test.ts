@@ -4,7 +4,11 @@ import { createMemoryHistory, createRouter } from 'vue-router';
 import { defineComponent, h } from 'vue';
 import PrimeVue from 'primevue/config';
 import TitleInterface from '@/base/Data/Models/titleInterface';
-import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
+import {
+  DataFailed,
+  DataSuccess,
+} from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
+import { ErrorModel, ErrorType } from '@/base/Core/NetworkStructure/Resources/errors/errorModel';
 import en from '@/locales/en.json';
 import ar from '@/locales/ar.json';
 import PurchaseRequestModel from '../../../../Procurement/core/models/purchase-request.model';
@@ -90,7 +94,7 @@ function mockData() {
           organization_employee: { id: 1, name: 'Recorder', type: 1 },
           status: 1,
           date: '2026-10-15',
-          items: [{ id: 5, purchase_request_item_id: 1, quantity: '1.00' }],
+          items: [{ id: 5, purchase_request_item: requestRecord().items[0], quantity: '1.00' }],
           created_at: '2026-10-15 08:06:17',
         }),
       ],
@@ -136,9 +140,8 @@ it('selects a Purchase Request first, submits only its positive item quantity, a
     .mockResolvedValue(new DataSuccess<void>({ message: 'Saved' }));
   const wrapper = await mountPage('en');
   expect(wrapper.find('#receive-1').exists()).toBe(false);
-  expect(wrapper.findAll('[role="tab"]')).toHaveLength(1);
-  expect(wrapper.get('[role="tab"]').text()).toContain('Receiving History');
-  expect(wrapper.get('[role="tab"]').attributes('aria-selected')).toBe('true');
+  expect(wrapper.findAll('[role="tab"]')).toHaveLength(0);
+  expect(wrapper.get('#receipt-history-heading').text()).toBe('Receiving History');
   expect(wrapper.text()).toContain('Recorder');
   await wrapper
     .findAll('button')
@@ -233,7 +236,7 @@ it('keeps history available when there are no purchase requests to receive', asy
     new DataSuccess({ data: [] }),
   );
   const wrapper = await mountPage('en');
-  expect(wrapper.get('[role="tab"]').attributes('aria-selected')).toBe('true');
+  expect(wrapper.findAll('[role="tab"]')).toHaveLength(0);
   expect(wrapper.text()).toContain('No Receipts');
   await wrapper
     .findAll('button')
@@ -241,5 +244,28 @@ it('keeps history available when there are no purchase requests to receive', asy
     ?.trigger('click');
   expect(wrapper.text()).toContain('No purchase requests yet');
   expect(wrapper.find('#receive-1').exists()).toBe(false);
+  wrapper.unmount();
+});
+
+it('keeps receipt quantities and date editable after a save failure', async () => {
+  mockData();
+  vi.spyOn(MaterialReceiptRepository.getInstance(), 'create').mockResolvedValue(
+    new DataFailed({ error: new ErrorModel('Save failed', ErrorType.validation) }),
+  );
+  const wrapper = await mountPage('en');
+  await wrapper
+    .findAll('button')
+    .find((button) => button.text().includes('New Receipt'))
+    ?.trigger('click');
+  await wrapper.get('#receipt-purchase-request').trigger('click');
+  await flushPromises();
+  await wrapper.get('#receive-1').setValue('2');
+  await wrapper.get('#receipt-date').setValue('2026-10-14');
+  await wrapper.get('form').trigger('submit');
+  await flushPromises();
+  expect(wrapper.get<HTMLInputElement>('#receive-1').element.value).toBe('2');
+  expect(wrapper.get<HTMLInputElement>('#receipt-date').element.value).toBe('2026-10-14');
+  expect(wrapper.get('#receive-1').attributes('disabled')).toBeUndefined();
+  expect(wrapper.text()).toContain('Save failed');
   wrapper.unmount();
 });

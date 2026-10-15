@@ -39,13 +39,7 @@ export default class PurchaseRequestItemModel {
       record.project_timeline_stage == null
         ? null
         : ShopDrawingTimelineStageModel.fromJson(record.project_timeline_stage);
-    if (
-      !isItemType(record.itemable_type) ||
-      (stage &&
-        record.project_timeline_stage_id != null &&
-        record.project_timeline_stage_id !== stage.projectTimelineStageId)
-    )
-      throw new Error('procurement.invalid_response');
+
     const itemable =
       record.itemable == null ? null : TitleModel.fromMap(responseObject(record.itemable));
     return new PurchaseRequestItemModel({
