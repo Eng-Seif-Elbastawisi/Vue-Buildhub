@@ -73,9 +73,11 @@
         <dd>{{ order.note || $t('procurement.unavailable') }}</dd>
       </div>
     </dl>
-    <AppButton v-if="attachment?.url" type="button" theme="secondary" @click="preview">{{
-      $t('procurement.orders.view_attachment')
-    }}</AppButton>
+    <div class="procurement-actions mt-2">
+      <AppButton v-if="attachment?.url" type="button" theme="secondary" @click="preview">{{
+        $t('procurement.orders.view_attachment')
+      }}</AppButton>
+    </div>
   </section>
 </template>
 <style scoped lang="scss">
