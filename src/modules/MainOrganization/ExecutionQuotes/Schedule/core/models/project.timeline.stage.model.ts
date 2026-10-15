@@ -15,7 +15,7 @@ export default class ProjectTimelineStageModel {
     parentId?: number | null;
     id: number;
     quoteStageId: number;
-    title: string;
+    title: string | null;
     children: ProjectTimelineSubStageModel[];
     stage?: TitleModel;
     subStage?: TitleModel | null;
@@ -33,34 +33,18 @@ export default class ProjectTimelineStageModel {
   static fromJson(value: unknown): ProjectTimelineStageModel {
     const payload = responseObject(value);
     const label = mappedLabel(payload.stage);
-    if (
-      (payload.parent_id !== undefined &&
-        payload.parent_id !== null &&
-        (typeof payload.parent_id !== 'number' || !validId(payload.parent_id))) ||
-      typeof payload.id !== 'number' ||
-      !validId(payload.id) ||
-      typeof payload.quote_stage_id !== 'number' ||
-      !validId(payload.quote_stage_id) ||
-      !label ||
-      typeof label.title !== 'string' ||
-      !Array.isArray(payload.children) ||
-      (payload.created_at !== undefined &&
-        payload.created_at !== null &&
-        typeof payload.created_at !== 'string')
-    )
-      throw new Error('schedule.invalid_response');
     // Use the QuoteStage association ID, rather than the nested master Stage ID.
     return new ProjectTimelineStageModel({
       parentId: payload.parent_id as number | null | undefined,
-      id: payload.id,
-      quoteStageId: payload.quote_stage_id,
-      title: label.title,
-      stage: label,
-      subStage: mappedLabel(payload.sub_stage),
-      createdAt: payload.created_at,
-      children: payload.children.map((child: unknown) =>
+      id: payload.id as number,
+      quoteStageId: payload.quote_stage_id as number,
+      title: label.title as string,
+      stage: label as TitleModel,
+      subStage: payload.sub_stage ? mappedLabel(payload.sub_stage) : null,
+      createdAt: payload.created_at as string | null | undefined,
+      children: payload.children.length > 0 && Array.isArray(payload.children) ? payload.children?.map((child: unknown) =>
         ProjectTimelineSubStageModel.fromJson(child),
-      ),
+      ) : [],
     });
   }
 }

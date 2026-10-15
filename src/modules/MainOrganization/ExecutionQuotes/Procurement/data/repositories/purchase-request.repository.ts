@@ -34,7 +34,7 @@ export default class PurchaseRequestRepository extends BaseRepository<
   }
   protected parseList(payload: unknown) {
     if (!Array.isArray(payload)) throw new Error('procurement.invalid_response');
-    return payload.map(PurchaseRequestModel.fromJson);
+    return payload.map((item) => PurchaseRequestModel.fromJson(item));
   }
   async index(params?: Params, options?: ApiCallOptions) {
     const requests = await super.index(params, { ...options, ...purchaseRequestOptions }, false);
