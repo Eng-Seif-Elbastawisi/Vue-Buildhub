@@ -45,7 +45,8 @@
     <RouterLink
       :to="materialReceiptPath(route.path, quoteId)"
       :aria-current="active === 'warehouse' ? 'page' : undefined"
-      ><i class="pi pi-box" aria-hidden="true"></i>{{ $t('material_receipt.title') }}</RouterLink
+      ><i class="pi pi-box" aria-hidden="true"></i
+      >{{ $t('material_receipt.warehouse') }}</RouterLink
     >
   </nav>
 </template>

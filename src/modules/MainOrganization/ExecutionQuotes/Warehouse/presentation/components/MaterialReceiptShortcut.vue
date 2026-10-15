@@ -7,9 +7,9 @@
 </script>
 <template>
   <ProjectManagementShortcut
-    :title="$t('material_receipt.title')"
-    :description="$t('material_receipt.subtitle')"
-    :open-label="$t('material_receipt.open')"
+    :title="$t('material_receipt.warehouse')"
+    :description="$t('material_disbursement.warehouse_subtitle')"
+    :open-label="$t('material_disbursement.open_warehouse')"
     icon="pi pi-box"
     :to="materialReceiptPath(route.path, quoteId)"
     :metrics="[]"
