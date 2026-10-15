@@ -1,7 +1,12 @@
 import TitleModel from '@/base/Core/Models/titleModel';
 import ShopDrawingTimelineStageModel from '../../../WorkItems/core/models/shop-drawing.timeline-stage.model';
 
-import { type PurchaseRequestItemType } from '../constants/purchase-request.constants';
+import { isItemType, type PurchaseRequestItemType } from '../constants/purchase-request.constants';
+import {
+  responseObject,
+  responseId,
+  nullableText,
+} from '../../../WorkItems/core/models/work-items.response';
 
 export default class PurchaseRequestItemModel {
   readonly id: number;
@@ -28,16 +33,29 @@ export default class PurchaseRequestItemModel {
     this.itemable = fields.itemable;
     this.quantity = fields.quantity;
   }
-  static fromJson(payload: Record<string, Record<string, string | number | null | undefined> | number | string | null | undefined | ShopDrawingTimelineStageModel>): PurchaseRequestItemModel {
-
+  static fromJson(payload: unknown): PurchaseRequestItemModel {
+    const record = responseObject(payload);
+    const stage =
+      record.project_timeline_stage == null
+        ? null
+        : ShopDrawingTimelineStageModel.fromJson(record.project_timeline_stage);
+    if (
+      !isItemType(record.itemable_type) ||
+      (stage &&
+        record.project_timeline_stage_id != null &&
+        record.project_timeline_stage_id !== stage.projectTimelineStageId)
+    )
+      throw new Error('procurement.invalid_response');
+    const itemable =
+      record.itemable == null ? null : TitleModel.fromMap(responseObject(record.itemable));
     return new PurchaseRequestItemModel({
-      id: payload.id as number,
-      projectTimelineStageId: ShopDrawingTimelineStageModel.fromJson(payload.project_timeline_stage).id as number,
-      projectTimelineStage: payload.project_timeline_stage ? ShopDrawingTimelineStageModel.fromJson(payload.project_timeline_stage) : null,
-      itemableType: payload.itemable_type as PurchaseRequestItemType,
-      itemableId: payload.itemable?.id as number,
-      itemable: payload.itemable ? TitleModel.fromMap(payload.itemable) : null,
-      quantity: payload.quantity as string | null,
+      id: responseId(record.id),
+      projectTimelineStageId: stage?.projectTimelineStageId ?? 0,
+      projectTimelineStage: stage,
+      itemableType: record.itemable_type,
+      itemableId: itemable?.id ?? 0,
+      itemable,
+      quantity: nullableText(record.quantity),
     });
   }
 }
