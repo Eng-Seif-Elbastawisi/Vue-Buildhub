@@ -124,7 +124,11 @@ export default class PurchaseOrderController extends BaseController<PurchaseOrde
         order.purchaseRequest.status !== 3)
         ? this.invalid()
         : result;
-    if (this.fetchState.value instanceof DataSuccess && this.fetchState.value.data)
+    if (
+      !this.issued.value &&
+      this.fetchState.value instanceof DataSuccess &&
+      this.fetchState.value.data
+    )
       this.refreshRequired.value = false;
     return this.fetchState.value;
   }
@@ -146,7 +150,6 @@ export default class PurchaseOrderController extends BaseController<PurchaseOrde
   }
   async refreshForStore() {
     const current = this.captureMutationScope();
-    // The Store path refreshes request status and offers, never Purchase Order details.
     const requests = await PurchaseRequestController.getInstance().fetchList();
     if (!current()) return false;
     await this.loadOffers();
@@ -187,7 +190,10 @@ export default class PurchaseOrderController extends BaseController<PurchaseOrde
       if (result instanceof DataSuccess) {
         this.issued.value = true;
         this.refreshRequired.value = true;
-        if (await this.refreshForStore()) this.refreshRequired.value = false;
+        const refreshed = await this.refreshForStore();
+        const order = await this.fetchOne();
+        if (current() && refreshed && order instanceof DataSuccess && order.data)
+          this.refreshRequired.value = false;
       } else {
         // Validation failures keep the draft; uncertain outcomes require read-only verification.
         const type = result?.error?.type;
@@ -200,8 +206,11 @@ export default class PurchaseOrderController extends BaseController<PurchaseOrde
     }
   }
   async retryLastOperation() {
-    if (await this.refreshForStore()) {
-      if (this.issued.value) this.refreshRequired.value = false;
+    const refreshed = await this.refreshForStore();
+    if (this.issued.value) {
+      const order = await this.fetchOne();
+      if (refreshed && order instanceof DataSuccess && order.data)
+        this.refreshRequired.value = false;
     }
     return this.itemState.value;
   }

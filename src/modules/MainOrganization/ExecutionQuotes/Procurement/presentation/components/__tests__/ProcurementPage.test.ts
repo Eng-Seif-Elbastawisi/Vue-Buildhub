@@ -7,6 +7,8 @@ import UpdatedCustomInputSelect from '@/shared/FormInputs/UpdatedCustomInputSele
 import TitleInterface from '@/base/Data/Models/titleInterface';
 import { priceRecord } from '../../../__tests__/price-fixtures';
 import ProcurementPage from '../ProcurementPage.vue';
+import PurchaseRequestCreatePage from '../PurchaseRequestCreatePage.vue';
+import SupplierPricesManagePage from '../SupplierPricesManagePage.vue';
 import PurchaseRequestController from '../../controllers/purchase-request.controller';
 import { mockNetwork, response } from '../../../../SiteTeam/__tests__/network';
 import { requestRecord, overviewRecord } from '../../../__tests__/fixtures';
@@ -67,7 +69,7 @@ it.each(['en', 'ar'])(
     wrapper.unmount();
   },
 );
-it('closes creation and clears old requests when the Quote changes', async () => {
+it('navigates to the request page with the Quote context and clears old requests on Quote navigation', async () => {
   vi.stubGlobal(
     'matchMedia',
     vi.fn(() => ({ matches: false, addEventListener: vi.fn(), removeEventListener: vi.fn() })),
@@ -89,23 +91,35 @@ it('closes creation and clears old requests when the Quote changes', async () =>
     routes: [
       {
         path: '/organization/execution-quotes/show/:id/procurement',
-        component: { template: '<div />' },
+        component: ProcurementPage,
+      },
+      {
+        path: '/organization/execution-quotes/show/:id/procurement/purchase-requests/add',
+        component: PurchaseRequestCreatePage,
       },
     ],
   });
   await router.push('/organization/execution-quotes/show/140/procurement');
-  const wrapper = mount(ProcurementPage, {
-    global: {
-      plugins: [
-        router,
-        PrimeVue,
-        createI18n({ legacy: false, locale: 'en', messages: { en, ar } }),
-      ],
-      stubs: { Dialog: { template: '<section><slot /></section>' } },
+  const wrapper = mount(
+    { template: '<RouterView />' },
+    {
+      global: {
+        plugins: [
+          router,
+          PrimeVue,
+          createI18n({ legacy: false, locale: 'en', messages: { en, ar } }),
+        ],
+        stubs: { Dialog: { template: '<section><slot /></section>' } },
+      },
     },
-  });
+  );
   await flushPromises();
   await wrapper.get('.procurement-header button').trigger('click');
+  await flushPromises();
+  expect(router.currentRoute.value.path).toBe(
+    '/organization/execution-quotes/show/140/procurement/purchase-requests/add',
+  );
+  expect(router.currentRoute.value.params.id).toBe('140');
   expect(wrapper.find('form').exists()).toBe(true);
   await router.push('/organization/execution-quotes/show/141/procurement');
   await flushPromises();
@@ -114,7 +128,7 @@ it('closes creation and clears old requests when the Quote changes', async () =>
   expect(wrapper.text()).toContain('No purchase requests yet');
   wrapper.unmount();
 });
-it('opens offers for the selected Purchase Request and guards Quote navigation with unsaved edits', async () => {
+it('opens Supplier Prices on its page and guards Quote navigation with unsaved edits', async () => {
   vi.stubGlobal(
     'matchMedia',
     vi.fn(() => ({ matches: false, addEventListener: vi.fn(), removeEventListener: vi.fn() })),
@@ -150,6 +164,10 @@ it('opens offers for the selected Purchase Request and guards Quote navigation w
     history: createMemoryHistory(),
     routes: [
       { path: '/organization/execution-quotes/show/:id/procurement', component: ProcurementPage },
+      {
+        path: '/organization/execution-quotes/show/:id/procurement/purchase-requests/:purchaseRequestId/supplier-prices',
+        component: SupplierPricesManagePage,
+      },
     ],
   });
   await router.push('/organization/execution-quotes/show/140/procurement');
@@ -176,32 +194,33 @@ it('opens offers for the selected Purchase Request and guards Quote navigation w
   expect(wrapper.get('.procurement-offers').find('form').exists()).toBe(false);
   await wrapper
     .findAll('button')
-    .find((button) => button.text() === 'Manage Prices')
+    .find((button) => button.text() === 'Manage Supplier Prices')
     ?.trigger('click');
   await flushPromises();
-  await wrapper.get('.procurement-offers input[inputmode="decimal"]').setValue('200.25');
+  expect(router.currentRoute.value.path).toBe(
+    '/organization/execution-quotes/show/140/procurement/purchase-requests/1/supplier-prices',
+  );
+  expect(router.currentRoute.value.params.purchaseRequestId).toBe('1');
+  await wrapper.get('input[inputmode="decimal"]').setValue('200.25');
   const navigation = router.push('/organization/execution-quotes/show/141/procurement');
   await flushPromises();
-  expect(wrapper.get('[role="alertdialog"]').text()).toContain(
-    'Discard unsaved supplier offer changes?',
-  );
+  expect(wrapper.text()).toContain('Leave this page and discard your unsaved changes?');
   await wrapper
     .findAll('button')
     .find((button) => button.text() === 'Keep Editing')
     ?.trigger('click');
   await navigation;
   expect(router.currentRoute.value.params.id).toBe('140');
-  expect(
-    (wrapper.get('.procurement-offers input[inputmode="decimal"]').element as HTMLInputElement)
-      .value,
-  ).toBe('200.25');
+  expect((wrapper.get('input[inputmode="decimal"]').element as HTMLInputElement).value).toBe(
+    '200.25',
+  );
   expect(
     post.mock.calls.some((call) => call[0].url.includes('store_purchase_request_prices')),
   ).toBe(false);
   wrapper.unmount();
 });
 
-it('creates the Purchase Request first, then saves supplier prices for that saved request through a separate dialog', async () => {
+it('creates the Purchase Request on its page, then saves supplier prices for that request', async () => {
   vi.stubGlobal(
     'matchMedia',
     vi.fn(() => ({ matches: false, addEventListener: vi.fn(), removeEventListener: vi.fn() })),
@@ -233,6 +252,14 @@ it('creates the Purchase Request first, then saves supplier prices for that save
     history: createMemoryHistory(),
     routes: [
       { path: '/organization/execution-quotes/show/:id/procurement', component: ProcurementPage },
+      {
+        path: '/organization/execution-quotes/show/:id/procurement/purchase-requests/add',
+        component: PurchaseRequestCreatePage,
+      },
+      {
+        path: '/organization/execution-quotes/show/:id/procurement/purchase-requests/:purchaseRequestId/supplier-prices',
+        component: SupplierPricesManagePage,
+      },
     ],
   });
   await router.push('/organization/execution-quotes/show/140/procurement');
@@ -256,6 +283,9 @@ it('creates the Purchase Request first, then saves supplier prices for that save
     .find((button) => button.text() === 'New Purchase Request')
     ?.trigger('click');
   await flushPromises();
+  expect(router.currentRoute.value.path).toBe(
+    '/organization/execution-quotes/show/140/procurement/purchase-requests/add',
+  );
   expect(wrapper.find('[inputmode="decimal"]').exists()).toBe(false);
   async function select(id: string, number: number, title: string) {
     const control = wrapper
@@ -272,6 +302,9 @@ it('creates the Purchase Request first, then saves supplier prices for that save
   await wrapper.get('#requirement-item-0-quantity').setValue('2.5');
   await wrapper.get('form').trigger('submit');
   await flushPromises();
+  expect(router.currentRoute.value.path).toBe(
+    '/organization/execution-quotes/show/140/procurement',
+  );
   expect(wrapper.find('form').exists()).toBe(false);
   expect(
     post.mock.calls.filter((call) => call[0].url.includes('purchase_request_prices')),
@@ -285,6 +318,9 @@ it('creates the Purchase Request first, then saves supplier prices for that save
     .find((button) => button.text() === 'Add Supplier Prices')
     ?.trigger('click');
   await flushPromises();
+  expect(router.currentRoute.value.path).toBe(
+    '/organization/execution-quotes/show/140/procurement/purchase-requests/1/supplier-prices',
+  );
   await wrapper
     .findAll('button')
     .find((button) => button.text() === 'Add Supplier')

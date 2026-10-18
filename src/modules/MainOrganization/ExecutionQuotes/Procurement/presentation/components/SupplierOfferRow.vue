@@ -55,10 +55,24 @@
   }
 </script>
 <template>
-  <fieldset class="procurement-item" :disabled="disabled">
-    <legend>{{ $t('procurement.offers.supplier_number', { number: index + 1 }) }}</legend>
+  <fieldset class="procurement-item supplier-prices-row" :disabled="disabled">
+    <legend class="procurement-sr-only">
+      {{ $t('procurement.offers.supplier_number', { number: index + 1 }) }}
+    </legend>
+    <div class="procurement-item__header">
+      <strong>{{ $t('procurement.offers.supplier_number', { number: index + 1 }) }}</strong>
+      <AppButton
+        type="button"
+        theme="secondary"
+        size="sm"
+        :disabled="disabled"
+        :aria-label="$t('procurement.offers.remove_supplier', { number: index + 1 })"
+        @click="emit('remove')"
+        >{{ $t('procurement.remove') }}</AppButton
+      >
+    </div>
     <div class="procurement-fields">
-      <div class="field-group">
+      <div class="field-group" :class="{ 'procurement-field-invalid': !!error('supplierId') }">
         <UpdatedCustomInputSelect
           :id="`${prefix}-supplier`"
           :key="supplierSelectionVersion"
@@ -143,7 +157,7 @@
           error('duration') ? $t(error('duration')!) : ''
         }}</small>
       </div>
-      <div class="field-group">
+      <div class="field-group" :class="{ 'procurement-field-invalid': !!error('durationType') }">
         <UpdatedCustomInputSelect
           :id="`${prefix}-unit`"
           :model-value="unit"
@@ -170,14 +184,5 @@
         }}</small>
       </div>
     </div>
-    <AppButton
-      type="button"
-      theme="secondary"
-      size="sm"
-      :disabled="disabled"
-      :aria-label="$t('procurement.offers.remove_supplier', { number: index + 1 })"
-      @click="emit('remove')"
-      >{{ $t('procurement.remove') }}</AppButton
-    >
   </fieldset>
 </template>

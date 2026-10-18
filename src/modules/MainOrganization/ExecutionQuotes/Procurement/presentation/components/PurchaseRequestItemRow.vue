@@ -74,9 +74,27 @@
 </script>
 <template>
   <fieldset class="procurement-item" :disabled="disabled">
-    <legend>{{ $t('procurement.item_number', { number: index + 1 }) }}</legend>
+    <legend class="procurement-sr-only">
+      {{ $t('procurement.item_number', { number: index + 1 }) }}
+    </legend>
+    <div class="procurement-item__header">
+      <strong>{{ $t('procurement.item_number', { number: index + 1 }) }}</strong>
+      <AppButton
+        type="button"
+        theme="secondary"
+        size="sm"
+        :disabled="disabled || !canRemove"
+        :title="$t('procurement.remove_item', { number: index + 1 })"
+        :aria-label="$t('procurement.remove_item', { number: index + 1 })"
+        @click="emit('remove')"
+        >{{ $t('procurement.remove') }}</AppButton
+      >
+    </div>
     <div class="procurement-fields">
-      <div class="field-group">
+      <div
+        class="field-group"
+        :class="{ 'procurement-field-invalid': !!error('projectTimelineStageId') }"
+      >
         <UpdatedCustomInputSelect
           :id="`${prefix}-stage`"
           :model-value="modelValue.stage"
@@ -136,8 +154,11 @@
             />{{ $t('procurement.product') }}</label
           >
         </div>
+        <small v-if="error('itemableType')" class="procurement-error" role="alert">{{
+          error('itemableType')
+        }}</small>
       </fieldset>
-      <div class="field-group">
+      <div class="field-group" :class="{ 'procurement-field-invalid': !!error('itemableId') }">
         <UpdatedCustomInputSelect
           :id="`${prefix}-catalog`"
           :key="modelValue.itemableType"
@@ -196,14 +217,5 @@
         }}</small>
       </div>
     </div>
-    <AppButton
-      type="button"
-      theme="secondary"
-      size="sm"
-      :disabled="disabled || !canRemove"
-      :title="$t('procurement.remove_item', { number: index + 1 })"
-      @click="emit('remove')"
-      >{{ $t('procurement.remove') }}</AppButton
-    >
   </fieldset>
 </template>

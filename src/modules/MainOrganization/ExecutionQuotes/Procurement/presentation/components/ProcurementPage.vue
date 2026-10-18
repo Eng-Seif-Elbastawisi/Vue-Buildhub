@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { computed, ref, watch, onBeforeUnmount, nextTick } from 'vue';
-  import { useRoute, onBeforeRouteLeave, onBeforeRouteUpdate } from 'vue-router';
+  import { useRoute, useRouter, onBeforeRouteLeave, onBeforeRouteUpdate } from 'vue-router';
   import Skeleton from 'primevue/skeleton';
   import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
   import AppButton from '@/shared/HelpersComponents/AppButton.vue';
@@ -14,17 +14,21 @@
     PurchaseRequestStatus,
   } from '../../core/constants/purchase-request.constants';
   import PurchaseRequestController from '../controllers/purchase-request.controller';
-  import PurchaseRequestFormDialog from './PurchaseRequestFormDialog.vue';
   import PurchaseRequestDetails from './PurchaseRequestDetails.vue';
   import SupplierPriceOffersPanel from './SupplierPriceOffersPanel.vue';
-  import PurchaseOrderForm from './PurchaseOrderForm.vue';
+  import PurchaseOrderViewDialog from './PurchaseOrderViewDialog.vue';
+  import {
+    purchaseOrderCreatePath,
+    purchaseRequestCreatePath,
+    supplierPricesPath,
+  } from '../procurement.routes';
   import PurchaseOrderController from '../controllers/purchase.order.controller';
   import '../styles/procurement.scss';
   const route = useRoute();
+  const router = useRouter();
   const controller = PurchaseRequestController.getInstance();
   const quoteId = computed(() => Number(route.params.id));
   const state = computed(() => controller.listState.value);
-  const formVisible = ref(false);
   const requestSearch = ref('');
   const requestStatus = ref<PurchaseRequestStatus | null>(null);
   const statusFilters = [
@@ -50,24 +54,24 @@
     requestStatus.value = null;
   }
   const orderRequestId = ref<number | null>(null);
-  const orderOfferId = ref<number | null>(null);
-  const orderIssueMode = ref(false);
   const orders = PurchaseOrderController.getInstance();
-  async function openOrder(id: number, priceId?: number, issuing = false) {
+  async function openOrder(id: number) {
     if (orders.isIssuing.value || !(await canNavigate())) return;
-    orderIssueMode.value = issuing;
-    orderOfferId.value = priceId ?? null;
     orderRequestId.value = id;
   }
-  async function openStoreOrder(id: number, priceId?: number) {
-    await openOrder(id, priceId, true);
+  async function openStoreOrder(id?: number, priceId?: number) {
+    if (orders.isIssuing.value || !(await canNavigate())) return;
+    await router.push({
+      path: purchaseOrderCreatePath(route.path, quoteId.value),
+      query: id ? { requestId: String(id), ...(priceId ? { offerId: String(priceId) } : {}) } : {},
+    });
   }
-  async function closeOrder() {
+  async function openStoreRequest() {
+    if (controller.isStoring.value || !(await canNavigate())) return;
+    await router.push(purchaseRequestCreatePath(route.path, quoteId.value));
+  }
+  function closeOrder() {
     orderRequestId.value = null;
-    orderOfferId.value = null;
-    orderIssueMode.value = false;
-    await nextTick();
-    await offersPanel.value?.refreshAfterOrder();
   }
   const offersRequestId = ref<number | null>(null);
   const offersPanel = ref<InstanceType<typeof SupplierPriceOffersPanel> | null>(null);
@@ -76,6 +80,13 @@
     offersRequestId.value = null;
     await nextTick();
     offersRequestId.value = id;
+  }
+  async function openManageOffers(id: number) {
+    if (!(await canNavigate())) return;
+    await router.push({
+      path: supplierPricesPath(route.path, quoteId.value, id),
+      query: { returnTo: 'procurement' },
+    });
   }
   async function canNavigate() {
     if (orders.isIssuing.value) return false;
@@ -86,17 +97,19 @@
   const expandedRequestId = ref<number | null>(null);
   watch(
     quoteId,
-    (id) => {
-      formVisible.value = false;
+    async (id) => {
       clearFilters();
       orderRequestId.value = null;
-      orderOfferId.value = null;
-      orderIssueMode.value = false;
       orders.release();
       offersRequestId.value = null;
       expandedRequestId.value = null;
       controller.activate(id);
-      if (validId(id)) void controller.load();
+      if (validId(id)) {
+        await controller.load();
+        const selectedId = Number(route.query.requestId);
+        if (id === quoteId.value && state.value.data?.some((request) => request.id === selectedId))
+          offersRequestId.value = selectedId;
+      }
     },
     { immediate: true },
   );
@@ -120,11 +133,18 @@
             }}</RouterLink
           >
         </div>
-        <AppButton type="button" :disabled="controller.isStoring.value" @click="formVisible = true"
-          ><i class="pi pi-plus" aria-hidden="true" />{{
-            $t('procurement.new_requirement')
-          }}</AppButton
-        >
+        <div class="procurement-actions">
+          <AppButton type="button" :disabled="controller.isStoring.value" @click="openStoreRequest"
+            ><i class="pi pi-plus" aria-hidden="true" />{{
+              $t('procurement.new_requirement')
+            }}</AppButton
+          >
+          <AppButton type="button" theme="secondary" @click="openStoreOrder()"
+            ><i class="pi pi-file-edit" aria-hidden="true" />{{
+              $t('procurement.orders.add')
+            }}</AppButton
+          >
+        </div>
       </header>
       <ol class="procurement-workflow" :aria-label="$t('procurement.workflow')">
         <li>
@@ -144,7 +164,7 @@
         <li>
           <span class="procurement-workflow-step" aria-hidden="true">3</span>
           <div>
-            <strong>{{ $t('procurement.orders.store') }}</strong
+            <strong>{{ $t('procurement.orders.issue') }}</strong
             ><span>{{ $t('procurement.orders.workflow_help') }}</span>
           </div>
         </li>
@@ -347,17 +367,15 @@
         :quote-id="quoteId"
         :purchase-request-id="offersRequestId"
         @store-order="openStoreOrder"
+        @manage-offers="openManageOffers"
       />
-      <PurchaseOrderForm
+      <PurchaseOrderViewDialog
         v-if="orderRequestId != null"
-        :key="`${quoteId}:${orderRequestId}:${orderOfferId}:${orderIssueMode}`"
+        :key="`${quoteId}:${orderRequestId}`"
         :quote-id="quoteId"
         :purchase-request-id="orderRequestId"
-        :purchase-request-price-id="orderOfferId ?? undefined"
-        :allow-issue="orderIssueMode"
         @close="closeOrder"
       />
-      <PurchaseRequestFormDialog v-if="formVisible" v-model:visible="formVisible" />
     </template>
   </section>
 </template>

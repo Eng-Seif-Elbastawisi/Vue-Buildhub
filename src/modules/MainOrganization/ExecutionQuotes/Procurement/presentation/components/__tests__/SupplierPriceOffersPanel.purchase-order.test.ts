@@ -68,7 +68,7 @@ it('opens Store from the header without requiring an order Fetch', async () => {
   await flushPromises();
   const store = wrapper
     .findAll('header button')
-    .find((button) => button.text() === 'Store Purchase Order');
+    .find((button) => button.text() === 'Issue Purchase Order');
   if (!store) throw new Error('Missing Store dialog entry');
   await store.trigger('click');
   expect(wrapper.emitted('storeOrder')).toEqual([[1]]);
