@@ -113,7 +113,7 @@
           <input
             v-model="word"
             :placeholder="$t('search_country')"
-            class="search-input"
+            class="search-input workspace-control"
             type="text"
             @input="Search"
           />
@@ -228,35 +228,35 @@
 </template>
 
 <style scoped lang="scss">
-  .material-page,
-  .material-header,
-  .row-actions {
-    display: flex;
-  }
+.material-page,
+.material-header,
+.row-actions {
+  display: flex;
+}
 
-  .material-page {
-    flex-direction: column;
-    gap: 1.5rem;
-  }
+.material-page {
+  flex-direction: column;
+  gap: 1.5rem;
+}
 
-  .material-header {
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-  }
+.material-header {
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
 
-  .material-header p,
-  .empty-state p {
-    color: var(--gray-5);
-  }
+.material-header p,
+.empty-state p {
+  color: var(--gray-5);
+}
 
-  .row-actions {
-    align-items: center;
-    gap: 0.75rem;
-  }
+.row-actions {
+  align-items: center;
+  gap: 0.75rem;
+}
 
-  .empty-state {
-    padding: 3rem 1rem;
-    text-align: center;
-  }
+.empty-state {
+  padding: 3rem 1rem;
+  text-align: center;
+}
 </style>

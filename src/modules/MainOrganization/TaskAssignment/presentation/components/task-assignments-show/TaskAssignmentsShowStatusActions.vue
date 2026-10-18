@@ -90,7 +90,7 @@ const updateDialogVisibility = (visible: boolean): void => {
     modal
     :header="model.title"
     :style="{ width: '32rem', maxWidth: '90vw' }"
-    class="task-status-dialog"
+    class="task-status-dialog workspace-dialog"
     @update:visible="updateDialogVisibility"
     @hide="emit('close')"
   >
@@ -109,7 +109,7 @@ const updateDialogVisibility = (visible: boolean): void => {
         <textarea
           id="task_action_notes"
           v-model="notes"
-          class="form-control"
+          class="form-control workspace-control"
           rows="3"
           :placeholder="$t('task_assignment.modals.notes_placeholder')"
         />

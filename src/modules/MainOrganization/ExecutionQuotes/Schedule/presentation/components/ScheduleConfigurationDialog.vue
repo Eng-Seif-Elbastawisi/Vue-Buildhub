@@ -11,7 +11,7 @@
   <Dialog
     :visible="true"
     modal
-    class="schedule-configuration-dialog"
+    class="schedule-configuration-dialog workspace-dialog"
     @update:visible="emit('close')"
   >
     <template #header>

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import { onMounted, ref } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
 
@@ -66,7 +67,7 @@
 </script>
 
 <template>
-  <div class="Measurement-crud-page">
+  <StandardFormLayout mode="edit" class="Measurement-crud-page">
     <StandardFormSectionHeader :title="$t('measurement')" icon="pi pi-sliders-h" />
     <MeasurementForm
       :measurement="controller.itemData.value!"
@@ -75,64 +76,66 @@
       @update-data="updateData"
     />
 
-    <div class="actions form-action-pair" :class="{ disabled: loading }">
-      <AppButton
-        :loading="loading"
-        class="btn-save"
-        :title="$t('measurement.save')"
-        size="sm"
-        type="submit"
-        @click="saveMeasurement"
-      >
-        {{ $t('measurement.save') }}
-
-        <template #icon>
-          <IconAccept />
-        </template>
-      </AppButton>
-
-      <AppButton
-        class="btn-cancel"
-        theme="secondary"
-        :title="$t('cancel')"
-        type="button"
-        @click="cancelMeasurement"
-      >
-        {{ $t('cancel') }}
-      </AppButton>
-    </div>
-
     <div v-if="controller.errorMessage.value" class="error">
       {{ controller.errorMessage.value }}
     </div>
-  </div>
+
+    <template #actions>
+      <div class="actions form-action-pair" :class="{ disabled: loading }">
+        <AppButton
+          :loading="loading"
+          class="btn-save"
+          :title="$t('measurement.save')"
+          size="sm"
+          type="submit"
+          @click="saveMeasurement"
+        >
+          {{ $t('measurement.save') }}
+
+          <template #icon>
+            <IconAccept />
+          </template>
+        </AppButton>
+
+        <AppButton
+          class="btn-cancel"
+          theme="secondary"
+          :title="$t('cancel')"
+          type="button"
+          @click="cancelMeasurement"
+        >
+          {{ $t('cancel') }}
+        </AppButton>
+      </div>
+    </template>
+  </StandardFormLayout>
 </template>
 
 <style scoped lang="scss">
-  @use '@/styles/mixins/form_action_pair' as form-actions;
+@use '@/styles/mixins/form_action_pair' as form-actions;
 
-  .Measurement-crud-page {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
+.Measurement-crud-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
 
-  .actions.disabled {
-    cursor: not-allowed;
-    pointer-events: none;
-    opacity: 0.7;
-  }
+.actions.disabled {
+  cursor: not-allowed;
+  pointer-events: none;
+  opacity: 0.7;
+}
 
-  .error {
-    margin-top: 20px;
-    padding: 10px;
-    background-color: var(--danger-light);
-    color: var(--danger-dark);
-    border: 1px solid #f5c6cb;
-    border-radius: 4px;
-  }
+.error {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: var(--danger-light);
+  color: var(--danger-dark);
+  border: 1px solid var(--bh-coral-soft);
+  border-radius: 4px;
+}
 
-  .form-action-pair {
-    @include form-actions.layout;
-  }
+.form-action-pair {
+  @include form-actions.layout;
+}
 </style>

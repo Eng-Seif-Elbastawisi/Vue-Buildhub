@@ -70,8 +70,8 @@
               body {
                 margin: 0;
                 padding: 0;
-                background: #ffffff;
-                color: #111827;
+                background: var(--bh-surface);
+                color: var(--bh-text);
                 direction: rtl;
                 font-family:
                   "Cairo",
@@ -122,7 +122,7 @@
               th,
               td {
                 padding: 8px;
-                border: 1px solid #d1d5db;
+                border: 1px solid var(--bh-field-line);
                 direction: rtl;
                 text-align: right;
                 unicode-bidi: plaintext;
@@ -131,8 +131,8 @@
               }
 
               th {
-                background: #f3f4f6;
-                color: #111827;
+                background: var(--bh-canvas);
+                color: var(--bh-text);
                 font-weight: 700;
               }
 

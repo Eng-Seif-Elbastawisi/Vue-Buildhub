@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import { onMounted, ref, watch } from 'vue';
 
   import TranslationParams from '@/base/Core/Params/translationParams';
@@ -53,7 +54,7 @@
 </script>
 
 <template>
-  <div class="Specialization-form-card">
+  <StandardFormLayout class="Specialization-form-card">
     <header>
       <h3>{{ $t('Specialization.form_title') }}</h3>
       <p>{{ $t('Specialization.form_description') }}</p>
@@ -71,35 +72,35 @@
         />
       </div>
     </div>
-  </div>
+  </StandardFormLayout>
 </template>
 
 <style scoped lang="scss">
-  .Specialization-form-card {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
+.Specialization-form-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
 
-  header p {
-    color: var(--gray-5);
-  }
+header p {
+  color: var(--gray-5);
+}
 
+.form-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  align-items: end;
+
+  &.disabled {
+    pointer-events: none;
+    opacity: 0.7;
+  }
+}
+
+@media (max-width: 768px) {
   .form-fields {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1rem;
-    align-items: end;
-
-    &.disabled {
-      pointer-events: none;
-      opacity: 0.7;
-    }
+    grid-template-columns: 1fr;
   }
-
-  @media (max-width: 768px) {
-    .form-fields {
-      grid-template-columns: 1fr;
-    }
-  }
+}
 </style>

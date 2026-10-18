@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import { computed, ref, onBeforeUnmount, watch, nextTick } from 'vue';
   import Dialog from 'primevue/dialog';
   import AppButton from '@/shared/HelpersComponents/AppButton.vue';
@@ -82,6 +83,7 @@
 </script>
 <template>
   <Dialog
+    class="workspace-dialog"
     :visible="true"
     modal
     :header="$t('procurement.offers.title')"
@@ -115,7 +117,7 @@
         @click="controller.fetchList()"
         >{{ $t('procurement.offers.retry_fetch') }}</AppButton
       >
-      <form novalidate @submit.prevent="saveOffers">
+      <StandardFormLayout as="form" embedded novalidate @submit.prevent="saveOffers">
         <h2>{{ $t('procurement.offers.manage') }}</h2>
         <p>{{ $t('procurement.offers.sync_help') }}</p>
         <div
@@ -214,7 +216,7 @@
             >{{ $t('procurement.offers.save_all') }}</AppButton
           >
         </footer>
-      </form>
+      </StandardFormLayout>
     </div>
   </Dialog>
 </template>

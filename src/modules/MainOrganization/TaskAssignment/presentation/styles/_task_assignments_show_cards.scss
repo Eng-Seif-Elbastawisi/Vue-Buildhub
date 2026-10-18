@@ -1,6 +1,6 @@
 @mixin styles {
   .task-assignment-show-page {
-    gap: 1.25rem; 
+    gap: 1.25rem;
     padding: 0.25rem;
     background: linear-gradient(180deg, var(--gray-50), var(--white));
 
@@ -8,11 +8,11 @@
       position: relative;
       overflow: hidden;
       min-height: 220px;
-      padding: 2rem; 
+      padding: 2rem;
       border: 1px solid var(--border-weak);
       border-radius: 1.125rem;
-      background: linear-gradient(135deg, var(--PrimaryColor-light), var(--white));
-      box-shadow: var(--shadow-sm);
+      background: var(--bh-surface);
+      box-shadow: none;
       isolation: isolate;
     }
 
@@ -32,7 +32,7 @@
       height: 340px;
       inset-block-start: -190px;
       inset-inline-end: 4%;
-      box-shadow: 0 0 0 38px var(--PrimaryColor-light), 0 0 0 78px var(--gray-50);
+      box-shadow: none;
     }
 
     .task-assignment-page-header::after {
@@ -40,7 +40,7 @@
       height: 210px;
       inset-block-end: -150px;
       inset-inline-start: 18%;
-      box-shadow: 0 0 0 28px var(--gray-50);
+      box-shadow: none;
     }
 
     .task-assignment-page-header__content {
@@ -56,7 +56,7 @@
       flex-basis: 72px;
       border: 8px solid var(--white);
       border-radius: 1.25rem;
-      box-shadow: var(--shadow-sm);
+      box-shadow: none;
     }
 
     .task-assignment-page-header__copy h1 {
@@ -77,7 +77,7 @@
       min-height: 42px;
       padding-inline: 1rem;
       border-radius: var(--radius-full);
-      box-shadow: var(--shadow-sm);
+      box-shadow: none;
     }
 
     .task-assignment-card {
@@ -95,8 +95,8 @@
       padding: 1.25rem;
       border: 1px solid var(--border-weak);
       border-radius: 1rem;
-      background: var(--white);
-      box-shadow: var(--shadow-sm);
+      background: var(--bh-surface-raised);
+      box-shadow: none;
     }
   }
 
@@ -173,7 +173,7 @@
     padding: 0.6rem 0.75rem;
     border: 1px solid var(--border-weak);
     border-radius: 0.75rem;
-    background: var(--white);
+    background: var(--bh-surface-raised);
   }
 
   .task-assignment-show__hero-meta-item > span:last-child,
@@ -345,7 +345,7 @@
   .task-assignment-show__history .p-accordion-header-link {
     gap: 0.65rem;
     border: 0;
-    background: var(--white);
+    background: var(--bh-surface-raised);
     color: var(--gray-900);
     font-family: 'Bold';
     font-size: var(--md-size);
@@ -377,7 +377,7 @@
     border: 3px solid var(--white);
     border-radius: var(--radius-full);
     background: var(--PrimaryColor);
-    box-shadow: 0 0 0 4px var(--PrimaryColor-light);
+    box-shadow: none;
   }
 
   .task-assignment-show__history-content {
@@ -436,7 +436,7 @@
     height: 82px;
     overflow: hidden;
     border-radius: 0.65rem;
-    background: var(--white);
+    background: var(--bh-surface-raised);
   }
 
   .task-assignment-show__attachment-preview button {
@@ -475,7 +475,7 @@
     justify-content: center;
     border: 1px solid var(--border-weak);
     border-radius: 0.75rem;
-    background: var(--white);
+    background: var(--bh-surface-raised);
     color: var(--PrimaryColor);
     text-decoration: none;
   }
@@ -509,8 +509,8 @@
     padding: 1rem 1.25rem;
     border: 1px solid var(--border-weak);
     border-radius: 1rem;
-    background: var(--white);
-    box-shadow: var(--shadow-sm);
+    background: var(--bh-surface-raised);
+    box-shadow: none;
   }
 
   .task-assignment-show__actions .task-action-btn {

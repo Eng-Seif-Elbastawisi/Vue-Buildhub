@@ -1,0 +1,1356 @@
+@use 'workspace-glass' as glass;
+
+/* Shared presentation contracts. Business state stays in the existing components. */
+body {
+  background: var(--bh-canvas);
+  color: var(--bh-text);
+  font-family: var(--bh-font);
+  caret-color: var(--bh-focus);
+  accent-color: var(--bh-blue-ink);
+}
+
+::selection {
+  color: var(--bh-text);
+  background: var(--bh-blue-soft);
+}
+
+:where(button, a, input, textarea, select, [tabindex]):focus-visible {
+  outline: 2px solid var(--bh-focus);
+  outline-offset: 3px;
+}
+
+:where(input, textarea)::placeholder {
+  color: var(--bh-muted);
+  opacity: 1;
+}
+
+:where(input, textarea, button, select) {
+  font: inherit;
+}
+
+:where(*) {
+  scrollbar-color: var(--bh-field-line) transparent;
+  scrollbar-width: thin;
+}
+
+:where(h1, h2, h3, p, button, label) {
+  text-transform: none;
+}
+
+:where(h1, h2, h3) {
+  text-wrap: balance;
+}
+
+:where(table, time, .amount, .price, .currency) {
+  font-variant-numeric: tabular-nums;
+}
+
+.workspace-page {
+  width: 100%;
+  min-width: 0;
+}
+
+.workspace-page--form {
+  max-width: 1180px;
+  margin-inline: auto;
+}
+
+.workspace-page--form > .standard-crud-page {
+  width: 100%;
+}
+
+.workspace-page--listing {
+  display: flow-root;
+}
+
+/* Existing native and PrimeVue fields retain all v-model and validation contracts. */
+body .input-wrapper .input,
+body
+  .field-group
+  :is(input:not([type='checkbox'], [type='radio'], [type='file'], [type='range']), textarea),
+body :is(.p-inputtext, .p-textarea, .p-select, .p-multiselect, .p-inputnumber-input) {
+  min-height: var(--bh-control-height);
+  border: 1px solid var(--bh-field-line);
+  border-radius: var(--bh-radius-control);
+  color: var(--bh-text);
+  background: var(--bh-surface-raised);
+  box-shadow: none;
+  font-size: var(--bh-text-sm);
+  transition:
+    border-color var(--bh-motion-fast),
+    background var(--bh-motion-fast);
+}
+
+body .input-wrapper .input:focus,
+body .field-group :is(input, textarea):focus,
+body :is(.p-select, .p-multiselect).p-focus {
+  border-color: var(--bh-focus);
+  outline: 2px solid var(--bh-focus);
+  outline-offset: 2px;
+  box-shadow: none;
+}
+
+body .input-wrapper .input:disabled,
+body .field-group :is(input, textarea):disabled {
+  color: var(--bh-muted);
+  background: var(--bh-surface-secondary);
+  cursor: not-allowed;
+}
+
+body .input-wrapper .input[aria-invalid='true'],
+body .field-group :is(input, textarea)[aria-invalid='true'] {
+  border-color: var(--bh-coral-ink);
+}
+
+body :is(.field-label, .input-wrapper .label) {
+  color: var(--bh-text);
+  font-size: var(--bh-text-sm);
+  font-weight: 500;
+}
+
+body .field-group {
+  min-width: 0;
+  gap: var(--bh-space-2);
+}
+
+body :is(.p-select-overlay, .p-multiselect-overlay, .p-datepicker-panel, .p-menu, .p-popover) {
+  border-color: var(--bh-line);
+  border-radius: var(--bh-radius-card);
+  background: var(--bh-surface-raised);
+  color: var(--bh-text);
+  box-shadow: var(--bh-shadow-popover);
+}
+
+body .btn {
+  min-height: var(--bh-control-height);
+  padding: 10px 20px;
+  border-radius: var(--bh-radius-pill);
+  font-size: var(--bh-text-sm);
+  font-weight: 500;
+  box-shadow: none;
+  transition:
+    background var(--bh-motion-fast),
+    color var(--bh-motion-fast);
+}
+
+/* Existing module button families share the same workspace variants. */
+body
+  :is(.dashboard-shell .main-content, .p-dialog, .unified-dialog)
+  :is(
+    .btn,
+    .btn-add,
+    .project-action-btn,
+    .invoice-show-btn,
+    .invoice-show-icon-btn,
+    .project-icon-btn
+  ) {
+  display: inline-flex;
+  min-height: var(--bh-control-height);
+  align-items: center;
+  justify-content: center;
+  gap: var(--bh-space-2);
+  padding: 10px 20px;
+  border-radius: var(--bh-radius-pill);
+  background-image: none;
+  box-shadow: none;
+  font-family: var(--bh-font);
+  font-size: var(--bh-text-sm);
+  font-weight: 500;
+  line-height: 1.4;
+  text-decoration: none;
+  transition:
+    background var(--bh-motion-fast),
+    color var(--bh-motion-fast),
+    border-color var(--bh-motion-fast);
+}
+
+body
+  :is(.dashboard-shell .main-content, .p-dialog, .unified-dialog)
+  :is(.btn-primary, .btn-add, .project-action-btn--primary, .invoice-show-btn--primary):not(
+    .btn--outline,
+    .btn--ghost,
+    [class*='action--']
+  ) {
+  border: 1px solid var(--PrimaryColor);
+  background: var(--PrimaryColor);
+  color: var(--button-primary-color, var(--bh-on-active));
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--button-primary-color) 18%, transparent);
+}
+
+body
+  :is(.dashboard-shell .main-content, .p-dialog, .unified-dialog)
+  :is(.btn-primary, .btn-add, .project-action-btn--primary, .invoice-show-btn--primary):not(
+    .btn--outline,
+    .btn--ghost,
+    [class*='action--']
+  ):hover:not(:disabled, [aria-disabled='true']) {
+  border-color: color-mix(in srgb, var(--PrimaryColor) 88%, var(--button-primary-color));
+  background: color-mix(in srgb, var(--PrimaryColor) 88%, var(--button-primary-color));
+  color: var(--button-primary-color, var(--bh-on-active));
+  box-shadow: none;
+  transform: none;
+}
+
+body
+  :is(.dashboard-shell .main-content, .p-dialog, .unified-dialog)
+  :is(
+    .btn-secondary:not(.btn--ghost),
+    .project-action-btn:not(.project-action-btn--primary),
+    .invoice-show-btn:not(.invoice-show-btn--primary),
+    .invoice-show-icon-btn,
+    .project-icon-btn
+  ) {
+  @include glass.surface(var(--bh-field-line));
+
+  color: var(--bh-text);
+}
+
+body
+  :is(.dashboard-shell .main-content, .p-dialog, .unified-dialog)
+  :is(
+    .btn-secondary:not(.btn--ghost),
+    .project-action-btn:not(.project-action-btn--primary),
+    .invoice-show-btn:not(.invoice-show-btn--primary),
+    .invoice-show-icon-btn,
+    .project-icon-btn
+  ):hover:not(:disabled, [aria-disabled='true']) {
+  border-color: var(--bh-field-line);
+  background: var(--bh-hover);
+  color: var(--bh-text);
+  box-shadow: none;
+  transform: none;
+}
+
+body
+  :is(.dashboard-shell .main-content, .p-dialog, .unified-dialog)
+  :is(
+    .btn,
+    .btn-add,
+    .project-action-btn,
+    .invoice-show-btn,
+    .invoice-show-icon-btn,
+    .project-icon-btn
+  ):focus-visible {
+  outline: 2px solid var(--bh-focus);
+  outline-offset: 3px;
+}
+
+body
+  :is(.dashboard-shell .main-content, .p-dialog, .unified-dialog)
+  :is(
+    .btn,
+    .btn-add,
+    .project-action-btn,
+    .invoice-show-btn,
+    .invoice-show-icon-btn,
+    .project-icon-btn
+  ):is(:disabled, [aria-disabled='true'], .btn--disabled) {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+body
+  :is(.dashboard-shell .main-content, .p-dialog, .unified-dialog)
+  :is(
+    .btn,
+    .btn-add,
+    .project-action-btn,
+    .invoice-show-btn,
+    .invoice-show-icon-btn,
+    .project-icon-btn
+  ):active:not(:disabled, [aria-disabled='true']) {
+  transform: translateY(1px);
+}
+
+body
+  :is(.dashboard-shell .main-content, .p-dialog, .unified-dialog)
+  :is(.invoice-show-icon-btn, .project-icon-btn, .btn--icon-only) {
+  width: var(--bh-control-height);
+  height: var(--bh-control-height);
+  padding: 10px;
+  flex-shrink: 0;
+}
+
+body .dashboard-shell .main-content .row-actions .action-btn {
+  display: inline-flex;
+  width: 36px;
+  height: 36px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--bh-line);
+  border-radius: var(--bh-radius-control);
+  background: var(--bh-surface-raised);
+  box-shadow: none;
+}
+
+body :is(.dashboard-shell .main-content, .p-dialog, .unified-dialog) .btn.btn--sm {
+  min-height: 34px;
+  padding: 6px 12px;
+}
+
+body .btn.btn--icon-only {
+  padding: 10px;
+}
+
+body :is(.dashboard-shell .main-content, .p-dialog, .unified-dialog) .btn.btn--lg {
+  min-height: 48px;
+}
+
+body .btn:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+body .btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+body :is(.document-form-card, .email-form-card, .form-card, .p-card) {
+  border: 0;
+  border-radius: var(--bh-radius-card);
+  color: var(--bh-text);
+  background: var(--bh-surface);
+  box-shadow: none;
+}
+
+body .standard-crud-page {
+  padding: 0;
+  background: transparent;
+}
+
+body .standard-crud-page :is(.document-form-card, .email-form-card) {
+  border: 0;
+  border-radius: var(--bh-radius-card);
+  background: var(--bh-surface);
+  box-shadow: none;
+}
+
+body :is(.document-form-header, .email-form-header) {
+  padding: 24px;
+  border-block-end: 1px solid var(--bh-line);
+  background: transparent;
+}
+
+body :is(.document-form-card, .email-form-card) .form-fields {
+  padding: 24px;
+  gap: 24px;
+}
+
+body :is(.document-form-footer, .email-form-footer) {
+  padding: 18px 24px;
+  border-block-start: 1px solid var(--bh-line);
+  background: var(--bh-surface);
+}
+
+body :is(.document-form-title, .email-form-title) {
+  color: var(--bh-text);
+  font-size: var(--bh-text-lg);
+}
+
+body :is(.document-form-subtitle, .email-form-subtitle) {
+  color: var(--bh-muted);
+}
+
+body .index-page-toolbar {
+  padding: 16px 20px;
+  border: 0;
+  border-radius: var(--bh-radius-card);
+  background: var(--bh-surface);
+  box-shadow: none;
+}
+
+body .index-page-heading__icon {
+  border-radius: 50%;
+  color: var(--bh-blue-ink);
+  background: var(--bh-blue-soft);
+}
+
+body .index-page-toolbar :is(input[type='search'], .search-input) {
+  border-radius: var(--bh-radius-pill);
+  background: var(--bh-surface-raised);
+}
+
+body :is(.app-table-wrapper, .app-table-wrapper--standard) {
+  padding: 12px 20px;
+  overflow: hidden;
+  border: 0;
+  border-radius: var(--bh-radius-card);
+  background: var(--bh-surface);
+  box-shadow: none;
+}
+
+body .app-table-wrapper--flush {
+  padding: 0;
+}
+
+body .table-responsive {
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+}
+
+body :is(.app-table, .p-datatable-table) {
+  width: 100%;
+  border-collapse: collapse;
+  background: transparent;
+}
+
+body :is(.app-table, .p-datatable-table) :is(th, td) {
+  padding: 16px 14px;
+  border: 0;
+  border-block-end: 1px solid var(--bh-line);
+  text-align: start;
+}
+
+body :is(.app-table, .p-datatable-table) th {
+  background: transparent;
+  color: var(--bh-muted);
+  font-size: var(--bh-text-xs);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+body :is(.app-table, .p-datatable-table) td {
+  color: var(--bh-text);
+  background: transparent;
+  font-size: var(--bh-text-sm);
+}
+
+body .app-table tbody tr:last-child td {
+  border-block-end: 0;
+}
+
+body .app-table tbody tr:hover > td {
+  background: var(--bh-hover);
+}
+
+body .app-table tbody tr.selected > td {
+  background: var(--bh-blue-soft);
+}
+
+body .app-table .empty-row {
+  padding-block: 56px;
+  text-align: center;
+  color: var(--bh-muted);
+}
+
+body :is(.pagination-container, .pagination-wrapper, .p-paginator) {
+  margin-block-start: 16px;
+  padding: 12px;
+  border: 0;
+  border-radius: var(--bh-radius-card);
+  background: var(--bh-surface);
+}
+
+body .p-paginator-page-selected {
+  color: var(--bh-on-active);
+  background: var(--bh-active);
+}
+
+body .p-dialog {
+  max-width: calc(100vw - 24px);
+  max-height: calc(100dvh - 32px);
+  border: 0;
+  border-radius: var(--bh-radius-card);
+  background: var(--bh-surface-raised);
+  color: var(--bh-text);
+  box-shadow: var(--bh-shadow-dialog);
+}
+
+body .p-dialog-header {
+  padding: 24px;
+  border-block-end: 1px solid var(--bh-line);
+}
+
+body .p-dialog-title {
+  font-size: var(--bh-text-xl);
+  font-weight: 600;
+}
+
+body .p-dialog-content {
+  padding: 24px;
+}
+
+body .p-dialog-footer {
+  padding: 16px 24px;
+  background: var(--bh-surface);
+  border-radius: 0 0 var(--bh-radius-card) var(--bh-radius-card);
+}
+
+body .p-drawer {
+  background: var(--bh-surface);
+  color: var(--bh-text);
+  border: 0;
+}
+
+body .p-tooltip-text {
+  background: var(--bh-active);
+  color: var(--bh-on-active);
+  border-radius: var(--bh-radius-sm);
+  padding: 8px 12px;
+}
+
+body .p-tablist-tab-list {
+  border-color: var(--bh-line);
+  background: transparent;
+  gap: 8px;
+}
+
+body .p-tab {
+  border: 0;
+  border-radius: var(--bh-radius-pill);
+  color: var(--bh-muted);
+}
+
+body .p-tab-active {
+  background: var(--bh-active);
+  color: var(--bh-on-active);
+}
+
+body .p-tablist-active-bar {
+  display: none;
+}
+
+body .p-tabpanels {
+  padding: 20px 0;
+  background: transparent;
+  color: var(--bh-text);
+}
+
+/* Existing mobile drawer keeps focus trapping, Escape handling and role filtering. */
+body .mobile-sidebar-drawer {
+  background: var(--bh-surface);
+  color: var(--bh-text);
+  border: 0;
+}
+
+body :is(.drawer-header, .drawer-footer, .drawer-profile) {
+  background: var(--bh-surface);
+  border-color: var(--bh-line);
+  color: var(--bh-text);
+}
+
+body .drawer-item {
+  color: var(--bh-muted);
+  border-radius: var(--bh-radius-control);
+}
+
+body .drawer-item.active {
+  background: var(--bh-active);
+  color: var(--bh-on-active);
+}
+
+@media (max-width: 680px) {
+  body :is(.document-form-header, .email-form-header) {
+    padding: 20px 16px;
+  }
+
+  body :is(.document-form-card, .email-form-card) .form-fields {
+    padding: 20px 16px;
+    gap: 20px;
+  }
+
+  body :is(.app-table-wrapper, .app-table-wrapper--standard) {
+    padding-inline: 10px;
+  }
+
+  body .index-page-toolbar {
+    padding: 14px;
+  }
+
+  body .p-dialog-content {
+    padding: 18px 16px;
+  }
+
+  body .p-dialog-header {
+    padding: 18px 16px;
+  }
+
+  body .p-dialog-footer {
+    padding: 16px;
+    flex-wrap: wrap;
+  }
+
+  .workspace-page--form {
+    max-width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.dashboard-shell :is(p, span, a, button, label, h1, h2, h3, small, strong) {
+  text-transform: none;
+}
+
+body .main-content .workspace-page--form > .standard-crud-page {
+  background: var(--bh-surface);
+  border-radius: var(--bh-radius-card);
+  overflow: visible;
+}
+
+body .main-content .standard-crud-page :is(.actions, .form-actions, .form-footer) {
+  flex-direction: row;
+  justify-content: flex-end;
+  background: var(--bh-surface);
+  border-radius: 0 0 var(--bh-radius-card) var(--bh-radius-card);
+}
+
+body .main-content .standard-crud-page :is(.actions, .form-actions, .form-footer) > * {
+  width: auto;
+  min-width: 150px;
+}
+
+body .main-content .standard-crud-page .form-action-pair {
+  flex-direction: row;
+}
+
+body .main-content .standard-crud-page :is(.actions, .form-actions, .form-footer) .btn {
+  width: auto;
+  border-radius: var(--bh-radius-pill);
+  font-size: var(--bh-text-sm);
+  font-weight: 500;
+}
+
+body .main-content .standard-crud-page .standard-form-section-header h2 {
+  font-family: var(--bh-font);
+  font-size: var(--bh-text-lg);
+  font-weight: 500;
+}
+
+body .main-content .standard-crud-page .standard-form-section-header__icon {
+  width: 44px;
+  height: 44px;
+  flex-basis: 44px;
+  font-size: 1.25rem;
+}
+
+@media (max-width: 680px) {
+  body .main-content .standard-crud-page :is(.actions, .form-actions, .form-footer) {
+    flex-direction: column;
+  }
+
+  body .main-content .standard-crud-page :is(.actions, .form-actions, .form-footer) > *,
+  body .main-content .standard-crud-page :is(.actions, .form-actions, .form-footer) .btn {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+/* Existing detail families: monetary values, histories and permission guards stay in their owners. */
+body .invoice-show-page .invoice-show-header__hero {
+  min-height: 0;
+  border-radius: var(--bh-radius-card);
+  box-shadow: none;
+
+  @include glass.surface;
+}
+
+body .invoice-show-page .invoice-show-header__hero::after {
+  display: none;
+}
+
+body
+  .invoice-show-page
+  :is(.invoice-show-header__illustration, .invoice-show-header__document-icon) {
+  display: none;
+}
+
+body .invoice-show-page .invoice-show-header__copy :is(h1, p) {
+  color: var(--bh-text);
+  text-shadow: none;
+}
+
+body .invoice-show-page .invoice-show-header__copy p {
+  color: var(--bh-muted);
+}
+
+body .invoice-show-page .invoice-show-header__copy .inv_title {
+  font-size: var(--bh-text-page);
+}
+
+body .invoice-show-page :is(.invoice-show-card, .invoice-show-summary, .invoice-show-panel) {
+  border: 0;
+  border-radius: var(--bh-radius-card);
+  background: var(--bh-surface);
+  box-shadow: none;
+}
+
+body .task-assignment-show-page .task-assignment-card {
+  border: 0;
+  border-radius: var(--bh-radius-card);
+  background: var(--bh-surface);
+  box-shadow: none;
+}
+
+body .ProjectFloor-crud-page .show-card {
+  border: 0;
+  border-radius: var(--bh-radius-card);
+  background: var(--bh-surface);
+  box-shadow: none;
+}
+
+body .unified-dialog {
+  border: 0;
+  border-radius: var(--bh-radius-panel);
+  background: var(--bh-surface-raised);
+  color: var(--bh-text);
+  box-shadow: var(--bh-shadow-dialog);
+}
+
+body .unified-dialog :is(.dialog-title, .dialog-message) {
+  color: var(--bh-text);
+}
+
+body .unified-dialog .dialog-message {
+  color: var(--bh-muted);
+}
+
+body .unified-dialog .dialog-close {
+  color: var(--bh-muted);
+  background: var(--bh-surface-secondary);
+  border-radius: 50%;
+}
+
+body .unified-dialog .dialog-action {
+  min-height: 44px;
+  border-radius: var(--bh-radius-pill);
+}
+
+body :is(.app-table-wrapper--standard, .pagination-wrapper--standard) {
+  --index-table-paper: var(--bh-surface);
+  --index-table-ink: var(--bh-text);
+  --index-table-muted: var(--bh-muted);
+  --index-table-head: var(--bh-surface);
+  --index-table-heading: var(--bh-muted);
+  --index-table-line: var(--bh-line);
+  --index-table-row-line: var(--bh-line);
+  --index-table-hover: var(--bh-hover);
+  --index-table-focus: var(--bh-blue-soft);
+  --index-table-scroll-thumb: var(--bh-field-line);
+  --index-table-scroll-track: var(--bh-canvas);
+  --index-table-shadow: none;
+  --index-table-accent: var(--bh-blue-ink);
+  --index-table-accent-dark: var(--bh-blue-ink);
+  --index-table-accent-pressed: var(--bh-active);
+  --index-table-accent-soft: var(--bh-blue-soft);
+  --index-table-accent-hover: var(--bh-hover);
+  --index-table-accent-border: var(--bh-field-line);
+  --index-table-button-line: var(--bh-line);
+  --index-table-neutral-soft: var(--bh-surface-secondary);
+  --index-table-neutral-ink: var(--bh-muted);
+}
+
+.dashboard-shell .app-table :is(th, td) {
+  text-transform: none;
+}
+
+body:has(.standard-crud-page) .field-help__button {
+  color: var(--bh-blue-ink);
+  background: var(--bh-blue-soft);
+  border-color: var(--bh-field-line);
+}
+
+body .workspace-page .error {
+  border-color: var(--bh-coral-soft);
+}
+
+/* The same content contract is used by page forms, embedded forms and read views.
+   Slots leave field order, submission and disabled behavior with the module. */
+body .standard-form-layout {
+  min-width: 0;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: var(--bh-radius-card);
+  color: var(--bh-text);
+  background: var(--bh-surface);
+  box-shadow: none;
+}
+
+body .standard-form-layout > :is(header, .document-form-header, .package-form-header),
+body .standard-form-layout__header {
+  display: flex;
+  align-items: center;
+  gap: var(--bh-space-4);
+  margin: 0;
+  padding: var(--bh-space-6);
+  border: 0;
+  border-block-end: 1px solid var(--bh-line);
+  background: transparent;
+  box-shadow: none;
+}
+
+body
+  .standard-form-layout
+  > header:not(.document-form-header, .package-form-header, :has(> svg, > i, > span)),
+body .standard-form-layout__header {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--bh-space-2);
+}
+
+body .standard-form-layout > header :is(h2, h3, h4),
+body .standard-form-layout > .document-form-header :is(h2, h3, h4) {
+  margin: 0;
+  color: var(--bh-text);
+  font-size: var(--bh-text-lg);
+  font-weight: 500;
+}
+
+body .standard-form-layout > header p,
+body .standard-form-layout > .document-form-header p {
+  margin: 0;
+  color: var(--bh-muted);
+  font-size: var(--bh-text-sm);
+  line-height: 1.6;
+}
+
+body .standard-form-layout > .form-fields {
+  display: grid;
+  grid-template-columns: repeat(var(--form-columns), minmax(0, 1fr));
+  gap: var(--bh-space-5);
+  margin: 0;
+  padding: var(--bh-space-6);
+}
+
+body .standard-form-layout.form-fields {
+  display: grid;
+  grid-template-columns: repeat(var(--form-columns), minmax(0, 1fr));
+  gap: var(--bh-space-5);
+  padding: var(--bh-space-6);
+}
+
+body .standard-form-layout :is(.full-row, .full-width, .col-span-2, .col-span-3) {
+  grid-column: 1 / -1;
+}
+
+body .standard-form-layout__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--bh-space-3);
+  padding: var(--bh-space-5) var(--bh-space-6);
+  border-block-start: 1px solid var(--bh-line);
+}
+
+body .standard-form-layout--embedded,
+body .standard-form-layout .standard-form-layout {
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+body .standard-form-layout[data-form-mode='show'] :is(dd, .detail-value, .info-value) {
+  margin: 0;
+  color: var(--bh-text);
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 1024px) {
+  body .standard-form-layout--three-columns {
+    --form-columns: 2 !important;
+  }
+}
+
+@media (max-width: 680px) {
+  body .standard-form-layout {
+    --form-columns: 1 !important;
+  }
+
+  body .standard-form-layout > :is(header, .document-form-header, .package-form-header),
+  body .standard-form-layout > .form-fields,
+  body .standard-form-layout.form-fields {
+    padding: var(--bh-space-5) var(--bh-space-4);
+  }
+
+  body .standard-form-layout__actions {
+    align-items: stretch;
+    flex-direction: column;
+    padding: var(--bh-space-4);
+  }
+}
+
+/* Native module controls share PrimeVue's geometry without replacing their models. */
+body
+  :is(
+    .workspace-page,
+    .p-dialog,
+    .unified-dialog,
+    .invoice-payment-dialog,
+    .auto-invoices-modal,
+    .package-subscription-modal,
+    .subscription-decision-modal
+  )
+  .workspace-control.workspace-control,
+body .input-wrapper > input:not([type='checkbox'], [type='radio'], [type='file'], [type='hidden']),
+body .multi-lang-input .field-input {
+  min-width: 0;
+  width: 100%;
+  min-height: var(--bh-control-height);
+  margin-block: 0;
+  padding: 0.7rem 0.875rem;
+  border: 1px solid var(--bh-field-line);
+  border-radius: var(--bh-radius-control);
+  color: var(--bh-text);
+  background: var(--bh-surface-raised);
+  box-shadow: none;
+  font-family: var(--bh-font);
+  font-size: var(--bh-text-sm);
+  font-weight: 400;
+  line-height: 1.4;
+  transition:
+    border-color var(--bh-motion-fast),
+    background var(--bh-motion-fast);
+}
+
+body :is(.workspace-page, .p-dialog) textarea.workspace-control,
+body .multi-lang-input textarea.field-input {
+  height: auto;
+  min-height: 112px;
+  resize: vertical;
+}
+
+body
+  :is(.workspace-page, .p-dialog)
+  .workspace-control.workspace-control:hover:not(:disabled, :focus),
+body :is(.p-select, .p-multiselect):hover:not(.p-disabled) {
+  border-color: var(--bh-blue-ink);
+}
+
+body
+  :is(
+    .workspace-page,
+    .p-dialog,
+    .invoice-payment-dialog,
+    .auto-invoices-modal,
+    .package-subscription-modal,
+    .subscription-decision-modal
+  )
+  .workspace-control.workspace-control:focus,
+body .input-wrapper > input:focus,
+body .multi-lang-input .field-input:focus {
+  border-color: var(--bh-focus);
+  outline: 2px solid var(--bh-focus);
+  outline-offset: 2px;
+  background: var(--bh-surface-raised);
+  box-shadow: none;
+}
+
+body
+  :is(
+    .workspace-page,
+    .p-dialog,
+    .invoice-payment-dialog,
+    .auto-invoices-modal,
+    .package-subscription-modal,
+    .subscription-decision-modal
+  )
+  .workspace-control.workspace-control:disabled,
+body
+  :is(
+    .workspace-page,
+    .p-dialog,
+    .invoice-payment-dialog,
+    .auto-invoices-modal,
+    .package-subscription-modal,
+    .subscription-decision-modal
+  )
+  .workspace-control.workspace-control[readonly] {
+  color: var(--bh-muted);
+  background: var(--bh-surface-secondary);
+  cursor: default;
+}
+
+body
+  :is(.workspace-page, .p-dialog)
+  .workspace-control.workspace-control:is(.p-invalid, [aria-invalid='true']) {
+  border-color: var(--bh-coral-ink);
+}
+
+body :is(.p-select, .p-multiselect) {
+  align-items: center;
+  min-width: 0;
+  margin-block: 0;
+  padding: 0;
+}
+
+body :is(.p-select-label, .p-multiselect-label) {
+  min-width: 0;
+  padding: 0.7rem 0.875rem;
+  color: var(--bh-text);
+  font-size: var(--bh-text-sm);
+  font-weight: 400;
+}
+
+body :is(.p-select-label, .p-multiselect-label).p-placeholder {
+  color: var(--bh-muted);
+}
+
+body :is(.p-select-dropdown, .p-multiselect-dropdown) {
+  flex-shrink: 0;
+  width: 2.75rem;
+  color: var(--bh-muted);
+}
+
+body :is(.p-select-option, .p-multiselect-option) {
+  min-height: 40px;
+  border-radius: var(--bh-radius-sm);
+  color: var(--bh-text);
+  font-size: var(--bh-text-sm);
+}
+
+body :is(.p-select-option-selected, .p-multiselect-option-selected) {
+  background: var(--bh-blue-soft);
+  color: var(--bh-blue-ink);
+}
+
+body :is(.p-select-option, .p-multiselect-option).p-focus {
+  background: var(--bh-hover);
+  color: var(--bh-text);
+}
+
+body :is(.p-datepicker, .p-inputnumber, .p-autocomplete) {
+  min-width: 0;
+  max-width: 100%;
+}
+
+body .p-datepicker-input {
+  min-width: 0;
+  width: 100%;
+}
+
+body .p-datepicker-panel {
+  max-width: calc(100vw - 24px);
+  font-size: var(--bh-text-sm);
+}
+
+body .p-datepicker-day-selected {
+  color: var(--bh-on-active);
+  background: var(--bh-active);
+}
+
+body .p-datepicker-today > .p-datepicker-day:not(.p-datepicker-day-selected) {
+  color: var(--bh-blue-ink);
+  background: var(--bh-blue-soft);
+}
+
+body :is(.p-select, .p-multiselect).p-invalid {
+  border-color: var(--bh-coral-ink);
+}
+
+body .multi-lang-input .header-input {
+  gap: var(--bh-space-3);
+  flex-wrap: wrap;
+}
+
+body .multi-lang-input .field-label {
+  color: var(--bh-text);
+  font-size: var(--bh-text-sm);
+  font-weight: 500;
+}
+
+body .multi-lang-input .lang-btn.active {
+  color: var(--bh-blue-ink);
+  background: var(--bh-blue-soft);
+  box-shadow: none;
+}
+
+body .workspace-data-table {
+  width: 100%;
+  border-collapse: collapse;
+  color: var(--bh-text);
+  font-size: var(--bh-text-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+body .workspace-data-table :is(th, td) {
+  padding: 12px 14px;
+  border: 0;
+  border-block-end: 1px solid var(--bh-line);
+  text-align: start;
+  vertical-align: middle;
+}
+
+body .workspace-data-table th {
+  background: var(--bh-surface);
+  color: var(--bh-muted);
+  font-size: var(--bh-text-xs);
+  font-weight: 500;
+}
+
+body .workspace-data-table td {
+  color: var(--bh-text);
+  background: var(--bh-surface-raised);
+}
+
+body .workspace-data-table tbody tr:hover > td {
+  background: var(--bh-hover);
+}
+
+body .workspace-data-table .workspace-control.workspace-control {
+  min-height: 36px;
+  padding: 0.5rem 0.625rem;
+}
+
+body .pagination-wrapper .pagination-item.active {
+  border-color: var(--bh-active);
+  color: var(--bh-on-active);
+  background: var(--bh-active);
+}
+
+body .workspace-dialog {
+  width: min(42rem, calc(100vw - 24px));
+}
+
+body .workspace-dialog--small {
+  width: min(26rem, calc(100vw - 24px));
+}
+
+body .workspace-dialog--large {
+  width: min(62rem, calc(100vw - 24px));
+}
+
+body .p-dialog-header {
+  gap: var(--bh-space-4);
+  flex-shrink: 0;
+}
+
+body .p-dialog-content {
+  min-height: 0;
+  overscroll-behavior: contain;
+}
+
+body .p-dialog :is(.form-actions, .dialog-actions, .filter-action, .dialogs-btn-container) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--bh-space-3);
+  margin-block-start: var(--bh-space-5);
+  padding-block-start: var(--bh-space-4);
+  border-block-start: 1px solid var(--bh-line);
+}
+
+body .p-dialog .standard-form-layout > .form-fields {
+  padding-inline: 0;
+}
+
+body .p-dialog :is(.standard-form-layout, .document-form-card, .email-form-card) {
+  background: transparent;
+}
+
+body .p-dialog .field-group {
+  margin-block-end: var(--bh-space-4);
+}
+
+@media (max-width: 680px) {
+  body .p-dialog :is(.form-actions, .dialog-actions, .filter-action, .dialogs-btn-container) {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}
+
+body .standard-form-layout:has(> .field-group):not(.standard-form-layout--embedded) {
+  display: grid;
+  grid-template-columns: repeat(var(--form-columns), minmax(0, 1fr));
+  gap: var(--bh-space-5);
+  padding: var(--bh-space-6);
+}
+
+body .workspace-page--listing :is(.search-field, .search-box) {
+  width: min(100%, 420px);
+  min-width: 0;
+}
+
+body .workspace-page--listing .search-field .search-input {
+  min-height: var(--bh-control-height);
+  padding-inline: 42px 36px;
+  border-radius: var(--bh-radius-pill);
+  background: var(--bh-surface-raised);
+}
+
+body
+  :is(
+    .invoice-payment-dialog__panel,
+    .auto-invoices-modal__panel,
+    .package-subscription-modal__panel,
+    .subscription-decision-modal__panel,
+    .labor-filter-dialog
+  ) {
+  max-width: calc(100vw - 24px);
+  max-height: calc(100dvh - 32px);
+  border: 0;
+  border-radius: var(--bh-radius-card);
+  color: var(--bh-text);
+  background: var(--bh-surface-raised);
+  box-shadow: var(--bh-shadow-dialog);
+}
+
+body
+  :is(
+    .invoice-payment-dialog,
+    .auto-invoices-modal,
+    .package-subscription-modal,
+    .subscription-decision-modal
+  )
+  .workspace-control {
+  min-height: var(--bh-control-height);
+  width: 100%;
+  padding: 0.7rem 0.875rem;
+  border: 1px solid var(--bh-field-line);
+  border-radius: var(--bh-radius-control);
+  color: var(--bh-text);
+  background: var(--bh-surface-raised);
+  font-size: var(--bh-text-sm);
+}
+
+body
+  :is(
+    .invoice-payment-dialog,
+    .auto-invoices-modal,
+    .package-subscription-modal,
+    .subscription-decision-modal
+  )
+  textarea.workspace-control {
+  min-height: 112px;
+  resize: vertical;
+}
+
+body :is(.popover-button, .table-bulk-actions) {
+  border: 0;
+  border-radius: var(--bh-radius-sm);
+  color: var(--bh-text);
+  background: transparent;
+}
+
+body :is(.tag-blue, .tag-more) {
+  color: var(--bh-blue-ink);
+  background: var(--bh-blue-soft);
+}
+
+@media (max-width: 680px) {
+  body .standard-form-layout:has(> .field-group):not(.standard-form-layout--embedded) {
+    padding: var(--bh-space-5) var(--bh-space-4);
+  }
+}
+
+body .workspace-table-scroll {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: auto;
+  border-radius: var(--bh-radius-control);
+  overscroll-behavior-inline: contain;
+}
+
+body .standard-form-layout > :is(.actions, .form-actions, .form-footer) {
+  margin: 0;
+  padding: var(--bh-space-5) var(--bh-space-6);
+  border-block-start: 1px solid var(--bh-line);
+}
+
+/* Content typography follows the workspace stack, including legacy family aliases. */
+body
+  :is(.workspace-page, .p-dialog, .unified-dialog, .p-select-overlay, .p-multiselect-overlay)
+  :is(input, select, textarea, button, label, h1, h2, h3, h4, h5, h6, p, span, td, th, dd, dt) {
+  font-family: var(--bh-font);
+}
+
+body .lang-input-wrapper > .workspace-control.workspace-control {
+  padding-inline-end: 76px;
+}
+
+body
+  .standard-form-layout__actions
+  > :is(.actions, .form-actions, .form-action-pair, .form-footer) {
+  display: flex;
+  width: auto;
+  flex-wrap: wrap;
+  flex-direction: row;
+  justify-content: flex-end;
+  gap: var(--bh-space-3);
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+body .standard-form-layout__actions :is(.btn, .app-btn, .btn-primary) {
+  width: auto;
+  min-width: 140px;
+  min-height: var(--bh-control-height);
+  border-radius: var(--bh-radius-pill);
+}
+
+body .standard-form-layout__actions > :is(.btn, .app-btn, .btn-primary) {
+  flex: 0 0 auto;
+}
+
+@media (max-width: 680px) {
+  body
+    .standard-form-layout__actions
+    > :is(.actions, .form-actions, .form-action-pair, .form-footer) {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  body .standard-form-layout__actions :is(.btn, .app-btn, .btn-primary) {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+body .main-content .standard-form-layout:is([data-form-mode='create'], [data-form-mode='edit']) {
+  gap: 0;
+}
+
+/* Keep the existing Quill editor and its formatting model inside the field family. */
+body :is(.ql-toolbar.ql-snow, .ql-container.ql-snow) {
+  border-color: var(--bh-field-line);
+  color: var(--bh-text);
+  background: var(--bh-surface-raised);
+  font-family: var(--bh-font);
+}
+
+body .ql-toolbar.ql-snow {
+  border-radius: var(--bh-radius-control) var(--bh-radius-control) 0 0;
+}
+
+body .ql-container.ql-snow {
+  border-radius: 0 0 var(--bh-radius-control) var(--bh-radius-control);
+}
+
+body .ql-snow .ql-picker {
+  color: var(--bh-text);
+}
+
+body .ql-snow .ql-picker-options {
+  border-color: var(--bh-line);
+  border-radius: var(--bh-radius-sm);
+  color: var(--bh-text);
+  background: var(--bh-surface-raised);
+  box-shadow: var(--bh-shadow-popover);
+}
+
+body .ql-snow .ql-stroke {
+  stroke: var(--bh-text);
+}
+
+body .ql-snow .ql-fill {
+  fill: var(--bh-text);
+}
+
+body .ql-snow :is(button:hover, button.ql-active) .ql-stroke {
+  stroke: var(--bh-blue-ink);
+}

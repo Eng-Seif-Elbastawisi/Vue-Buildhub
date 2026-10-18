@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import { computed, onMounted, ref, watch } from 'vue';
   import { onBeforeRouteLeave, useRoute } from 'vue-router';
   import { useFormsStore } from '@/stores/formsStore';
@@ -97,7 +98,7 @@
 </script>
 
 <template>
-  <div class="document-form-card">
+  <StandardFormLayout class="document-form-card">
     <div class="document-form-header">
       <DocumentIcon />
       <div class="document-form-header-text">
@@ -120,7 +121,7 @@
             v-model="name"
             type="text"
             :placeholder="$t('admin.name_placeholder')"
-            class="field-input"
+            class="field-input workspace-control"
             @input="updateData"
           />
         </div>
@@ -137,7 +138,7 @@
             v-model="email"
             type="email"
             :placeholder="$t('email_placeholder')"
-            class="field-input"
+            class="field-input workspace-control"
             @input="updateData"
           />
         </div>
@@ -154,7 +155,7 @@
             v-model="phone"
             type="text"
             :placeholder="$t('phone_placeholder')"
-            class="field-input"
+            class="field-input workspace-control"
             @input="updateData"
           />
         </div>
@@ -171,7 +172,7 @@
             v-model="password"
             type="password"
             :placeholder="$t('password_placeholder')"
-            class="field-input"
+            class="field-input workspace-control"
             @input="updateData"
           />
         </div>
@@ -188,45 +189,45 @@
         />
       </div>
     </div>
-  </div>
+  </StandardFormLayout>
 </template>
 
 <style scoped lang="scss">
-  .document-form-header {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 1.5rem;
-  }
+.document-form-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
 
+.form-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+
+  &.disabled {
+    pointer-events: none;
+    opacity: 0.7;
+  }
+}
+
+.field-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid var(--border-weak);
+  border-radius: var(--bh-radius-control);
+  background: var(--bh-surface-raised);
+  outline: none;
+  transition: all 0.25s ease;
+  font-family: 'Medium';
+  font-weight: 400;
+  font-size: var(--sm-size);
+  color: var(--bread-crumb-color-span);
+}
+
+@media (max-width: 768px) {
   .form-fields {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1rem;
-
-    &.disabled {
-      pointer-events: none;
-      opacity: 0.7;
-    }
+    grid-template-columns: 1fr;
   }
-
-  .field-input {
-    width: 100%;
-    padding: 12px 16px;
-    border: 1px solid var(--border-weak);
-    border-radius: 28px;
-    background: var(--white);
-    outline: none;
-    transition: all 0.25s ease;
-    font-family: 'Medium';
-    font-weight: 400;
-    font-size: var(--sm-size);
-    color: var(--bread-crumb-color-span);
-  }
-
-  @media (max-width: 768px) {
-    .form-fields {
-      grid-template-columns: 1fr;
-    }
-  }
+}
 </style>

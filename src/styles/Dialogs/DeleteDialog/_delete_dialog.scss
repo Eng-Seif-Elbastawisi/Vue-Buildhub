@@ -6,12 +6,12 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
-  padding: clamp(24px, 5vw, 40px);
-  border: 1px solid var(--border-weak);
-  border-radius: var(--modal-radius);
-  color: var(--gray-900) !important;
-  background-color: var(--bg-card) !important;
-  box-shadow: var(--shadow-xl);
+  padding: var(--bh-space-6);
+  border: 0;
+  border-radius: var(--bh-radius-card);
+  color: var(--bh-text);
+  background-color: var(--bh-surface-raised);
+  box-shadow: var(--bh-shadow-dialog);
   font-family: var(--font-family);
   text-align: center;
 
@@ -26,8 +26,8 @@
   .dialog-title {
     margin: 4px 0 0;
     color: var(--gray-900);
-    font-family: 'Bold', var(--font-family);
-    font-size: 1.3rem;
+    font-family: var(--bh-font);
+    font-size: var(--bh-text-lg);
     line-height: 1.35;
   }
 
@@ -53,7 +53,7 @@
       width: 50%;
       min-height: var(--control-height);
       padding: 10px 16px;
-      border-radius: var(--control-radius);
+      border-radius: var(--bh-radius-pill);
       font-family: var(--font-family);
       font-size: var(--sm-size);
       font-weight: $BaseFontSemiBoldWeight;

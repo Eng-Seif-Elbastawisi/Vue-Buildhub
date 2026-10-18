@@ -7,7 +7,6 @@
     buildBreadcrumb,
     type BreadcrumbItem,
   } from '../LayoutComponents/SubComponents/RouteHelper';
-  import FeatureHeader from '@/assets/images/FeatureHeader.jpg';
   import PageHeaderIcon from './PageHeaderIcon.vue';
   import { getPageHeaderAction, getPageHeaderIcon } from './pageHeaderIcon';
   const route = useRoute();
@@ -94,7 +93,6 @@
       'feature-header-container--entity': visibleIcon && !pageIntroDetail,
     }"
   >
-    <img class="header-img" :src="FeatureHeader" :alt="$t('feature_header_image_alt')" />
     <div :key="route.path" class="content" :class="{ 'content--standard-form': pageIntroDetail }">
       <PageHeaderIcon
         v-if="visibleIcon"
@@ -122,89 +120,78 @@
 </template>
 
 <style scoped lang="scss">
-  .feature-header-container.feature-header-container {
-    --quote-copper-soft: var(--PrimaryColor-light);
-    --quote-copper-dark: var(--PrimaryColor);
+  @use 'workspace-glass' as glass;
 
+  .feature-header-container.page-header--animated {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 1.5rem;
+    gap: var(--bh-space-6);
+    width: 100%;
+    min-width: 0;
     min-height: 112px;
-    margin-block: 1rem 1.5rem;
-    padding: 1.5rem 1.75rem;
+    margin: var(--bh-space-5) auto var(--bh-space-6);
+    padding: var(--bh-space-6);
     overflow: visible;
-    color: var(--secondary-text-color, var(--white));
-    background: var(--SecondaryColor);
-    border: 1px solid
-      color-mix(in sRGB, var(--SecondaryColor), var(--secondary-text-color, var(--white)) 20%);
-    border-radius: var(--radius-md, 14px);
+    border-radius: var(--bh-radius-card);
+    color: var(--bh-text);
     box-shadow: none;
-    animation: none;
 
-    &::after,
-    .header-img {
+    @include glass.surface;
+
+    &::after {
       display: none;
     }
 
     > .content {
       display: flex;
       flex: 1;
-      flex-direction: row;
       align-items: center;
-      gap: 1.25rem;
+      flex-direction: row;
+      gap: var(--bh-space-4);
       min-width: 0;
       padding: 0;
       background: transparent;
-      animation: none;
     }
 
     .standard-form-header-copy {
       display: flex;
       flex-direction: column;
-      gap: 0.5rem;
+      gap: 6px;
       min-width: 0;
       text-align: start;
     }
 
     .title {
       margin: 0;
-      color: var(--secondary-text-color, var(--white));
-      font-size: clamp(1.5rem, 2.4vw, 2.2rem);
+      color: var(--bh-text);
+      font-size: var(--bh-text-page);
+      font-family: var(--bh-font);
       font-weight: 700;
-      line-height: 1.25;
+      line-height: 1.2;
       text-transform: none;
-      text-wrap: balance;
       overflow-wrap: anywhere;
-      animation: none;
     }
 
     .standard-form-header-description {
       max-width: 65ch;
       margin: 0;
-      color: var(--secondary-text-color, var(--white));
-      font-size: 1rem;
+      color: var(--bh-muted);
+      font-size: var(--bh-text-sm);
       line-height: 1.5;
       text-transform: none;
-      overflow-wrap: anywhere;
-      animation: none;
     }
 
     .standard-form-header-icon {
       display: grid;
-      flex: 0 0 64px;
+      flex: 0 0 var(--bh-control-height);
       place-items: center;
-      width: 64px;
-      height: 64px;
-      color: color-mix(in sRGB, var(--PrimaryColor), var(--secondary-text-color, var(--white)) 65%);
-      background: color-mix(
-        in sRGB,
-        var(--SecondaryColor),
-        var(--secondary-text-color, var(--white)) 10%
-      );
-      border: 1px solid var(--PrimaryColor);
-      border-radius: var(--radius-md, 14px);
-      animation: none;
+      width: var(--bh-control-height);
+      height: var(--bh-control-height);
+      color: var(--bh-blue-ink);
+      background: color-mix(in sRGB, var(--bh-surface-raised) 65%, var(--bh-blue-soft));
+      border: 0;
+      border-radius: var(--bh-radius-control);
     }
 
     .actions {
@@ -212,102 +199,34 @@
       flex-wrap: wrap;
       align-items: center;
       justify-content: flex-end;
-      gap: 0.75rem;
+      gap: 12px;
       min-width: 0;
 
       &:empty {
         display: none;
       }
     }
-
-    :deep(.btn) {
-      min-height: 44px;
-      font-size: 0.85rem;
-      text-transform: none;
-      transition:
-        background-color 180ms ease,
-        border-color 180ms ease;
-    }
-
-    :deep(.btn-primary) {
-      color: var(--button-primary-color, var(--white));
-      background: var(--PrimaryColor);
-      border: 1px solid var(--PrimaryColor);
-      box-shadow: none;
-    }
-
-    :deep(.btn-primary:hover:not(:disabled)) {
-      background: color-mix(in sRGB, var(--PrimaryColor), var(--SecondaryColor) 15%);
-    }
-
-    :deep(.btn-secondary) {
-      color: var(--secondary-text-color, var(--white));
-      background: transparent;
-      border: 1px solid
-        color-mix(in sRGB, var(--secondary-text-color, var(--white)), var(--SecondaryColor) 25%);
-      box-shadow: none;
-    }
-
-    :deep(.btn-secondary:hover:not(:disabled)) {
-      background: color-mix(
-        in sRGB,
-        var(--SecondaryColor),
-        var(--secondary-text-color, var(--white)) 10%
-      );
-    }
-
-    :deep(:is(a, button):focus-visible) {
-      outline: 2px solid var(--PrimaryColor);
-      outline-offset: 4px;
-    }
-
-    &::selection,
-    :deep(::selection) {
-      color: var(--SecondaryColor);
-      background: color-mix(
-        in sRGB,
-        var(--PrimaryColor),
-        var(--secondary-text-color, var(--white)) 65%
-      );
-    }
   }
 
-  @media (max-width: 680px) {
-    .feature-header-container.feature-header-container {
+  @media (max-width: 767px) {
+    .feature-header-container.page-header--animated {
       flex-direction: column;
       align-items: stretch;
-      gap: 1.25rem;
       min-height: 0;
-      padding: 1.25rem;
-
-      > .content {
-        align-items: flex-start;
-        gap: 0.875rem;
-      }
-
-      .title {
-        font-size: 1.5rem;
-      }
-
-      .standard-form-header-description {
-        font-size: 0.88rem;
-      }
-
-      .standard-form-header-icon {
-        flex-basis: 48px;
-        width: 48px;
-        height: 48px;
-      }
+      gap: var(--bh-space-4);
+      padding: var(--bh-space-5) var(--bh-space-4);
 
       .actions {
-        justify-content: flex-start;
-      }
-    }
-  }
+        justify-content: start;
+        width: 100%;
 
-  @media (prefers-reduced-motion: reduce) {
-    .feature-header-container.feature-header-container :deep(.btn) {
-      transition: none;
+        > :deep(.btn),
+        > :deep(button),
+        > :deep(a) {
+          flex: 1 1 auto;
+          justify-content: center;
+        }
+      }
     }
   }
 </style>

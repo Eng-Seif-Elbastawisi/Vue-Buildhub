@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import { computed, onMounted, ref, watch } from 'vue';
 
   import TranslationParams from '@/base/Core/Params/translationParams';
@@ -100,7 +101,7 @@
 </script>
 
 <template>
-  <div class="ItemTypes-form-card">
+  <StandardFormLayout class="ItemTypes-form-card">
     <header>
       <h3>{{ $t('ItemTypes.form_title') }}</h3>
       <p>{{ $t('ItemTypes.form_description') }}</p>
@@ -155,7 +156,7 @@
           id="code"
           v-model="code"
           type="text"
-          class="field-input"
+          class="field-input workspace-control"
           :placeholder="$t('code_placeholder')"
           @input="updateData"
         />
@@ -168,53 +169,53 @@
         @update:model-value="updateData"
       />
     </div>
-  </div>
+  </StandardFormLayout>
 </template>
 
 <style scoped lang="scss">
-  .ItemTypes-form-card {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
+.ItemTypes-form-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
 
-  header p {
-    color: var(--gray-5);
-  }
+header p {
+  color: var(--gray-5);
+}
 
+.form-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  align-items: end;
+
+  &.disabled {
+    pointer-events: none;
+    opacity: 0.7;
+  }
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.full-row {
+  grid-column: 1 / -1;
+}
+
+.field-input {
+  width: 100%;
+}
+
+@media (max-width: 768px) {
   .form-fields {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1rem;
-    align-items: end;
-
-    &.disabled {
-      pointer-events: none;
-      opacity: 0.7;
-    }
-  }
-
-  .field-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+    grid-template-columns: 1fr;
   }
 
   .full-row {
-    grid-column: 1 / -1;
+    grid-column: auto;
   }
-
-  .field-input {
-    width: 100%;
-  }
-
-  @media (max-width: 768px) {
-    .form-fields {
-      grid-template-columns: 1fr;
-    }
-
-    .full-row {
-      grid-column: auto;
-    }
-  }
+}
 </style>

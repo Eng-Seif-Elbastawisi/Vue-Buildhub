@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import { ref, watch } from 'vue';
   import type ClientSourceModel from '../../core/models/client.source.model';
   import AddClientSourceParams from '../../core/params/add.client.source.params';
@@ -53,7 +54,7 @@
 </script>
 
 <template>
-  <div class="field-group" :class="{ disabled: props.loading }">
+  <StandardFormLayout embedded class="field-group" :class="{ disabled: props.loading }">
     <MultiLangInput
       v-model="translations"
       field-key="title"
@@ -62,13 +63,13 @@
       type="title"
       @update:model-value="updateData"
     />
-  </div>
+  </StandardFormLayout>
 </template>
 
 <style scoped lang="scss">
-  .field-group.disabled {
-    cursor: not-allowed;
-    pointer-events: none;
-    opacity: 0.7;
-  }
+.field-group.disabled {
+  cursor: not-allowed;
+  pointer-events: none;
+  opacity: 0.7;
+}
 </style>

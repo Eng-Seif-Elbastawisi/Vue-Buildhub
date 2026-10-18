@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import { onMounted, ref, watch } from 'vue';
   import { useRoute } from 'vue-router';
 
@@ -110,7 +111,7 @@
 </script>
 
 <template>
-  <div class="QuoteType-form-card">
+  <StandardFormLayout class="QuoteType-form-card">
     <header>
       <h3>
         {{ isEdit ? $t('quote_type.update') : $t('quote_type.form_title') }}
@@ -128,7 +129,7 @@
         <input
           id="quote-type-code"
           v-model.trim="typeCode"
-          class="configuration-field-input"
+          class="configuration-field-input workspace-control"
           :class="{ readonly: isEdit }"
           type="text"
           maxlength="100"
@@ -153,7 +154,7 @@
         </label>
         <input
           id="quote-type-calculation-model"
-          class="configuration-field-input readonly"
+          class="configuration-field-input readonly workspace-control"
           type="text"
           :value="calculationModel"
           :disabled="loading || disabled"
@@ -210,105 +211,105 @@
         </span>
       </div>
     </div>
-  </div>
+  </StandardFormLayout>
 </template>
 
 <style scoped lang="scss">
-  .QuoteType-form-card {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
+.QuoteType-form-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.status-toggle-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  height: 46px;
+}
+
+header p {
+  color: var(--gray-5);
+}
+
+.configuration-fields {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--bg-section);
+  border: 1px solid var(--border-weak);
+  border-radius: var(--radius-lg);
+}
+
+.configuration-field {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  small {
+    color: var(--subtitle-color);
+    font-size: var(--xs-size);
   }
 
-  .status-toggle-wrapper {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    height: 46px;
-  }
-
-  header p {
-    color: var(--gray-5);
-  }
-
-  .configuration-fields {
-    display: grid;
-    grid-template-columns: repeat(1, minmax(0, 1fr));
-    gap: 1rem;
-    padding: 1rem;
-    background: var(--bg-section);
-    border: 1px solid var(--border-weak);
-    border-radius: var(--radius-lg);
-  }
-
-  .configuration-field {
-    display: flex;
-    min-width: 0;
-    flex-direction: column;
-    gap: 0.5rem;
-
-    small {
-      color: var(--subtitle-color);
-      font-size: var(--xs-size);
-    }
-
-    label {
-      color: var(--title-card-color);
-      font-size: var(--sm-size);
-      font-weight: 600;
-    }
-
-    span {
-      color: var(--danger-color);
-    }
-  }
-
-  .configuration-field-input {
-    width: 100%;
-    min-height: 2.75rem;
-    padding: 0.7rem 0.85rem;
+  label {
     color: var(--title-card-color);
-    background: var(--white);
-    border: 1px solid var(--border-weak);
-    border-radius: var(--radius-md);
-    font-family: inherit;
-    cursor: text;
-
-    &::placeholder {
-      color: var(--gray-500);
-    }
-
-    &.readonly {
-      color: var(--gray-600);
-      background: var(--gray-100);
-      cursor: default;
-    }
+    font-size: var(--sm-size);
+    font-weight: 600;
   }
 
-  .form-fields {
-    display: grid;
+  span {
+    color: var(--danger-color);
+  }
+}
+
+.configuration-field-input {
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 0.7rem 0.85rem;
+  color: var(--title-card-color);
+  background: var(--bh-surface-raised);
+  border: 1px solid var(--border-weak);
+  border-radius: var(--bh-radius-control);
+  font-family: inherit;
+  cursor: text;
+
+  &::placeholder {
+    color: var(--gray-500);
+  }
+
+  &.readonly {
+    color: var(--gray-600);
+    background: var(--gray-100);
+    cursor: default;
+  }
+}
+
+.form-fields {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+
+  &.disabled {
+    pointer-events: none;
+    opacity: 0.7;
+  }
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.full-row {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 768px) {
+  .configuration-fields {
     grid-template-columns: 1fr;
-    gap: 1rem;
-
-    &.disabled {
-      pointer-events: none;
-      opacity: 0.7;
-    }
   }
-
-  .field-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .full-row {
-    grid-column: 1 / -1;
-  }
-
-  @media (max-width: 768px) {
-    .configuration-fields {
-      grid-template-columns: 1fr;
-    }
-  }
+}
 </style>

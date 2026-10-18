@@ -45,11 +45,11 @@
     <p v-if="!validId(quoteId)" role="alert">{{ $t('material_receipt.invalid_quote') }}</p>
     <template v-else>
       <ProjectWorkspaceNav :quote-id="quoteId" active="warehouse" />
-      <header class="material-receipt__intro">
-        <div>
-          <h1><i class="pi pi-box" aria-hidden="true" />{{ $t('material_receipt.title') }}</h1>
+      <header class="procurement-header procurement-intro">
+        <div class="procurement-intro-copy">
+          <h1><i class="pi pi-box" aria-hidden="true" />{{ $t('material_receipt.warehouse') }}</h1>
           <p>{{ $t('material_receipt.subtitle') }}</p>
-          <RouterLink :to="quotePath(route.path, quoteId)" class="material-receipt__back">
+          <RouterLink :to="quotePath(route.path, quoteId)" class="procurement-back-link">
             <i class="pi pi-arrow-left" aria-hidden="true" />{{ $t('material_receipt.back') }}
           </RouterLink>
         </div>

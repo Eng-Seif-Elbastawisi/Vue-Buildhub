@@ -30,8 +30,8 @@
       <i class="pi pi-plus-circle"></i> {{ emptyLabel }}
     </RouterLink>
 
-    <div v-else class="table-wrap project-items-table-scroll">
-      <table class="project-table">
+    <div v-else class="table-wrap project-items-table-scroll workspace-table-scroll">
+      <table class="project-table workspace-data-table">
         <thead>
           <tr>
             <th>{{ idLabel }}</th>

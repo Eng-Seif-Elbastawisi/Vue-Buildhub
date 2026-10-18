@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
 import { onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import EditAttachmentTypeParams from '../../core/params/edit.attachment.type.params';
@@ -43,8 +44,8 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="attachment-type-crud-page">
-  <!-- <pre>
+  <StandardFormLayout mode="edit" class="attachment-type-crud-page">
+    <!-- <pre>
     {{ controller.itemData.value }}
   </pre> -->
     <AttachmentTypeForm
@@ -53,16 +54,19 @@ onMounted(async () => {
       is-edit
       @update-data="updateData"
     />
-    <button
-      :class="{ 'btn--loading': loading }"
-      class="btn btn-primary"
-      type="button"
-      :disabled="loading"
-      @click="saveAttachmentType"
-    >
-      {{ $t('save') }}
-    </button>
-  </div>
+
+    <template #actions>
+      <button
+        :class="{ 'btn--loading': loading }"
+        class="btn btn-primary"
+        type="button"
+        :disabled="loading"
+        @click="saveAttachmentType"
+      >
+        {{ $t('save') }}
+      </button>
+    </template>
+  </StandardFormLayout>
 </template>
 
 <style scoped>

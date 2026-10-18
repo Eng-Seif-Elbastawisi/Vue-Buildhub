@@ -398,7 +398,12 @@
       />
     </div>
 
-    <div class="table-responsive">
+    <div
+      class="table-responsive"
+      role="region"
+      tabindex="0"
+      :aria-label="tableLabel ? $t(tableLabel) : $t('table_scroll_region')"
+    >
       <table
         class="app-table"
         :class="{
@@ -415,7 +420,12 @@
           <tr>
             <!-- Selection checkbox column -->
             <th v-if="selectable" class="th-checkbox">
-              <input type="checkbox" :checked="allSelected" @change="toggleAll" />
+              <input
+                type="checkbox"
+                :checked="allSelected"
+                :aria-label="$t('table_select_all')"
+                @change="toggleAll"
+              />
             </th>
 
             <!-- Index column -->
@@ -462,7 +472,7 @@
                   :title="sortDescription(header)"
                 >
                   <template v-if="sortKey === header.key">
-                    {{ sortDirection === 'asc' ? '▲' : '▼' }}
+                    <i :class="sortDirection === 'asc' ? 'pi pi-arrow-up' : 'pi pi-arrow-down'"></i>
                   </template>
                   <template v-else>
                     <svg
@@ -531,7 +541,12 @@
             >
               <!-- Selection checkbox -->
               <td v-if="selectable" class="td-checkbox" @click.stop>
-                <input type="checkbox" :checked="isRowSelected(index)" @change="toggleRow(index)" />
+                <input
+                  type="checkbox"
+                  :checked="isRowSelected(index)"
+                  :aria-label="$t('table_select_row', { row: index + 1 })"
+                  @change="toggleRow(index)"
+                />
               </td>
 
               <!-- Row index -->

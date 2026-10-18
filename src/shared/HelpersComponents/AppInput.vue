@@ -1,7 +1,9 @@
 <script setup lang="ts">
-  import { ref, watch } from 'vue';
+  import { ref, useId, watch } from 'vue';
 
   import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
+
+  const inputId = useId();
 
   // Props
   const props = defineProps<{
@@ -40,10 +42,16 @@
   <div class="inputs-container">
     <div v-for="(_, i) in inputs" :key="i" class="input-wrapper">
       <span class="field-help-label-row field-help-label-row--block">
-        <label for="">{{ $t('Title') }}</label>
+        <label :for="`${inputId}-${i}`">{{ $t('Title') }}</label>
         <FieldHelpIcon :label="$t('Title')" field-name="title" />
       </span>
-      <input v-model="inputs[i]!.title" type="text" :placeholder="$t('Enter Title')" />
+      <input
+        :id="`${inputId}-${i}`"
+        v-model="inputs[i]!.title"
+        class="input"
+        type="text"
+        :placeholder="$t('Enter Title')"
+      />
     </div>
   </div>
 </template>

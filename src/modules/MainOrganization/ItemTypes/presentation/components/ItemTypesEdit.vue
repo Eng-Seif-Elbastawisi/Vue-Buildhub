@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import { onMounted, ref } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import type AddItemTypesParams from '../../core/params/add.item.types.params.js';
@@ -40,50 +41,54 @@
   });
 </script>
 <template>
-  <div class="ItemTypes-crud-page">
+  <StandardFormLayout mode="edit" class="ItemTypes-crud-page">
     <ItemTypesForm
       :item-types="controller.itemData.value!"
       :loading="loading"
       @update-data="updateData"
     />
-    <div class="form-actions form-action-pair">
-      <button
-        class="btn btn-primary"
-        :class="{ 'btn--loading': loading }"
-        type="button"
-        :disabled="loading"
-        @click="saveItemTypes"
-      >
-        {{ $t('ItemTypes.update') }}
-      </button>
-      <button class="btn btn-secondary back-button" type="button" @click="goBack">
-        {{ $t('common.back') }}
-      </button>
-    </div>
+
     <div v-if="controller.errorMessage.value" class="error">
       {{ controller.errorMessage.value }}
     </div>
-  </div>
+
+    <template #actions>
+      <div class="form-actions form-action-pair">
+        <button
+          class="btn btn-primary"
+          :class="{ 'btn--loading': loading }"
+          type="button"
+          :disabled="loading"
+          @click="saveItemTypes"
+        >
+          {{ $t('ItemTypes.update') }}
+        </button>
+        <button class="btn btn-secondary back-button" type="button" @click="goBack">
+          {{ $t('common.back') }}
+        </button>
+      </div>
+    </template>
+  </StandardFormLayout>
 </template>
 <style scoped lang="scss">
-  @use '@/styles/mixins/form_action_pair' as form-actions;
+@use '@/styles/mixins/form_action_pair' as form-actions;
 
-  .ItemTypes-crud-page {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
+.ItemTypes-crud-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
 
-  .error {
-    margin-top: 20px;
-    padding: 10px;
-    background-color: var(--danger-light);
-    color: var(--danger-dark);
-    border: 1px solid #f5c6cb;
-    border-radius: 4px;
-  }
+.error {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: var(--danger-light);
+  color: var(--danger-dark);
+  border: 1px solid var(--bh-coral-soft);
+  border-radius: 4px;
+}
 
-  .form-action-pair {
-    @include form-actions.layout;
-  }
+.form-action-pair {
+  @include form-actions.layout;
+}
 </style>

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
   import { computed, ref, watch } from 'vue';
   import { useI18n } from 'vue-i18n';
@@ -81,13 +82,13 @@
   <Dialog
     :visible="visible"
     modal
-    class="work-items-dialog"
+    class="work-items-dialog workspace-dialog"
     :header="$t('work_items.new_activity')"
     :closable="!busy"
     :close-on-escape="!busy"
     @update:visible="emit('update:visible', $event)"
   >
-    <form class="work-items-form" @submit.prevent="save">
+    <StandardFormLayout as="form" embedded class="work-items-form" @submit.prevent="save">
       <WorkItemStageSelect
         id="activity-stage"
         v-model="stage"
@@ -131,7 +132,7 @@
         <input
           id="activity-title"
           v-model="title"
-          class="input"
+          class="input workspace-control"
           type="text"
           :disabled="busy"
           :required="true"
@@ -154,7 +155,7 @@
         <input
           id="activity-date"
           v-model="date"
-          class="input"
+          class="input workspace-control"
           type="date"
           :disabled="busy"
           :required="true"
@@ -177,7 +178,7 @@
         <textarea
           id="activity-description"
           v-model="description"
-          class="input"
+          class="input workspace-control"
           rows="4"
           :disabled="busy"
         ></textarea>
@@ -220,6 +221,6 @@
           $t('work_items.save')
         }}</AppButton>
       </div>
-    </form></Dialog
+    </StandardFormLayout></Dialog
   >
 </template>

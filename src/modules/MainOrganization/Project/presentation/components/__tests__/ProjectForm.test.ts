@@ -35,6 +35,7 @@ describe('ProjectForm.vue', () => {
     const wrapper = shallowMount(ProjectForm, {
       global: {
         stubs: {
+          StandardFormLayout: false,
           DatePicker: true,
           FieldHelpIcon: true,
           MultiLangInput: multiLangInputStub,

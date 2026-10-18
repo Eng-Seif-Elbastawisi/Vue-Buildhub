@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import { ref } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import LaborForm from './LaborForm.vue';
@@ -29,55 +30,57 @@
 </script>
 
 <template>
-  <div class="labor-crud-page">
+  <StandardFormLayout mode="create" class="labor-crud-page">
     <LaborForm :form-key="formKey" :loading="loading" @update-data="updateData" />
-
-    <div class="actions form-action-pair" :class="{ disabled: loading }">
-      <button
-        :disabled="loading"
-        :class="{ 'btn--loading': loading }"
-        class="btn btn-primary w-full"
-        type="button"
-        @click="saveLabor"
-      >
-        <span v-if="loading" class="loader"></span>
-        <span v-else>{{ $t('labor.save') }}</span>
-      </button>
-      <button class="btn btn-secondary back-button" type="button" @click="goBack">
-        {{ $t('common.back') }}
-      </button>
-    </div>
 
     <div v-if="controller.errorMessage.value" class="error">
       {{ controller.errorMessage.value }}
     </div>
-  </div>
+
+    <template #actions>
+      <div class="actions form-action-pair" :class="{ disabled: loading }">
+        <button
+          :disabled="loading"
+          :class="{ 'btn--loading': loading }"
+          class="btn btn-primary w-full"
+          type="button"
+          @click="saveLabor"
+        >
+          <span v-if="loading" class="loader"></span>
+          <span v-else>{{ $t('labor.save') }}</span>
+        </button>
+        <button class="btn btn-secondary back-button" type="button" @click="goBack">
+          {{ $t('common.back') }}
+        </button>
+      </div>
+    </template>
+  </StandardFormLayout>
 </template>
 
 <style scoped lang="scss">
-  @use '@/styles/mixins/form_action_pair' as form-actions;
+@use '@/styles/mixins/form_action_pair' as form-actions;
 
-  .labor-crud-page {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
+.labor-crud-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
 
-  .actions.disabled {
-    pointer-events: none;
-    opacity: 0.7;
-  }
+.actions.disabled {
+  pointer-events: none;
+  opacity: 0.7;
+}
 
-  .error {
-    margin-top: 20px;
-    padding: 10px;
-    background-color: var(--danger-light);
-    color: var(--danger-dark);
-    border: 1px solid var(--danger-light);
-    border-radius: 4px;
-  }
+.error {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: var(--danger-light);
+  color: var(--danger-dark);
+  border: 1px solid var(--danger-light);
+  border-radius: 4px;
+}
 
-  .form-action-pair {
-    @include form-actions.layout;
-  }
+.form-action-pair {
+  @include form-actions.layout;
+}
 </style>

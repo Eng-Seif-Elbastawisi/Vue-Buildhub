@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
 import { computed, onUnmounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type TitleInterface from '@/base/Data/Models/titleInterface';
@@ -79,8 +80,12 @@ onUnmounted(() => {
 <template>
   <Teleport to="body">
     <div v-if="visible" class="invoice-payment-dialog" role="dialog" aria-modal="true">
-      <button class="invoice-payment-dialog__backdrop" type="button" :aria-label="$t('invoice_show.close')"
-        @click="$emit('close')"></button>
+      <button
+        class="invoice-payment-dialog__backdrop"
+        type="button"
+        :aria-label="$t('invoice_show.close')"
+        @click="$emit('close')"
+      ></button>
 
       <section class="invoice-payment-dialog__panel">
         <header class="invoice-payment-dialog__header">
@@ -92,47 +97,81 @@ onUnmounted(() => {
           </button>
         </header>
 
-        <form class="invoice-payment-dialog__form" @submit.prevent="submitPayment">
+        <StandardFormLayout
+          as="form"
+          embedded
+          class="invoice-payment-dialog__form"
+          @submit.prevent="submitPayment"
+        >
           <div class="field-group">
             <label class="field-label" for="show_payment_amount">
               {{ $t('invoice_payment.payment_amount') }}
             </label>
-            <input id="show_payment_amount" v-model.number="paymentAmount" class="field-input" min="0" step="1"
-              type="number" :placeholder="$t('invoice_payment.payment_amount_placeholder')" />
+            <input
+              id="show_payment_amount"
+              v-model.number="paymentAmount"
+              class="field-input workspace-control"
+              min="0"
+              step="1"
+              type="number"
+              :placeholder="$t('invoice_payment.payment_amount_placeholder')"
+            />
           </div>
 
           <div class="field-group">
             <label class="field-label" for="show_payment_date">
               {{ $t('invoice_payment.payment_date') }}
             </label>
-            <input id="show_payment_date" v-model="paymentDate" class="field-input" type="date" />
+            <input
+              id="show_payment_date"
+              v-model="paymentDate"
+              class="field-input workspace-control"
+              type="date"
+            />
           </div>
 
           <div class="field-group">
-            <UpdatedCustomInputSelect id="show_payment_method" v-model="paymentMethod"
+            <UpdatedCustomInputSelect
+              id="show_payment_method"
+              v-model="paymentMethod"
               :label="$t('invoice_payment.payment_method')"
-              :placeholder="$t('invoice_payment.payment_method_placeholder')" :reload="false"
-              :static-options="paymentMethodOptions" required />
+              :placeholder="$t('invoice_payment.payment_method_placeholder')"
+              :reload="false"
+              :static-options="paymentMethodOptions"
+              required
+            />
           </div>
 
           <div class="field-group col-span-2">
             <label class="field-label" for="show_payment_notes">
               {{ $t('invoice_payment.notes') }}
             </label>
-            <textarea id="show_payment_notes" v-model="notes" class="field-input field-textarea"
-              :placeholder="$t('invoice_payment.notes_placeholder')" />
+            <textarea
+              id="show_payment_notes"
+              v-model="notes"
+              class="field-input field-textarea workspace-control"
+              :placeholder="$t('invoice_payment.notes_placeholder')"
+            />
           </div>
 
           <footer class="invoice-payment-dialog__actions">
-            <button class="invoice-show-btn invoice-show-btn--light" type="button" @click="$emit('close')">
+            <button
+              class="invoice-show-btn invoice-show-btn--light"
+              type="button"
+              @click="$emit('close')"
+            >
               {{ $t('cancel') }}
             </button>
-            <button class="invoice-show-btn invoice-show-btn--primary" type="submit" :disabled="loading">
+            <button
+              class="invoice-show-btn invoice-show-btn--primary"
+              type="submit"
+              :disabled="loading"
+            >
               <i class="pi pi-check"></i>
               {{ loading ? $t('invoice_show.saving') : $t('invoice_payment.save') }}
             </button>
           </footer>
-        </form>
+        </StandardFormLayout>
       </section>
     </div>
   </Teleport>

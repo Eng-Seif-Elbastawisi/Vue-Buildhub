@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import { computed, onMounted } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
@@ -22,7 +23,7 @@
 </script>
 
 <template>
-  <div class="standard-crud-page">
+  <StandardFormLayout mode="show" class="standard-crud-page">
     <template v-if="warehouse">
       <div class="Warehouse-form-card">
         <header>
@@ -62,36 +63,36 @@
     </template>
     <p v-else-if="controller.errorMessage.value">{{ controller.errorMessage.value }}</p>
     <p v-else>{{ $t('loading') }}</p>
-  </div>
+  </StandardFormLayout>
 </template>
 
 <style scoped lang="scss">
-  .Warehouse-form-card {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
+.Warehouse-form-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
 
-  .Warehouse-form-card header p {
-    color: var(--gray-5);
-  }
+.Warehouse-form-card header p {
+  color: var(--gray-5);
+}
 
+.form-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  align-items: end;
+}
+
+.row-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+@media (max-width: 768px) {
   .form-fields {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1rem;
-    align-items: end;
+    grid-template-columns: 1fr;
   }
-
-  .row-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-  }
-
-  @media (max-width: 768px) {
-    .form-fields {
-      grid-template-columns: 1fr;
-    }
-  }
+}
 </style>

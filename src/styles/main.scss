@@ -142,20 +142,6 @@ body {
 //   fill: red !important;
 // }
 
-/* ── PrimeVue Toggle Switch ───────────────────────────────────── */
-.p-toggleswitch.p-toggleswitch-checked .p-toggleswitch-slider {
-  background-color: var(--PrimaryColor) !important;
-}
-
-/* ── PrimeVue Radio / Checkbox ────────────────────────────────── */
-.p-radiobutton-box {
-  border: 1px solid var(--gray-300) !important;
-}
-
-.factor-item .p-radiobutton-checked .p-radiobutton-box {
-  border: none !important;
-}
-
 /* ── Sidebar Link Overrides ───────────────────────────────────── */
 .sidebar .links ul {
   border: none !important;
@@ -232,8 +218,7 @@ body {
   }
 }
 
-.article-solution-steps-header-explain,
-.p-checkbox-box {
+.article-solution-steps-header-explain {
   border-radius: 5px !important;
   z-index: 999;
 }

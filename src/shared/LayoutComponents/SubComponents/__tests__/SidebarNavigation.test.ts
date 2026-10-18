@@ -74,6 +74,7 @@ describe('SidebarNavigation.vue', () => {
         query: {},
       }),
     );
+    routerMocks.push.mockReset();
     sidebarCountsMocks.fetchSidebarCounts.mockReset();
     sidebarCountsMocks.fetchSidebarCounts.mockResolvedValue({
       data: {
@@ -124,8 +125,8 @@ describe('SidebarNavigation.vue', () => {
   it('renders menu groups and items', () => {
     const wrapper = mountSidebar();
 
-    expect(wrapper.text()).toContain('sidebar.sys_config');
-    expect(wrapper.text()).toContain('sidebar.construction_config');
+    expect(wrapper.find('[title="sidebar.sys_config"]').exists()).toBe(true);
+    expect(wrapper.get('.workspace-context-nav').text()).toContain('sidebar.construction_config');
     expect(wrapper.text()).toContain('sidebar.stages');
     expect(wrapper.text()).toContain('sidebar.client_source');
   });
@@ -158,62 +159,29 @@ describe('SidebarNavigation.vue', () => {
     expect(wrapper.get('a.menu-item.active').find('.item-icon').exists()).toBe(false);
   });
 
-  it('starts with the shared navigation pane open across dashboard routes', async () => {
-    const route = reactive({
-      name: 'Execution Quotes',
-      path: '/organization/execution-quotes',
-      fullPath: '/organization/execution-quotes',
-      params: {},
-      query: {},
-    });
-    routerMocks.useRoute.mockReturnValue(route);
-
+  it('keeps the rail compact and makes each group discoverable without navigating', async () => {
     const wrapper = mountSidebar();
-
-    expect(wrapper.get('.sidebar-shell').classes()).toContain('is-open');
-    expect(wrapper.get('.section-toggle.active').attributes('title')).toBe(
-      'sidebar.execution-quotes',
-    );
-    expect(wrapper.find('.sidebar-rail').exists()).toBe(false);
-
-    route.name = 'Other Route';
-    await nextTick();
-
-    expect(wrapper.get('.sidebar-shell').classes()).toContain('is-open');
-  });
-
-  it('expands nested items and collapses the single sidebar', async () => {
-    const wrapper = mountSidebar();
-    const executionQuotesButton = wrapper.get('.section-toggle[title="sidebar.execution-quotes"]');
-
-    expect(wrapper.get('.sidebar-shell').classes()).toContain('is-open');
-    expect(executionQuotesButton.attributes('aria-expanded')).toBe('false');
-
-    await executionQuotesButton.trigger('click');
-    expect(executionQuotesButton.attributes('aria-expanded')).toBe('true');
-    expect(wrapper.get('#sidebar-section-execution-quotes').isVisible()).toBe(true);
-
-    await executionQuotesButton.trigger('click');
-    expect(executionQuotesButton.attributes('aria-expanded')).toBe('false');
-    expect(wrapper.find('#sidebar-section-execution-quotes').exists()).toBe(false);
-
-    await wrapper.get('.collapse-toggle').trigger('click');
     expect(wrapper.get('.sidebar-shell').classes()).not.toContain('is-open');
-    expect(wrapper.get('.collapse-toggle').attributes('aria-label')).toBe('expand_sidebar');
-
-    await wrapper.get('.collapse-toggle').trigger('click');
-    expect(wrapper.get('.sidebar-shell').classes()).toContain('is-open');
+    await wrapper.get('.section-toggle[title="sidebar.execution-quotes"]').trigger('click');
+    expect(wrapper.get('.workspace-context-nav').text()).toContain('sidebar.execution-quote');
+    expect(
+      wrapper.get('.workspace-context-nav a[title="sidebar.add-execution-quote"]').attributes('to'),
+    ).toBe('/organization/execution-quotes/add');
+    expect(routerMocks.push).not.toHaveBeenCalled();
+    expect(wrapper.find('.collapse-toggle').exists()).toBe(false);
+    expect(wrapper.find('.section-items').exists()).toBe(false);
+    expect(wrapper.get('.sidebar-shell').classes()).not.toContain('is-open');
+    await wrapper
+      .get('.workspace-context-nav a[title="sidebar.add-execution-quote"]')
+      .trigger('click');
+    expect(wrapper.emitted('clickItem')).toBeTruthy();
   });
 
-  it('removes the extra top spacing before the execution offers group', async () => {
+  it('shows nested group labels in contextual navigation', async () => {
     const wrapper = mountSidebar();
-
     await wrapper.get('.section-toggle[title="sidebar.design_offers"]').trigger('click');
-
-    const executionOffersGroup = wrapper.get('.menu-subgroup[title="sidebar.execution_offers"]');
-
-    expect(executionOffersGroup.classes()).toContain('menu-subgroup--flush-top');
-    expect(executionOffersGroup.find('.menu-subgroup__icon').exists()).toBe(false);
+    expect(wrapper.get('.workspace-context-nav').text()).toContain('sidebar.execution_offers');
+    expect(wrapper.findAll('.sidebar-shell a.menu-item')).toHaveLength(0);
   });
 
   it('emits clickItem event when a menu item is clicked', async () => {

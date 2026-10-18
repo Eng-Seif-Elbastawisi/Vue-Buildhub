@@ -226,8 +226,11 @@
             {{ emptyLabel }}
           </div>
 
-          <div v-else class="table-wrap department-table-wrap project-department-table-scroll">
-            <table class="project-table project-table--departments">
+          <div
+            v-else
+            class="table-wrap department-table-wrap project-department-table-scroll workspace-table-scroll"
+          >
+            <table class="project-table project-table--departments workspace-data-table">
               <thead>
                 <tr>
                   <th>
@@ -325,30 +328,30 @@
 </template>
 
 <style scoped lang="scss">
+.department-add-action {
+  display: inline-flex;
+  width: fit-content;
+  min-height: 2.35rem;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  margin-inline-start: 0.25rem;
+  padding-inline: 0.85rem;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .project-departments-heading {
+    flex-wrap: wrap;
+  }
+
   .department-add-action {
-    display: inline-flex;
-    width: fit-content;
-    min-height: 2.35rem;
-    flex: 0 0 auto;
-    align-items: center;
+    width: 100%;
+    margin-inline-start: 0;
     justify-content: center;
-    gap: 0.4rem;
-    margin-inline-start: 0.25rem;
-    padding-inline: 0.85rem;
-    text-decoration: none;
-    white-space: nowrap;
   }
-
-  @media (max-width: 768px) {
-    .project-departments-heading {
-      flex-wrap: wrap;
-    }
-
-    .department-add-action {
-      width: 100%;
-      margin-inline-start: 0;
-      justify-content: center;
-    }
-  }
+}
 </style>
 ```

@@ -1,6 +1,7 @@
 <script lang="ts" setup>
   import { computed, onMounted, ref } from 'vue';
   import IconLogout from '@/shared/icons/IconLogout.vue';
+  import { useThemeStore } from '@/stores/theme';
   import { useUserStore } from '@/stores/user';
   import EmployeeImage from '@/assets/images/headerIMages/employee.jpg';
   import { useRouter } from 'vue-router';
@@ -9,6 +10,7 @@
   import GlobalProjectSearch from '@/modules/MainOrganization/Project/presentation/components/GlobalProjectSearch.vue';
   import { useLanguageSwitcher } from './useLanguageSwitcher';
 
+  const themeStore = useThemeStore();
   const userStore = useUserStore();
   const router = useRouter();
   const { currentPalette } = useSystemIdentityTheme();
@@ -52,13 +54,25 @@
 </script>
 
 <template>
-  <header class="header" :style="paletteStyle">
+  <header class="header" :style="paletteStyle" @keydown.esc="isDropMenuOpen = false">
     <span class="navbar-glass-layer" aria-hidden="true"></span>
 
-    <nav class="nav">
+    <nav class="nav" :aria-label="$t('workspace_navigation')">
+      <span class="workspace-brand"
+        >{{ $t('buildhub') }}<span>{{ $t(roleLabel) }}</span></span
+      >
       <GlobalProjectSearch class="navbar-project-search" />
 
       <div class="setting">
+        <button
+          class="nav-action theme-toggle"
+          type="button"
+          :aria-label="$t('toggle_theme')"
+          :aria-pressed="themeStore.isDark"
+          @click="themeStore.toggle"
+        >
+          <i :class="themeStore.isDark ? 'pi pi-sun' : 'pi pi-moon'" aria-hidden="true" />
+        </button>
         <button
           class="nav-action language-toggle"
           type="button"
@@ -254,7 +268,7 @@
     font-weight: 700;
 
     .pi-globe {
-      color: var(--palette-primary);
+      color: var(--bh-text);
       font-size: 17px;
     }
 

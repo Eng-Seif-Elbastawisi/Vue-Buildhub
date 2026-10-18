@@ -207,12 +207,12 @@
               </div>
               <div
                 v-else
-                class="procurement-table-scroll"
+                class="procurement-table-scroll workspace-table-scroll"
                 tabindex="0"
                 role="region"
                 :aria-label="$t('procurement.requirements')"
               >
-                <table class="procurement-table">
+                <table class="procurement-table workspace-data-table">
                   <caption class="procurement-sr-only">
                     {{
                       $t('procurement.requirements')

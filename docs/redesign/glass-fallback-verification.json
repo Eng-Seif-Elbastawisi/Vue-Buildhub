@@ -1,0 +1,16 @@
+[
+  {
+    "reduce": false,
+    "blur": "blur(18px) saturate(1.25)",
+    "background": "color(srgb 0.972549 0.980392 0.992157 / 0.82)",
+    "image": "linear-gradient(115deg, color(srgb 0.890196 0.921569 0.976471 / 0.48), rgba(0, 0, 0, 0) 75%), none",
+    "preference": false
+  },
+  {
+    "reduce": true,
+    "blur": "none",
+    "background": "rgb(248, 250, 253)",
+    "image": "none",
+    "preference": true
+  }
+]

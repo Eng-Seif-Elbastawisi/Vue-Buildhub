@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
 import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { onBeforeRouteLeave } from 'vue-router';
@@ -211,8 +212,11 @@ watch(
 </script>
 
 <template>
-  <div class="invoice-form-layout">
-    <section class="invoice-form__card invoice-form__details" aria-labelledby="invoice-details-title">
+  <StandardFormLayout class="invoice-form-layout">
+    <section
+      class="invoice-form__card invoice-form__details"
+      aria-labelledby="invoice-details-title"
+    >
       <header class="invoice-form__header">
         <span class="invoice-form__header-icon" aria-hidden="true">
           <InvoiceDocumentIcon />
@@ -225,55 +229,110 @@ watch(
 
       <div class="invoice-form__fields" :class="{ 'is-disabled': loading }">
         <div v-if="invoiceType" class="field-group invoice-form__project">
-          <UpdatedCustomInputSelect id="invoice_project_id" :model-value="selectedProject"
-            :label="$t('invoice.project')" :controller="projectController"
-            :placeholder="$t('invoice.project_placeholder')" :params="projectParams"
-            @update:model-value="updateProject" />
+          <UpdatedCustomInputSelect
+            id="invoice_project_id"
+            :model-value="selectedProject"
+            :label="$t('invoice.project')"
+            :controller="projectController"
+            :placeholder="$t('invoice.project_placeholder')"
+            :params="projectParams"
+            @update:model-value="updateProject"
+          />
         </div>
 
         <div v-if="isGroupInvoice && selectedProject" class="field-group invoice-form__invoices">
-          <UpdatedCustomInputSelect id="invoice_ids" :model-value="selectedInvoices"
-            :label="$t('invoice.group_invoices')" :controller="invoiceController"
-            :placeholder="$t('invoice.group_invoices_placeholder')" :params="invoiceParams" :type="2"
-            @update:model-value="updateInvoices" />
+          <UpdatedCustomInputSelect
+            id="invoice_ids"
+            :model-value="selectedInvoices"
+            :label="$t('invoice.group_invoices')"
+            :controller="invoiceController"
+            :placeholder="$t('invoice.group_invoices_placeholder')"
+            :params="invoiceParams"
+            :type="2"
+            @update:model-value="updateInvoices"
+          />
         </div>
 
         <div v-if="isSingleInvoice" class="field-group invoice-form__date">
           <span class="field-help-label-row field-help-label-row--block">
             <label class="field-label" for="invoice_date">{{ $t('invoice.invoice_date') }}</label>
-            <FieldHelpIcon :label="$t('invoice.invoice_date')" field-name="date" field-id="invoice_date" />
+            <FieldHelpIcon
+              :label="$t('invoice.invoice_date')"
+              field-name="date"
+              field-id="invoice_date"
+            />
           </span>
-          <input id="invoice_date" v-model="invoiceDate" class="field-input" type="date" @input="updateData" />
+          <input
+            id="invoice_date"
+            v-model="invoiceDate"
+            class="field-input workspace-control"
+            type="date"
+            @input="updateData"
+          />
         </div>
 
         <div v-if="isSingleInvoice" class="field-group invoice-form__amount">
           <span class="field-help-label-row field-help-label-row--block">
             <label class="field-label" for="invoice_amount">{{
               $t('invoice.invoice_amount')
-              }}</label>
-            <FieldHelpIcon :label="$t('invoice.invoice_amount')" field-name="price" field-id="invoice_amount" />
+            }}</label>
+            <FieldHelpIcon
+              :label="$t('invoice.invoice_amount')"
+              field-name="price"
+              field-id="invoice_amount"
+            />
           </span>
-          <input id="invoice_amount" v-model.number="invoiceAmount" class="field-input" min="0" step="1" type="number"
-            :placeholder="$t('invoice.invoice_amount_placeholder')" @input="updateData" />
+          <input
+            id="invoice_amount"
+            v-model.number="invoiceAmount"
+            class="field-input workspace-control"
+            min="0"
+            step="1"
+            type="number"
+            :placeholder="$t('invoice.invoice_amount_placeholder')"
+            @input="updateData"
+          />
         </div>
 
         <div class="field-group invoice-form__group-title">
-          <MultiLangInput :key="currentLanguage" field-key="title" :label="$t('title')" :languages="[currentLanguage]"
-            :model-value="groupTitle" type="title" @update:model-value="updateGroupTitle" />
+          <MultiLangInput
+            :key="currentLanguage"
+            field-key="title"
+            :label="$t('title')"
+            :languages="[currentLanguage]"
+            :model-value="groupTitle"
+            type="title"
+            @update:model-value="updateGroupTitle"
+          />
         </div>
         <div v-if="isSingleInvoice" class="field-group invoice-form__notes">
           <span class="field-help-label-row field-help-label-row--block">
             <label class="field-label" for="invoice_notes">{{ $t('invoice.notes') }}</label>
-            <FieldHelpIcon :label="$t('invoice.notes')" field-name="notes" field-id="invoice_notes" />
+            <FieldHelpIcon
+              :label="$t('invoice.notes')"
+              field-name="notes"
+              field-id="invoice_notes"
+            />
           </span>
-          <textarea id="invoice_notes" v-model="notes" class="field-input field-textarea"
-            :placeholder="$t('invoice.notes_placeholder')" @input="updateData" />
+          <textarea
+            id="invoice_notes"
+            v-model="notes"
+            class="field-input field-textarea workspace-control"
+            :placeholder="$t('invoice.notes_placeholder')"
+            @input="updateData"
+          />
         </div>
       </div>
 
       <footer class="invoice-form__footer">
-        <AppButton class="invoice-form__submit" :disabled="loading" :loading="loading" :title="$t(submitLabelKey)"
-          type="button" @click="emit('submit')">
+        <AppButton
+          class="invoice-form__submit"
+          :disabled="loading"
+          :loading="loading"
+          :title="$t(submitLabelKey)"
+          type="button"
+          @click="emit('submit')"
+        >
           {{ $t(submitLabelKey) }}
         </AppButton>
       </footer>
@@ -291,11 +350,23 @@ watch(
       </header>
 
       <div class="invoice-type-options" :class="{ 'is-disabled': loading }">
-        <label v-for="option in invoiceTypeOptions" :key="option.id" class="invoice-type-option"
-          :class="{ 'is-selected': invoiceType === option.id }" :for="`invoice_type_${option.id}`">
-          <input :id="`invoice_type_${option.id}`" class="invoice-type-option__radio" type="radio" name="invoice_type"
-            :value="option.id" :checked="invoiceType === option.id" :disabled="loading"
-            @change="updateInvoiceType(option)" />
+        <label
+          v-for="option in invoiceTypeOptions"
+          :key="option.id"
+          class="invoice-type-option"
+          :class="{ 'is-selected': invoiceType === option.id }"
+          :for="`invoice_type_${option.id}`"
+        >
+          <input
+            :id="`invoice_type_${option.id}`"
+            class="invoice-type-option__radio"
+            type="radio"
+            name="invoice_type"
+            :value="option.id"
+            :checked="invoiceType === option.id"
+            :disabled="loading"
+            @change="updateInvoiceType(option)"
+          />
           <span class="invoice-type-option__icon" aria-hidden="true">
             <InvoiceDocumentIcon v-if="option.icon === 'project'" />
             <GroupIcon v-else />
@@ -307,5 +378,5 @@ watch(
         </label>
       </div>
     </aside>
-  </div>
+  </StandardFormLayout>
 </template>

@@ -1,13 +1,13 @@
 .execution-quote-index,
 .execution-quote-index__actions-menu,
 body:has(.execution-quote-index) .p-select-overlay {
-  --quote-ink: color-mix(in sRGB, var(--SecondaryColor) 20%, var(--gray-800));
-  --quote-copper: var(--PrimaryColor);
-  --quote-copper-dark: var(--PrimaryColor);
-  --quote-copper-soft: var(--PrimaryColor-light);
-  --quote-copper-pressed: color-mix(in sRGB, var(--PrimaryColor), var(--SecondaryColor) 15%);
-  --quote-copper-border: var(--PrimaryColor);
-  --quote-copper-hover: var(--PrimaryColor-alpha-8);
+  --quote-ink: var(--bh-text);
+  --quote-copper: var(--bh-blue-ink);
+  --quote-copper-dark: var(--bh-blue-ink);
+  --quote-copper-soft: var(--bh-blue-soft);
+  --quote-copper-pressed: var(--bh-active);
+  --quote-copper-border: var(--bh-field-line);
+  --quote-copper-hover: var(--bh-hover);
 }
 
 .execution-quote-index {
@@ -48,9 +48,9 @@ body:has(.execution-quote-index) .p-select-overlay {
 }
 
 .execution-quote-index .btn-primary {
-  border-color: var(--quote-copper-dark);
+  border-color: var(--PrimaryColor);
   color: var(--button-primary-color, var(--white));
-  background: var(--quote-copper-dark);
+  background: var(--PrimaryColor);
 }
 
 .execution-quote-index .btn-primary:hover:not(:disabled) {
@@ -82,7 +82,7 @@ body:has(.execution-quote-index) .p-select-overlay {
   border: 1px solid var(--quote-line);
   border-radius: 12px;
   background: var(--quote-paper);
-  box-shadow: 0 7px 20px rgb(39 42 43 / 5%);
+  box-shadow: none;
 }
 
 .execution-quote-index__filters-heading,
@@ -177,12 +177,12 @@ body:has(.execution-quote-index) .p-select-overlay {
 .execution-quote-index__filter-field .p-select {
   width: 100%;
   min-width: 0;
-  height: 42px;
-  min-height: 42px;
+  height: var(--bh-control-height);
+  min-height: var(--bh-control-height);
   margin: 0;
   padding: 0 11px !important;
   border: 1px solid var(--quote-field-line) !important;
-  border-radius: 8px;
+  border-radius: var(--bh-radius-control);
   background: var(--quote-paper);
   transition:
     background-color 170ms ease,
@@ -197,7 +197,7 @@ body:has(.execution-quote-index) .p-select-overlay {
 }
 
 .execution-quote-index__filter-field .p-select.p-focus {
-  box-shadow: 0 0 0 2px var(--quote-copper-soft);
+  box-shadow: none;
 }
 
 .execution-quote-index__filter-field .p-select-label {
@@ -236,20 +236,20 @@ body:has(.execution-quote-index) .p-select-overlay {
 
 body:has(.execution-quote-index) .p-select-overlay {
   border: 1px solid var(--quote-line) !important;
-  border-radius: 9px;
+  border-radius: var(--bh-radius-control);
   background: var(--quote-paper) !important;
-  box-shadow: 0 10px 24px rgb(39 42 43 / 12%);
+  box-shadow: none;
 }
 
 body:has(.execution-quote-index) .p-select-overlay .p-inputtext {
   border-color: var(--quote-field-line) !important;
-  border-radius: 7px;
+  border-radius: var(--bh-radius-control);
   background: var(--quote-paper) !important;
 }
 
 body:has(.execution-quote-index) .p-select-overlay .p-inputtext:focus {
   border-color: var(--quote-copper) !important;
-  box-shadow: 0 0 0 2px var(--quote-copper-soft);
+  box-shadow: none;
 }
 
 body:has(.execution-quote-index) .p-select-option {
@@ -280,7 +280,7 @@ body:has(.execution-quote-index) .p-select-overlay.p-anchored-overlay-leave-to {
   border: 1px solid var(--quote-line);
   border-radius: 14px;
   background: var(--quote-paper);
-  box-shadow: 0 8px 22px rgb(39 42 43 / 4%);
+  box-shadow: none;
 }
 
 .execution-quote-index .status-loading {
@@ -493,7 +493,7 @@ body:has(.execution-quote-index) .p-select-overlay.p-anchored-overlay-leave-to {
   padding: 0 11px;
   border: 1px solid var(--quote-copper-soft);
   color: var(--quote-paper);
-  background: var(--white);
+  background: var(--bh-surface-raised);
 }
 
 .execution-quote-index
@@ -544,7 +544,7 @@ body:has(.execution-quote-index) .p-select-overlay.p-anchored-overlay-leave-to {
   border: 1px solid var(--quote-line);
   border-radius: 9px;
   background: var(--quote-paper);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--bh-shadow-popover);
 }
 
 .execution-quote-index__actions-menu .p-menu-item-link {
@@ -635,4 +635,16 @@ body:has(.execution-quote-index) .p-select-overlay.p-anchored-overlay-leave-to {
   body:has(.execution-quote-index) .p-select-overlay.p-anchored-overlay-leave-active {
     transition: none;
   }
+}
+
+.execution-quote-index .app-btn {
+  border-radius: var(--bh-radius-pill);
+  font-weight: 500;
+}
+
+.execution-quote-index :is(.execution-quote-index__filters, .execution-quote-index__table-section) {
+  border: 0;
+  border-radius: var(--bh-radius-card);
+  background: var(--bh-surface);
+  box-shadow: none;
 }

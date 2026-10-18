@@ -49,7 +49,7 @@
   border: 1px solid var(--border-weak);
   border-radius: var(--radius-md);
   background: var(--bg-card);
-  box-shadow: var(--shadow-sm);
+  box-shadow: none;
 }
 
 .site-team-section-heading {
@@ -203,7 +203,7 @@
 
 .site-team-avatar {
   display: grid;
-  // flex: 0 0 2.5rem;
+  /* flex: 0 0 2.5rem; */
   padding: 0.35rem 0.75rem;
   place-items: center;
   width: fit-content;
@@ -411,4 +411,28 @@
 .site-team-avatar,
 .site-team-member-avatar {
   color: color-mix(in sRGB, var(--SecondaryColor) 20%, var(--gray-800));
+}
+
+.site-team {
+  padding: 0;
+  gap: var(--bh-space-6);
+  color: var(--bh-text);
+
+  .site-team-card {
+    border: 0;
+    border-radius: var(--bh-radius-card);
+    background: var(--bh-surface);
+    box-shadow: none;
+  }
+
+  .site-team-project-title {
+    color: var(--bh-text);
+    font-size: var(--bh-text-page);
+  }
+
+  .site-team-floor {
+    border-color: var(--bh-line);
+    border-radius: var(--bh-radius-control);
+    background: var(--bh-surface-raised);
+  }
 }

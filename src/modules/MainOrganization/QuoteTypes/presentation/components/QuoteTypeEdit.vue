@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import { computed, onMounted, ref } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
 
@@ -81,53 +82,48 @@
 </script>
 
 <template>
-  <div class="QuoteType-crud-page">
+  <StandardFormLayout mode="edit" class="QuoteType-crud-page">
     <QuoteTypeForm
       :quote-type="controller.itemData.value ?? undefined"
       :loading="loading"
       @update-data="updateData"
     />
 
-    <button
-      class="btn btn-primary"
-      :class="{ 'btn--loading': loading }"
-      type="button"
-      :disabled="loading"
-      @click="saveQuoteType"
-    >
-      {{
-        isEdit
-          ? $t('quote_type.update')
-          : $t('quote_type.save')
-      }}
-    </button>
-
-    <div
-      v-if="controller.errorMessage.value"
-      class="error"
-    >
+    <div v-if="controller.errorMessage.value" class="error">
       {{ controller.errorMessage.value }}
     </div>
-  </div>
+
+    <template #actions>
+      <button
+        class="btn btn-primary"
+        :class="{ 'btn--loading': loading }"
+        type="button"
+        :disabled="loading"
+        @click="saveQuoteType"
+      >
+        {{ isEdit ? $t('quote_type.update') : $t('quote_type.save') }}
+      </button>
+    </template>
+  </StandardFormLayout>
 </template>
 
 <style scoped>
-  .QuoteType-crud-page {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
+.QuoteType-crud-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
 
-  .error {
-    margin-top: 20px;
-    padding: 10px;
-    background-color: var(--danger-light);
-    color: var(--danger-dark);
-    border: 1px solid #f5c6cb;
-    border-radius: 4px;
-  }
+.error {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: var(--danger-light);
+  color: var(--danger-dark);
+  border: 1px solid #f5c6cb;
+  border-radius: 4px;
+}
 
-  .btn-primary {
-    width: 100%;
-  }
+.btn-primary {
+  width: 100%;
+}
 </style>

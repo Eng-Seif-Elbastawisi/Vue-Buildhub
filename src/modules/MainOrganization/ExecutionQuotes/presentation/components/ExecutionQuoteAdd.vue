@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import { computed, ref, watch } from 'vue';
   import { useI18n } from 'vue-i18n';
   import { useRoute, useRouter } from 'vue-router';
@@ -253,7 +254,7 @@
 </script>
 
 <template>
-  <div class="execution-quote-add">
+  <StandardFormLayout mode="create" class="execution-quote-add">
     <ExecutionQuoteForm
       :key="isBuilderPage ? builderResetKey : 0"
       :loading="loading"
@@ -316,202 +317,202 @@
     <div v-if="controller.errorMessage.value" class="execution-quote-add__error">
       {{ controller.errorMessage.value }}
     </div>
-  </div>
+  </StandardFormLayout>
 </template>
 
 <style scoped>
-  .execution-quote-add {
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-    padding-bottom: 1.5rem;
+.execution-quote-add {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding-bottom: 1.5rem;
+}
+
+.execution-quote-add__save {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-end;
+  justify-content: center;
+  gap: 0.5rem;
+  min-width: 12rem;
+  min-height: 3rem;
+  margin-inline: 0;
+  border-radius: var(--radius-md);
+  box-shadow: none;
+  transition:
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.execution-quote-add__save:hover:not(:disabled) {
+  box-shadow: none;
+  transform: translateY(-1px);
+}
+
+.execution-quote-add__action-bar {
+  display: flex;
+  position: sticky;
+  z-index: 5;
+  bottom: 1rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-inline: 1.25rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--PrimaryColor-alpha-20);
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  box-shadow: none;
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+  animation: execution-quote-actions-enter 360ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.execution-quote-add__setup-dock {
+  display: flex;
+  position: sticky;
+  z-index: 5;
+  bottom: 1rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  /* max-width: calc(96rem - 3rem); */
+  width: 100%;
+  margin-inline: auto;
+  padding: 0.85rem 0.9rem;
+  border: 1px solid var(--border-weak);
+  border-radius: var(--radius-lg);
+  background: var(--gray-900-alpha-95);
+  box-shadow: none;
+  color: var(--white);
+  backdrop-filter: blur(10px);
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+  animation: execution-quote-actions-enter 360ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.execution-quote-add__action-bar:hover,
+.execution-quote-add__action-bar:focus-within {
+  border-color: var(--PrimaryColor-alpha-30);
+  box-shadow: none;
+}
+
+.execution-quote-add__setup-dock:hover,
+.execution-quote-add__setup-dock:focus-within {
+  border-color: var(--PrimaryColor-alpha-50);
+  box-shadow: none;
+}
+
+.execution-quote-add__action-copy {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-align: start;
+}
+
+.execution-quote-add__action-copy > span:last-child {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.execution-quote-add__action-bar .execution-quote-add__action-copy {
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.execution-quote-add__action-icon {
+  display: grid;
+  width: 2.4rem;
+  height: 2.4rem;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 0.75rem 0.75rem 0.25rem;
+  background: var(--PrimaryColor);
+  color: var(--white);
+}
+
+.execution-quote-add__action-bar .execution-quote-add__action-copy strong {
+  color: var(--title-card-color);
+}
+
+.execution-quote-add__action-copy small,
+.execution-quote-add__action-bar .execution-quote-add__action-copy span {
+  color: var(--subtitle-color);
+  font-size: var(--xs-size);
+}
+
+.execution-quote-add__setup-dock .execution-quote-add__action-copy small {
+  color: var(--gray-300);
+}
+
+:global([dir='rtl'] .execution-quote-add__action-icon i) {
+  transform: scaleX(-1);
+}
+
+.execution-quote-add__action-bar .execution-quote-add__save {
+  flex: 0 0 auto;
+  margin-inline: 0;
+}
+
+.execution-quote-add__error {
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--danger);
+  border-radius: var(--radius-sm);
+  background: var(--danger-light);
+  color: var(--danger-dark);
+  animation: execution-quote-actions-enter 240ms ease-out both;
+}
+
+@keyframes execution-quote-actions-enter {
+  from {
+    opacity: 0;
+    transform: translateY(0.75rem);
   }
 
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 700px) {
   .execution-quote-add__save {
-    display: inline-flex;
-    align-items: center;
-    align-self: flex-end;
-    justify-content: center;
-    gap: 0.5rem;
-    min-width: 12rem;
-    min-height: 3rem;
-    margin-inline: 0;
-    border-radius: var(--radius-md);
-    box-shadow: var(--shadow-sm);
-    transition:
-      box-shadow var(--transition-fast),
-      transform var(--transition-fast);
+    align-self: stretch;
   }
 
-  .execution-quote-add__save:hover:not(:disabled) {
-    box-shadow: var(--shadow-md);
-    transform: translateY(-1px);
-  }
-
+  .execution-quote-add__setup-dock,
   .execution-quote-add__action-bar {
-    display: flex;
-    position: sticky;
-    z-index: 5;
-    bottom: 1rem;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    margin-inline: 1.25rem;
-    padding: 0.85rem 1rem;
-    border: 1px solid var(--PrimaryColor-alpha-20);
-    border-radius: var(--radius-md);
-    background: var(--bg-card);
-    box-shadow: var(--shadow-md);
-    transition:
-      border-color var(--transition-fast),
-      box-shadow var(--transition-fast);
-    animation: execution-quote-actions-enter 360ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    position: static;
+    align-items: stretch;
+    flex-direction: column;
+    margin-inline: 0.75rem;
   }
 
   .execution-quote-add__setup-dock {
-    display: flex;
-    position: sticky;
-    z-index: 5;
-    bottom: 1rem;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    /* max-width: calc(96rem - 3rem); */
-    width: 100%;
-    margin-inline: auto;
-    padding: 0.85rem 0.9rem;
-    border: 1px solid var(--border-weak);
-    border-radius: var(--radius-lg);
-    background: var(--gray-900-alpha-95);
-    box-shadow: var(--shadow-xl);
-    color: var(--white);
-    backdrop-filter: blur(10px);
-    transition:
-      border-color var(--transition-fast),
-      box-shadow var(--transition-fast);
-    animation: execution-quote-actions-enter 360ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    width: calc(100% - 1.5rem);
   }
 
-  .execution-quote-add__action-bar:hover,
-  .execution-quote-add__action-bar:focus-within {
-    border-color: var(--PrimaryColor-alpha-30);
-    box-shadow: var(--shadow-lg);
-  }
-
-  .execution-quote-add__setup-dock:hover,
-  .execution-quote-add__setup-dock:focus-within {
-    border-color: var(--PrimaryColor-alpha-50);
-    box-shadow: var(--shadow-xl);
-  }
-
-  .execution-quote-add__action-copy {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    text-align: start;
-  }
-
-  .execution-quote-add__action-copy > span:last-child {
-    display: flex;
-    flex-direction: column;
-    gap: 0.2rem;
-  }
-
-  .execution-quote-add__action-bar .execution-quote-add__action-copy {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 0.2rem;
-  }
-
-  .execution-quote-add__action-icon {
-    display: grid;
-    width: 2.4rem;
-    height: 2.4rem;
-    flex: 0 0 auto;
-    place-items: center;
-    border-radius: 0.75rem 0.75rem 0.25rem;
-    background: var(--PrimaryColor);
-    color: var(--white);
-  }
-
-  .execution-quote-add__action-bar .execution-quote-add__action-copy strong {
-    color: var(--title-card-color);
-  }
-
-  .execution-quote-add__action-copy small,
-  .execution-quote-add__action-bar .execution-quote-add__action-copy span {
-    color: var(--subtitle-color);
-    font-size: var(--xs-size);
-  }
-
-  .execution-quote-add__setup-dock .execution-quote-add__action-copy small {
-    color: var(--gray-300);
-  }
-
-  :global([dir='rtl'] .execution-quote-add__action-icon i) {
-    transform: scaleX(-1);
-  }
-
+  .execution-quote-add__setup-dock .execution-quote-add__save,
   .execution-quote-add__action-bar .execution-quote-add__save {
-    flex: 0 0 auto;
-    margin-inline: 0;
+    width: 100%;
   }
+}
 
+@media (prefers-reduced-motion: reduce) {
+  .execution-quote-add__save,
+  .execution-quote-add__action-bar,
+  .execution-quote-add__setup-dock,
   .execution-quote-add__error {
-    padding: 0.75rem 1rem;
-    border: 1px solid var(--danger);
-    border-radius: var(--radius-sm);
-    background: var(--danger-light);
-    color: var(--danger-dark);
-    animation: execution-quote-actions-enter 240ms ease-out both;
+    animation: none;
+    transition: none;
   }
 
-  @keyframes execution-quote-actions-enter {
-    from {
-      opacity: 0;
-      transform: translateY(0.75rem);
-    }
-
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+  .execution-quote-add__save:hover:not(:disabled) {
+    transform: none;
   }
-
-  @media (max-width: 700px) {
-    .execution-quote-add__save {
-      align-self: stretch;
-    }
-
-    .execution-quote-add__setup-dock,
-    .execution-quote-add__action-bar {
-      position: static;
-      align-items: stretch;
-      flex-direction: column;
-      margin-inline: 0.75rem;
-    }
-
-    .execution-quote-add__setup-dock {
-      width: calc(100% - 1.5rem);
-    }
-
-    .execution-quote-add__setup-dock .execution-quote-add__save,
-    .execution-quote-add__action-bar .execution-quote-add__save {
-      width: 100%;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .execution-quote-add__save,
-    .execution-quote-add__action-bar,
-    .execution-quote-add__setup-dock,
-    .execution-quote-add__error {
-      animation: none;
-      transition: none;
-    }
-
-    .execution-quote-add__save:hover:not(:disabled) {
-      transform: none;
-    }
-  }
+}
 </style>

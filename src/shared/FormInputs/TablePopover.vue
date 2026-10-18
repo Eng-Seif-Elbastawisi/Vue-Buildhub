@@ -25,7 +25,7 @@
 
 <template>
   <!-- Text mode -->
-  <div v-if="locationTitles.length > 0" class="popover-button" @click="toggle">
+  <button v-if="locationTitles.length > 0" type="button" class="popover-button" @click="toggle">
     <span v-if="locationTitles.length > 1" class="tag tag-more">
       {{ locationTitles.length - 1 }}
     </span>
@@ -33,10 +33,10 @@
       {{ wordSlice(locationTitles.join(', '), 10) }}
     </span>
     <DropIcon class="drop-icon" />
-  </div>
+  </button>
 
   <!-- Image mode -->
-  <div v-else-if="data_img?.length" class="popover-button" @click="toggle">
+  <button v-else-if="data_img?.length" type="button" class="popover-button" @click="toggle">
     <img
       v-for="(supervisor, idx) in data_img.slice(0, 3)"
       :key="idx"
@@ -46,7 +46,7 @@
       @error="setDefaultImage"
     />
     <span v-if="data_img.length > 3" class="avatar-more"> +{{ data_img.length - 3 }} </span>
-  </div>
+  </button>
 
   <!-- Popover -->
   <Popover ref="op">

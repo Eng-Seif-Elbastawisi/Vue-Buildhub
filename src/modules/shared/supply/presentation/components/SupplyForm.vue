@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
 import { onMounted, ref, watch } from 'vue';
 import { onBeforeRouteLeave } from 'vue-router';
 import type TitleInterface from '@/base/Data/Models/titleInterface';
@@ -102,7 +103,7 @@ onMounted(updateData);
 </script>
 
 <template>
-  <div class="supply-form-card">
+  <StandardFormLayout class="supply-form-card">
     <div class="document-form-header">
       <DocumentIcon />
       <header class="form-header">
@@ -114,8 +115,14 @@ onMounted(updateData);
     <div class="form-fields" :class="{ disabled: loading }">
       <div class="field-group col-span-2">
         <!-- {{ translations }} -->
-        <MultiLangInput field-key="title" :label="$t('supply.title')" :languages="['en', 'ar']"
-          :model-value="translations" type="title" @update:model-value="updateTranslations" />
+        <MultiLangInput
+          field-key="title"
+          :label="$t('supply.title')"
+          :languages="['en', 'ar']"
+          :model-value="translations"
+          type="title"
+          @update:model-value="updateTranslations"
+        />
       </div>
 
       <div class="field-group">
@@ -124,25 +131,47 @@ onMounted(updateData);
           <FieldHelpIcon :label="$t('supply.price')" field-name="price" field-id="supply-price" />
         </span>
         <div class="input-wrap">
-          <input id="supply-price" v-model.number="price" class="field-input" min="0" step="1" type="number"
-            :placeholder="$t('supply.price_placeholder')" @input="updateData" />
+          <input
+            id="supply-price"
+            v-model.number="price"
+            class="field-input workspace-control"
+            min="0"
+            step="1"
+            type="number"
+            :placeholder="$t('supply.price_placeholder')"
+            @input="updateData"
+          />
         </div>
       </div>
 
       <!-- {{ brand }} -->
       <div class="field-group">
-        <UpdatedCustomInputSelect id="supply-brand" v-model="brand" :controller="brandController"
-          :label="$t('supply.brand')" :params="brandParams" :placeholder="$t('supply.brand_placeholder')" required
-          @update:model-value="updateData" />
+        <UpdatedCustomInputSelect
+          id="supply-brand"
+          v-model="brand"
+          :controller="brandController"
+          :label="$t('supply.brand')"
+          :params="brandParams"
+          :placeholder="$t('supply.brand_placeholder')"
+          required
+          @update:model-value="updateData"
+        />
       </div>
       <!-- {{ measurement }} -->
       <div class="field-group">
-        <UpdatedCustomInputSelect id="supply-measurement" v-model="measurement" :controller="measurementController"
-          :label="$t('measurement')" :params="measurementParams" :placeholder="$t('measurement.unit_placeholder')"
-          required @update:model-value="updateData" />
+        <UpdatedCustomInputSelect
+          id="supply-measurement"
+          v-model="measurement"
+          :controller="measurementController"
+          :label="$t('measurement')"
+          :params="measurementParams"
+          :placeholder="$t('measurement.unit_placeholder')"
+          required
+          @update:model-value="updateData"
+        />
       </div>
     </div>
-  </div>
+  </StandardFormLayout>
 </template>
 
 <style scoped lang="scss">
@@ -159,8 +188,8 @@ onMounted(updateData);
     padding: 12px 16px;
     padding-inline-end: 50px;
     border: 1px solid var(--border-weak);
-    border-radius: 28px;
-    background: var(--white);
+    border-radius: var(--bh-radius-control);
+    background: var(--bh-surface-raised);
     outline: none;
     transition: all 0.25s ease;
     font-family: 'Medium';

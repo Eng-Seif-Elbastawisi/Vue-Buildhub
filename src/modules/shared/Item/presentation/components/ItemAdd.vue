@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import { ref } from 'vue';
   import { useRoute } from 'vue-router';
   import ItemController from '../controllers/Item.controller.ts';
@@ -35,40 +36,42 @@
 </script>
 
 <template>
-  <div class="item-crud-page">
+  <StandardFormLayout mode="create" class="item-crud-page">
     <ItemForm :form-key="formKey" :loading="loading" @update-data="updateData" />
-
-    <div class="actions" :class="{ disabled: loading }">
-      <button
-        :disabled="loading"
-        :class="{ 'btn--loading': loading }"
-        class="btn btn-primary w-full"
-        type="button"
-        @click="saveItem"
-      >
-        <span v-if="loading" class="loader"></span>
-        <span v-else>{{ $t('item.save') }}</span>
-      </button>
-    </div>
 
     <div v-if="controller.errorMessage.value" class="error">
       {{ controller.errorMessage.value }}
     </div>
-  </div>
+
+    <template #actions>
+      <div class="actions" :class="{ disabled: loading }">
+        <button
+          :disabled="loading"
+          :class="{ 'btn--loading': loading }"
+          class="btn btn-primary w-full"
+          type="button"
+          @click="saveItem"
+        >
+          <span v-if="loading" class="loader"></span>
+          <span v-else>{{ $t('item.save') }}</span>
+        </button>
+      </div>
+    </template>
+  </StandardFormLayout>
 </template>
 
 <style scoped lang="scss">
-  .actions.disabled {
-    pointer-events: none;
-    opacity: 0.7;
-  }
+.actions.disabled {
+  pointer-events: none;
+  opacity: 0.7;
+}
 
-  .error {
-    margin-top: 20px;
-    padding: 10px;
-    background-color: var(--danger-light);
-    color: var(--danger-dark);
-    border: 1px solid #f5c6cb;
-    border-radius: 4px;
-  }
+.error {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: var(--danger-light);
+  color: var(--danger-dark);
+  border: 1px solid var(--bh-coral-soft);
+  border-radius: 4px;
+}
 </style>

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import { computed, onMounted, ref } from 'vue';
   import { useRoute } from 'vue-router';
 
@@ -73,7 +74,7 @@
 </script>
 
 <template>
-  <div class="item-crud-page">
+  <StandardFormLayout mode="create" class="item-crud-page">
     <ProjectFloorShow :project="projectId" />
 
     <ProjectItemForm
@@ -84,47 +85,49 @@
       @update-data="params = $event"
     />
 
-    <div class="actions" :class="{ disabled: loading }">
-      <button
-        :class="{ 'btn--loading': loading }"
-        class="btn btn-primary w-full"
-        type="button"
-        :disabled="loading || !params?.items?.length"
-        @click="saveItems"
-      >
-        <span v-if="loading" class="loader"></span>
-        <span v-else>{{ $t('project_item.save') }}</span>
-      </button>
-    </div>
-
     <ProjectItemTable :items="projectItems" :loading="loading" />
 
     <div v-if="controller.errorMessage.value" class="error">
       {{ controller.errorMessage.value }}
     </div>
     <ProjectPricingAdd :project-id="projectId" :form-key="formKey" :loading="loading" />
-  </div>
+
+    <template #actions>
+      <div class="actions" :class="{ disabled: loading }">
+        <button
+          :class="{ 'btn--loading': loading }"
+          class="btn btn-primary w-full"
+          type="button"
+          :disabled="loading || !params?.items?.length"
+          @click="saveItems"
+        >
+          <span v-if="loading" class="loader"></span>
+          <span v-else>{{ $t('project_item.save') }}</span>
+        </button>
+      </div>
+    </template>
+  </StandardFormLayout>
 </template>
 
 <style scoped lang="scss">
-  .item-crud-page {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
+.item-crud-page {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
 
-  .actions.disabled {
-    pointer-events: none;
-    opacity: 0.7;
-  }
+.actions.disabled {
+  pointer-events: none;
+  opacity: 0.7;
+}
 
-  .error {
-    margin-top: 20px;
-    padding: 10px;
-    background-color: var(--danger-light);
-    color: var(--danger-dark);
-    border: 1px solid #f5c6cb;
-    border-radius: 4px;
-  }
+.error {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: var(--danger-light);
+  color: var(--danger-dark);
+  border: 1px solid var(--bh-coral-soft);
+  border-radius: 4px;
+}
 </style>

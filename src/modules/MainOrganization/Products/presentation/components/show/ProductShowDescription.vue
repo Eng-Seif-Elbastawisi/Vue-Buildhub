@@ -31,54 +31,54 @@
 </template>
 
 <style scoped lang="scss">
-  .description-card {
-    padding: 1.15rem;
-    background: var(--bg-card);
-    border: 1px solid var(--border-weak);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-sm);
-  }
+.description-card {
+  padding: 1.15rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-weak);
+  border-radius: var(--radius-lg);
+  box-shadow: none;
+}
 
-  .section-header {
-    display: flex;
-    align-items: center;
-    gap: 0.7rem;
-    margin-bottom: 1rem;
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin-bottom: 1rem;
 
-    h3 {
-      margin: 0;
-      color: var(--title-color);
-      font-size: var(--md-size);
-      font-weight: 800;
-    }
-
-    p {
-      margin: 0.15rem 0 0;
-      color: var(--subtitle-color);
-      font-size: var(--xs-size);
-    }
-  }
-
-  .section-icon {
-    display: grid;
-    flex: 0 0 2.4rem;
-    width: 2.4rem;
-    height: 2.4rem;
-    color: var(--PrimaryColor);
-    background: var(--PrimaryColor-light);
-    border-radius: var(--radius-sm);
-    place-items: center;
-  }
-
-  .description-text {
+  h3 {
     margin: 0;
-    padding: 1rem;
-    color: var(--gray-700);
-    background: var(--gray-50);
-    border: 1px solid var(--border-weak);
-    border-radius: var(--radius-sm);
-    font-size: var(--sm-size);
-    line-height: 1.9;
-    white-space: pre-line;
+    color: var(--title-color);
+    font-size: var(--md-size);
+    font-weight: 800;
   }
+
+  p {
+    margin: 0.15rem 0 0;
+    color: var(--subtitle-color);
+    font-size: var(--xs-size);
+  }
+}
+
+.section-icon {
+  display: grid;
+  flex: 0 0 2.4rem;
+  width: 2.4rem;
+  height: 2.4rem;
+  color: var(--PrimaryColor);
+  background: var(--PrimaryColor-light);
+  border-radius: var(--radius-sm);
+  place-items: center;
+}
+
+.description-text {
+  margin: 0;
+  padding: 1rem;
+  color: var(--gray-700);
+  background: var(--gray-50);
+  border: 1px solid var(--border-weak);
+  border-radius: var(--radius-sm);
+  font-size: var(--sm-size);
+  line-height: 1.9;
+  white-space: pre-line;
+}
 </style>

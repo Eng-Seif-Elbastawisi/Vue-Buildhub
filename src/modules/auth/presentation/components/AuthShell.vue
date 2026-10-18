@@ -1,270 +1,277 @@
 <script setup lang="ts">
   import { computed } from 'vue';
   import { useI18n } from 'vue-i18n';
-  import floorPlanBackground from '@/assets/images/ChatGPT Image Jul 1, 2026, 11_19_11 AM.png';
-  import AdminEstimationVisual from './AdminEstimationVisual.vue';
-  import OrganizationConstructionVisual from './OrganizationConstructionVisual.vue';
+  import BuildHubLogo from '@/assets/images/BuildHubLogo.jpg';
 
-  type LoginMode = 'organization' | 'admin';
-
-  type HeadlineContent = {
-    firstAccent: string;
-    firstRest: string;
-    secondAccent: string;
-  };
-
-  type StatCard = {
-    label: string;
-    value: string;
-    icon: 'project' | 'estimate' | 'alert' | 'invoice' | 'company' | 'roles' | 'settings' | 'audit';
-  };
-
-  const props = defineProps<{
-    mode: LoginMode;
-  }>();
+  const props = defineProps<{ mode: 'organization' | 'admin' }>();
   const { locale } = useI18n({ useScope: 'global' });
   const direction = computed(() => (locale.value === 'ar' ? 'rtl' : 'ltr'));
-
-  const loginModeConfig = {
-    organization: {
-      badge: 'auth_organization_badge',
-      brandSubtitle: 'auth_organization_brand_subtitle',
-      headline: {
-        firstAccent: 'auth_organization_headline_first_accent',
-        firstRest: 'auth_organization_headline_first_rest',
-        secondAccent: 'auth_organization_headline_second_accent',
-      },
-      description: 'auth_organization_description',
-      heroImage: 'none',
-      sideImage: `url("${floorPlanBackground}")`,
-      cards: [
-        { label: 'auth_organization_card_projects', value: '24', icon: 'project' },
-        { label: 'auth_organization_card_estimates', value: '18', icon: 'estimate' },
-        { label: 'auth_organization_card_alerts', value: '7', icon: 'alert' },
-        { label: 'auth_organization_card_invoices', value: '12', icon: 'invoice' },
-      ],
-    },
-    admin: {
-      badge: 'auth_admin_badge',
-      brandSubtitle: 'auth_admin_brand_subtitle',
-      headline: {
-        firstAccent: 'auth_admin_headline_first_accent',
-        firstRest: 'auth_admin_headline_first_rest',
-        secondAccent: 'auth_admin_headline_second_accent',
-      },
-      description: 'auth_admin_description',
-      heroImage: 'none',
-      sideImage: 'none',
-      cards: [
-        { label: 'auth_admin_card_companies', value: '01', icon: 'company' },
-        { label: 'auth_admin_card_roles', value: '02', icon: 'roles' },
-        { label: 'auth_admin_card_settings', value: '03', icon: 'settings' },
-        { label: 'auth_admin_card_audit', value: '04', icon: 'audit' },
-      ],
-    },
-  } satisfies Record<
-    LoginMode,
-    {
-      badge: string;
-      brandSubtitle: string;
-      headline: HeadlineContent;
-      description: string;
-      heroImage: string;
-      sideImage: string;
-      cards: StatCard[];
-    }
-  >;
-
-  const content = computed(() => loginModeConfig[props.mode]);
-  const shellStyle = computed(() => ({
-    '--auth-hero-image': content.value.heroImage,
-    '--auth-side-image': content.value.sideImage,
+  const content = computed(() => ({
+    badge: `auth_${props.mode}_badge`,
+    brandSubtitle: `auth_${props.mode}_brand_subtitle`,
+    firstAccent: `auth_${props.mode}_headline_first_accent`,
+    firstRest: `auth_${props.mode}_headline_first_rest`,
+    secondAccent: `auth_${props.mode}_headline_second_accent`,
+    description: `auth_${props.mode}_description`,
   }));
 </script>
 
 <template>
-  <main class="auth-shell" :class="`auth-shell--${mode}`" :style="shellStyle" :dir="direction">
-    <div class="auth-shell__layout">
-      <section class="auth-shell__hero" :aria-labelledby="`${mode}-login-title`">
-        <div class="auth-shell__hero-image" aria-hidden="true"></div>
-        <OrganizationConstructionVisual v-if="mode === 'organization'" />
-        <AdminEstimationVisual v-if="mode === 'admin'" />
-        <div class="auth-shell__hero-shade" aria-hidden="true"></div>
-        <div class="auth-shell__blueprint" aria-hidden="true"></div>
-
-        <div class="auth-shell__hero-content">
-          <header class="auth-shell__brand">
-            <div class="auth-shell__brand-mark" aria-hidden="true">
-              <span></span>
-              <span></span>
-              <span></span>
-            </div>
-            <div>
-              <strong>{{ $t('buildhub_os') }}</strong>
-              <p>{{ $t(content.brandSubtitle) }}</p>
-            </div>
-          </header>
-
-          <div class="auth-shell__copy">
-            <span class="auth-shell__badge">{{ $t(content.badge) }}</span>
-            <h1 :id="`${mode}-login-title`">
-              <span>
-                <mark>{{ $t(content.headline.firstAccent) }}</mark>
-                {{ $t(content.headline.firstRest) }}
-              </span>
-              <mark>{{ $t(content.headline.secondAccent) }}</mark>
-            </h1>
-            <p>{{ $t(content.description) }}</p>
+  <main class="auth-workspace" :class="`auth-workspace--${mode}`" :dir="direction">
+    <div class="auth-workspace__layout">
+      <section class="auth-workspace__intro" :aria-labelledby="`${mode}-login-title`">
+        <header class="auth-workspace__brand">
+          <img :src="BuildHubLogo" :alt="$t('buildhub_logo')" />
+          <div>
+            <strong>{{ $t('buildhub') }}</strong>
+            <p>{{ $t(content.brandSubtitle) }}</p>
           </div>
-
-          <!-- <div class="auth-shell__stats" :aria-label="$t('auth_login_modules_label')">
-            <article
-              v-for="(card, index) in content.cards"
-              :key="card.label"
-              class="auth-shell__stat-card"
-              :class="`auth-shell__stat-card--${index + 1}`"
-            >
-              <span
-                class="auth-shell__stat-icon"
-                :class="`auth-shell__stat-icon--${card.icon}`"
-                aria-hidden="true"
-              >
-                <i></i>
-              </span>
-              <p>{{ $t(card.label) }}</p>
-              <strong>{{ card.value }} <span aria-hidden="true">↗</span></strong>
-            </article>
-          </div> -->
-
-          <article v-if="mode === 'admin'" class="auth-shell__admin-dashboard">
-            <div class="auth-shell__admin-dashboard-head">
-              <span>{{ $t('auth_visual_admin_title') }}</span>
-              <strong>{{ $t('auth_visual_live_label') }}</strong>
-            </div>
-            <div class="auth-shell__admin-dashboard-grid">
-              <span>{{ $t('auth_visual_admin_pipeline_label') }}</span>
-              <i></i>
-              <span>{{ $t('auth_visual_admin_progress_label') }}</span>
-              <i></i>
-              <span>{{ $t('auth_visual_admin_finance_label') }}</span>
-              <i></i>
-            </div>
-          </article>
+        </header>
+        <div class="auth-workspace__copy">
+          <h1 :id="`${mode}-login-title`">
+            {{ $t(content.firstAccent) }} {{ $t(content.firstRest) }}
+            <span>{{ $t(content.secondAccent) }}</span>
+          </h1>
+          <p>{{ $t(content.description) }}</p>
         </div>
+        <p class="auth-workspace__portal">{{ $t(content.badge) }}</p>
       </section>
-
-      <section class="auth-shell__side" :aria-label="$t('auth_login_form_label')">
-        <div class="auth-shell__side-bg" aria-hidden="true"></div>
+      <section class="auth-workspace__form" :aria-label="$t('auth_login_form_label')">
         <slot :mode="mode" :badge="$t(content.badge)" />
       </section>
     </div>
   </main>
 </template>
 
-<style scoped>
-  .auth-shell[dir='ltr'],
-  .auth-shell[dir='ltr'] .auth-shell__hero-content,
-  .auth-shell[dir='ltr'] .auth-shell__side {
-    direction: ltr;
+<style scoped lang="scss">
+  .auth-workspace {
+    display: grid;
+    min-height: 100dvh;
+    place-items: center;
+    padding: clamp(16px, 3vw, 48px);
+    color: var(--bh-text);
+    background: var(--bh-canvas);
+    font-family: var(--bh-font);
   }
 
-  .auth-shell--organization .auth-shell__hero-image {
-    background: var(--auth-darker);
-    transform: none;
-    animation: none;
+  .auth-workspace__layout {
+    display: grid;
+    width: min(100%, 1280px);
+    min-height: 720px;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
   }
 
-  .auth-shell--organization .auth-shell__hero-shade {
-    z-index: 1;
-    background: linear-gradient(90deg, var(--auth-black-12), transparent 42%, var(--auth-black-36));
+  .auth-workspace__intro {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 56px;
+    padding: clamp(24px, 4vw, 60px);
+    border-radius: var(--bh-radius-panel);
+    background: var(--bh-surface-secondary);
   }
 
-  .auth-shell--organization .auth-shell__blueprint {
-    display: none;
+  .auth-workspace__brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
   }
 
-  .auth-shell--organization .auth-shell__hero-content {
+  .auth-workspace__brand img {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+    border-radius: var(--bh-radius-control);
+  }
+
+  .auth-workspace__brand strong {
+    color: var(--bh-text);
+    font-size: var(--bh-text-xl);
+    font-weight: 600;
+  }
+
+  .auth-workspace__brand p {
+    margin: 4px 0 0;
+    color: var(--bh-muted);
+    font-size: var(--bh-text-sm);
+    line-height: 1.5;
+  }
+
+  .auth-workspace__copy h1 {
+    margin: 0;
+    color: var(--bh-text);
+    font-size: clamp(2rem, 3.5vw, 3.25rem);
+    font-weight: 500;
+    line-height: 1.25;
+    text-transform: none;
+    text-wrap: balance;
+  }
+
+  .auth-workspace__copy h1 span {
+    display: block;
+    color: var(--bh-blue-ink);
+  }
+
+  .auth-workspace__copy p {
+    max-width: 45ch;
+    margin-block: 24px 0;
+    color: var(--bh-muted);
+    font-size: var(--bh-text-md);
+    line-height: 1.8;
+  }
+
+  .auth-workspace__portal {
+    align-self: flex-start;
+    margin: 0;
+    padding: 10px 18px;
+    border-radius: var(--bh-radius-pill);
+    background: var(--bh-surface);
+    color: var(--bh-muted);
+    font-size: var(--bh-text-sm);
+  }
+
+  .auth-workspace__form {
+    display: grid;
+    align-items: center;
+    padding: clamp(24px, 4vw, 56px);
+    border-radius: var(--bh-radius-panel);
+    background: var(--bh-surface);
+  }
+
+  .auth-workspace__form :deep(.login-form) {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    gap: 32px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .auth-workspace__form :deep(.title) {
+    margin: 0;
+    text-align: start;
+  }
+
+  .auth-workspace__form :deep(.title h2) {
+    margin: 0;
+    color: var(--bh-text);
+    font-size: var(--bh-text-page);
+    line-height: 1.3;
+  }
+
+  .auth-workspace__form :deep(.title p) {
+    margin: 12px 0 0;
+    color: var(--bh-muted);
+    font-size: var(--bh-text-sm);
+    line-height: 1.6;
+  }
+
+  .auth-workspace__form :deep(.inputs) {
+    display: grid;
+    width: 100%;
+    gap: 24px;
+  }
+
+  .auth-workspace__form :deep(.input-wrapper) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-auto-flow: row;
+    width: 100%;
+    min-width: 0;
+    padding-inline: 0;
+    gap: 8px;
+  }
+
+  .auth-workspace__form :deep(.input-wrapper label) {
+    color: var(--bh-text);
+    font-size: var(--bh-text-sm);
+  }
+
+  .auth-workspace__form :deep(.input-wrapper input) {
+    width: 100%;
+    height: 48px;
+    padding: 12px 16px;
+    padding-inline-end: 48px;
+    color: var(--bh-text);
+    background: var(--bh-surface-raised);
+    border: 1px solid var(--bh-field-line);
+    border-radius: var(--bh-radius-control);
+  }
+
+  .auth-workspace__form :deep(.auth-input-wrap) {
     position: relative;
-    z-index: 2;
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+    justify-self: stretch;
   }
 
-  .auth-shell--organization :deep(.login-form) {
-    width: min(100%, 525px);
-    gap: 34px;
-    padding: clamp(26px, 3vw, 36px);
+  .auth-workspace__form :deep(.auth-password-toggle) {
+    position: absolute;
+    inset-inline-end: 8px;
+    inset-block-start: 4px;
+    width: 40px;
+    height: 40px;
+    padding: 10px;
+    border: 0;
+    border-radius: 50%;
+    color: var(--bh-muted);
+    background: transparent;
   }
 
-  .auth-shell--organization :deep(.inputs) {
-    gap: 18px;
+  .auth-workspace__form :deep(.btn-primary) {
+    width: 100%;
+    min-height: 48px;
+    border-radius: var(--bh-radius-pill);
   }
 
-  .auth-shell--organization :deep(.input-wrapper) {
-    gap: 9px;
+  .auth-workspace__form :deep(.login-form__toolbar) {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
   }
 
-  .auth-shell--organization :deep(.auth-input-wrap input) {
-    height: 56px;
-    border-color: color-mix(in sRGB, var(--auth-border) 72%, var(--gray-400));
+  .auth-workspace__form :deep(.login-form__badge) {
+    color: var(--bh-muted);
+    font-size: var(--bh-text-xs);
   }
 
-  .auth-shell--organization :deep(.btn.btn-primary) {
-    min-height: 56px;
-    box-shadow: 0 12px 28px var(--auth-copper-22);
+  .auth-workspace__form :deep(.auth-password-toggle svg) {
+    display: block;
+    width: 20px;
+    height: 20px;
   }
 
-  .auth-shell--organization :deep(.btn.btn-primary:hover) {
-    box-shadow: 0 16px 32px var(--auth-copper-30);
+  .auth-workspace :deep(:is(p, span, label, input, button)) {
+    text-transform: none;
   }
 
-  @media (min-width: 2000px) and (min-height: 900px), (min-width: 1200px) and (min-height: 1200px) {
-    .auth-shell--organization .auth-shell__hero,
-    .auth-shell--organization .auth-shell__side {
-      padding-block-end: clamp(110px, 13vh, 200px);
+  @media (max-width: 800px) {
+    .auth-workspace__layout {
+      grid-template-columns: 1fr;
+      min-height: 0;
     }
-  }
 
-  @media (max-width: 900px) {
-    .auth-shell--organization :deep(.login-form) {
-      width: min(100%, 500px);
-    }
-  }
-
-  @media (max-width: 600px) {
-    .auth-shell--organization :deep(.login-form) {
-      gap: 40px;
-      padding: 22px 16px;
+    .auth-workspace__intro {
+      gap: 24px;
     }
 
-    .auth-shell--organization :deep(.auth-input-wrap input) {
-      height: 54px;
+    .auth-workspace__copy h1 {
+      font-size: 1.75rem;
     }
 
-    .auth-shell--organization :deep(.btn.btn-primary) {
-      min-height: 54px;
+    .auth-workspace__copy p {
+      margin-block-start: 12px;
+      font-size: var(--bh-text-sm);
     }
-  }
 
-  .auth-shell--admin .auth-shell__hero-shade {
-    z-index: 1;
-    background: linear-gradient(
-      90deg,
-      transparent 0 28%,
-      var(--auth-black-36) 57%,
-      var(--auth-admin-bg) 100%
-    );
-  }
-
-  .auth-shell--admin .auth-shell__hero-content {
-    position: relative;
-    z-index: 2;
-  }
-
-  .auth-shell--admin .auth-shell__copy {
-    width: min(100%, 480px);
-    justify-self: start;
-  }
-
-  .auth-shell--admin .auth-shell__stat-card {
-    background: var(--auth-admin-card);
+    .auth-workspace__portal {
+      display: none;
+    }
   }
 </style>

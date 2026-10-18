@@ -78,19 +78,16 @@
       >
         {{ $t('prev') }}
       </button>
-      <span
+      <button
         v-for="item in numberOfPages.slice(currentPage > 2 ? currentPage - 2 : 0, currentPage + 2)"
         :key="item"
         :class="['pagination-item', { active: item === currentPage }]"
         :aria-current="item === currentPage ? 'page' : undefined"
-        role="button"
-        tabindex="0"
+        type="button"
         @click="emit('changePage', item)"
-        @keydown.enter="emit('changePage', item)"
-        @keydown.space.prevent="emit('changePage', item)"
       >
         {{ item }}
-      </span>
+      </button>
       <button
         class="pagination-btn"
         type="button"
@@ -108,9 +105,9 @@
       </button>
       <Popover ref="op">
         <div class="per-page">
-          <span @click="emit('countPerPage', 10)">10</span>
-          <span @click="emit('countPerPage', 20)">20</span>
-          <span @click="emit('countPerPage', 30)">30</span>
+          <button type="button" @click="emit('countPerPage', 10)">10</button>
+          <button type="button" @click="emit('countPerPage', 20)">20</button>
+          <button type="button" @click="emit('countPerPage', 30)">30</button>
         </div>
       </Popover>
       <span>{{ $t('per_page') }}</span>

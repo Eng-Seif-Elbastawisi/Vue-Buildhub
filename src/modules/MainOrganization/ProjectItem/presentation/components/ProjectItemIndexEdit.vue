@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import { computed, onMounted, ref } from 'vue';
   import { useI18n } from 'vue-i18n';
   import { useRoute, useRouter } from 'vue-router';
@@ -91,7 +92,7 @@
 </script>
 
 <template>
-  <div class="item-page">
+  <StandardFormLayout mode="edit" class="item-page">
     <IndexPageHeader
       :title="$t('project_item.index.title')"
       :subtitle="$t('project_item.index.description')"
@@ -115,7 +116,7 @@
           <input
             v-model="word"
             :placeholder="$t('project_item.search_placeholder')"
-            class="search-input"
+            class="search-input workspace-control"
             type="text"
             @input="Search"
           />
@@ -225,39 +226,39 @@
         />
       </template>
     </DataStatusBuilder>
-  </div>
+  </StandardFormLayout>
 </template>
 
 <style scoped lang="scss">
-  .material-page,
-  .material-header,
-  .row-actions {
-    display: flex;
-  }
+.material-page,
+.material-header,
+.row-actions {
+  display: flex;
+}
 
-  .material-page {
-    flex-direction: column;
-    gap: 1.5rem;
-  }
+.material-page {
+  flex-direction: column;
+  gap: 1.5rem;
+}
 
-  .material-header {
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-  }
+.material-header {
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
 
-  .material-header p,
-  .empty-state p {
-    color: var(--gray-5);
-  }
+.material-header p,
+.empty-state p {
+  color: var(--gray-5);
+}
 
-  .row-actions {
-    align-items: center;
-    gap: 0.75rem;
-  }
+.row-actions {
+  align-items: center;
+  gap: 0.75rem;
+}
 
-  .empty-state {
-    padding: 3rem 1rem;
-    text-align: center;
-  }
+.empty-state {
+  padding: 3rem 1rem;
+  text-align: center;
+}
 </style>

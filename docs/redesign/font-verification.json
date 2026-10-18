@@ -1,0 +1,88 @@
+{
+  "fontResponsesFailed": [],
+  "cases": [
+    {
+      "case": "regular",
+      "fonts": [
+        {
+          "familyName": "Lufga",
+          "postScriptName": "Lufga-Regular",
+          "isCustomFont": true,
+          "glyphCount": 16
+        }
+      ]
+    },
+    {
+      "case": "medium",
+      "fonts": [
+        {
+          "familyName": "Lufga",
+          "postScriptName": "Lufga-Medium",
+          "isCustomFont": true,
+          "glyphCount": 16
+        }
+      ]
+    },
+    {
+      "case": "semibold",
+      "fonts": [
+        {
+          "familyName": "Lufga",
+          "postScriptName": "Lufga-SemiBold",
+          "isCustomFont": true,
+          "glyphCount": 16
+        }
+      ]
+    },
+    {
+      "case": "bold",
+      "fonts": [
+        {
+          "familyName": "Lufga",
+          "postScriptName": "Lufga-Bold",
+          "isCustomFont": true,
+          "glyphCount": 16
+        }
+      ]
+    },
+    {
+      "case": "italic",
+      "fonts": [
+        {
+          "familyName": "Lufga",
+          "postScriptName": "Lufga-Italic",
+          "isCustomFont": true,
+          "glyphCount": 16
+        }
+      ]
+    },
+    {
+      "case": "legacy",
+      "fonts": [
+        {
+          "familyName": "Lufga",
+          "postScriptName": "Lufga-Medium",
+          "isCustomFont": true,
+          "glyphCount": 16
+        }
+      ]
+    },
+    {
+      "case": "arabic",
+      "fonts": [
+        {
+          "familyName": "Lufga",
+          "postScriptName": "Lufga-Regular",
+          "isCustomFont": true,
+          "glyphCount": 1
+        },
+        {
+          "familyName": "URW DIN Arabic",
+          "postScriptName": "URWDINArabic-Medium",
+          "isCustomFont": true,
+          "glyphCount": 13
+        }
+      ]
+    }
+  ]
+}

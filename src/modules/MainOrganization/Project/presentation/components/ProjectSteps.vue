@@ -25,10 +25,16 @@ const steps = [
 <template>
   <nav class="project-steps" :aria-label="$t('Project.steps.progress_label')">
     <ol class="project-steps__track">
-      <li v-for="(step, index) in steps" :key="step.id" class="project-steps__item" :class="{
-        active: currentStep === step.id,
-        completed: currentStep > step.id,
-      }" :aria-current="currentStep === step.id ? 'step' : undefined">
+      <li
+        v-for="(step, index) in steps"
+        :key="step.id"
+        class="project-steps__item"
+        :class="{
+          active: currentStep === step.id,
+          completed: currentStep > step.id,
+        }"
+        :aria-current="currentStep === step.id ? 'step' : undefined"
+      >
         <span class="project-steps__circle" aria-hidden="true">
           <span v-if="currentStep > step.id">✓</span>
           <span v-else>{{ step.id }}</span>
@@ -39,8 +45,12 @@ const steps = [
           <small>{{ $t(step.descriptionKey) }}</small>
         </span>
 
-        <span v-if="index < steps.length - 1" class="project-steps__line" :class="{ completed: currentStep > step.id }"
-          aria-hidden="true"></span>
+        <span
+          v-if="index < steps.length - 1"
+          class="project-steps__line"
+          :class="{ completed: currentStep > step.id }"
+          aria-hidden="true"
+        ></span>
       </li>
     </ol>
   </nav>
@@ -56,7 +66,7 @@ const steps = [
   border: 1px solid var(--border-weak);
   border-radius: var(--radius-lg);
   background: var(--bg-card);
-  box-shadow: var(--shadow-sm);
+  box-shadow: none;
 }
 
 .project-steps__track {
@@ -82,7 +92,7 @@ const steps = [
       border-color: var(--PrimaryColor);
       background: var(--PrimaryColor);
       color: var(--standard-white);
-      box-shadow: 0 0 0 5px var(--PrimaryColor-alpha-10);
+      box-shadow: none;
 
       &::after {
         position: absolute;
@@ -235,7 +245,6 @@ const steps = [
 }
 
 @media (prefers-reduced-motion: reduce) {
-
   .project-steps__item,
   .project-steps__item.active .project-steps__circle::after {
     animation: none;

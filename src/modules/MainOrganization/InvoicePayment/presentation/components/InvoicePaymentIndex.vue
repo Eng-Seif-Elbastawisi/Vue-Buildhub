@@ -110,7 +110,7 @@
           <input
             v-model="word"
             :placeholder="$t('invoice_payment.search_placeholder')"
-            class="search-input"
+            class="search-input workspace-control"
             type="text"
             @input="search"
           />
@@ -199,5 +199,5 @@
 </template>
 
 <style lang="scss">
-  @use '../styles/invoice_payment';
+@use '../styles/invoice_payment';
 </style>

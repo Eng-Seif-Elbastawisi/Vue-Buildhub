@@ -892,171 +892,171 @@
 </template>
 
 <style scoped>
-  .execution-quote-builder {
-    display: flex;
+.execution-quote-builder {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.builder-toolbar,
+.builder-toolbar__context,
+.pricing-notice {
+  display: flex;
+}
+
+.builder-toolbar {
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--border-weak);
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  box-shadow: none;
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+  animation: execution-quote-builder-enter 320ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.builder-toolbar:hover,
+.builder-toolbar:focus-within {
+  border-color: var(--PrimaryColor-alpha-30);
+  box-shadow: none;
+}
+
+.builder-toolbar__context {
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+  text-align: start;
+}
+
+.builder-toolbar__context span,
+.pricing-notice p {
+  color: var(--subtitle-color);
+  font-size: var(--xs-size);
+}
+
+.builder-toolbar__context strong {
+  overflow: hidden;
+  color: var(--title-card-color);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pricing-notice {
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--PrimaryColor-alpha-20);
+  border-radius: var(--radius-md);
+  background: var(--info-light);
+  color: var(--title-card-color);
+  animation: execution-quote-builder-enter 360ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.pricing-notice__icon {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--radius-full);
+  background: var(--PrimaryColor-alpha-10);
+  color: var(--PrimaryColor);
+}
+
+.pricing-notice p {
+  margin: 0.2rem 0 0;
+  line-height: 1.6;
+}
+
+.pricing-notice--pending {
+  border-style: dashed;
+}
+
+.execution-quote-builder > :deep(.execution-builder-card) {
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+  animation: execution-quote-builder-enter 380ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.execution-quote-builder > :deep(.execution-builder-card:hover),
+.execution-quote-builder > :deep(.execution-builder-card:focus-within) {
+  border-color: var(--PrimaryColor-alpha-30);
+  box-shadow: none;
+}
+
+.execution-quote-builder :deep(.stage-card:hover),
+.execution-quote-builder :deep(.sub-stage-card:hover),
+.execution-quote-builder :deep(.source-card:hover:not(:disabled)) {
+  border-color: var(--PrimaryColor);
+  box-shadow: none;
+  transform: translateY(-2px);
+}
+
+.execution-quote-builder :deep(.stage-card:focus-visible),
+.execution-quote-builder :deep(.sub-stage-card:focus-visible),
+.execution-quote-builder :deep(.source-card:focus-visible) {
+  border-color: var(--PrimaryColor);
+  outline: 3px solid var(--PrimaryColor-alpha-20);
+  outline-offset: 2px;
+}
+
+.execution-quote-builder :deep(.stage-card),
+.execution-quote-builder :deep(.sub-stage-card),
+.execution-quote-builder :deep(.source-card) {
+  transition:
+    border-color var(--transition-fast),
+    background-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+@keyframes execution-quote-builder-enter {
+  from {
+    opacity: 0;
+    transform: translateY(0.7rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 640px) {
+  .builder-toolbar {
+    align-items: stretch;
     flex-direction: column;
-    gap: 1rem;
+  }
+
+  .builder-toolbar__exit {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .builder-toolbar,
+  .pricing-notice,
+  .execution-quote-builder > :deep(.execution-builder-card) {
+    animation: none;
   }
 
   .builder-toolbar,
-  .builder-toolbar__context,
-  .pricing-notice {
-    display: flex;
-  }
-
-  .builder-toolbar {
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    padding: 0.85rem 1rem;
-    border: 1px solid var(--border-weak);
-    border-radius: var(--radius-md);
-    background: var(--bg-card);
-    box-shadow: var(--shadow-sm);
-    transition:
-      border-color var(--transition-fast),
-      box-shadow var(--transition-fast);
-    animation: execution-quote-builder-enter 320ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
-  }
-
-  .builder-toolbar:hover,
-  .builder-toolbar:focus-within {
-    border-color: var(--PrimaryColor-alpha-30);
-    box-shadow: var(--shadow-md);
-  }
-
-  .builder-toolbar__context {
-    flex-direction: column;
-    gap: 0.2rem;
-    min-width: 0;
-    text-align: start;
-  }
-
-  .builder-toolbar__context span,
-  .pricing-notice p {
-    color: var(--subtitle-color);
-    font-size: var(--xs-size);
-  }
-
-  .builder-toolbar__context strong {
-    overflow: hidden;
-    color: var(--title-card-color);
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .pricing-notice {
-    align-items: flex-start;
-    gap: 0.75rem;
-    padding: 0.9rem 1rem;
-    border: 1px solid var(--PrimaryColor-alpha-20);
-    border-radius: var(--radius-md);
-    background: var(--info-light);
-    color: var(--title-card-color);
-    animation: execution-quote-builder-enter 360ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
-  }
-
-  .pricing-notice__icon {
-    display: grid;
-    flex: 0 0 auto;
-    place-items: center;
-    width: 2rem;
-    height: 2rem;
-    border-radius: var(--radius-full);
-    background: var(--PrimaryColor-alpha-10);
-    color: var(--PrimaryColor);
-  }
-
-  .pricing-notice p {
-    margin: 0.2rem 0 0;
-    line-height: 1.6;
-  }
-
-  .pricing-notice--pending {
-    border-style: dashed;
-  }
-
-  .execution-quote-builder > :deep(.execution-builder-card) {
-    transition:
-      border-color var(--transition-fast),
-      box-shadow var(--transition-fast);
-    animation: execution-quote-builder-enter 380ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
-  }
-
-  .execution-quote-builder > :deep(.execution-builder-card:hover),
-  .execution-quote-builder > :deep(.execution-builder-card:focus-within) {
-    border-color: var(--PrimaryColor-alpha-30);
-    box-shadow: var(--shadow-md);
+  .execution-quote-builder > :deep(.execution-builder-card),
+  .execution-quote-builder :deep(.stage-card),
+  .execution-quote-builder :deep(.sub-stage-card),
+  .execution-quote-builder :deep(.source-card) {
+    transition: none;
   }
 
   .execution-quote-builder :deep(.stage-card:hover),
   .execution-quote-builder :deep(.sub-stage-card:hover),
   .execution-quote-builder :deep(.source-card:hover:not(:disabled)) {
-    border-color: var(--PrimaryColor);
-    box-shadow: var(--shadow-md);
-    transform: translateY(-2px);
+    transform: none;
   }
-
-  .execution-quote-builder :deep(.stage-card:focus-visible),
-  .execution-quote-builder :deep(.sub-stage-card:focus-visible),
-  .execution-quote-builder :deep(.source-card:focus-visible) {
-    border-color: var(--PrimaryColor);
-    outline: 3px solid var(--PrimaryColor-alpha-20);
-    outline-offset: 2px;
-  }
-
-  .execution-quote-builder :deep(.stage-card),
-  .execution-quote-builder :deep(.sub-stage-card),
-  .execution-quote-builder :deep(.source-card) {
-    transition:
-      border-color var(--transition-fast),
-      background-color var(--transition-fast),
-      box-shadow var(--transition-fast),
-      transform var(--transition-fast);
-  }
-
-  @keyframes execution-quote-builder-enter {
-    from {
-      opacity: 0;
-      transform: translateY(0.7rem);
-    }
-
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @media (max-width: 640px) {
-    .builder-toolbar {
-      align-items: stretch;
-      flex-direction: column;
-    }
-
-    .builder-toolbar__exit {
-      width: 100%;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .builder-toolbar,
-    .pricing-notice,
-    .execution-quote-builder > :deep(.execution-builder-card) {
-      animation: none;
-    }
-
-    .builder-toolbar,
-    .execution-quote-builder > :deep(.execution-builder-card),
-    .execution-quote-builder :deep(.stage-card),
-    .execution-quote-builder :deep(.sub-stage-card),
-    .execution-quote-builder :deep(.source-card) {
-      transition: none;
-    }
-
-    .execution-quote-builder :deep(.stage-card:hover),
-    .execution-quote-builder :deep(.sub-stage-card:hover),
-    .execution-quote-builder :deep(.source-card:hover:not(:disabled)) {
-      transform: none;
-    }
-  }
+}
 </style>

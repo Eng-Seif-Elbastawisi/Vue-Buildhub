@@ -65,7 +65,7 @@
     :visible="modelValue"
     modal
     append-to="body"
-    class="execution-quote-client-dialog"
+    class="execution-quote-client-dialog workspace-dialog"
     :closable="!saving"
     :dismissable-mask="!saving"
     :draggable="false"
@@ -103,60 +103,60 @@
 </template>
 
 <style scoped lang="scss">
-  :deep(.execution-quote-client-dialog) {
-    width: min(44rem, calc(100vw - 2rem));
-  }
+:deep(.execution-quote-client-dialog) {
+  width: min(44rem, calc(100vw - 2rem));
+}
 
-  .execution-quote-client-dialog__header,
-  .execution-quote-client-dialog__actions {
-    display: flex;
-    align-items: center;
-  }
+.execution-quote-client-dialog__header,
+.execution-quote-client-dialog__actions {
+  display: flex;
+  align-items: center;
+}
 
-  .execution-quote-client-dialog__header {
-    gap: 0.75rem;
-    text-align: start;
-  }
+.execution-quote-client-dialog__header {
+  gap: 0.75rem;
+  text-align: start;
+}
 
-  .execution-quote-client-dialog__header > span {
-    display: grid;
-    flex: 0 0 2.75rem;
-    place-items: center;
-    width: 2.75rem;
-    height: 2.75rem;
-    border-radius: var(--radius-md);
-    background: var(--PrimaryColor-light);
-    color: var(--PrimaryColor);
-  }
+.execution-quote-client-dialog__header > span {
+  display: grid;
+  flex: 0 0 2.75rem;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: var(--radius-md);
+  background: var(--PrimaryColor-light);
+  color: var(--PrimaryColor);
+}
 
-  .execution-quote-client-dialog__header h2,
-  .execution-quote-client-dialog__header p {
-    margin: 0;
-  }
+.execution-quote-client-dialog__header h2,
+.execution-quote-client-dialog__header p {
+  margin: 0;
+}
 
-  .execution-quote-client-dialog__header h2 {
-    color: var(--title-card-color);
-    font-size: var(--md-size-2);
-  }
+.execution-quote-client-dialog__header h2 {
+  color: var(--title-card-color);
+  font-size: var(--md-size-2);
+}
 
-  .execution-quote-client-dialog__header p {
-    margin-block-start: 0.25rem;
-    color: var(--subtitle-color);
-    font-size: var(--sm-size);
-  }
+.execution-quote-client-dialog__header p {
+  margin-block-start: 0.25rem;
+  color: var(--subtitle-color);
+  font-size: var(--sm-size);
+}
 
-  .execution-quote-client-dialog__actions {
-    justify-content: flex-end;
-    gap: 0.5rem;
-  }
+.execution-quote-client-dialog__actions {
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
 
-  .execution-quote-client-dialog__error {
-    margin-block-start: 1rem;
-    padding: 0.75rem;
-    border: 1px solid var(--danger);
-    border-radius: var(--radius-sm);
-    background: var(--danger-light);
-    color: var(--danger-dark);
-    text-align: start;
-  }
+.execution-quote-client-dialog__error {
+  margin-block-start: 1rem;
+  padding: 0.75rem;
+  border: 1px solid var(--danger);
+  border-radius: var(--radius-sm);
+  background: var(--danger-light);
+  color: var(--danger-dark);
+  text-align: start;
+}
 </style>

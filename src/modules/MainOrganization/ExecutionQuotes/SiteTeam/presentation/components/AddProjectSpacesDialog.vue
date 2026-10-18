@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
   import { computed, ref, watch } from 'vue';
   import { useI18n } from 'vue-i18n';
@@ -94,13 +95,13 @@
   <Dialog
     :visible="visible"
     modal
-    class="site-team-dialog site-team-dialog--spaces"
+    class="site-team-dialog site-team-dialog--spaces workspace-dialog"
     :header="$t('site_team.add_spaces')"
     :closable="!busy"
     :close-on-escape="!busy"
     @update:visible="emit('update:visible', $event)"
   >
-    <form class="site-team-form" @submit.prevent="save">
+    <StandardFormLayout as="form" embedded class="site-team-form" @submit.prevent="save">
       <h3>{{ $t('site_team.select_floor') }}</h3>
       <div class="field-group">
         <UpdatedCustomInputSelect
@@ -177,7 +178,7 @@
               v-model="row[dimension]"
               type="number"
               step="any"
-              class="input"
+              class="input workspace-control"
               :aria-invalid="invalidField(row, dimension)"
               :aria-describedby="`${dimension}-error-${row.key}`"
             />
@@ -201,7 +202,12 @@
               :help-text="$t('field_help.execution_fields.notes')"
             />
           </span>
-          <textarea :id="`notes-${row.key}`" v-model="row.notes" rows="2" class="input"></textarea>
+          <textarea
+            :id="`notes-${row.key}`"
+            v-model="row.notes"
+            rows="2"
+            class="input workspace-control"
+          ></textarea>
         </div>
         <AppButton
           theme="secondary"
@@ -221,6 +227,6 @@
         }}</AppButton>
         <AppButton type="submit" :loading="busy">{{ $t('site_team.save_spaces') }}</AppButton>
       </div>
-    </form>
+    </StandardFormLayout>
   </Dialog>
 </template>

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import { computed, onMounted, ref } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import { useI18n } from 'vue-i18n';
@@ -114,14 +115,19 @@
 </script>
 
 <template>
-  <main class="invoice-action-page">
+  <StandardFormLayout as="main" class="invoice-action-page">
     <header class="invoice-action-header">
       <p class="invoice-action-header__eyebrow">{{ $t('invoice_action.page_label') }}</p>
       <h1>{{ $t('invoice_action.title') }}</h1>
       <p>{{ $t('invoice_action.description') }}</p>
     </header>
 
-    <form class="invoice-action-card" @submit.prevent="submitInvoiceAction">
+    <StandardFormLayout
+      as="form"
+      embedded
+      class="invoice-action-card"
+      @submit.prevent="submitInvoiceAction"
+    >
       <div class="invoice-action-grid">
         <div class="invoice-action-field">
           <UpdatedCustomInputSelect
@@ -171,83 +177,83 @@
           {{ $t('invoice_action.save') }}
         </AppButton>
       </footer>
-    </form>
-  </main>
+    </StandardFormLayout>
+  </StandardFormLayout>
 </template>
 
 <style scoped lang="scss">
-  .invoice-action-page {
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-    padding: 1.5rem;
+.invoice-action-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 1.5rem;
+}
+
+.invoice-action-header,
+.invoice-action-card {
+  padding: 1.25rem;
+  border: 1px solid var(--border-weak);
+  border-radius: var(--radius-sm);
+  background: var(--BgWhite);
+  box-shadow: none;
+}
+
+.invoice-action-header {
+  h1,
+  p {
+    margin: 0;
   }
 
-  .invoice-action-header,
-  .invoice-action-card {
-    padding: 1.25rem;
-    border: 1px solid var(--border-weak);
-    border-radius: var(--radius-sm);
-    background: var(--BgWhite);
-    box-shadow: var(--shadow-sm);
+  h1 {
+    margin-block: 0.25rem;
+    color: var(--gray-900);
+    font-size: 1.75rem;
   }
+}
 
-  .invoice-action-header {
-    h1,
-    p {
-      margin: 0;
-    }
+.invoice-action-header__eyebrow {
+  color: var(--PrimaryColor);
+  font-family: 'Bold';
+}
 
-    h1 {
-      margin-block: 0.25rem;
-      color: var(--gray-900);
-      font-size: 1.75rem;
-    }
+.invoice-action-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.invoice-action-field {
+  min-width: 0;
+
+  small {
+    display: block;
+    margin-top: 0.45rem;
+    color: var(--gray-500);
   }
+}
 
-  .invoice-action-header__eyebrow {
-    color: var(--PrimaryColor);
-    font-family: 'Bold';
-  }
+.invoice-action-status,
+.invoice-action-error {
+  margin: 1rem 0 0;
+}
 
+.invoice-action-status {
+  color: var(--success-dark);
+}
+
+.invoice-action-error {
+  color: var(--danger-dark);
+}
+
+.invoice-action-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1.25rem;
+}
+
+@media (max-width: 768px) {
   .invoice-action-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1rem;
+    grid-template-columns: 1fr;
   }
-
-  .invoice-action-field {
-    min-width: 0;
-
-    small {
-      display: block;
-      margin-top: 0.45rem;
-      color: var(--gray-500);
-    }
-  }
-
-  .invoice-action-status,
-  .invoice-action-error {
-    margin: 1rem 0 0;
-  }
-
-  .invoice-action-status {
-    color: var(--success-dark);
-  }
-
-  .invoice-action-error {
-    color: var(--danger-dark);
-  }
-
-  .invoice-action-actions {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 1.25rem;
-  }
-
-  @media (max-width: 768px) {
-    .invoice-action-grid {
-      grid-template-columns: 1fr;
-    }
-  }
+}
 </style>

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
 import { computed, ref, watch } from 'vue';
 import { onBeforeRouteLeave } from 'vue-router';
 import { useI18n } from 'vue-i18n';
@@ -279,7 +280,12 @@ function updateData(): void {
 </script>
 
 <template>
-  <section class="pricing-summary-card" :class="{ disabled: loading }">
+  <StandardFormLayout
+    as="section"
+    embedded
+    class="pricing-summary-card"
+    :class="{ disabled: loading }"
+  >
     <div class="summary-grid">
       <article class="summary-box">
         <span class="summary-label">
@@ -302,30 +308,55 @@ function updateData(): void {
           </span>
 
           <div class="discount-toggle">
-            <button type="button" :class="{
-              active: isValueDiscount,
-            }" @click="setDiscountType('value')">
+            <button
+              type="button"
+              :class="{
+                active: isValueDiscount,
+              }"
+              @click="setDiscountType('value')"
+            >
               {{ $t('project_pricing.value') }}
             </button>
 
-            <button type="button" :class="{
-              active: isPercentageDiscount,
-            }" @click="setDiscountType('percentage')">
+            <button
+              type="button"
+              :class="{
+                active: isPercentageDiscount,
+              }"
+              @click="setDiscountType('percentage')"
+            >
               %
             </button>
           </div>
         </div>
 
         <div class="pricing-input-wrapper">
-          <input id="project-pricing-discount-value" v-model.number="discountValue" class="field-input" :class="{
-            'field-input--error': discountValueError,
-          }" min="0" :max="isPercentageDiscount ? 100 : undefined" step="1" type="number" inputmode="decimal"
-            :aria-invalid="Boolean(discountValueError)" aria-describedby="project-pricing-discount-value-error"
-            :placeholder="$t('project_pricing.discount_value_placeholder')" @keydown="preventInvalidNumberKeys"
-            @input="updateDiscountValue" />
+          <input
+            id="project-pricing-discount-value"
+            v-model.number="discountValue"
+            class="field-input workspace-control"
+            :class="{
+              'field-input--error': discountValueError,
+            }"
+            min="0"
+            :max="isPercentageDiscount ? 100 : undefined"
+            step="1"
+            type="number"
+            inputmode="decimal"
+            :aria-invalid="Boolean(discountValueError)"
+            aria-describedby="project-pricing-discount-value-error"
+            :placeholder="$t('project_pricing.discount_value_placeholder')"
+            @keydown="preventInvalidNumberKeys"
+            @input="updateDiscountValue"
+          />
 
-          <small v-if="discountValueError" id="project-pricing-discount-value-error" class="field-error" role="alert"
-            aria-live="polite">
+          <small
+            v-if="discountValueError"
+            id="project-pricing-discount-value-error"
+            class="field-error"
+            role="alert"
+            aria-live="polite"
+          >
             <i class="pi pi-exclamation-circle" aria-hidden="true" />
 
             <span>
@@ -341,20 +372,40 @@ function updateData(): void {
             {{ $t('project_pricing.tax_percentage') }}
           </label>
 
-          <FieldHelpIcon :label="$t('project_pricing.tax_percentage')" field-name="tax"
-            field-id="project-pricing-total-tax" />
+          <FieldHelpIcon
+            :label="$t('project_pricing.tax_percentage')"
+            field-name="tax"
+            field-id="project-pricing-total-tax"
+          />
         </span>
 
         <div class="pricing-input-wrapper">
-          <input id="project-pricing-total-tax" :value="totalTaxInput" class="field-input" :class="{
-            'field-input--error': totalTaxError,
-          }" min="0" max="100" step="1" type="number" inputmode="decimal" :aria-invalid="Boolean(totalTaxError)"
+          <input
+            id="project-pricing-total-tax"
+            :value="totalTaxInput"
+            class="field-input workspace-control"
+            :class="{
+              'field-input--error': totalTaxError,
+            }"
+            min="0"
+            max="100"
+            step="1"
+            type="number"
+            inputmode="decimal"
+            :aria-invalid="Boolean(totalTaxError)"
             aria-describedby="project-pricing-total-tax-error"
-            :placeholder="$t('project_pricing.total_tax_placeholder')" @keydown="preventInvalidNumberKeys"
-            @input="updateTotalTax" />
+            :placeholder="$t('project_pricing.total_tax_placeholder')"
+            @keydown="preventInvalidNumberKeys"
+            @input="updateTotalTax"
+          />
 
-          <small v-if="totalTaxError" id="project-pricing-total-tax-error" class="field-error" role="alert"
-            aria-live="polite">
+          <small
+            v-if="totalTaxError"
+            id="project-pricing-total-tax-error"
+            class="field-error"
+            role="alert"
+            aria-live="polite"
+          >
             <i class="pi pi-exclamation-circle" aria-hidden="true" />
 
             <span>
@@ -364,14 +415,14 @@ function updateData(): void {
         </div>
       </article>
     </div>
-  </section>
+  </StandardFormLayout>
 </template>
 
 <style scoped lang="scss">
 .pricing-summary-card {
-  padding: 1rem ;
-  border-top: 1px solid rgba(214, 207, 198, 0.75);
-  border-bottom: 1px solid rgba(214, 207, 198, 0.75);
+  padding: 1rem;
+  border-top: 1px solid var(--bh-line);
+  border-bottom: 1px solid var(--bh-line);
   background: var(--bg-main);
 
   &.disabled {
@@ -393,7 +444,7 @@ function updateData(): void {
   justify-content: center;
   gap: 0.75rem;
   padding: 1.15rem;
-  border: 1px solid rgba(214, 207, 198, 0.95);
+  border: 1px solid var(--bh-line);
   border-radius: 18px;
   background: var(--bg-main);
 }
@@ -429,7 +480,7 @@ function updateData(): void {
   align-items: center;
   gap: 0.25rem;
   padding: 0.2rem;
-  border: 1px solid rgba(214, 207, 198, 0.95);
+  border: 1px solid var(--bh-line);
   border-radius: 999px;
   background: var(--gray-100);
 
@@ -449,7 +500,7 @@ function updateData(): void {
     &.active {
       background: var(--gray-900);
       color: var(--bg-main);
-      box-shadow: 0 6px 14px rgba(15, 23, 42, 0.18);
+      box-shadow: none;
     }
 
     &:disabled {
@@ -467,10 +518,10 @@ function updateData(): void {
 
 .field-input {
   width: 100%;
-  min-height: 40px;
+  min-height: var(--bh-control-height);
   padding: 0.55rem 0.85rem;
-  border: 1px solid rgba(214, 207, 198, 0.95);
-  border-radius: 9px;
+  border: 1px solid var(--bh-line);
+  border-radius: var(--bh-radius-control);
   background: var(--bg-main);
   color: var(--gray-900);
   outline: none;
@@ -481,7 +532,7 @@ function updateData(): void {
 
   &:focus {
     border-color: var(--PrimaryColor);
-    box-shadow: 0 0 0 3px var(--PrimaryColor-light);
+    box-shadow: none;
   }
 
   &:disabled {
@@ -491,11 +542,11 @@ function updateData(): void {
 }
 
 .field-input--error {
-  border-color: #dc2626;
+  border-color: var(--bh-coral-ink);
 
   &:focus {
-    border-color: #dc2626;
-    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12);
+    border-color: var(--bh-coral-ink);
+    box-shadow: none;
   }
 }
 
@@ -503,7 +554,7 @@ function updateData(): void {
   display: flex;
   align-items: flex-start;
   gap: 0.4rem;
-  color: #dc2626;
+  color: var(--bh-coral-ink);
   font-family: 'Medium';
   font-size: var(--xs-size);
   line-height: 1.5;

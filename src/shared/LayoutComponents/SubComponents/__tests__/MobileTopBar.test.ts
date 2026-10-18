@@ -22,7 +22,7 @@ describe('MobileTopBar', () => {
     expect(wrapper.text()).toContain('BuildHub');
     expect(wrapper.find('.mobile-project-search-stub').exists()).toBe(true);
 
-    await wrapper.find('.mobile-menu-btn').trigger('click');
+    await wrapper.find('[aria-label="Open sidebar"]').trigger('click');
 
     expect(wrapper.emitted('openSidebar')).toHaveLength(1);
   });

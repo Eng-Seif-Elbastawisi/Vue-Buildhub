@@ -181,7 +181,7 @@
         <input
           :id="`${prefix}-quantity`"
           :value="modelValue.quantity"
-          class="input"
+          class="input workspace-control"
           type="number"
           step="0.01"
           min="0.01"

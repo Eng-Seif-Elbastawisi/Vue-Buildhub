@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import { onMounted, ref } from 'vue';
   import { useRoute } from 'vue-router';
   import type AddContractorParams from '../../core/params/add.contractor.params';
@@ -31,23 +32,27 @@
 </script>
 
 <template>
-  <div class="standard-crud-page">
+  <StandardFormLayout mode="edit" class="standard-crud-page">
     <ContractorForm
       :contractor="controller.itemData.value ?? undefined"
       :loading="loading"
       @update-data="updateData"
     />
-    <button
-      :class="{ 'btn--loading': loading }"
-      class="btn btn-primary"
-      type="button"
-      :disabled="loading"
-      @click="saveContractor"
-    >
-      {{ $t('Contractor.update') }}
-    </button>
+
     <div v-if="controller.errorMessage.value" class="error">
       {{ controller.errorMessage.value }}
     </div>
-  </div>
+
+    <template #actions>
+      <button
+        :class="{ 'btn--loading': loading }"
+        class="btn btn-primary"
+        type="button"
+        :disabled="loading"
+        @click="saveContractor"
+      >
+        {{ $t('Contractor.update') }}
+      </button>
+    </template>
+  </StandardFormLayout>
 </template>

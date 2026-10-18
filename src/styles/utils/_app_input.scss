@@ -1,55 +1,38 @@
-@use '../variables' as *;
-@use '../mixins/border' as *;
-@use '../mixins/flex' as *;
-
 .input-wrapper {
-  @include flex-column();
-
-  padding-inline-end: var(--xl-size-1);
-
-  @media (max-width: 768px) {
-    padding-inline-end: 0;
-  }
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: var(--bh-space-2);
 
   .label {
-    font-size: var(--sm-size);
-    color: var(--gray-800);
-    font-weight: $BaseFontMediumWeight;
-    text-transform: capitalize;
-
-    @include flex-align();
-
-    gap: var(--xs-size-4);
+    display: flex;
+    align-items: center;
+    gap: var(--bh-space-2);
+    color: var(--bh-text);
+    font-size: var(--bh-text-sm);
+    font-weight: 500;
   }
 
   .input {
-    @include flex-row(nowrap, flex-start, center);
-
-    gap: var(--xs-size-2);
-    background-color: var(--white);
-    color: var(--gray-800);
-    font-size: var(--sm-size);
-    font-weight: $BaseFontSemiBoldWeight;
-    padding: $XsSize4;
-
-    @include border($BaseBorderWidth, var(--gray-200), solid, var(--md-size));
-
     width: 100%;
-    cursor: pointer;
-    transition: var(--transition-fast);
+    min-height: var(--bh-control-height);
+    padding: 0.7rem 0.875rem;
+    border: 1px solid var(--bh-field-line);
+    border-radius: var(--bh-radius-control);
+    color: var(--bh-text);
+    background: var(--bh-surface-raised);
+    font: inherit;
+    font-size: var(--bh-text-sm);
+    cursor: text;
 
     &:focus {
-      outline: none;
-      border-color: var(--PrimaryColor);
-      box-shadow: 0 0 0 3px var(--PrimaryColor-light);
-      background-color: white;
-
-      @include border($BaseBorderWidth, var(--PrimaryColor), solid, var(--md-size));
+      border-color: var(--bh-focus);
+      outline: 2px solid var(--bh-focus);
+      outline-offset: 2px;
     }
 
     &::placeholder {
-      color: var(--gray-400);
-      font-size: var(--sm-size);
+      color: var(--bh-muted);
     }
   }
 }

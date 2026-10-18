@@ -75,8 +75,11 @@ describe('HomeDashboard', () => {
     await flushPromises();
 
     expect(wrapper.find('.dashboard-home__admin-hero').exists()).toBe(true);
-    expect(wrapper.get('.dashboard-home__admin-art img').attributes('src')).toContain(
-      'dashboard-admin-architecture.png',
+    expect(wrapper.get('.dashboard-home__modules a[href="/admin/organization"]').text()).toBe(
+      'Organization',
+    );
+    expect(wrapper.find('.dashboard-home__modules a[href="/organization/project"]').exists()).toBe(
+      false,
     );
     expect(wrapper.find('.dashboard-home__hero').exists()).toBe(false);
     expect(wrapper.findAll('.dashboard-home__card')).toHaveLength(4);
@@ -87,12 +90,7 @@ describe('HomeDashboard', () => {
       '0',
     ]);
     expect(wrapper.findAll('.dashboard-home__card').map((card) => card.attributes('href'))).toEqual(
-      [
-        '/admin/organization',
-        '/admin/admins',
-        '/admin/package',
-        '/admin/package/subscriptions',
-      ],
+      ['/admin/organization', '/admin/admins', '/admin/package', '/admin/package/subscriptions'],
     );
     expect(wrapper.findAll('.dashboard-home__card-icon')).toHaveLength(4);
     expect(wrapper.findAll('.dashboard-home__card-arrow')).toHaveLength(4);

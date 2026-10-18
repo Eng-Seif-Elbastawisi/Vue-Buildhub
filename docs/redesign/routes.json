@@ -1,0 +1,2027 @@
+[
+  {
+    "portal": "organization",
+    "path": "/organization/system-identity",
+    "name": "System Identity",
+    "component": "src/views/shared/SystemIdentity/IndexSystemIdentity.vue",
+    "meta": {
+      "breadcrumb": "system_identity.title"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/suppliers",
+    "name": "Suppliers",
+    "component": "src/views/MainOrganization/Suppliers/IndexSuppliers.vue",
+    "meta": {
+      "breadcrumb": "Suppliers"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/suppliers/add",
+    "name": "Add Suppliers",
+    "component": "src/views/MainOrganization/Suppliers/AddSuppliers.vue",
+    "meta": {
+      "breadcrumb": "Add Suppliers",
+      "parent": "Suppliers"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/suppliers/edit/:id",
+    "name": "Edit Suppliers",
+    "component": "src/views/MainOrganization/Suppliers/EditSuppliers.vue",
+    "meta": {
+      "breadcrumb": "Edit Suppliers",
+      "parent": "Suppliers"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/client",
+    "name": "Client",
+    "component": "src/views/MainOrganization/Client/IndexClient.vue",
+    "meta": {
+      "breadcrumb": "Client"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/client/add",
+    "name": "Add Client",
+    "component": "src/views/MainOrganization/Client/AddClient.vue",
+    "meta": {
+      "breadcrumb": "Add Client",
+      "parent": "Client"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/client/edit/:client_id",
+    "name": "Edit Client",
+    "component": "src/views/MainOrganization/Client/EditClient.vue",
+    "meta": {
+      "breadcrumb": "Edit Client",
+      "parent": "Client"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/employee",
+    "name": "Employee",
+    "component": "src/views/MainOrganization/employee/IndexEmployee.vue",
+    "meta": {
+      "breadcrumb": "Employee"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/employee/add",
+    "name": "Add Employee",
+    "component": "src/views/MainOrganization/employee/AddEmployee.vue",
+    "meta": {
+      "breadcrumb": "Add Employee",
+      "parent": "Employee"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/employee/edit/:employee_id",
+    "name": "Edit Employee",
+    "component": "src/views/MainOrganization/employee/EditEmployee.vue",
+    "meta": {
+      "breadcrumb": "Edit Employee",
+      "parent": "Employee"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/specialization",
+    "name": "Specialization",
+    "component": "src/views/MainOrganization/Specialization/IndexSpecialization.vue",
+    "meta": {
+      "breadcrumb": "Specialization"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/specialization/add",
+    "name": "Add Specialization",
+    "component": "src/views/MainOrganization/Specialization/AddSpecialization.vue",
+    "meta": {
+      "breadcrumb": "Add Specialization",
+      "parent": "Specialization"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/specialization/edit/:specialization_id",
+    "name": "Edit Specialization",
+    "component": "src/views/MainOrganization/Specialization/EditSpecialization.vue",
+    "meta": {
+      "breadcrumb": "Edit Specialization",
+      "parent": "Specialization"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/warehouse",
+    "name": "Warehouse",
+    "component": "src/views/MainOrganization/Warehouse/IndexWarehouse.vue",
+    "meta": {
+      "breadcrumb": "Warehouse"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/warehouse/add",
+    "name": "Add Warehouse",
+    "component": "src/views/MainOrganization/Warehouse/AddWarehouse.vue",
+    "meta": {
+      "breadcrumb": "Add Warehouse",
+      "parent": "Warehouse"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/warehouse/edit/:warehouse_id",
+    "name": "Edit Warehouse",
+    "component": "src/views/MainOrganization/Warehouse/EditWarehouse.vue",
+    "meta": {
+      "breadcrumb": "Edit Warehouse",
+      "parent": "Warehouse"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/warehouse/show/:warehouse_id",
+    "name": "Show Warehouse",
+    "component": "src/views/MainOrganization/Warehouse/ShowWarehouse.vue",
+    "meta": {
+      "breadcrumb": "Show Warehouse",
+      "parent": "Warehouse"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/contractors",
+    "name": "Contractors",
+    "component": "src/views/MainOrganization/Contractor/IndexContractor.vue",
+    "meta": {
+      "breadcrumb": "Contractor.list_title"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/contractors/add",
+    "name": "Add Contractor",
+    "component": "src/views/MainOrganization/Contractor/AddContractor.vue",
+    "meta": {
+      "breadcrumb": "Contractor.add",
+      "parent": "Contractor.list_title"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/contractors/edit/:contractor_id",
+    "name": "Edit Contractor",
+    "component": "src/views/MainOrganization/Contractor/EditContractor.vue",
+    "meta": {
+      "breadcrumb": "Contractor.edit",
+      "parent": "Contractor.list_title"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/contractors/show/:contractor_id",
+    "name": "Show Contractor",
+    "component": "src/views/MainOrganization/Contractor/ShowContractor.vue",
+    "meta": {
+      "breadcrumb": "Contractor.show",
+      "parent": "Contractor.list_title"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/term",
+    "name": "Term",
+    "component": "src/views/MainOrganization/Term/IndexTerm.vue",
+    "meta": {
+      "breadcrumb": "Term"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/term/add",
+    "name": "Add Term",
+    "component": "src/views/MainOrganization/Term/AddTerm.vue",
+    "meta": {
+      "breadcrumb": "Add Term",
+      "parent": "Term"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/term/edit/:term_id",
+    "name": "Edit Term",
+    "component": "src/views/MainOrganization/Term/EditTerm.vue",
+    "meta": {
+      "breadcrumb": "Edit Term",
+      "parent": "Term"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/project",
+    "name": "project",
+    "component": "src/views/MainOrganization/Project/IndexProject.vue",
+    "meta": {
+      "breadcrumb": "project.breadcrumb.requests",
+      "pageHeaderDescription": "project.page.requests_description",
+      "pageHeaderActionLabel": "project.page.add_request"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/converted-projects",
+    "name": "converted-projects",
+    "component": "src/views/MainOrganization/Project/IndexConvertedProject.vue",
+    "meta": {
+      "breadcrumb": "project.breadcrumb.converted",
+      "pageHeaderDescription": "project.page.converted_description",
+      "pageHeaderActionLabel": "project.page.add_project"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/offers-projects",
+    "name": "offers-projects",
+    "component": "src/views/MainOrganization/Project/IndexOfferProject.vue",
+    "meta": {
+      "breadcrumb": "project.breadcrumb.offers",
+      "pageHeaderDescription": "project.page.offers_description",
+      "pageHeaderActionLabel": "project.page.add_offer"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/project/add",
+    "name": "add-project",
+    "component": "src/views/MainOrganization/Project/AddProject.vue",
+    "meta": {
+      "breadcrumb": "Add request",
+      "parent": "project"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/project/edit/:project_id",
+    "name": "edit-project",
+    "component": "src/views/MainOrganization/Project/EditProject.vue",
+    "meta": {
+      "breadcrumb": "Edit request",
+      "parent": "project"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/project/show/:project_id",
+    "name": "show-project",
+    "component": "src/views/MainOrganization/Project/ShowProject.vue",
+    "meta": {
+      "breadcrumb": "Show project",
+      "parent": "project"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/project/show/:project_id/price-percentage",
+    "name": "project-price-percentage",
+    "component": "src/views/shared/PricePercentage/IndexPricePercentage.vue",
+    "meta": {
+      "breadcrumb": "price_percentage.title",
+      "parent": "show-project"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/project/show/:project_id/invoice-action/add",
+    "name": "project-invoice-action-add",
+    "component": "src/views/MainOrganization/Invoice/SetInvoiceAction.vue",
+    "meta": {
+      "breadcrumb": "invoice_action.title",
+      "parent": "show-project"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/project/history/:project_id",
+    "name": "project-history",
+    "component": "src/views/MainOrganization/Project/ProjectHistory.vue",
+    "meta": {
+      "breadcrumb": "Project history",
+      "parent": "project"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/task-assignment",
+    "name": "mainorganization-task-assignment-index",
+    "component": "src/views/MainOrganization/TaskAssignment/IndexTaskAssignment.vue",
+    "meta": {
+      "breadcrumb": "task_assignment.title"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/task-assignment/create",
+    "name": "mainorganization-task-assignment-create",
+    "component": "src/views/MainOrganization/TaskAssignment/AddTaskAssignment.vue",
+    "meta": {
+      "breadcrumb": "task_assignment.create_title",
+      "parent": "mainorganization-task-assignment-index"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/task-assignment/show/:id",
+    "name": "mainorganization-task-assignment-show",
+    "component": "src/views/MainOrganization/TaskAssignment/ShowTaskAssignment.vue",
+    "meta": {
+      "breadcrumb": "task_assignment.show_title",
+      "parent": "mainorganization-task-assignment-index"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/task-assignment/approved",
+    "name": "mainorganization-task-assignment-approved",
+    "component": "src/views/MainOrganization/TaskAssignment/ApprovedTasksIndex.vue",
+    "meta": {
+      "breadcrumb": "task_assignment.approved_title",
+      "parent": "mainorganization-task-assignment-index"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/project_preview/add",
+    "name": "add-project_preview",
+    "component": "src/views/MainOrganization/Project/ProjectPreview/AddProjectPreview.vue",
+    "meta": {
+      "breadcrumb": "Add project_preview",
+      "parent": "project-preview"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/project_preview/edit/:project_preview_id",
+    "name": "edit-project_preview",
+    "component": "src/views/MainOrganization/Project/ProjectPreview/EditProjectPreview.vue",
+    "meta": {
+      "breadcrumb": "Edit project_preview",
+      "parent": "project-preview"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/project-pricing",
+    "name": "Project Pricing",
+    "component": "src/views/MainOrganization/ProjectPricing/IndexProjectPricing.vue",
+    "meta": {
+      "breadcrumb": "Project Pricing"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/project-pricing/add",
+    "name": "Add Project Pricing",
+    "component": "src/views/MainOrganization/ProjectPricing/AddProjectPricing.vue",
+    "meta": {
+      "breadcrumb": "Add Project Pricing",
+      "parent": "Project Pricing"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/project-pricing/edit/:id",
+    "name": "Edit Project Pricing",
+    "component": "src/views/MainOrganization/ProjectPricing/EditProjectPricing.vue",
+    "meta": {
+      "breadcrumb": "Edit Project Pricing",
+      "parent": "Project Pricing"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/project_floor/add",
+    "name": "add-project_floor",
+    "component": "src/views/MainOrganization/ProjectFloor/AddProjectFloor.vue",
+    "meta": {
+      "breadcrumb": "Add project_floor",
+      "parent": "project-floor"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/project_floor/edit/:project_floor_id",
+    "name": "edit-project_floor",
+    "component": "src/views/MainOrganization/ProjectFloor/EditProjectFloor.vue",
+    "meta": {
+      "breadcrumb": "Edit project_floor",
+      "parent": "project-floor"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/project_floor/show/:project_floor_id",
+    "name": "show-project_floor",
+    "component": "src/views/MainOrganization/ProjectFloor/ShowProjectFloor.vue",
+    "meta": {
+      "breadcrumb": "Show project_floor",
+      "parent": "project-floor"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/invoice",
+    "name": "Invoice",
+    "component": "src/views/MainOrganization/Invoice/IndexInvoice.vue",
+    "meta": {
+      "breadcrumb": "Invoice"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/invoices/:id",
+    "name": "Show Invoice",
+    "component": "src/views/MainOrganization/Invoice/ShowInvoice.vue",
+    "meta": {
+      "breadcrumb": "Invoice Details",
+      "parent": "Invoice"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/invoice/add",
+    "name": "Add Invoice",
+    "component": "src/views/MainOrganization/Invoice/AddInvoice.vue",
+    "meta": {
+      "breadcrumb": "Add Invoice",
+      "parent": "Invoice"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/invoice/edit/:id",
+    "name": "Edit Invoice",
+    "component": "src/views/MainOrganization/Invoice/EditInvoice.vue",
+    "meta": {
+      "breadcrumb": "Edit Invoice",
+      "parent": "Invoice"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/invoice-payment",
+    "name": "Invoice Payment",
+    "component": "src/views/MainOrganization/InvoicePayment/IndexInvoicePayment.vue",
+    "meta": {
+      "breadcrumb": "Invoice Payment"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/invoice-payment/add",
+    "name": "Add Invoice Payment",
+    "component": "src/views/MainOrganization/InvoicePayment/AddInvoicePayment.vue",
+    "meta": {
+      "breadcrumb": "Add Invoice Payment",
+      "parent": "Invoice Payment"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/invoice-payment/edit/:id",
+    "name": "Edit Invoice Payment",
+    "component": "src/views/MainOrganization/InvoicePayment/EditInvoicePayment.vue",
+    "meta": {
+      "breadcrumb": "Edit Invoice Payment",
+      "parent": "Invoice Payment"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/packages",
+    "name": "mainorganization-packages",
+    "component": "src/views/MainOrganization/Package/OrganizationPackages.vue",
+    "meta": {
+      "breadcrumb": "organization_packages.packages",
+      "allowedUserTypes": [2]
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/item_types",
+    "name": "ItemTypes",
+    "component": "src/views/MainOrganization/ItemTypes/IndexItemTypes.vue",
+    "meta": {
+      "breadcrumb": "ItemTypes"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/item_types/add",
+    "name": "Add ItemTypes",
+    "component": "src/views/MainOrganization/ItemTypes/AddItemTypes.vue",
+    "meta": {
+      "breadcrumb": "Add ItemTypes",
+      "parent": "ItemTypes"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/item_types/edit/:item_types_id",
+    "name": "Edit ItemTypes",
+    "component": "src/views/MainOrganization/ItemTypes/EditItemTypes.vue",
+    "meta": {
+      "breadcrumb": "Edit ItemTypes",
+      "parent": "ItemTypes"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/products",
+    "name": "Products",
+    "component": "src/views/MainOrganization/Products/IndexProducts.vue",
+    "meta": {
+      "breadcrumb": "Products.library_title"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/products/add",
+    "name": "Add Products",
+    "component": "src/views/MainOrganization/Products/AddProducts.vue",
+    "meta": {
+      "breadcrumb": "Products.add",
+      "parent": "Products.library_title"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/products/edit/:products_id",
+    "name": "Edit Products",
+    "component": "src/views/MainOrganization/Products/EditProducts.vue",
+    "meta": {
+      "breadcrumb": "Products.form.update",
+      "parent": "Products.library_title"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/products/show/:products_id",
+    "name": "Show Products",
+    "component": "src/views/MainOrganization/Products/ShowProducts.vue",
+    "meta": {
+      "breadcrumb": "Products.show.subtitle",
+      "parent": "Products.library_title"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/quote-types",
+    "name": "Quote Types",
+    "component": "src/views/MainOrganization/QuoteTypes/IndexQuoteType.vue",
+    "meta": {
+      "breadcrumb": "quote_type.list_title"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/quote-types/add",
+    "name": "Add Quote Type",
+    "component": "src/views/MainOrganization/QuoteTypes/AddQuoteType.vue",
+    "meta": {
+      "breadcrumb": "quote_type.add",
+      "parent": "quote_type.list_title"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/quote-types/edit/:id",
+    "name": "Edit Quote Type",
+    "component": "src/views/MainOrganization/QuoteTypes/EditQuoteType.vue",
+    "meta": {
+      "breadcrumb": "quote_type.update",
+      "parent": "quote_type.list_title"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/labor",
+    "name": "Labor",
+    "component": "src/views/MainOrganization/Laboor/IndexLabor.vue",
+    "meta": {
+      "breadcrumb": "labor.list_title"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/labor/add",
+    "name": "add_labor",
+    "component": "src/views/MainOrganization/Laboor/AddLabor.vue",
+    "meta": {
+      "breadcrumb": "labor.add",
+      "parent": "Labor"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/labor/edit/:labor_id",
+    "name": "edit_labor",
+    "component": "src/views/MainOrganization/Laboor/EditLabor.vue",
+    "meta": {
+      "breadcrumb": "labor.update",
+      "parent": "Labor"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/execution-quotes/show/:id(\\d+)/warehouse/material-disbursement",
+    "name": "Quote Material Disbursement",
+    "component": "src/views/MainOrganization/ExecutionQuotes/Warehouse/MaterialDisbursement.vue",
+    "meta": {
+      "breadcrumb": "material_disbursement.title",
+      "parent": "execution_quote.show.title"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/execution-quotes/show/:id(\\d+)/warehouse/material-receipt",
+    "name": "Quote Material Receipt",
+    "component": "src/views/MainOrganization/ExecutionQuotes/Warehouse/MaterialReceipt.vue",
+    "meta": {
+      "breadcrumb": "material_receipt.title",
+      "parent": "execution_quote.show.title"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/execution-quotes/show/:id(\\d+)/procurement",
+    "name": "Quote Procurement",
+    "component": "src/views/MainOrganization/ExecutionQuotes/Procurement/ProcurementIndex.vue",
+    "meta": {
+      "breadcrumb": "procurement.title",
+      "parent": "execution_quote.show.title"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/execution-quotes/show/:id(\\d+)/work-items",
+    "name": "Quote Work Items",
+    "component": "src/views/MainOrganization/ExecutionQuotes/WorkItems/WorkItemsIndex.vue",
+    "meta": {
+      "breadcrumb": "work_items.title",
+      "parent": "execution_quote.show.title"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/execution-quotes",
+    "name": "Execution Quotes",
+    "component": "src/views/MainOrganization/ExecutionQuotes/IndexExecutionQuotes.vue",
+    "meta": {
+      "breadcrumb": "execution_quote.title"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/execution-quotes/add",
+    "name": "Add Execution Quote",
+    "component": "src/views/MainOrganization/ExecutionQuotes/AddExecutionQuote.vue",
+    "meta": {
+      "breadcrumb": "execution_quote.new_quote",
+      "parent": "execution_quote.title"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/execution-quotes/show/:id(\\d+)",
+    "name": "Show Execution Quote",
+    "component": "src/views/MainOrganization/ExecutionQuotes/ShowExecutionQuote.vue",
+    "meta": {
+      "breadcrumb": "execution_quote.show.title",
+      "parent": "execution_quote.title"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/execution-quotes/add/stages/:stageId(\\d+)?",
+    "name": "Build Execution Quote",
+    "component": "src/views/MainOrganization/ExecutionQuotes/AddExecutionQuote.vue",
+    "meta": {
+      "breadcrumb": "execution_quote.steps.stages",
+      "parent": "execution_quote.new_quote"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/execution-quotes/show/:id(\\d+)/site-team",
+    "name": "Quote Site Team",
+    "component": "src/views/MainOrganization/ExecutionQuotes/SiteTeam/SiteTeamIndex.vue",
+    "meta": {
+      "breadcrumb": "site_team.title",
+      "parent": "execution_quote.show.title"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/execution-quotes/show/:id(\\d+)/schedule",
+    "name": "Quote Schedule",
+    "component": "src/views/MainOrganization/ExecutionQuotes/Schedule/ScheduleIndex.vue",
+    "meta": {
+      "breadcrumb": "schedule.title",
+      "parent": "execution_quote.show.title"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/execution-quotes/show/:id(\\d+)/schedule/add",
+    "name": "Add Schedule Group",
+    "component": "src/views/MainOrganization/ExecutionQuotes/Schedule/ScheduleGroupAdd.vue",
+    "meta": {
+      "breadcrumb": "schedule.title",
+      "parent": "execution_quote.show.title"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/execution-quotes/show/:id(\\d+)/schedule/:groupId(\\d+)",
+    "name": "Show Schedule Group",
+    "component": "src/views/MainOrganization/ExecutionQuotes/Schedule/ScheduleGroupShow.vue",
+    "meta": {
+      "breadcrumb": "schedule.title",
+      "parent": "execution_quote.show.title"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/execution-quotes/show/:id(\\d+)/schedule/:groupId(\\d+)/edit",
+    "name": "Edit Schedule Group",
+    "component": "src/views/MainOrganization/ExecutionQuotes/Schedule/ScheduleGroupEdit.vue",
+    "meta": {
+      "breadcrumb": "schedule.title",
+      "parent": "execution_quote.show.title"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/attachment-types",
+    "name": "attachment-types",
+    "component": "src/views/MainOrganization/AttachmentType/IndexAttachmentType.vue",
+    "meta": {
+      "breadcrumb": "attachment_types"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/attachment-types/add",
+    "name": "add-attachment-type",
+    "component": "src/views/MainOrganization/AttachmentType/AddAttachmentType.vue",
+    "meta": {
+      "breadcrumb": "attachment_type.add",
+      "parent": "attachment-types"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/attachment-types/edit/:id(\\d+)",
+    "name": "edit-attachment-type",
+    "component": "src/views/MainOrganization/AttachmentType/EditAttachmentType.vue",
+    "meta": {
+      "breadcrumb": "attachment_type.edit",
+      "parent": "attachment-types"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/organization",
+    "name": "Organization Organization",
+    "component": "src/views/shared/organization/IndexOrganization.vue",
+    "meta": {
+      "breadcrumb": "Organization"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/organization/add",
+    "name": "Add Organization Organization",
+    "component": "src/views/shared/organization/AddOrganization.vue",
+    "meta": {
+      "breadcrumb": "Add Organization",
+      "parent": "Organization"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/organization/edit/:id",
+    "name": "Edit Organization Organization",
+    "component": "src/views/shared/organization/EditOrganization.vue",
+    "meta": {
+      "breadcrumb": "Edit Organization",
+      "parent": "Organization"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/organization-toggle",
+    "name": "Organization Toggle Organization",
+    "component": "src/views/MainOrganization/Organization/OrganizationToggle.vue",
+    "meta": {
+      "breadcrumb": "organization_toggle.title"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/item",
+    "name": "Item Organization",
+    "component": "src/views/shared/Item/Indexitem.vue",
+    "meta": {}
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/item/add",
+    "name": "Add Item Organization",
+    "component": "src/views/shared/Item/AddItem.vue",
+    "meta": {
+      "breadcrumb": "Add Item",
+      "parent": "Item"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/item/edit/:id",
+    "name": "Edit Item Organization",
+    "component": "src/views/shared/Item/EditItem.vue",
+    "meta": {
+      "breadcrumb": "Edit Item",
+      "parent": "Item"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/admins",
+    "name": "Admin Organization",
+    "component": "src/views/MainAdmin/Admin/IndexAdmin.vue",
+    "meta": {
+      "breadcrumb": "Admins",
+      "allowedUserTypes": [1]
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/admin/add",
+    "name": "Add Admin Organization",
+    "component": "src/views/MainAdmin/Admin/AddAdmin.vue",
+    "meta": {
+      "breadcrumb": "Add Admin",
+      "parent": "Admin",
+      "allowedUserTypes": [1]
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/admin/edit/:id",
+    "name": "Edit Admin Organization",
+    "component": "src/views/MainAdmin/Admin/EditAdmin.vue",
+    "meta": {
+      "breadcrumb": "Edit Admin",
+      "parent": "Admin",
+      "allowedUserTypes": [1]
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/brand",
+    "name": "Brand Organization",
+    "component": "src/views/shared/Brand/IndexBrand.vue",
+    "meta": {
+      "breadcrumb": "Brand"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/brand/add",
+    "name": "Add Brand Organization",
+    "component": "src/views/shared/Brand/AddBrand.vue",
+    "meta": {
+      "breadcrumb": "Add Brand",
+      "parent": "Brand"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/brand/edit/:id?",
+    "name": "Edit Brand Organization",
+    "component": "src/views/shared/Brand/EditBrand.vue",
+    "meta": {
+      "breadcrumb": "Edit Brand",
+      "parent": "Brand"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/departments",
+    "name": "Departments Organization",
+    "component": "src/views/shared/Department/IndexDepartment.vue",
+    "meta": {}
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/departments/add",
+    "name": "Add Department Organization",
+    "component": "src/views/shared/Department/AddDepartment.vue",
+    "meta": {
+      "breadcrumb": "Add Department",
+      "parent": "Departments"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/departments/edit/:id",
+    "name": "Edit Department Organization",
+    "component": "src/views/shared/Department/EditDepartment.vue",
+    "meta": {
+      "breadcrumb": "Edit Department",
+      "parent": "Departments"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/projectType",
+    "name": "Projects Organization",
+    "component": "src/views/shared/ProjectType/IndexProjectType.vue",
+    "meta": {
+      "breadcrumb": "Projects"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/projectType/add",
+    "name": "Add Project Organization",
+    "component": "src/views/shared/ProjectType/AddProjectType.vue",
+    "meta": {
+      "breadcrumb": "Add Project",
+      "parent": "Projects"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/projectType/edit/:project_id",
+    "name": "Edit Project Organization",
+    "component": "src/views/shared/ProjectType/EditProjectType.vue",
+    "meta": {
+      "breadcrumb": "Edit Project",
+      "parent": "Projects"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/stages",
+    "name": "Stages Organization",
+    "component": "src/views/shared/Stages/IndexStage.vue",
+    "meta": {
+      "breadcrumb": "stage.execution_title"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/stages/add",
+    "name": "Add Stage Organization",
+    "component": "src/views/shared/Stages/AddStage.vue",
+    "meta": {
+      "breadcrumb": "Add Stage",
+      "parent": "Stages"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/stages/edit/:id",
+    "name": "Edit Stage Organization",
+    "component": "src/views/shared/Stages/EditStage.vue",
+    "meta": {
+      "breadcrumb": "Edit Stage",
+      "parent": "Stages"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/stages/:parent_id/sub-stages",
+    "name": "Sub Stages Organization",
+    "component": "src/views/shared/Stages/SubStages/IndexSubStage.vue",
+    "meta": {
+      "breadcrumb": "Sub Stages",
+      "parent": "Stages"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/stages/:parent_id/sub-stages/add",
+    "name": "Add Sub Stage Organization",
+    "component": "src/views/shared/Stages/SubStages/AddSubStage.vue",
+    "meta": {
+      "breadcrumb": "Add Sub Stage",
+      "parent": "Sub Stages"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/stages/:parent_id/sub-stages/edit/:id",
+    "name": "Edit Sub Stage Organization",
+    "component": "src/views/shared/Stages/SubStages/EditSubStage.vue",
+    "meta": {
+      "breadcrumb": "Edit Sub Stage",
+      "parent": "Sub Stages"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/terms",
+    "name": "Terms Organization",
+    "component": "src/views/MainOrganization/Term/IndexTerm.vue",
+    "meta": {
+      "breadcrumb": "Terms"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/terms/add",
+    "name": "Add Term Organization",
+    "component": "src/views/MainOrganization/Term/AddTerm.vue",
+    "meta": {
+      "breadcrumb": "Add Term",
+      "parent": "Terms"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/terms/edit/:id",
+    "name": "Edit Term Organization",
+    "component": "src/views/MainOrganization/Term/EditTerm.vue",
+    "meta": {
+      "breadcrumb": "Edit Term",
+      "parent": "Terms"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/material",
+    "name": "Material Organization",
+    "component": "src/views/shared/Material/IndexMaterial.vue",
+    "meta": {
+      "breadcrumb": "Material"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/material/add",
+    "name": "Add Material Organization",
+    "component": "src/views/shared/Material/AddMaterial.vue",
+    "meta": {
+      "breadcrumb": "Add Material",
+      "parent": "Material"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/material/edit/:material_id",
+    "name": "Edit Material Organization",
+    "component": "src/views/shared/Material/EditMaterial.vue",
+    "meta": {
+      "breadcrumb": "Edit Material",
+      "parent": "Material"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/supply",
+    "name": "Supply Organization",
+    "component": "src/views/shared/supply/IndexSupply.vue",
+    "meta": {
+      "breadcrumb": "Supply"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/supply/add",
+    "name": "Add Supply Organization",
+    "component": "src/views/shared/supply/AddSupply.vue",
+    "meta": {
+      "breadcrumb": "Add Supply",
+      "parent": "Supply"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/supply/edit/:supply_id",
+    "name": "Edit Supply Organization",
+    "component": "src/views/shared/supply/EditSupply.vue",
+    "meta": {
+      "breadcrumb": "Edit Supply",
+      "parent": "Supply"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/location",
+    "name": "location Organization",
+    "component": "src/views/shared/Location/IndexLocation.vue",
+    "meta": {
+      "breadcrumb": "location"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/location/add",
+    "name": "Add Location Organization",
+    "component": "src/views/shared/Location/AddLocation.vue",
+    "meta": {
+      "breadcrumb": "Add Location",
+      "parent": "location"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/location/edit/:id",
+    "name": "Edit Location Organization",
+    "component": "src/views/shared/Location/EditLocation.vue",
+    "meta": {
+      "breadcrumb": "Edit Location",
+      "parent": "location"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/measurement",
+    "name": "Measurement Organization",
+    "component": "src/views/shared/measurement/IndexMeasurement.vue",
+    "meta": {
+      "breadcrumb": "Measurement"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/measurement/add",
+    "name": "Add Measurement Organization",
+    "component": "src/views/shared/measurement/AddMeasurement.vue",
+    "meta": {
+      "breadcrumb": "Add Measurement",
+      "parent": "Measurement"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/measurement/edit/:id",
+    "name": "Edit Measurement Organization",
+    "component": "src/views/shared/measurement/EditMeasurement.vue",
+    "meta": {
+      "breadcrumb": "Edit Measurement",
+      "parent": "Measurement"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/client-source",
+    "name": "Client Source Organization",
+    "component": "src/views/shared/ClientSource/IndexClientSource.vue",
+    "meta": {
+      "breadcrumb": "Client Source"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/client-source/add",
+    "name": "Add Client Source Organization",
+    "component": "src/views/shared/ClientSource/AddClientSource.vue",
+    "meta": {
+      "breadcrumb": "Add Client Source",
+      "parent": "Client Source"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/client-source/edit/:id",
+    "name": "Edit Client Source Organization",
+    "component": "src/views/shared/ClientSource/EditClientSource.vue",
+    "meta": {
+      "breadcrumb": "Edit Client Source",
+      "parent": "Client Source"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/location-governorate",
+    "name": "location-governorate Organization",
+    "component": "src/views/shared/Location/Governorate/IndexLocation.vue",
+    "meta": {
+      "breadcrumb": "location-governorate"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/location-governorate/add",
+    "name": "Add Location Governorate Organization",
+    "component": "src/views/shared/Location/Governorate/AddLocation.vue",
+    "meta": {
+      "breadcrumb": "Add Location Governorate",
+      "parent": "location-governorate"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/location-governorate/edit/:id",
+    "name": "Edit Location Governorate Organization",
+    "component": "src/views/shared/Location/Governorate/EditLocation.vue",
+    "meta": {
+      "breadcrumb": "Edit Location Governorate",
+      "parent": "location-governorate"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/location-city",
+    "name": "location-city Organization",
+    "component": "src/views/shared/Location/City/IndexLocation.vue",
+    "meta": {
+      "breadcrumb": "location-city"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/location-city/add",
+    "name": "Add Location City Organization",
+    "component": "src/views/shared/Location/City/AddLocation.vue",
+    "meta": {
+      "breadcrumb": "Add Location City",
+      "parent": "location-city"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/location-city/edit/:id",
+    "name": "Edit Location City Organization",
+    "component": "src/views/shared/Location/City/EditLocation.vue",
+    "meta": {
+      "breadcrumb": "Edit Location City",
+      "parent": "location-city"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/system-identity",
+    "name": "System Identity Organization",
+    "component": "src/views/shared/SystemIdentity/IndexSystemIdentity.vue",
+    "meta": {
+      "breadcrumb": "system_identity.title"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/space",
+    "name": "Space Organization",
+    "component": "src/views/shared/Space/IndexSpace.vue",
+    "meta": {
+      "breadcrumb": "Space"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/space/add",
+    "name": "Add Space Organization",
+    "component": "src/views/shared/Space/AddSpace.vue",
+    "meta": {
+      "breadcrumb": "Add Space",
+      "parent": "Space"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/space/edit/:space_id",
+    "name": "Edit Space Organization",
+    "component": "src/views/shared/Space/EditSpace.vue",
+    "meta": {
+      "breadcrumb": "Edit Space",
+      "parent": "Specialization"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/project-item",
+    "name": "Project Item Organization",
+    "component": "src/views/MainOrganization/ProjectItem/IndexProjectItem.vue",
+    "meta": {
+      "breadcrumb": "Project Item"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/project-item/add",
+    "name": "Add Project Item Organization",
+    "component": "src/views/MainOrganization/ProjectItem/AddProjectItem.vue",
+    "meta": {
+      "breadcrumb": "Add Project Item",
+      "parent": "Project Item"
+    }
+  },
+  {
+    "portal": "organization",
+    "path": "/organization/project-item/edit/:id",
+    "name": "Edit Project Item Organization",
+    "component": "src/views/MainOrganization/ProjectItem/EditProjectItem.vue",
+    "meta": {
+      "breadcrumb": "Edit Project Item",
+      "parent": "Project Item"
+    }
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/organization",
+    "name": "Organization",
+    "component": "src/views/shared/organization/IndexOrganization.vue",
+    "meta": {
+      "breadcrumb": "Organization"
+    }
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/organization/add",
+    "name": "Add Organization",
+    "component": "src/views/shared/organization/AddOrganization.vue",
+    "meta": {
+      "breadcrumb": "Add Organization",
+      "parent": "Organization"
+    }
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/organization/edit/:id",
+    "name": "Edit Organization",
+    "component": "src/views/shared/organization/EditOrganization.vue",
+    "meta": {
+      "breadcrumb": "Edit Organization",
+      "parent": "Organization"
+    }
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/organization-toggle",
+    "name": "Organization Toggle",
+    "component": "src/views/MainOrganization/Organization/OrganizationToggle.vue",
+    "meta": {
+      "breadcrumb": "organization_toggle.title"
+    }
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/item",
+    "name": "Item",
+    "component": "src/views/shared/Item/Indexitem.vue",
+    "meta": {}
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/item/add",
+    "name": "Add Item",
+    "component": "src/views/shared/Item/AddItem.vue",
+    "meta": {
+      "breadcrumb": "Add Item",
+      "parent": "Item"
+    }
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/item/edit/:id",
+    "name": "Edit Item",
+    "component": "src/views/shared/Item/EditItem.vue",
+    "meta": {
+      "breadcrumb": "Edit Item",
+      "parent": "Item"
+    }
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/admins",
+    "name": "Admin",
+    "component": "src/views/MainAdmin/Admin/IndexAdmin.vue",
+    "meta": {
+      "breadcrumb": "Admins",
+      "allowedUserTypes": [1]
+    }
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/admin/add",
+    "name": "Add Admin",
+    "component": "src/views/MainAdmin/Admin/AddAdmin.vue",
+    "meta": {
+      "breadcrumb": "Add Admin",
+      "parent": "Admin",
+      "allowedUserTypes": [1]
+    }
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/admin/edit/:id",
+    "name": "Edit Admin",
+    "component": "src/views/MainAdmin/Admin/EditAdmin.vue",
+    "meta": {
+      "breadcrumb": "Edit Admin",
+      "parent": "Admin",
+      "allowedUserTypes": [1]
+    }
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/package",
+    "name": "Packages",
+    "component": "src/views/MainAdmin/Package/IndexPackage.vue",
+    "meta": {
+      "breadcrumb": "Packages",
+      "allowedUserTypes": [1]
+    }
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/package/add",
+    "name": "Add Package",
+    "component": "src/views/MainAdmin/Package/AddPackage.vue",
+    "meta": {
+      "breadcrumb": "Add Package",
+      "parent": "Packages",
+      "allowedUserTypes": [1]
+    }
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/package/subscriptions",
+    "name": "Package Subscriptions",
+    "component": "src/views/MainAdmin/Package/PackageSubscriptions.vue",
+    "meta": {
+      "breadcrumb": "Package Subscriptions",
+      "parent": "Packages",
+      "allowedUserTypes": [1]
+    }
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/package/edit/:id",
+    "name": "Edit Package",
+    "component": "src/views/MainAdmin/Package/EditPackage.vue",
+    "meta": {
+      "breadcrumb": "Edit Package",
+      "parent": "Packages",
+      "allowedUserTypes": [1]
+    }
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/organization",
+    "name": "Organization Admin",
+    "component": "src/views/shared/organization/IndexOrganization.vue",
+    "meta": {
+      "breadcrumb": "Organization"
+    }
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/organization/add",
+    "name": "Add Organization Admin",
+    "component": "src/views/shared/organization/AddOrganization.vue",
+    "meta": {
+      "breadcrumb": "Add Organization",
+      "parent": "Organization"
+    }
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/organization/edit/:id",
+    "name": "Edit Organization Admin",
+    "component": "src/views/shared/organization/EditOrganization.vue",
+    "meta": {
+      "breadcrumb": "Edit Organization",
+      "parent": "Organization"
+    }
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/organization-toggle",
+    "name": "Organization Toggle Admin",
+    "component": "src/views/MainOrganization/Organization/OrganizationToggle.vue",
+    "meta": {
+      "breadcrumb": "organization_toggle.title"
+    }
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/item",
+    "name": "Item Admin",
+    "component": "src/views/shared/Item/Indexitem.vue",
+    "meta": {}
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/item/add",
+    "name": "Add Item Admin",
+    "component": "src/views/shared/Item/AddItem.vue",
+    "meta": {
+      "breadcrumb": "Add Item",
+      "parent": "Item"
+    }
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/item/edit/:id",
+    "name": "Edit Item Admin",
+    "component": "src/views/shared/Item/EditItem.vue",
+    "meta": {
+      "breadcrumb": "Edit Item",
+      "parent": "Item"
+    }
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/admins",
+    "name": "Admin Admin",
+    "component": "src/views/MainAdmin/Admin/IndexAdmin.vue",
+    "meta": {
+      "breadcrumb": "Admins",
+      "allowedUserTypes": [1]
+    }
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/admin/add",
+    "name": "Add Admin Admin",
+    "component": "src/views/MainAdmin/Admin/AddAdmin.vue",
+    "meta": {
+      "breadcrumb": "Add Admin",
+      "parent": "Admin",
+      "allowedUserTypes": [1]
+    }
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/admin/edit/:id",
+    "name": "Edit Admin Admin",
+    "component": "src/views/MainAdmin/Admin/EditAdmin.vue",
+    "meta": {
+      "breadcrumb": "Edit Admin",
+      "parent": "Admin",
+      "allowedUserTypes": [1]
+    }
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/brand",
+    "name": "Brand Admin",
+    "component": "src/views/shared/Brand/IndexBrand.vue",
+    "meta": {
+      "breadcrumb": "Brand"
+    }
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/brand/add",
+    "name": "Add Brand Admin",
+    "component": "src/views/shared/Brand/AddBrand.vue",
+    "meta": {
+      "breadcrumb": "Add Brand",
+      "parent": "Brand"
+    }
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/brand/edit/:id?",
+    "name": "Edit Brand Admin",
+    "component": "src/views/shared/Brand/EditBrand.vue",
+    "meta": {
+      "breadcrumb": "Edit Brand",
+      "parent": "Brand"
+    }
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/departments",
+    "name": "Departments Admin",
+    "component": "src/views/shared/Department/IndexDepartment.vue",
+    "meta": {}
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/departments/add",
+    "name": "Add Department Admin",
+    "component": "src/views/shared/Department/AddDepartment.vue",
+    "meta": {
+      "breadcrumb": "Add Department",
+      "parent": "Departments"
+    }
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/departments/edit/:id",
+    "name": "Edit Department Admin",
+    "component": "src/views/shared/Department/EditDepartment.vue",
+    "meta": {
+      "breadcrumb": "Edit Department",
+      "parent": "Departments"
+    }
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/projectType",
+    "name": "Projects Admin",
+    "component": "src/views/shared/ProjectType/IndexProjectType.vue",
+    "meta": {
+      "breadcrumb": "Projects"
+    }
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/projectType/add",
+    "name": "Add Project Admin",
+    "component": "src/views/shared/ProjectType/AddProjectType.vue",
+    "meta": {
+      "breadcrumb": "Add Project",
+      "parent": "Projects"
+    }
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/projectType/edit/:project_id",
+    "name": "Edit Project Admin",
+    "component": "src/views/shared/ProjectType/EditProjectType.vue",
+    "meta": {
+      "breadcrumb": "Edit Project",
+      "parent": "Projects"
+    }
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/stages",
+    "name": "Stages Admin",
+    "component": "src/views/shared/Stages/IndexStage.vue",
+    "meta": {
+      "breadcrumb": "stage.execution_title"
+    }
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/stages/add",
+    "name": "Add Stage Admin",
+    "component": "src/views/shared/Stages/AddStage.vue",
+    "meta": {
+      "breadcrumb": "Add Stage",
+      "parent": "Stages"
+    }
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/stages/edit/:id",
+    "name": "Edit Stage Admin",
+    "component": "src/views/shared/Stages/EditStage.vue",
+    "meta": {
+      "breadcrumb": "Edit Stage",
+      "parent": "Stages"
+    }
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/stages/:parent_id/sub-stages",
+    "name": "Sub Stages Admin",
+    "component": "src/views/shared/Stages/SubStages/IndexSubStage.vue",
+    "meta": {
+      "breadcrumb": "Sub Stages",
+      "parent": "Stages"
+    }
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/stages/:parent_id/sub-stages/add",
+    "name": "Add Sub Stage Admin",
+    "component": "src/views/shared/Stages/SubStages/AddSubStage.vue",
+    "meta": {
+      "breadcrumb": "Add Sub Stage",
+      "parent": "Sub Stages"
+    }
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/stages/:parent_id/sub-stages/edit/:id",
+    "name": "Edit Sub Stage Admin",
+    "component": "src/views/shared/Stages/SubStages/EditSubStage.vue",
+    "meta": {
+      "breadcrumb": "Edit Sub Stage",
+      "parent": "Sub Stages"
+    }
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/terms",
+    "name": "Terms Admin",
+    "component": "src/views/MainOrganization/Term/IndexTerm.vue",
+    "meta": {
+      "breadcrumb": "Terms"
+    }
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/terms/add",
+    "name": "Add Term Admin",
+    "component": "src/views/MainOrganization/Term/AddTerm.vue",
+    "meta": {
+      "breadcrumb": "Add Term",
+      "parent": "Terms"
+    }
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/terms/edit/:id",
+    "name": "Edit Term Admin",
+    "component": "src/views/MainOrganization/Term/EditTerm.vue",
+    "meta": {
+      "breadcrumb": "Edit Term",
+      "parent": "Terms"
+    }
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/material",
+    "name": "Material Admin",
+    "component": "src/views/shared/Material/IndexMaterial.vue",
+    "meta": {
+      "breadcrumb": "Material"
+    }
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/material/add",
+    "name": "Add Material Admin",
+    "component": "src/views/shared/Material/AddMaterial.vue",
+    "meta": {
+      "breadcrumb": "Add Material",
+      "parent": "Material"
+    }
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/material/edit/:material_id",
+    "name": "Edit Material Admin",
+    "component": "src/views/shared/Material/EditMaterial.vue",
+    "meta": {
+      "breadcrumb": "Edit Material",
+      "parent": "Material"
+    }
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/supply",
+    "name": "Supply Admin",
+    "component": "src/views/shared/supply/IndexSupply.vue",
+    "meta": {
+      "breadcrumb": "Supply"
+    }
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/supply/add",
+    "name": "Add Supply Admin",
+    "component": "src/views/shared/supply/AddSupply.vue",
+    "meta": {
+      "breadcrumb": "Add Supply",
+      "parent": "Supply"
+    }
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/supply/edit/:supply_id",
+    "name": "Edit Supply Admin",
+    "component": "src/views/shared/supply/EditSupply.vue",
+    "meta": {
+      "breadcrumb": "Edit Supply",
+      "parent": "Supply"
+    }
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/location",
+    "name": "location Admin",
+    "component": "src/views/shared/Location/IndexLocation.vue",
+    "meta": {
+      "breadcrumb": "location"
+    }
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/location/add",
+    "name": "Add Location Admin",
+    "component": "src/views/shared/Location/AddLocation.vue",
+    "meta": {
+      "breadcrumb": "Add Location",
+      "parent": "location"
+    }
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/location/edit/:id",
+    "name": "Edit Location Admin",
+    "component": "src/views/shared/Location/EditLocation.vue",
+    "meta": {
+      "breadcrumb": "Edit Location",
+      "parent": "location"
+    }
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/measurement",
+    "name": "Measurement Admin",
+    "component": "src/views/shared/measurement/IndexMeasurement.vue",
+    "meta": {
+      "breadcrumb": "Measurement"
+    }
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/measurement/add",
+    "name": "Add Measurement Admin",
+    "component": "src/views/shared/measurement/AddMeasurement.vue",
+    "meta": {
+      "breadcrumb": "Add Measurement",
+      "parent": "Measurement"
+    }
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/measurement/edit/:id",
+    "name": "Edit Measurement Admin",
+    "component": "src/views/shared/measurement/EditMeasurement.vue",
+    "meta": {
+      "breadcrumb": "Edit Measurement",
+      "parent": "Measurement"
+    }
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/client-source",
+    "name": "Client Source Admin",
+    "component": "src/views/shared/ClientSource/IndexClientSource.vue",
+    "meta": {
+      "breadcrumb": "Client Source"
+    }
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/client-source/add",
+    "name": "Add Client Source Admin",
+    "component": "src/views/shared/ClientSource/AddClientSource.vue",
+    "meta": {
+      "breadcrumb": "Add Client Source",
+      "parent": "Client Source"
+    }
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/client-source/edit/:id",
+    "name": "Edit Client Source Admin",
+    "component": "src/views/shared/ClientSource/EditClientSource.vue",
+    "meta": {
+      "breadcrumb": "Edit Client Source",
+      "parent": "Client Source"
+    }
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/location-governorate",
+    "name": "location-governorate Admin",
+    "component": "src/views/shared/Location/Governorate/IndexLocation.vue",
+    "meta": {
+      "breadcrumb": "location-governorate"
+    }
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/location-governorate/add",
+    "name": "Add Location Governorate Admin",
+    "component": "src/views/shared/Location/Governorate/AddLocation.vue",
+    "meta": {
+      "breadcrumb": "Add Location Governorate",
+      "parent": "location-governorate"
+    }
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/location-governorate/edit/:id",
+    "name": "Edit Location Governorate Admin",
+    "component": "src/views/shared/Location/Governorate/EditLocation.vue",
+    "meta": {
+      "breadcrumb": "Edit Location Governorate",
+      "parent": "location-governorate"
+    }
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/location-city",
+    "name": "location-city Admin",
+    "component": "src/views/shared/Location/City/IndexLocation.vue",
+    "meta": {
+      "breadcrumb": "location-city"
+    }
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/location-city/add",
+    "name": "Add Location City Admin",
+    "component": "src/views/shared/Location/City/AddLocation.vue",
+    "meta": {
+      "breadcrumb": "Add Location City",
+      "parent": "location-city"
+    }
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/location-city/edit/:id",
+    "name": "Edit Location City Admin",
+    "component": "src/views/shared/Location/City/EditLocation.vue",
+    "meta": {
+      "breadcrumb": "Edit Location City",
+      "parent": "location-city"
+    }
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/system-identity",
+    "name": "System Identity Admin",
+    "component": "src/views/shared/SystemIdentity/IndexSystemIdentity.vue",
+    "meta": {
+      "breadcrumb": "system_identity.title"
+    }
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/space",
+    "name": "Space Admin",
+    "component": "src/views/shared/Space/IndexSpace.vue",
+    "meta": {
+      "breadcrumb": "Space"
+    }
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/space/add",
+    "name": "Add Space Admin",
+    "component": "src/views/shared/Space/AddSpace.vue",
+    "meta": {
+      "breadcrumb": "Add Space",
+      "parent": "Space"
+    }
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/space/edit/:space_id",
+    "name": "Edit Space Admin",
+    "component": "src/views/shared/Space/EditSpace.vue",
+    "meta": {
+      "breadcrumb": "Edit Space",
+      "parent": "Specialization"
+    }
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/project-item",
+    "name": "Project Item Admin",
+    "component": "src/views/MainOrganization/ProjectItem/IndexProjectItem.vue",
+    "meta": {
+      "breadcrumb": "Project Item"
+    }
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/project-item/add",
+    "name": "Add Project Item Admin",
+    "component": "src/views/MainOrganization/ProjectItem/AddProjectItem.vue",
+    "meta": {
+      "breadcrumb": "Add Project Item",
+      "parent": "Project Item"
+    }
+  },
+  {
+    "portal": "admin",
+    "path": "/admin/project-item/edit/:id",
+    "name": "Edit Project Item Admin",
+    "component": "src/views/MainOrganization/ProjectItem/EditProjectItem.vue",
+    "meta": {
+      "breadcrumb": "Edit Project Item",
+      "parent": "Project Item"
+    }
+  }
+]

@@ -85,8 +85,8 @@
           {{ $t('task_assignment.empty_tasks') }}
         </div>
 
-        <div v-else class="task-assignment-table-wrap">
-          <table class="task-assignment-table">
+        <div v-else class="task-assignment-table-wrap workspace-table-scroll">
+          <table class="task-assignment-table workspace-data-table">
             <thead>
               <tr>
                 <th>{{ $t('task_assignment.task') }}</th>
@@ -95,7 +95,9 @@
                 <th>{{ $t('task_assignment.assigned_employees') }}</th>
                 <th>{{ $t('task_assignment.notes') }}</th>
                 <!-- <th>{{ $t('status') }}</th> -->
-                <th v-if="taskRows(data).some((task) => task.insideStatus === 4)">{{ $t('task_assignment.review_decision') }}</th>
+                <th v-if="taskRows(data).some((task) => task.insideStatus === 4)">
+                  {{ $t('task_assignment.review_decision') }}
+                </th>
                 <th>{{ $t('general.actions') }}</th>
               </tr>
             </thead>
@@ -133,7 +135,6 @@
                     <button
                       type="button"
                       class="task-review-action task-review-action--accept"
-                  
                       @click="emit('change-inside-status', task, InsideStatusDecision.ACCEPT)"
                     >
                       <i
@@ -148,10 +149,9 @@
                     <button
                       type="button"
                       class="task-review-action task-review-action--reject"
-                     
                       @click="emit('change-inside-status', task, InsideStatusDecision.REJECT)"
                     >
-                    <!--  :disabled="!task.projectDepartmentItemId || isInsideStatusUpdating(task)" -->
+                      <!--  :disabled="!task.projectDepartmentItemId || isInsideStatusUpdating(task)" -->
                       <i class="pi pi-times" aria-hidden="true"></i>
                       {{ $t('task_assignment.reject') }}
                     </button>
@@ -168,7 +168,6 @@
                     "
                   />
                 </td>
-
               </tr>
             </tbody>
           </table>

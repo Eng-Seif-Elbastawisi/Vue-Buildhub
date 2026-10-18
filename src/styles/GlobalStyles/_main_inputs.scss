@@ -21,10 +21,10 @@
   .field-label {
     width: fit-content;
     text-align: start;
-    color: $Gray-5;
+    color: var(--bh-text);
     font-size: $MdSize;
     font-weight: $BaseFontSemiBoldWeight;
-    text-transform: capitalize !important;
+    text-transform: none;
     font-family: var(--font-family);
   }
 
@@ -34,7 +34,7 @@
     background: var(--gray-100);
     padding: 3px;
     border-radius: var(--radius-md);
-    border: 1px solid var(--border-weak);
+    border: 1px solid var(--bh-field-line);
   }
 
   .lang-btn {
@@ -80,15 +80,15 @@
     width: 100%;
     padding: 12px 16px;
     padding-inline-end: 50px; // Space for indicator
-    border: 1px solid var(--border-weak);
-    border-radius: 28px;
-    background: var(--white);
+    border: 1px solid var(--bh-field-line);
+    border-radius: var(--bh-radius-control);
+    background: var(--bh-surface-raised);
     outline: none;
     transition: all 0.25s ease;
     font-family: 'Medium';
     font-weight: 400;
     font-size: $SmSize;
-    color: var(--bread-crumb-color-span);
+    color: var(--bh-text);
     // max-width: 100%;
     max-height: 200px;
     max-width: 100%;
@@ -98,7 +98,7 @@
     // }
 
     &::placeholder {
-      color: var(--bread-crumb-color-span);
+      color: var(--bh-text);
       font-family: 'Medium';
       font-weight: 500;
       font-size: $SmSize;

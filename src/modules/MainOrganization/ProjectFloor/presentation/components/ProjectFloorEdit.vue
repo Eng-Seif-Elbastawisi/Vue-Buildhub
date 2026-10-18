@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
 import { computed, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute } from 'vue-router';
@@ -255,7 +256,7 @@ onMounted(fetchProjectFloor);
 </script>
 
 <template>
-  <div class="ProjectFloor-crud-page">
+  <StandardFormLayout mode="edit" class="ProjectFloor-crud-page">
     <div v-if="initialLoading" class="project-floor-state" aria-busy="true">
       {{ $t('loading') }}
     </div>
@@ -272,8 +273,14 @@ onMounted(fetchProjectFloor);
 
     <template v-else-if="projectFloor">
       <ProjectFloorForm
-:project-floor="projectFloor" :project-id="projectId" :project-preview-id="projectPreviewId"
-        :loading="saving" :is-edit="true" :validation-errors="validationErrors" @update-data="updateData" />
+        :project-floor="projectFloor"
+        :project-id="projectId"
+        :project-preview-id="projectPreviewId"
+        :loading="saving"
+        :is-edit="true"
+        :validation-errors="validationErrors"
+        @update-data="updateData"
+      />
 
       <div class="btns form-action-pair">
         <button
@@ -310,25 +317,23 @@ onMounted(fetchProjectFloor);
     <div v-else class="project-floor-state project-floor-state--error">
       {{ $t('no_data') }}
     </div>
-  </div>
+  </StandardFormLayout>
 </template>
 
-
 <style scoped lang="scss">
-  @use '@/styles/mixins/form_action_pair' as form-actions;
+@use '@/styles/mixins/form_action_pair' as form-actions;
 
-  .ProjectFloor-crud-page {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
+.ProjectFloor-crud-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
 
+.retry-button {
+  width: auto;
+}
 
-  .retry-button {
-    width: auto;
-  }
-
-  .form-action-pair {
-    @include form-actions.layout;
-  }
+.form-action-pair {
+  @include form-actions.layout;
+}
 </style>

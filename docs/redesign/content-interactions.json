@@ -1,0 +1,186 @@
+[
+  {
+    "options": {
+      "width": 1440,
+      "locale": "en"
+    },
+    "checks": [
+      "Native inputs and populated existing static select accept values",
+      "Create submit reaches intercepted API with bound values; failed submission retains values",
+      "Edit data loads through existing API/model; password remains hidden",
+      "Populated AppTable sort control updates existing sort state",
+      "Row selection preserved",
+      "Search preserves existing server request semantics",
+      "Pagination updates route through existing handler",
+      "Delete confirmation opens and cancels without deleting"
+    ],
+    "errors": [],
+    "calls": [
+      {
+        "endpoint": "store_employee",
+        "payload": {
+          "name": "Unsaved fixture",
+          "email": "unsaved@example.test",
+          "phone": "01012345678",
+          "password": "fixture-password",
+          "type": "2"
+        }
+      },
+      {
+        "endpoint": "show_employee",
+        "payload": {
+          "employee_id": 31
+        }
+      },
+      {
+        "endpoint": "fetch_employees",
+        "payload": {
+          "with_pagination": 1,
+          "page": 1,
+          "per_page": 10
+        }
+      },
+      {
+        "endpoint": "fetch_employees",
+        "payload": {
+          "word": "Fixture",
+          "with_pagination": 1,
+          "page": 1,
+          "per_page": 10
+        }
+      },
+      {
+        "endpoint": "fetch_employees",
+        "payload": {
+          "with_pagination": 1,
+          "page": 1,
+          "per_page": 10
+        }
+      }
+    ],
+    "live": false
+  },
+  {
+    "options": {
+      "width": 1024,
+      "locale": "en"
+    },
+    "checks": [
+      "Native inputs and populated existing static select accept values",
+      "Create submit reaches intercepted API with bound values; failed submission retains values",
+      "Edit data loads through existing API/model; password remains hidden",
+      "Populated AppTable sort control updates existing sort state",
+      "Row selection preserved",
+      "Search preserves existing server request semantics",
+      "Pagination updates route through existing handler",
+      "Delete confirmation opens and cancels without deleting"
+    ],
+    "errors": [],
+    "calls": [
+      {
+        "endpoint": "store_employee",
+        "payload": {
+          "name": "Unsaved fixture",
+          "email": "unsaved@example.test",
+          "phone": "01012345678",
+          "password": "fixture-password",
+          "type": "2"
+        }
+      },
+      {
+        "endpoint": "show_employee",
+        "payload": {
+          "employee_id": 31
+        }
+      },
+      {
+        "endpoint": "fetch_employees",
+        "payload": {
+          "with_pagination": 1,
+          "page": 1,
+          "per_page": 10
+        }
+      },
+      {
+        "endpoint": "fetch_employees",
+        "payload": {
+          "word": "Fixture",
+          "with_pagination": 1,
+          "page": 1,
+          "per_page": 10
+        }
+      },
+      {
+        "endpoint": "fetch_employees",
+        "payload": {
+          "with_pagination": 1,
+          "page": 1,
+          "per_page": 10
+        }
+      }
+    ],
+    "live": false
+  },
+  {
+    "options": {
+      "width": 390,
+      "locale": "ar",
+      "dark": true
+    },
+    "checks": [
+      "Native inputs and populated existing static select accept values",
+      "Create submit reaches intercepted API with bound values; failed submission retains values",
+      "Edit data loads through existing API/model; password remains hidden",
+      "Populated AppTable sort control updates existing sort state",
+      "Row selection preserved",
+      "Search preserves existing server request semantics",
+      "Pagination updates route through existing handler",
+      "Delete confirmation opens and cancels without deleting"
+    ],
+    "errors": [],
+    "calls": [
+      {
+        "endpoint": "store_employee",
+        "payload": {
+          "name": "Unsaved fixture",
+          "email": "unsaved@example.test",
+          "phone": "01012345678",
+          "password": "fixture-password",
+          "type": "2"
+        }
+      },
+      {
+        "endpoint": "show_employee",
+        "payload": {
+          "employee_id": 31
+        }
+      },
+      {
+        "endpoint": "fetch_employees",
+        "payload": {
+          "with_pagination": 1,
+          "page": 1,
+          "per_page": 10
+        }
+      },
+      {
+        "endpoint": "fetch_employees",
+        "payload": {
+          "word": "Fixture",
+          "with_pagination": 1,
+          "page": 1,
+          "per_page": 10
+        }
+      },
+      {
+        "endpoint": "fetch_employees",
+        "payload": {
+          "with_pagination": 1,
+          "page": 1,
+          "per_page": 10
+        }
+      }
+    ],
+    "live": false
+  }
+]

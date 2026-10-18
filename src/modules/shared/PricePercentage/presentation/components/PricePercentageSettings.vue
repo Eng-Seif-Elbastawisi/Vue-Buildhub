@@ -135,8 +135,14 @@ const savePercentages = async () => {
           <p>{{ $t('price_percentage.form_description') }}</p>
         </div>
 
-        <AppButton class="add-row-button" theme="secondary" type="button" :disabled="loading"
-          :title="$t('price_percentage.add_row')" @click="addRow">
+        <AppButton
+          class="add-row-button"
+          theme="secondary"
+          type="button"
+          :disabled="loading"
+          :title="$t('price_percentage.add_row')"
+          @click="addRow"
+        >
           <span aria-hidden="true">+</span>
           {{ $t('price_percentage.add_row') }}
         </AppButton>
@@ -148,9 +154,15 @@ const savePercentages = async () => {
             <label :for="`price-percentage-title-${row.key}`">
               {{ $t('price_percentage.entry_title') }}
             </label>
-            <input :id="`price-percentage-title-${row.key}`" v-model="row.title" class="form-input title-input"
-              type="text" :disabled="loading" :placeholder="$t('price_percentage.title_placeholder')"
-              autocomplete="off" />
+            <input
+              :id="`price-percentage-title-${row.key}`"
+              v-model="row.title"
+              class="form-input title-input workspace-control"
+              type="text"
+              :disabled="loading"
+              :placeholder="$t('price_percentage.title_placeholder')"
+              autocomplete="off"
+            />
           </div>
 
           <div class="field-group">
@@ -158,17 +170,33 @@ const savePercentages = async () => {
               {{ $t('price_percentage.percentage') }}
             </label>
             <div class="percentage-input-wrap">
-              <input :id="`price-percentage-value-${row.key}`" v-model.number="row.percentage"
-                class="form-input percentage-input" type="number" :min="MIN_PERCENTAGE" :max="MAX_PERCENTAGE" step="1"
-                inputmode="decimal" :disabled="loading" :placeholder="$t('price_percentage.percentage_placeholder')"
-                @keydown="preventInvalidPercentageKey" @paste="preventInvalidPercentagePaste" />
+              <input
+                :id="`price-percentage-value-${row.key}`"
+                v-model.number="row.percentage"
+                class="form-input percentage-input workspace-control"
+                type="number"
+                :min="MIN_PERCENTAGE"
+                :max="MAX_PERCENTAGE"
+                step="1"
+                inputmode="decimal"
+                :disabled="loading"
+                :placeholder="$t('price_percentage.percentage_placeholder')"
+                @keydown="preventInvalidPercentageKey"
+                @paste="preventInvalidPercentagePaste"
+              />
               <span class="percentage-symbol" aria-hidden="true">%</span>
             </div>
           </div>
 
-          <AppButton class="remove-row-button" theme="danger" type="button" :disabled="loading"
-            :title="$t('price_percentage.remove_row')" :aria-label="$t('price_percentage.remove_row')"
-            @click="removeRow(rowIndex)">
+          <AppButton
+            class="remove-row-button"
+            theme="danger"
+            type="button"
+            :disabled="loading"
+            :title="$t('price_percentage.remove_row')"
+            :aria-label="$t('price_percentage.remove_row')"
+            @click="removeRow(rowIndex)"
+          >
             {{ $t('price_percentage.remove_row') }}
           </AppButton>
         </article>
@@ -179,14 +207,25 @@ const savePercentages = async () => {
         <p>{{ $t('price_percentage.empty') }}</p>
       </div>
 
-      <div class="total-summary" :class="hasRequiredTotal ? 'is-valid' : 'is-invalid'" aria-live="polite">
+      <div
+        class="total-summary"
+        :class="hasRequiredTotal ? 'is-valid' : 'is-invalid'"
+        aria-live="polite"
+      >
         <span>{{ $t('price_percentage.total') }}</span>
         <strong>{{ totalPercentage }} / {{ REQUIRED_PERCENTAGE_TOTAL }}%</strong>
       </div>
     </section>
 
-    <AppButton class="save-button" block type="button" :loading="loading" :disabled="loading"
-      :title="$t('price_percentage.save')" @click="savePercentages">
+    <AppButton
+      class="save-button"
+      block
+      type="button"
+      :loading="loading"
+      :disabled="loading"
+      :title="$t('price_percentage.save')"
+      @click="savePercentages"
+    >
       {{ $t('price_percentage.save') }}
     </AppButton>
 
@@ -209,7 +248,7 @@ const savePercentages = async () => {
   border: 1px solid var(--border-weak);
   border-radius: var(--radius-sm);
   background: var(--BgWhite);
-  box-shadow: var(--shadow-sm);
+  box-shadow: none;
 }
 
 .settings-header {
@@ -301,7 +340,7 @@ const savePercentages = async () => {
   width: 100%;
   min-height: 44px;
   border: 1px solid var(--border-weak);
-  border-radius: var(--radius-sm);
+  border-radius: var(--bh-radius-control);
   padding: 0.7rem 0.8rem;
   background: var(--BgWhite);
   color: var(--gray-900);
@@ -309,7 +348,7 @@ const savePercentages = async () => {
 
   &:focus {
     border-color: var(--PrimaryColor);
-    box-shadow: 0 0 0 3px var(--PrimaryColor-alpha-20);
+    box-shadow: none;
   }
 
   &:disabled {

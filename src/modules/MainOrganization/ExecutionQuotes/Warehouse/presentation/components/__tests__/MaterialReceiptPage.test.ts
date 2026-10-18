@@ -139,6 +139,7 @@ it('selects a Purchase Request first, submits only its positive item quantity, a
     .spyOn(MaterialReceiptRepository.getInstance(), 'create')
     .mockResolvedValue(new DataSuccess<void>({ message: 'Saved' }));
   const wrapper = await mountPage('en');
+  expect(wrapper.get('h1').text()).toBe('Warehouse');
   expect(wrapper.find('#receive-1').exists()).toBe(false);
   expect(wrapper.findAll('[role="tab"]')).toHaveLength(0);
   expect(wrapper.get('#receipt-history-heading').text()).toBe('Receiving History');

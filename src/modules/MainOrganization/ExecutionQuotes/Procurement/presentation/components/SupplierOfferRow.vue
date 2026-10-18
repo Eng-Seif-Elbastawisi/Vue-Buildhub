@@ -103,7 +103,7 @@
         <input
           :id="`${prefix}-price`"
           :value="row.price"
-          class="input"
+          class="input workspace-control"
           type="text"
           inputmode="decimal"
           :disabled="disabled"
@@ -130,7 +130,7 @@
         <input
           :id="`${prefix}-duration`"
           :value="row.duration"
-          class="input"
+          class="input workspace-control"
           type="number"
           step="1"
           min="0"

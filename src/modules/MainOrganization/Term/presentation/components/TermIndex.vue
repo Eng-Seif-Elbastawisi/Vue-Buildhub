@@ -135,10 +135,7 @@
 <template>
   <div class="Term-page">
     <!-- ================= HEADER ================= -->
-    <IndexPageHeader
-      :title="$t('Term.list_title')"
-      :subtitle="$t('Term.list_description')"
-    >
+    <IndexPageHeader :title="$t('Term.list_title')" :subtitle="$t('Term.list_description')">
       <template #search>
         <!-- Search -->
         <div class="search-field">
@@ -160,7 +157,7 @@
           <input
             v-model="word"
             :placeholder="$t('search_terms')"
-            class="search-input"
+            class="search-input workspace-control"
             type="text"
             @input="Search"
           />
@@ -296,131 +293,121 @@
 </template>
 
 <style scoped lang="scss">
-  @use '../styles/Term_imports';
+@use '../styles/Term_imports';
 
-  .Term-page {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
+.Term-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
 
-  /* ================= HEADER ================= */
+/* ================= HEADER ================= */
 
+.page-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.page-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.page-info p {
+  color: var(--gray-5);
+}
+
+/* ================= TOOLBAR ================= */
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+/* ================= ROW ACTIONS ================= */
+
+.row-actions {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  min-width: 80px;
+}
+
+/* ================= ACTION BUTTON ================= */
+
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    opacity 0.2s ease;
+}
+
+/* ================= EDIT ================= */
+
+.action-btn.edit {
+  color: var(--PrimaryColor);
+}
+
+.action-btn.edit:hover {
+  background-color: var(--PrimaryColor-alpha-10);
+}
+
+/* ================= DELETE ================= */
+
+.action-btn.delete {
+  display: inline-flex;
+  color: #ef4444;
+  visibility: visible;
+  opacity: 1;
+}
+
+.action-btn.delete:hover {
+  background-color: rgba(239, 68, 68, 0.1);
+}
+
+/* ================= EMPTY ================= */
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 3rem 1rem;
+  text-align: center;
+}
+
+.empty-state p {
+  color: var(--gray-5);
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media (max-width: 768px) {
   .page-header {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 1rem;
-  }
-
-  .page-info {
-    display: flex;
     flex-direction: column;
-    gap: 0.35rem;
   }
-
-  .page-info p {
-    color: var(--gray-5);
-  }
-
-  /* ================= TOOLBAR ================= */
 
   .toolbar {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 1rem;
+    width: 100%;
+    justify-content: space-between;
   }
-
-  /* ================= ROW ACTIONS ================= */
-
-  .row-actions {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 8px;
-    min-width: 80px;
-  }
-
-  /* ================= ACTION BUTTON ================= */
-
-  .action-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    width: 32px;
-    height: 32px;
-
-    padding: 0;
-
-    border: none;
-    border-radius: 6px;
-
-    background: transparent;
-
-    cursor: pointer;
-
-    transition:
-      background-color 0.2s ease,
-      color 0.2s ease,
-      opacity 0.2s ease;
-  }
-
-  /* ================= EDIT ================= */
-
-  .action-btn.edit {
-    color: var(--PrimaryColor);
-  }
-
-  .action-btn.edit:hover {
-    background-color: var(--PrimaryColor-alpha-10);
-  }
-
-  /* ================= DELETE ================= */
-
-  .action-btn.delete {
-    display: inline-flex;
-
-    color: #ef4444;
-
-    visibility: visible;
-    opacity: 1;
-  }
-
-  .action-btn.delete:hover {
-    background-color: rgba(239, 68, 68, 0.1);
-  }
-
-  /* ================= EMPTY ================= */
-
-  .empty-state {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-
-    padding: 3rem 1rem;
-
-    text-align: center;
-  }
-
-  .empty-state p {
-    color: var(--gray-5);
-  }
-
-  /* ================= RESPONSIVE ================= */
-
-  @media (max-width: 768px) {
-    .page-header {
-      flex-direction: column;
-    }
-
-    .toolbar {
-      width: 100%;
-      justify-content: space-between;
-    }
-  }
+}
 </style>

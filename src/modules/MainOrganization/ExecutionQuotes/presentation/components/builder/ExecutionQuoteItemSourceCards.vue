@@ -73,95 +73,95 @@
 </template>
 
 <style scoped lang="scss">
-  .execution-builder-card {
-    padding: 1.1rem;
-    border: 1px solid var(--border-weak);
-    border-radius: var(--radius-md);
-    background: var(--bg-card);
-    box-shadow: var(--shadow-sm);
-  }
+.execution-builder-card {
+  padding: 1.1rem;
+  border: 1px solid var(--border-weak);
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  box-shadow: none;
+}
 
-  .builder-section-title {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.75rem;
-  }
+.builder-section-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
 
-  .builder-section-title h2 {
-    margin: 0;
-    color: var(--title-card-color);
-    font-size: 1.15rem;
-  }
+.builder-section-title h2 {
+  margin: 0;
+  color: var(--title-card-color);
+  font-size: 1.15rem;
+}
 
-  .builder-badge,
-  .source-card__code {
-    display: inline-flex;
-    width: fit-content;
-    padding: 0.25rem 0.55rem;
-    border-radius: var(--radius-full);
-    font-size: var(--xs-size);
-    font-weight: 700;
-  }
+.builder-badge,
+.source-card__code {
+  display: inline-flex;
+  width: fit-content;
+  padding: 0.25rem 0.55rem;
+  border-radius: var(--radius-full);
+  font-size: var(--xs-size);
+  font-weight: 700;
+}
 
-  .builder-badge {
-    background: var(--PrimaryColor-light);
-    color: var(--PrimaryColor);
-  }
+.builder-badge {
+  background: var(--PrimaryColor-light);
+  color: var(--PrimaryColor);
+}
 
+.source-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-top: 0.85rem;
+}
+
+.source-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-height: 7rem;
+  padding: 0.9rem;
+  border: 1px solid var(--border-weak);
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  color: var(--title-card-color);
+  cursor: pointer;
+  text-align: start;
+  transition: var(--transition-fast);
+}
+
+.source-card:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.source-card--selected {
+  border-color: var(--PrimaryColor);
+  background: var(--PrimaryColor-alpha-4);
+  box-shadow: none;
+}
+
+.source-card__code {
+  align-self: flex-end;
+  background: var(--gray-100);
+  color: var(--gray-600);
+}
+
+.source-card small {
+  color: var(--subtitle-color);
+  font-size: var(--xs-size);
+}
+
+@media (max-width: 800px) {
   .source-grid {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 0.75rem;
-    margin-top: 0.85rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+}
 
-  .source-card {
-    display: flex;
-    flex-direction: column;
-    gap: 0.35rem;
-    min-height: 7rem;
-    padding: 0.9rem;
-    border: 1px solid var(--border-weak);
-    border-radius: var(--radius-md);
-    background: var(--bg-card);
-    color: var(--title-card-color);
-    cursor: pointer;
-    text-align: start;
-    transition: var(--transition-fast);
+@media (max-width: 520px) {
+  .source-grid {
+    grid-template-columns: 1fr;
   }
-
-  .source-card:disabled {
-    cursor: not-allowed;
-    opacity: 0.6;
-  }
-
-  .source-card--selected {
-    border-color: var(--PrimaryColor);
-    background: var(--PrimaryColor-alpha-4);
-    box-shadow: inset 0 -3px 0 var(--PrimaryColor);
-  }
-
-  .source-card__code {
-    align-self: flex-end;
-    background: var(--gray-100);
-    color: var(--gray-600);
-  }
-
-  .source-card small {
-    color: var(--subtitle-color);
-    font-size: var(--xs-size);
-  }
-
-  @media (max-width: 800px) {
-    .source-grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-  }
-
-  @media (max-width: 520px) {
-    .source-grid {
-      grid-template-columns: 1fr;
-    }
-  }
+}
 </style>

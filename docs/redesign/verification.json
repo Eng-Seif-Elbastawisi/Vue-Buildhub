@@ -1,0 +1,65 @@
+{
+  "root_type_check": "passed (vue-tsc --noEmit)",
+  "plain_tsc": "passed (tsc --noEmit)",
+  "build_gate": {
+    "status": "failed",
+    "diagnostics": 221,
+    "baseline_diagnostics": 221,
+    "same_diagnostics_after_path_and_line_normalization": true
+  },
+  "vite_bundle": "passed after final correction",
+  "focused_shared_ui_tests": {
+    "files": 11,
+    "tests": 78,
+    "failed": 0
+  },
+  "review_regression_tests": {
+    "files": 3,
+    "tests": 18,
+    "failed": 0
+  },
+  "companion_tests": {
+    "files": 77,
+    "passed_files": 67,
+    "failed_files": 10,
+    "passed_tests": 197,
+    "failed_tests": 18,
+    "suite_load_failures": 1,
+    "same_failure_identifiers_on_baseline": true
+  },
+  "full_unit_suite": {
+    "status": "terminated before summary",
+    "exit_code": 143
+  },
+  "read_only_full_eslint": {
+    "errors": 20,
+    "warnings": 687,
+    "baseline_errors": 20,
+    "baseline_warnings": 687
+  },
+  "core_redesign_eslint": "passed",
+  "changed_styles": {
+    "errors": 0,
+    "warnings": 43
+  },
+  "companion_policy_missing": [],
+  "desktop_offline_route_checks": {
+    "declarations": 208,
+    "valid_shells": 208,
+    "runtime_errors": 0,
+    "page_overflow": 0
+  },
+  "browser_scenes": {
+    "scenes": 18,
+    "runtime_errors": 0,
+    "page_overflow": 0,
+    "live_backend": false
+  },
+  "live_crud_permissions": "not verified",
+  "existing_e2e_visual_regression_suites": "none found in repository; captures are manual browser evidence",
+  "finish_review": {
+    "disposition": "pass for five-item correction scope",
+    "findings_resolved": 5,
+    "whole_application_acceptance": false
+  }
+}

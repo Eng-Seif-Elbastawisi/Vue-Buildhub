@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import { computed, onMounted, ref } from 'vue';
   import { useI18n } from 'vue-i18n';
 
@@ -77,7 +78,7 @@
 </script>
 
 <template>
-  <div class="show-page">
+  <StandardFormLayout mode="show" class="show-page">
     <!-- Loading -->
     <div v-if="loading" class="state-box">
       <div class="spinner"></div>
@@ -139,67 +140,67 @@
         {{ controller.errorMessage.value }}
       </p>
     </div>
-  </div>
+  </StandardFormLayout>
 </template>
 
 <style scoped lang="scss">
+.show-page {
+  display: flex;
+  min-height: 100%;
+  flex-direction: column;
+  gap: 1rem;
+  padding: clamp(1rem, 2vw, 1.75rem);
+  background: var(--bg-section);
+  border-radius: var(--radius-xl);
+}
+
+.content-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.state-box {
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  color: var(--subtitle-color);
+
+  .spinner {
+    width: 36px;
+    height: 36px;
+    border: 3px solid var(--border-weak);
+    border-top-color: var(--PrimaryColor);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  .empty-icon {
+    box-sizing: content-box;
+    padding: 0.85rem;
+    color: var(--PrimaryColor);
+    background: var(--PrimaryColor-light);
+    border-radius: var(--radius-md);
+  }
+
+  h3 {
+    margin: 0;
+    color: var(--title-color);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 700px) {
   .show-page {
-    display: flex;
-    min-height: 100%;
-    flex-direction: column;
-    gap: 1rem;
-    padding: clamp(1rem, 2vw, 1.75rem);
-    background: var(--bg-section);
-    border-radius: var(--radius-xl);
+    padding: 1rem;
   }
-
-  .content-stack {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .state-box {
-    min-height: 60vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 0.75rem;
-    color: var(--subtitle-color);
-
-    .spinner {
-      width: 36px;
-      height: 36px;
-      border: 3px solid var(--border-weak);
-      border-top-color: var(--PrimaryColor);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
-
-    .empty-icon {
-      box-sizing: content-box;
-      padding: 0.85rem;
-      color: var(--PrimaryColor);
-      background: var(--PrimaryColor-light);
-      border-radius: var(--radius-md);
-    }
-
-    h3 {
-      margin: 0;
-      color: var(--title-color);
-    }
-  }
-
-  @keyframes spin {
-    to {
-      transform: rotate(360deg);
-    }
-  }
-
-  @media (max-width: 700px) {
-    .show-page {
-      padding: 1rem;
-    }
-  }
+}
 </style>

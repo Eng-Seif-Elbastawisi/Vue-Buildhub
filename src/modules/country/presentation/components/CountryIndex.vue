@@ -125,7 +125,7 @@
           <input
             v-model="word"
             :placeholder="$t('search_by_country_name_or_code')"
-            class="search-input"
+            class="search-input workspace-control"
             type="text"
             @input="Search"
           />
@@ -262,8 +262,8 @@
 </template>
 
 <style scoped>
-  .flag-img {
-    width: 40px;
-    height: 40px;
-  }
+.flag-img {
+  width: 40px;
+  height: 40px;
+}
 </style>

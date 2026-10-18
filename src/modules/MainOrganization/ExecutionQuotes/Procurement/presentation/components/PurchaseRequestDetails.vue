@@ -60,8 +60,8 @@
     </dl>
     <h4>{{ $t('procurement.requested_items') }}</h4>
     <p v-if="!request.items.length">{{ $t('procurement.no_requested_items') }}</p>
-    <div v-else class="procurement-table-scroll">
-      <table class="procurement-table">
+    <div v-else class="procurement-table-scroll workspace-table-scroll">
+      <table class="procurement-table workspace-data-table">
         <thead>
           <tr>
             <th scope="col">{{ $t('procurement.timeline_stage') }}</th>

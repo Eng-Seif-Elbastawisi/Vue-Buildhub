@@ -137,7 +137,7 @@
           <input
             v-model="word"
             :placeholder="$t('search_client_sources')"
-            class="search-input"
+            class="search-input workspace-control"
             type="text"
             @input="Search"
           />
@@ -251,5 +251,5 @@
 </template>
 
 <style lang="scss">
-  @use '../styles/client_source_index';
+@use '../styles/client_source_index';
 </style>

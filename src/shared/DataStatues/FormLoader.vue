@@ -8,13 +8,18 @@
 </script>
 
 <template>
-  <form class="grid grid-cols-1 md:grid-cols-4 gap-md">
+  <form
+    class="form-loader grid grid-cols-1 md:grid-cols-4 gap-md"
+    role="status"
+    aria-busy="true"
+    :aria-label="$t('loading')"
+  >
     <div v-for="i in inputsCount" :key="i" class="col-span-2 input-wrapper gap-4">
       <Skeleton height="0.5rem" width="20%"></Skeleton>
-      <Skeleton height="3rem" width="100%"></Skeleton>
+      <Skeleton height="var(--bh-control-height)" width="100%"></Skeleton>
     </div>
     <div class="col-span-3 button-wrapper">
-      <button class="btn btn-primary" type="submit">{{ $t('submit') }}</button>
+      <button class="btn btn-primary" type="submit" disabled>{{ $t('submit') }}</button>
       <!--      <PrimaryButton :title="'Add'" :type="'submit'" />-->
     </div>
   </form>

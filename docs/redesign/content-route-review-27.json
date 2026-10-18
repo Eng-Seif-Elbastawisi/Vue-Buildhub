@@ -1,0 +1,17 @@
+[
+  {
+    "index": 27,
+    "path": "/organization/project/add",
+    "component": "src/views/MainOrganization/Project/AddProject.vue",
+    "screenshot": "content-route-screenshots/027.png",
+    "actual": "/organization/project/add",
+    "overflow": false,
+    "fields": 28,
+    "layouts": 2,
+    "table": false,
+    "emptyOrError": false,
+    "text": "1\nRequest Data\nRequest Data Description\n2\nRequest Preview\nRequest Preview Description\n3\nRequest Floors\nRequest Floors Description\nrequest details\n\nFill in the request details below\n\n* Title\ni\nAR\nEN\nAR\n* Date\ni\nProject type\n*\nSelect project type\nClien",
+    "errors": [],
+    "live": false
+  }
+]

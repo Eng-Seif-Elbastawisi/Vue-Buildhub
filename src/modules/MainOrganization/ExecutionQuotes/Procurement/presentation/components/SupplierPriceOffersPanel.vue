@@ -142,12 +142,12 @@
       </p>
       <template v-if="controller.loaded.value || controller.savedOffers.value.length">
         <div
-          class="procurement-table-scroll"
+          class="procurement-table-scroll workspace-table-scroll"
           tabindex="0"
           role="region"
           :aria-label="$t('procurement.offers.saved_offers')"
         >
-          <table class="procurement-table">
+          <table class="procurement-table workspace-data-table">
             <caption class="procurement-sr-only">
               {{
                 $t('procurement.offers.saved_offers')

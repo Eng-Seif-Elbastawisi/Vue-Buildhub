@@ -42,8 +42,8 @@
       {{ emptyLabel }}
     </div>
 
-    <div v-else class="table-wrap project-spaces-table-wrapper">
-      <table class="project-table project-table--spaces">
+    <div v-else class="table-wrap project-spaces-table-wrapper workspace-table-scroll">
+      <table class="project-table project-table--spaces workspace-data-table">
         <thead>
           <tr>
             <th>{{ floorLabel }}</th>

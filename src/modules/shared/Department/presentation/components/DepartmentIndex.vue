@@ -183,7 +183,7 @@
           <input
             v-model="word"
             :placeholder="$t('search_departments')"
-            class="search-input"
+            class="search-input workspace-control"
             type="text"
             @input="Search"
           />
@@ -285,40 +285,40 @@
 </template>
 
 <style scoped lang="scss">
-  .department-page__header {
-    width: 100%;
-    margin-bottom: 1.5rem;
+.department-page__header {
+  width: 100%;
+  margin-bottom: 1.5rem;
 
-    p {
-      margin: 0;
-      color: var(--gray-5);
-    }
+  p {
+    margin: 0;
+    color: var(--gray-5);
+  }
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 64px 20px;
+  text-align: center;
+
+  svg {
+    color: var(--gray-300);
+    margin-bottom: 16px;
   }
 
-  .empty-state {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 64px 20px;
-    text-align: center;
-
-    svg {
-      color: var(--gray-300);
-      margin-bottom: 16px;
-    }
-
-    h3 {
-      font-size: 1.125rem;
-      font-weight: 700;
-      color: var(--gray-700);
-      margin: 0 0 4px;
-    }
-
-    p {
-      font-size: 0.875rem;
-      color: var(--gray-400);
-      margin: 0 0 20px;
-    }
+  h3 {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--gray-700);
+    margin: 0 0 4px;
   }
+
+  p {
+    font-size: 0.875rem;
+    color: var(--gray-400);
+    margin: 0 0 20px;
+  }
+}
 </style>

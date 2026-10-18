@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import { onMounted, ref } from 'vue';
   import { useRoute } from 'vue-router';
   import AppButton from '@/shared/HelpersComponents/AppButton.vue';
@@ -27,7 +28,7 @@
 </script>
 
 <template>
-  <section class="department-page">
+  <StandardFormLayout as="section" mode="edit" class="department-page">
     <StandardFormSectionHeader
       :title="$t('Term.form_title')"
       :description="$t('Term.form_description')"
@@ -38,22 +39,26 @@
       :loading="loading"
       @update-data="(value) => (params = value as EditTermParams)"
     />
-    <AppButton :loading="loading" :title="$t('save')" type="button" @click="save">{{
-      $t('save')
-    }}</AppButton>
+
     <div v-if="controller.errorMessage.value" class="error">
       {{ controller.errorMessage.value }}
     </div>
-  </section>
+
+    <template #actions>
+      <AppButton :loading="loading" :title="$t('save')" type="button" @click="save">{{
+        $t('save')
+      }}</AppButton>
+    </template>
+  </StandardFormLayout>
 </template>
 
 <style scoped>
-  .error {
-    margin-top: 20px;
-    padding: 10px;
-    background-color: var(--danger-light);
-    color: var(--danger-dark);
-    border: 1px solid #f5c6cb;
-    border-radius: 4px;
-  }
+.error {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: var(--danger-light);
+  color: var(--danger-dark);
+  border: 1px solid var(--bh-coral-soft);
+  border-radius: 4px;
+}
 </style>

@@ -42,9 +42,18 @@ const onInput = (event: Event) => {
 
     <div class="pricing-input">
       <input
-:value="modelValue ?? ''" type="number" :min="EXECUTION_QUOTE_STAGE_PRICING_MINIMUM" step="1" required
-        :disabled="disabled" :aria-required="!disabled" :aria-label="$t('execution_quote.client_stage_price')"
-        :placeholder="$t('execution_quote.placeholders.client_stage_price')" @input="onInput" />
+        class="workspace-control"
+        :value="modelValue ?? ''"
+        type="number"
+        :min="EXECUTION_QUOTE_STAGE_PRICING_MINIMUM"
+        step="1"
+        required
+        :disabled="disabled"
+        :aria-required="!disabled"
+        :aria-label="$t('execution_quote.client_stage_price')"
+        :placeholder="$t('execution_quote.placeholders.client_stage_price')"
+        @input="onInput"
+      />
 
       <span class="pricing-input__suffix">
         {{ $t('execution_quote.table.currency_egp') }}
@@ -62,7 +71,7 @@ const onInput = (event: Event) => {
   border: 1px solid var(--border-weak);
   border-radius: var(--radius-md);
   background: var(--bg-card);
-  box-shadow: var(--shadow-sm);
+  box-shadow: none;
 }
 
 .builder-section-title {
@@ -104,7 +113,7 @@ const onInput = (event: Event) => {
   padding-block: 0.55rem;
   padding-inline: 0.7rem 3.5rem;
   border: 1px solid var(--input-border-color);
-  border-radius: var(--radius-sm);
+  border-radius: var(--bh-radius-control);
   background: var(--bg-card);
   color: var(--Title-input-Color);
 }

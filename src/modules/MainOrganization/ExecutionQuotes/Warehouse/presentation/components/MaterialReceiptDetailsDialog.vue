@@ -12,7 +12,7 @@
     v-model:visible="visible"
     modal
     append-to="self"
-    class="material-receipt__details-dialog"
+    class="material-receipt__details-dialog workspace-dialog"
     :header="$t('material_receipt.receipt_details')"
   >
     <div v-if="receipt" class="material-receipt__details">

@@ -44,60 +44,60 @@
 </template>
 
 <style scoped lang="scss">
-  .execution-builder-card {
-    padding: 1.1rem;
-    border: 1px solid var(--border-weak);
-    border-radius: var(--radius-md);
-    background: var(--bg-card);
-    box-shadow: var(--shadow-sm);
-  }
+.execution-builder-card {
+  padding: 1.1rem;
+  border: 1px solid var(--border-weak);
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  box-shadow: none;
+}
 
-  .stage-header__back {
-    margin-bottom: 0.7rem;
-    width: fit-content;
-    margin-inline-start: auto;
-  }
+.stage-header__back {
+  margin-bottom: 0.7rem;
+  width: fit-content;
+  margin-inline-start: auto;
+}
 
-  .stage-header__meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.45rem;
-  }
+.stage-header__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
 
-  .stage-header__badge,
-  .stage-header__type,
-  .stage-header__status {
-    display: inline-flex;
-    width: fit-content;
-    padding: 0.25rem 0.55rem;
-    border-radius: var(--radius-full);
-    font-size: var(--xs-size);
-    font-weight: 700;
-  }
+.stage-header__badge,
+.stage-header__type,
+.stage-header__status {
+  display: inline-flex;
+  width: fit-content;
+  padding: 0.25rem 0.55rem;
+  border-radius: var(--radius-full);
+  font-size: var(--xs-size);
+  font-weight: 700;
+}
 
-  .stage-header__badge {
-    background: var(--PrimaryColor-light);
-    color: var(--PrimaryColor);
-  }
+.stage-header__badge {
+  background: var(--PrimaryColor-light);
+  color: var(--PrimaryColor);
+}
 
-  .stage-header__type {
-    background: var(--btn-easy);
-    color: var(--PrimaryColor);
-  }
+.stage-header__type {
+  background: var(--btn-easy);
+  color: var(--PrimaryColor);
+}
 
-  .stage-header__status {
-    background: var(--light-green-bg);
-    color: var(--primary-green);
-  }
+.stage-header__status {
+  background: var(--light-green-bg);
+  color: var(--primary-green);
+}
 
-  .stage-header h2 {
-    margin: 0.55rem 0 0;
-    color: var(--title-card-color);
-  }
+.stage-header h2 {
+  margin: 0.55rem 0 0;
+  color: var(--title-card-color);
+}
 
-  .stage-header p {
-    margin: 0.3rem 0 0;
-    color: var(--subtitle-color);
-    font-size: var(--sm-size);
-  }
+.stage-header p {
+  margin: 0.3rem 0 0;
+  color: var(--subtitle-color);
+  font-size: var(--sm-size);
+}
 </style>

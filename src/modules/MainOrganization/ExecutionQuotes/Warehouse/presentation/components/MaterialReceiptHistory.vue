@@ -59,12 +59,14 @@
           </div>
           <div
             v-else
-            class="material-receipt__scroll"
+            class="material-receipt__scroll workspace-table-scroll"
             role="region"
             tabindex="0"
             :aria-label="$t('material_receipt.history')"
           >
-            <table class="material-receipt__table material-receipt__table--history">
+            <table
+              class="material-receipt__table material-receipt__table--history workspace-data-table"
+            >
               <thead>
                 <tr>
                   <th scope="col">{{ $t('material_receipt.receipt_date') }}</th>

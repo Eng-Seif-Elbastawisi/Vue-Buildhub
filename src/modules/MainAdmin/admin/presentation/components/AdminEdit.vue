@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import { onMounted, ref } from 'vue';
   import { useRoute } from 'vue-router';
   import type AddAdminParams from '../../core/params/add.admin.params';
@@ -40,7 +41,7 @@
 </script>
 
 <template>
-  <div class="admin-crud-page">
+  <StandardFormLayout mode="edit" class="admin-crud-page">
     <AdminForm
       :admin="controller.itemData.value!"
       :form-key="formKey"
@@ -48,43 +49,45 @@
       @update-data="updateData"
     />
 
-    <div class="actions" :class="{ disabled: loading }">
-      <button
-        :disabled="loading"
-        :class="{ 'btn--loading': loading }"
-        class="btn btn-primary w-full"
-        type="button"
-        @click="saveAdmin"
-      >
-        <span v-if="loading" class="loader"></span>
-        <span v-else>{{ $t('admin.update') }}</span>
-      </button>
-    </div>
-
     <div v-if="controller.errorMessage.value" class="error">
       {{ controller.errorMessage.value }}
     </div>
-  </div>
+
+    <template #actions>
+      <div class="actions" :class="{ disabled: loading }">
+        <button
+          :disabled="loading"
+          :class="{ 'btn--loading': loading }"
+          class="btn btn-primary w-full"
+          type="button"
+          @click="saveAdmin"
+        >
+          <span v-if="loading" class="loader"></span>
+          <span v-else>{{ $t('admin.update') }}</span>
+        </button>
+      </div>
+    </template>
+  </StandardFormLayout>
 </template>
 
 <style scoped lang="scss">
-  .admin-crud-page {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
+.admin-crud-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
 
-  .actions.disabled {
-    pointer-events: none;
-    opacity: 0.7;
-  }
+.actions.disabled {
+  pointer-events: none;
+  opacity: 0.7;
+}
 
-  .error {
-    margin-top: 20px;
-    padding: 10px;
-    background-color: var(--danger-light);
-    color: var(--danger-dark);
-    border: 1px solid #f5c6cb;
-    border-radius: 4px;
-  }
+.error {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: var(--danger-light);
+  color: var(--danger-dark);
+  border: 1px solid var(--bh-coral-soft);
+  border-radius: 4px;
+}
 </style>

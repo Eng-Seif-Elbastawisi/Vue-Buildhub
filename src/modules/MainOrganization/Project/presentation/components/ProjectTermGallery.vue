@@ -87,151 +87,151 @@
 </template>
 
 <style scoped lang="scss">
-  .term-gallery {
-    display: flex;
-    flex-direction: column;
-    gap: 0.85rem;
-    min-width: 0;
+.term-gallery {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  min-width: 0;
+}
+
+.term-gallery__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+
+  h5,
+  p {
+    margin: 0;
   }
 
-  .term-gallery__header {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 1rem;
-
-    h5,
-    p {
-      margin: 0;
-    }
-
-    h5 {
-      color: var(--gray-800);
-      font-family: 'Bold';
-      font-size: var(--sm-size);
-    }
-
-    p {
-      margin-block-start: 0.25rem;
-      color: var(--gray-500);
-      font-size: var(--xs-size);
-      line-height: 1.5;
-    }
-  }
-
-  .term-gallery__count {
-    flex: 0 0 auto;
-    padding: 0.35rem 0.7rem;
-    border-radius: var(--radius-full);
-    color: var(--PrimaryColor);
-    background-color: var(--PrimaryColor-alpha-8);
-    font-size: var(--xs-size);
-    font-weight: 600;
-  }
-
-  .term-gallery__grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.75rem;
-  }
-
-  .term-gallery__card {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.75rem;
-    min-width: 0;
-    min-height: 94px;
-    padding: 0.9rem;
-    border: 1px solid var(--PrimaryColor-alpha-30);
-    border-radius: var(--radius-md);
-    color: var(--gray-900);
-    text-align: start;
-    background-color: var(--PrimaryColor-alpha-4);
-    box-shadow: 0 0 0 1px var(--PrimaryColor-alpha-8);
-  }
-
-  .term-gallery__check {
-    display: grid;
-    flex: 0 0 30px;
-    width: 30px;
-    height: 30px;
-    place-items: center;
-    border: 1px solid var(--PrimaryColor);
-    border-radius: var(--radius-full);
-    color: var(--white);
-    background-color: var(--PrimaryColor);
-    font-size: 0.75rem;
-  }
-
-  .term-gallery__content {
-    display: flex;
-    min-width: 0;
-    flex-direction: column;
-    gap: 0.35rem;
-
-    strong {
-      color: var(--gray-900);
-      font-family: 'Bold';
-      font-size: var(--sm-size);
-      line-height: 1.4;
-    }
-
-    span {
-      display: -webkit-box;
-      overflow: hidden;
-      color: var(--gray-500);
-      font-size: var(--xs-size);
-      line-height: 1.55;
-      -webkit-box-orient: vertical;
-      -webkit-line-clamp: 3;
-    }
-  }
-
-  .term-gallery__remove {
-    display: grid;
-    flex: 0 0 30px;
-    width: 30px;
-    height: 30px;
-    margin-inline-start: auto;
-    place-items: center;
-    border: 1px solid var(--border-strong);
-    border-radius: var(--radius-full);
-    color: var(--gray-500);
-    background-color: var(--bg-card);
-
-    &:hover {
-      border-color: var(--danger);
-      color: var(--danger);
-      background-color: var(--danger-light);
-    }
-
-    &:focus-visible {
-      outline: 3px solid var(--PrimaryColor-alpha-20);
-      outline-offset: 2px;
-    }
-  }
-
-  .term-gallery__empty {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    min-height: 100px;
-    border: 1px dashed var(--border-strong);
-    border-radius: var(--radius-md);
-    color: var(--gray-500);
-    background-color: var(--gray-50);
+  h5 {
+    color: var(--gray-800);
+    font-family: 'Bold';
     font-size: var(--sm-size);
   }
 
-  @media (max-width: 720px) {
-    .term-gallery__grid {
-      grid-template-columns: 1fr;
-    }
-
-    .term-gallery__header {
-      flex-direction: column;
-      gap: 0.6rem;
-    }
+  p {
+    margin-block-start: 0.25rem;
+    color: var(--gray-500);
+    font-size: var(--xs-size);
+    line-height: 1.5;
   }
+}
+
+.term-gallery__count {
+  flex: 0 0 auto;
+  padding: 0.35rem 0.7rem;
+  border-radius: var(--radius-full);
+  color: var(--PrimaryColor);
+  background-color: var(--PrimaryColor-alpha-8);
+  font-size: var(--xs-size);
+  font-weight: 600;
+}
+
+.term-gallery__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.term-gallery__card {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  min-width: 0;
+  min-height: 94px;
+  padding: 0.9rem;
+  border: 1px solid var(--PrimaryColor-alpha-30);
+  border-radius: var(--radius-md);
+  color: var(--gray-900);
+  text-align: start;
+  background-color: var(--PrimaryColor-alpha-4);
+  box-shadow: none;
+}
+
+.term-gallery__check {
+  display: grid;
+  flex: 0 0 30px;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  border: 1px solid var(--PrimaryColor);
+  border-radius: var(--radius-full);
+  color: var(--white);
+  background-color: var(--PrimaryColor);
+  font-size: 0.75rem;
+}
+
+.term-gallery__content {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.35rem;
+
+  strong {
+    color: var(--gray-900);
+    font-family: 'Bold';
+    font-size: var(--sm-size);
+    line-height: 1.4;
+  }
+
+  span {
+    display: -webkit-box;
+    overflow: hidden;
+    color: var(--gray-500);
+    font-size: var(--xs-size);
+    line-height: 1.55;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+  }
+}
+
+.term-gallery__remove {
+  display: grid;
+  flex: 0 0 30px;
+  width: 30px;
+  height: 30px;
+  margin-inline-start: auto;
+  place-items: center;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-full);
+  color: var(--gray-500);
+  background-color: var(--bg-card);
+
+  &:hover {
+    border-color: var(--danger);
+    color: var(--danger);
+    background-color: var(--danger-light);
+  }
+
+  &:focus-visible {
+    outline: 3px solid var(--PrimaryColor-alpha-20);
+    outline-offset: 2px;
+  }
+}
+
+.term-gallery__empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 100px;
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-md);
+  color: var(--gray-500);
+  background-color: var(--gray-50);
+  font-size: var(--sm-size);
+}
+
+@media (max-width: 720px) {
+  .term-gallery__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .term-gallery__header {
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+}
 </style>

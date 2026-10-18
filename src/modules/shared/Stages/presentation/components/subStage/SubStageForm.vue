@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
 import { onMounted, ref, watch } from 'vue';
 
 import TranslationParams from '@/base/Core/Params/translationParams';
@@ -87,7 +88,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="Stage-form-card">
+  <StandardFormLayout class="Stage-form-card">
     <header>
       <h3>
         {{ isEdit ? $t('sub_stage.edit_title') : $t('sub_stage.add_title') }}
@@ -98,21 +99,29 @@ onMounted(() => {
     <div class="form-fields" :class="{ disabled: loading }">
       <div class="field-group full-row">
         <MultiLangInput
-field-key="title" :label="$t('title')" :languages="['ar', 'en']" :model-value="translations"
-          type="title" required @update:model-value="updateTranslations" />
+          field-key="title"
+          :label="$t('title')"
+          :languages="['ar', 'en']"
+          :model-value="translations"
+          type="title"
+          required
+          @update:model-value="updateTranslations"
+        />
       </div>
 
       <div class="status-toggle-wrapper">
         <ToggleSwitch
-v-model="status" input-id="sub-stage-status" :disabled="loading"
-          @update:model-value="updateData" />
+          v-model="status"
+          input-id="sub-stage-status"
+          :disabled="loading"
+          @update:model-value="updateData"
+        />
         <span class="status-text" :class="{ active: status }">
           {{ status ? $t('active') : $t('inactive') }}
         </span>
       </div>
-
     </div>
-  </div>
+  </StandardFormLayout>
 </template>
 
 <style scoped lang="scss">

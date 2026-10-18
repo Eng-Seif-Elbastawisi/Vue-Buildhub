@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import { computed, onMounted, ref, watch } from 'vue';
   import { onBeforeRouteLeave, useRoute } from 'vue-router';
 
@@ -206,7 +207,7 @@
 </script>
 
 <template>
-  <div class="material-form-card">
+  <StandardFormLayout class="material-form-card">
     <header class="form-header">
       <h3>
         {{ $t('item.form_title') }}
@@ -246,7 +247,7 @@
           <input
             id="item-price"
             v-model.number="price"
-            class="field-input"
+            class="field-input workspace-control"
             min="0"
             step="1"
             type="number"
@@ -336,7 +337,7 @@
           <textarea
             id="item-notes"
             v-model="notes"
-            class="field-input notes-input"
+            class="field-input notes-input workspace-control"
             :placeholder="$t('item.notes_placeholder')"
             rows="3"
             @input="updateData"
@@ -344,63 +345,63 @@
         </div>
       </div>
     </div>
-  </div>
+  </StandardFormLayout>
 </template>
 
 <style scoped lang="scss">
-  .field-input {
-    width: 100%;
-    max-width: 100%;
-    padding: 12px 16px;
-    border: 1px solid var(--border-weak);
-    border-radius: 28px;
-    background: var(--white);
-    outline: none;
-    color: var(--bread-crumb-color-span);
-    font-family: 'Medium';
-    font-size: var(--sm-size);
-    font-weight: 400;
-    transition: all 0.25s ease;
-  }
+.field-input {
+  width: 100%;
+  max-width: 100%;
+  padding: 12px 16px;
+  border: 1px solid var(--border-weak);
+  border-radius: var(--bh-radius-control);
+  background: var(--bh-surface-raised);
+  outline: none;
+  color: var(--bread-crumb-color-span);
+  font-family: 'Medium';
+  font-size: var(--sm-size);
+  font-weight: 400;
+  transition: all 0.25s ease;
+}
 
-  .notes-input {
-    min-height: 96px;
-    resize: vertical;
-  }
+.notes-input {
+  min-height: 96px;
+  resize: vertical;
+}
 
-  .material-form-card {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
+.material-form-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
 
-  .form-header p {
-    color: var(--gray-5);
-  }
+.form-header p {
+  color: var(--gray-5);
+}
 
+.form-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: end;
+  gap: 1rem;
+
+  &.disabled {
+    pointer-events: none;
+    opacity: 0.7;
+  }
+}
+
+.col-span-2 {
+  grid-column: span 2;
+}
+
+@media (max-width: 768px) {
   .form-fields {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    align-items: end;
-    gap: 1rem;
-
-    &.disabled {
-      pointer-events: none;
-      opacity: 0.7;
-    }
+    grid-template-columns: 1fr;
   }
 
   .col-span-2 {
-    grid-column: span 2;
+    grid-column: span 1;
   }
-
-  @media (max-width: 768px) {
-    .form-fields {
-      grid-template-columns: 1fr;
-    }
-
-    .col-span-2 {
-      grid-column: span 1;
-    }
-  }
+}
 </style>

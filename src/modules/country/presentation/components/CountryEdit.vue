@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import { onMounted, ref } from 'vue';
   import { useRoute } from 'vue-router';
   import CountryController from '../controllers/country.controller';
@@ -41,41 +42,43 @@
 </script>
 
 <template>
-  <div class="email-crud-example">
+  <StandardFormLayout mode="edit" class="email-crud-example">
     <CountryForm
       :country="controller.itemData.value!"
       :loading="loading"
       @update-data="updateData"
     />
 
-    <div class="actions" :class="{ disabled: loading }">
-      <button
-        :disabled="loading"
-        :class="{ 'btn--loading': loading }"
-        type="button"
-        class="btn btn-primary"
-        @click="saveEmail"
-      >
-        <span v-if="loading" class="loader"></span>
-        <span v-else>{{ $t('Save') }}</span>
-      </button>
-    </div>
-
     <!-- Error Display -->
     <div v-if="controller.errorMessage.value" class="error">
       {{ controller.errorMessage.value }}
     </div>
-  </div>
+
+    <template #actions>
+      <div class="actions" :class="{ disabled: loading }">
+        <button
+          :disabled="loading"
+          :class="{ 'btn--loading': loading }"
+          type="button"
+          class="btn btn-primary"
+          @click="saveEmail"
+        >
+          <span v-if="loading" class="loader"></span>
+          <span v-else>{{ $t('Save') }}</span>
+        </button>
+      </div>
+    </template>
+  </StandardFormLayout>
 </template>
 
 <style scoped lang="scss">
-  .actions {
-    &.disabled {
-      cursor: not-allowed;
-      pointer-events: none;
-      opacity: 0.7;
-    }
+.actions {
+  &.disabled {
+    cursor: not-allowed;
+    pointer-events: none;
+    opacity: 0.7;
   }
+}
 </style>
 
 <!-- <style scoped>
@@ -148,7 +151,7 @@
     padding: 10px;
     background-color: var(--danger-light);
     color: var(--danger-dark);
-    border: 1px solid #f5c6cb;
+    border: 1px solid var(--bh-coral-soft);
     border-radius: 4px;
   }
 </style> -->

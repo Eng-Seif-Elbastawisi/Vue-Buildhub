@@ -30,39 +30,39 @@ const badgeClass = computed(() => {
 </template>
 
 <style scoped lang="scss">
-.quote-status-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.25rem 0.75rem;
-  border-radius: 9999px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  white-space: nowrap;
+  .quote-status-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
 
-  &.status-draft {
-    background: #f1f5f9;
-    color: #64748b;
-  }
+    &.status-draft {
+      background: var(--bh-canvas);
+      color: var(--bh-muted);
+    }
 
-  &.status-pending-validation {
-    background: #fef3c7;
-    color: #d97706;
-  }
+    &.status-pending-validation {
+      background: var(--bh-amber-soft);
+      color: var(--bh-amber-ink);
+    }
 
-  &.status-revision-required {
-    background: #fee2e2;
-    color: #dc2626;
-  }
+    &.status-revision-required {
+      background: var(--bh-coral-soft);
+      color: var(--bh-coral-ink);
+    }
 
-  &.status-sent-to-client {
-    background: #dcfce7;
-    color: #16a34a;
-  }
+    &.status-sent-to-client {
+      background: var(--bh-green-soft);
+      color: var(--bh-green-ink);
+    }
 
-  &.status-default {
-    background: #f3f4f6;
-    color: #6b7280;
+    &.status-default {
+      background: var(--bh-canvas);
+      color: var(--bh-muted);
+    }
   }
-}
 </style>

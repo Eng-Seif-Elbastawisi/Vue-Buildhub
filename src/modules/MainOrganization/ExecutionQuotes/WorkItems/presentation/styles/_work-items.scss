@@ -478,3 +478,24 @@ body:has(.work-items-page) .attachment-gallery__toolbar {
   background: var(--SecondaryColor);
   color: var(--secondary-text-color, var(--white));
 }
+
+.work-items-page {
+  padding: 0;
+  color: var(--bh-text);
+
+  .work-items-header h1 {
+    font-size: var(--bh-text-page);
+    color: var(--bh-text);
+  }
+
+  .work-items-section {
+    border: 0;
+    border-radius: var(--bh-radius-card);
+    background: var(--bh-surface);
+  }
+
+  .work-items-section-header {
+    padding: var(--bh-space-6);
+    border-color: var(--bh-line);
+  }
+}

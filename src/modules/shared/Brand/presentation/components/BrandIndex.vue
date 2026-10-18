@@ -126,7 +126,7 @@
           <input
             v-model="word"
             :placeholder="$t('search_brands')"
-            class="search-input"
+            class="search-input workspace-control"
             type="text"
             @input="Search"
           />
@@ -319,24 +319,76 @@
 </template>
 
 <style scoped>
-  .filter-dialog {
-    color: black;
+.filter-dialog {
+  color: var(--bh-text);
+}
+
+.field-group {
+  label {
+    font-weight: 600;
+    font-family: 'Medium';
+    color: var(--gray-5);
+  }
+}
+
+.input-wrap {
+  input {
+    width: 100%;
+    padding: 13px var(--md-size);
+    border: 1px solid var(--input-border-color) !important;
+    border-radius: var(--bh-radius-control) !important;
+    font-size: var(--sm-size);
+    color: var(--Gray-6);
+    background: var(--BgWhite) !important;
+    outline: none;
+    transition: all 0.25s ease;
+  }
+}
+
+.save_button {
+  button {
+    background-color: var(--PrimaryColor);
+    color: var(--button-primary-color);
+    padding: 1rem;
+    border-radius: var(--xl-size-3);
+  }
+}
+
+.dialog-header {
+  h6 {
+    color: var(--bh-text);
+    font-size: 18px;
+    font-weight: 600;
+  }
+}
+
+.p-dialog-title {
+  color: var(--bh-text) !important;
+}
+
+.all_inputs {
+  .group {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    align-items: end;
   }
 
-  .field-group {
+  .form_group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
     label {
-      font-weight: 600;
-      font-family: 'Medium';
-      color: var(--gray-5);
+      color: var(--bh-text);
     }
-  }
 
-  .input-wrap {
     input {
       width: 100%;
-      padding: 13px var(--md-size);
+      padding: var(--xs-size) var(--md-size);
       border: 1px solid var(--input-border-color) !important;
-      border-radius: var(--xl-size-3) !important;
+      border-radius: var(--bh-radius-control) !important;
       font-size: var(--sm-size);
       color: var(--Gray-6);
       background: var(--BgWhite) !important;
@@ -344,93 +396,41 @@
       transition: all 0.25s ease;
     }
   }
+}
 
-  .save_button {
-    button {
-      background-color: var(--PrimaryColor);
-      color: var(--button-primary-color);
-      padding: 1rem;
-      border-radius: var(--xl-size-3);
-    }
+:deep(.p-datepicker) {
+  width: 100%;
+}
+
+:deep(.p-inputtext) {
+  width: 100%;
+  background-color: var(--bh-surface-raised);
+  border: 1px solid rgba(230, 230, 230, 1);
+  border-radius: var(--bh-radius-control);
+  color: var(--bh-text) !important;
+}
+
+.date-remove {
+  border-bottom: 2px dashed rgba(230, 230, 230, 1);
+  padding-bottom: 1rem;
+  margin: 1rem 0;
+
+  &::placeholder {
+    color: red !important;
   }
 
-  .dialog-header {
-    h6 {
-      color: black;
-      font-size: 18px;
-      font-weight: 600;
-    }
+  h6 {
+    color: rgba(75, 75, 75, 1);
+    font-family: medium;
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 1rem;
   }
 
-  .p-dialog-title {
-    color: black !important;
-  }
-
-  .all_inputs {
-    .group {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 1rem;
-      margin-bottom: 1.5rem;
-      align-items: end;
-    }
-
-    .form_group {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-
-      label {
-        color: black;
-      }
-
-      input {
-        width: 100%;
-        padding: var(--xs-size) var(--md-size);
-        border: 1px solid var(--input-border-color) !important;
-        border-radius: var(--xl-size-3) !important;
-        font-size: var(--sm-size);
-        color: var(--Gray-6);
-        background: var(--BgWhite) !important;
-        outline: none;
-        transition: all 0.25s ease;
-      }
+  :deep(.input-label) {
+    label {
+      color: var(--bh-text) !important;
     }
   }
-
-  :deep(.p-datepicker) {
-    width: 100%;
-  }
-
-  :deep(.p-inputtext) {
-    width: 100%;
-    background-color: white;
-    border: 1px solid rgba(230, 230, 230, 1);
-    border-radius: 20px;
-    color: black !important;
-  }
-
-  .date-remove {
-    border-bottom: 2px dashed rgba(230, 230, 230, 1);
-    padding-bottom: 1rem;
-    margin: 1rem 0;
-
-    &::placeholder {
-      color: red !important;
-    }
-
-    h6 {
-      color: rgba(75, 75, 75, 1);
-      font-family: medium;
-      font-size: 18px;
-      font-weight: 600;
-      margin-bottom: 1rem;
-    }
-
-    :deep(.input-label) {
-      label {
-        color: black !important;
-      }
-    }
-  }
+}
 </style>

@@ -147,6 +147,7 @@
         @close="showSettings = false"
       />
       <Dialog
+        class="workspace-dialog"
         :visible="deleteId !== null"
         modal
         :header="$t('schedule.delete')"

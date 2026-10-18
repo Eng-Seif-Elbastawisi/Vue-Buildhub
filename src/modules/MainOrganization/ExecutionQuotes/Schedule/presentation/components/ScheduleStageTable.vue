@@ -5,8 +5,8 @@
 </script>
 
 <template>
-  <div class="schedule__table-wrap">
-    <table class="schedule__stage-table">
+  <div class="schedule__table-wrap workspace-table-scroll">
+    <table class="schedule__stage-table workspace-data-table">
       <thead>
         <tr>
           <th scope="col">{{ $t('schedule.main_stage') }}</th>

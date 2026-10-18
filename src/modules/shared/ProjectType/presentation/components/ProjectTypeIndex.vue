@@ -93,7 +93,7 @@
           <input
             v-model="word"
             :placeholder="$t('search_project_types')"
-            class="search-input"
+            class="search-input workspace-control"
             type="text"
             @input="Search"
           />
@@ -217,33 +217,33 @@
 </template>
 
 <style scoped lang="scss">
-  .project-page {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
+.project-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
 
-  .toolbar {
-    width: 100%;
-    justify-content: space-between;
-  }
+.toolbar {
+  width: 100%;
+  justify-content: space-between;
+}
 
-  .page-header,
-  .row-actions {
-    display: flex;
-    align-items: start;
-    flex-direction: row;
-    justify-content: space-between;
-    gap: 1rem;
-  }
+.page-header,
+.row-actions {
+  display: flex;
+  align-items: start;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 1rem;
+}
 
-  .page-header p,
-  .empty-state p {
-    color: var(--gray-5);
-  }
+.page-header p,
+.empty-state p {
+  color: var(--gray-5);
+}
 
-  .empty-state {
-    padding: 3rem 1rem;
-    text-align: center;
-  }
+.empty-state {
+  padding: 3rem 1rem;
+  text-align: center;
+}
 </style>

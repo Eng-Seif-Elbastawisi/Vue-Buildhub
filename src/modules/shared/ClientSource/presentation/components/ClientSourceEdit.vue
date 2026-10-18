@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import StandardFormSectionHeader from '@/shared/components/form/StandardFormSectionHeader.vue';
   import { onMounted, ref } from 'vue';
   import { useRoute } from 'vue-router';
@@ -49,7 +50,7 @@
 </script>
 
 <template>
-  <div class="email-crud-example">
+  <StandardFormLayout mode="edit" class="email-crud-example">
     <div class="email-form-card">
       <StandardFormSectionHeader :title="$t('client_source')" icon="pi pi-share-alt" />
       <ClientSourceForm
@@ -79,35 +80,35 @@
         {{ controller.errorMessage.value }}
       </div>
     </div>
-  </div>
+  </StandardFormLayout>
 </template>
 
 <style scoped lang="scss">
-  @use '@/styles/mixins/form_action_pair' as form-actions;
+@use '@/styles/mixins/form_action_pair' as form-actions;
 
-  .email-crud-example {
-    padding: 0;
-    padding-block: 20px;
-  }
+.email-crud-example {
+  padding: 0;
+  padding-block: 20px;
+}
 
-  .actions {
-    &.disabled {
-      cursor: not-allowed;
-      pointer-events: none;
-      opacity: 0.7;
-    }
+.actions {
+  &.disabled {
+    cursor: not-allowed;
+    pointer-events: none;
+    opacity: 0.7;
   }
+}
 
-  .error {
-    margin-top: 20px;
-    padding: 10px;
-    background-color: var(--danger-light);
-    color: var(--danger-dark);
-    border: 1px solid #f5c6cb;
-    border-radius: 4px;
-  }
+.error {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: var(--danger-light);
+  color: var(--danger-dark);
+  border: 1px solid var(--bh-coral-soft);
+  border-radius: 4px;
+}
 
-  .form-action-pair {
-    @include form-actions.layout;
-  }
+.form-action-pair {
+  @include form-actions.layout;
+}
 </style>

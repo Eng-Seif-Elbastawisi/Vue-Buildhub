@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
   import { computed, ref, watch } from 'vue';
   import { useI18n } from 'vue-i18n';
@@ -169,13 +170,19 @@
   <Dialog
     :visible="visible"
     modal
-    class="procurement-dialog"
+    class="procurement-dialog workspace-dialog"
     :header="$t('procurement.new_requirement')"
     :closable="!busy"
     :close-on-escape="!busy"
     @update:visible="!busy && emit('update:visible', $event)"
   >
-    <form class="procurement-form" novalidate @submit.prevent="save">
+    <StandardFormLayout
+      as="form"
+      embedded
+      class="procurement-form"
+      novalidate
+      @submit.prevent="save"
+    >
       <p>{{ $t('procurement.request_form_help') }}</p>
       <section aria-labelledby="requirement-general">
         <h2 id="requirement-general">{{ $t('procurement.general_information') }}</h2>
@@ -425,6 +432,6 @@
           >{{ $t('procurement.create_requirement') }}</AppButton
         >
       </div>
-    </form>
+    </StandardFormLayout>
   </Dialog>
 </template>

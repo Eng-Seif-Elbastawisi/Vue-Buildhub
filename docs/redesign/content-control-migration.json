@@ -1,0 +1,462 @@
+[
+  {
+    "file": "src/modules/country/presentation/components/CountryForm.vue",
+    "additions": 3
+  },
+  {
+    "file": "src/modules/country/presentation/components/CountryIndex.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/MainAdmin/admin/presentation/components/AdminForm.vue",
+    "additions": 4
+  },
+  {
+    "file": "src/modules/MainAdmin/package/presentation/components/PackageForm.vue",
+    "additions": 5
+  },
+  {
+    "file": "src/modules/MainAdmin/package/presentation/components/PackageSubscriptionStatusDialog.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/MainAdmin/package/presentation/components/PackageSubscriptionsIndex.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/MainOrganization/AttachmentType/presentation/components/AttachmentTypeIndex.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/MainOrganization/Contractor/presentation/components/ContractorForm.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/MainOrganization/Contractor/presentation/components/ContractorIndex.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/MainOrganization/ExecutionQuotes/presentation/components/ExecutionQuoteClientDialog.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/MainOrganization/ExecutionQuotes/presentation/components/ExecutionQuoteForm.vue",
+    "additions": 4
+  },
+  {
+    "file": "src/modules/MainOrganization/ExecutionQuotes/presentation/components/ExecutionQuoteShow.vue",
+    "additions": 2
+  },
+  {
+    "file": "src/modules/MainOrganization/ExecutionQuotes/presentation/components/ExecutionQuoteStatusDialog.vue",
+    "additions": 2
+  },
+  {
+    "file": "src/modules/MainOrganization/Invoice/presentation/components/InvoiceForm.vue",
+    "additions": 3
+  },
+  {
+    "file": "src/modules/MainOrganization/Invoice/presentation/components/InvoiceIndex.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/MainOrganization/InvoicePayment/presentation/components/InvoicePaymentForm.vue",
+    "additions": 4
+  },
+  {
+    "file": "src/modules/MainOrganization/InvoicePayment/presentation/components/InvoicePaymentIndex.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/MainOrganization/ItemTypes/presentation/components/ItemTypesForm.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/MainOrganization/ItemTypes/presentation/components/ItemTypesIndex.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/MainOrganization/Labors/presentation/components/LaborForm.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/MainOrganization/Labors/presentation/components/LaborIndex.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/MainOrganization/Package/presentation/components/OrganizationPackageSubscriptionDialog.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/MainOrganization/Products/presentation/components/ProductsForm.vue",
+    "additions": 2
+  },
+  {
+    "file": "src/modules/MainOrganization/Products/presentation/components/ProductsIndex.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/MainOrganization/Project/presentation/components/GlobalProjectSearch.vue",
+    "additions": 3
+  },
+  {
+    "file": "src/modules/MainOrganization/Project/presentation/components/ProjectAttachmentManager.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/MainOrganization/Project/presentation/components/ProjectForm.vue",
+    "additions": 3
+  },
+  {
+    "file": "src/modules/MainOrganization/Project/presentation/components/ProjectIndex.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/MainOrganization/ProjectFloor/presentation/components/FinalResults.vue",
+    "additions": 2
+  },
+  {
+    "file": "src/modules/MainOrganization/ProjectFloor/presentation/components/ProjectFloorForm.vue",
+    "additions": 5
+  },
+  {
+    "file": "src/modules/MainOrganization/ProjectItem/presentation/components/ProjectItemForm.vue",
+    "additions": 5
+  },
+  {
+    "file": "src/modules/MainOrganization/ProjectItem/presentation/components/ProjectItemIndex.vue",
+    "additions": 3
+  },
+  {
+    "file": "src/modules/MainOrganization/ProjectItem/presentation/components/ProjectItemIndexEdit.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/MainOrganization/ProjectPricing/presentation/components/ProjectPricingForm.vue",
+    "additions": 2
+  },
+  {
+    "file": "src/modules/MainOrganization/ProjectPricing/presentation/components/ProjectPricingIndex.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/MainOrganization/QuoteTypes/presentation/components/QuoteTypeForm.vue",
+    "additions": 2
+  },
+  {
+    "file": "src/modules/MainOrganization/QuoteTypes/presentation/components/QuoteTypeIndex.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/MainOrganization/Specialization/presentation/components/SpecializationIndex.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/MainOrganization/Suppliers/presentation/components/SuppliersForm.vue",
+    "additions": 2
+  },
+  {
+    "file": "src/modules/MainOrganization/Suppliers/presentation/components/SuppliersIndex.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/MainOrganization/TaskAssignment/presentation/components/EmployeeTasksList.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/MainOrganization/TaskAssignment/presentation/components/TaskApprovedIndex.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/MainOrganization/TaskAssignment/presentation/components/TaskAssignmentForm.vue",
+    "additions": 4
+  },
+  {
+    "file": "src/modules/MainOrganization/TaskAssignment/presentation/components/TaskStatusAction.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/MainOrganization/Term/presentation/components/TermIndex.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/MainOrganization/Warehouse/presentation/components/WarehouseIndex.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/MainOrganization/client/presentation/components/clientForm.vue",
+    "additions": 4
+  },
+  {
+    "file": "src/modules/MainOrganization/client/presentation/components/clientIndex.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/MainOrganization/employee/presentation/components/EmployeeForm.vue",
+    "additions": 4
+  },
+  {
+    "file": "src/modules/MainOrganization/employee/presentation/components/EmployeeIndex.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/shared/Brand/presentation/components/BrandIndex.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/shared/ClientSource/presentation/components/ClientSourceIndex.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/shared/Department/presentation/components/DepartmentIndex.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/shared/Item/presentation/components/ItemForm.vue",
+    "additions": 2
+  },
+  {
+    "file": "src/modules/shared/Item/presentation/components/ItemIndex.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/shared/Materials/presentation/components/MaterialsForm.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/shared/Materials/presentation/components/MaterialsIndex.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/shared/Organization/presentation/components/OrganizationForm.vue",
+    "additions": 6
+  },
+  {
+    "file": "src/modules/shared/PricePercentage/presentation/components/PricePercentageSettings.vue",
+    "additions": 2
+  },
+  {
+    "file": "src/modules/shared/ProjectType/presentation/components/ProjectTypeIndex.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/shared/Space/presentation/components/SpaceIndex.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/shared/Stages/presentation/components/StageIndex.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/shared/SystemIdentity/presentation/components/SystemIdentityForm.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/shared/Term/presentation/components/TermIndex.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/shared/location/presentation/components/locationIndex.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/shared/measurement/presentation/components/MeasurementForm.vue",
+    "additions": 2
+  },
+  {
+    "file": "src/modules/shared/measurement/presentation/components/MeasurementIndex.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/shared/supply/presentation/components/SupplyForm.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/shared/supply/presentation/components/SupplyIndex.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/MainOrganization/ExecutionQuotes/Procurement/presentation/components/ProcurementPage.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/MainOrganization/ExecutionQuotes/Procurement/presentation/components/PurchaseOrderForm.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/MainOrganization/ExecutionQuotes/Procurement/presentation/components/PurchaseRequestDetails.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/MainOrganization/ExecutionQuotes/Procurement/presentation/components/PurchaseRequestFormDialog.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/MainOrganization/ExecutionQuotes/Procurement/presentation/components/PurchaseRequestItemRow.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/MainOrganization/ExecutionQuotes/Procurement/presentation/components/SupplierOfferRow.vue",
+    "additions": 2
+  },
+  {
+    "file": "src/modules/MainOrganization/ExecutionQuotes/Procurement/presentation/components/SupplierPriceOffersDialog.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/MainOrganization/ExecutionQuotes/Procurement/presentation/components/SupplierPriceOffersPanel.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/MainOrganization/ExecutionQuotes/Schedule/presentation/components/ScheduleConfigurationDialog.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/MainOrganization/ExecutionQuotes/Schedule/presentation/components/ScheduleGroupForm.vue",
+    "additions": 2
+  },
+  {
+    "file": "src/modules/MainOrganization/ExecutionQuotes/Schedule/presentation/components/ScheduleIndex.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/MainOrganization/ExecutionQuotes/Schedule/presentation/components/ScheduleSettingsDialog.vue",
+    "additions": 2
+  },
+  {
+    "file": "src/modules/MainOrganization/ExecutionQuotes/Schedule/presentation/components/ScheduleStageTable.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/MainOrganization/ExecutionQuotes/SiteTeam/presentation/components/AddProjectSpacesDialog.vue",
+    "additions": 3
+  },
+  {
+    "file": "src/modules/MainOrganization/ExecutionQuotes/SiteTeam/presentation/components/EngineerSelectionDialog.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/MainOrganization/ExecutionQuotes/SiteTeam/presentation/components/SiteInfoDialog.vue",
+    "additions": 3
+  },
+  {
+    "file": "src/modules/MainOrganization/ExecutionQuotes/Warehouse/presentation/components/MaterialDisbursementDetailsDialog.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/MainOrganization/ExecutionQuotes/Warehouse/presentation/components/MaterialDisbursementFormDialog.vue",
+    "additions": 4
+  },
+  {
+    "file": "src/modules/MainOrganization/ExecutionQuotes/Warehouse/presentation/components/MaterialDisbursementHistory.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/MainOrganization/ExecutionQuotes/Warehouse/presentation/components/MaterialDisbursementPage.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/MainOrganization/ExecutionQuotes/Warehouse/presentation/components/MaterialReceiptDetailsDialog.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/MainOrganization/ExecutionQuotes/Warehouse/presentation/components/MaterialReceiptFormDialog.vue",
+    "additions": 4
+  },
+  {
+    "file": "src/modules/MainOrganization/ExecutionQuotes/Warehouse/presentation/components/MaterialReceiptHistory.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/MainOrganization/ExecutionQuotes/WorkItems/presentation/components/DailyReportFormDialog.vue",
+    "additions": 3
+  },
+  {
+    "file": "src/modules/MainOrganization/ExecutionQuotes/WorkItems/presentation/components/MeetingIssueFormDialog.vue",
+    "additions": 4
+  },
+  {
+    "file": "src/modules/MainOrganization/ExecutionQuotes/WorkItems/presentation/components/ShopDrawingFormDialog.vue",
+    "additions": 4
+  },
+  {
+    "file": "src/modules/MainOrganization/ExecutionQuotes/WorkItems/presentation/components/TaskFormDialog.vue",
+    "additions": 3
+  },
+  {
+    "file": "src/modules/MainOrganization/ExecutionQuotes/presentation/components/builder/ExecutionQuoteItemForm.vue",
+    "additions": 2
+  },
+  {
+    "file": "src/modules/MainOrganization/ExecutionQuotes/presentation/components/builder/ExecutionQuoteStageClientPrice.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/MainOrganization/ExecutionQuotes/presentation/components/builder/ExecutionQuoteSupervisionPricing.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/MainOrganization/Invoice/presentation/components/invoice_show/AddInvoicePaymentDialog.vue",
+    "additions": 3
+  },
+  {
+    "file": "src/modules/MainOrganization/Invoice/presentation/components/invoice_show/InvoiceItemsCard.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/MainOrganization/Invoice/presentation/components/invoice_show/InvoicePaymentsCard.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/MainOrganization/Products/presentation/components/show/ProductShowSortings.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/MainOrganization/Project/presentation/components/project_preview/ProjectPreviewForm.vue",
+    "additions": 3
+  },
+  {
+    "file": "src/modules/MainOrganization/Project/presentation/components/project_show/ProjectDepartmentsSection.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/MainOrganization/Project/presentation/components/project_show/ProjectFloorEditDialog.vue",
+    "additions": 3
+  },
+  {
+    "file": "src/modules/MainOrganization/Project/presentation/components/project_show/ProjectFloorsSection.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/MainOrganization/Project/presentation/components/project_show/ProjectItemsSection.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/MainOrganization/Project/presentation/components/project_show/ProjectShowHeader.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/MainOrganization/Project/presentation/components/project_show/ProjectSideColumn.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/MainOrganization/Project/presentation/components/project_show/ProjectSpacesSection.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/MainOrganization/TaskAssignment/presentation/components/task-assignments-show/TaskAssignmentsShowStatusActions.vue",
+    "additions": 2
+  },
+  {
+    "file": "src/modules/shared/Stages/presentation/components/subStage/SubStageIndex.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/shared/location/presentation/components/city/locationIndex.vue",
+    "additions": 1
+  },
+  {
+    "file": "src/modules/shared/location/presentation/components/governorate/locationIndex.vue",
+    "additions": 1
+  }
+]

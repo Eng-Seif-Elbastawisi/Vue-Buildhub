@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import { computed, onMounted, ref, watch } from 'vue';
   import DatePicker from 'primevue/datepicker';
 
@@ -288,7 +289,8 @@
 </script>
 
 <template>
-  <section
+  <StandardFormLayout
+    as="section"
     class="project-preview-form-page form-section"
     :class="{ disabled: loading }"
     :data-mode="isEdit ? 'edit' : 'add'"
@@ -411,7 +413,7 @@
           <input
             id="site_link"
             v-model="siteLink"
-            class="field-input field-input--url"
+            class="field-input field-input--url workspace-control"
             type="url"
             :placeholder="$t('project.site_link_placeholder')"
             :aria-invalid="Boolean(validationErrors.site_link)"
@@ -435,7 +437,7 @@
         <textarea
           id="address"
           v-model="address"
-          class="field-input field-textarea field-textarea--compact"
+          class="field-input field-textarea field-textarea--compact workspace-control"
           rows="1"
           :placeholder="$t('project.preview_address_placeholder')"
           :aria-invalid="Boolean(validationErrors.address)"
@@ -462,7 +464,7 @@
         <textarea
           id="notification_message"
           v-model="notificationMessage"
-          class="field-input field-textarea"
+          class="field-input field-textarea workspace-control"
           rows="4"
           :placeholder="$t('project.preview_notification_message_placeholder')"
           :aria-invalid="Boolean(validationErrors.notification_message)"
@@ -480,305 +482,305 @@
         </small>
       </div>
     </div>
-  </section>
+  </StandardFormLayout>
 </template>
 
 <style scoped lang="scss">
-  .form-section {
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-    overflow: visible;
-    border: 1px solid var(--border-weak);
-    border-radius: var(--card-radius);
-    background: var(--bg-card);
-    box-shadow: var(--shadow-sm);
+.form-section {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: visible;
+  border: 1px solid var(--border-weak);
+  border-radius: var(--card-radius);
+  background: var(--bg-card);
+  box-shadow: none;
 
-    &.disabled {
-      pointer-events: none;
-      opacity: 0.72;
-    }
+  &.disabled {
+    pointer-events: none;
+    opacity: 0.72;
   }
+}
 
-  .form-section__header {
-    display: flex;
-    align-items: center;
-    gap: 0.875rem;
-    padding: clamp(1rem, 2vw, 1.5rem);
-    border-bottom: 1px solid var(--border-weak);
-  }
+.form-section__header {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  padding: clamp(1rem, 2vw, 1.5rem);
+  border-bottom: 1px solid var(--border-weak);
+}
 
-  .form-section__icon {
-    display: inline-grid;
-    flex: 0 0 auto;
-    width: 2.75rem;
-    height: 2.75rem;
-    place-items: center;
-    border: 1px solid var(--workflow-accent-12, var(--border-weak));
-    border-radius: var(--radius-md);
-    background: var(--workflow-accent-soft, var(--PrimaryColor-light));
-    color: var(--PrimaryColor);
-    font-size: 1.15rem;
-  }
+.form-section__icon {
+  display: inline-grid;
+  flex: 0 0 auto;
+  width: 2.75rem;
+  height: 2.75rem;
+  place-items: center;
+  border: 1px solid var(--workflow-accent-12, var(--border-weak));
+  border-radius: var(--radius-md);
+  background: var(--workflow-accent-soft, var(--PrimaryColor-light));
+  color: var(--PrimaryColor);
+  font-size: 1.15rem;
+}
 
-  .form-section__heading {
-    min-width: 0;
-  }
+.form-section__heading {
+  min-width: 0;
+}
 
-  .form-section__heading h3,
-  .form-section__heading p {
-    margin: 0;
-  }
+.form-section__heading h3,
+.form-section__heading p {
+  margin: 0;
+}
 
-  .form-section__heading h3 {
-    color: var(--gray-900);
-    font-family: 'Bold', var(--font-family);
-    font-size: var(--xl-size-base);
-    line-height: 1.4;
-  }
+.form-section__heading h3 {
+  color: var(--gray-900);
+  font-family: 'Bold', var(--font-family);
+  font-size: var(--xl-size-base);
+  line-height: 1.4;
+}
 
-  .form-section__heading p {
-    margin-top: 0.25rem;
-    color: var(--gray-500);
-    font-size: var(--sm-size);
-    line-height: 1.65;
-  }
+.form-section__heading p {
+  margin-top: 0.25rem;
+  color: var(--gray-500);
+  font-size: var(--sm-size);
+  line-height: 1.65;
+}
 
-  .form-grid {
-    display: grid;
-    gap: 1.25rem 1.125rem;
-    align-items: start;
-    padding: clamp(1rem, 2vw, 1.5rem);
-  }
+.form-grid {
+  display: grid;
+  gap: 1.25rem 1.125rem;
+  align-items: start;
+  padding: clamp(1rem, 2vw, 1.5rem);
+}
 
+.form-grid--three {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+.field-block {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+
+.field-block--third {
+  grid-column: span 2;
+}
+
+.field-block--half {
+  grid-column: span 3;
+}
+
+.field-block--full {
+  grid-column: 1 / -1;
+}
+
+.field-label-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  min-height: 1.5rem;
+}
+
+.field-label {
+  color: var(--gray-800);
+  font-family: 'Medium', var(--font-family);
+  font-size: var(--sm-size);
+  line-height: 1.45;
+}
+
+.field-required {
+  margin-inline-start: 0.15rem;
+  color: var(--danger);
+}
+
+.field-control {
+  position: relative;
+  min-width: 0;
+  direction: ltr;
+}
+
+.field-control__icon {
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  inset-inline-end: 1rem;
+  color: var(--gray-500);
+  font-size: 0.95rem;
+  pointer-events: none;
+  transform: translateY(-50%);
+}
+
+.field-input {
+  width: 100%;
+  min-height: var(--workflow-control-height, var(--control-height));
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--bh-radius-control);
+  background: var(--bg-main);
+  color: var(--gray-800);
+  outline: none;
+  font-family: 'Medium', var(--font-family);
+  font-weight: 400;
+  font-size: var(--sm-size);
+  line-height: 1.5;
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    background-color var(--transition-fast);
+}
+
+.field-input:hover:not(:disabled) {
+  border-color: var(--gray-400);
+}
+
+.field-input:focus-visible {
+  border-color: var(--PrimaryColor);
+  box-shadow: none;
+}
+
+.field-input::placeholder {
+  color: var(--gray-400);
+  opacity: 1;
+}
+
+.field-input--url {
+  padding-inline-end: 2.75rem;
+  text-align: start;
+  unicode-bidi: isolate;
+}
+
+.field-error {
+  display: block;
+  margin: 0;
+  color: var(--danger-dark);
+  font-family: 'Medium', var(--font-family);
+  font-size: var(--xs-size);
+  line-height: 1.5;
+}
+
+.prime-date-picker {
+  width: 100%;
+}
+
+:deep(.p-datepicker-input) {
+  width: 100%;
+  min-height: var(--workflow-control-height, var(--control-height));
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--bh-radius-control);
+  background: var(--bg-main);
+  color: var(--gray-800);
+  outline: none;
+  font-family: 'Medium', var(--font-family);
+  font-weight: 400;
+  font-size: var(--sm-size);
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+:deep(.p-datepicker-input:hover:not(:disabled)) {
+  border-color: var(--gray-400);
+}
+
+:deep(.p-datepicker-input:focus-visible) {
+  border-color: var(--PrimaryColor);
+  box-shadow: none;
+}
+
+:deep(.p-datepicker-dropdown) {
+  border-start-end-radius: var(--control-radius);
+  border-end-end-radius: var(--control-radius);
+  color: var(--gray-500);
+}
+
+:deep(.p-select) {
+  width: 100%;
+  min-height: var(--workflow-control-height, var(--control-height));
+  border-color: var(--border-strong);
+  border-radius: var(--bh-radius-control);
+  background: var(--bg-main);
+  box-shadow: none;
+}
+
+:deep(.p-select:hover:not(.p-disabled)) {
+  border-color: var(--gray-400);
+}
+
+:deep(.p-select:focus-within) {
+  border-color: var(--PrimaryColor);
+  box-shadow: none;
+}
+
+:deep(.p-select-label) {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  color: var(--gray-800);
+  font-family: 'Medium', var(--font-family);
+  font-size: var(--sm-size);
+}
+
+:deep(.p-select-label.p-placeholder) {
+  color: var(--gray-400);
+}
+
+.field-textarea {
+  min-height: 7rem;
+  resize: vertical;
+}
+
+.field-textarea--compact {
+  min-height: var(--workflow-control-height, var(--control-height));
+  border-radius: var(--bh-radius-control);
+}
+
+.form-section :deep(.input-label) {
+  display: none;
+}
+
+@media (max-width: 992px) {
   .form-grid--three {
-    grid-template-columns: repeat(6, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .field-block {
-    display: flex;
-    min-width: 0;
-    flex-direction: column;
-    gap: 0.625rem;
-  }
-
-  .field-block--third {
-    grid-column: span 2;
-  }
-
+  .field-block--third,
   .field-block--half {
-    grid-column: span 3;
+    grid-column: span 1;
   }
 
   .field-block--full {
     grid-column: 1 / -1;
   }
+}
 
-  .field-label-row {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.375rem;
-    min-height: 1.5rem;
+@media (max-width: 640px) {
+  .form-section__header,
+  .form-grid {
+    padding: 1rem;
   }
 
-  .field-label {
-    color: var(--gray-800);
-    font-family: 'Medium', var(--font-family);
-    font-size: var(--sm-size);
-    line-height: 1.45;
+  .form-section__header {
+    align-items: flex-start;
   }
 
-  .field-required {
-    margin-inline-start: 0.15rem;
-    color: var(--danger);
+  .form-grid--three {
+    grid-template-columns: 1fr;
   }
 
-  .field-control {
-    position: relative;
-    min-width: 0;
-    direction: ltr;
+  .field-block--third,
+  .field-block--half,
+  .field-block--full {
+    grid-column: span 1;
   }
+}
 
-  .field-control__icon {
-    position: absolute;
-    z-index: 1;
-    top: 50%;
-    inset-inline-end: 1rem;
-    color: var(--gray-500);
-    font-size: 0.95rem;
-    pointer-events: none;
-    transform: translateY(-50%);
-  }
-
-  .field-input {
-    width: 100%;
-    min-height: var(--workflow-control-height, var(--control-height));
-    padding: 0.75rem 1rem;
-    border: 1px solid var(--border-strong);
-    border-radius: var(--control-radius);
-    background: var(--bg-main);
-    color: var(--gray-800);
-    outline: none;
-    font-family: 'Medium', var(--font-family);
-    font-weight: 400;
-    font-size: var(--sm-size);
-    line-height: 1.5;
-    transition:
-      border-color var(--transition-fast),
-      box-shadow var(--transition-fast),
-      background-color var(--transition-fast);
-  }
-
-  .field-input:hover:not(:disabled) {
-    border-color: var(--gray-400);
-  }
-
-  .field-input:focus-visible {
-    border-color: var(--PrimaryColor);
-    box-shadow: var(--focus-ring);
-  }
-
-  .field-input::placeholder {
-    color: var(--gray-400);
-    opacity: 1;
-  }
-
-  .field-input--url {
-    padding-inline-end: 2.75rem;
-    text-align: start;
-    unicode-bidi: isolate;
-  }
-
-  .field-error {
-    display: block;
-    margin: 0;
-    color: var(--danger-dark);
-    font-family: 'Medium', var(--font-family);
-    font-size: var(--xs-size);
-    line-height: 1.5;
-  }
-
-  .prime-date-picker {
-    width: 100%;
-  }
-
+@media (prefers-reduced-motion: reduce) {
+  .field-input,
   :deep(.p-datepicker-input) {
-    width: 100%;
-    min-height: var(--workflow-control-height, var(--control-height));
-    padding: 0.75rem 1rem;
-    border: 1px solid var(--border-strong);
-    border-radius: var(--control-radius);
-    background: var(--bg-main);
-    color: var(--gray-800);
-    outline: none;
-    font-family: 'Medium', var(--font-family);
-    font-weight: 400;
-    font-size: var(--sm-size);
-    transition:
-      border-color var(--transition-fast),
-      box-shadow var(--transition-fast);
+    transition: none;
   }
-
-  :deep(.p-datepicker-input:hover:not(:disabled)) {
-    border-color: var(--gray-400);
-  }
-
-  :deep(.p-datepicker-input:focus-visible) {
-    border-color: var(--PrimaryColor);
-    box-shadow: var(--focus-ring);
-  }
-
-  :deep(.p-datepicker-dropdown) {
-    border-start-end-radius: var(--control-radius);
-    border-end-end-radius: var(--control-radius);
-    color: var(--gray-500);
-  }
-
-  :deep(.p-select) {
-    width: 100%;
-    min-height: var(--workflow-control-height, var(--control-height));
-    border-color: var(--border-strong);
-    border-radius: var(--control-radius);
-    background: var(--bg-main);
-    box-shadow: none;
-  }
-
-  :deep(.p-select:hover:not(.p-disabled)) {
-    border-color: var(--gray-400);
-  }
-
-  :deep(.p-select:focus-within) {
-    border-color: var(--PrimaryColor);
-    box-shadow: var(--focus-ring);
-  }
-
-  :deep(.p-select-label) {
-    display: flex;
-    align-items: center;
-    padding: 0.75rem 1rem;
-    color: var(--gray-800);
-    font-family: 'Medium', var(--font-family);
-    font-size: var(--sm-size);
-  }
-
-  :deep(.p-select-label.p-placeholder) {
-    color: var(--gray-400);
-  }
-
-  .field-textarea {
-    min-height: 7rem;
-    resize: vertical;
-  }
-
-  .field-textarea--compact {
-    min-height: var(--workflow-control-height, var(--control-height));
-    border-radius: var(--control-radius);
-  }
-
-  .form-section :deep(.input-label) {
-    display: none;
-  }
-
-  @media (max-width: 992px) {
-    .form-grid--three {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .field-block--third,
-    .field-block--half {
-      grid-column: span 1;
-    }
-
-    .field-block--full {
-      grid-column: 1 / -1;
-    }
-  }
-
-  @media (max-width: 640px) {
-    .form-section__header,
-    .form-grid {
-      padding: 1rem;
-    }
-
-    .form-section__header {
-      align-items: flex-start;
-    }
-
-    .form-grid--three {
-      grid-template-columns: 1fr;
-    }
-
-    .field-block--third,
-    .field-block--half,
-    .field-block--full {
-      grid-column: span 1;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .field-input,
-    :deep(.p-datepicker-input) {
-      transition: none;
-    }
-  }
+}
 </style>

@@ -327,8 +327,8 @@
     </div>
 
     <div v-else class="floors-summary-layout">
-      <div class="table-wrap">
-        <table class="project-table">
+      <div class="table-wrap workspace-table-scroll">
+        <table class="project-table workspace-data-table">
           <thead>
             <tr>
               <th>
@@ -473,136 +473,136 @@
 </template>
 
 <style scoped lang="scss">
-  .project-floors-card {
-    position: relative;
-  }
+.project-floors-card {
+  position: relative;
+}
 
-  .project-floors-toolbar {
-    display: flex;
-    width: 100%;
-    align-items: center;
-    justify-content: space-between;
-    margin-block-end: 1rem;
-  }
+.project-floors-toolbar {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  margin-block-end: 1rem;
+}
 
+.project-floors-title {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.75rem;
+  margin: 0;
+}
+
+.project-floors-title h2 {
+  min-width: 0;
+  margin: 0;
+}
+
+.project-floor-add-action {
+  display: inline-flex;
+  width: fit-content;
+  min-height: 2.35rem;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  margin-inline-start: auto;
+  padding-inline: 0.85rem;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.project-floor-locked {
+  display: inline-flex;
+  width: fit-content;
+  min-height: 2.35rem;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  margin-inline-start: auto;
+  padding: 0.55rem 0.85rem;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-full);
+  background: var(--warning-light);
+  color: var(--warning-dark);
+  font-family: 'Medium';
+  font-size: var(--sm-size);
+  line-height: 1.4;
+  text-align: center;
+}
+
+.project-floor-locked i {
+  flex: 0 0 auto;
+}
+
+.project-floor-empty-locked {
+  display: flex;
+  min-height: 9rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.85rem;
+  padding: 1.25rem;
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-lg);
+  background: rgb(255 255 255 / 65%);
+  cursor: not-allowed;
+  text-align: start;
+}
+
+.project-floor-empty-locked__icon {
+  display: inline-flex;
+  width: 2.75rem;
+  height: 2.75rem;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--warning-light);
+  color: var(--warning-dark);
+  font-size: 1.1rem;
+}
+
+.project-floor-empty-locked__content {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.project-floor-empty-locked__content strong {
+  color: var(--text-primary);
+  font-family: 'Medium';
+}
+
+.project-floor-empty-locked__content span {
+  color: var(--text-secondary);
+  font-size: var(--sm-size);
+  line-height: 1.6;
+}
+
+@media (max-width: 640px) {
   .project-floors-title {
-    display: flex;
-    width: 100%;
-    min-width: 0;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 0.75rem;
-    margin: 0;
+    align-items: flex-start;
+    flex-wrap: wrap;
   }
 
-  .project-floors-title h2 {
-    min-width: 0;
-    margin: 0;
-  }
-
-  .project-floor-add-action {
-    display: inline-flex;
-    width: fit-content;
-    min-height: 2.35rem;
-    flex: 0 0 auto;
-    align-items: center;
-    justify-content: center;
-    gap: 0.4rem;
-    margin-inline-start: auto;
-    padding-inline: 0.85rem;
-    text-decoration: none;
-    white-space: nowrap;
-  }
-
+  .project-floor-add-action,
   .project-floor-locked {
-    display: inline-flex;
-    width: fit-content;
-    min-height: 2.35rem;
-    flex: 0 0 auto;
-    align-items: center;
+    width: 100%;
+    margin-inline-start: 0;
     justify-content: center;
-    gap: 0.45rem;
-    margin-inline-start: auto;
-    padding: 0.55rem 0.85rem;
-    border: 1px solid var(--border-strong);
-    border-radius: var(--radius-full);
-    background: var(--warning-light);
-    color: var(--warning-dark);
-    font-family: 'Medium';
-    font-size: var(--sm-size);
-    line-height: 1.4;
-    text-align: center;
-  }
-
-  .project-floor-locked i {
-    flex: 0 0 auto;
   }
 
   .project-floor-empty-locked {
-    display: flex;
-    min-height: 9rem;
-    align-items: center;
-    justify-content: center;
-    gap: 0.85rem;
-    padding: 1.25rem;
-    border: 1px dashed var(--border-strong);
-    border-radius: var(--radius-lg);
-    background: rgb(255 255 255 / 65%);
-    cursor: not-allowed;
-    text-align: start;
-  }
-
-  .project-floor-empty-locked__icon {
-    display: inline-flex;
-    width: 2.75rem;
-    height: 2.75rem;
-    flex: 0 0 auto;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    background: var(--warning-light);
-    color: var(--warning-dark);
-    font-size: 1.1rem;
+    flex-direction: column;
+    text-align: center;
   }
 
   .project-floor-empty-locked__content {
-    display: flex;
-    min-width: 0;
-    flex-direction: column;
-    gap: 0.25rem;
+    align-items: center;
   }
-
-  .project-floor-empty-locked__content strong {
-    color: var(--text-primary);
-    font-family: 'Medium';
-  }
-
-  .project-floor-empty-locked__content span {
-    color: var(--text-secondary);
-    font-size: var(--sm-size);
-    line-height: 1.6;
-  }
-
-  @media (max-width: 640px) {
-    .project-floors-title {
-      align-items: flex-start;
-      flex-wrap: wrap;
-    }
-
-    .project-floor-add-action,
-    .project-floor-locked {
-      width: 100%;
-      margin-inline-start: 0;
-      justify-content: center;
-    }
-
-    .project-floor-empty-locked {
-      flex-direction: column;
-      text-align: center;
-    }
-
-    .project-floor-empty-locked__content {
-      align-items: center;
-    }
-  }
+}
 </style>

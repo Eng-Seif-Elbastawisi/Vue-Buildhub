@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import { ref } from 'vue';
   import AppButton from '@/shared/HelpersComponents/AppButton.vue';
   import IconAccept from '@/shared/icons/IconAccept.vue';
@@ -41,7 +42,7 @@
 </script>
 
 <template>
-  <div class="email-crud-example">
+  <StandardFormLayout mode="create" class="email-crud-example">
     <CountryForm
       :form-key="formKey"
       :email="controller.itemData.value!"
@@ -49,52 +50,54 @@
       @update-data="updateData"
     />
 
-    <div class="actions" :class="{ disabled: loading }">
-      <AppButton
-        :title="$t('Save')"
-        :loading="loading"
-        size="sm"
-        icon="right"
-        type="submit"
-        @click="saveEmail"
-      >
-        {{ $t('Save') }}
-
-        <template #icon>
-          <IconAccept />
-        </template>
-      </AppButton>
-    </div>
-
     <!-- Error Display -->
     <div v-if="controller.errorMessage.value" class="error">
       {{ controller.errorMessage.value }}
     </div>
-  </div>
+
+    <template #actions>
+      <div class="actions" :class="{ disabled: loading }">
+        <AppButton
+          :title="$t('Save')"
+          :loading="loading"
+          size="sm"
+          icon="right"
+          type="submit"
+          @click="saveEmail"
+        >
+          {{ $t('Save') }}
+
+          <template #icon>
+            <IconAccept />
+          </template>
+        </AppButton>
+      </div>
+    </template>
+  </StandardFormLayout>
 </template>
 
 <style scoped lang="scss">
-  :deep(.input-file) {
-    border: 1px solid #d9dbe9 !important;
-    padding: 11px;
-    border-radius: 20px !important;
-    cursor: pointer;
-  }
+:deep(.input-file) {
+  border: 1px solid #d9dbe9 !important;
+  padding: 11px;
+  border-radius: var(--bh-radius-control) !important;
+  cursor: pointer;
+}
 
-  .actions {
-    &.disabled {
-      cursor: not-allowed;
-      pointer-events: none;
-      opacity: 0.7;
-    }
+.actions {
+  &.disabled {
+    cursor: not-allowed;
+    pointer-events: none;
+    opacity: 0.7;
   }
+}
 
-  .error {
-    margin-top: 20px;
-    padding: 10px;
-    background-color: var(--danger-light);
-    color: var(--danger-dark);
-    border: 1px solid #f5c6cb;
-    border-radius: 4px;
-  }
+.error {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: var(--danger-light);
+  color: var(--danger-dark);
+  border: 1px solid var(--bh-coral-soft);
+  border-radius: 4px;
+}
 </style>

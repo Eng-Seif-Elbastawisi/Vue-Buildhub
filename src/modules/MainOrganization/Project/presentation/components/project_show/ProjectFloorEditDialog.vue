@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
 import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import Dialog from 'primevue/dialog';
@@ -376,9 +377,16 @@ const handleVisibilityChange = (visible: boolean): void => {
 
 <template>
   <Dialog
-:visible="modelValue" modal append-to="body" :closable="!updating" :dismissable-mask="!updating"
-    :draggable="false" :style="{ width: '60rem', maxWidth: 'calc(100vw - 2rem)' }" class="project-floor-edit-dialog"
-    @update:visible="handleVisibilityChange">
+    :visible="modelValue"
+    modal
+    append-to="body"
+    :closable="!updating"
+    :dismissable-mask="!updating"
+    :draggable="false"
+    :style="{ width: '60rem', maxWidth: 'calc(100vw - 2rem)' }"
+    class="project-floor-edit-dialog workspace-dialog"
+    @update:visible="handleVisibilityChange"
+  >
     <template #header>
       <div class="project-floor-edit-dialog__header">
         <span class="project-floor-edit-dialog__header-icon" aria-hidden="true">
@@ -394,13 +402,21 @@ const handleVisibilityChange = (visible: boolean): void => {
       </div>
     </template>
 
-    <form class="project-floor-edit-dialog__form" @submit.prevent="submitFloorUpdate">
+    <StandardFormLayout
+      as="form"
+      embedded
+      class="project-floor-edit-dialog__form"
+      @submit.prevent="submitFloorUpdate"
+    >
       <div
-v-if="
-        validationErrors.project_floor_id ||
-        validationErrors.project_id ||
-        validationErrors.project_preview_id
-      " class="project-floor-edit-dialog__context-error" role="alert">
+        v-if="
+          validationErrors.project_floor_id ||
+          validationErrors.project_id ||
+          validationErrors.project_preview_id
+        "
+        class="project-floor-edit-dialog__context-error"
+        role="alert"
+      >
         <i class="pi pi-exclamation-circle" aria-hidden="true" />
         <span>
           {{
@@ -418,8 +434,10 @@ v-if="
         </div>
 
         <article
-v-for="(space, spaceIndex) in spaces" :key="`${space.space_id}-${spaceIndex}`"
-          class="project-floor-edit-dialog__space">
+          v-for="(space, spaceIndex) in spaces"
+          :key="`${space.space_id}-${spaceIndex}`"
+          class="project-floor-edit-dialog__space"
+        >
           <header class="project-floor-edit-dialog__space-header">
             <span>{{ spaceIndex + 1 }}</span>
             <div>
@@ -428,7 +446,11 @@ v-for="(space, spaceIndex) in spaces" :key="`${space.space_id}-${spaceIndex}`"
             </div>
           </header>
 
-          <p v-if="fieldError(spaceIndex, 'space_id')" class="project-floor-edit-dialog__field-error" role="alert">
+          <p
+            v-if="fieldError(spaceIndex, 'space_id')"
+            class="project-floor-edit-dialog__field-error"
+            role="alert"
+          >
             {{ fieldError(spaceIndex, 'space_id') }}
           </p>
 
@@ -436,15 +458,27 @@ v-for="(space, spaceIndex) in spaces" :key="`${space.space_id}-${spaceIndex}`"
             <label v-for="field in ['length', 'width', 'height'] as const" :key="field">
               <span>{{ $t(`ProjectFloor.${field}`) }}</span>
               <input
-:id="`floor-space-${spaceIndex}-${field}`" class="project-floor-edit-dialog__input" type="number"
-                min="0.01" step="1" inputmode="decimal" :value="space[field] ?? ''" :disabled="updating"
-                :aria-invalid="Boolean(fieldError(spaceIndex, field))" :aria-describedby="fieldError(spaceIndex, field)
+                :id="`floor-space-${spaceIndex}-${field}`"
+                class="project-floor-edit-dialog__input workspace-control"
+                type="number"
+                min="0.01"
+                step="1"
+                inputmode="decimal"
+                :value="space[field] ?? ''"
+                :disabled="updating"
+                :aria-invalid="Boolean(fieldError(spaceIndex, field))"
+                :aria-describedby="
+                  fieldError(spaceIndex, field)
                     ? `floor-space-${spaceIndex}-${field}-error`
                     : undefined
-                  " @input="updateDimension(spaceIndex, field, $event)" />
+                "
+                @input="updateDimension(spaceIndex, field, $event)"
+              />
               <small
-v-if="fieldError(spaceIndex, field)" :id="`floor-space-${spaceIndex}-${field}-error`"
-                class="project-floor-edit-dialog__field-error">
+                v-if="fieldError(spaceIndex, field)"
+                :id="`floor-space-${spaceIndex}-${field}-error`"
+                class="project-floor-edit-dialog__field-error"
+              >
                 {{ fieldError(spaceIndex, field) }}
               </small>
             </label>
@@ -452,8 +486,12 @@ v-if="fieldError(spaceIndex, field)" :id="`floor-space-${spaceIndex}-${field}-er
             <label class="project-floor-edit-dialog__notes-field">
               <span>{{ $t('ProjectFloor.notes') }}</span>
               <textarea
-v-model="space.notes" class="project-floor-edit-dialog__input" rows="3" :disabled="updating"
-                :placeholder="$t('ProjectFloor.notes_placeholder')" />
+                v-model="space.notes"
+                class="project-floor-edit-dialog__input workspace-control"
+                rows="3"
+                :disabled="updating"
+                :placeholder="$t('ProjectFloor.notes_placeholder')"
+              />
             </label>
           </div>
         </article>
@@ -462,15 +500,25 @@ v-model="space.notes" class="project-floor-edit-dialog__input" rows="3" :disable
       <p v-if="validationErrors.spaces" class="project-floor-edit-dialog__field-error" role="alert">
         {{ validationErrors.spaces }}
       </p>
-    </form>
+    </StandardFormLayout>
 
     <template #footer>
       <div class="project-floor-edit-dialog__actions">
-        <button type="button" class="btn btn-secondary" :disabled="updating" @click="handleVisibilityChange(false)">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          :disabled="updating"
+          @click="handleVisibilityChange(false)"
+        >
           {{ $t('cancel') }}
         </button>
 
-        <button type="button" class="btn btn-primary" :disabled="updating || !floor" @click="submitFloorUpdate">
+        <button
+          type="button"
+          class="btn btn-primary"
+          :disabled="updating || !floor"
+          @click="submitFloorUpdate"
+        >
           <i v-if="updating" class="pi pi-spinner pi-spin" aria-hidden="true" />
           {{ $t('ProjectFloor.save_changes') }}
         </button>
@@ -561,7 +609,7 @@ v-model="space.notes" class="project-floor-edit-dialog__input" rows="3" :disable
   margin-block-end: 1rem;
 }
 
-.project-floor-edit-dialog__space-header>span {
+.project-floor-edit-dialog__space-header > span {
   display: inline-flex;
   width: 2.25rem;
   height: 2.25rem;
@@ -580,7 +628,7 @@ v-model="space.notes" class="project-floor-edit-dialog__input" rows="3" :disable
 }
 
 .project-floor-edit-dialog__space-header small,
-.project-floor-edit-dialog__fields label>span {
+.project-floor-edit-dialog__fields label > span {
   color: var(--gray-600);
   font-size: var(--xs-size);
 }
@@ -613,7 +661,7 @@ v-model="space.notes" class="project-floor-edit-dialog__input" rows="3" :disable
   min-height: 2.75rem;
   padding: 0.7rem 0.8rem;
   border: 1px solid var(--border-strong);
-  border-radius: var(--radius-md);
+  border-radius: var(--bh-radius-control);
   background: var(--BgWhite);
   color: var(--gray-900);
   font: inherit;

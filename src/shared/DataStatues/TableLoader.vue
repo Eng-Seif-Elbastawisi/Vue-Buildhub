@@ -8,8 +8,8 @@ const { rows, cols } = defineProps<{
 </script>
 
 <template>
-  <div class="table-responsive">
-    <table class="main-table">
+  <div class="app-table-wrapper table-responsive" aria-busy="true">
+    <table class="app-table">
       <thead>
         <tr>
           <th v-for="i in cols" :key="i" scope="col">#</th>

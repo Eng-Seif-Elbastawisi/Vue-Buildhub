@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
 import { ref } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 
@@ -35,25 +36,34 @@ const cancelQuoteTypeAdd = () => {
 </script>
 
 <template>
-  <div class="QuoteType-crud-page">
-    <QuoteTypeForm :loading="loading" @update-data="params = $event" :disabled="true" />
-
-    <div class="form-footer form-action-pair">
-      <button
-class="btn btn-primary" :class="{ 'btn--loading': loading }" type="button" :disabled="loading"
-        @click="saveQuoteType">
-        {{ $t('common.save') }}
-      </button>
-
-      <ConfirmCancelDialog
-ref="confirmCancelRef" :title="$t('cancel_changes')"
-        :message="$t('are_you_sure_you_want_to_leave')" @confirm="cancelQuoteTypeAdd" />
-    </div>
+  <StandardFormLayout mode="create" class="QuoteType-crud-page">
+    <QuoteTypeForm :loading="loading" :disabled="true" @update-data="params = $event" />
 
     <div v-if="controller.errorMessage.value" class="error">
       {{ controller.errorMessage.value }}
     </div>
-  </div>
+
+    <template #actions>
+      <div class="form-footer form-action-pair">
+        <button
+          class="btn btn-primary"
+          :class="{ 'btn--loading': loading }"
+          type="button"
+          :disabled="loading"
+          @click="saveQuoteType"
+        >
+          {{ $t('common.save') }}
+        </button>
+
+        <ConfirmCancelDialog
+          ref="confirmCancelRef"
+          :title="$t('cancel_changes')"
+          :message="$t('are_you_sure_you_want_to_leave')"
+          @confirm="cancelQuoteTypeAdd"
+        />
+      </div>
+    </template>
+  </StandardFormLayout>
 </template>
 
 <style scoped lang="scss">

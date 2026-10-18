@@ -1,4 +1,10 @@
 {
+  "change_language": "Change language",
+  "table_scroll_region": "Data table, scroll horizontally to view all columns",
+  "table_select_all": "Select all rows",
+  "table_select_row": "Select row {row}",
+  "workspace_navigation": "Workspace navigation",
+  "toggle_theme": "Switch light or dark appearance",
   "home": "Home",
   "home_dashboard.hero_label": "Welcome to BuildHub",
   "home_dashboard.welcome": "Welcome back",

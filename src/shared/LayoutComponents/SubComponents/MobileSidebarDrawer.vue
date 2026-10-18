@@ -343,6 +343,26 @@
 
 <style scoped lang="scss">
   .mobile-sidebar-layer {
+    --quote-graphite: var(--bh-surface);
+    --quote-graphite-text: var(--bh-text);
+    --quote-graphite-line: var(--bh-line);
+    --quote-graphite-heading: var(--bh-text);
+    --quote-graphite-muted: var(--bh-muted);
+    --quote-graphite-hover: var(--bh-hover);
+    --quote-graphite-raised: var(--bh-surface-secondary);
+    --quote-graphite-input: var(--bh-surface-secondary);
+    --quote-graphite-input-line: var(--bh-line);
+    --quote-graphite-copper: var(--bh-blue-soft);
+    --quote-graphite-copper-line: var(--bh-line);
+    --quote-graphite-danger: var(--bh-coral-ink);
+    --quote-graphite-active-text: var(--bh-on-active);
+    --quote-graphite-active: var(--bh-active);
+    --quote-graphite-active-icon: var(--bh-active);
+    --quote-copper: var(--bh-active);
+    --quote-copper-light: var(--bh-blue-ink);
+    --quote-copper-pale-text: var(--bh-blue-ink);
+    --quote-copper-line: var(--bh-active);
+
     position: fixed;
     inset: 0;
     z-index: 1500;

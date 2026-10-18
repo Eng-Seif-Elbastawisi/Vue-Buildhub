@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import { computed, onMounted, ref, watch } from 'vue';
   import { onBeforeRouteLeave } from 'vue-router';
   import { useI18n } from 'vue-i18n';
@@ -71,7 +72,7 @@
 </script>
 
 <template>
-  <div class="document-form-card">
+  <StandardFormLayout class="document-form-card">
     <div class="document-form-header">
       <DocumentIcon />
       <div class="document-form-header-text">
@@ -105,45 +106,45 @@
         </div>
       </div>
     </div>
-  </div>
+  </StandardFormLayout>
 </template>
 
 <style scoped>
-  .document-form-header {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 1.5rem;
-  }
+.document-form-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
 
-  .form-fields {
-    .all_inputs {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 1rem;
-      align-items: end;
-    }
+.form-fields {
+  .all_inputs {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    align-items: end;
   }
+}
 
-  .field-input {
-    width: 100%;
-    max-width: 100%;
-    max-height: 200px;
-    padding: 12px 16px;
-    padding-inline-end: 50px;
-    border: 1px solid var(--border-weak);
-    border-radius: 28px;
-    outline: none;
-    background: var(--white);
-    color: var(--bread-crumb-color-span);
-    font-family: 'Medium';
-    font-size: var(--sm-size);
-    font-weight: 400;
-    transition: all 0.25s ease;
-  }
+.field-input {
+  width: 100%;
+  max-width: 100%;
+  max-height: 200px;
+  padding: 12px 16px;
+  padding-inline-end: 50px;
+  border: 1px solid var(--border-weak);
+  border-radius: var(--bh-radius-control);
+  outline: none;
+  background: var(--bh-surface-raised);
+  color: var(--bread-crumb-color-span);
+  font-family: 'Medium';
+  font-size: var(--sm-size);
+  font-weight: 400;
+  transition: all 0.25s ease;
+}
 
-  .disabled-input {
-    pointer-events: none;
-    opacity: 0.5;
-  }
+.disabled-input {
+  pointer-events: none;
+  opacity: 0.5;
+}
 </style>

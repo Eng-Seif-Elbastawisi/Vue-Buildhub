@@ -1,4 +1,10 @@
 {
+  "change_language": "تغيير اللغة",
+  "table_scroll_region": "جدول البيانات، مرر أفقياً لعرض جميع الأعمدة",
+  "table_select_all": "تحديد جميع الصفوف",
+  "table_select_row": "تحديد الصف {row}",
+  "workspace_navigation": "التنقل في مساحة العمل",
+  "toggle_theme": "تبديل المظهر الفاتح أو الداكن",
   "home": "الرئيسية",
   "home_dashboard.hero_label": "مرحباً بك في بيلد هَب",
   "home_dashboard.welcome": "مرحباً بك مجدداً",

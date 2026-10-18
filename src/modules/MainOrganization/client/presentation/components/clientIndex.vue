@@ -80,10 +80,7 @@
 
 <template>
   <div class="client-page">
-    <IndexPageHeader
-      :title="$t('client.list_title')"
-      :subtitle="$t('client.list_description')"
-    >
+    <IndexPageHeader :title="$t('client.list_title')" :subtitle="$t('client.list_description')">
       <template #search>
         <div class="search-field">
           <span class="search-icon">
@@ -103,7 +100,7 @@
           <input
             v-model="word"
             :placeholder="$t('search_clients')"
-            class="search-input"
+            class="search-input workspace-control"
             type="text"
             @input="Search"
           />
@@ -228,40 +225,40 @@
 </template>
 
 <style scoped lang="scss">
-  .toolbar {
-    width: 100%;
-    justify-content: space-between;
-  }
+.toolbar {
+  width: 100%;
+  justify-content: space-between;
+}
 
-  .material-page,
-  .material-header,
-  .row-actions {
-    display: flex;
-  }
+.material-page,
+.material-header,
+.row-actions {
+  display: flex;
+}
 
-  .material-page {
-    flex-direction: column;
-    gap: 1.5rem;
-  }
+.material-page {
+  flex-direction: column;
+  gap: 1.5rem;
+}
 
-  .material-header {
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-  }
+.material-header {
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
 
-  .material-header p,
-  .empty-state p {
-    color: var(--gray-5);
-  }
+.material-header p,
+.empty-state p {
+  color: var(--gray-5);
+}
 
-  .row-actions {
-    align-items: center;
-    gap: 0.75rem;
-  }
+.row-actions {
+  align-items: center;
+  gap: 0.75rem;
+}
 
-  .empty-state {
-    padding: 3rem 1rem;
-    text-align: center;
-  }
+.empty-state {
+  padding: 3rem 1rem;
+  text-align: center;
+}
 </style>

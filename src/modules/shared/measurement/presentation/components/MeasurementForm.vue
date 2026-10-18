@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
 import { ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 
@@ -190,21 +191,28 @@ const confirmCancel = () => {
 
 </script>
 
-
 <template>
-
-  <div class="measurement-form">
-
+  <StandardFormLayout embedded class="measurement-form">
     <div class="field-group" :class="{ disabled: loading }">
       <MultiLangInput
-field-key="title" :label="$t('measurement_title')" :languages="['en', 'ar']"
-        :model-value="translations" type="title" @update:model-value="updateTranslations" />
+        field-key="title"
+        :label="$t('measurement_title')"
+        :languages="['en', 'ar']"
+        :model-value="translations"
+        type="title"
+        @update:model-value="updateTranslations"
+      />
     </div>
 
     <div class="field-group" :class="{ disabled: loading }">
       <MultiLangInput
-field-key="symbol" :label="$t('symbol')" :languages="['en', 'ar']" :model-value="symbol"
-        type="title" @update:model-value="updateSymbol" />
+        field-key="symbol"
+        :label="$t('symbol')"
+        :languages="['en', 'ar']"
+        :model-value="symbol"
+        type="title"
+        @update:model-value="updateSymbol"
+      />
     </div>
 
     <div class="field-group" :class="{ disabled: loading || isEdit }">
@@ -212,8 +220,14 @@ field-key="symbol" :label="$t('symbol')" :languages="['en', 'ar']" :model-value=
         {{ $t('code') }}
       </label>
       <input
-id="code" v-model="code" class="field-input" type="text" :placeholder="$t('code')"
-        :disabled="loading || isEdit" @input="updateData" />
+        id="code"
+        v-model="code"
+        class="field-input workspace-control"
+        type="text"
+        :placeholder="$t('code')"
+        :disabled="loading || isEdit"
+        @input="updateData"
+      />
     </div>
 
     <div class="field-group" :class="{ disabled: loading || isEdit }">
@@ -221,8 +235,16 @@ id="code" v-model="code" class="field-input" type="text" :placeholder="$t('code'
         {{ $t('precision') }}
       </label>
       <input
-id="precision" v-model.number="precision" class="field-input" type="number" min="0" step="1"
-        :placeholder="$t('precision')" :disabled="loading || isEdit" @input="updateData" />
+        id="precision"
+        v-model.number="precision"
+        class="field-input workspace-control"
+        type="number"
+        min="0"
+        step="1"
+        :placeholder="$t('precision')"
+        :disabled="loading || isEdit"
+        @input="updateData"
+      />
     </div>
 
     <div class="field-group status-group" :class="{ disabled: loading }">
@@ -231,18 +253,17 @@ id="precision" v-model.number="precision" class="field-input" type="number" min=
       </label>
       <div class="status-toggle-wrapper">
         <ToggleSwitch
-v-model="status" input-id="measurement-status" :disabled="loading"
-          @update:model-value="updateData" />
+          v-model="status"
+          input-id="measurement-status"
+          :disabled="loading"
+          @update:model-value="updateData"
+        />
         <span class="status-text" :class="{ active: status }">
           {{ status ? $t('active') : $t('inactive') }}
         </span>
       </div>
     </div>
-
-
-
-  </div>
-
+  </StandardFormLayout>
 </template>
 <style scoped lang="scss">
 .measurement-form {
@@ -268,28 +289,23 @@ v-model="status" input-id="measurement-status" :disabled="loading"
   display: block;
   width: 100%;
   min-width: 0;
-  height: 46px;
+  height: var(--bh-control-height);
   padding: 0 1rem;
-
   border: 1px solid var(--border-weak);
-  border-radius: 12px;
-
-  background: var(--white);
+  border-radius: var(--bh-radius-control);
+  background: var(--bh-surface-raised);
   color: var(--bread-crumb-color-span);
-
   outline: none;
-
   font-family: 'Medium', sans-serif;
   font-size: var(--sm-size);
   font-weight: 400;
-
   transition:
     border-color 0.2s ease,
     box-shadow 0.2s ease,
     background-color 0.2s ease;
 
   &::placeholder {
-    color: var(--text-muted, #999);
+    color: var(--text-muted, var(--bh-muted));
     opacity: 0.8;
   }
 
@@ -299,7 +315,7 @@ v-model="status" input-id="measurement-status" :disabled="loading"
 
   &:focus {
     border-color: var(--PrimaryColor);
-    box-shadow: 0 0 0 3px var(--PrimaryColor-alpha-10);
+    box-shadow: none;
   }
 
   &:disabled {
@@ -333,7 +349,7 @@ input[type='number'] {
   .field-input {
     height: 44px;
     padding: 0 0.875rem;
-    border-radius: 10px;
+    border-radius: var(--bh-radius-control);
   }
 
   .field-group label {
@@ -357,7 +373,7 @@ input[type='number'] {
 .status-text {
   font-family: 'Medium', sans-serif;
   font-size: var(--sm-size);
-  color: var(--text-muted, #999);
+  color: var(--text-muted, var(--bh-muted));
   transition: color 0.2s ease;
 
   &.active {

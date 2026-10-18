@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import { computed, ref, watch } from 'vue';
   import { onBeforeRouteLeave } from 'vue-router';
   import { useI18n } from 'vue-i18n';
@@ -198,7 +199,7 @@
 </script>
 
 <template>
-  <div class="package-form-card">
+  <StandardFormLayout class="package-form-card">
     <div class="package-form-header">
       <DocumentIcon />
 
@@ -243,7 +244,7 @@
         <input
           id="package-duration"
           v-model.number="duration"
-          class="field-input"
+          class="field-input workspace-control"
           min="0"
           type="number"
           :placeholder="$t('package.duration_placeholder')"
@@ -279,7 +280,7 @@
         <input
           id="package-price"
           v-model="price"
-          class="field-input"
+          class="field-input workspace-control"
           inputmode="decimal"
           type="text"
           :placeholder="$t('package.price_placeholder')"
@@ -319,7 +320,7 @@
         <input
           id="package-discount-value"
           v-model.number="discountValue"
-          class="field-input"
+          class="field-input workspace-control"
           min="0"
           inputmode="decimal"
           type="number"
@@ -345,7 +346,7 @@
         <input
           id="package-projectnumbers"
           v-model.number="projectnumbers"
-          class="field-input"
+          class="field-input workspace-control"
           min="0"
           type="number"
           :placeholder="$t('package.projectnumbers_placeholder')"
@@ -370,7 +371,7 @@
         <input
           id="package-employeenumbers"
           v-model.number="employeenumbers"
-          class="field-input"
+          class="field-input workspace-control"
           min="0"
           type="number"
           :placeholder="$t('package.employeenumbers_placeholder')"
@@ -406,93 +407,93 @@
         </span>
       </label>
     </div>
-  </div>
+  </StandardFormLayout>
 </template>
 
 <style scoped lang="scss">
-  .package-form-header {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 1.5rem;
+.package-form-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
 
-    h4,
-    p {
-      margin: 0;
-    }
-
-    p {
-      margin-top: 0.25rem;
-      color: var(--gray-5);
-    }
+  h4,
+  p {
+    margin: 0;
   }
 
-  .form-fields {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1rem;
-
-    &.disabled {
-      pointer-events: none;
-      opacity: 0.7;
-    }
+  p {
+    margin-top: 0.25rem;
+    color: var(--gray-5);
   }
+}
 
-  .field-group {
-    min-width: 0;
+.form-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
 
-    &--full {
-      grid-column: 1 / -1;
-    }
+  &.disabled {
+    pointer-events: none;
+    opacity: 0.7;
   }
+}
 
-  .field-input {
-    width: 100%;
-    min-height: 48px;
-    padding: 12px 16px;
-    border: 1px solid var(--border-weak);
-    border-radius: 28px;
-    outline: none;
-    background: var(--white);
-    color: var(--bread-crumb-color-span);
-    font-family: 'Medium';
-    font-size: var(--sm-size);
-    font-weight: 400;
-    transition:
-      border-color 0.2s ease,
-      box-shadow 0.2s ease;
+.field-group {
+  min-width: 0;
 
-    &:focus {
-      border-color: var(--primary-color);
-      box-shadow: 0 0 0 3px rgb(37 99 235 / 10%);
-    }
+  &--full {
+    grid-column: 1 / -1;
   }
+}
 
-  .toggle-field {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    min-height: 48px;
-    padding: 0 1rem;
-    border: 1px solid var(--border-weak);
-    border-radius: 28px;
-    background: var(--white);
+.field-input {
+  width: 100%;
+  min-height: var(--bh-control-height);
+  padding: 12px 16px;
+  border: 1px solid var(--border-weak);
+  border-radius: var(--bh-radius-control);
+  outline: none;
+  background: var(--bh-surface-raised);
+  color: var(--bread-crumb-color-span);
+  font-family: 'Medium';
+  font-size: var(--sm-size);
+  font-weight: 400;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+
+  &:focus {
+    border-color: var(--primary-color);
+    box-shadow: none;
+  }
+}
+
+.toggle-field {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 48px;
+  padding: 0 1rem;
+  border: 1px solid var(--border-weak);
+  border-radius: 28px;
+  background: var(--bh-surface-raised);
+  cursor: pointer;
+
+  input {
+    width: 18px;
+    height: 18px;
     cursor: pointer;
+  }
+}
 
-    input {
-      width: 18px;
-      height: 18px;
-      cursor: pointer;
-    }
+@media (max-width: 768px) {
+  .form-fields {
+    grid-template-columns: 1fr;
   }
 
-  @media (max-width: 768px) {
-    .form-fields {
-      grid-template-columns: 1fr;
-    }
-
-    .field-group--full {
-      grid-column: auto;
-    }
+  .field-group--full {
+    grid-column: auto;
   }
+}
 </style>

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import { onMounted, ref } from 'vue';
   import { useRoute } from 'vue-router';
   import AppButton from '@/shared/HelpersComponents/AppButton.vue';
@@ -43,7 +44,7 @@
 </script>
 
 <template>
-  <section class="department-page">
+  <StandardFormLayout as="section" mode="edit" class="department-page">
     <StandardFormSectionHeader :title="$t('department')" icon="pi pi-sitemap" />
     <h2>{{ $t('edit_department') }}</h2>
     <DepartmentForm
@@ -53,41 +54,45 @@
       :reset-key="resetKey"
       @update-data="(value) => (params = value as EditDepartmentParams)"
     />
-    <div class="actions form-action-pair" :class="{ disabled: loading }">
-      <AppButton :loading="loading" :title="$t('save')" type="button" @click="save">{{
-        $t('save')
-      }}</AppButton>
-      <AppButton theme="secondary" :title="$t('cancel')" type="button" @click="clearInputs">
-        {{ $t('cancel') }}
-      </AppButton>
-    </div>
+
     <div v-if="controller.errorMessage.value" class="error">
       {{ controller.errorMessage.value }}
     </div>
-  </section>
+
+    <template #actions>
+      <div class="actions form-action-pair" :class="{ disabled: loading }">
+        <AppButton :loading="loading" :title="$t('save')" type="button" @click="save">{{
+          $t('save')
+        }}</AppButton>
+        <AppButton theme="secondary" :title="$t('cancel')" type="button" @click="clearInputs">
+          {{ $t('cancel') }}
+        </AppButton>
+      </div>
+    </template>
+  </StandardFormLayout>
 </template>
 
 <style scoped lang="scss">
-  @use '@/styles/mixins/form_action_pair' as form-actions;
+@use '@/styles/mixins/form_action_pair' as form-actions;
 
-  .actions {
-    &.disabled {
-      cursor: not-allowed;
-      pointer-events: none;
-      opacity: 0.7;
-    }
+.actions {
+  &.disabled {
+    cursor: not-allowed;
+    pointer-events: none;
+    opacity: 0.7;
   }
+}
 
-  .error {
-    margin-top: 20px;
-    padding: 10px;
-    background-color: var(--danger-light);
-    color: var(--danger-dark);
-    border: 1px solid #f5c6cb;
-    border-radius: 4px;
-  }
+.error {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: var(--danger-light);
+  color: var(--danger-dark);
+  border: 1px solid var(--bh-coral-soft);
+  border-radius: 4px;
+}
 
-  .form-action-pair {
-    @include form-actions.layout;
-  }
+.form-action-pair {
+  @include form-actions.layout;
+}
 </style>

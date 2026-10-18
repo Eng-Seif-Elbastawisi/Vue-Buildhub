@@ -168,26 +168,43 @@ onMounted(async () => {
         <div class="search-field">
           <span class="search-icon">
             <svg
-width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-              stroke-linecap="round">
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            >
               <circle cx="11" cy="11" r="8" />
               <path d="m21 21-4.35-4.35" />
             </svg>
           </span>
 
           <input
-v-model="word" class="search-input" type="text" :placeholder="$t('search_measurements')"
-            @input="search" />
+            v-model="word"
+            class="search-input workspace-control"
+            type="text"
+            :placeholder="$t('search_measurements')"
+            @input="search"
+          />
         </div>
       </template>
 
       <template #actions>
         <button
-class="app-btn btn btn-primary btn--md btn--has-icon btn-save white"
-          @click="router.push(`${routePrefix}/measurement/add`)">
+          class="app-btn btn btn-primary btn--md btn--has-icon btn-save white"
+          @click="router.push(`${routePrefix}/measurement/add`)"
+        >
           <svg
-width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-            stroke-linecap="round">
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            stroke-linecap="round"
+          >
             <path d="M12 5v14M5 12h14" />
           </svg>
 
@@ -200,16 +217,16 @@ width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" str
     <DataStatusBuilder :controller="state" :on-retry="async () => await fetchMeasurements()">
       <template #success="{ data }">
         <div class="table-frame">
-<AppTable
-  :headers="headers"
-  :items="data as MeasurementModel[]"
-  :bulk-delete="deleteSelectedMeasurements"
-  selectable
-  show-index
-  hoverable
-  striped
-  @sort="onSort"
->
+          <AppTable
+            :headers="headers"
+            :items="data as MeasurementModel[]"
+            :bulk-delete="deleteSelectedMeasurements"
+            selectable
+            show-index
+            hoverable
+            striped
+            @sort="onSort"
+          >
             <!-- Title -->
             <template #cell-title="{ item }">
               {{ item?.title || '-' }}
@@ -240,24 +257,40 @@ width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" str
                 <!-- Edit -->
 
                 <ChangeStatusButton
-:id="item.id!" :key="`${item.id}-${item.status}`" :initial-is-active="item.status"
-                  :type="StatusTypeEnum.MEASUREMENT_UNIT" @reload="async () => await fetchMeasurements()" />
+                  :id="item.id!"
+                  :key="`${item.id}-${item.status}`"
+                  :initial-is-active="item.status"
+                  :type="StatusTypeEnum.MEASUREMENT_UNIT"
+                  @reload="async () => await fetchMeasurements()"
+                />
 
                 <button
-class="action-btn edit" :title="$t('Edit')"
-                  @click="router.push(`${routePrefix}/measurement/edit/${item.id}`)">
+                  class="action-btn edit"
+                  :title="$t('Edit')"
+                  @click="router.push(`${routePrefix}/measurement/edit/${item.id}`)"
+                >
                   <EditIcon />
                 </button>
 
                 <!-- Delete -->
                 <DeleteDialog
-:title="$t('Are you sure you want to remove this measurement unit?')"
-                  :message="$t('This action cannot be undone.')" :hasbtn="true" @delete="deleteMeasurement(item.id!)">
+                  :title="$t('Are you sure you want to remove this measurement unit?')"
+                  :message="$t('This action cannot be undone.')"
+                  :hasbtn="true"
+                  @delete="deleteMeasurement(item.id!)"
+                >
                   <template #btn>
                     <button class="action-btn delete" :title="$t('Delete')">
                       <svg
-width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        stroke-linecap="round" stroke-linejoin="round">
+                        width="15"
+                        height="15"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
                         <path d="M3 6h18" />
                         <path d="M19 6v14c0 1-1.2 2-2 2H7c-.8 0-2-1-2-2V6" />
                         <path d="M8 6V4c0-1.1.9-2 2-2h4c1.1 0 2 .9 2 2v2" />
@@ -272,16 +305,24 @@ width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" str
 
         <!-- Pagination -->
         <Pagination
-:pagination="controller.pagination.value" @change-page="onPageChange"
-          @count-per-page="onPerPageChange" />
+          :pagination="controller.pagination.value"
+          @change-page="onPageChange"
+          @count-per-page="onPerPageChange"
+        />
       </template>
 
       <!-- Empty -->
       <template #empty>
         <div class="empty-state">
           <svg
-width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"
-            stroke-linecap="round">
+            width="56"
+            height="56"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1"
+            stroke-linecap="round"
+          >
             <rect x="2" y="4" width="20" height="16" rx="2" />
             <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
           </svg>
@@ -296,8 +337,14 @@ width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" str
 
           <router-link :to="formRoute" class="btn-add empty-cta">
             <svg
-width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-              stroke-linecap="round">
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+            >
               <path d="M12 5v14M5 12h14" />
             </svg>
 

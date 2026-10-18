@@ -28,9 +28,15 @@
 
 <template>
   <div v-if="isOpen" class="dialog-overlay" @click.self="closeDialog">
-    <div class="dialog-content">
-      <p class="dialog-message">{{ message }}</p>
-      <button class="dialog-close-btn" @click="closeDialog">{{ $t('close') }}</button>
+    <div
+      class="dialog-content"
+      role="alertdialog"
+      aria-modal="true"
+      aria-describedby="validation-dialog-message"
+      :aria-label="$t('dialog.error_title')"
+    >
+      <p id="validation-dialog-message" class="dialog-message">{{ message }}</p>
+      <button type="button" class="dialog-close-btn" @click="closeDialog">{{ $t('close') }}</button>
     </div>
   </div>
 </template>
@@ -50,9 +56,9 @@
   }
 
   .dialog-content {
-    background: var(--bg-main);
-    padding: 20px;
-    border-radius: 8px;
+    background: var(--bh-surface-raised);
+    padding: var(--bh-space-6);
+    border-radius: var(--bh-radius-card);
     text-align: center;
     max-width: 400px;
     width: 90%;
@@ -61,20 +67,20 @@
   .dialog-message {
     margin-bottom: 20px;
     font-size: 16px;
-    color: var(--gray-900) !important;
+    color: var(--bh-text);
   }
 
   .dialog-close-btn {
     background: var(--PrimaryColor);
-    color: var(--BgWhite);
+    color: var(--button-primary-color);
     padding: 10px 20px;
     border: none;
-    border-radius: 4px;
+    border-radius: var(--bh-radius-pill);
     cursor: pointer;
     font-size: 14px;
   }
 
   .dialog-close-btn:hover {
-    background: var(--PrimaryColor-dark);
+    background: var(--SecondaryColor);
   }
 </style>

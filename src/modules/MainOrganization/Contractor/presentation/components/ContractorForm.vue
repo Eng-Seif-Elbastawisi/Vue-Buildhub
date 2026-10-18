@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import { onMounted, ref, watch } from 'vue';
   import TitleInterface from '@/base/Data/Models/titleInterface';
   import CustomSelect from '@/shared/FormInputs/UpdatedCustomInputSelect.vue';
@@ -44,7 +45,7 @@
 </script>
 
 <template>
-  <div class="contractor-form-card">
+  <StandardFormLayout class="contractor-form-card">
     <header>
       <h3>{{ $t('Contractor.form_title') }}</h3>
       <p>{{ $t('Contractor.form_description') }}</p>
@@ -55,7 +56,7 @@
         <input
           id="contractor-name"
           v-model="name"
-          class="field-input"
+          class="field-input workspace-control"
           type="text"
           :placeholder="$t('Contractor.name_placeholder')"
           :disabled="loading"
@@ -78,5 +79,5 @@
         />
       </div>
     </div>
-  </div>
+  </StandardFormLayout>
 </template>

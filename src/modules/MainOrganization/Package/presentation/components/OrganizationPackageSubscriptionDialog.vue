@@ -43,7 +43,7 @@
     :dismissable-mask="!loading"
     :draggable="false"
     :style="{ width: '32rem', maxWidth: 'calc(100vw - 2rem)' }"
-    class="organization-package-dialog"
+    class="organization-package-dialog workspace-dialog"
     @update:visible="updateVisibility"
   >
     <template #header>
@@ -105,92 +105,92 @@
 </template>
 
 <style scoped lang="scss">
-  .organization-package-dialog__header,
-  .organization-package-dialog__actions {
-    display: flex;
-    align-items: center;
-  }
+.organization-package-dialog__header,
+.organization-package-dialog__actions {
+  display: flex;
+  align-items: center;
+}
 
-  .organization-package-dialog__header {
-    gap: 0.85rem;
-  }
+.organization-package-dialog__header {
+  gap: 0.85rem;
+}
 
-  .organization-package-dialog__header h3,
-  .organization-package-dialog__header p,
+.organization-package-dialog__header h3,
+.organization-package-dialog__header p,
+.organization-package-dialog__summary {
+  margin: 0;
+}
+
+.organization-package-dialog__header h3 {
+  color: var(--gray-900);
+  font-family: 'Bold';
+}
+
+.organization-package-dialog__header p {
+  margin-block-start: 0.25rem;
+  color: var(--gray-600);
+  font-size: var(--sm-size);
+}
+
+.organization-package-dialog__icon {
+  display: inline-flex;
+  width: 2.75rem;
+  height: 2.75rem;
+  flex: 0 0 2.75rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  background: var(--PrimaryColor-light);
+  color: var(--PrimaryColor);
+  font-size: var(--xl-size-base);
+}
+
+.organization-package-dialog__summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+  padding: 1rem;
+  border: 1px solid var(--border-weak);
+  border-radius: var(--radius-md);
+  background: var(--gray-50);
+}
+
+.organization-package-dialog__summary div {
+  min-width: 0;
+}
+
+.organization-package-dialog__summary dt {
+  color: var(--gray-600);
+  font-size: var(--xs-size);
+}
+
+.organization-package-dialog__summary dd {
+  overflow: hidden;
+  margin: 0.35rem 0 0;
+  color: var(--gray-900);
+  font-family: 'Bold';
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.organization-package-dialog__actions {
+  width: 100%;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+@media (max-width: 560px) {
   .organization-package-dialog__summary {
-    margin: 0;
-  }
-
-  .organization-package-dialog__header h3 {
-    color: var(--gray-900);
-    font-family: 'Bold';
-  }
-
-  .organization-package-dialog__header p {
-    margin-block-start: 0.25rem;
-    color: var(--gray-600);
-    font-size: var(--sm-size);
-  }
-
-  .organization-package-dialog__icon {
-    display: inline-flex;
-    width: 2.75rem;
-    height: 2.75rem;
-    flex: 0 0 2.75rem;
-    align-items: center;
-    justify-content: center;
-    border-radius: var(--radius-md);
-    background: var(--PrimaryColor-light);
-    color: var(--PrimaryColor);
-    font-size: var(--xl-size-base);
-  }
-
-  .organization-package-dialog__summary {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 0.75rem;
-    padding: 1rem;
-    border: 1px solid var(--border-weak);
-    border-radius: var(--radius-md);
-    background: var(--gray-50);
-  }
-
-  .organization-package-dialog__summary div {
-    min-width: 0;
-  }
-
-  .organization-package-dialog__summary dt {
-    color: var(--gray-600);
-    font-size: var(--xs-size);
-  }
-
-  .organization-package-dialog__summary dd {
-    overflow: hidden;
-    margin: 0.35rem 0 0;
-    color: var(--gray-900);
-    font-family: 'Bold';
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .organization-package-dialog__actions {
+    align-items: stretch;
+    flex-direction: column-reverse;
+  }
+
+  .organization-package-dialog__actions .btn {
     width: 100%;
-    justify-content: flex-end;
-    gap: 0.75rem;
   }
-
-  @media (max-width: 560px) {
-    .organization-package-dialog__summary {
-      grid-template-columns: minmax(0, 1fr);
-    }
-
-    .organization-package-dialog__actions {
-      align-items: stretch;
-      flex-direction: column-reverse;
-    }
-
-    .organization-package-dialog__actions .btn {
-      width: 100%;
-    }
-  }
+}
 </style>
