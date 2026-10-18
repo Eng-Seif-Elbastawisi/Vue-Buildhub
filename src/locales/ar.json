@@ -3565,6 +3565,7 @@
   "material_disbursement.disbursement_id": "رقم عملية الصرف",
   "material_disbursement.notes": "ملاحظات (اختياري)",
   "material_disbursement.issued_items": "الأصناف المصروفة",
+  "material_disbursement.item_number": "صنف رقم {id}",
   "material_disbursement.select_items": "اختر المواد / المنتجات",
   "material_disbursement.select": "تحديد",
   "material_disbursement.select_item": "تحديد الصنف رقم {id} للصرف",

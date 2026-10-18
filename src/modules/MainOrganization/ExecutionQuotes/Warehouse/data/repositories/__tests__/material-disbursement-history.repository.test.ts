@@ -43,6 +43,29 @@ it('maps history employees with employee_type', async () => {
   expect(result.data?.[0]?.organizationEmployee.employee_type).toBe(1);
 });
 
+it('loads disbursement history when item titles are null', async () => {
+  const record = disbursementRecord();
+  post.mockResolvedValue(
+    response({
+      status: true,
+      data: [
+        {
+          ...record,
+          items: [
+            { id: 4, purchase_request_item: { id: 1, title: null }, quantity: '2.00' },
+            { id: 5, purchase_request_item: { id: 2, title: null }, quantity: '5.00' },
+          ],
+        },
+      ],
+    }),
+  );
+  const result = await MaterialDisbursementHistoryRepository.getInstance().show(
+    new FetchDisbursementsParams(140),
+  );
+  expect(result).toBeInstanceOf(DataSuccess);
+  expect(result.data?.[0]?.items.map((item) => item.purchaseRequestItem.id)).toEqual([1, 2]);
+});
+
 it('keeps an empty history response as an empty array', async () => {
   post.mockResolvedValue(response({ status: true, data: [] }));
   const result = await MaterialDisbursementHistoryRepository.getInstance().show(

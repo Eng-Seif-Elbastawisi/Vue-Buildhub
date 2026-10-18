@@ -21,7 +21,7 @@ export default class PurchaseRequestDisbursementHistoryItemModel {
     const record = responseObject(payload);
     const item = responseObject(record.purchase_request_item);
     responseId(item.id);
-    responseText(item.title);
+    if (item.title !== null) responseText(item.title);
     const quantity = responseText(record.quantity);
     if (decimalCents(quantity) === null) throw new Error('material_disbursement.invalid_response');
     return new PurchaseRequestDisbursementHistoryItemModel(

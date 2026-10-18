@@ -49,7 +49,10 @@
       <h2>{{ $t('material_disbursement.issued_items') }}</h2>
       <ul class="material-receipt__detail-items">
         <li v-for="item in disbursement.items" :key="item.id">
-          <span>{{ item.purchaseRequestItem.title }}</span
+          <span>{{
+            item.purchaseRequestItem.title ||
+            $t('material_disbursement.item_number', { id: item.purchaseRequestItem.id })
+          }}</span
           ><strong>{{ item.quantity }}</strong>
         </li>
       </ul>

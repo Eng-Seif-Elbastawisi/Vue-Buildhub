@@ -76,7 +76,11 @@ async function mountPage(locale: 'en' | 'ar' = 'en') {
       plugins: [router, PrimeVue],
       mocks: {
         $i18n: { locale },
-        $t: (key: string) => dictionary[key as keyof typeof dictionary] ?? key,
+        $t: (key: string, params?: Record<string, string | number>) =>
+          (dictionary[key as keyof typeof dictionary] ?? key).replace(
+            /\{(\w+)\}/g,
+            (placeholder, name: string) => String(params?.[name] ?? placeholder),
+          ),
       },
       stubs: {
         UpdatedCustomInputSelect: SelectStub,
@@ -159,5 +163,29 @@ it('renders Arabic RTL and read-only historical details', async () => {
   expect(wrapper.text()).toContain('Item 9');
   expect(wrapper.text()).toContain('1.50');
   expect(wrapper.text()).toContain('2.00');
+  wrapper.unmount();
+});
+
+it('renders Arabic history when purchase request item titles are null', async () => {
+  const { historySpy } = mockRead();
+  const record = disbursementRecord();
+  historySpy.mockResolvedValue(
+    new DataSuccess({
+      data: [
+        PurchaseRequestDisbursementModel.fromJson({
+          ...record,
+          items: [{ id: 4, purchase_request_item: { id: 1, title: null }, quantity: '2.00' }],
+        }),
+      ],
+    }),
+  );
+  const wrapper = await mountPage('ar');
+  expect(wrapper.text()).toContain('سجل صرف المواد');
+  expect(wrapper.text()).toContain('Receiver');
+  await wrapper
+    .findAll('button')
+    .find((button) => button.text().includes('تفاصيل'))
+    ?.trigger('click');
+  expect(wrapper.text()).toContain('صنف رقم 1');
   wrapper.unmount();
 });

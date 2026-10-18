@@ -10,7 +10,7 @@
   import MaterialDisbursementController from '../controllers/material-disbursement.controller';
   import WarehouseFeatureNav from './WarehouseFeatureNav.vue';
   import MaterialDisbursementFormDialog from './MaterialDisbursementFormDialog.vue';
-  // import MaterialDisbursementHistory from './MaterialDisbursementHistory.vue';
+  import MaterialDisbursementHistory from './MaterialDisbursementHistory.vue';
   import MaterialDisbursementDetailsDialog from './MaterialDisbursementDetailsDialog.vue';
 
   const errorStateSlots = ['failed', 'timeout', 'no-network', 'rate-limited'] as const;
@@ -161,11 +161,11 @@
         </div>
       </section>
 
-      <!-- <MaterialDisbursementHistory
+      <MaterialDisbursementHistory
         :state="controller.historyState.value"
         :retry="retryHistory"
         @details="detailId = $event"
-      /> -->
+      />
       <MaterialDisbursementFormDialog :key="quoteId" v-model:visible="dialogVisible" />
       <MaterialDisbursementDetailsDialog v-model:visible="detailVisible" :disbursement="detail" />
     </template>
