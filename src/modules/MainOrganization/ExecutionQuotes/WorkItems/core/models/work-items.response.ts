@@ -20,7 +20,8 @@ export function employeeReference(payload: unknown): EmployeeModel {
   const employee = responseObject(payload);
   responseId(employee.id);
   responseText(employee.name);
-  if (typeof employee.type !== 'number') throw new Error('work_items.invalid_response');
+  if (typeof (employee.employee_type ?? employee.type) !== 'number')
+    throw new Error('work_items.invalid_response');
   return EmployeeModel.fromJson(employee);
 }
 export function optionalEmployee(payload: unknown): EmployeeModel | null {
