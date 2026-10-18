@@ -9,6 +9,7 @@
   import MaterialReceiptHistory from './MaterialReceiptHistory.vue';
   import MaterialReceiptFormDialog from './MaterialReceiptFormDialog.vue';
   import MaterialReceiptDetailsDialog from './MaterialReceiptDetailsDialog.vue';
+  import WarehouseFeatureNav from './WarehouseFeatureNav.vue';
 
   const route = useRoute();
   const controller = MaterialReceiptController.getInstance();
@@ -60,6 +61,8 @@
           <i class="pi pi-plus" aria-hidden="true" />{{ $t('material_receipt.new_receipt') }}
         </AppButton>
       </header>
+
+      <WarehouseFeatureNav :quote-id="quoteId" :current-path="route.path" active="receipt" />
 
       <MaterialReceiptHistory
         :state="controller.historyState.value"

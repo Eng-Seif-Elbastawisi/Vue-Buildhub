@@ -6,6 +6,10 @@ it('reuses EmployeeModel mapping of {id,name,type}', () => {
   expect(employee).toBeInstanceOf(EmployeeModel);
   expect(employee.employee_type).toBe(2);
 });
+it('accepts employee_type from employee API references', () => {
+  const employee = employeeReference({ id: 7, name: 'Assignee', employee_type: 2 });
+  expect(employee.employee_type).toBe(2);
+});
 it.each([null, [], { id: 0, name: 'Name', type: 1 }, { id: 1, name: 'Name' }])(
   'rejects malformed employee reference',
   (payload) => expect(() => employeeReference(payload)).toThrow('work_items.invalid_response'),

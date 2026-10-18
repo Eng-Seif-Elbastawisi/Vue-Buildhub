@@ -4,3 +4,9 @@ export { default as MaterialReceiptHistoryRepository } from './data/repositories
 export { default as MaterialReceiptApiService } from './data/api/material-receipt.api-service';
 export { default as PurchaseRequestReceiptItemSummaryModel } from './core/models/purchase-request-receipt-item-summary.model';
 export { default as PurchaseRequestReceiptModel } from './core/models/purchase-request-receipt.model';
+export { default as MaterialDisbursementController } from './presentation/controllers/material-disbursement.controller';
+export { default as MaterialDisbursementRepository } from './data/repositories/material-disbursement.repository';
+export { default as MaterialDisbursementHistoryRepository } from './data/repositories/material-disbursement-history.repository';
+export { default as MaterialDisbursementApiService } from './data/api/material-disbursement.api-service';
+export { default as DisbursementStockModel } from './core/models/disbursement-stock.model';
+export { default as PurchaseRequestDisbursementModel } from './core/models/purchase-request-disbursement.model';
