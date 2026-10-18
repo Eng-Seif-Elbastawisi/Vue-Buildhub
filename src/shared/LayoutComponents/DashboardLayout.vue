@@ -48,7 +48,7 @@
     position: fixed;
     inset-block: 0;
     inset-inline-start: 0;
-    z-index: 1200;
+    z-index: var(--bh-z-rail);
     width: 0;
     min-height: 100vh;
     pointer-events: none;

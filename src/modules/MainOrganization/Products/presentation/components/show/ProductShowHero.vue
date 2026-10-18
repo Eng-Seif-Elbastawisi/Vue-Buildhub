@@ -119,7 +119,7 @@
 
     <div class="hero-info">
       <div class="hero-meta">
-        <span class="status-pill" :class="product.isActive ? 'is-active' : 'is-inactive'">
+        <span class="status-pill bh-status" :class="product.isActive ? 'is-active' : 'is-inactive'">
           <span class="status-dot" aria-hidden="true"></span>
           {{ product.isActive ? $t('Products.form.active') : $t('Products.form.inactive') }}
         </span>

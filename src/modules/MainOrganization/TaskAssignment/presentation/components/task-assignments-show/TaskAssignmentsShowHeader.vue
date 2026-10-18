@@ -67,7 +67,7 @@ const lastUpdatedAt = computed(() => model?.histories?.[0]?.created_at);
     <div v-if="model" class="task-status-summary">
       <span class="task-status-summary__label">{{ $t('status') }}</span>
 
-      <span class="task-status-chip" :class="statusMeta.className">
+      <span class="task-status-chip bh-status" :class="statusMeta.className">
         <span class="task-status-chip__icon" aria-hidden="true">
           <i :class="statusMeta.icon" />
         </span>

@@ -16,6 +16,8 @@
   }
 
   .main-content {
+    // Inline fixed dialogs must not be trapped beneath the shell navigation.
+    z-index: auto;
     width: 100%;
     max-width: var(--bh-content-max);
     min-height: calc(100dvh - var(--bh-header-height) - var(--bh-context-height));
@@ -28,7 +30,7 @@
     position: fixed;
     inset-block-start: 0;
     inset-inline: var(--bh-rail-width) 0;
-    z-index: 1100;
+    z-index: var(--bh-z-header);
     width: auto;
     height: var(--bh-header-height);
     min-height: var(--bh-header-height);

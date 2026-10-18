@@ -133,7 +133,7 @@
   .header {
     position: sticky;
     inset-block-start: 12px;
-    z-index: 1100;
+    z-index: var(--bh-z-header);
     isolation: isolate;
     width: auto;
     min-height: 76px;
@@ -279,6 +279,7 @@
   }
 
   .user {
+    z-index: 2;
     position: relative;
     margin-inline-start: 6px;
     padding-inline-start: 14px;

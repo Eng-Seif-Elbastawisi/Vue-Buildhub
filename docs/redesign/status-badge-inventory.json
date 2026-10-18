@@ -1,0 +1,421 @@
+{
+  "scannedVueFiles": 696,
+  "migratedOwners": 32,
+  "badgePositions": 36,
+  "owners": [
+    {
+      "component": "src/modules/MainAdmin/package/presentation/components/PackageIndex.vue",
+      "classes": ["feature-status"],
+      "badges": 2
+    },
+    {
+      "component": "src/modules/MainOrganization/ExecutionQuotes/Procurement/presentation/components/ProcurementPage.vue",
+      "classes": ["procurement-status"],
+      "badges": 1
+    },
+    {
+      "component": "src/modules/MainOrganization/ExecutionQuotes/Procurement/presentation/components/PurchaseOrderDetails.vue",
+      "classes": ["procurement-status"],
+      "badges": 1
+    },
+    {
+      "component": "src/modules/MainOrganization/ExecutionQuotes/Schedule/presentation/components/ProjectManagementShortcut.vue",
+      "classes": ["project-shortcut__badge"],
+      "badges": 1
+    },
+    {
+      "component": "src/modules/MainOrganization/ExecutionQuotes/Warehouse/presentation/components/MaterialReceiptHistory.vue",
+      "classes": ["material-receipt__status"],
+      "badges": 1
+    },
+    {
+      "component": "src/modules/MainOrganization/ExecutionQuotes/WorkItems/presentation/components/DailyReportsList.vue",
+      "classes": ["work-items-badge"],
+      "badges": 1
+    },
+    {
+      "component": "src/modules/MainOrganization/ExecutionQuotes/presentation/components/ExecutionQuoteIndex.vue",
+      "classes": ["execution-quote-index__client-status", "execution-quote-index__progress-status"],
+      "badges": 2
+    },
+    {
+      "component": "src/modules/MainOrganization/ExecutionQuotes/presentation/components/ExecutionQuoteShow.vue",
+      "classes": ["execution-quote-show__status"],
+      "badges": 1
+    },
+    {
+      "component": "src/modules/MainOrganization/ExecutionQuotes/presentation/components/builder/ExecutionQuoteMainStages.vue",
+      "classes": ["stage-card__status"],
+      "badges": 1
+    },
+    {
+      "component": "src/modules/MainOrganization/ExecutionQuotes/presentation/components/builder/ExecutionQuoteStageHeader.vue",
+      "classes": ["stage-header__status"],
+      "badges": 1
+    },
+    {
+      "component": "src/modules/MainOrganization/Invoice/presentation/components/InvoiceIndex.vue",
+      "classes": ["invoice-status-badge"],
+      "badges": 1
+    },
+    {
+      "component": "src/modules/MainOrganization/Invoice/presentation/components/invoice_show/InvoiceChildrenCard.vue",
+      "classes": ["invoice-status-badge"],
+      "badges": 1
+    },
+    {
+      "component": "src/modules/MainOrganization/Invoice/presentation/components/invoice_show/InvoicePaymentsCard.vue",
+      "classes": ["invoice-payments-card__status"],
+      "badges": 1
+    },
+    {
+      "component": "src/modules/MainOrganization/Invoice/presentation/components/invoice_show/InvoiceShowHeader.vue",
+      "classes": ["invoice-show-status-pill"],
+      "badges": 1
+    },
+    {
+      "component": "src/modules/MainOrganization/Labors/presentation/components/LaborIndex.vue",
+      "classes": ["status-badge"],
+      "badges": 2
+    },
+    {
+      "component": "src/modules/MainOrganization/Package/presentation/components/OrganizationPackageCard.vue",
+      "classes": ["organization-package-card__status"],
+      "badges": 1
+    },
+    {
+      "component": "src/modules/MainOrganization/Package/presentation/components/OrganizationPackageSubscriptionsTable.vue",
+      "classes": ["package-subscription-status"],
+      "badges": 1
+    },
+    {
+      "component": "src/modules/MainOrganization/Products/presentation/components/ProductsIndex.vue",
+      "classes": ["status-badge"],
+      "badges": 1
+    },
+    {
+      "component": "src/modules/MainOrganization/Products/presentation/components/show/ProductShowHero.vue",
+      "classes": ["status-pill"],
+      "badges": 1
+    },
+    {
+      "component": "src/modules/MainOrganization/Products/presentation/components/show/ProductShowInfo.vue",
+      "classes": ["status-pill"],
+      "badges": 1
+    },
+    {
+      "component": "src/modules/MainOrganization/Project/presentation/components/GlobalProjectSearch.vue",
+      "classes": ["status-badge"],
+      "badges": 1
+    },
+    {
+      "component": "src/modules/MainOrganization/Project/presentation/components/ProjectHistory.vue",
+      "classes": ["status-badge"],
+      "badges": 1
+    },
+    {
+      "component": "src/modules/MainOrganization/Project/presentation/components/ProjectIndex.vue",
+      "classes": ["status-badge"],
+      "badges": 1
+    },
+    {
+      "component": "src/modules/MainOrganization/Project/presentation/components/project_show/ProjectFloorsSection.vue",
+      "classes": ["status-badge"],
+      "badges": 1
+    },
+    {
+      "component": "src/modules/MainOrganization/Project/presentation/components/project_show/ProjectInfoSection.vue",
+      "classes": ["status-badge"],
+      "badges": 1
+    },
+    {
+      "component": "src/modules/MainOrganization/Project/presentation/components/project_show/ProjectShowHeader.vue",
+      "classes": ["status-badge"],
+      "badges": 1
+    },
+    {
+      "component": "src/modules/MainOrganization/TaskAssignment/presentation/components/TaskApprovedIndex.vue",
+      "classes": ["assignment-status"],
+      "badges": 1
+    },
+    {
+      "component": "src/modules/MainOrganization/TaskAssignment/presentation/components/task-assignments-show/TaskAssignmentsShowDetails.vue",
+      "classes": ["status-badge"],
+      "badges": 2
+    },
+    {
+      "component": "src/modules/MainOrganization/TaskAssignment/presentation/components/task-assignments-show/TaskAssignmentsShowHeader.vue",
+      "classes": ["task-status-chip"],
+      "badges": 1
+    },
+    {
+      "component": "src/modules/MainOrganization/TaskAssignment/presentation/components/task-assignments-show/TaskAssignmentsShowHistory.vue",
+      "classes": ["status-badge"],
+      "badges": 1
+    },
+    {
+      "component": "src/modules/MainOrganization/ExecutionQuotes/presentation/components/ExecutionQuoteForm.vue",
+      "classes": ["quote-hero__badge"],
+      "badges": 1
+    },
+    {
+      "component": "src/modules/MainOrganization/ExecutionQuotes/presentation/components/QuoteStatusBadge.vue",
+      "classes": ["quote-status-badge"],
+      "badges": 1,
+      "migration": "Shared StatusBadge wrapper; existing status prop and mappings preserved"
+    }
+  ],
+  "modules": {
+    "MainAdmin/admin": {
+      "vueFiles": 4,
+      "migratedOwners": []
+    },
+    "MainAdmin/auth_admin": {
+      "vueFiles": 3,
+      "migratedOwners": []
+    },
+    "MainAdmin/package": {
+      "vueFiles": 6,
+      "migratedOwners": ["src/modules/MainAdmin/package/presentation/components/PackageIndex.vue"]
+    },
+    "MainOrganization/AttachmentType": {
+      "vueFiles": 4,
+      "migratedOwners": []
+    },
+    "MainOrganization/ChangeStatus": {
+      "vueFiles": 2,
+      "migratedOwners": []
+    },
+    "MainOrganization/Contractor": {
+      "vueFiles": 5,
+      "migratedOwners": []
+    },
+    "MainOrganization/ExecutionQuotes": {
+      "vueFiles": 76,
+      "migratedOwners": [
+        "src/modules/MainOrganization/ExecutionQuotes/Procurement/presentation/components/ProcurementPage.vue",
+        "src/modules/MainOrganization/ExecutionQuotes/Procurement/presentation/components/PurchaseOrderDetails.vue",
+        "src/modules/MainOrganization/ExecutionQuotes/Schedule/presentation/components/ProjectManagementShortcut.vue",
+        "src/modules/MainOrganization/ExecutionQuotes/Warehouse/presentation/components/MaterialReceiptHistory.vue",
+        "src/modules/MainOrganization/ExecutionQuotes/WorkItems/presentation/components/DailyReportsList.vue",
+        "src/modules/MainOrganization/ExecutionQuotes/presentation/components/ExecutionQuoteIndex.vue",
+        "src/modules/MainOrganization/ExecutionQuotes/presentation/components/ExecutionQuoteShow.vue",
+        "src/modules/MainOrganization/ExecutionQuotes/presentation/components/builder/ExecutionQuoteMainStages.vue",
+        "src/modules/MainOrganization/ExecutionQuotes/presentation/components/builder/ExecutionQuoteStageHeader.vue",
+        "src/modules/MainOrganization/ExecutionQuotes/presentation/components/ExecutionQuoteForm.vue",
+        "src/modules/MainOrganization/ExecutionQuotes/presentation/components/QuoteStatusBadge.vue"
+      ]
+    },
+    "MainOrganization/Invoice": {
+      "vueFiles": 22,
+      "migratedOwners": [
+        "src/modules/MainOrganization/Invoice/presentation/components/InvoiceIndex.vue",
+        "src/modules/MainOrganization/Invoice/presentation/components/invoice_show/InvoiceChildrenCard.vue",
+        "src/modules/MainOrganization/Invoice/presentation/components/invoice_show/InvoicePaymentsCard.vue",
+        "src/modules/MainOrganization/Invoice/presentation/components/invoice_show/InvoiceShowHeader.vue"
+      ]
+    },
+    "MainOrganization/InvoicePayment": {
+      "vueFiles": 4,
+      "migratedOwners": []
+    },
+    "MainOrganization/ItemTypes": {
+      "vueFiles": 4,
+      "migratedOwners": []
+    },
+    "MainOrganization/Labors": {
+      "vueFiles": 4,
+      "migratedOwners": [
+        "src/modules/MainOrganization/Labors/presentation/components/LaborIndex.vue"
+      ]
+    },
+    "MainOrganization/Organization": {
+      "vueFiles": 1,
+      "migratedOwners": []
+    },
+    "MainOrganization/Package": {
+      "vueFiles": 5,
+      "migratedOwners": [
+        "src/modules/MainOrganization/Package/presentation/components/OrganizationPackageCard.vue",
+        "src/modules/MainOrganization/Package/presentation/components/OrganizationPackageSubscriptionsTable.vue"
+      ]
+    },
+    "MainOrganization/Products": {
+      "vueFiles": 11,
+      "migratedOwners": [
+        "src/modules/MainOrganization/Products/presentation/components/ProductsIndex.vue",
+        "src/modules/MainOrganization/Products/presentation/components/show/ProductShowHero.vue",
+        "src/modules/MainOrganization/Products/presentation/components/show/ProductShowInfo.vue"
+      ]
+    },
+    "MainOrganization/Project": {
+      "vueFiles": 26,
+      "migratedOwners": [
+        "src/modules/MainOrganization/Project/presentation/components/GlobalProjectSearch.vue",
+        "src/modules/MainOrganization/Project/presentation/components/ProjectHistory.vue",
+        "src/modules/MainOrganization/Project/presentation/components/ProjectIndex.vue",
+        "src/modules/MainOrganization/Project/presentation/components/project_show/ProjectFloorsSection.vue",
+        "src/modules/MainOrganization/Project/presentation/components/project_show/ProjectInfoSection.vue",
+        "src/modules/MainOrganization/Project/presentation/components/project_show/ProjectShowHeader.vue"
+      ]
+    },
+    "MainOrganization/ProjectFloor": {
+      "vueFiles": 6,
+      "migratedOwners": []
+    },
+    "MainOrganization/ProjectItem": {
+      "vueFiles": 5,
+      "migratedOwners": []
+    },
+    "MainOrganization/ProjectPricing": {
+      "vueFiles": 4,
+      "migratedOwners": []
+    },
+    "MainOrganization/QuoteTypes": {
+      "vueFiles": 6,
+      "migratedOwners": []
+    },
+    "MainOrganization/Specialization": {
+      "vueFiles": 4,
+      "migratedOwners": []
+    },
+    "MainOrganization/Suppliers": {
+      "vueFiles": 4,
+      "migratedOwners": []
+    },
+    "MainOrganization/TaskAssignment": {
+      "vueFiles": 12,
+      "migratedOwners": [
+        "src/modules/MainOrganization/TaskAssignment/presentation/components/TaskApprovedIndex.vue",
+        "src/modules/MainOrganization/TaskAssignment/presentation/components/task-assignments-show/TaskAssignmentsShowDetails.vue",
+        "src/modules/MainOrganization/TaskAssignment/presentation/components/task-assignments-show/TaskAssignmentsShowHeader.vue",
+        "src/modules/MainOrganization/TaskAssignment/presentation/components/task-assignments-show/TaskAssignmentsShowHistory.vue"
+      ]
+    },
+    "MainOrganization/Term": {
+      "vueFiles": 4,
+      "migratedOwners": []
+    },
+    "MainOrganization/Warehouse": {
+      "vueFiles": 5,
+      "migratedOwners": []
+    },
+    "MainOrganization/auth_organization": {
+      "vueFiles": 3,
+      "migratedOwners": []
+    },
+    "MainOrganization/client": {
+      "vueFiles": 4,
+      "migratedOwners": []
+    },
+    "MainOrganization/employee": {
+      "vueFiles": 4,
+      "migratedOwners": []
+    },
+    "auth": {
+      "vueFiles": 7,
+      "migratedOwners": []
+    },
+    "country": {
+      "vueFiles": 6,
+      "migratedOwners": []
+    },
+    "home": {
+      "vueFiles": 1,
+      "migratedOwners": []
+    },
+    "shared/Brand": {
+      "vueFiles": 5,
+      "migratedOwners": []
+    },
+    "shared/ClientSource": {
+      "vueFiles": 6,
+      "migratedOwners": []
+    },
+    "shared/Department": {
+      "vueFiles": 4,
+      "migratedOwners": []
+    },
+    "shared/Item": {
+      "vueFiles": 4,
+      "migratedOwners": []
+    },
+    "shared/Materials": {
+      "vueFiles": 5,
+      "migratedOwners": []
+    },
+    "shared/Organization": {
+      "vueFiles": 4,
+      "migratedOwners": []
+    },
+    "shared/PricePercentage": {
+      "vueFiles": 1,
+      "migratedOwners": []
+    },
+    "shared/ProjectType": {
+      "vueFiles": 4,
+      "migratedOwners": []
+    },
+    "shared/Space": {
+      "vueFiles": 4,
+      "migratedOwners": []
+    },
+    "shared/Stages": {
+      "vueFiles": 10,
+      "migratedOwners": []
+    },
+    "shared/SystemIdentity": {
+      "vueFiles": 2,
+      "migratedOwners": []
+    },
+    "shared/Term": {
+      "vueFiles": 4,
+      "migratedOwners": []
+    },
+    "shared/location": {
+      "vueFiles": 12,
+      "migratedOwners": []
+    },
+    "shared/measurement": {
+      "vueFiles": 6,
+      "migratedOwners": []
+    },
+    "shared/supply": {
+      "vueFiles": 4,
+      "migratedOwners": []
+    }
+  },
+  "excludedKinds": [
+    "Navigation/count badges",
+    "Filter chips and selection controls",
+    "Progress bars, workflow counts and timeline markers",
+    "Site/team selected-count labels",
+    "Work-item type and drawing-version metadata",
+    "Project/service/category labels and dates",
+    "Form-toggle labels and feedback banners",
+    "Skeletons, loading/error/connection indicators",
+    "Invoice status summary metric text (not a badge)"
+  ],
+  "preservedMappingNotes": [
+    "Project numeric status colors are retained, including existing brand and green mappings for pre-execution states.",
+    "Task review header stays purple; task review history stays blue, matching existing distinct styles.",
+    "Warehouse partial receipts retain their existing brand color.",
+    "The stage builder header already styles both Active and Inactive labels green; this existing mapping is preserved."
+  ],
+  "verification": {
+    "sharedAndQuoteTests": {
+      "passed": 6,
+      "failed": 0
+    },
+    "moduleInteractionTests": {
+      "passed": 30,
+      "failed": 1,
+      "baselineProcurementFailureReproduced": true
+    },
+    "typeCheck": "passed",
+    "viteBundle": "passed",
+    "targetedStylelint": "passed",
+    "changedOwnerEslint": "two pre-existing ProductsIndex unused declarations and one pre-existing ProjectIndex warning; no new errors",
+    "liveBackendVerified": false
+  }
+}

@@ -88,7 +88,7 @@
 
 .email-crud-example {
   padding: 0;
-  padding-block: 20px;
+  // padding-block: 20px;
 }
 
 .actions {

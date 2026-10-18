@@ -180,7 +180,7 @@
           </template>
 
           <template #cell-status="{ item }">
-            <span class="invoice-status-badge" :class="statusClassFor(item)">
+            <span class="invoice-status-badge bh-status" :class="statusClassFor(item)">
               {{ statusLabelFor(item) }}
             </span>
           </template>

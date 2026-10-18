@@ -49,7 +49,7 @@ const historyStatusClass = (status?: InsideStatusType): string => {
               <span class="detail-label">{{ $t('status') }}</span>
               <span class="detail-value">
                 <span
-                  class="status-badge status-badge--history task-assignment-show__history-status"
+                  class="status-badge status-badge--history task-assignment-show__history-status bh-status"
                   :class="historyStatusClass(history.status)"
                 >
                   {{ $t(getTypeNameKey(history.status ?? 1)) }}

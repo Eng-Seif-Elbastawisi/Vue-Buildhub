@@ -90,6 +90,21 @@
       "mixin": "src/styles/_workspace-glass.scss",
       "fallback": "Opaque workspace surface without backdrop support or with reduced transparency",
       "scope": "Shared index and feature/page-intro headings, supporting buttons, invoice/project/execution quote detail heroes"
+    },
+    "statusBadges": {
+      "height": "22px",
+      "radius": "6px",
+      "padding": "2px 8px",
+      "font": "12px/18px, 600",
+      "success": "#16803f",
+      "danger": "#c83d46",
+      "warning": "#efb74b / #443006",
+      "info": "#2b62bf",
+      "neutral": "#e2e5ea / #485366",
+      "darkNeutral": "#354052 / #edf2fa",
+      "recipe": "src/styles/_status-badges.scss",
+      "component": "src/shared/ConstructionStates/StatusBadge.vue",
+      "coverage": "docs/redesign/STATUS_BADGES.md"
     }
   },
   "components": [

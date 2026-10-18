@@ -161,7 +161,7 @@
 
       <span
         v-if="subscription && statusLabelKey"
-        class="organization-package-card__status"
+        class="organization-package-card__status bh-status"
         :class="statusClass"
       >
         {{ $t(statusLabelKey) }}

@@ -589,7 +589,7 @@
                     <p>{{ $t('execution_quote.show.client_section_hint') }}</p>
                   </div>
                   <span
-                    class="execution-quote-show__status"
+                    class="execution-quote-show__status bh-status"
                     :class="{
                       'execution-quote-show__status--active': quote.client?.status === 1,
                     }"
@@ -2044,24 +2044,62 @@
 }
 
 .execution-quote-show .workspace-project-details {
-  border: 0;
+  border: 1px solid var(--bh-line);
   border-radius: var(--bh-radius-card);
   background: var(--bh-surface);
 }
 
 .execution-quote-show .workspace-project-details > summary {
-  color: var(--bh-text);
-  background: var(--bh-surface);
+  min-height: 80px;
+  padding: var(--bh-space-5);
+  gap: var(--bh-space-4);
   border: 0;
-  border-radius: var(--bh-radius-card);
+  border-radius: inherit;
+  background: var(--PrimaryColor);
+  color: var(--button-primary-color, var(--bh-on-active));
+  font-family: var(--bh-font);
+  font-size: var(--bh-text-xl);
+  font-weight: 700;
+}
+
+.execution-quote-show .workspace-project-details > summary:hover {
+  background: color-mix(in sRGB, var(--PrimaryColor) 88%, var(--button-primary-color));
+}
+
+.execution-quote-show .workspace-project-details > summary:focus-visible {
+  outline: 2px solid var(--bh-focus);
+  outline-offset: 3px;
+}
+
+.execution-quote-show .workspace-project-details[open] > summary {
+  border-end-start-radius: 0;
+  border-end-end-radius: 0;
+  border-block-end: 1px solid var(--bh-line);
 }
 
 .execution-quote-show .workspace-project-details__icon,
 .execution-quote-show .workspace-project-details__toggle {
-  color: var(--bh-blue-ink);
-  border: 0;
-  background: var(--bh-blue-soft);
-  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: var(--button-primary-color, var(--bh-on-active));
+  border: 1px solid color-mix(in sRGB, var(--button-primary-color) 24%, transparent);
+  border-radius: var(--bh-radius-control);
+  background: color-mix(in sRGB, var(--button-primary-color) 10%, transparent);
+}
+
+.execution-quote-show .workspace-project-details__toggle {
+  width: 32px;
+  height: 32px;
+  font-size: var(--bh-text-xs);
+}
+
+@media (max-width: 640px) {
+  .execution-quote-show .workspace-project-details > summary {
+    min-height: 72px;
+    padding: var(--bh-space-4);
+    gap: var(--bh-space-3);
+    font-size: var(--bh-text-lg);
+  }
 }
 
 .execution-quote-show .execution-quote-show__stage-card {

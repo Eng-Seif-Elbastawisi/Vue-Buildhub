@@ -82,7 +82,7 @@
                     number: invoice.invoice_number || invoice.id,
                   })
                 }}
-                <span class="invoice-show-status-pill" :class="statusClass">
+                <span class="invoice-show-status-pill bh-status" :class="statusClass">
                   <i class="pi pi-check-circle" aria-hidden="true"></i>
                   {{ statusLabel }}
                 </span>

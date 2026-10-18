@@ -85,7 +85,7 @@
                   <td>{{ receipt.organizationEmployee.name }}</td>
                   <td>
                     <span
-                      class="material-receipt__status"
+                      class="material-receipt__status bh-status"
                       :class="
                         receipt.status === 2
                           ? 'material-receipt__status--complete'

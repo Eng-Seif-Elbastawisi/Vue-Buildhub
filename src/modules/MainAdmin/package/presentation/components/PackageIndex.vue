@@ -172,7 +172,7 @@
           <!-- Mobile -->
           <template #cell-hasmobild="{ item }">
             <span
-              class="feature-status"
+              class="feature-status bh-status"
               :class="
                 getBooleanFeature(item, FeaturesKEY.HAS_MOBILE)
                   ? 'feature-status--active'
@@ -197,7 +197,7 @@
           <!-- Portal -->
           <template #cell-hasportal="{ item }">
             <span
-              class="feature-status"
+              class="feature-status bh-status"
               :class="
                 getBooleanFeature(item, FeaturesKEY.HAS_PORTAL)
                   ? 'feature-status--active'

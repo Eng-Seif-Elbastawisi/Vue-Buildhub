@@ -365,7 +365,7 @@
 
     position: fixed;
     inset: 0;
-    z-index: 1500;
+    z-index: var(--bh-z-mobile-drawer);
     display: flex;
     justify-content: flex-start;
     background: var(--quote-overlay);

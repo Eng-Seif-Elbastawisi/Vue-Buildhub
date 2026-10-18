@@ -73,7 +73,7 @@
     top: 0;
     left: 0;
     right: 0;
-    z-index: 1400;
+    z-index: var(--bh-z-mobile-header);
     display: none;
     align-items: center;
     justify-content: space-between;

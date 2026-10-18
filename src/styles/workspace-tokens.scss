@@ -59,18 +59,46 @@
   --bh-radius-pill: 999px;
   --bh-shadow-popover: 0 12px 36px rgb(16 20 26 / 12%);
   --bh-shadow-dialog: 0 24px 72px rgb(16 20 26 / 20%);
+  /* Shell layers stay below custom dialogs (1000+) and PrimeVue overlays. */
+  --bh-z-context-nav: 100;
+  --bh-z-rail: 110;
+  --bh-z-header: 120;
+  --bh-z-mobile-header: 140;
+  --bh-z-mobile-drawer: 900;
   --bh-rail-width: 80px;
   --bh-header-height: 78px;
   --bh-context-height: 60px;
   --bh-content-gap: clamp(1rem, 2.2vw, 2rem);
   --bh-content-max: 1600px;
   --bh-control-height: 44px;
+  --bh-status-height: 22px;
+  --bh-status-radius: 6px;
+  --bh-status-padding: 8px;
+  --bh-status-font-size: 12px;
+  --bh-status-success-bg: #16803f;
+  --bh-status-danger-bg: #c83d46;
+  --bh-status-warning-bg: #efb74b;
+  --bh-status-warning-fg: #443006;
+  --bh-status-info-bg: #2b62bf;
+  --bh-status-review-bg: #6d28d9;
+  --bh-status-neutral-bg: #e2e5ea;
+  --bh-status-neutral-fg: #485366;
+  --bh-status-on-solid: var(--bh-neutral-0);
+  --bh-status-success-ink: var(--bh-green-ink);
+  --bh-status-danger-ink: var(--bh-coral-ink);
+  --bh-status-warning-ink: var(--bh-amber-ink);
+  --bh-status-info-ink: var(--bh-blue-ink);
+  --bh-status-review-ink: #6d28d9;
+  --bh-status-neutral-ink: var(--bh-muted);
   --bh-motion-fast: 140ms;
   --bh-motion-base: 200ms;
   --bh-ease: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 :root.dark {
+  --bh-status-review-ink: #c4b5fd;
+  --bh-status-neutral-bg: #354052;
+  --bh-status-neutral-fg: #edf2fa;
   --bh-canvas: #171e29;
   --bh-surface: #202a38;
   --bh-surface-raised: #283444;

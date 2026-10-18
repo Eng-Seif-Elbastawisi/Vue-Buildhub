@@ -46,7 +46,7 @@ const childrenCount = (stage: StageModel) => {
         @click="emit('open', stage)"
       >
         <span class="stage-card__topline">
-          <span class="stage-card__status" :class="{ 'stage-card__status--active': stage.status }">
+          <span class="stage-card__status bh-status" :class="{ 'stage-card__status--active': stage.status }">
             {{ stage.status ? $t('active') : $t('inactive') }}
           </span>
           <span class="stage-card__children">

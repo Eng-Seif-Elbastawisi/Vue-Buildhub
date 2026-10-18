@@ -32,7 +32,7 @@
       <div class="stage-header__meta">
         <span class="stage-header__badge">{{ $t('execution_quote.stage_details') }}</span>
         <span v-if="quoteTypeTitle" class="stage-header__type">{{ quoteTypeTitle }}</span>
-        <span v-if="active !== undefined" class="stage-header__status">
+        <span v-if="active !== undefined" class="stage-header__status bh-status">
           {{ active ? $t('active') : $t('inactive') }}
         </span>
       </div>

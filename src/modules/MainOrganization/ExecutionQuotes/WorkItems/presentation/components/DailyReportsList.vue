@@ -30,7 +30,7 @@
       <li v-for="report in reports" :key="report.id">
         <div class="work-items-record-heading">
           <h3>{{ report.date }}</h3>
-          <span class="work-items-badge" :class="`work-items-safety-${report.siteSafetyStatus}`">{{
+          <span class="work-items-badge bh-status" :class="`work-items-safety-${report.siteSafetyStatus}`">{{
             $t(`work_items.safety_${report.siteSafetyStatus}`)
           }}</span>
         </div>

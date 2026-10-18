@@ -662,7 +662,7 @@
 
           <template #cell-status="{ item: product }">
             <div class="product-cell product-status">
-              <span class="status-badge" :class="product.status ? 'is-active' : 'is-inactive'">
+              <span class="status-badge bh-status" :class="product.status ? 'is-active' : 'is-inactive'">
                 <span class="status-dot" aria-hidden="true"></span>
                 {{ product.status ? $t('Products.form.active') : $t('Products.form.inactive') }}
               </span>

@@ -385,7 +385,7 @@
 
               <td>
                 <span
-                  class="status-badge status-badge--inline"
+                  class="status-badge status-badge--inline bh-status"
                   :class="getStatusMeta(floor.status).className"
                 >
                   {{ Number(floor.status) === 1 ? completedLabel : inProgressLabel }}

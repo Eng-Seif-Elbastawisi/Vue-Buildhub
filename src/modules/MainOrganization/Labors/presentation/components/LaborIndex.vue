@@ -525,7 +525,7 @@
 
           <template #cell-pricingMode="{ item }">
             <div class="pricing-mode">
-              <span :class="['status-badge', item.pricingMode]">
+              <span class="bh-status" :class="['status-badge', item.pricingMode]">
                 {{ $t(`labor.${item.pricingMode}`) }}
               </span>
               <span v-if="item.pricingMode === 'configured'" class="configured-rate">
@@ -539,7 +539,7 @@
           </template>
 
           <template #cell-mappingReady="{ item }">
-            <span :class="['status-badge', item.mappingReady ? 'ready' : 'not-ready']">
+            <span class="bh-status" :class="['status-badge', item.mappingReady ? 'ready' : 'not-ready']">
               {{ $t(item.mappingReady ? 'labor.ready' : 'labor.not_ready') }}
             </span>
           </template>

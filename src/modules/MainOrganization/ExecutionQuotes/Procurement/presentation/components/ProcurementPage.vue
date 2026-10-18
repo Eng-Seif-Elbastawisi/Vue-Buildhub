@@ -265,7 +265,7 @@
                       <td>{{ request.createdAt ?? $t('procurement.unavailable') }}</td>
                       <td>
                         <span
-                          class="procurement-status"
+                          class="procurement-status bh-status"
                           :class="`procurement-status--${request.status}`"
                           >{{ $t(statusKey(request.status)) }}</span
                         >

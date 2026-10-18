@@ -1,6 +1,16 @@
 import { definePreset } from '@primeuix/themes';
 import Aura from '@primeuix/themes/aura';
 
+const statusTagColors = {
+  primary: { background: 'var(--PrimaryColor)', color: 'var(--button-primary-color)' },
+  secondary: { background: 'var(--bh-status-neutral-bg)', color: 'var(--bh-status-neutral-fg)' },
+  success: { background: 'var(--bh-status-success-bg)', color: 'var(--bh-status-on-solid)' },
+  info: { background: 'var(--bh-status-info-bg)', color: 'var(--bh-status-on-solid)' },
+  warn: { background: 'var(--bh-status-warning-bg)', color: 'var(--bh-status-warning-fg)' },
+  danger: { background: 'var(--bh-status-danger-bg)', color: 'var(--bh-status-on-solid)' },
+  contrast: { background: 'var(--bh-active)', color: 'var(--bh-on-active)' },
+};
+
 const identityColors = {
   primary: {
     color: 'var(--PrimaryColor)',
@@ -132,6 +142,21 @@ export default definePreset(Aura, {
     },
   },
   components: {
+    tag: {
+      root: {
+        fontSize: 'var(--bh-status-font-size)',
+        fontWeight: '600',
+        padding: '2px var(--bh-status-padding)',
+        gap: '4px',
+        borderRadius: 'var(--bh-status-radius)',
+        roundedBorderRadius: 'var(--bh-status-radius)',
+      },
+      icon: { size: '12px' },
+      colorScheme: {
+        light: statusTagColors,
+        dark: statusTagColors,
+      },
+    },
     checkbox: {
       root: { ...selectionColors, borderRadius: '0.375rem' },
       icon: { checkedColor: 'var(--bh-on-active)', checkedHoverColor: 'var(--bh-on-active)' },

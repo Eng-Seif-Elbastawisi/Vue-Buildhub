@@ -630,7 +630,7 @@
           <!-- =================================================== -->
 
           <template #cell-status="{ item }">
-            <span v-if="item.status" class="status-badge" :class="`status-${item.status}`">
+            <span v-if="item.status" class="status-badge bh-status" :class="`status-${item.status}`">
               {{ $t(getConvertStatusNameKey(item.status)) }}
             </span>
 

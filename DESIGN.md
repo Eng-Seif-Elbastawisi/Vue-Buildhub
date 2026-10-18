@@ -278,3 +278,19 @@ The execution quote hero also retains the glass surface with matching title scal
 `_workspace-intro.scss` is the single owner of `.procurement-header.procurement-intro`, `.procurement-intro-copy` and the intro back link. Procurement and both project Warehouse pages import it; Warehouse no longer carries a separate intro implementation. The existing Procurement surface uses workspace colors, 24px corners, 28px/32px desktop padding and 24px mobile padding, with responsive primary actions. Receipt-page identity is translated with the existing `material_receipt.warehouse` key; Material Receipt remains the receiving tab and breadcrumb context. Material Disbursement keeps its feature title.
 
 The dashboard hides its automatic FeatureHeader when the page provides this intro, following the existing own-header rule for index pages. Project navigation, Warehouse tabs, back links and action bindings remain intact. See [Warehouse intro verification](docs/redesign/warehouse-intro-verification.json); browser checks use empty API fixtures, not live CRUD data.
+
+### Project details disclosure contrast
+
+The execution quote's native `details` summary uses the existing Primary/primary-foreground pair for a distinct, high-contrast section header. Its title uses the shared type scale at weight 700, with a 44px document frame, a 32px chevron frame and the shared control radius. Open state squares the lower corners and separates the summary from the unchanged body. Hover, keyboard focus and native Enter/Space disclosure remain available; mobile reduces padding and title size. See [verification](docs/redesign/project-details-header-verification.json). The focused quote suite has seven failures also reproduced against the pre-change component; this refinement does not resolve those baseline failures.
+
+### Compact semantic status badges
+
+Record statuses use `StatusBadge.vue` or the existing native span with `bh-status` and its unchanged domain classes. `_status-badges.scss` owns the single visual recipe and class-to-color bridge; `workspace-tokens.scss` owns badge colors, height, padding, typography and corners. Use `label` or the default slot, `severity="success|danger|warning|info|neutral|brand|review"`, optional `icon`, and optional `variant="dot"`. Status values, translations and transitions belong to callers. QuoteStatusBadge remains the domain wrapper; do not replace it with a numeric-to-color mapping in the generic component.
+
+The default is a solid 22px badge with 6px corners, 8px horizontal padding and 12px/600 text, with no border/shadow/gradient. Icons remain 12px. Long labels may wrap outside tables; table badges keep intrinsic single-line width and use the existing table scroller. PrimeVue Tag uses the same preset tokens, including rounded tags. Neutral colors adapt to dark mode; semantic solid colors keep readable foregrounds. This pattern applies to record statuses, not filters, navigation, counts, progress, category/date metadata or feedback banners.
+
+The [complete status coverage report](docs/redesign/STATUS_BADGES.md) records migrated owners, every module reviewed, inherited semantic quirks, visual/interaction evidence and remaining baseline/live-verification limits.
+
+### Shell and overlay stacking
+
+Use the shared `--bh-z-*` shell tokens: context navigation 100, rail 110, header/account menu 120, mobile header 140, mobile drawer 900. Keep the shell below custom modal layers (1000+) and PrimeVue managed overlays. The dashboard main content must retain `z-index: auto`; a positioned content stacking context traps inline fixed dialogs below navigation. Preserve PrimeVue automatic stacking for nested dialogs and their teleported controls.

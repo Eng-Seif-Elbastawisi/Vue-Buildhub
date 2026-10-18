@@ -176,7 +176,7 @@
 
           <template #cell-isAssign="{ item }">
             <span
-              class="assignment-status"
+              class="assignment-status bh-status"
               :class="{
                 assigned: item.isAssign,
               }"

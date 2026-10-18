@@ -2,7 +2,7 @@
   position: fixed;
   inset-block: 0;
   inset-inline-start: 0;
-  z-index: 1200;
+  z-index: var(--bh-z-rail);
   width: var(--bh-rail-width);
   height: 100dvh;
   color: var(--bh-text);
@@ -136,7 +136,7 @@
 
 .workspace-context-nav {
   position: fixed;
-  z-index: 1090;
+  z-index: var(--bh-z-context-nav);
   inset-block-start: var(--bh-header-height);
   inset-inline: var(--bh-rail-width) 0;
   display: flex;

@@ -1,0 +1,332 @@
+/* Explicit opt-in status visuals. Counts, filters, navigation and progress bars stay separate. */
+@mixin tone($tone) {
+  --bh-status-bg: var(--bh-status-#{$tone}-bg);
+  --bh-status-fg: var(--bh-status-#{$tone}-fg, var(--bh-status-on-solid));
+  --bh-status-dot-ink: var(--bh-status-#{$tone}-ink, var(--bh-status-#{$tone}-bg));
+}
+
+.bh-status,
+.p-tag {
+  --bh-status-bg: var(--bh-status-neutral-bg);
+  --bh-status-fg: var(--bh-status-neutral-fg);
+  --bh-status-dot-ink: var(--bh-muted);
+}
+
+/* Existing domain class names retain their current semantic colors. */
+.bh-status:is(
+  .bh-status--brand,
+  .is-converted,
+  .assigned,
+  .status-5,
+  .status-10,
+  .material-receipt__status--partial,
+  .task-assignment-show__history-status--assigned
+),
+.bh-status.project-shortcut__badge,
+.bh-status.work-items-badge,
+.p-tag-primary,
+.p-tag:not(
+  .p-tag-success,
+  .p-tag-danger,
+  .p-tag-warn,
+  .p-tag-info,
+  .p-tag-secondary,
+  .p-tag-contrast
+) {
+  --bh-status-bg: var(--PrimaryColor);
+  --bh-status-fg: var(--button-primary-color);
+  --bh-status-dot-ink: var(--bh-blue-ink);
+}
+
+.bh-status.procurement-status,
+.bh-status.status-badge:is(.is-muted, .is-progress) {
+  @include tone(warning);
+}
+
+.bh-status.stage-header__status,
+.project-show-page :where(.bh-status.status-badge) {
+  @include tone(success);
+}
+
+.bh-status:is(
+  .bh-status--success,
+  .is-active,
+  .is-paid,
+  .is-revised,
+  .ready,
+  .configured,
+  .status-badge--success,
+  .status-sent-to-client,
+  .status-3,
+  .status-13,
+  .procurement-status--3,
+  .material-receipt__status--complete,
+  .feature-status--active,
+  .package-subscription-status--confirmed,
+  .task-status-chip--working,
+  .task-assignment-show__history-status--working,
+  .execution-quote-show__status--active,
+  .stage-card__status--active,
+  .execution-quote-index__progress-status--ready,
+  .execution-quote-index__client-status--active
+),
+.p-tag-success {
+  @include tone(success);
+}
+
+.bh-status:is(
+  .bh-status--danger,
+  .is-inactive,
+  .is-unpaid,
+  .not-ready,
+  .status-revision-required,
+  .status-14,
+  .procurement-status--2,
+  .feature-status--inactive,
+  .package-subscription-status--rejected,
+  .work-items-safety-3
+),
+.p-tag-danger {
+  @include tone(danger);
+}
+
+.bh-status:is(
+  .bh-status--warning,
+  .is-pending,
+  .is-partial,
+  .status-pending-validation,
+  .status-1,
+  .status-4,
+  .status-12,
+  .task-status-chip--held,
+  .task-assignment-show__history-status--hold,
+  .package-subscription-status--pending,
+  .execution-quote-index__progress-status--building
+),
+.p-tag-warn {
+  @include tone(warning);
+}
+
+.bh-status:is(
+  .bh-status--info,
+  .is-extra-paid,
+  .is-send-client,
+  .status-2,
+  .status-11,
+  .task-status-chip--assigned,
+  .task-assignment-show__history-status--review
+),
+.bh-status.task-assignment-status-badge.is-progress,
+.p-tag-info {
+  @include tone(info);
+}
+
+.bh-status:is(.bh-status--review, .task-status-chip--review) {
+  @include tone(review);
+}
+
+.bh-status:is(
+  .status-draft,
+  .status-default,
+  .status-badge--muted,
+  .manual_entry,
+  .task-status-chip--default,
+  .execution-quote-index__progress-status--draft
+),
+.p-tag-secondary {
+  @include tone(neutral);
+}
+
+.p-tag-contrast {
+  --bh-status-bg: var(--bh-active);
+  --bh-status-fg: var(--bh-on-active);
+}
+
+@mixin badge {
+  display: inline-flex;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: fit-content;
+  min-width: 0;
+  max-width: 100%;
+  height: auto;
+  min-height: var(--bh-status-height);
+  margin: 0;
+  padding: 2px var(--bh-status-padding);
+  border: 0;
+  border-radius: var(--bh-status-radius);
+  background: var(--bh-status-bg);
+  color: var(--bh-status-fg);
+  box-shadow: none;
+  font-family: var(--bh-font);
+  font-size: var(--bh-status-font-size);
+  font-weight: 600;
+  line-height: 18px;
+  letter-spacing: normal;
+  text-align: center;
+  text-transform: none;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  overflow: visible;
+  vertical-align: middle;
+  transform: none;
+  animation: none;
+  transition: none;
+}
+
+.bh-status,
+.p-tag,
+html
+  body
+  :is(
+    .dashboard-shell .main-content,
+    .p-dialog.p-component,
+    .unified-dialog,
+    .p-popover.p-component,
+    .global-project-search
+  )
+  :is(.bh-status[class], .p-tag) {
+  @include badge;
+}
+
+html
+  body
+  :is(
+    .dashboard-shell .main-content,
+    .p-dialog.p-component,
+    .unified-dialog,
+    .p-popover.p-component,
+    .global-project-search
+  )
+  .bh-status[class]
+  .task-status-chip__icon,
+html
+  body
+  :is(
+    .dashboard-shell .main-content,
+    .p-dialog.p-component,
+    .unified-dialog,
+    .p-popover.p-component,
+    .global-project-search
+  )
+  .bh-status[class]
+  :is(i, svg) {
+  display: inline-flex;
+  flex: 0 0 12px;
+  width: 12px;
+  height: 12px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  box-shadow: none;
+  font-size: 12px;
+  line-height: 1;
+  animation: none;
+}
+
+html
+  body
+  :is(
+    .dashboard-shell .main-content,
+    .p-dialog.p-component,
+    .unified-dialog,
+    .p-popover.p-component,
+    .global-project-search
+  )
+  .bh-status[class]
+  .task-status-chip__icon {
+  align-items: center;
+  justify-content: center;
+}
+
+html
+  body
+  :is(
+    .dashboard-shell .main-content,
+    .p-dialog.p-component,
+    .unified-dialog,
+    .p-popover.p-component,
+    .global-project-search
+  )
+  .bh-status[class]
+  :is(.task-status-chip__text, .p-tag-label) {
+  color: inherit;
+  font: inherit;
+}
+
+html
+  body
+  :is(
+    .dashboard-shell .main-content,
+    .p-dialog.p-component,
+    .unified-dialog,
+    .p-popover.p-component,
+    .global-project-search
+  )
+  .bh-status[class]
+  :is(.task-status-chip__indicator, .status-dot) {
+  display: none;
+}
+
+.bh-status.bh-status--dot,
+html
+  body
+  :is(
+    .dashboard-shell .main-content,
+    .p-dialog.p-component,
+    .unified-dialog,
+    .p-popover.p-component,
+    .global-project-search
+  )
+  .bh-status.bh-status--dot {
+  justify-content: flex-start;
+  padding-inline: 0;
+  background: transparent;
+  color: var(--bh-status-dot-ink);
+
+  &::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    flex: 0 0 6px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+}
+
+.bh-status.bh-status--icon-only,
+html
+  body
+  :is(
+    .dashboard-shell .main-content,
+    .p-dialog.p-component,
+    .unified-dialog,
+    .p-popover.p-component,
+    .global-project-search
+  )
+  .bh-status.bh-status--icon-only {
+  width: var(--bh-status-height);
+  padding-inline: 0;
+}
+
+/* Table columns retain intrinsic label width; the existing table wrapper scrolls. */
+html
+  body
+  :is(
+    .dashboard-shell .main-content,
+    .p-dialog.p-component,
+    .unified-dialog,
+    .p-popover.p-component,
+    .global-project-search
+  )
+  :is(.app-table, .workspace-data-table, .p-datatable-table)
+  .bh-status[class] {
+  width: max-content;
+  max-width: none;
+  white-space: nowrap;
+  overflow-wrap: normal;
+}

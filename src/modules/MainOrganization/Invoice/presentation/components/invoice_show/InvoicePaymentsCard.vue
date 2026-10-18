@@ -61,7 +61,7 @@
           >
             <td>
               <div class="invoice-payments-card__payment">
-                <span class="invoice-payments-card__status">
+                <span class="invoice-payments-card__status bh-status bh-status--success bh-status--icon-only">
                   <i class="pi pi-check"></i>
                 </span>
                 <strong>{{ $t('invoice_show.payment_received') }}</strong>

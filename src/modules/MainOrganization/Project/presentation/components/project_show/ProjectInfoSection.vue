@@ -55,7 +55,7 @@
             <small v-if="projectInfo.meta" :title="projectInfo.meta">{{ projectInfo.meta }}</small>
             <span
               v-if="projectInfo.badge"
-              class="status-badge status-badge--inline"
+              class="status-badge status-badge--inline bh-status"
               :class="projectInfo.badge"
             >
               {{ projectInfo.value }}

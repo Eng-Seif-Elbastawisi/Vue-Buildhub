@@ -6,6 +6,26 @@
 
 There are **208 child route declarations**, **197 distinct portal paths** and **137 referenced view components**. Existing duplicate declarations remain; organization has 138 declarations and administration 70. `/mainportal` remains the organization router alias. No route definitions, guards, API endpoints, request/response mappings, controllers, repositories, business calculations or financial visibility conditions were edited.
 
+## Dialog stacking correction
+
+The shell now uses shared layer tokens below existing custom dialogs (1000+) and PrimeVue overlays. The main content resets its legacy z-index to `auto`, allowing inline fixed overlays to escape the previous content stacking context. Header/account controls remain above contextual navigation; mobile navigation and its drawer remain below modal overlays. Dialog behavior and API contracts are unchanged.
+
+Browser hit-testing reproduced shell overlap before the fix and passed afterward at 1440px, 1024px and 390px, in LTR/light and RTL/dark. Tests covered body and inline custom overlays, real PrimeVue dialogs, dropdown selection, nested dialogs and Escape closing. All 31 focused layout tests, root type-check and targeted Stylelint passed. These checks use synthetic read-only API responses and do not establish live CRUD acceptance. [Before/after verification](dialog-stacking-verification.json).
+
+## Application-wide compact status badges
+
+Migrated all 32 identified active status-badge owners (36 template positions) to one shared 22px/6px-corner solid badge recipe. Added a generic StatusBadge, retained QuoteStatusBadge's public/domain contracts, and themed PrimeVue Tag through its supported preset. Native spans keep their status classes and all bindings. Status mappings, values, translations, APIs, permissions and calculations are unchanged. Counts, filters, navigation and progress are excluded.
+
+Source review covers 696 non-test Vue files and all module groups listed in [STATUS_BADGES.md](STATUS_BADGES.md). Verification includes 354 owner/scoped-style samples, nine dialog badges and an actual populated invoice route with synthetic API fixtures at 1440/1024/390px, including Arabic/dark. Minimum measured solid text contrast: 4.98:1. Table labels stay single-line in existing scrollers; long non-table labels wrap. Six shared/quote tests and thirty module interaction tests passed. One pre-existing Procurement selector test and two pre-existing Products lint errors reproduce against baseline; root type-check, Vite bundling and targeted Stylelint pass. No live CRUD/permission acceptance is claimed.
+
+See [inventory](status-badge-inventory.json), [preservation proof](status-badge-preservation.json), [visual checks](status-badge-visual-verification.json) and [invoice route evidence](status-badge-route-verification.json).
+
+## Project details disclosure header
+
+ExecutionQuoteShow's `workspace-project-details` summary now has a Primary-colored high-contrast header, stronger title, framed icon/chevron, visible focus and correct open-state separation. Script, template, native disclosure behavior and all fields are unchanged. Targeted ESLint/Stylelint passed. Fixture-backed browser checks passed Enter/Space expansion/collapse at 1440/1024 English/light and 390 Arabic/dark with no document overflow. Live backend operations were not tested.
+
+The focused ExecutionQuoteShow suite reports 3 passing and 7 failing tests. A rerun against the exact pre-change component reproduced the same seven failure occurrences, including missing action selectors; no unit-suite pass is claimed. See [verification](project-details-header-verification.json) and `project-details-header-screenshots`.
+
 ## Warehouse intro reuse
 
 MaterialReceiptPage and MaterialDisbursementPage now use Procurement's `procurement-header procurement-intro` structure and one shared intro stylesheet. Removed obsolete Warehouse intro/back-link rules and Procurement's duplicated intro declarations. Warehouse canvas padding now follows Procurement. The receipt page heading is Warehouse using the existing EN/AR key; the Material Receipt tab, receipt breadcrumb, receiving history and existing actions remain. Pages with this intro suppress the automatic duplicate shell FeatureHeader.

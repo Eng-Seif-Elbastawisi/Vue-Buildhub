@@ -231,7 +231,7 @@
       <div class="project-hero__body">
         <div class="project-hero__content">
           <div class="project-hero__badges">
-            <span class="status-badge" :class="statusMeta.className">
+            <span class="status-badge bh-status" :class="statusMeta.className">
               {{ statusMeta.label }}
             </span>
 

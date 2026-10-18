@@ -1,4 +1,5 @@
 @use 'workspace-glass' as glass;
+@use 'status-badges';
 
 /* Shared presentation contracts. Business state stays in the existing components. */
 body {

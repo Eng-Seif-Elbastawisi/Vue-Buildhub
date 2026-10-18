@@ -300,7 +300,7 @@
           .status-pill,
           [class$='-status-badge'],
           [class$='-status-chip']
-        ):not(.quote-status-badge) {
+        ):not(.bh-status) {
         display: inline-flex;
         align-items: center;
         gap: 5px;

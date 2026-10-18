@@ -431,7 +431,7 @@
           <div class="project-search-card__body">
             <div class="project-search-card__title-row">
               <h3>{{ displayText(project.title) }}</h3>
-              <span v-if="project.status" class="status-badge" :class="`status-${project.status}`">
+              <span v-if="project.status" class="status-badge bh-status" :class="`status-${project.status}`">
                 {{ $t(getConvertStatusNameKey(project.status)) }}
               </span>
               <span v-else>-</span>
