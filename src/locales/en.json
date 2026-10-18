@@ -3570,6 +3570,7 @@
   "material_disbursement.disbursement_id": "Disbursement ID",
   "material_disbursement.notes": "Notes (Optional)",
   "material_disbursement.issued_items": "Issued Items",
+  "material_disbursement.item_number": "Item #{id}",
   "material_disbursement.select_items": "Select Materials / Products",
   "material_disbursement.select": "Select",
   "material_disbursement.select_item": "Select item #{id} to issue",

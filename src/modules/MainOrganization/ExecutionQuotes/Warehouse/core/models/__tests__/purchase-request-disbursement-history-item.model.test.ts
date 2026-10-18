@@ -13,3 +13,13 @@ it('keeps the disbursement line ID distinct from the original purchase request i
   expect(item.purchaseRequestItem.id).toBe(9);
   expect(item.quantity).toBe('1.50');
 });
+
+it('keeps the item ID when the localized title is null', () => {
+  const item = PurchaseRequestDisbursementHistoryItemModel.fromJson({
+    id: 4,
+    purchase_request_item: { id: 1, title: null },
+    quantity: '2.00',
+  });
+  expect(item.purchaseRequestItem.id).toBe(1);
+  expect(item.purchaseRequestItem.title).toBe('');
+});
