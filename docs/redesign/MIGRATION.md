@@ -6,6 +6,10 @@
 
 There are **208 child route declarations**, **197 distinct portal paths** and **137 referenced view components**. Existing duplicate declarations remain; organization has 138 declarations and administration 70. `/mainportal` remains the organization router alias. No route definitions, guards, API endpoints, request/response mappings, controllers, repositories, business calculations or financial visibility conditions were edited.
 
+## Procurement workflow spacing and contrast
+
+The existing three-step guide now uses one sharper surface with consistent padding, logical dividers, stronger typography and contrasting number markers. Below 700px, steps stack and retain their helper text. Only the workflow SCSS changed; translations, markup and purchasing behavior remain intact. Browser checks at 1440px, 1024px and 390px (English/light and Arabic/dark) found no overflow. Stylelint and root type-check passed; ProcurementPage tests retain the known search-selector failure (5 passed, 1 failed). [Verification](procurement-workflow-verification.json).
+
 ## Dialog stacking correction
 
 The shell now uses shared layer tokens below existing custom dialogs (1000+) and PrimeVue overlays. The main content resets its legacy z-index to `auto`, allowing inline fixed overlays to escape the previous content stacking context. Header/account controls remain above contextual navigation; mobile navigation and its drawer remain below modal overlays. Dialog behavior and API contracts are unchanged.
