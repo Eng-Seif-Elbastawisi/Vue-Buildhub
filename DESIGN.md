@@ -294,3 +294,7 @@ The [complete status coverage report](docs/redesign/STATUS_BADGES.md) records mi
 ### Shell and overlay stacking
 
 Use the shared `--bh-z-*` shell tokens: context navigation 100, rail 110, header/account menu 120, mobile header 140, mobile drawer 900. Keep the shell below custom modal layers (1000+) and PrimeVue managed overlays. The dashboard main content must retain `z-index: auto`; a positioned content stacking context traps inline fixed dialogs below navigation. Preserve PrimeVue automatic stacking for nested dialogs and their teleported controls.
+
+### Row actions
+
+Existing `.row-actions` groups share 8px spacing and 8px button corners. Icon controls are 36px with 16px icons; coarse-pointer controls expand to 44px. Neutral actions use dark ink on raised surfaces and invert on hover. Destructive actions retain coral/red semantics, using solid red on hover. Keep visible keyboard focus, reduced-motion support and disabled presentation. Text actions preserve natural widths. The shared recipe lives in `workspace-components.scss`; module styles must not force hover colors with `!important`.

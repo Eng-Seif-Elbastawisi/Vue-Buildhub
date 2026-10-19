@@ -564,7 +564,6 @@
             striped
             hoverable
             empty-message="execution_quote.empty_quotes"
-            @row-click="openShow"
           >
             <template #cell-quoteSource="{ item }">
               <span
