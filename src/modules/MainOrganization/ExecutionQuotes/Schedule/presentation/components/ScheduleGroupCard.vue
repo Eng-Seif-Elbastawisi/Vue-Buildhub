@@ -71,18 +71,27 @@
       <AppButton :to="`${basePath}/${group.id}`" :disabled="busy">{{
         $t('schedule.show')
       }}</AppButton>
-      <AppButton :to="`${basePath}/${group.id}/edit`" theme="secondary" :disabled="busy">{{
-        $t('schedule.edit')
-      }}</AppButton>
-      <AppButton theme="danger" :disabled="busy" @click="$emit('delete')">{{
+      <AppButton
+        :to="timelineApproved ? undefined : `${basePath}/${group.id}/edit`"
+        theme="secondary"
+        :disabled="busy || timelineApproved"
+        >{{ $t('schedule.edit') }}</AppButton
+      >
+      <AppButton theme="danger" :disabled="busy || timelineApproved" @click="$emit('delete')">{{
         $t('schedule.delete')
       }}</AppButton>
-      <AppButton theme="secondary" :disabled="busy || !earlier" @click="$emit('move', -1)">{{
-        $t('schedule.earlier')
-      }}</AppButton>
-      <AppButton theme="secondary" :disabled="busy || !later" @click="$emit('move', 1)">{{
-        $t('schedule.later')
-      }}</AppButton>
+      <AppButton
+        theme="secondary"
+        :disabled="busy || timelineApproved || !earlier"
+        @click="$emit('move', -1)"
+        >{{ $t('schedule.earlier') }}</AppButton
+      >
+      <AppButton
+        theme="secondary"
+        :disabled="busy || timelineApproved || !later"
+        @click="$emit('move', 1)"
+        >{{ $t('schedule.later') }}</AppButton
+      >
     </div>
   </article>
 </template>

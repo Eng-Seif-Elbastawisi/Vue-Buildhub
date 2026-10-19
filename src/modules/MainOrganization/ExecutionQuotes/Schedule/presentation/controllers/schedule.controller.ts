@@ -47,6 +47,9 @@ export default class ScheduleController extends BaseController<ScheduleGroupMode
   private group: number | null = null;
   readonly settingsState = shallowRef<DataState<ScheduleSettingsModel>>(new DataInitial());
   readonly ownerState = shallowRef<DataState<ExecutionQuoteShowModel>>(new DataInitial());
+  readonly timelineApproved = computed(
+    () => this.ownerState.value.data?.timelineStatus === TimelineApprovalStatus.APPROVED,
+  );
   readonly approvalState = shallowRef<DataState<ExecutionQuoteShowModel>>(new DataInitial());
   readonly workStatusState = shallowRef<DataState<ProjectTimelineWorkStatusModel>>(
     new DataInitial(),
@@ -423,6 +426,7 @@ export default class ScheduleController extends BaseController<ScheduleGroupMode
     return this.finishSave(await super.create(params), params.quoteId, epoch);
   }
   async update(params?: Params) {
+    if (this.timelineApproved.value) return new DataCancelled<ScheduleGroupModel>();
     if (
       !(params instanceof ScheduleGroupParams) ||
       params.groupId !== this.group ||
@@ -435,7 +439,11 @@ export default class ScheduleController extends BaseController<ScheduleGroupMode
     return this.finishSave(await super.update(params), params.quoteId, epoch);
   }
   async delete(params?: Params) {
-    if (!(params instanceof ScheduleOwnerParams) || !validId(params.groupId ?? 0))
+    if (
+      this.timelineApproved.value ||
+      !(params instanceof ScheduleOwnerParams) ||
+      !validId(params.groupId ?? 0)
+    )
       return new DataCancelled<void>();
     const epoch = this.startSave(params);
     if (epoch === null) return new DataCancelled<void>();
@@ -460,6 +468,7 @@ export default class ScheduleController extends BaseController<ScheduleGroupMode
     const position = groups?.findIndex((group) => group.id === groupId) ?? -1;
     return (
       this.completeSequence.value &&
+      !this.timelineApproved.value &&
       !this.busy.value &&
       position >= 0 &&
       position + direction >= 0 &&
@@ -470,6 +479,7 @@ export default class ScheduleController extends BaseController<ScheduleGroupMode
     const groups = this.listState.value.data ?? [];
     if (
       this.owner === null ||
+      this.timelineApproved.value ||
       !this.completeSequence.value ||
       this.busy.value ||
       !validId(projectTimelineId) ||

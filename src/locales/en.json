@@ -3164,6 +3164,7 @@
     "reorder_label": "Reorder {title}",
     "stage_count": "{count} quote stages",
     "invalid_response": "The Schedule response does not match the supported schema",
+    "approved_read_only": "Approved schedules cannot be edited, deleted, or reordered.",
     "selection_identity_pending": "Editing is unavailable until the returned QuoteStage and SubStage identifiers are confirmed",
     "holidays": "Weekly days off",
     "configuration": "Project Configuration",

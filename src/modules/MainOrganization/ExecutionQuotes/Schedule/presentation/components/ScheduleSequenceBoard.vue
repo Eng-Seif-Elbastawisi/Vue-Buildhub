@@ -21,7 +21,7 @@
   const announcement = ref(false);
   const displayed = computed(() => preview.value ?? props.groups);
   watch(
-    () => [props.quoteId, props.groups],
+    () => [props.quoteId, props.groups, props.timelineApproved],
     () => {
       preview.value = null;
       draggedId.value = null;
@@ -30,7 +30,7 @@
     },
   );
   function start(id: number, event: DragEvent) {
-    if (!controller.completeSequence.value || controller.busy.value) {
+    if (props.timelineApproved || !controller.completeSequence.value || controller.busy.value) {
       event.preventDefault();
       return;
     }
@@ -45,7 +45,7 @@
     insertion.value = null;
   }
   async function reorder(id: number, order: number) {
-    if (controller.busy.value) return;
+    if (props.timelineApproved || controller.busy.value) return;
     const owner = props.quoteId;
     const moved = props.groups.find((group) => group.id === id);
     if (!moved) return;
@@ -61,7 +61,7 @@
     announcement.value = state instanceof DataSuccess;
   }
   function drop(slot: number) {
-    if (draggedId.value === null || controller.busy.value) return;
+    if (props.timelineApproved || draggedId.value === null || controller.busy.value) return;
     const id = draggedId.value;
     const original = props.groups.findIndex((group) => group.id === id);
     const order = slot - (slot > original ? 1 : 0) + 1;
@@ -125,8 +125,14 @@
               <button
                 type="button"
                 class="schedule__drag-handle"
-                :draggable="controller.completeSequence.value && !controller.busy.value"
-                :disabled="!controller.completeSequence.value || controller.busy.value"
+                :draggable="
+                  !timelineApproved && controller.completeSequence.value && !controller.busy.value
+                "
+                :disabled="
+                  timelineApproved ||
+                  !controller.completeSequence.value ||
+                  controller.busy.value
+                "
                 :aria-label="$t('schedule.reorder_label', { title: entry.title })"
                 @dragstart="start(entry.id, $event)"
                 @dragend="finish"

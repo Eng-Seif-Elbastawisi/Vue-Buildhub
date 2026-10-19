@@ -6,6 +6,7 @@ import {
 } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
 import { ErrorModel, ErrorType } from '@/base/Core/NetworkStructure/Resources/errors/errorModel';
 import ScheduleSequenceBoard from '../ScheduleSequenceBoard.vue';
+import ScheduleApiService from '../../../data/api/schedule.api-service';
 import ScheduleController from '../../controllers/schedule.controller';
 import ScheduleRepository from '../../../data/repositories/schedule.repository';
 import ScheduleSettingsModel from '../../../core/models/schedule.settings.model';
@@ -104,5 +105,29 @@ it('blocks a second move and keeps saved-order feedback separate from a read ref
   expect(controller.refreshFailed.value).toBe(true);
   expect(controller.mutationState.value).toBeInstanceOf(DataSuccess);
   expect(wrapper.text()).toContain('schedule.order_saved');
+  wrapper.unmount();
+});
+
+it('disables approved timeline actions and prevents dragging from sending an order change', async () => {
+  const sort = vi.spyOn(ScheduleApiService.getInstance(), 'sort');
+  const wrapper = board();
+  await wrapper.setProps({ timelineApproved: true });
+  for (const handle of wrapper.findAll('.schedule__drag-handle')) {
+    expect(handle.attributes('disabled')).toBeDefined();
+    expect(handle.attributes('draggable')).toBe('false');
+  }
+  const card = wrapper.findAll('article')[1];
+  for (const action of ['schedule.edit', 'schedule.delete', 'schedule.earlier', 'schedule.later']) {
+    const button = card.findAll('button').find((entry) => entry.text() === action);
+    expect(button).toBeDefined();
+    expect(button?.attributes('disabled')).toBeDefined();
+    await button?.trigger('click');
+  }
+  expect(card.find('a[to$="/edit"]').exists()).toBe(false);
+  await wrapper.findAll('.schedule__drag-handle')[1].trigger('dragstart');
+  await wrapper.get('[data-slot="0"]').trigger('drop');
+  await flushPromises();
+  expect(sort).not.toHaveBeenCalled();
+  expect(wrapper.emitted('delete')).toBeUndefined();
   wrapper.unmount();
 });

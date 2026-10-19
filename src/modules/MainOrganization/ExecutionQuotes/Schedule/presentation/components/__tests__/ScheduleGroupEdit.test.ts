@@ -16,3 +16,11 @@ it('loads edit on direct navigation without relying on an earlier Index visit', 
   wrapper.unmount();
   quoteRequest.mockRestore();
 });
+
+it('blocks the edit form on direct navigation to an approved schedule', async () => {
+  const { wrapper } = await mountScheduleRoute(ScheduleGroupEdit, '/schedule/101/201', 3);
+  expect(wrapper.text()).toContain('schedule.approved_read_only');
+  expect(wrapper.find('#schedule-title').exists()).toBe(false);
+  expect(wrapper.find('form').exists()).toBe(false);
+  wrapper.unmount();
+});

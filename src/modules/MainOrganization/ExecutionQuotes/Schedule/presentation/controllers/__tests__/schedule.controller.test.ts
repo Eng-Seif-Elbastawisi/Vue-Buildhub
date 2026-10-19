@@ -1,3 +1,4 @@
+import ScheduleApiService from '../../../data/api/schedule.api-service';
 import ExecutionQuoteApiService from '../../../../data/api/execution.quote.api-service';
 import { beforeEach, expect, it, vi } from 'vitest';
 import {
@@ -571,5 +572,27 @@ it('preserves the loaded Edit detail when BaseController update returns validati
   expect(await controller.update(params)).toBe(failure);
   expect(controller.itemState.value).toBe(loadedDetail);
   expect(controller.mutationState.value.error?.displayMessage).toBe('Title rejected');
+  expect(controller.busy.value).toBe(false);
+});
+
+it('blocks editing, deleting and reordering approved timelines before sending requests', async () => {
+  controller.activate(101, 201);
+  controller.ownerState.value = new DataSuccess({
+    data: new ExecutionQuoteShowModel({ id: 101, timelineStatus: 3 }),
+  });
+  controller.listState.value = new DataSuccess({ data: [groupFixture(201), groupFixture(202)] });
+  controller.completeSequence.value = true;
+  const api = ScheduleApiService.getInstance();
+  const update = vi.spyOn(api, 'update');
+  const remove = vi.spyOn(api, 'delete');
+  const sort = vi.spyOn(api, 'sort');
+  const changes = new ScheduleGroupParams({ ...form(), groupId: 201 });
+  expect(await controller.update(changes)).toBeInstanceOf(DataCancelled);
+  expect(await controller.delete(new ScheduleOwnerParams(101, 201))).toBeInstanceOf(DataCancelled);
+  expect(await controller.changeProjectTimelineOrder(201, 2)).toBeInstanceOf(DataCancelled);
+  expect(controller.canMove(201, 1)).toBe(false);
+  expect(update).not.toHaveBeenCalled();
+  expect(remove).not.toHaveBeenCalled();
+  expect(sort).not.toHaveBeenCalled();
   expect(controller.busy.value).toBe(false);
 });

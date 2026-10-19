@@ -16,7 +16,7 @@ afterEach(() => {
   vi.unstubAllGlobals();
   ScheduleController.getInstance().release();
 });
-export async function mountScheduleRoute(component: Component, path: string) {
+export async function mountScheduleRoute(component: Component, path: string, timelineStatus = 1) {
   ScheduleController.getInstance().release();
   vi.stubGlobal(
     'matchMedia',
@@ -24,7 +24,10 @@ export async function mountScheduleRoute(component: Component, path: string) {
   );
   const quoteRequest = vi
     .spyOn(ExecutionQuoteApiService.getInstance(), 'show')
-    .mockResolvedValue({ statusCode: 200, data: { status: true, data: { id: 101 } } });
+    .mockResolvedValue({
+      statusCode: 200,
+      data: { status: true, data: { id: 101, timeline_status: timelineStatus } },
+    });
   vi.spyOn(ScheduleApiService.getInstance(), 'index').mockResolvedValue({
     statusCode: 200,
     data: overviewResponse(),
