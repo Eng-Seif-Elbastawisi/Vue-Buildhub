@@ -50,7 +50,6 @@ export default class PurchaseRequestController extends BaseController<
       .filter((group) => group.workStatus === TimelineWorkStatus.START)
       .flatMap((group) =>
         group.stages
-          .filter((stage) => stage.parentId === null && stage.subStage == null)
           .map(
             (stage) =>
               new TitleInterface({ id: stage.id, title: `${group.title} · ${stage.title}` }),

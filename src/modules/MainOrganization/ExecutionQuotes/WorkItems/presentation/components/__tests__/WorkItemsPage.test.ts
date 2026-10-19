@@ -89,6 +89,7 @@ it.each(['en', 'ar'])(
     ).toEqual({ quote_id: 140 });
     expect(wrapper.findAll('.workspace-nav a').map((link) => link.attributes('href'))).toEqual([
       '/organization/execution-quotes/show/140',
+      '/organization/execution-quotes/show/140/intelligence',
       '/organization/execution-quotes/show/140/schedule',
       '/organization/execution-quotes/show/140/site-team',
       '/organization/execution-quotes/show/140/work-items',

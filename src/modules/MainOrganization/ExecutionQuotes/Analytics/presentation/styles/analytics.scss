@@ -1,0 +1,458 @@
+.project-intelligence {
+  color: var(--bh-text, var(--gray-800));
+
+  --analytics-border: var(--bh-line, var(--border-weak));
+  --analytics-muted: var(--bh-muted, var(--subtitle-color));
+  --analytics-surface: var(--bh-surface, var(--bg-card));
+  --analytics-shadow: color-mix(in srgb, var(--SecondaryColor) 8%, transparent);
+
+  display: grid;
+  gap: 1.5rem;
+  padding-block-end: 2rem;
+  min-width: 0;
+
+  * {
+    box-sizing: border-box;
+  }
+
+  h1,
+  h2,
+  h3,
+  p {
+    margin: 0;
+  }
+
+  a {
+    color: inherit;
+  }
+
+  button,
+  a,
+  summary,
+  input {
+    &:focus-visible {
+      outline: 2px solid var(--PrimaryColor);
+      outline-offset: 4px;
+    }
+  }
+
+  small {
+    color: var(--analytics-muted);
+    line-height: 1.6;
+  }
+}
+
+.intelligence-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  padding-block: 0.75rem;
+}
+
+.intelligence-header h1 {
+  font-size: clamp(1.5rem, 2.4vw, 2.3rem);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  margin-block: 0.4rem 0.65rem;
+}
+
+.intelligence-eyebrow {
+  color: var(--PrimaryColor);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.intelligence-controls {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+}
+
+.intelligence-controls .field-group {
+  min-width: 11rem;
+  margin: 0;
+}
+
+.analytics-flat {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.intelligence-period {
+  display: flex;
+  gap: 0.5rem;
+  align-items: baseline;
+  flex-wrap: wrap;
+  color: var(--analytics-muted);
+  font-size: 0.78rem;
+  line-height: 1.7;
+}
+
+.analytics-kpis {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.analytics-kpi,
+.analytics-panel {
+  background: var(--analytics-surface);
+  border: 1px solid var(--analytics-border);
+  border-radius: 16px;
+  padding: 1.3rem;
+  min-width: 0;
+  box-shadow: 0 4px 16px -12px var(--analytics-shadow);
+}
+
+.analytics-kpi {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  gap: 0.9rem;
+  border-block-start: 2px solid color-mix(in srgb, var(--PrimaryColor) 22%, var(--analytics-border));
+}
+
+.analytics-kpi__title {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.6rem;
+  align-items: baseline;
+  width: 100%;
+  font-size: 0.8rem;
+  text-decoration: none;
+  color: var(--analytics-muted) !important;
+}
+
+.analytics-kpi__title i {
+  font-size: 0.65rem;
+}
+
+.analytics-kpi strong {
+  font-size: clamp(1.2rem, 1.8vw, 1.9rem);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.3;
+}
+
+.analytics-kpi small {
+  font-size: 0.7rem;
+  margin-block-start: auto;
+}
+
+.analytics-charts {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr;
+  gap: 1rem;
+  align-items: start;
+}
+
+.analytics-panel header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-block-end: 1.2rem;
+}
+
+.analytics-panel header a {
+  color: var(--analytics-muted);
+  padding: 0.4rem;
+}
+
+.analytics-panel h2 {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.analytics-panel header p {
+  color: var(--analytics-muted);
+  font-size: 0.75rem;
+  margin-block-start: 0.5rem;
+  line-height: 1.6;
+}
+
+.analytics-panel--wide {
+  grid-column: auto;
+}
+
+.analytics-message {
+  display: grid;
+  justify-items: start;
+  align-content: center;
+  gap: 0.75rem;
+  min-height: 12rem;
+  color: var(--analytics-muted);
+}
+
+.analytics-message > i {
+  font-size: 1.5rem;
+  color: var(--PrimaryColor);
+  opacity: 0.6;
+}
+
+.analytics-retry {
+  border: 1px solid var(--analytics-border);
+  background: var(--analytics-surface);
+  color: inherit;
+  padding: 0.45rem 0.7rem;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.status-chart__svg,
+.activity-chart svg {
+  display: block;
+  width: 100%;
+  max-height: 230px;
+  overflow: visible;
+  direction: ltr;
+}
+
+.chart-grid line {
+  stroke: var(--analytics-border);
+  stroke-dasharray: 3 5;
+}
+
+.chart-grid text,
+.chart-date {
+  fill: var(--analytics-muted);
+  font-size: 18px;
+}
+
+.chart-value {
+  fill: var(--bh-text, var(--gray-800));
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.series-0 {
+  --series-color: var(--PrimaryColor);
+}
+
+.series-1 {
+  --series-color: var(--SecondaryColor);
+}
+
+.series-2 {
+  --series-color: var(--warning-color, var(--PrimaryColor));
+}
+
+.series-3 {
+  --series-color: var(--danger-color, var(--SecondaryColor));
+}
+
+.chart-bar {
+  fill: var(--series-color);
+}
+
+.chart-depth {
+  fill: color-mix(in srgb, var(--series-color) 55%, var(--analytics-surface));
+  filter: drop-shadow(0 3px 3px var(--analytics-shadow));
+}
+
+.status-chart--flat .chart-depth {
+  display: none;
+}
+
+.chart-legend {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+  padding: 0;
+  margin: 0.8rem 0;
+}
+
+.chart-legend button {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.6rem;
+  border: 1px solid var(--analytics-border);
+  border-radius: 8px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  text-align: start;
+  font-size: 0.75rem;
+  transition: background-color 180ms ease;
+}
+
+.chart-legend button:hover,
+.chart-legend button[aria-pressed='true'] {
+  background: color-mix(in srgb, var(--PrimaryColor) 6%, transparent);
+}
+
+.chart-legend strong {
+  margin-inline-start: auto;
+  font-variant-numeric: tabular-nums;
+}
+
+.chart-dot {
+  flex: 0 0 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--series-color);
+}
+
+.chart-tooltip {
+  padding: 0.5rem 0.7rem;
+  background: var(--bg-section);
+  border-radius: 6px;
+  font-size: 0.75rem;
+}
+
+.analytics-table {
+  margin-block-start: 1rem;
+  font-size: 0.75rem;
+}
+
+.analytics-table summary {
+  cursor: pointer;
+  color: var(--analytics-muted);
+  padding-block: 0.4rem;
+}
+
+.analytics-table[open] {
+  max-height: 18rem;
+  overflow: auto;
+}
+
+.analytics-table table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-block-start: 0.5rem;
+}
+
+.analytics-table th,
+.analytics-table td {
+  text-align: start;
+  padding: 0.5rem;
+  border-block-end: 1px solid var(--analytics-border);
+}
+
+.analytics-empty {
+  color: var(--analytics-muted);
+  padding-block: 1.25rem;
+  font-size: 0.85rem;
+}
+
+.analytics-readiness__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  font-size: 0.85rem;
+}
+
+.analytics-readiness h3 {
+  font-size: 0.85rem;
+  margin-block-end: 1rem;
+}
+
+.analytics-readiness ul {
+  padding-inline-start: 1.2rem;
+  line-height: 2.2;
+}
+
+.analytics-readiness dl {
+  margin: 0;
+}
+
+.analytics-readiness dl > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-block: 0.6rem;
+  border-block-end: 1px solid var(--analytics-border);
+}
+
+.analytics-readiness dd {
+  margin: 0;
+  color: var(--analytics-muted);
+}
+
+.analytics-footnote {
+  color: var(--analytics-muted);
+  font-size: 0.75rem;
+  line-height: 1.7;
+  margin-block-start: 1.25rem !important;
+}
+
+@media (max-width: 1100px) {
+  .analytics-charts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 800px) {
+  .analytics-kpis {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .analytics-charts,
+  .analytics-readiness__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .analytics-panel--wide {
+    grid-column: auto;
+  }
+
+  .analytics-kpi,
+  .analytics-panel {
+    padding: 1rem;
+  }
+
+  .intelligence-controls {
+    width: 100%;
+  }
+
+  .intelligence-controls .field-group {
+    flex: 1;
+  }
+
+  .analytics-kpis {
+    gap: 0.65rem;
+  }
+
+  .chart-legend {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 360px) {
+  .analytics-kpis {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .project-intelligence * {
+    transition: none !important;
+    animation: none !important;
+  }
+
+  .chart-depth {
+    display: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .chart-depth {
+    display: none;
+  }
+
+  .chart-bar {
+    fill: CanvasText;
+  }
+}

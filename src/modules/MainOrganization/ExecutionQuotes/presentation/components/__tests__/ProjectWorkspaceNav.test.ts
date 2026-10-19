@@ -17,6 +17,7 @@ it.each(['/organization', '/mainportal'])(
     });
     expect(wrapper.findAll('a').map((link) => link.attributes('href'))).toEqual([
       `${prefix}/execution-quotes/show/140`,
+      `${prefix}/execution-quotes/show/140/intelligence`,
       `${prefix}/execution-quotes/show/140/schedule`,
       `${prefix}/execution-quotes/show/140/site-team`,
       `${prefix}/execution-quotes/show/140/work-items`,

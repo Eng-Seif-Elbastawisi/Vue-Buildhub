@@ -1,0 +1,519 @@
+{
+  "document": "BuildHub Project Intelligence Metrics and Charts",
+  "version": "1.0.0-proposal",
+  "as_of_date": "2026-10-19",
+  "status": "PROPOSED_BACKEND_CONTRACT_NOT_IMPLEMENTED",
+  "scope": "single_quote_project_workspace",
+  "owner_key": "quote_id",
+  "proposed_aggregate_endpoint": {
+    "method": "POST",
+    "action": "fetch_quote_execution_analytics",
+    "confirmed": false,
+    "authentication": "auth:employee, scoped by quote/project/organization",
+    "request_fields": {
+      "quote_id": "required number",
+      "from_date": "optional YYYY-MM-DD",
+      "to_date": "optional YYYY-MM-DD"
+    }
+  },
+  "source_actions": [
+    {
+      "action": "show_project_configuration",
+      "entity": "project_configurations",
+      "scope": "quote_id",
+      "used_fields": [
+        "work_status",
+        "responsible_employee",
+        "start_date",
+        "delivery_date"
+      ]
+    },
+    {
+      "action": "fetch_project_timelines",
+      "entity": "project_timelines",
+      "scope": "quote_id",
+      "used_fields": [
+        "id",
+        "work_status",
+        "order"
+      ],
+      "special_rule": "Unfiltered for the status distribution. New execution selectors are different and may send work_status:1."
+    },
+    {
+      "action": "fetch_project_timeline_stage_tasks",
+      "entity": "project_timeline_stage_tasks",
+      "scope": "quote_id",
+      "used_fields": [
+        "id",
+        "assigned_employee",
+        "end_date",
+        "created_at"
+      ]
+    },
+    {
+      "action": "fetch_project_timeline_stage_reports",
+      "entity": "project_timeline_stage_reports",
+      "scope": "quote_id",
+      "used_fields": [
+        "id",
+        "date",
+        "site_safety_status",
+        "report_scope_type"
+      ]
+    },
+    {
+      "action": "fetch_project_timeline_stage_meetings",
+      "entity": "project_timeline_stage_meetings",
+      "scope": "quote_id",
+      "used_fields": [
+        "id",
+        "type",
+        "created_at",
+        "date"
+      ]
+    },
+    {
+      "action": "fetch_purchase_requests",
+      "entity": "purchase_requests",
+      "scope": "quote_id",
+      "used_fields": [
+        "id",
+        "status",
+        "priority",
+        "created_at"
+      ]
+    },
+    {
+      "action": "fetch_shop_drawing_quotes",
+      "entity": "shop_drawing_quotes",
+      "scope": "quote_id",
+      "used_fields": [
+        "id",
+        "created_at",
+        "version_number"
+      ]
+    },
+    {
+      "action": "fetch_purchase_request_prices",
+      "entity": "purchase_request_prices",
+      "scope": "purchase_request_id",
+      "used_fields": [
+        "supplier",
+        "price",
+        "duration",
+        "duration_type"
+      ],
+      "special_rule": "Contextual one-request compare only; not a project-wide dashboard scan."
+    },
+    {
+      "action": "fetch_purchase_order",
+      "entity": "purchase_orders",
+      "scope": "purchase_request_id",
+      "used_fields": [
+        "id",
+        "is_order_paid"
+      ],
+      "special_rule": "Returns an object or null per request; do not fan out for project dashboard."
+    },
+    {
+      "action": "fetch_purchase_request_receipts",
+      "entity": "purchase_request_receipts",
+      "scope": "purchase_request_id",
+      "used_fields": [
+        "status",
+        "items_summary",
+        "receipts"
+      ],
+      "special_rule": "Per request; proposed server aggregation needed."
+    }
+  ],
+  "enums": {
+    "project_work_status": {
+      "null": "NOT_STARTED",
+      "1": "START",
+      "2": "HOLD",
+      "3": "STOP"
+    },
+    "timeline_group_work_status": {
+      "null": "NOT_STARTED",
+      "1": "START",
+      "2": "HOLD",
+      "3": "STOP"
+    },
+    "timeline_approval_status": {
+      "1": "PENDING",
+      "2": "CANCEL",
+      "3": "APPROVED"
+    },
+    "site_safety_status": {
+      "1": "OK",
+      "2": "OBSERVATION",
+      "3": "INCIDENT"
+    },
+    "purchase_request_status": {
+      "1": "PENDING",
+      "2": "REJECTED",
+      "3": "CONFIRMED"
+    },
+    "meeting_record_type": {
+      "1": "MEETING",
+      "2": "ISSUE",
+      "3": "RISK",
+      "4": "DELAY"
+    },
+    "receiving_status": {
+      "null": "NOT_RECEIVED",
+      "1": "PARTIAL",
+      "2": "COMPLETE"
+    }
+  },
+  "kpi_definitions": [
+    {
+      "key": "project_work_status",
+      "label": "Execution status",
+      "definition": "project_configurations.work_status; null means not started",
+      "source": "show_project_configuration",
+      "group": "Execution",
+      "availability": "existing_fields",
+      "time_semantics": "snapshot"
+    },
+    {
+      "key": "timeline_groups_total",
+      "label": "Timeline groups",
+      "definition": "count all current timeline groups for Quote (no work_status filter)",
+      "source": "fetch_project_timelines",
+      "group": "Execution",
+      "availability": "existing_fields",
+      "time_semantics": "snapshot"
+    },
+    {
+      "key": "timeline_groups_started",
+      "label": "Active groups",
+      "definition": "count current group rows with work_status == 1",
+      "source": "fetch_project_timelines",
+      "group": "Execution",
+      "availability": "existing_fields",
+      "time_semantics": "snapshot"
+    },
+    {
+      "key": "tasks_total",
+      "label": "Recorded tasks",
+      "definition": "count distinct task IDs for Quote",
+      "source": "fetch_project_timeline_stage_tasks",
+      "group": "Activity",
+      "availability": "existing_fields",
+      "time_semantics": "snapshot"
+    },
+    {
+      "key": "tasks_assigned",
+      "label": "Assigned tasks",
+      "definition": "count distinct task IDs whose assigned_employee is non-null",
+      "source": "fetch_project_timeline_stage_tasks",
+      "group": "Activity",
+      "availability": "existing_fields",
+      "time_semantics": "snapshot",
+      "caution": "No verified completion status"
+    },
+    {
+      "key": "daily_reports_count",
+      "label": "Daily reports",
+      "definition": "count distinct report IDs with report.date inside selected inclusive date range",
+      "source": "fetch_project_timeline_stage_reports",
+      "group": "Activity",
+      "availability": "existing_fields",
+      "time_semantics": "event_period"
+    },
+    {
+      "key": "pending_purchase_requests",
+      "label": "Pending requests",
+      "definition": "count distinct purchase_request IDs with status == 1",
+      "source": "fetch_purchase_requests",
+      "group": "Procurement",
+      "availability": "existing_fields",
+      "time_semantics": "snapshot"
+    },
+    {
+      "key": "shop_drawings_total",
+      "label": "Shop drawings",
+      "definition": "count distinct drawing IDs for Quote/Project",
+      "source": "fetch_shop_drawing_quotes",
+      "group": "Technical",
+      "availability": "existing_fields",
+      "time_semantics": "snapshot"
+    },
+    {
+      "key": "reports_with_observation",
+      "label": "Observation-flagged reports",
+      "definition": "count report IDs with site_safety_status == 2 in period",
+      "source": "fetch_project_timeline_stage_reports",
+      "group": "Safety",
+      "availability": "existing_fields",
+      "time_semantics": "event_period",
+      "caution": "Reports, not distinct incidents"
+    },
+    {
+      "key": "reports_with_incident",
+      "label": "Incident-flagged reports",
+      "definition": "count report IDs with site_safety_status == 3 in period",
+      "source": "fetch_project_timeline_stage_reports",
+      "group": "Safety",
+      "availability": "existing_fields",
+      "time_semantics": "event_period",
+      "caution": "Reports, not distinct incidents"
+    },
+    {
+      "key": "receiving_requests_complete",
+      "label": "Requests fully received",
+      "definition": "count purchase requests with current receiving status == 2",
+      "source": "fetch_purchase_request_receipts",
+      "group": "Warehouse",
+      "availability": "aggregate_backend_needed",
+      "time_semantics": "snapshot"
+    },
+    {
+      "key": "unpaid_purchase_orders",
+      "label": "Unpaid purchase orders",
+      "definition": "count current POs with is_order_paid == false",
+      "source": "fetch_purchase_order",
+      "group": "Procurement",
+      "availability": "aggregate_backend_needed",
+      "time_semantics": "snapshot"
+    },
+    {
+      "key": "start_readiness",
+      "label": "Start readiness",
+      "definition": "backend check: positive same-project invoice payment AND Shop Drawing exists AND project configuration exists AND valid responsible employee for first START",
+      "source": "change_project_configuration_work_status server validator",
+      "group": "Execution",
+      "availability": "read_only_backend_summary_needed",
+      "time_semantics": "snapshot"
+    }
+  ],
+  "chart_definitions": [
+    {
+      "key": "timeline_work_status_distribution",
+      "title": "Timeline groups by work status",
+      "visualization": "accessible donut with subtle 2.5D raised depth",
+      "formula": "count groups for statuses null,1,2,3; sum equals timeline_groups_total",
+      "source": "fetch_project_timelines",
+      "availability": "existing_fields",
+      "time_semantics": "snapshot",
+      "caution": "STOP means stopped, not completed; do not use started-only selector response"
+    },
+    {
+      "key": "daily_reports_trend",
+      "title": "Daily reports per day",
+      "visualization": "area/line chart with depth-shadow under line",
+      "formula": "per report.date bucket count distinct report ID; fill zero days",
+      "source": "fetch_project_timeline_stage_reports",
+      "availability": "existing_fields",
+      "time_semantics": "event_period"
+    },
+    {
+      "key": "daily_reports_safety_mix",
+      "title": "Safety status of reports",
+      "visualization": "stacked bars / 2.5D donut",
+      "formula": "count report IDs by site_safety_status 1,2,3 in range",
+      "source": "fetch_project_timeline_stage_reports",
+      "availability": "existing_fields",
+      "time_semantics": "event_period",
+      "caution": "Flagged reports are not distinct safety incidents"
+    },
+    {
+      "key": "purchase_request_status_mix",
+      "title": "Purchase request status",
+      "visualization": "3D-styled stacked bar",
+      "formula": "count requests by status 1 Pending,2 Rejected,3 Confirmed",
+      "source": "fetch_purchase_requests",
+      "availability": "existing_fields",
+      "time_semantics": "snapshot"
+    },
+    {
+      "key": "purchase_requests_by_priority",
+      "title": "Purchase requests by priority",
+      "visualization": "horizontal bars with restrained isometric ends",
+      "formula": "count requests by priority 1 Normal,2 Low,3 High",
+      "source": "fetch_purchase_requests",
+      "availability": "existing_fields",
+      "time_semantics": "snapshot"
+    },
+    {
+      "key": "work_record_type_mix",
+      "title": "Meetings, issues, risks and delays",
+      "visualization": "accessible isometric bar comparison",
+      "formula": "count stage meeting records by type 1,2,3,4",
+      "source": "fetch_project_timeline_stage_meetings",
+      "availability": "existing_fields",
+      "time_semantics": "snapshot",
+      "caution": "No open/resolved status in confirmed data"
+    },
+    {
+      "key": "shop_drawings_created_trend",
+      "title": "Shop drawing records created",
+      "visualization": "mini columns / sparkline",
+      "formula": "count distinct drawing ID by created_at date/week in period",
+      "source": "fetch_shop_drawing_quotes",
+      "availability": "existing_fields",
+      "time_semantics": "event_period",
+      "caution": "Record count is not approval count"
+    },
+    {
+      "key": "receiving_request_status_mix",
+      "title": "Purchase request receiving status",
+      "visualization": "segmented horizontal bars",
+      "formula": "count distinct purchase requests with receiving data.status null,1,2",
+      "source": "fetch_purchase_request_receipts",
+      "availability": "aggregate_backend_needed",
+      "time_semantics": "snapshot",
+      "caution": "Do not sum incompatible quantity units; do not make N+1 API calls"
+    },
+    {
+      "key": "supplier_offers_comparison",
+      "title": "Supplier quoted prices for one request",
+      "visualization": "horizontal price bars, one scale",
+      "formula": "each saved supplier price offer for a single purchase_request_id",
+      "source": "fetch_purchase_request_prices",
+      "availability": "existing_fields",
+      "time_semantics": "snapshot",
+      "caution": "Internal visibility only; price/currency semantic not confirmed"
+    },
+    {
+      "key": "purchase_orders_paid_mix",
+      "title": "PO payment flag distribution",
+      "visualization": "segmented count chart",
+      "formula": "count POs with is_order_paid true vs false",
+      "source": "fetch_purchase_order",
+      "availability": "aggregate_backend_needed",
+      "time_semantics": "snapshot",
+      "caution": "Per request API cannot be called N+1 from dashboard"
+    }
+  ],
+  "deferred_until_rules_or_contracts_confirmed": [
+    "project_progress_percent",
+    "recognized_revenue",
+    "forecast_profit",
+    "actual_cost_variance",
+    "inventory_on_hand_by_unit",
+    "task_completion_rate",
+    "unique_safety_incident_count",
+    "on_time_delivery_rate"
+  ],
+  "rendering_constraints": [
+    "2.5D visual styling is frontend-only and must not alter numeric scale",
+    "accessible table/text fallback",
+    "reduced motion support",
+    "permission gating server-side",
+    "zero means measured zero, not unavailable",
+    "filter event time series but label snapshots as as-of"
+  ],
+  "contract_fixture_synthetic": {
+    "note": "SYNTHETIC EXAMPLE ONLY. All numbers and entity identifiers below are illustrative and are NOT BuildHub production data.",
+    "request": {
+      "quote_id": 140,
+      "from_date": "2026-09-20",
+      "to_date": "2026-10-19"
+    },
+    "response": {
+      "status": true,
+      "message": "Execution analytics retrieved successfully.",
+      "data": {
+        "quote_id": 140,
+        "project_id": 86,
+        "as_of": "2026-10-19T12:00:00+03:00",
+        "timezone": "Africa/Cairo",
+        "period": {
+          "from_date": "2026-09-20",
+          "to_date": "2026-10-19"
+        },
+        "overview": {
+          "project_work_status": 1,
+          "timeline_approval_status": 3,
+          "planned_start_date": "2026-10-10",
+          "planned_delivery_date": null,
+          "responsible_employee": {
+            "id": 9,
+            "name": "Example Engineer",
+            "type": 4
+          }
+        },
+        "kpis": {
+          "timeline_groups_total": 8,
+          "timeline_groups_started": 3,
+          "tasks_total": 21,
+          "tasks_assigned": 17,
+          "daily_reports_count": 20,
+          "pending_purchase_requests": 4,
+          "shop_drawings_total": 5,
+          "receiving_requests_complete": 2,
+          "reports_with_observation": 1,
+          "reports_with_incident": 0
+        },
+        "charts": {
+          "timeline_work_status_distribution": [
+            {
+              "work_status": null,
+              "count": 2
+            },
+            {
+              "work_status": 1,
+              "count": 3
+            },
+            {
+              "work_status": 2,
+              "count": 2
+            },
+            {
+              "work_status": 3,
+              "count": 1
+            }
+          ],
+          "daily_reports_safety_mix": [
+            {
+              "site_safety_status": 1,
+              "count": 19
+            },
+            {
+              "site_safety_status": 2,
+              "count": 1
+            },
+            {
+              "site_safety_status": 3,
+              "count": 0
+            }
+          ],
+          "purchase_request_status_mix": [
+            {
+              "status": 1,
+              "count": 4
+            },
+            {
+              "status": 2,
+              "count": 1
+            },
+            {
+              "status": 3,
+              "count": 6
+            }
+          ]
+        },
+        "start_readiness": {
+          "has_positive_project_invoice_payment": true,
+          "has_shop_drawing": true,
+          "has_project_configuration": true,
+          "responsible_employee_selected": true,
+          "eligible_for_first_start": true
+        },
+        "metric_availability": {
+          "progress_percent": {
+            "state": "unavailable",
+            "reason": "progress_weighting_not_approved"
+          },
+          "recognized_revenue": {
+            "state": "unavailable",
+            "reason": "revenue_recognition_not_approved"
+          }
+        }
+      }
+    }
+  }
+}

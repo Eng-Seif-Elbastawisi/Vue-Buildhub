@@ -2,6 +2,13 @@ import type { RouteRecordRaw } from '@/router/types';
 
 export const executionQuoteRoutes: RouteRecordRaw[] = [
   {
+    path: 'execution-quotes/show/:id(\\d+)/intelligence',
+    name: 'Quote Project Intelligence',
+    component: () =>
+      import('@/views/MainOrganization/ExecutionQuotes/Analytics/AnalyticsIndex.vue'),
+    meta: { breadcrumb: 'intelligence.title', parent: 'execution_quote.show.title' },
+  },
+  {
     path: 'execution-quotes/show/:id(\\d+)/warehouse/material-disbursement',
     name: 'Quote Material Disbursement',
     component: () =>
