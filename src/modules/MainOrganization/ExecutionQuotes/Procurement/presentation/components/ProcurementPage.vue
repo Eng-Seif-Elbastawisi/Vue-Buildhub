@@ -139,11 +139,11 @@
               $t('procurement.new_requirement')
             }}</AppButton
           >
-          <AppButton type="button" theme="secondary" @click="openStoreOrder()"
+          <!-- <AppButton type="button" theme="secondary" @click="openStoreOrder()"
             ><i class="pi pi-file-edit" aria-hidden="true" />{{
               $t('procurement.orders.add')
             }}</AppButton
-          >
+          > -->
         </div>
       </header>
       <ol class="procurement-workflow" :aria-label="$t('procurement.workflow')">
