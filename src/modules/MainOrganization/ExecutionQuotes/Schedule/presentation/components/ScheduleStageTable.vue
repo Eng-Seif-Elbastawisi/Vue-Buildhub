@@ -5,25 +5,19 @@
 </script>
 
 <template>
-  <div class="schedule__table-wrap workspace-table-scroll">
-    <table class="schedule__stage-table workspace-data-table">
-      <thead>
-        <tr>
-          <th scope="col">{{ $t('schedule.main_stage') }}</th>
-          <th scope="col">{{ $t('schedule.sub_stage') }}</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="stage in stages" :key="stage.quoteStageId">
-          <th scope="row">{{ stage.title }}</th>
-          <td>
-            <ul v-if="stage.children.length" class="schedule__substage-list">
-              <li v-for="child in stage.children" :key="child.subStageId">{{ child.title }}</li>
-            </ul>
-            <span v-else class="schedule__muted">{{ $t('schedule.not_available') }}</span>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+  <ul class="schedule__stage-list" :aria-label="$t('schedule.main_stage')">
+    <li v-for="stage in stages" :key="stage.quoteStageId" class="schedule__stage-item">
+      <strong class="schedule__stage-title">{{ stage.title }}</strong>
+      <ul
+        v-if="stage.children.length"
+        class="schedule__substage-list"
+        :aria-label="$t('schedule.sub_stage')"
+      >
+        <li v-for="child in stage.children" :key="child.subStageId">{{ child.title }}</li>
+      </ul>
+      <p v-else class="schedule__stage-fallback schedule__muted">
+        {{ $t('schedule.not_available') }}
+      </p>
+    </li>
+  </ul>
 </template>

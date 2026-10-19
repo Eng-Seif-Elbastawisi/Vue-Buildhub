@@ -954,64 +954,47 @@ body .p-dialog.schedule-settings .p-dialog-header {
   margin-inline: 1rem;
 }
 
-.schedule__group-details .schedule__table-wrap {
+.schedule__group-details .schedule__stage-list {
   margin-block-end: 1rem;
 }
 
-.schedule__table-wrap {
+.schedule__stage-list {
   min-width: 0;
-  overflow-x: auto;
-  border: 1px solid var(--schedule-line);
-  border-radius: 10px;
-  background: var(--schedule-paper);
-}
-
-.schedule__stage-table {
-  width: 100%;
-  border-collapse: collapse;
-  text-align: start;
+  margin: 0;
+  padding: 0;
+  list-style: none;
   font-size: 0.875rem;
-}
-
-.schedule__stage-table th,
-.schedule__stage-table td {
-  min-width: 7rem;
-  padding: 0.75rem 1rem;
-  border-block-end: 1px solid var(--schedule-line);
-  text-align: start;
-  vertical-align: top;
+  line-height: 1.6;
   overflow-wrap: anywhere;
 }
 
-.schedule__stage-table thead {
-  background: var(--schedule-canvas);
-  color: var(--schedule-muted);
-  font-size: 0.75rem;
+.schedule__stage-item {
+  padding-block: 0.75rem;
 }
 
-.schedule__stage-table tbody th {
+.schedule__stage-item + .schedule__stage-item {
+  border-block-start: 1px solid var(--schedule-line);
+}
+
+.schedule__stage-title {
   color: var(--schedule-accent-dark);
   font-weight: 600;
 }
 
-.schedule__stage-table tbody tr:last-child > * {
-  border-block-end: 0;
-}
-
 .schedule__substage-list {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
   gap: 0.375rem;
-  margin: 0;
-  padding: 0;
-  list-style: none;
+  margin-block: 0.5rem 0;
+  padding-inline-start: 1.25rem;
+  list-style: disc;
 }
 
-.schedule__substage-list li {
-  padding: 0.25rem 0.5rem;
-  border: 1px solid var(--schedule-line);
-  border-radius: 6px;
-  background: var(--schedule-canvas);
+.schedule__substage-list li::marker {
+  color: var(--schedule-muted);
+}
+
+.schedule__stage-fallback {
+  margin-block: 0.5rem 0;
 }
 
 .schedule__muted,
@@ -1076,7 +1059,7 @@ body .p-dialog.schedule-settings .p-dialog-header {
   font-variant-numeric: tabular-nums;
 }
 
-.schedule__overview-group .schedule__table-wrap {
+.schedule__overview-group .schedule__stage-list {
   margin: 1rem;
 }
 

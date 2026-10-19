@@ -49,7 +49,7 @@
           {{ $t('procurement.orders.issue_from_prices') }}
         </p>
       </template>
-      <div class="procurement-actions">
+      <div class="procurement-actions mt-2">
         <AppButton type="button" theme="secondary" @click="emit('close')">{{
           $t('close')
         }}</AppButton>
