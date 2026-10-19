@@ -3260,6 +3260,7 @@
   "project_workspace.details": "تفاصيل المشروع وعرض التنفيذ",
   "project_workspace.navigation": "التنقل بين تطبيقات المشروع",
   "work_items.title": "بنود العمل",
+  "work_items.drawings_subtitle": "إدارة رسومات المشروع وإصداراتها ومرفقاتها.",
   "work_items.subtitle": "إدارة مهام الموقع والتقارير اليومية والاجتماعات ومشكلات التنفيذ.",
   "work_items.open": "فتح بنود العمل",
   "work_items.tasks": "مهام المهندسين",

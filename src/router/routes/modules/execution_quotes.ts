@@ -68,6 +68,12 @@ export const executionQuoteRoutes: RouteRecordRaw[] = [
     },
   },
   {
+    path: 'execution-quotes/show/:id(\\d+)/drawings',
+    name: 'Quote Drawings',
+    component: () => import('@/views/MainOrganization/ExecutionQuotes/Drawings/DrawingsIndex.vue'),
+    meta: { breadcrumb: 'work_items.drawings', parent: 'execution_quote.show.title' },
+  },
+  {
     path: 'execution-quotes/show/:id(\\d+)',
     name: 'Show Execution Quote',
     component: () => import('@/views/MainOrganization/ExecutionQuotes/ShowExecutionQuote.vue'),

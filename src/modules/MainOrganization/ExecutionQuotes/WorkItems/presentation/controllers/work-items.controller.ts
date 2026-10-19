@@ -103,7 +103,6 @@ export default class WorkItemsController extends BaseController<WorkTaskModel> {
   }
   async load() {
     await Promise.all([
-      this.loadDrawings(),
       this.loadTasks(),
       this.loadReports(),
       this.loadActivities(),

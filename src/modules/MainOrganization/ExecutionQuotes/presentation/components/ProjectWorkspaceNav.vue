@@ -3,12 +3,12 @@
   import { useRoute } from 'vue-router';
   import { quotePath, schedulePath } from '../../Schedule/presentation/schedule.routes';
   import { siteTeamPath } from '../../SiteTeam/presentation/site-team.routes';
-  import { workItemsPath } from '../../WorkItems/presentation/work-items.routes';
+  import { drawingsPath, workItemsPath } from '../../WorkItems/presentation/work-items.routes';
   import { procurementPath } from '../../Procurement/presentation/procurement.routes';
   import { materialReceiptPath } from '../../Warehouse/presentation/material-receipt.routes';
   const props = defineProps<{
     quoteId: number;
-    active: 'schedule' | 'site-team' | 'work-items' | 'procurement' | 'warehouse';
+    active: 'schedule' | 'site-team' | 'work-items' | 'drawings' | 'procurement' | 'warehouse';
   }>();
   const route = useRoute();
   const validQuote = computed(() => Number.isInteger(props.quoteId) && props.quoteId > 0);
@@ -35,6 +35,11 @@
       :to="workItemsPath(route.path, quoteId)"
       :aria-current="active === 'work-items' ? 'page' : undefined"
       ><i class="pi pi-list-check" aria-hidden="true"></i>{{ $t('work_items.title') }}</RouterLink
+    >
+    <RouterLink
+      :to="drawingsPath(route.path, quoteId)"
+      :aria-current="active === 'drawings' ? 'page' : undefined"
+      ><i class="pi pi-file-edit" aria-hidden="true"></i>{{ $t('work_items.drawings') }}</RouterLink
     >
     <RouterLink
       :to="procurementPath(route.path, quoteId)"

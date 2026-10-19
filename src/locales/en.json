@@ -3265,6 +3265,7 @@
   "project_workspace.details": "Project details & quote",
   "project_workspace.navigation": "Project app navigation",
   "work_items.title": "Work Items",
+  "work_items.drawings_subtitle": "Manage project drawings, revisions, and attachments.",
   "work_items.subtitle": "Manage site tasks, daily reports, meetings, and execution issues.",
   "work_items.open": "Open Work Items",
   "work_items.tasks": "Engineer Tasks",
