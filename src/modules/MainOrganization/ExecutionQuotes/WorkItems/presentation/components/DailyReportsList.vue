@@ -46,20 +46,23 @@
           {{ $t(`execution_updates.scope_${report.reportScopeType}`) }}
           <span v-if="report.projectFloorSpace">· {{ report.projectFloorSpace.space.title }}</span>
         </p>
-        <button
-          v-if="report.attachments.length"
-          type="button"
-          class="btn btn-secondary"
-          @click="attachmentGallery.open(report.attachments.map(toGalleryAttachment), 0)"
-        >
-          {{ $t('attachments') }} ({{ report.attachments.length }})
-        </button>
+
         <dl>
           <div>
             <dt>{{ $t('work_items.created_by') }}</dt>
             <dd>{{ report.employee.name }}</dd>
           </div>
         </dl>
+        <div class="work-items-record-actions">
+          <button
+            v-if="report.attachments.length"
+            type="button"
+            class="btn btn-secondary"
+            @click="attachmentGallery.open(report.attachments.map(toGalleryAttachment), 0)"
+          >
+            {{ $t('attachments') }} ({{ report.attachments.length }})
+          </button>
+        </div>
       </li>
     </ul>
   </WorkItemSection>

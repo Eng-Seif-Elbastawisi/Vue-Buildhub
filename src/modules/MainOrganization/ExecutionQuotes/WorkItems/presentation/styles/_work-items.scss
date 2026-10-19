@@ -499,3 +499,12 @@ body:has(.work-items-page) .attachment-gallery__toolbar {
     border-color: var(--bh-line);
   }
 }
+
+
+.work-items-record-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: end;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
