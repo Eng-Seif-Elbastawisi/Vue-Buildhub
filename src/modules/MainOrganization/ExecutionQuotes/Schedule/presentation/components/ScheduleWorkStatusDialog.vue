@@ -17,12 +17,12 @@
   import { ChangeTimelineWorkStatusParams } from '../../core/params/schedule.status.params';
   import ScheduleController from '../controllers/schedule.controller';
 
-  const props = defineProps<{ group: ScheduleGroupModel }>();
-  const emit = defineEmits<{ close: [] }>();
+  const props = defineProps<{ group: ScheduleGroupModel; startOnly?: boolean }>();
+  const emit = defineEmits<{ close: []; saved: [] }>();
   const controller = ScheduleController.getInstance();
   const { t } = useI18n();
   const statuses = computed(() =>
-    Object.values(TimelineWorkStatus).map(
+    (props.startOnly ? [TimelineWorkStatus.START] : Object.values(TimelineWorkStatus)).map(
       (id) => new TitleInterface({ id, title: t(`schedule.work_${id}`) }),
     ),
   );
@@ -31,7 +31,11 @@
       (id) => new TitleInterface({ id, title: t(`schedule.reason_${id}`) }),
     ),
   );
-  const selected = ref<TitleInterface<number> | null>(null);
+  const selected = ref<TitleInterface<number> | null>(
+    props.startOnly
+      ? new TitleInterface({ id: TimelineWorkStatus.START, title: t('schedule.work_1') })
+      : null,
+  );
   const reason = ref<TitleInterface<number> | null>(null);
   const note = ref('');
   const invalid = ref(false);
@@ -47,7 +51,10 @@
         note.value.trim() || null,
       ),
     );
-    if (state instanceof DataSuccess) emit('close');
+    if (state instanceof DataSuccess) {
+      emit('saved');
+      emit('close');
+    }
   }
 </script>
 <template>

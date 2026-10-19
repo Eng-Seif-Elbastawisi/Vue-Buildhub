@@ -2,6 +2,7 @@ import BaseRepository from '@/base/Domain/Repositories/baseRepository';
 import type { ApiCallOptions } from '@/base/Data/ApiService/baseApiService';
 import type { ApiResponse } from '@/base/Data/ApiService/baseApiService';
 import ScheduleOwnerParams from '../../core/params/schedule.owner.params';
+import { TimelineWorkStatus } from '../../core/constants/timeline.status';
 import type Params from '@/base/Core/Params/params';
 import {
   DataFailed,
@@ -56,6 +57,11 @@ export default class ScheduleRepository extends BaseRepository<ScheduleGroupMode
     } catch (error: unknown) {
       return this.handleError(error);
     }
+  }
+  fetchStartedProjectTimelines(quoteId: number) {
+    return this.readOverview(
+      new ScheduleOwnerParams(quoteId, undefined, undefined, TimelineWorkStatus.START),
+    );
   }
   async readOverview(params: Params): Promise<DataState<ProjectTimelineOverviewModel>> {
     try {

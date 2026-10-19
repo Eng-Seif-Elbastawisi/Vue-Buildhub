@@ -45,12 +45,17 @@ export default class ScheduleApiService extends BaseApiService {
     }
     throw new ValidationException('schedule.invalid_form', errors);
   }
-  private ownerParams(params?: Params, scope: 'quote' | 'timeline' = 'quote') {
+  private ownerParams(
+    params?: Params,
+    scope: 'quote' | 'timeline' = 'quote',
+    allowWorkStatus = false,
+  ) {
     if (
       !(params instanceof ScheduleOwnerParams) ||
       params.constructor !== ScheduleOwnerParams ||
       (params.groupId !== undefined) !== (scope === 'timeline') ||
-      params.order !== undefined
+      params.order !== undefined ||
+      (!allowWorkStatus && params.workStatus !== undefined)
     ) {
       throw new ValidationException('schedule.invalid_form');
     }
@@ -61,7 +66,8 @@ export default class ScheduleApiService extends BaseApiService {
     if (
       !(params instanceof ScheduleGroupParams) ||
       (params.groupId !== undefined) !== (operation === 'update') ||
-      params.order !== undefined
+      params.order !== undefined ||
+      params.workStatus !== undefined
     ) {
       throw new ValidationException('schedule.invalid_form');
     }
@@ -69,7 +75,11 @@ export default class ScheduleApiService extends BaseApiService {
     return params;
   }
   async index(params?: Params, options?: ApiCallOptions): Promise<ApiResponse<unknown>> {
-    return super.index(this.ownerParams(params), this.requestOptions(options), false);
+    return super.index(
+      this.ownerParams(params, 'quote', true),
+      this.requestOptions(options),
+      false,
+    );
   }
   async show(params?: Params, options?: ApiCallOptions): Promise<ApiResponse<unknown>> {
     return super.show(this.ownerParams(params, 'timeline'), this.requestOptions(options), false);
@@ -117,7 +127,8 @@ export default class ScheduleApiService extends BaseApiService {
     if (
       !(params instanceof ScheduleSettingsParams) ||
       params.groupId !== undefined ||
-      params.order !== undefined
+      params.order !== undefined ||
+      params.workStatus !== undefined
     ) {
       throw new ValidationException('schedule.invalid_form');
     }

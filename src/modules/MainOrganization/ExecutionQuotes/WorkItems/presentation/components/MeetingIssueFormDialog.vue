@@ -17,7 +17,10 @@
   import WorkItemsController from '../controllers/work-items.controller';
   import StoreActivityParams from '../../core/params/store.activity.params';
   import IndexEmployeeParams from '@/modules/MainOrganization/employee/core/params/index.employee.params';
-  import { WorkActivityType } from '../../core/constants/work-items.constants';
+  import {
+    WorkActivityType,
+    type MeetingAudienceType,
+  } from '../../core/constants/work-items.constants';
 
   const props = defineProps<{ visible: boolean; initialType?: WorkActivityType }>();
   const emit = defineEmits<{ 'update:visible': [boolean] }>();
@@ -28,6 +31,9 @@
   const errors = ref<FieldError[]>([]);
   const busy = computed(() => controller.activitiesSaveState.value instanceof DataLoading);
   const failure = computed(() => controller.activitiesSaveState.value.error?.displayMessage);
+  const backendErrors = computed(() =>
+    Object.values(controller.activitiesSaveState.value.error?.validationErrors ?? {}).flat(),
+  );
   function fieldError(field: string) {
     return errors.value.find((error) => error.field === field)?.message;
   }
@@ -40,6 +46,12 @@
   const type = ref<Selection>(null);
   const date = ref('');
   const description = ref('');
+  const audience = ref<Selection>(null);
+  const attendees = ref<Selection>([]);
+  const result = ref('');
+  const audienceOptions = computed(() =>
+    [1, 2].map((id) => new TitleInterface({ id, title: t(`execution_updates.audience_${id}`) })),
+  );
   const typeOptions = computed(() =>
     [1, 2, 3, 4].map((id) => new TitleInterface({ id, title: t(`work_items.type_${id}`) })),
   );
@@ -54,6 +66,9 @@
       employee.value = null;
       date.value = '';
       description.value = '';
+      audience.value = null;
+      attendees.value = [];
+      result.value = '';
       type.value =
         typeOptions.value.find(
           (option) => option.id === (props.initialType ?? WorkActivityType.Meeting),
@@ -71,6 +86,11 @@
       date: date.value || null,
       description: description.value.trim() || null,
       employeeId: selectionId(employee.value),
+      meetingAudienceType: selectionId(audience.value) as MeetingAudienceType | null,
+      result: result.value.trim() || null,
+      attendees: (Array.isArray(attendees.value) ? attendees.value : []).map((employee) =>
+        Number(employee.id),
+      ),
     });
     errors.value = params.validate().errors;
     if (errors.value.length) return;
@@ -163,7 +183,7 @@
           aria-describedby="activity-date-error"
         /><small id="activity-date-error" role="alert">{{ fieldError('date') }}</small>
       </div>
-      <div v-else class="field-group input-wrapper">
+      <div class="field-group input-wrapper">
         <span class="field-help-label-row field-help-label-row--block"
           ><label for="activity-description" class="field-label label">{{
             $t('work_items.record_description')
@@ -183,6 +203,62 @@
           :disabled="busy"
         ></textarea>
       </div>
+      <template v-if="isMeeting">
+        <div class="field-group">
+          <UpdatedCustomInputSelect
+            id="meeting-audience"
+            v-model="audience"
+            label="execution_updates.audience"
+            :placeholder="$t('execution_updates.audience')"
+            :static-options="audienceOptions"
+            :disabled="busy"
+            ><template #LabelHeader
+              ><FieldHelpIcon
+                :label="$t('execution_updates.audience')"
+                field-name="audience"
+                field-id="meeting-audience"
+                :help-text="$t('execution_updates.audience_help')" /></template
+          ></UpdatedCustomInputSelect>
+        </div>
+        <div class="field-group input-wrapper">
+          <span class="field-help-label-row field-help-label-row--block"
+            ><label for="meeting-result" class="field-label label">{{
+              $t('execution_updates.result')
+            }}</label
+            ><FieldHelpIcon
+              :label="$t('execution_updates.result')"
+              field-name="result"
+              field-id="meeting-result"
+              :help-text="$t('execution_updates.result_help')"
+          /></span>
+          <textarea
+            id="meeting-result"
+            v-model="result"
+            class="input workspace-control"
+            :disabled="busy"
+            rows="3"
+          />
+        </div>
+        <div class="field-group">
+          <UpdatedCustomInputSelect
+            id="meeting-attendees"
+            v-model="attendees"
+            :type="2"
+            label="execution_updates.attendees"
+            :placeholder="$t('work_items.select_employee')"
+            :controller="controller.employeeOptions"
+            :params="employeeParams"
+            paginated
+            :disabled="busy"
+            ><template #LabelHeader
+              ><FieldHelpIcon
+                :label="$t('execution_updates.attendees')"
+                field-name="attendees"
+                field-id="meeting-attendees"
+                :help-text="$t('execution_updates.attendees_help')" /></template
+          ></UpdatedCustomInputSelect>
+        </div>
+      </template>
       <div v-if="!isMeeting">
         <div class="field-group">
           <UpdatedCustomInputSelect
@@ -210,6 +286,9 @@
         <small v-if="fieldError('employeeId')" role="alert">{{ fieldError('employeeId') }}</small>
       </div>
       <p v-if="failure" class="work-items-error" role="alert">{{ $t(failure) }}</p>
+      <ul v-if="backendErrors.length" role="alert">
+        <li v-for="(message, index) in backendErrors" :key="index">{{ message }}</li>
+      </ul>
       <div class="work-items-actions">
         <AppButton
           type="button"

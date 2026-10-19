@@ -195,3 +195,14 @@ it('does not retry a failed create or turn a network rejection into success', as
   await expect(api.create(group())).rejects.toBeInstanceOf(ValidationException);
   expect(NetworkService.instance.post).toHaveBeenCalledOnce();
 });
+
+it('uses the same Timeline Fetch endpoint with an optional execution work-status filter', async () => {
+  await api.index(new ScheduleOwnerParams(140, undefined, undefined, 1));
+  await api.index(new ScheduleOwnerParams(140));
+  const calls = vi.mocked(NetworkService.instance.post).mock.calls;
+  expect(calls.map(([request]) => request.data)).toEqual([
+    { quote_id: 140, work_status: 1 },
+    { quote_id: 140 },
+  ]);
+  expect(calls.every(([request]) => request.url.endsWith('fetch_project_timelines'))).toBe(true);
+});

@@ -1,4 +1,8 @@
 <script setup lang="ts">
+  import {
+    attachmentGallery,
+    toGalleryAttachment,
+  } from '@/shared/AttachmentGallery/attachmentGallery';
   import { computed } from 'vue';
   import {
     DataLoading,
@@ -30,12 +34,26 @@
       <li v-for="report in reports" :key="report.id">
         <div class="work-items-record-heading">
           <h3>{{ report.date }}</h3>
-          <span class="work-items-badge bh-status" :class="`work-items-safety-${report.siteSafetyStatus}`">{{
-            $t(`work_items.safety_${report.siteSafetyStatus}`)
-          }}</span>
+          <span
+            class="work-items-badge bh-status"
+            :class="`work-items-safety-${report.siteSafetyStatus}`"
+            >{{ $t(`work_items.safety_${report.siteSafetyStatus}`) }}</span
+          >
         </div>
         <p class="work-items-stage-label">{{ stageLabel(report.projectTimelineStageId) }}</p>
         <p class="work-items-notes">{{ report.notes ?? $t('work_items.no_notes') }}</p>
+        <p v-if="report.reportScopeType">
+          {{ $t(`execution_updates.scope_${report.reportScopeType}`) }}
+          <span v-if="report.projectFloorSpace">· {{ report.projectFloorSpace.space.title }}</span>
+        </p>
+        <button
+          v-if="report.attachments.length"
+          type="button"
+          class="btn btn-secondary"
+          @click="attachmentGallery.open(report.attachments.map(toGalleryAttachment), 0)"
+        >
+          {{ $t('attachments') }} ({{ report.attachments.length }})
+        </button>
         <dl>
           <div>
             <dt>{{ $t('work_items.created_by') }}</dt>

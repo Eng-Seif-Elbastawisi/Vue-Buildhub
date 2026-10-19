@@ -9,6 +9,7 @@ export default class StoreShopDrawingQuoteParams implements Params {
     versionNumber: string;
     file: string | null;
     projectTimelineStageIds: number[];
+    projectFloorSpaceId?: number | null;
   };
   constructor(fields: {
     quoteId: number;
@@ -17,10 +18,12 @@ export default class StoreShopDrawingQuoteParams implements Params {
     versionNumber: string;
     file: string | null;
     projectTimelineStageIds: number[];
+    projectFloorSpaceId?: number | null;
   }) {
     this.fields = fields;
   }
   private static validation = new ClassValidation().setRules({
+    projectFloorSpaceId: { custom: positiveId },
     quoteId: { required: true, custom: positiveId },
     title: { required: true },
     date: { custom: dateOnly },
@@ -38,6 +41,9 @@ export default class StoreShopDrawingQuoteParams implements Params {
   toMap() {
     return {
       quote_id: this.fields.quoteId,
+      ...(this.fields.projectFloorSpaceId == null
+        ? {}
+        : { project_floor_space_id: this.fields.projectFloorSpaceId }),
       title: this.fields.title.trim(),
       date: this.fields.date,
       version_number: this.fields.versionNumber.trim(),

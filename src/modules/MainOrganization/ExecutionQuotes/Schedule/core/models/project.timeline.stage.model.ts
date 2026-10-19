@@ -14,7 +14,7 @@ export default class ProjectTimelineStageModel {
     parentId?: number | null;
     id: number;
     quoteStageId: number;
-    title: string | null;
+    title: string;
     children: ProjectTimelineSubStageModel[];
     stage?: TitleModel;
     subStage?: TitleModel | null;
@@ -32,6 +32,7 @@ export default class ProjectTimelineStageModel {
   static fromJson(value: unknown): ProjectTimelineStageModel {
     const payload = responseObject(value);
     const label = mappedLabel(payload.stage);
+    if (!label || !Array.isArray(payload.children)) throw new Error('schedule.invalid_response');
     // Use the QuoteStage association ID, rather than the nested master Stage ID.
     return new ProjectTimelineStageModel({
       parentId: payload.parent_id as number | null | undefined,
@@ -41,9 +42,9 @@ export default class ProjectTimelineStageModel {
       stage: label as TitleModel,
       subStage: payload.sub_stage ? mappedLabel(payload.sub_stage) : null,
       createdAt: payload.created_at as string | null | undefined,
-      children: payload.children.length > 0 && Array.isArray(payload.children) ? payload.children?.map((child: unknown) =>
+      children: payload.children.map((child: unknown) =>
         ProjectTimelineSubStageModel.fromJson(child),
-      ) : [],
+      ),
     });
   }
 }

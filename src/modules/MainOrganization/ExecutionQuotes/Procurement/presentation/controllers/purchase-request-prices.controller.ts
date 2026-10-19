@@ -25,6 +25,9 @@ import { supplierPriceNumber } from '../../core/params/supplier-price.decimal';
 import PurchaseRequestController from './purchase-request.controller';
 
 export interface SupplierOfferDraft {
+  attachment?: string;
+  savedAttachment?: string | null;
+  processing?: boolean;
   key: number;
   supplier: TitleInterface<string | number> | null;
   price: string;
@@ -73,6 +76,7 @@ export default class PurchaseRequestPricesController extends BaseController<
       !this.readOnly.value &&
       this.loaded.value &&
       !this.isSyncing.value &&
+      !this.draft.value.some((row) => row.processing) &&
       !this.refreshRequired.value &&
       this.dirty.value,
   );
@@ -165,7 +169,8 @@ export default class PurchaseRequestPricesController extends BaseController<
   }
   private signature(rows: SupplierOfferDraft[]) {
     return JSON.stringify(
-      rows.map(({ supplier, price, duration, durationType }) => ({
+      rows.map(({ supplier, price, duration, durationType, attachment }) => ({
+        attachment,
         id: supplier == null ? null : Number(supplier.id),
         price: supplierPriceNumber(price) ?? price,
         duration: /^\d+$/.test(duration) ? Number(duration) : duration,
@@ -206,6 +211,9 @@ export default class PurchaseRequestPricesController extends BaseController<
       ];
       return;
     }
+    if ('supplier' in fields) {
+      fields = { ...fields, attachment: undefined, savedAttachment: null };
+    }
     this.errors.value = [];
     this.draft.value = this.draft.value.map((row) =>
       row.key === key ? { ...row, ...fields, key: row.key } : row,
@@ -225,6 +233,7 @@ export default class PurchaseRequestPricesController extends BaseController<
   private rowsFromOffers(offers: PurchaseRequestPriceModel[]) {
     return offers.map((offer) => ({
       key: ++this.rowKey,
+      savedAttachment: offer.attachment,
       supplier: offer.supplier
         ? new TitleInterface({ id: offer.supplier.id, title: offer.supplier.name ?? '' })
         : null,
@@ -302,6 +311,7 @@ export default class PurchaseRequestPricesController extends BaseController<
             supplierPriceNumber(row.price) ?? NaN,
             /^\d+$/.test(row.duration) ? Number(row.duration) : NaN,
             Number(row.durationType?.id),
+            row.attachment,
           ),
       ),
     );

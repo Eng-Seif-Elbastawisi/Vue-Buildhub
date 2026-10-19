@@ -1,4 +1,8 @@
 <script setup lang="ts">
+  import {
+    attachmentGallery,
+    toGalleryAttachment,
+  } from '@/shared/AttachmentGallery/attachmentGallery';
   import { computed, ref, onBeforeUnmount } from 'vue';
   import Skeleton from 'primevue/skeleton';
   import AppButton from '@/shared/HelpersComponents/AppButton.vue';
@@ -165,6 +169,16 @@
               <tr v-for="offer in offers" :key="offer.id">
                 <th scope="row">{{ offer.supplier?.name ?? $t('procurement.unavailable') }}</th>
                 <td class="procurement-price">
+                  <button
+                    v-if="offer.attachment"
+                    type="button"
+                    class="btn btn-secondary"
+                    @click="
+                      attachmentGallery.open([toGalleryAttachment({ file: offer.attachment })], 0)
+                    "
+                  >
+                    {{ $t('work_items.view_attachment') }}
+                  </button>
                   {{ offer.price ?? $t('procurement.unavailable') }}
                 </td>
                 <td>

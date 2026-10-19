@@ -68,7 +68,7 @@ it('loads only explicit main timeline-stage associations, never master Stage IDs
   );
   await controller.loadStages();
   expect(controller.mainStages.value.map((stage) => stage.id)).toEqual([17]);
-  expect(post.mock.calls[0]?.[0].data).toEqual({ quote_id: 140 });
+  expect(post.mock.calls[0]?.[0].data).toEqual({ quote_id: 140, work_status: 1 });
 });
 it('uses the scoped Project lookup when optional owner metadata is omitted', async () => {
   post

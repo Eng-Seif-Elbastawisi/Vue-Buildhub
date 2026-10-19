@@ -54,6 +54,16 @@
         <p v-if="activity.type !== WorkActivityType.Meeting" class="work-items-notes">
           {{ activity.description ?? $t('work_items.no_notes') }}
         </p>
+        <template v-if="activity.type === WorkActivityType.Meeting">
+          <p v-if="activity.meetingAudienceType">
+            {{ $t(`execution_updates.audience_${activity.meetingAudienceType}`) }}
+          </p>
+          <p v-if="activity.result">{{ $t('execution_updates.result') }}: {{ activity.result }}</p>
+          <p v-if="activity.attendees.length">
+            {{ $t('execution_updates.attendees') }}:
+            {{ activity.attendees.map((employee) => employee.name).join(' · ') }}
+          </p>
+        </template>
         <dl>
           <div v-if="activity.type === WorkActivityType.Meeting">
             <dt>{{ $t('work_items.meeting_date') }}</dt>

@@ -24,3 +24,8 @@ export function dateOnly(date: unknown): boolean {
   ];
   return day <= (days[month - 1] ?? 0);
 }
+
+export const ReportScopeType = { ALL_PROJECT: 1, SPECIFIC_SPACE: 2 } as const;
+export type ReportScopeType = (typeof ReportScopeType)[keyof typeof ReportScopeType];
+export const MeetingAudienceType = { INTERNAL: 1, WITH_CLIENT: 2 } as const;
+export type MeetingAudienceType = (typeof MeetingAudienceType)[keyof typeof MeetingAudienceType];

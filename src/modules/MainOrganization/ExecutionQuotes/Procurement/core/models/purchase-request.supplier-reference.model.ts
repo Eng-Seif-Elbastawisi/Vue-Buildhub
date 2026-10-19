@@ -1,16 +1,27 @@
-// Supplier master mapping requires phone/materials/specialization; this relation only has id/name.
+import { validId } from '../../../Schedule/core/constants/schedule.constants';
+
+// Offer summaries use title; keep the existing name accessor for lookup consumers.
 export default class PurchaseRequestSupplierReferenceModel {
   readonly id: number;
-  readonly name: string | null;
-  constructor(id: number, name: string | null) {
-    this.id = id;
-    this.name = name;
+  readonly title: string | null;
+  get name() {
+    return this.title;
   }
-  static fromJson(payload: Record<string, number | string | null | undefined>): PurchaseRequestSupplierReferenceModel {
-
-    return new PurchaseRequestSupplierReferenceModel(
-      payload.id as number,
-      (payload.title as string | null | undefined) ?? null,
-    );
+  constructor(id: number, title: string | null) {
+    this.id = id;
+    this.title = title;
+  }
+  static fromJson(payload: unknown): PurchaseRequestSupplierReferenceModel {
+    if (!payload || typeof payload !== 'object' || Array.isArray(payload))
+      throw new Error('procurement.offers.invalid_response');
+    const supplier = payload as Record<string, unknown>;
+    const title = supplier.title ?? supplier.name ?? null;
+    if (
+      typeof supplier.id !== 'number' ||
+      !validId(supplier.id) ||
+      (title !== null && typeof title !== 'string')
+    )
+      throw new Error('procurement.offers.invalid_response');
+    return new PurchaseRequestSupplierReferenceModel(supplier.id as number, title as string | null);
   }
 }

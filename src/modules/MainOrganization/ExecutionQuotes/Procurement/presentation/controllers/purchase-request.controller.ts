@@ -23,7 +23,7 @@ import ExecutionQuoteRepository from '../../../data/repositories/execution.quote
 import ShowExecutionQuoteParams from '../../../core/params/show.execution.quote.params';
 import type ExecutionQuoteShowModel from '../../../core/models/execution.quote.show.model';
 import ScheduleRepository from '../../../Schedule/data/repositories/schedule.repository';
-import ScheduleOwnerParams from '../../../Schedule/core/params/schedule.owner.params';
+import { TimelineWorkStatus } from '../../../Schedule/core/constants/timeline.status';
 import type ScheduleGroupModel from '../../../Schedule/core/models/schedule.group.model';
 import { validId } from '../../../Schedule/core/constants/schedule.constants';
 import PurchaseRequestRepository from '../../data/repositories/purchase-request.repository';
@@ -46,11 +46,16 @@ export default class PurchaseRequestController extends BaseController<
   readonly floorsState = shallowRef<DataState<ProjectFloorModel[]>>(new DataInitial());
   readonly projectId = computed(() => this.ownerState.value.data?.project?.id);
   readonly mainStages = computed(() =>
-    (this.stagesState.value.data ?? []).flatMap((group) =>
-      group.stages.map(
-        (stage) => new TitleInterface({ id: stage.id, title: `${group.title} · ${stage.title}` }),
+    (this.stagesState.value.data ?? [])
+      .filter((group) => group.workStatus === TimelineWorkStatus.START)
+      .flatMap((group) =>
+        group.stages
+          .filter((stage) => stage.parentId === null && stage.subStage == null)
+          .map(
+            (stage) =>
+              new TitleInterface({ id: stage.id, title: `${group.title} · ${stage.title}` }),
+          ),
       ),
-    ),
   );
   private constructor() {
     super();
@@ -139,8 +144,8 @@ export default class PurchaseRequestController extends BaseController<
     if (!this.quoteId.value) return;
     const current = this.requestScope('stages');
     this.stagesState.value = new DataLoading();
-    const overview = await ScheduleRepository.getInstance().readOverview(
-      new ScheduleOwnerParams(this.quoteId.value),
+    const overview = await ScheduleRepository.getInstance().fetchStartedProjectTimelines(
+      this.quoteId.value,
     );
     if (!current()) return;
     this.stagesState.value =
@@ -202,6 +207,18 @@ export default class PurchaseRequestController extends BaseController<
       },
     };
   }
+  private validSelection(params: StorePurchaseRequestParams) {
+    return (
+      params.validate().isValid &&
+      params.items.every((item) =>
+        this.mainStages.value.some((stage) => stage.id === item.projectTimelineStageId),
+      ) &&
+      (params.isAllProject ||
+        this.floorsState.value.data?.some((floor) =>
+          floor.spaces.some((space) => space.id === params.projectFloorSpaceId),
+        ) === true)
+    );
+  }
   async create(params: Params, options?: ApiCallOptions) {
     if (
       this.isStoring.value ||
@@ -209,22 +226,19 @@ export default class PurchaseRequestController extends BaseController<
       params.quoteId !== this.quoteId.value
     )
       return new DataCancelled<void>();
-    if (
-      !params.validate().isValid ||
-      params.items.some(
-        (item) => !this.mainStages.value.some((stage) => stage.id === item.projectTimelineStageId),
-      ) ||
-      (!params.isAllProject &&
-        !this.floorsState.value.data?.some((floor) =>
-          floor.spaces.some((space) => space.id === params.projectFloorSpaceId),
-        ))
-    ) {
+    if (!this.validSelection(params)) {
       this.itemState.value = this.invalid();
       return this.itemState.value;
     }
     const current = this.captureMutationScope();
     this.isStoring.value = true;
     try {
+      await this.loadStages();
+      if (!current()) return new DataCancelled<void>();
+      if (!this.validSelection(params)) {
+        this.itemState.value = this.invalid();
+        return this.itemState.value;
+      }
       const saved = await super.create(params, options);
       if (!current()) return new DataCancelled<void>();
       if (saved instanceof DataSuccess) {

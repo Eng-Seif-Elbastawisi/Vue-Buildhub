@@ -1,4 +1,9 @@
 <script setup lang="ts">
+  import HandleFilesUpload from '@/shared/FormInputs/HandleFilesUpload.vue';
+  import {
+    attachmentGallery,
+    toGalleryAttachment,
+  } from '@/shared/AttachmentGallery/attachmentGallery';
   import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
   import { computed, ref, nextTick } from 'vue';
   import { useI18n } from 'vue-i18n';
@@ -182,6 +187,24 @@
         <small v-if="error('durationType')" class="procurement-error" role="alert">{{
           $t(error('durationType')!)
         }}</small>
+      </div>
+      <div class="field-group">
+        <button
+          v-if="row.savedAttachment"
+          type="button"
+          class="btn btn-secondary"
+          @click="attachmentGallery.open([toGalleryAttachment({ file: row.savedAttachment })], 0)"
+        >
+          {{ $t('work_items.view_attachment') }}
+        </button>
+        <HandleFilesUpload
+          :key="`${row.key}-${row.supplier?.id}`"
+          label="attachments"
+          :max-files="1"
+          accept=""
+          @change="emit('update', { attachment: $event[0]?.base64 || undefined })"
+          @processing="emit('update', { processing: $event })"
+        />
       </div>
     </div>
   </fieldset>

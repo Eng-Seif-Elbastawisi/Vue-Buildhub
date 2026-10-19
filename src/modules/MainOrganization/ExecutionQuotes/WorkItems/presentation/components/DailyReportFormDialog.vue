@@ -1,4 +1,7 @@
 <script setup lang="ts">
+  import HandleFilesUpload from '@/shared/FormInputs/HandleFilesUpload.vue';
+  import ReportAttachmentParams from '../../core/params/report.attachment.params';
+  import { ReportScopeType } from '../../core/constants/work-items.constants';
   import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
   import { computed, ref, watch } from 'vue';
@@ -24,9 +27,28 @@
   const controller = WorkItemsController.getInstance();
   type Selection = TitleInterface<string | number> | TitleInterface<string | number>[] | null;
   const stage = ref<Selection>(null);
+  const space = ref<Selection>(null);
+  const scope = ref<Selection>(null);
+  const attachments = ref<ReportAttachmentParams[]>([]);
+  const processing = ref(false);
+  const uploadKey = ref(0);
+  const scopeOptions = computed(() =>
+    [1, 2].map((id) => new TitleInterface({ id, title: t(`execution_updates.scope_${id}`) })),
+  );
+  watch(
+    () => selectionId(scope.value),
+    (id) => {
+      if (id !== ReportScopeType.SPECIFIC_SPACE) space.value = null;
+    },
+  );
   const errors = ref<FieldError[]>([]);
-  const busy = computed(() => controller.reportsSaveState.value instanceof DataLoading);
+  const busy = computed(
+    () => processing.value || controller.reportsSaveState.value instanceof DataLoading,
+  );
   const failure = computed(() => controller.reportsSaveState.value.error?.displayMessage);
+  const backendErrors = computed(() =>
+    Object.values(controller.reportsSaveState.value.error?.validationErrors ?? {}).flat(),
+  );
   function fieldError(field: string) {
     return errors.value.find((error) => error.field === field)?.message;
   }
@@ -44,6 +66,11 @@
     (visible) => {
       if (!visible) return;
       stage.value = null;
+      scope.value = scopeOptions.value[0] ?? null;
+      space.value = null;
+      attachments.value = [];
+      uploadKey.value++;
+      void controller.loadSpaces();
       errors.value = [];
       date.value = '';
       notes.value = '';
@@ -62,6 +89,9 @@
       date.value,
       notes.value.trim() || null,
       selectionId(safety.value) as SiteSafetyStatus,
+      selectionId(scope.value) as ReportScopeType,
+      selectionId(space.value),
+      attachments.value,
     );
     errors.value = params.validate().errors;
     if (errors.value.length) return;
@@ -151,7 +181,63 @@
       <small v-if="fieldError('siteSafetyStatus')" role="alert">{{
         fieldError('siteSafetyStatus')
       }}</small>
+      <div class="field-group">
+        <UpdatedCustomInputSelect
+          id="report-scope"
+          v-model="scope"
+          label="execution_updates.scope"
+          :placeholder="$t('execution_updates.scope')"
+          :static-options="scopeOptions"
+          :disabled="busy"
+          required
+          ><template #LabelHeader
+            ><FieldHelpIcon
+              :label="$t('execution_updates.scope')"
+              field-name="scope"
+              field-id="report-scope"
+              :help-text="$t('execution_updates.scope_help')" /></template
+        ></UpdatedCustomInputSelect>
+      </div>
+      <div v-if="selectionId(scope) === ReportScopeType.SPECIFIC_SPACE" class="field-group">
+        <UpdatedCustomInputSelect
+          id="report-space"
+          v-model="space"
+          label="execution_updates.space"
+          :placeholder="$t('execution_updates.space')"
+          :static-options="controller.spaceOptions.value"
+          :disabled="busy"
+          required
+          ><template #LabelHeader
+            ><FieldHelpIcon
+              :label="$t('execution_updates.space')"
+              field-name="space"
+              field-id="report-space"
+              :help-text="$t('execution_updates.space_help')" /></template
+        ></UpdatedCustomInputSelect>
+        <small v-if="fieldError('projectFloorSpaceId')" role="alert">{{
+          fieldError('projectFloorSpaceId')
+        }}</small>
+        <p v-if="controller.floorsState.value.error" role="alert">
+          {{ $t(controller.floorsState.value.error.displayMessage) }}
+          <button type="button" class="btn btn-secondary" @click="controller.loadSpaces()">
+            {{ $t('work_items.retry') }}
+          </button>
+        </p>
+      </div>
+      <fieldset class="field-group" :disabled="busy">
+        <HandleFilesUpload
+          :key="uploadKey"
+          label="attachments"
+          multiple
+          accept=""
+          @change="attachments = $event.map((file) => new ReportAttachmentParams(file.base64))"
+          @processing="processing = $event"
+        />
+      </fieldset>
       <p v-if="failure" class="work-items-error" role="alert">{{ $t(failure) }}</p>
+      <ul v-if="backendErrors.length" role="alert">
+        <li v-for="(message, index) in backendErrors" :key="index">{{ message }}</li>
+      </ul>
       <div class="work-items-actions">
         <AppButton
           type="button"

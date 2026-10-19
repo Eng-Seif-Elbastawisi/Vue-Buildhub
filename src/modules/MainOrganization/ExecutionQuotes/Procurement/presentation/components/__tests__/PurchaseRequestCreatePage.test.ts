@@ -21,19 +21,34 @@ import ar from '@/locales/ar.json';
 let post: ReturnType<typeof mockNetwork>;
 const controller = PurchaseRequestController.getInstance();
 const base = '/organization/execution-quotes/show/140/procurement';
+function executionTimeline() {
+  const group = timelineGroup();
+  return {
+    status: true,
+    data: {
+      basicData: { count_timeline: 1 },
+      data: [{ ...group, stages: [...group.stages, { ...group.stages[0], id: 18 }] }],
+    },
+  };
+}
+
 beforeEach(() => {
   post = mockNetwork();
   post.mockImplementation(async (request) =>
-    response({
-      status: true,
-      data: request.url.includes('fetch_employees')
-        ? [{ id: 7, name: 'Responsible Employee' }]
-        : request.url.includes('fetch_materials')
-          ? [{ id: 5, title: 'Material Title' }]
-          : request.url.includes('fetch_products')
-            ? [{ id: 36, title: 'Product Title' }]
-            : [],
-    }),
+    response(
+      request.url.includes('fetch_project_timelines')
+        ? executionTimeline()
+        : {
+            status: true,
+            data: request.url.includes('fetch_employees')
+              ? [{ id: 7, name: 'Responsible Employee' }]
+              : request.url.includes('fetch_materials')
+                ? [{ id: 5, title: 'Material Title' }]
+                : request.url.includes('fetch_products')
+                  ? [{ id: 36, title: 'Product Title' }]
+                  : [],
+          },
+    ),
   );
   vi.stubGlobal(
     'matchMedia',
@@ -224,7 +239,7 @@ it('removes one requested item while keeping another row and its fields', async 
 it('shows backend item validation next to the affected quantity without losing input', async () => {
   const { wrapper, router } = await mountPage();
   await fill(wrapper);
-  post.mockRejectedValueOnce(
+  post.mockResolvedValueOnce(response(executionTimeline())).mockRejectedValueOnce(
     new ValidationException('Invalid quantity', {
       'items.0.quantity': ['Available stock is insufficient'],
     }),
@@ -277,7 +292,9 @@ it('supports multiple independent item rows and validates every row before trans
 it('preserves employee, scope and item lines after failed or unconfirmed Store responses', async () => {
   const { wrapper, router } = await mountPage();
   await fill(wrapper);
-  post.mockResolvedValueOnce(response({ status: false, message: 'Quantity is not available' }));
+  post
+    .mockResolvedValueOnce(response(executionTimeline()))
+    .mockResolvedValueOnce(response({ status: false, message: 'Quantity is not available' }));
   await wrapper.get('form').trigger('submit');
   await flushPromises();
   expect(router.currentRoute.value.path).toBe(`${base}/purchase-requests/add`);
@@ -291,16 +308,24 @@ it('preserves employee, scope and item lines after failed or unconfirmed Store r
   expect(employeeSelect?.props('modelValue')).toMatchObject({ id: 7 });
   post.mockImplementation(async (request) =>
     response(
-      request.url.includes('store_purchase_request')
-        ? { data: { id: 99 } }
-        : { status: true, data: [] },
+      request.url.includes('fetch_project_timelines')
+        ? executionTimeline()
+        : request.url.includes('store_purchase_request')
+          ? { data: { id: 99 } }
+          : { status: true, data: [] },
     ),
   );
   await wrapper.get('form').trigger('submit');
   await flushPromises();
   expect(router.currentRoute.value.path).toBe(`${base}/purchase-requests/add`);
   expect(wrapper.text()).toContain('did not explicitly confirm creation');
-  post.mockImplementation(async () => response({ status: true, data: [] }));
+  post.mockImplementation(async (request) =>
+    response(
+      request.url.includes('fetch_project_timelines')
+        ? executionTimeline()
+        : { status: true, data: [] },
+    ),
+  );
   await wrapper.get('form').trigger('submit');
   await flushPromises();
   expect(router.currentRoute.value.path).toBe(base);
@@ -328,7 +353,9 @@ it('submits the Project Floor Space association and clears it when switching to 
     expect.objectContaining({ id: 25, title: 'Living Room' }),
   ]);
   await select(wrapper, 'requirement-space', { id: 25, title: 'Living Room' });
-  post.mockResolvedValueOnce(response({ status: false, message: 'Retry after correction' }));
+  post
+    .mockResolvedValueOnce(response(executionTimeline()))
+    .mockResolvedValueOnce(response({ status: false, message: 'Retry after correction' }));
   await wrapper.get('form').trigger('submit');
   await flushPromises();
   expect(storeCalls()[0]?.[0].data).toMatchObject({

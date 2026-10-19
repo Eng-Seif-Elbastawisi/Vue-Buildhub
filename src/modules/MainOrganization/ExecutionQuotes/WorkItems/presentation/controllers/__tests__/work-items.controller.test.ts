@@ -1,3 +1,4 @@
+import { startedOverview } from '../../../__tests__/timeline-fixtures';
 import { beforeEach, expect, it } from 'vitest';
 import type { AxiosResponse } from 'axios';
 import {
@@ -28,6 +29,7 @@ beforeEach(() => {
   controller.stagesState.value = new DataSuccess({
     data: [
       new ScheduleGroupModel({
+        workStatus: 1,
         id: 2,
         title: 'Group',
         duration: 1,
@@ -45,12 +47,20 @@ beforeEach(() => {
   });
 });
 it('uses actual timeline stage ID and rejects QuoteStage ID', async () => {
-  post.mockResolvedValue(response({ status: true, data: [] }));
+  post.mockImplementation(async (request) =>
+    response(
+      request.url.includes('fetch_project_timelines')
+        ? startedOverview()
+        : { status: true, data: [] },
+    ),
+  );
   expect(controller.stages.value[0]?.id).toBe(18);
   expect(await controller.saveTask(new StoreTaskParams(999, 'Task'))).toBeInstanceOf(DataFailed);
   expect(post).not.toHaveBeenCalled();
   expect(await controller.saveTask(new StoreTaskParams(18, 'Task'))).toBeInstanceOf(DataSuccess);
-  expect(post.mock.calls[0]?.[0].data).toMatchObject({ project_timeline_stage_id: 18 });
+  expect(post.mock.calls.find((call) => call[0].url.includes('store_'))?.[0].data).toMatchObject({
+    project_timeline_stage_id: 18,
+  });
 });
 it('isolates late Quote A reads from Quote B', async () => {
   const pending = deferred();
@@ -107,20 +117,30 @@ it('independent states and latest-request isolation', async () => {
 });
 it('blocks duplicate mutations and refreshes only affected collection', async () => {
   const pending = deferred();
-  post.mockReturnValueOnce(pending.promise).mockResolvedValue(response({ status: true, data: [] }));
+  post
+    .mockResolvedValueOnce(response(startedOverview()))
+    .mockReturnValueOnce(pending.promise)
+    .mockResolvedValue(response({ status: true, data: [] }));
   const first = controller.saveTask(new StoreTaskParams(18, 'Task'));
   expect(await controller.saveTask(new StoreTaskParams(18, 'Task'))).toBeInstanceOf(DataCancelled);
   pending.resolve(response({ status: true }));
   await first;
   expect(post.mock.calls.map((call) => call[0].url?.split('/').pop())).toEqual([
+    'fetch_project_timelines',
     'store_project_timeline_stage_task',
     'fetch_project_timeline_stage_tasks',
   ]);
 });
 it('failed Store does not refresh or invent a row', async () => {
-  post.mockResolvedValue(response({ status: false, message: 'Rejected' }));
+  post.mockImplementation(async (request) =>
+    response(
+      request.url.includes('fetch_project_timelines')
+        ? startedOverview()
+        : { status: false, message: 'Rejected' },
+    ),
+  );
   expect(await controller.saveTask(new StoreTaskParams(18, 'Task'))).toBeInstanceOf(DataFailed);
-  expect(post).toHaveBeenCalledTimes(1);
+  expect(post).toHaveBeenCalledTimes(2);
   expect(controller.tasksState.value.data).toBeNull();
 });
 it('late Store after owner switch cannot trigger refresh or close a new form', async () => {
@@ -142,6 +162,7 @@ it('Schedule lookup uses existing fetch_project_timelines and actual stage IDs',
           {
             id: 2,
             title: 'Group',
+            work_status: 1,
             duration: 1,
             duration_type: 4,
             stages: [
@@ -155,20 +176,23 @@ it('Schedule lookup uses existing fetch_project_timelines and actual stage IDs',
   await controller.loadStages();
   expect(post.mock.calls[0]?.[0]).toMatchObject({
     url: expect.stringContaining('fetch_project_timelines'),
-    data: { quote_id: 140 },
+    data: { quote_id: 140, work_status: 1 },
   });
   expect(controller.stages.value[0]?.id).toBe(18);
 });
 it('keeps submission disabled while authoritative refresh is pending', async () => {
   const pending = deferred();
-  post.mockResolvedValueOnce(response({ status: true })).mockReturnValueOnce(pending.promise);
+  post
+    .mockResolvedValueOnce(response(startedOverview()))
+    .mockResolvedValueOnce(response({ status: true }))
+    .mockReturnValueOnce(pending.promise);
   const save = controller.saveTask(new StoreTaskParams(18, 'Task'));
   for (let turn = 0; turn < 20; turn++) await Promise.resolve();
   expect(controller.tasksSaveState.value).toBeInstanceOf(DataLoading);
   expect(await controller.saveTask(new StoreTaskParams(18, 'Task'))).toBeInstanceOf(DataCancelled);
   pending.resolve(response({ status: true, data: [] }));
   await save;
-  expect(post).toHaveBeenCalledTimes(2);
+  expect(post).toHaveBeenCalledTimes(3);
 });
 it('employee lookup sends supported search/page and ignores stale owner response', async () => {
   post.mockResolvedValue(
@@ -191,7 +215,13 @@ it('employee lookup sends supported search/page and ignores stale owner response
 });
 
 it('drawing creation accepts only explicit main stages owned by current Quote and refreshes on success', async () => {
-  post.mockResolvedValue(response({ status: true, data: [] }));
+  post.mockImplementation(async (request) =>
+    response(
+      request.url.includes('fetch_project_timelines')
+        ? startedOverview()
+        : { status: true, data: [] },
+    ),
+  );
   const params = new StoreShopDrawingQuoteParams({
     quoteId: 140,
     title: 'MEP',
@@ -207,6 +237,7 @@ it('drawing creation accepts only explicit main stages owned by current Quote an
   controller.stagesState.value = new DataSuccess({
     data: [
       new ScheduleGroupModel({
+        workStatus: 1,
         ...group,
         stages: [
           new ProjectTimelineStageModel({
@@ -240,6 +271,7 @@ it('drawing creation accepts only explicit main stages owned by current Quote an
   ).toBeInstanceOf(DataFailed);
   expect(await controller.saveDrawing(params)).toBeInstanceOf(DataSuccess);
   expect(post.mock.calls.map((call) => call[0].url.split('/').pop())).toEqual([
+    'fetch_project_timelines',
     'store_shop_drawing_quote',
     'fetch_shop_drawing_quotes',
   ]);
@@ -283,6 +315,7 @@ it('drawing save blocks duplicates, keeps independent state and ignores late suc
   controller.stagesState.value = new DataSuccess({
     data: [
       new ScheduleGroupModel({
+        workStatus: 1,
         id: 2,
         title: 'Main',
         duration: 1,

@@ -12,9 +12,15 @@ import { mockNetwork, response } from '../../../../SiteTeam/__tests__/network';
 afterEach(() => {
   WorkItemsController.getInstance().release();
   vi.restoreAllMocks();
+  vi.unstubAllGlobals();
 });
 
 async function mountPage(path: string, locale = 'en') {
+  vi.stubGlobal(
+    'matchMedia',
+    vi.fn(() => ({ matches: false, addEventListener: vi.fn(), removeEventListener: vi.fn() })),
+  );
+
   const router = createRouter({
     history: createMemoryHistory(),
     routes: [
@@ -85,10 +91,17 @@ it.each([
     expect(wrapper.get('.work-items-section').attributes('open')).toBeDefined();
     expect(wrapper.get('.work-items-records h3').text()).toBe('Drawing 140');
     expect(wrapper.attributes('dir')).toBe(locale === 'ar' ? 'rtl' : 'ltr');
-    expect(post.mock.calls.map(([request]) => request.url.split('/').pop()).sort()).toEqual([
-      'fetch_project_timelines',
-      'fetch_shop_drawing_quotes',
-    ]);
+    expect(
+      post.mock.calls
+        .filter(([request]) => request.url.includes('fetch_project_timelines'))
+        .map(([request]) => request.data),
+    ).toEqual([{ quote_id: 140, work_status: 1 }, { quote_id: 140 }]);
+    expect(
+      post.mock.calls.filter(([request]) => request.url.includes('fetch_shop_drawing_quotes')),
+    ).toHaveLength(1);
+    expect(post.mock.calls.filter(([request]) => request.url.includes('show_quote'))).toHaveLength(
+      1,
+    );
     await wrapper.get('.work-items-header button').trigger('click');
     expect(wrapper.find('[role="dialog"]').exists()).toBe(true);
     expect(wrapper.find('#drawing-title').exists()).toBe(true);

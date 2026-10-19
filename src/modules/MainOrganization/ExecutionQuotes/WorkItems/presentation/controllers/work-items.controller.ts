@@ -10,12 +10,17 @@ import {
 } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
 import { ErrorModel, ErrorType } from '@/base/Core/NetworkStructure/Resources/errors/errorModel';
 import TitleInterface from '@/base/Data/Models/titleInterface';
+import ExecutionQuoteRepository from '../../../data/repositories/execution.quote.repository';
+import ShowExecutionQuoteParams from '../../../core/params/show.execution.quote.params';
+import ProjectFloorRepository from '@/modules/MainOrganization/ProjectFloor/data/repositories/project.floor.repository';
+import IndexProjectFloorParams from '@/modules/MainOrganization/ProjectFloor/core/params/index.project.floor.params';
+import type ProjectFloorModel from '@/modules/MainOrganization/ProjectFloor/core/models/project.floor.model';
 import type Params from '@/base/Core/Params/params';
 import type EmployeeModel from '@/modules/MainOrganization/employee/core/models/employee.model';
 import EmployeeRepository from '@/modules/MainOrganization/employee/data/repositories/employee.repository';
 import IndexEmployeeParams from '@/modules/MainOrganization/employee/core/params/index.employee.params';
 import ScheduleRepository from '../../../Schedule/data/repositories/schedule.repository';
-import ScheduleOwnerParams from '../../../Schedule/core/params/schedule.owner.params';
+import { TimelineWorkStatus } from '../../../Schedule/core/constants/timeline.status';
 import type ScheduleGroupModel from '../../../Schedule/core/models/schedule.group.model';
 import type WorkTaskModel from '../../core/models/task.model';
 import type DailyReportModel from '../../core/models/report.model';
@@ -32,15 +37,25 @@ export default class WorkItemsController extends BaseController<WorkTaskModel> {
   private static instance: WorkItemsController;
   private epoch = 0;
   private requests = new Map<string, number>();
+  readonly floorsState = shallowRef<DataState<ProjectFloorModel[]>>(new DataInitial());
+  readonly spaceOptions = computed(() =>
+    (this.floorsState.value.data ?? []).flatMap((floor) =>
+      floor.spaces
+        .filter((space) => positiveId(space.id))
+        .map((space) => new TitleInterface({ id: Number(space.id), title: space.space.title })),
+    ),
+  );
   readonly quoteId = shallowRef<number | null>(null);
   readonly stagesState = shallowRef<DataState<ScheduleGroupModel[]>>(new DataInitial());
   readonly employeesState = shallowRef<DataState<EmployeeModel[]>>(new DataInitial());
   readonly stages = computed(() =>
-    (this.stagesState.value.data ?? []).flatMap((group) =>
-      group.stages.map(
-        (stage) => new TitleInterface({ id: stage.id, title: `${group.title} · ${stage.title}` }),
+    (this.stagesState.value.data ?? [])
+      .filter((group) => group.workStatus === TimelineWorkStatus.START)
+      .flatMap((group) =>
+        group.stages.map(
+          (stage) => new TitleInterface({ id: stage.id, title: `${group.title} · ${stage.title}` }),
+        ),
       ),
-    ),
   );
   readonly employeeOptions = {
     fetchAsOptions: (params?: Params) => this.loadEmployees(params),
@@ -49,12 +64,15 @@ export default class WorkItemsController extends BaseController<WorkTaskModel> {
     pagination: computed(() => this.employeesState.value.pagination),
   };
   readonly drawingStages = computed(() =>
-    (this.stagesState.value.data ?? []).flatMap((group) =>
-      group.stages
-        .map(
-          (stage) => new TitleInterface({ id: stage.id, title: `${group.title} · ${stage.title}` }),
-        ),
-    ),
+    (this.stagesState.value.data ?? [])
+      .filter((group) => group.workStatus === TimelineWorkStatus.START)
+      .flatMap((group) =>
+        group.stages
+          .map(
+            (stage) =>
+              new TitleInterface({ id: stage.id, title: `${group.title} · ${stage.title}` }),
+          ),
+      ),
   );
   readonly drawingsState = shallowRef<DataState<ShopDrawingQuoteModel[]>>(new DataInitial());
   readonly drawingsSaveState = shallowRef<DataState<void>>(new DataInitial());
@@ -85,6 +103,7 @@ export default class WorkItemsController extends BaseController<WorkTaskModel> {
     this.quoteId.value = null;
     this.requests.clear();
     this.stagesState.value = new DataInitial();
+    this.floorsState.value = new DataInitial();
     this.employeesState.value = new DataInitial();
     this.drawingsState.value = new DataInitial();
     this.drawingsSaveState.value = new DataInitial();
@@ -109,13 +128,53 @@ export default class WorkItemsController extends BaseController<WorkTaskModel> {
       this.loadStages(),
     ]);
   }
+  async loadSpaces() {
+    const quoteId = this.quoteId.value;
+    if (quoteId === null) return;
+    const current = this.requestScope('spaces');
+    this.floorsState.value = new DataLoading();
+    const owner = await ExecutionQuoteRepository.getInstance().show(
+      new ShowExecutionQuoteParams({ executionQuoteId: quoteId }),
+      { useStaticData: false, enableRetry: false },
+      false,
+    );
+    if (!current()) return;
+    const projectId = owner.data?.project?.id;
+    if (
+      !(owner instanceof DataSuccess) ||
+      (owner.data?.id !== undefined && owner.data.id !== quoteId) ||
+      !positiveId(projectId)
+    ) {
+      this.floorsState.value = new DataFailed({
+        error:
+          owner.error ?? new ErrorModel('procurement.floor_ownership_error', ErrorType.validation),
+      });
+      return;
+    }
+    const floors = await ProjectFloorRepository.getInstance().index(
+      new IndexProjectFloorParams('', 1, 10, 0, undefined, Number(projectId)),
+      { useStaticData: false, enableRetry: false },
+      false,
+    );
+    if (!current()) return;
+    this.floorsState.value = floors.data?.some(
+      (floor) =>
+        (floor.project?.id ?? floor.project_id) !== undefined &&
+        (floor.project?.id ?? floor.project_id) !== Number(projectId),
+    )
+      ? new DataFailed({
+        error: new ErrorModel('procurement.floor_ownership_error', ErrorType.validation),
+      })
+      : floors;
+  }
   async loadStages() {
     if (this.quoteId.value === null) return;
     const current = this.requestScope('stages');
     this.stagesState.value = new DataLoading();
-    const overview = await ScheduleRepository.getInstance().readOverview(
-      new ScheduleOwnerParams(this.quoteId.value),
+    const overview = await ScheduleRepository.getInstance().fetchStartedProjectTimelines(
+      this.quoteId.value,
     );
+    // console.log('overview', overview.data.projectTimelines);
     if (!current()) return;
     this.stagesState.value =
       overview instanceof DataSuccess && overview.data
@@ -160,8 +219,25 @@ export default class WorkItemsController extends BaseController<WorkTaskModel> {
   }
   async saveDrawing(params: StoreShopDrawingQuoteParams): Promise<DataState<void>> {
     if (this.drawingsSaveState.value instanceof DataLoading) return new DataCancelled();
+    if (
+      params.fields.quoteId !== this.quoteId.value ||
+      !params.fields.projectTimelineStageIds.length ||
+      params.fields.projectTimelineStageIds.some(
+        (id) => !this.drawingStages.value.some((stage) => stage.id === id),
+      )
+    ) {
+      const failure = this.invalidStage();
+      this.drawingsSaveState.value = failure;
+      return failure;
+    }
+    const ownerEpoch = this.epoch;
+    this.drawingsSaveState.value = new DataLoading();
+    await this.loadStages();
+    if (ownerEpoch !== this.epoch) return new DataCancelled();
     const ids = params.fields.projectTimelineStageIds;
     if (
+      (params.fields.projectFloorSpaceId != null &&
+        !this.spaceOptions.value.some((space) => space.id === params.fields.projectFloorSpaceId)) ||
       params.fields.quoteId !== this.quoteId.value ||
       !ids.length ||
       ids.some((id) => !this.drawingStages.value.some((stage) => stage.id === id))
@@ -196,6 +272,15 @@ export default class WorkItemsController extends BaseController<WorkTaskModel> {
       this.tasksSaveState.value = failure;
       return failure;
     }
+    const ownerEpoch = this.epoch;
+    this.tasksSaveState.value = new DataLoading();
+    await this.loadStages();
+    if (ownerEpoch !== this.epoch) return new DataCancelled();
+    if (!this.ownsStage(params.projectTimelineStageId)) {
+      const failure = this.invalidStage();
+      this.tasksSaveState.value = failure;
+      return failure;
+    }
     const epoch = this.epoch;
     this.tasksSaveState.value = new DataLoading();
     const saved = await this.repository.storeTask(params);
@@ -224,6 +309,19 @@ export default class WorkItemsController extends BaseController<WorkTaskModel> {
       this.reportsSaveState.value = failure;
       return failure;
     }
+    const ownerEpoch = this.epoch;
+    this.reportsSaveState.value = new DataLoading();
+    await this.loadStages();
+    if (ownerEpoch !== this.epoch) return new DataCancelled();
+    if (
+      !this.ownsStage(params.projectTimelineStageId) ||
+      (params.reportScopeType === 2 &&
+        !this.spaceOptions.value.some((space) => space.id === params.projectFloorSpaceId))
+    ) {
+      const failure = this.invalidStage();
+      this.reportsSaveState.value = failure;
+      return failure;
+    }
     const epoch = this.epoch;
     this.reportsSaveState.value = new DataLoading();
     const saved = await this.repository.storeReport(params);
@@ -247,6 +345,15 @@ export default class WorkItemsController extends BaseController<WorkTaskModel> {
   }
   async saveActivity(params: StoreActivityParams): Promise<DataState<void>> {
     if (this.activitiesSaveState.value instanceof DataLoading) return new DataCancelled();
+    if (!this.ownsStage(params.fields.projectTimelineStageId)) {
+      const failure = this.invalidStage();
+      this.activitiesSaveState.value = failure;
+      return failure;
+    }
+    const ownerEpoch = this.epoch;
+    this.activitiesSaveState.value = new DataLoading();
+    await this.loadStages();
+    if (ownerEpoch !== this.epoch) return new DataCancelled();
     if (!this.ownsStage(params.fields.projectTimelineStageId)) {
       const failure = this.invalidStage();
       this.activitiesSaveState.value = failure;

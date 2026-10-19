@@ -1,3 +1,4 @@
+import { startedOverview } from '../../../__tests__/timeline-fixtures';
 import { beforeEach, expect, it } from 'vitest';
 import { flushPromises } from '@vue/test-utils';
 import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
@@ -16,6 +17,7 @@ beforeEach(() => {
   controller.stagesState.value = new DataSuccess({
     data: [
       new ScheduleGroupModel({
+        workStatus: 1,
         id: 2,
         title: 'Main',
         duration: 1,
@@ -37,11 +39,13 @@ it('preserves task inputs on rejection and closes only after successful retry', 
   let attempts = 0;
   post.mockImplementation(async (request) =>
     response(
-      request.url.includes('store_project_timeline_stage_task')
-        ? ++attempts === 1
-          ? { status: false, message: 'Rejected' }
-          : { status: true }
-        : { status: true, data: [] },
+      request.url.includes('fetch_project_timelines')
+        ? startedOverview([18])
+        : request.url.includes('store_project_timeline_stage_task')
+          ? ++attempts === 1
+            ? { status: false, message: 'Rejected' }
+            : { status: true }
+          : { status: true, data: [] },
     ),
   );
   const wrapper = mountDialog(TaskFormDialog);

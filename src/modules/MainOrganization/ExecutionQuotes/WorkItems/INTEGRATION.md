@@ -1,25 +1,27 @@
 # Work Items integration
 
+October 19 update: see [execution integration changes](../../../../../docs/execution-october-19-integration.md) for START-only new-work selection, the fixed alert, updated fields/attachments, legacy handling, and outstanding backend questions.
+
 Work Items lives in the Quote workspace at `execution-quotes/show/:id/work-items` under the existing organization/mainportal route prefixes. The app launcher and shared navigation retain Schedule and Site & Team.
 
 ## Implementation boundary
 
 One `WorkItemsApiService`, `WorkItemsRepository`, and `WorkItemsController` extend the existing base classes and use `getInstance()`. Custom operations are needed for four response types and independent owner-safe state. Transport stays in `data/api`; repositories map verified Fetch envelopes. No new store, dependency, form engine, or Project entity was introduced.
 
-`FetchWorkItemsParams` sends only `quote_id`. `StoreTaskParams`, `StoreReportParams`, and `StoreActivityParams` send `project_timeline_stage_id` without Quote or Project IDs. Task nullable employee/date and report nullable notes remain null. Activity serialization sends date for Meeting; other types send description and employee ID and omit date. No nested request payload is needed.
+`FetchWorkItemsParams` sends only `quote_id`. `StoreTaskParams`, `StoreReportParams`, and `StoreActivityParams` send `project_timeline_stage_id` without Quote or Project IDs. Task nullable employee/date and report nullable notes remain null. Meeting serialization includes date, description, audience, result, and numeric attendee IDs; other types send description and employee ID and omit meeting-only fields. Reports serialize attachment subparams and scope/space fields.
 
 `WorkTaskModel`, `DailyReportModel`, and `WorkActivityModel` map the collection rows. Existing `EmployeeModel.fromJson()` handles nested `{id, name, type}` references, including the `type` → `employee_type` mapping. Creator and optional assignee have separate model fields; no new employee model was necessary. Malformed response objects, rows, IDs, and enum values produce failed state rather than empty success.
 
 ## Reused modules and controls
 
-- Schedule: `ScheduleRepository.readOverview()`, `ScheduleOwnerParams`, `ScheduleGroupModel`, `ProjectTimelineStageModel`. Selection uses `ProjectTimelineStageModel.id`, never its `quoteStageId` or nested master-stage ID. Only explicitly available parent timeline stages are offered; child-stage identifiers are not guessed.
+- Schedule: `ScheduleRepository.fetchStartedProjectTimelines()`, `ScheduleOwnerParams`, `ScheduleGroupModel`, `ProjectTimelineStageModel`. Selection uses `ProjectTimelineStageModel.id`, never its `quoteStageId` or nested master-stage ID. Only explicitly available parent timeline stages are offered; child-stage identifiers are not guessed.
 - Employee: `EmployeeRepository`, `IndexEmployeeParams`, and `EmployeeModel`. The existing search/page request mechanism and shared selector pagination are retained without an invented role filter.
 - Workspace: `ProjectWorkspaceApps`, `ProjectWorkspaceNav`, `ProjectManagementShortcut`, and `quotePath` prefix resolution. Schedule and Site & Team keep their existing diagrams; Work Items uses a decorative checklist SVG for its `pi-list-check` shortcut.
 - Forms: `UpdatedCustomInputSelect`, `AppButton`, PrimeVue `Dialog` and `Skeleton`, and `input-wrapper` styles.
 
 `WorkItemStageSelect` shares the stage options, loading/retry/unavailable behavior across the three forms. `EngineerTasksList`, `DailyReportsList` and `WorkActivitiesList` own their record-specific presentation. Their props are respectively `DataState<WorkTaskModel[]>`, `DataState<DailyReportModel[]>` and `DataState<WorkActivityModel[]>`, plus `stageLabel: (id: number) => string`. They emit `retry`; `WorkItemsPage` connects it to `loadTasks()`, `loadReports()` and `loadActivities()` on the controller. The extracted components do not fetch or mutate data.
 
-`WorkItemSection` shares loading, error/retry and empty-state rendering inside a native `details`/`summary` accordion. Each section starts expanded and toggles independently with native keyboard support. Collapsing keeps its body mounted, preserving the activity filter. The three focused forms and network layer are unchanged by this refactor.
+`WorkItemSection` shares loading, error/retry and empty-state rendering inside a native `details`/`summary` accordion. Each section uses native keyboard toggling; the existing section component controls its initial state. Collapsing keeps its body mounted, preserving the activity filter. The three focused forms and network layer are unchanged by this refactor.
 
 ## Behavior
 
@@ -93,9 +95,9 @@ The supplied `shop_drawing_quote_endpoints.md` confirms POST `store_shop_drawing
 
 The existing `ProjectTimelineStageModel` now retains optional `parentId`, without changing existing Schedule fields. `WorkItemStageSelect` reuses the shared selector in multi-selection mode for drawings. Only explicit `parent_id: null` stages from the current Quote's Schedule overview are offered. The controller rechecks Quote identity and eligible association IDs before Store; the backend contract requires final same-Quote/Project/Organization validation. If `parent_id` is omitted, no main-stage eligibility is inferred and creation is unavailable with explanatory feedback. Existing tasks/report/activity selection behavior is unchanged.
 
-`ShopDrawingFormDialog.vue` uses native file selection and existing `filesToBase64()` to retain complete file bytes as the demonstrated data URI, including non-image formats. Existing `HandleFilesUpload` was inspected but its default accepted formats and lack of a disabled/processing interface do not fit the unconfirmed file rules and duplicate-submit requirements here. The dialog displays the filename and a shared `attachmentKind()` icon, allows replacement/removal, blocks Save during conversion, ignores late conversion after closure, and preserves fields/file after failed Store. Backend validation messages exposed by the existing ErrorModel are displayed. The upload form introduces no compression, inline image/CAD preview, multipart transport, size cap, or MIME allowlist. Returned attachments now have shared-gallery viewing, as described below: images have thumbnails, PDFs use the existing embedded viewer, and CAD/other files use its fallback. Open/Download remains available.
+`ShopDrawingFormDialog.vue` now uses the shared `HandleFilesUpload` with one file, unrestricted `accept`, and its processing/error events. A disabled fieldset protects the upload during Store. It retains complete Base64 Data URIs, preserves selected files after rejected Store, and uses the shared uploader for removal and preview. The Project Floor Space select uses the existing shared select and the linked Project's floor-space associations. Requiredness of the new Shop Drawing space field remains a backend question.
 
-`ShopDrawingsList.vue` reuses the existing accordion/list states and displays server data. Returned file links use `toGalleryAttachment()` URL normalization with an additional HTTP/HTTPS restriction, open in a new tab with `noopener noreferrer`, and are absent when missing or unsafe. This Open/Download action lets the browser/server handle the file; it does not promise cross-origin forced downloading.
+`ShopDrawingsList.vue` keeps its existing list/gallery presentation and adds the nullable space name. Returned files pass through `toGalleryAttachment()` and the existing HTTP/HTTPS restriction before opening the shared attachment gallery. No extra file viewer or backend-generated revision number is introduced.
 
 Drawing reads and saves have independent DataState resources with epoch/request guards. Explicit backend success triggers authoritative drawing Fetch; a failed refresh remains visible in the list without generating a local row or retrying Store. No edit/delete/approval/rejection/publication/current-revision behavior exists.
 

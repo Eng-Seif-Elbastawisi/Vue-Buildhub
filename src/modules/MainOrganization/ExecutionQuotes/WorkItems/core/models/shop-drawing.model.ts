@@ -1,3 +1,4 @@
+import PurchaseRequestProjectFloorSpaceModel from '../../../Procurement/core/models/purchase-request.project-floor-space.model';
 import type EmployeeModel from '@/modules/MainOrganization/employee/core/models/employee.model';
 import ShopDrawingTimelineStageModel from './shop-drawing.timeline-stage.model';
 import {
@@ -8,6 +9,8 @@ import {
   optionalEmployee,
 } from './work-items.response';
 export default class ShopDrawingQuoteModel {
+  readonly projectFloorSpaceId: number | null;
+  readonly projectFloorSpace: PurchaseRequestProjectFloorSpaceModel | null;
   readonly id: number;
   readonly employee: EmployeeModel | null;
   readonly quoteId: number;
@@ -20,6 +23,8 @@ export default class ShopDrawingQuoteModel {
   readonly stages: ShopDrawingTimelineStageModel[];
   readonly createdAt: string | null;
   constructor(fields: {
+    projectFloorSpaceId?: number | null;
+    projectFloorSpace?: PurchaseRequestProjectFloorSpaceModel | null;
     id: number;
     employee: EmployeeModel | null;
     quoteId: number;
@@ -32,6 +37,8 @@ export default class ShopDrawingQuoteModel {
     stages: ShopDrawingTimelineStageModel[];
     createdAt: string | null;
   }) {
+    this.projectFloorSpaceId = fields.projectFloorSpaceId ?? null;
+    this.projectFloorSpace = fields.projectFloorSpace ?? null;
     this.id = fields.id;
     this.employee = fields.employee;
     this.quoteId = fields.quoteId;
@@ -48,6 +55,12 @@ export default class ShopDrawingQuoteModel {
     const record = responseObject(payload);
     if (!Array.isArray(record.stages)) throw new Error('work_items.invalid_response');
     return new ShopDrawingQuoteModel({
+      projectFloorSpaceId:
+        record.project_floor_space_id == null ? null : responseId(record.project_floor_space_id),
+      projectFloorSpace:
+        record.project_floor_space == null
+          ? null
+          : PurchaseRequestProjectFloorSpaceModel.fromJson(record.project_floor_space),
       id: responseId(record.id),
       employee: optionalEmployee(record.employee),
       quoteId: responseId(record.quote_id),
