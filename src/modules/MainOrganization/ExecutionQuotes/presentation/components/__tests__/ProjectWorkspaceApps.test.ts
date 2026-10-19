@@ -45,6 +45,7 @@ it.each(['en', 'ar'])(
     await flushPromises();
     const links = wrapper.findAll('.project-shortcut');
     expect(links.map((link) => link.attributes('href'))).toEqual([
+      '/organization/execution-quotes/show/140/intelligence',
       '/organization/execution-quotes/show/140/schedule',
       '/organization/execution-quotes/show/140/site-team',
       '/organization/execution-quotes/show/140/work-items',
@@ -59,7 +60,7 @@ it.each(['en', 'ar'])(
     ).toContain('0');
     expect(wrapper.findAll('.schedule-shortcuts h2')).toHaveLength(0);
     expect(wrapper.get('.workspace-apps__grid > .project-shortcut').findAll('dd')).toHaveLength(0);
-    await wrapper.get('.workspace-apps__grid > .project-shortcut').trigger('click');
+    await wrapper.get('a[href$="/site-team"]').trigger('click');
     await flushPromises();
     expect(router.currentRoute.value.path).toBe(
       '/organization/execution-quotes/show/140/site-team',

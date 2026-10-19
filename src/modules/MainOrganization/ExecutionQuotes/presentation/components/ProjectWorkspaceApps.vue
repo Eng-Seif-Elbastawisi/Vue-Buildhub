@@ -4,6 +4,10 @@
   import WorkItemsShortcut from '../../WorkItems/presentation/components/WorkItemsShortcut.vue';
   import ProcurementShortcut from '../../Procurement/presentation/components/ProcurementShortcut.vue';
   import MaterialReceiptShortcut from '../../Warehouse/presentation/components/MaterialReceiptShortcut.vue';
+  import { useRoute } from 'vue-router';
+  import { quotePath } from '../../Schedule/presentation/schedule.routes';
+  import ProjectManagementShortcut from '../../Schedule/presentation/components/ProjectManagementShortcut.vue';
+  const route = useRoute();
   defineProps<{ quoteId: number }>();
 </script>
 <template>
@@ -16,6 +20,15 @@
       <i class="pi pi-th-large" aria-hidden="true"></i>
     </header>
     <div class="workspace-apps__grid">
+      <ProjectManagementShortcut
+        :title="$t('intelligence.title')"
+        :description="$t('intelligence.description')"
+        :open-label="$t('intelligence.explore')"
+        icon="pi pi-chart-bar"
+        :to="`${quotePath(route.path, quoteId)}/intelligence`"
+        :metrics="[]"
+        state="available"
+      />
       <ScheduleShortcut :quote-id="quoteId" compact />
       <SiteTeamShortcut :quote-id="quoteId" />
       <WorkItemsShortcut :quote-id="quoteId" />

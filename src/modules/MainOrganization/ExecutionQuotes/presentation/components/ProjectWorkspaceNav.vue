@@ -8,7 +8,14 @@
   import { materialReceiptPath } from '../../Warehouse/presentation/material-receipt.routes';
   const props = defineProps<{
     quoteId: number;
-    active: 'schedule' | 'site-team' | 'work-items' | 'drawings' | 'procurement' | 'warehouse';
+    active:
+      | 'intelligence'
+      | 'schedule'
+      | 'site-team'
+      | 'work-items'
+      | 'drawings'
+      | 'procurement'
+      | 'warehouse';
   }>();
   const route = useRoute();
   const validQuote = computed(() => Number.isInteger(props.quoteId) && props.quoteId > 0);
@@ -19,6 +26,11 @@
       <i class="pi pi-th-large" aria-hidden="true"></i>{{ $t('project_workspace.apps') }}
     </RouterLink>
     <span class="workspace-nav__divider" aria-hidden="true"></span>
+    <RouterLink
+      :to="`${quotePath(route.path, quoteId)}/intelligence`"
+      :aria-current="active === 'intelligence' ? 'page' : undefined"
+      ><i class="pi pi-chart-bar" aria-hidden="true" />{{ $t('intelligence.title') }}</RouterLink
+    >
     <RouterLink
       :to="schedulePath(route.path, quoteId)"
       :aria-current="active === 'schedule' ? 'page' : undefined"
