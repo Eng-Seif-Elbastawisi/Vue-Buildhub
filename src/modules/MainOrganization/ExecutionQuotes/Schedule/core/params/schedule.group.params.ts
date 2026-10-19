@@ -1,5 +1,5 @@
 import { ClassValidation } from '@/base/Presentation/Utils/classValidation';
-import { durationTypes, validId, type TaskDurationType } from '../constants/schedule.constants';
+import { durationTypes, type TaskDurationType } from '../constants/schedule.constants';
 import ScheduleOwnerParams from './schedule.owner.params';
 import type ProjectTimelineStageParams from './project.timeline.stage.params';
 

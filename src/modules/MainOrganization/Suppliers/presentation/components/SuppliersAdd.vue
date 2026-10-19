@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import { ref } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import SuppliersController from '../controllers/Suppliers.controller.ts';
@@ -30,7 +31,7 @@
 </script>
 
 <template>
-  <div class="document-crud-example">
+  <StandardFormLayout mode="create" class="document-crud-example">
     <SuppliersForm :form-key="formKey" :loading="loading" @update-data="updateData" />
 
     <!-- <AppButton :title="$t('supplier.update')" size="sm" icon="right" type="submit" @click="saveDocument">
@@ -39,58 +40,61 @@
         <IconAccept />
       </template>
 </AppButton> -->
-    <div class="actions form-action-pair" :class="{ disabled: loading }">
-      <button
-        :disabled="loading"
-        :class="{ 'btn--loading': loading }"
-        class="btn btn-primary w-full"
-        type="submit"
-        @click="saveDocument"
-      >
-        <span v-if="loading" class="loader"></span>
-        <span v-else>
-          {{ $t('supplier.save') }}
-        </span>
-      </button>
-      <button class="btn btn-secondary back-button" type="button" @click="goBack">
-        {{ $t('common.back') }}
-      </button>
-    </div>
 
     <div v-if="controller.errorMessage.value" class="error">
       {{ controller.errorMessage.value }}
     </div>
-  </div>
+
+    <template #actions>
+      <div class="actions form-action-pair" :class="{ disabled: loading }">
+        <button
+          :disabled="loading"
+          :class="{ 'btn--loading': loading }"
+          class="btn btn-primary w-full"
+          type="submit"
+          @click="saveDocument"
+        >
+          <span v-if="loading" class="loader"></span>
+          <span v-else>
+            {{ $t('supplier.save') }}
+          </span>
+        </button>
+        <button class="btn btn-secondary back-button" type="button" @click="goBack">
+          {{ $t('common.back') }}
+        </button>
+      </div>
+    </template>
+  </StandardFormLayout>
 </template>
 
 <style scoped lang="scss">
-  @use '@/styles/mixins/form_action_pair' as form-actions;
+@use '@/styles/mixins/form_action_pair' as form-actions;
 
-  .document-crud-example {
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
+.document-crud-example {
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
 
-  .actions {
-    &.disabled {
-      cursor: not-allowed;
-      pointer-events: none;
-      opacity: 0.7;
-    }
+.actions {
+  &.disabled {
+    cursor: not-allowed;
+    pointer-events: none;
+    opacity: 0.7;
   }
+}
 
-  .error {
-    margin-top: 20px;
-    padding: 10px;
-    background-color: var(--danger-light);
-    color: var(--danger-dark);
-    border: 1px solid #f5c6cb;
-    border-radius: 4px;
-  }
+.error {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: var(--danger-light);
+  color: var(--danger-dark);
+  border: 1px solid var(--bh-coral-soft);
+  border-radius: 4px;
+}
 
-  .form-action-pair {
-    @include form-actions.layout;
-  }
+.form-action-pair {
+  @include form-actions.layout;
+}
 </style>

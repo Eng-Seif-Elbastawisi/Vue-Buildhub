@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import { computed, defineAsyncComponent, nextTick, ref, watch } from 'vue';
   import Popover from 'primevue/popover';
 
@@ -230,7 +231,7 @@
       <div class="project-hero__body">
         <div class="project-hero__content">
           <div class="project-hero__badges">
-            <span class="status-badge" :class="statusMeta.className">
+            <span class="status-badge bh-status" :class="statusMeta.className">
               {{ statusMeta.label }}
             </span>
 
@@ -417,7 +418,12 @@
       <div v-if="isStatusModalOpen" class="project-status-modal" role="dialog" aria-modal="true">
         <div class="project-status-modal__backdrop" @click="closeStatusModal"></div>
 
-        <form class="project-status-modal__panel" @submit.prevent="submitStatusChange">
+        <StandardFormLayout
+          as="form"
+          embedded
+          class="project-status-modal__panel"
+          @submit.prevent="submitStatusChange"
+        >
           <header class="project-status-modal__header">
             <h2>{{ changeStatusModalTitle }}</h2>
 
@@ -436,7 +442,12 @@
             <label class="project-status-field project-status-field--full">
               <span>{{ notesLabel }}</span>
 
-              <textarea v-model="notes" :placeholder="notesPlaceholder" rows="4"></textarea>
+              <textarea
+                v-model="notes"
+                class="workspace-control"
+                :placeholder="notesPlaceholder"
+                rows="4"
+              ></textarea>
             </label>
           </div>
 
@@ -458,7 +469,7 @@
               {{ changeStatusLoading ? changingStatusLabel : saveStatusLabel }}
             </button>
           </footer>
-        </form>
+        </StandardFormLayout>
       </div>
     </Teleport>
 

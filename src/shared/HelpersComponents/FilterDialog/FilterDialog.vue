@@ -16,12 +16,13 @@
 </script>
 
 <template>
-  <button class="btn fillter-button" @click="visible = true">
+  <button type="button" class="btn fillter-button" @click="visible = true">
     {{ $t('Filter') }}
     <DialogIconFillter />
   </button>
   <Dialog
     v-model:visible="visible"
+    class="workspace-dialog workspace-dialog--small"
     modal
     :style="{ width: '25rem' }"
     :pt="{

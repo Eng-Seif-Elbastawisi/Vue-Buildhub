@@ -1,162 +1,300 @@
 ---
-name: BuildHub project workspace
-description: Incumbent visual identity for Quote Show, Schedule, and Site & Team
+name: BuildHub application workspace
+description: A bilingual operational workspace with layered cool surfaces and contextual navigation.
 colors:
-  quote-ink: '#272a2b'
-  quote-muted: '#676b6d'
-  quote-line: '#e7e1da'
-  quote-paper: '#fffdfa'
-  quote-canvas: '#f5f3f0'
-  quote-copper: '#a45e39'
-  quote-copper-dark: '#854725'
-  quote-copper-soft: '#f4e8df'
-  primary: '#c47a35'
-  primary-alpha-8: 'rgba(79, 175, 124, 0.08)'
-  title-card: 'rgba(17, 24, 39, 1)'
-  subtitle: '#64748b'
-  card: '#ffffff'
-  section: '#f8fafc'
-  border-weak: '#e2e8f0'
+  primary: '#10141a'
+  primary-hover: '#354052'
+  periwinkle: '#83a2db'
+  blue-ink: '#365b96'
+  blue-soft: '#e3ebf9'
+  coral: '#ce6969'
+  coral-ink: '#a23d45'
+  coral-soft: '#fae8e9'
+  green-ink: '#28664f'
+  green-soft: '#e2f0e8'
+  amber-ink: '#805b20'
+  amber-soft: '#f7edd8'
+  canvas: '#e8edf5'
+  surface: '#f8fafd'
+  surface-raised: '#fff'
+  surface-secondary: '#dfe7f3'
+  muted: '#5d6879'
+  line: '#d3dce8'
+  field-line: '#b8c5d6'
+  hover: '#e0e7f1'
+  focus: '#4169a9'
+  dark-canvas: '#171e29'
+  dark-surface: '#202a38'
+  dark-surface-raised: '#283444'
+  dark-surface-secondary: '#2e3c50'
+  dark-text: '#edf2fa'
+  dark-muted: '#b6c2d4'
+  dark-line: '#3c4a5f'
+  dark-field-line: '#63738c'
+  dark-active: '#e5edfa'
+  dark-hover: '#344358'
+  dark-blue-ink: '#b4ccfa'
+  dark-blue-soft: '#2a3d5a'
+  dark-coral-ink: '#ffb5ba'
+  dark-coral-soft: '#4e303c'
+  dark-green-ink: '#a0d7bb'
+  dark-green-soft: '#294438'
+  dark-amber-ink: '#ebcd91'
+  dark-amber-soft: '#483e29'
+  dark-focus: '#a3c4fc'
 typography:
+  page:
+    fontFamily: 'Lufga, Medium, Segoe UI, sans-serif'
+    fontSize: 'clamp(1.5rem, 2.2vw, 2rem)'
   title:
-    fontFamily: "'Medium', 'Segoe UI', sans-serif"
-    fontSize: '1.5rem'
-    fontWeight: 600
-  card-title:
-    fontFamily: "'Medium', 'Segoe UI', sans-serif"
-    fontSize: '1.25rem'
-    fontWeight: 600
-  card-body:
-    fontFamily: "'Medium', 'Segoe UI', sans-serif"
-    fontSize: '0.8rem'
-    lineHeight: 1.65
-  navigation:
-    fontFamily: "'Medium', 'Segoe UI', sans-serif"
-    fontSize: '0.85rem'
-    fontWeight: 600
+    fontFamily: 'Lufga, Medium, Segoe UI, sans-serif'
+    fontSize: '1.125rem'
+  body:
+    fontFamily: 'Lufga, Medium, Segoe UI, sans-serif'
+    fontSize: '1rem'
+  label:
+    fontFamily: 'Lufga, Medium, Segoe UI, sans-serif'
+    fontSize: '0.875rem'
+    fontWeight: 500
+  small:
+    fontFamily: 'Lufga, Medium, Segoe UI, sans-serif'
+    fontSize: '0.75rem'
 rounded:
   sm: '8px'
-  control: '10px'
-  md: '12px'
-  panel: '14px'
-  lg: '16px'
-  full: '9999px'
+  control: '12px'
+  card: '24px'
+  panel: '32px'
+  pill: '999px'
 spacing:
-  compact: '0.75rem'
-  standard: '1rem'
-  app-gap: '1.25rem'
-  section: '1.5rem'
+  '1': '0.25rem'
+  '2': '0.5rem'
+  '3': '0.75rem'
+  '4': '1rem'
+  '5': '1.25rem'
+  '6': '1.5rem'
+  '8': '2rem'
+  '10': '2.5rem'
 components:
-  workspace-app:
-    backgroundColor: '{colors.card}'
-    textColor: '{colors.title-card}'
-    rounded: '{rounded.lg}'
-  workspace-navigation:
-    backgroundColor: '{colors.card}'
-    textColor: '{colors.subtitle}'
-    rounded: '{rounded.panel}'
-    padding: '0.5rem'
-  workspace-navigation-active:
-    backgroundColor: '{colors.primary-alpha-8}'
-    textColor: '{colors.title-card}'
+  button-primary:
+    backgroundColor: '{colors.primary}'
+    textColor: '{colors.surface-raised}'
+    rounded: '{rounded.pill}'
+    height: '44px'
+    padding: '0 24px'
+  button-primary-hover:
+    backgroundColor: '{colors.primary-hover}'
+    textColor: '{colors.surface-raised}'
+  button-secondary:
+    backgroundColor: '{colors.surface}'
+    textColor: '{colors.primary-hover}'
+    rounded: '{rounded.pill}'
+    height: '44px'
+  input:
+    backgroundColor: '{colors.surface-raised}'
+    textColor: '{colors.primary}'
     rounded: '{rounded.control}'
-    padding: '0.75rem 1rem'
-  schedule-card:
-    backgroundColor: '{colors.quote-paper}'
-    textColor: '{colors.quote-ink}'
-    rounded: '{rounded.panel}'
+    typography: '{typography.label}'
+  navigation-active:
+    backgroundColor: '{colors.primary}'
+    textColor: '{colors.surface-raised}'
+    rounded: '{rounded.pill}'
+    padding: '8px 18px'
+  badge:
+    backgroundColor: '{colors.blue-soft}'
+    textColor: '{colors.blue-ink}'
+    rounded: '{rounded.pill}'
+    padding: '2px 7px'
+  card:
+    backgroundColor: '{colors.surface}'
+    textColor: '{colors.primary}'
+    rounded: '{rounded.card}'
 ---
 
-# Design System: BuildHub project workspace
+# Design System: BuildHub application workspace
 
 ## Overview
 
-This is a scoped record of the existing BuildHub identity as used by Quote Show, Schedule, and Site & Team. It extends the authenticated dashboard's ink, copper, warm canvas, and established controls. It does not define a replacement theme for unrelated modules.
+**Creative North Star: "The Contextual Workspace"**
 
-The shell uses warm paper and charcoal with copper accents. Workspace content combines that shell identity with the existing white cards, slate text, and legacy primary tokens. SVG geometry distinguishes the app entries: stepped timeline bars for Schedule, a floor plan for Site & Team, and a checklist for Work Items. These illustrations are code assets, not raster images.
+BuildHub adapts the user-pinned RonDesignLab Customer Journey CRM reference into an application-wide operational workspace. A slim icon rail identifies global sections; horizontal pills expose their contextual destinations. Cool blue-gray canvas, near-white surfaces, dark ink, periwinkle accents and restrained coral feedback establish the shared visual language.
 
-Key characteristics:
+This record replaces the former scoped warm copper identity. The direction contract is [DIRECTION.md](docs/redesign/DIRECTION.md). Palette values are approximate adaptations from supplied raster references, not original Figma tokens. Existing BuildHub branding, customer palette controls and bilingual local fonts remain authoritative.
 
-- Compact project identity and clear app navigation.
-- Rounded, bordered task surfaces with restrained depth.
-- Existing bilingual typography and immediate keyboard focus feedback.
+**Key Characteristics:**
+
+- Separate global selection from contextual navigation.
+- Use rounded modular surfaces with tonal depth.
+- Keep operational records, forms and tables readable in English and Arabic.
+- Use short state feedback and respect reduced motion.
+
+The token-bearing implementation is documented here; this is not whole-application approval. Isolated browser fixtures and offline captures do not establish live backend or permission acceptance. Existing full-suite and build gate failures remain outside this document’s verification; [AUDIT.md](docs/redesign/AUDIT.md) records the migration’s evidence boundaries. Screenshots under `docs/redesign/screenshots` are review artifacts using isolated browser profiles and synthetic fixtures where populated data is shown. No new production raster asset was added; supplied screenshots are visual references.
 
 ## Colors
 
 ### Primary
 
-Quote copper identifies Schedule actions and shell accents; its dark and soft companions support text and selected states. The legacy primary remains in launcher illustrations, outlines, and Site & Team controls.
+Dark ink is the default brand primary and active navigation fill. Slate is its brand hover companion. System Identity owns `--PrimaryColor`, `--SecondaryColor`, derived alpha values and readable button text. Its default accent is periwinkle; saved customer palettes and logos continue to apply. Fixed workspace semantic tokens are separate from those customer branding variables.
+
+### Secondary
+
+Periwinkle and blue ink/soft pairs identify supporting icons, selected records and contextual emphasis. Coral ink/soft pairs express errors and destructive feedback. Green and amber pairs preserve success and warning meaning. Existing semantic action colors remain in the action stylesheet; do not collapse every action into the brand primary.
 
 ### Neutral
 
-Quote ink, muted, line, paper, and canvas form the warm shell and Schedule palette. Title-card ink, subtitle slate, white card, pale section, and weak border remain the launcher and Site & Team palette. The Schedule summary uses title-card ink with white values and translucent white labels and separators.
+Canvas frames surface and raised-surface layers; secondary surface groups related cards. Muted ink supports labels, line defines separators, and field-line keeps controls distinguishable. Hover and focus are explicit semantic colors.
 
-**Source precedence.** The shell declares quote tokens on `body:has(.dashboard-shell)` in [dashboard-shell.scss](src/shared/LayoutComponents/styles/dashboard-shell.scss). Schedule aliases these tokens with legacy fallbacks. Launcher and Site & Team styles reference legacy tokens directly. Their values come from the imported [main.min.css](src/styles/main.min.css), whose source includes [_variables.scss](src/styles/_variables.scss).
+**The Palette Ownership Rule.** Keep customer branding variables configurable; use workspace semantic tokens for shared surfaces, text, focus and status feedback.
 
-**Recorded drift.** The legacy primary alpha family is green-based even though its opaque primary is copper. The alpha-8 token above records that incumbent value; it is not a copper tint. Do not infer new alpha values from the opaque primary. Dark-mode legacy overrides also exist; this record's primitive values describe the default light state, not a verified dark-mode specification.
+`src/styles/workspace-tokens.scss` defines the light primitives in frontmatter and the `.dark` semantic overrides recorded there. Dark mode changes surfaces, text, field boundaries, active navigation and status pairs; it does not replace the saved brand palette. The persisted theme store toggles `.dark` on the document root. PrimeVue uses the same selector and semantic variable references in both schemes. Dark token support is implemented; complete populated-route dark-mode acceptance remains unverified.
+
+Source order matters: `src/main.ts` imports `main.scss`, `standard-crud-form.scss`, `construction-states.scss`, `workspace-tokens.scss`, then `workspace-components.scss`. The active authored entry is `main.scss`; retained generated CSS files are not that entry. Legacy gray, quote, table and standard-form token names bridge into workspace semantics. Historical `copper` names in those aliases no longer establish a copper visual requirement.
 
 ## Typography
 
-The dashboard inherits the local URW DIN Arabic Medium face, registered under `Medium`, with Segoe UI and sans-serif fallbacks. [Font registrations](src/styles/_fonts.scss) also include Thin, Light, Bold, and Demi; these workspace refinements introduce no new font family.
+The Latin face is **Lufga**, supplied in `src/assets/fonts/lufga_fonts`. `src/styles/_fonts.scss` bundles the OpenType files at weights 100–900 in upright and italic styles, using `font-display: swap`. The shared stack is `Lufga`, local URW DIN Arabic Medium (registered as `Medium`), Segoe UI, then sans-serif. Legacy `Thin`, `Light`, `Medium`, `Demi` and `Bold` families map Latin glyphs to the corresponding Lufga files through Unicode ranges; their existing DIN Arabic faces remain available for Arabic glyphs. This preserves older module font declarations without changing module behavior. Chromium verified actual bundled Lufga rendering for Regular, Medium, SemiBold, Bold, Italic and the legacy Medium alias, plus DIN Arabic fallback; see [font verification](docs/redesign/font-verification.json).
 
-App section headings use the title role, and app titles use the card-title role. Small descriptions use card-body; navigation and app action text use navigation. App metrics use tabular numerals. Site & Team's project title grows with `clamp(1.5rem, 2.5vw, 2rem)`.
+Page headings use the fluid page role. Section titles use the title role; body, labels and small table headings use the recorded scale. Dialog titles use the existing extra-large step (1.375rem); dashboard count values retain a larger local treatment. Auth introduction headings have their own fluid size. These are local compositions, not additional mandatory global type roles.
 
-Workspace headings and prose override the global capitalization rule where explicitly styled. Keep translated text intact rather than relying on automatic title casing.
+Tables, times and monetary values use tabular numerals. Shared shell and auth text suppress automatic title casing so translated strings retain their intended form; legacy global capitalization still exists elsewhere. Keep English and Arabic keys paired and do not rely on CSS casing to edit copy.
 
 ## Layout
 
-The launcher grid uses `repeat(auto-fit, minmax(min(100%, 23rem), 1fr))` with the app-gap spacing. It fits two entries where space allows and stacks them when it does not. The app description has a maximum width of 65ch. Quote Show retains its compact header and a native project-details disclosure, closed initially; quote creation date and quote type sit inside that disclosure with the existing commercial and project sections.
+The desktop shell uses an icon rail (80px), fixed search/account row (78px), and scrollable contextual strip (60px). Rail controls are 48px; contextual links are at least 40px high. The desktop rail stays compact: its group buttons only select the horizontal contextual destinations, with no expansion toggle or duplicate sidebar module links. The main content area is fluid, capped at 1600px, with a content inset of `clamp(1rem, 2.2vw, 2rem)`.
 
-Schedule and Site & Team use responsive page padding (`clamp(1rem, 2vw, 2rem)`). Schedule summaries and panels use fluid columns with an 18rem minimum bounded by available width. At 600px, summary rows switch to block separators and remove their individual inline padding; the summary container adds a 1rem inline inset at 700px and below. Site & Team's summary gives site information more width than locations and assigned engineers, then becomes one column at 900px.
+Desktop content reserves the combined header and contextual-strip height before the breadcrumb row. The strip has a fixed 60px border-box height; the breadcrumb keeps a separate 14px top inset. Contextual links accept pointer events independently of the fixed rail container.
 
-App navigation wraps naturally; at 600px and below, the Apps link occupies a full row and the divider disappears. Quote header actions stack at mobile widths, preserving both existing actions.
+At 1023px and below, the existing mobile topbar and drawer replace desktop navigation; content loses its rail offset and receives a 1rem inline inset. The drawer keeps its existing focus and Escape behavior. Contextual destinations and module directories retain existing role filtering and disabled entries.
 
-Logical margins, padding, borders, and alignment support RTL. Schedule mirrors its date-direction arrow under RTL. Decorative app diagrams keep their architectural orientation.
+Forms may use the centered 1180px form wrapper. Shared form headers and field regions use 24px padding; at 680px and below, these regions use 20px vertical and 16px inline padding. Shared action rows stack at that breakpoint. Existing standard CRUD field grids also retain their narrower-screen rules; inspect the owning form before assuming all fields share one grid.
+
+Home retains existing counts and a role-filtered module directory. Its directory becomes two columns at 1100px and one at 680px; count cards use two columns on small screens. Auth pairs introduction and form panels, stacking at 800px. Tables scroll inside their own regions rather than requiring the page to widen.
+
+Logical insets, margins, padding, borders and start alignment support RTL. Home link arrows mirror for RTL. Preserve existing direction-aware schedule and app navigation behavior. Responsive module-specific breakpoints coexist with these shared values.
 
 ## Elevation & Depth
 
-These module containers are flat: the page frame removes its background, border, and shadow; Site & Team cards explicitly remove shadows. Borders, tonal fills, separators, and the dark Schedule summary establish hierarchy. Expanded Quote Show detail cards retain their existing small shadow. Existing dialogs retain their established application treatment; this refinement does not introduce a new shadow vocabulary.
+Tonal layers and whitespace provide the default depth: shared cards, tables, form cards and project heroes remove resting shadows. Popovers and dialogs remain lifted so teleported interactions are legible above the shell. The exact popover and dialog shadows are carried in the sidecar from `workspace-tokens.scss`; overlay masks also have light and dark values. Some established action hover treatments retain local shadows.
 
-Style order matters. [DashboardLayout.vue](src/shared/LayoutComponents/DashboardLayout.vue) loads shell SCSS; Schedule and Site & Team pages import their module styles. Later module rules override earlier declarations, including the Schedule summary's dark background. Specific page selectors override the shared `standard-crud-page` frame. Quote Show, app cards, and navigation also carry scoped component styles. Treat executable imports and the final matching declaration as authoritative over stale module README descriptions.
+**The Tonal Surface Rule.** Group persistent working content with surface tone and spacing; reserve the shared elevation tokens for overlays.
+
+State feedback uses the fast duration (140ms). Existing local animations can remain. Global reduced-motion rules reduce animation and transition duration to 0.01ms, limit iterations and remove smooth scrolling; shell and targeted module rules additionally remove spatial transitions.
 
 ## Shapes
 
-App cards use the large rounded shape; navigation and Schedule panels use the panel shape. Navigation links use the control shape. Site & Team floor rows and space forms retain smaller rounded edges. Badges and member initials use the full radius. Fine borders and native disclosure controls provide structure without introducing additional ornamental frames.
+Controls use gently rounded corners, cards use broad rounded corners, and grouped panels use the largest shared radius. Pills distinguish compact actions and navigation; circular icon markers support headings and counts. Fine field borders and table separators are functional structure. Shared cards do not require ornamental outlines.
+
+The frontmatter records the workspace scale. Content controls use the shared 12px radius. Native module controls explicitly opt into `workspace-control`; obsolete global PrimeVue internals and the legacy CRUD control overrides have been removed. Compact table controls may use a 36px minimum height while ordinary fields use 44px.
 
 ## Components
 
-### App links
+### Buttons
 
-Each entire card is a router link with a decorative inline SVG, title, description, optional loaded metrics, and an ink-colored action footer. Hover changes the border to the legacy primary; keyboard focus draws a two-pixel primary outline with a four-pixel offset.
+Primary actions use customer primary fill and computed readable text, switching to customer secondary fill and its readable text on hover. Standard CRUD actions are 44px high with pill corners. General `.btn` controls have a 42px minimum and 10px by 20px padding; small and large variants retain their existing sizes. Secondary form actions use the surface with secondary ink and boundary, then fill on hover. Press feedback moves an enabled control down 1px. Disabled controls retain existing opacity and cursor behavior.
 
-Hover and focus trace the illustration line over 700ms; hover scales the SVG over 500ms and moves the action arrow upward. Reduced motion removes those animations, transforms, and card transitions. Schedule metrics support loading, error, unavailable, and successful states. Site & Team exposes only already loaded metrics belonging to the current quote; its shortcut does not fetch them in the background.
+### Inputs / Fields
+
+Use existing input wrappers, UpdatedCustomInputSelect, FieldHelpIcon and field groups. Shared native and PrimeVue controls use raised surfaces, field-line borders and a 44px minimum. Focus uses a visible two-pixel semantic outline; invalid fields use coral ink and disabled fields use secondary surfaces. Existing validation messages and component APIs remain with their owners.
+
+### Cards / Containers
+
+Shared cards use the card radius and surface fill. Forms use `StandardFormLayout` while preserving caller-owned headers, field sections and actions. Listing toolbars, tables and pagination are separate rounded surfaces. Table headers use small muted text; rows retain separators, hover tone and a blue-soft selected state. Data behavior stays with the existing components.
 
 ### Navigation
 
-The shared navigation connects Apps, Schedule, and Site & Team. The active app uses `aria-current="page"`, an alpha fill, and ink text; hover uses the section fill. Focus uses a visible primary outline. Reduced motion disables its 180ms transitions.
+The icon rail and horizontal contextual pills share active ink/on-active treatment, hover tone and visible focus. The mobile drawer retains the existing route definitions and access filtering. The reference supplies the hierarchy, not new route destinations or permissions.
 
-Existing route helpers preserve `/mainportal` or `/organization` and the quote ID: [schedule.routes.ts](src/modules/MainOrganization/ExecutionQuotes/Schedule/presentation/schedule.routes.ts) defines Quote Show and Schedule paths; [site-team.routes.ts](src/modules/MainOrganization/ExecutionQuotes/SiteTeam/presentation/site-team.routes.ts) extends the Quote Show path. Navigation renders only for a positive integer quote ID.
+### Chips
 
-### Disclosures and task surfaces
+Navigation badges use blue-soft with blue ink, pill corners and compact padding. Status indicators retain semantic coral, green and amber meaning and existing text labels; color alone must not replace the label.
 
-Quote project details use native `details` and `summary`; the chevron rotates when expanded and receives reduced-motion handling. Site & Team floor disclosures start open and tint their summary on hover or expansion. Member rows use initials, names, supporting text, and separators. Small Site & Team links, badges, and avatars use ink text.
+### Overlays
 
-Schedule preserves existing task controls, timeline cards, and settings dialog. Coarse pointers hide drag handles. Reduced motion removes timeline tracing and spatial movement while retaining brief opacity and border feedback. Form controls remain the established BuildHub controls; this document does not redefine their API or interaction contracts.
+The Aura-derived `src/styles/primevue/systemIdentityPreset.ts` uses supported PrimeVue 4 semantic form-field, content, overlay, focus and color-scheme tokens. Body-level styles cover teleported Select, MultiSelect, DatePicker, Menu, Popover, Dialog, Drawer and Tooltip surfaces. Dialogs constrain their width and height to the viewport; the configured modal stacking layer clears the desktop rail. Keep existing interaction and validation ownership.
+
+### Project and execution workspaces
+
+Project details use a secondary-surface hero, surface cards, pill actions and a raised actions popover. Execution listings reuse surface filters and tables. Schedule groups sit inside broad secondary-surface panels, with surface task cards and periwinkle hover boundaries. Thin links between adjacent board cards express saved schedule order only; they disappear at 768px and below. They do not establish a dependency model or a new workflow. Existing quote disclosures, procurement controls and Site & Team content retain their business owners while legacy palette aliases adopt workspace colors.
 
 ## Do's and Don'ts
 
-- **Do** inherit the actual shell and module tokens and existing font registrations.
-- **Do** keep real module routes and quote ownership attached to app navigation.
-- **Do** preserve translated labels, logical spacing, native disclosures, visible focus, and reduced-motion behavior.
-- **Do** verify later style overrides before documenting a visual value.
-- **Don't** treat this surface composition as a required layout for unrelated BuildHub screens.
-- **Don't** replace the incumbent palette, fonts, or shared controls while extending these surfaces.
-- **Don't** invent metrics or raster assets where the implementation uses loaded data and SVG geometry.
+- **Do** use semantic workspace tokens and existing shared controls for new surfaces.
+- **Do** preserve saved customer palettes, BuildHub branding and the local bilingual fonts.
+- **Do** keep translated labels, logical spacing, visible focus and reduced-motion behavior.
+- **Do** connect navigation, summaries and schedules to their existing routes and real data owners.
+- **Do** inspect final matching declarations when a legacy module overrides a shared primitive.
 
-## Procurement refinement
+- **Don't** restore the obsolete scoped copper identity as the application default.
+- **Don't** promote one page composition into a mandatory layout for every module.
+- **Don't** invent customer records, metrics, dependencies or approval states to fill a visual.
+- **Don't** describe fixture screenshots or source inspection as full live acceptance.
 
-Procurement extends this workspace with a charcoal introduction, warm paper panels and copper selection accents. Colors are module-local aliases of existing quote tokens; the existing DIN font and shared controls remain in use. Bordered, shadow-free panels and tabular prices establish hierarchy. A compact three-step guide connects requirements, supplier prices and storing an order.
+## Unified form and content contracts
 
-Purchase Requests provide local text search and all/pending/confirmed/rejected filters. The result count describes the filtered collection against the full loaded collection. Filters reset on quote changes and never trigger additional API calls. Supplier Prices retains its local supplier filter. Mobile tables scroll inside their named, keyboard-focusable regions; filters, dialog fields and actions adapt to narrow screens. Logical spacing and an explicit locale direction support Arabic RTL. Reduced-motion rules remove decorative transitions.
+`src/shared/components/form/StandardFormLayout.vue` is the single reusable form layout. It renders the same native root via `as="div|section|main|form"`. Existing class attributes and native events fall through to that root. Default-slot content remains direct children, so dynamic fields and owner-specific structure retain their bindings. There is no submission, fetching, validation, routing or permission logic in this component.
 
-Order creation remains in Supplier Prices, using the selected saved price-record ID. Order viewing remains in Purchase Requests. The refinement preserves shared attachment input/preview, backend status authority and the existing Store/Fetch separation. No raster assets ship with this change. Mocked desktop, mobile and RTL browser captures and validation limits are recorded in Procurement's DESIGN_REVIEW.md.
+- `mode="create|edit|show"` annotates presentation. Show mode does not convert values into inputs or disable caller-owned controls.
+- `title` and optional `description`, or the `header` slot, provide an optional header. Existing module headers can remain in the default slot.
+- `columns` accepts 1, 2 or 3 (for example, `:columns="2"`) sets the direct `.form-fields` grid. Three columns reduce to two at 1024px; grids reduce to one at 680px. Full-row fields use `full-row`, `full-width` or the existing span classes. Specialized timeline, invoice and repeater grids retain their owners.
+- The optional `actions` slot supplies the shared footer. Seventy page owners now provide their existing actions through this slot. Specialized workflow docks and child-owned invoice actions retain their existing placement. Existing `.actions`, `.form-actions`, `.form-footer` and `.form-action-pair` markup also uses the compatibility stylesheet.
+- `loading` sets `aria-busy` and exposes the optional `loading` slot. `disabled` sets `aria-disabled`. Both are presentation metadata: modules must keep binding actual disabled controls and submission guards themselves.
+- `embedded` removes the extra card surface for dialog forms and nested layouts. Nested instances also share their parent's surface.
+
+`src/styles/standard-crud-form.scss` is now a compatibility layer for thin page owners, existing field span classes, headers and action rows. It no longer manufactures large header icons or sets competing control dimensions. `workspace-components.scss` owns the layout, controls and states. Native module fields carry `workspace-control`; native tables carry `workspace-data-table`, and their existing scroll wrappers carry `workspace-table-scroll`.
+
+Existing `UpdatedCustomInputSelect` keeps object-valued selections, select-all, lookup controllers and lookup pagination. Direct native selects that already bind enum/string values retain those contracts and receive the same native control treatment. PrimeVue DatePicker keeps its existing date models. No unused alternate input component was introduced.
+
+`AppTable` retains columns, scoped slots, selection, sorting, reordering and existing events. `Pagination` retains server-owned page state and events; page and page-size controls are native buttons. Sorting is not automatically wired to an endpoint by this visual migration. Native operational tables keep their own columns and calculations and scroll inside their existing wrappers.
+
+PrimeVue dialogs receive `workspace-dialog` and keep their visibility/close/focus contracts. Small and large size classes are available without overriding caller-supplied widths. Custom invoice and subscription dialogs keep their existing lifecycle and teleported overlays, with shared surface tokens. Existing delete confirmation phases use compact PrimeIcons in place of the large scene; confirmation and pending/error/success logic remain unchanged. File upload inputs remain native and focusable with a visible focus treatment on their labels.
+
+The content migration and verification status is recorded in [MIGRATION.md](docs/redesign/MIGRATION.md). Source review and isolated component/network fixtures are distinguished from populated live acceptance.
+
+Rich text fields retain Quill and its existing formatting/model bindings. Toolbar, editor and picker surfaces use workspace text, field-line, raised-surface and focus/accent tokens; no new editor implementation was introduced.
+
+### Sharper list headings and shared module actions
+
+`IndexPageHeader` uses the shared page type scale, a tighter 1.2 title line-height, and a 44px icon on a 12px corner radius. The current user-requested glass panel has a 24px radius, 24px desktop padding and a 112px minimum desktop height; mobile uses 20px block/16px inline padding with actions following the identity. Search text inherits the Lufga workspace stack. Props, slots and caller-owned actions remain unchanged.
+
+`workspace-components.scss` owns button geometry and variants for `.btn`, legacy `.btn-add`, `.project-action-btn`, `.invoice-show-btn` and their icon controls inside workspace content and dialogs. Default actions are 44px pills, compact buttons remain 34px, large buttons 48px, and dense table actions 36px rounded controls. Primary actions use the existing System Identity primary/foreground pair; secondary actions use workspace surface/text/field-line tokens. Ghost and outline primary variants retain their separate behavior, and semantic action tones remain available. Existing invoice/project control names share this presentation without replacing their event or routing contracts. Execution Quotes no longer sets its default primary action to the blue support accent.
+
+Evidence and limitations: [heading/button verification](docs/redesign/heading-button-verification.json) covers nine offline routed listing scenes and two isolated detail/button fixtures. Screenshots are browser captures in `docs/redesign/heading-button-screenshots`; they contain no generated artwork. The invoice fixture mounts the actual InvoiceShowHeader and AppButton components; project detail samples validate CSS classes only. This does not establish live populated project/invoice detail acceptance.
+
+### Frosted workspace heading surfaces
+
+The user-requested glass treatment extends the existing workspace palette. `workspace-tokens.scss` defines `--bh-glass-fill` (82% workspace surface), `--bh-glass-tint` (48% blue-soft), `--bh-glass-border` (72% raised surface mixed with field-line), `--bh-glass-background` (a restrained tint wash over the translucent fill), and `--bh-glass-blur` (18px). These derive from semantic colors and follow the existing dark theme. Text does not inherit opacity.
+
+`_workspace-glass.scss` contains one shared `surface` mixin, used by IndexPageHeader, supporting button variants, the invoice detail hero, the execution quote detail hero and the project detail hero. It supplies an opaque base surface, enables the translucent background and blur/saturation under `@supports`, and restores an opaque surface with no blur for `prefers-reduced-transparency: reduce`. Supporting controls keep a stronger field-line edge; primary actions keep the existing primary/foreground palette pair with a fine inset reflection. No shell, route, data, visibility or event behavior changed.
+
+Current evidence: [glass heading verification](docs/redesign/glass-heading-verification.json), [reduced-transparency verification](docs/redesign/glass-fallback-verification.json), and browser captures in `docs/redesign/glass-heading-screenshots`. These supersede the previous flat heading captures for this presentation. Nine offline listing scenes cover the three modules at desktop/tablet/mobile, including Arabic/dark; the invoice detail fixture mounts its real header, while project action samples check CSS only. Full populated project and execution detail workflows remain outside the evidence.
+
+### Shared feature/page-intro header parity
+
+`FeatureHeader.vue` applies the same glass mixin to `.feature-header-container.page-header--animated`, including its page-intro and entity variants. A component-owned selector keeps older shell/CRUD compatibility rules from flattening the surface. It uses 112px minimum desktop height, 24px padding/radius, the shared page title scale at weight 700/line-height 1.2, and a 44px icon with control-radius corners. At 767px and below it stacks actions, removes the minimum height and uses 20px block/16px inline padding. Existing route titles, descriptions, icons, slots and visibility behavior remain.
+
+The execution quote hero also retains the glass surface with matching title scale, mobile padding, muted metadata labels and normal text values. Secondary source badges use the existing blue ink/soft pair; the leading badge retains the primary palette. The original route template, API mapping and displayed fields are unchanged. See [feature-header evidence](docs/redesign/feature-header-verification.json) and [quote-hero fixture evidence](docs/redesign/quote-hero-verification.json). Actual routed quote rendering was checked with synthetic API data; it does not prove live backend acceptance.
+
+### Procurement and Warehouse workspace intros
+
+`_workspace-intro.scss` is the single owner of `.procurement-header.procurement-intro`, `.procurement-intro-copy` and the intro back link. Procurement and both project Warehouse pages import it; Warehouse no longer carries a separate intro implementation. The existing Procurement surface uses workspace colors, 24px corners, 28px/32px desktop padding and 24px mobile padding, with responsive primary actions. Receipt-page identity is translated with the existing `material_receipt.warehouse` key; Material Receipt remains the receiving tab and breadcrumb context. Material Disbursement keeps its feature title.
+
+The dashboard hides its automatic FeatureHeader when the page provides this intro, following the existing own-header rule for index pages. Project navigation, Warehouse tabs, back links and action bindings remain intact. See [Warehouse intro verification](docs/redesign/warehouse-intro-verification.json); browser checks use empty API fixtures, not live CRUD data.
+
+### Project details disclosure contrast
+
+The execution quote's native `details` summary uses the existing Primary/primary-foreground pair for a distinct, high-contrast section header. Its title uses the shared type scale at weight 700, with a 44px document frame, a 32px chevron frame and the shared control radius. Open state squares the lower corners and separates the summary from the unchanged body. Hover, keyboard focus and native Enter/Space disclosure remain available; mobile reduces padding and title size. See [verification](docs/redesign/project-details-header-verification.json). The focused quote suite has seven failures also reproduced against the pre-change component; this refinement does not resolve those baseline failures.
+
+### Compact semantic status badges
+
+Record statuses use `StatusBadge.vue` or the existing native span with `bh-status` and its unchanged domain classes. `_status-badges.scss` owns the single visual recipe and class-to-color bridge; `workspace-tokens.scss` owns badge colors, height, padding, typography and corners. Use `label` or the default slot, `severity="success|danger|warning|info|neutral|brand|review"`, optional `icon`, and optional `variant="dot"`. Status values, translations and transitions belong to callers. QuoteStatusBadge remains the domain wrapper; do not replace it with a numeric-to-color mapping in the generic component.
+
+The default is a solid 22px badge with 6px corners, 8px horizontal padding and 12px/600 text, with no border/shadow/gradient. Icons remain 12px. Long labels may wrap outside tables; table badges keep intrinsic single-line width and use the existing table scroller. PrimeVue Tag uses the same preset tokens, including rounded tags. Neutral colors adapt to dark mode; semantic solid colors keep readable foregrounds. This pattern applies to record statuses, not filters, navigation, counts, progress, category/date metadata or feedback banners.
+
+The [complete status coverage report](docs/redesign/STATUS_BADGES.md) records migrated owners, every module reviewed, inherited semantic quirks, visual/interaction evidence and remaining baseline/live-verification limits.
+
+### Shell and overlay stacking
+
+Use the shared `--bh-z-*` shell tokens: context navigation 100, rail 110, header/account menu 120, mobile header 140, mobile drawer 900. Keep the shell below custom modal layers (1000+) and PrimeVue managed overlays. The dashboard main content must retain `z-index: auto`; a positioned content stacking context traps inline fixed dialogs below navigation. Preserve PrimeVue automatic stacking for nested dialogs and their teleported controls.
+
+### Row actions
+
+Existing `.row-actions` groups share 8px spacing and 8px button corners. Icon controls are 36px with 16px icons; coarse-pointer controls expand to 44px. Neutral actions use dark ink on raised surfaces and invert on hover. Destructive actions retain coral/red semantics, using solid red on hover. Keep visible keyboard focus, reduced-motion support and disabled presentation. Text actions preserve natural widths. The shared recipe lives in `workspace-components.scss`; module styles must not force hover colors with `!important`.

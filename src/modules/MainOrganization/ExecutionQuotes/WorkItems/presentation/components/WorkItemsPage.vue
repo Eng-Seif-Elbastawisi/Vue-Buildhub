@@ -9,8 +9,6 @@
   import EngineerTasksList from './EngineerTasksList.vue';
   import DailyReportsList from './DailyReportsList.vue';
   import WorkActivitiesList from './WorkActivitiesList.vue';
-  import ShopDrawingsList from './ShopDrawingsList.vue';
-  import ShopDrawingFormDialog from './ShopDrawingFormDialog.vue';
   import TaskFormDialog from './TaskFormDialog.vue';
   import DailyReportFormDialog from './DailyReportFormDialog.vue';
   import MeetingIssueFormDialog from './MeetingIssueFormDialog.vue';
@@ -18,7 +16,6 @@
   const { t } = useI18n();
   const controller = WorkItemsController.getInstance();
   const quoteId = computed(() => Number(route.params.id));
-  const drawingOpen = ref(false);
   const taskOpen = ref(false);
   const reportOpen = ref(false);
   const activityOpen = ref(false);
@@ -36,7 +33,6 @@
   watch(
     quoteId,
     (id) => {
-      drawingOpen.value = false;
       taskOpen.value = false;
       reportOpen.value = false;
       activityOpen.value = false;
@@ -56,9 +52,6 @@
         <p>{{ $t('work_items.subtitle') }}</p>
       </div>
       <div class="work-items-actions">
-        <AppButton theme="secondary" :disabled="!positiveId(quoteId)" @click="drawingOpen = true">{{
-          $t('work_items.new_drawing')
-        }}</AppButton>
         <AppButton :disabled="!positiveId(quoteId)" @click="taskOpen = true">{{
           $t('work_items.new_task')
         }}</AppButton
@@ -98,13 +91,7 @@
         :stage-label="stageLabel"
         @retry="controller.loadActivities()"
       />
-      <ShopDrawingsList
-        :key="`drawings-${quoteId}`"
-        :state="controller.drawingsState.value"
-        @retry="controller.loadDrawings()"
-      />
     </template>
-    <ShopDrawingFormDialog :key="`drawing-${quoteId}`" v-model:visible="drawingOpen" />
     <TaskFormDialog :key="`task-${quoteId}`" v-model:visible="taskOpen" />
     <DailyReportFormDialog :key="`report-${quoteId}`" v-model:visible="reportOpen" />
     <MeetingIssueFormDialog

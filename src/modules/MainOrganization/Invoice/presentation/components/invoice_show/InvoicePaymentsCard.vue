@@ -39,11 +39,11 @@
 
     <div
       v-if="payments.length"
-      class="invoice-payments-card__table-wrap"
+      class="invoice-payments-card__table-wrap workspace-table-scroll"
       tabindex="0"
       :aria-label="$t('invoice_show.payments')"
     >
-      <table class="invoice-payments-card__table">
+      <table class="invoice-payments-card__table workspace-data-table">
         <thead>
           <tr>
             <th scope="col">{{ $t('invoice_show.payment_received') }}</th>
@@ -61,7 +61,7 @@
           >
             <td>
               <div class="invoice-payments-card__payment">
-                <span class="invoice-payments-card__status">
+                <span class="invoice-payments-card__status bh-status bh-status--success bh-status--icon-only">
                   <i class="pi pi-check"></i>
                 </span>
                 <strong>{{ $t('invoice_show.payment_received') }}</strong>

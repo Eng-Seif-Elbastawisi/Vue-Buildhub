@@ -1,5 +1,7 @@
 # Quote Schedule integration
 
+October 19 update: see [execution integration changes](../../../../../docs/execution-october-19-integration.md) for START-only new-work selection, the fixed alert, updated fields/attachments, legacy handling, and outstanding backend questions.
+
 The existing Schedule module now uses the confirmed Project Timeline and Project Configuration requests. Quote remains the sole owner. No module, application shell, or Stage master records were recreated. Existing changes were preserved.
 
 ## References and precedence

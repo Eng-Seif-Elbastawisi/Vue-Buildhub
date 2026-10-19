@@ -1,0 +1,85 @@
+/* Procurement and Warehouse share one project-workspace intro treatment. */
+.procurement-header.procurement-intro {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--bh-space-6);
+  margin: 0;
+  padding: 28px 32px;
+  border: 0;
+  border-radius: var(--bh-radius-card);
+  background: var(--bh-surface);
+  color: var(--bh-text);
+  box-shadow: none;
+
+  h1 {
+    display: flex;
+    align-items: center;
+    gap: var(--bh-space-3);
+    margin: 0;
+    color: var(--bh-text);
+    font-family: var(--bh-font);
+    font-size: var(--bh-text-page);
+    font-weight: 700;
+    line-height: 1.25;
+    overflow-wrap: anywhere;
+  }
+
+  h1 .pi {
+    color: var(--bh-blue-ink);
+    font-size: 1.5rem;
+  }
+
+  p {
+    max-width: 65ch;
+    margin-block: var(--bh-space-3) var(--bh-space-4);
+    color: var(--bh-muted);
+    font-size: var(--bh-text-sm);
+    line-height: 1.7;
+    overflow-wrap: anywhere;
+  }
+
+  .btn__text {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--bh-space-2);
+  }
+
+  .procurement-intro-copy {
+    flex: 1 1 24rem;
+    min-width: 0;
+  }
+
+  .procurement-back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--bh-space-2);
+    color: var(--bh-muted);
+    font-size: var(--bh-text-xs);
+    text-underline-offset: 0.3em;
+
+    &:hover {
+      color: var(--bh-text);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--bh-focus);
+      outline-offset: 3px;
+    }
+  }
+}
+
+[dir='rtl'] .procurement-intro .procurement-back-link .pi {
+  transform: rotate(180deg);
+}
+
+@media (max-width: 700px) {
+  .procurement-header.procurement-intro {
+    padding: var(--bh-space-6);
+
+    .btn {
+      width: 100%;
+    }
+  }
+}

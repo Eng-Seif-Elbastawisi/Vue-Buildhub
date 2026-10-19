@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import { computed, onMounted, ref } from 'vue';
   import { useRoute } from 'vue-router';
   import { useI18n } from 'vue-i18n';
@@ -469,7 +470,7 @@
 <template>
   <DataStatusBuilder :controller="invoiceState" :on-retry="refreshInvoice">
     <template #success="{ data }">
-      <div v-if="data" class="invoice-show-page" :style="paletteStyle">
+      <StandardFormLayout v-if="data" mode="show" class="invoice-show-page" :style="paletteStyle">
         <InvoiceShowHeader
           :invoice="data as InvoiceShowModel"
           :status-label="statusLabel"
@@ -553,7 +554,7 @@
           @close="paymentDialogOpen = false"
           @submit="handleAddPayment"
         />
-      </div>
+      </StandardFormLayout>
     </template>
 
     <template #loader>

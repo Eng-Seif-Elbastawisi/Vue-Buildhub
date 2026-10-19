@@ -1,7 +1,6 @@
 <script setup lang="ts">
   import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
-  import { useI18n } from 'vue-i18n';
   import { storeToRefs } from 'pinia';
 
   import BuildHubLogo from '@/assets/images/BuildHubLogo.jpg';
@@ -24,7 +23,6 @@
 
   const route = useRoute();
   const router = useRouter();
-  const { t } = useI18n();
 
   const emit = defineEmits<{
     (e: 'clickItem'): void;
@@ -34,11 +32,9 @@
   const { user } = storeToRefs(userStore);
   const { currentPalette } = useSystemIdentityTheme();
 
-  const isPanelOpen = ref(true);
   const expandedSectionKey = ref<string | null>(null);
   const sidebarSectionsState = ref(getSidebarSections());
   const sidebarCounts = ref<SidebarCountsPayload | null>(null);
-  const searchQuery = ref('');
 
   interface SidebarItem {
     type?: SidebarItemConfig['type'];
@@ -61,10 +57,6 @@
 
   const currentRole = computed<SidebarRole>(() => {
     return user.value?.isMaster || user.value?.type === UserType.ADMIN ? 'admin' : 'organization';
-  });
-
-  const organizationName = computed(() => {
-    return sidebarCounts.value?.organization?.name || t('Organization');
   });
 
   const brandLogo = computed(
@@ -173,37 +165,6 @@
     return menu.value.find((section) => section.items.some((item) => isActiveRoute(item.link)));
   });
 
-  const searchableMenu = computed<SidebarSection[]>(() => {
-    const query = searchQuery.value.trim().toLowerCase();
-
-    if (!query) {
-      return menu.value;
-    }
-
-    return menu.value
-      .map((section) => {
-        const sectionLabel = t(section.labelKey).toLowerCase();
-        const filteredItems = section.items.filter((item) => {
-          const label = t(item.labelKey).toLowerCase();
-          const searchText = `${label} ${sectionLabel} ${item.path ?? ''}`.toLowerCase();
-
-          return searchText.includes(query);
-        });
-
-        return {
-          ...section,
-          items: filteredItems,
-        };
-      })
-      .filter((section) => section.items.length > 0);
-  });
-
-  const hasSearchQuery = computed(() => searchQuery.value.trim().length > 0);
-
-  const isSectionExpanded = (section: SidebarSection) => {
-    return isPanelOpen.value && (hasSearchQuery.value || expandedSectionKey.value === section.key);
-  };
-
   watch(
     activeSection,
     (section) => {
@@ -234,30 +195,19 @@
     window.removeEventListener(DATA_MUTATION_SUCCEEDED_EVENT, refreshCountsAfterMutation);
   });
 
+  const contextualSection = computed(
+    () =>
+      menu.value.find((section) => section.key === expandedSectionKey.value) ??
+      activeSection.value ??
+      menu.value[0],
+  );
+
   const selectSection = (section: SidebarSection) => {
-    if (!isPanelOpen.value) {
-      expandedSectionKey.value = section.key;
-      isPanelOpen.value = true;
-      return;
-    }
-
-    if (hasSearchQuery.value) {
-      expandedSectionKey.value = section.key;
-      searchQuery.value = '';
-      return;
-    }
-
-    expandedSectionKey.value = expandedSectionKey.value === section.key ? null : section.key;
-  };
-
-  const togglePanel = () => {
-    isPanelOpen.value = !isPanelOpen.value;
+    expandedSectionKey.value = section.key;
   };
 
   const handleItemClick = () => {
-    searchQuery.value = '';
     emit('clickItem');
-    isPanelOpen.value = false;
   };
 
   const logout = () => {
@@ -270,126 +220,44 @@
 </script>
 
 <template>
-  <aside
-    class="sidebar-shell"
-    :class="{ 'is-open': isPanelOpen }"
-    :aria-label="$t('main_navigation')"
-  >
+  <aside class="sidebar-shell" :aria-label="$t('main_navigation')">
     <div class="sidebar-wrapper">
       <header class="brand-panel">
         <div class="brand-mark">
           <img class="logo" :src="brandLogo" :alt="$t('buildhub_logo')" />
         </div>
-
-        <div v-if="isPanelOpen" class="brand-copy">
-          <span class="brand-name">{{ organizationName }}</span>
-          <span class="brand-meta">
-            {{ currentRole === 'admin' ? $t('Admin') : $t('Organization') }}
-          </span>
-        </div>
-
-        <button
-          type="button"
-          class="collapse-toggle"
-          :aria-label="isPanelOpen ? $t('collapse_sidebar') : $t('expand_sidebar')"
-          :title="isPanelOpen ? $t('collapse_sidebar') : $t('expand_sidebar')"
-          :aria-expanded="isPanelOpen"
-          @click="togglePanel"
-        >
-          <i class="pi pi-angle-double-left" aria-hidden="true"></i>
-        </button>
       </header>
 
-      <div v-if="isPanelOpen" class="sidebar-profile">
-        <span class="sidebar-profile__avatar" aria-hidden="true">
-          <img v-if="user?.image" :src="user.image" alt="" />
-          <span v-else>{{ (user?.name || $t('user')).trim().charAt(0) }}</span>
-        </span>
-        <span class="sidebar-profile__copy">
-          <strong class="sidebar-profile__name">{{ user?.name || $t('user') }}</strong>
-          <span class="sidebar-profile__role">
-            {{ currentRole === 'admin' ? $t('Admin') : $t('Organization') }}
-          </span>
-        </span>
-      </div>
-
-      <div v-if="isPanelOpen" class="sidebar-search">
-        <i class="pi pi-search sidebar-search__icon" aria-hidden="true"></i>
-        <input
-          v-model="searchQuery"
-          class="sidebar-search__input"
-          type="search"
-          :placeholder="$t('search_what_you_want')"
-          :aria-label="$t('search_what_you_want')"
-        />
-      </div>
+      <router-link
+        :to="appPrefix"
+        class="rail-home"
+        :aria-label="$t('home')"
+        :title="$t('home')"
+        @click="handleItemClick"
+      >
+        <i class="pi pi-home" aria-hidden="true" />
+      </router-link>
 
       <nav class="menu-scroll" :aria-label="$t('sidebar_groups')">
-        <section v-for="section in searchableMenu" :key="section.key" class="menu-group">
+        <section v-for="section in menu" :key="section.key" class="menu-group">
           <button
             type="button"
             class="section-toggle"
             :class="{
-              active: activeSection?.key === section.key,
-              expanded: isSectionExpanded(section),
+              active: contextualSection?.key === section.key,
             }"
             :aria-label="$t(section.labelKey)"
             :title="$t(section.labelKey)"
-            :aria-expanded="isSectionExpanded(section)"
+            :aria-expanded="contextualSection?.key === section.key"
             :aria-controls="
-              isSectionExpanded(section) ? `sidebar-section-${section.key}` : undefined
+              contextualSection?.key === section.key
+                ? `workspace-context-${section.key}`
+                : undefined
             "
             @click="selectSection(section)"
           >
             <component :is="section.icon" class="section-icon" />
-            <span v-if="isPanelOpen" class="section-label">{{ $t(section.labelKey) }}</span>
-            <i v-if="isPanelOpen" class="pi pi-chevron-down section-chevron" aria-hidden="true"></i>
           </button>
-
-          <div
-            v-if="isSectionExpanded(section)"
-            :id="`sidebar-section-${section.key}`"
-            class="section-items"
-          >
-            <template v-for="item in section.items" :key="getItemKey(item)">
-              <div
-                v-if="isGroupItem(item)"
-                class="menu-subgroup"
-                :class="{ 'menu-subgroup--flush-top': item.flushTop }"
-                :title="$t(item.labelKey)"
-              >
-                <span v-if="item.icon" class="menu-subgroup__icon">
-                  <component :is="item.icon" class="icon" />
-                </span>
-                <span class="menu-subgroup__label">{{ $t(item.labelKey) }}</span>
-              </div>
-
-              <router-link
-                v-else-if="!isDisabledItem(item)"
-                :to="item.link ?? ''"
-                class="menu-item"
-                :class="{ active: isActiveRoute(item.link) }"
-                :title="$t(item.labelKey)"
-                @click="handleItemClick"
-              >
-                <span class="label">{{ $t(item.labelKey) }}</span>
-                <span v-if="item.badge" class="badge">{{ item.badge }}</span>
-                <span v-if="item.hasArrow" class="arrow">›</span>
-              </router-link>
-
-              <button
-                v-else
-                type="button"
-                class="menu-item is-disabled"
-                :title="$t(item.labelKey)"
-                disabled
-                aria-disabled="true"
-              >
-                <span class="label">{{ $t(item.labelKey) }}</span>
-                <span v-if="item.badge" class="badge">{{ item.badge }}</span>
-              </button>
-            </template>
-          </div>
         </section>
       </nav>
 
@@ -402,11 +270,38 @@
           @click="logout"
         >
           <span class="item-icon"><IconLogout /></span>
-          <span v-if="isPanelOpen" class="label">{{ $t('logout') }}</span>
         </button>
       </footer>
     </div>
   </aside>
+  <nav
+    v-if="contextualSection"
+    :id="`workspace-context-${contextualSection.key}`"
+    class="workspace-context-nav"
+    :aria-label="$t(contextualSection.labelKey)"
+  >
+    <span class="workspace-context-nav__label">{{ $t(contextualSection.labelKey) }}</span>
+    <template v-for="item in contextualSection.items" :key="getItemKey(item)">
+      <span v-if="isGroupItem(item)" class="workspace-context-nav__group">{{
+        $t(item.labelKey)
+      }}</span>
+      <router-link
+        v-else-if="!isDisabledItem(item)"
+        :to="item.link ?? ''"
+        class="menu-item context-link"
+        :class="{ active: isActiveRoute(item.link) }"
+        :aria-current="isActiveRoute(item.link) ? 'page' : undefined"
+        :title="$t(item.labelKey)"
+        @click="handleItemClick"
+      >
+        {{ $t(item.labelKey) }}
+        <span v-if="item.badge" class="badge">{{ item.badge }}</span>
+      </router-link>
+      <span v-else class="context-link is-disabled" aria-disabled="true">{{
+        $t(item.labelKey)
+      }}</span>
+    </template>
+  </nav>
 </template>
 
 <style scoped lang="scss" src="./sidebar-navigation.scss"></style>

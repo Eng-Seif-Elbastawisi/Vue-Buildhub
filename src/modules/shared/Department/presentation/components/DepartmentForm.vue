@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import { computed, onMounted, ref, watch } from 'vue';
 
   import TitleInterface from '@/base/Data/Models/titleInterface';
@@ -159,7 +160,7 @@
 </script>
 
 <template>
-  <div class="form-fields">
+  <StandardFormLayout embedded class="form-fields">
     <div class="field-group" :class="{ disabled: loading }">
       <MultiLangInput
         field-key="title"
@@ -183,44 +184,44 @@
         @update:model-value="updateStage"
       />
     </div>
-  </div>
+  </StandardFormLayout>
 </template>
 
 <style scoped lang="scss">
+.form-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  padding: 20px;
+}
+
+/* .col-span-2 { */
+/*   grid-column: span 2; */
+/* } */
+
+.field-group {
+  min-width: 0;
+
+  &.disabled {
+    cursor: not-allowed;
+    pointer-events: none;
+    opacity: 0.7;
+  }
+}
+
+/* .field-group--stage { */
+/*   grid-column: 1 / -1; */
+/*   justify-self: start; */
+/*   width: min(100%, 720px); */
+/* } */
+
+@media (max-width: 768px) {
   .form-fields {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1rem;
-    padding: 20px;
+    grid-template-columns: 1fr;
   }
 
-  // .col-span-2 {
-  //   grid-column: span 2;
-  // }
-
-  .field-group {
-    min-width: 0;
-
-    &.disabled {
-      cursor: not-allowed;
-      pointer-events: none;
-      opacity: 0.7;
-    }
+  .col-span-2 {
+    grid-column: span 1;
   }
-
-  // .field-group--stage {
-  //   grid-column: 1 / -1;
-  //   justify-self: start;
-  //   width: min(100%, 720px);
-  // }
-
-  @media (max-width: 768px) {
-    .form-fields {
-      grid-template-columns: 1fr;
-    }
-
-    .col-span-2 {
-      grid-column: span 1;
-    }
-  }
+}
 </style>

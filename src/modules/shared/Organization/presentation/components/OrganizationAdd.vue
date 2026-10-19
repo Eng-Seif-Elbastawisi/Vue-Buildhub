@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import { ref } from 'vue';
   import { useRoute } from 'vue-router';
   import OrganizationController from '../controllers/organization.controller.ts';
@@ -28,7 +29,7 @@
 </script>
 
 <template>
-  <div class="document-crud-example">
+  <StandardFormLayout mode="create" class="document-crud-example">
     <OrganizationForm :form-key="formKey" :loading="loading" @update-data="updateData" />
 
     <!-- <AppButton :title="$t('supplier.update')" size="sm" icon="right" type="submit" @click="saveDocument">
@@ -37,46 +38,49 @@
         <IconAccept />
       </template>
 </AppButton> -->
-    <div class="actions" :class="{ disabled: loading }">
-      <button
-        :disabled="loading"
-        :class="{ 'btn--loading': loading }"
-        class="btn btn-primary w-full"
-        type="submit"
-        @click="saveOrganization"
-      >
-        <span v-if="loading" class="loader"></span>
-        <span v-else>
-          {{ $t('organization.save') }}
-        </span>
-      </button>
-    </div>
 
     <div v-if="controller.errorMessage.value" class="error">
       {{ controller.errorMessage.value }}
     </div>
-  </div>
+
+    <template #actions>
+      <div class="actions" :class="{ disabled: loading }">
+        <button
+          :disabled="loading"
+          :class="{ 'btn--loading': loading }"
+          class="btn btn-primary w-full"
+          type="submit"
+          @click="saveOrganization"
+        >
+          <span v-if="loading" class="loader"></span>
+          <span v-else>
+            {{ $t('organization.save') }}
+          </span>
+        </button>
+      </div>
+    </template>
+  </StandardFormLayout>
 </template>
 
 <style scoped lang="scss">
-  .document-crud-example {
-    margin: 0 auto;
-  }
+.document-crud-example {
+  margin: 0 auto;
+}
 
-  .actions {
-    &.disabled {
-      cursor: not-allowed;
-      pointer-events: none;
-      opacity: 0.7;
-    }
+.actions {
+  &.disabled {
+    cursor: not-allowed;
+    pointer-events: none;
+    opacity: 0.7;
   }
+}
 
-  .error {
-    margin-top: 20px;
-    padding: 10px;
-    background-color: var(--danger-light);
-    color: var(--danger-dark);
-    border: 1px solid #f5c6cb;
-    border-radius: 4px;
-  }
+.error {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: var(--danger-light);
+  color: var(--danger-dark);
+  border: 1px solid var(--bh-coral-soft);
+  border-radius: 4px;
+}
 </style>

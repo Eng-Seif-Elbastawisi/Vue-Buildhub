@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import { ref } from 'vue';
   import { useI18n } from 'vue-i18n';
   import { useRoute } from 'vue-router';
@@ -71,7 +72,7 @@
 </script>
 
 <template>
-  <div class="Project-crud-page">
+  <StandardFormLayout mode="create" class="Project-crud-page">
     <ProjectSteps :current-step="1" />
 
     <ProjectForm
@@ -81,7 +82,11 @@
       @update-data="params = $event"
     />
 
-    <fieldset class="next-step-selector" aria-labelledby="project-next-step-title" :disabled="loading">
+    <fieldset
+      class="next-step-selector"
+      aria-labelledby="project-next-step-title"
+      :disabled="loading"
+    >
       <h2 id="project-next-step-title" class="next-step-title">
         {{ $t('Project.next_step') }}
       </h2>
@@ -127,104 +132,106 @@
       </div>
     </fieldset>
 
-    <button
-      class="btn btn-primary"
-      :class="{ 'btn--loading': loading }"
-      type="button"
-      :disabled="loading"
-      @click="saveProject"
-    >
-      {{ $t('Project.save') }}
-    </button>
-
     <div v-if="controller.errorMessage.value" class="error">
       {{ controller.errorMessage.value }}
     </div>
-  </div>
+
+    <template #actions>
+      <button
+        class="btn btn-primary"
+        :class="{ 'btn--loading': loading }"
+        type="button"
+        :disabled="loading"
+        @click="saveProject"
+      >
+        {{ $t('Project.save') }}
+      </button>
+    </template>
+  </StandardFormLayout>
 </template>
 
 <style scoped>
-  .Project-crud-page {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
+.Project-crud-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
 
-  .error {
-    margin-top: 20px;
-    padding: 10px;
-    border: 1px solid #f5c6cb;
-    border-radius: 4px;
-    background-color: var(--danger-light);
-    color: var(--danger-dark);
-  }
+.error {
+  margin-top: 20px;
+  padding: 10px;
+  border: 1px solid var(--bh-coral-soft);
+  border-radius: 4px;
+  background-color: var(--danger-light);
+  color: var(--danger-dark);
+}
 
-  .btn-primary {
-    width: 100%;
-  }
+.btn-primary {
+  width: 100%;
+}
 
-  .next-step-selector {
-    min-width: 0;
-    margin-block: 0.25rem;
-    padding: 1.25rem;
-    border: 1px solid var(--border-weak);
-    border-radius: 18px;
-    background: var(--white);
-  }
+.next-step-selector {
+  min-width: 0;
+  margin-block: 0.25rem;
+  padding: 1.25rem;
+  border: 1px solid var(--border-weak);
+  border-radius: var(--bh-radius-control);
+  background: var(--bh-surface-raised);
+}
 
-  .next-step-title {
-    margin: 0 0 0.25rem;
-    color: var(--gray-8);
-    font-family: 'Bold';
-    font-size: 1.25rem;
-    font-weight: 700;
-    line-height: 1.4;
-    text-align: start;
-  }
+.next-step-title {
+  margin: 0 0 0.25rem;
+  color: var(--gray-8);
+  font-family: 'Bold';
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.4;
+  text-align: start;
+}
 
+.next-step-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.875rem;
+  margin-block-start: 0.5rem;
+}
+
+.next-step-option {
+  display: flex;
+  min-height: 64px;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.125rem;
+  border: 1px solid var(--border-weak);
+  border-radius: 14px;
+  color: var(--gray-6);
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.next-step-option:hover {
+  border-color: var(--PrimaryColor);
+  background: var(--PrimaryColor-light);
+}
+
+.next-step-option--selected {
+  border-color: var(--PrimaryColor);
+  background: var(--PrimaryColor-light);
+  color: var(--PrimaryColor);
+  font-family: 'Medium';
+}
+
+.next-step-selector:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+@media (max-width: 640px) {
   .next-step-options {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.875rem;
-    margin-block-start: 0.5rem;
+    grid-template-columns: 1fr;
   }
-
-  .next-step-option {
-    display: flex;
-    min-height: 64px;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 1rem 1.125rem;
-    border: 1px solid var(--border-weak);
-    border-radius: 14px;
-    color: var(--gray-6);
-    cursor: pointer;
-    transition:
-      border-color 0.2s ease,
-      background-color 0.2s ease,
-      color 0.2s ease;
-  }
-
-  .next-step-option:hover {
-    border-color: var(--PrimaryColor);
-    background: var(--PrimaryColor-light);
-  }
-
-  .next-step-option--selected {
-    border-color: var(--PrimaryColor);
-    background: var(--PrimaryColor-light);
-    color: var(--PrimaryColor);
-    font-family: 'Medium';
-  }
-
-  .next-step-selector:disabled {
-    cursor: not-allowed;
-    opacity: 0.7;
-  }
-
-  @media (max-width: 640px) {
-    .next-step-options {
-      grid-template-columns: 1fr;
-    }
-  }
+}
 </style>

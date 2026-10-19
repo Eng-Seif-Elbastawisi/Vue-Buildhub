@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import { computed, ref, watch } from 'vue';
   import { useI18n } from 'vue-i18n';
   import { useRoute, useRouter } from 'vue-router';
@@ -451,7 +452,8 @@
 </script>
 
 <template>
-  <section
+  <StandardFormLayout
+    as="section"
     class="execution-quote"
     :class="{
       'execution-quote--loading': loading,
@@ -459,7 +461,7 @@
     }"
   >
     <template v-if="!isBuilderPage">
-      <div class="execution-quote__actions">
+      <div class="execution-quote__actions p-2">
         <AppButton class="execution-quote__new-button" icon="right" disabled>
           <template #icon>
             <i class="pi pi-plus" aria-hidden="true"></i>
@@ -482,7 +484,7 @@
 
       <div class="execution-quote__top-grid">
         <section class="quote-hero">
-          <span class="quote-hero__badge">
+          <span class="quote-hero__badge bh-status bh-status--neutral">
             <i class="pi pi-file-edit" aria-hidden="true"></i>
             {{ $t('execution_quote.new_draft') }}
           </span>
@@ -676,7 +678,7 @@
               <input
                 id="client_name"
                 v-model="client_name"
-                class="field-input"
+                class="field-input workspace-control"
                 :placeholder="$t('client_name_placeholder')"
                 :disabled="loading || baseLocked"
                 @input="updateBaseData"
@@ -699,7 +701,7 @@
               <input
                 id="client_phone"
                 v-model="client_phone"
-                class="field-input"
+                class="field-input workspace-control"
                 :placeholder="$t('client_phone_placeholder')"
                 :disabled="loading || baseLocked"
                 @input="updateBaseData"
@@ -720,7 +722,7 @@
                 id="client_email"
                 v-model="client_email"
                 type="email"
-                class="field-input"
+                class="field-input workspace-control"
                 :placeholder="$t('client.email_placeholder')"
                 :disabled="loading || baseLocked"
                 @input="updateBaseData"
@@ -740,7 +742,7 @@
               <input
                 id="client_address"
                 v-model="client_address"
-                class="field-input"
+                class="field-input workspace-control"
                 :placeholder="$t('client.address_placeholder')"
                 :disabled="loading || baseLocked"
                 @input="updateBaseData"
@@ -838,7 +840,7 @@
       :disabled="loading || quoteItemsCount === 0"
       @update:model-value="updateSupervisionPricing"
     />
-  </section>
+  </StandardFormLayout>
 </template>
 
 <style scoped lang="scss">
@@ -847,9 +849,9 @@
     flex-direction: column;
     gap: 1rem;
     width: 100%;
-    // max-width: 96rem;
+    /* max-width: 96rem; */
     margin-inline: auto;
-    // padding: clamp(0.75rem, 2vw, 1.5rem);
+    /* padding: clamp(0.75rem, 2vw, 1.5rem); */
     color: var(--title-card-color);
 
     &--loading {
@@ -929,7 +931,7 @@
     border: 1px solid var(--border-weak);
     border-radius: var(--radius-lg);
     background: var(--bg-card);
-    box-shadow: var(--shadow-sm);
+    box-shadow: none;
     transition:
       border-color var(--transition-fast),
       box-shadow var(--transition-fast);
@@ -940,7 +942,7 @@
   .execution-quote__card:hover,
   .execution-quote__card:focus-within {
     border-color: var(--PrimaryColor-alpha-30);
-    box-shadow: var(--shadow-md);
+    box-shadow: none;
   }
 
   .quote-hero {
@@ -954,14 +956,14 @@
     border: 1px solid var(--gray-800);
     border-radius: var(--radius-lg);
     background: linear-gradient(135deg, var(--SecondaryColor), var(--gray-950));
-    box-shadow: var(--shadow-lg);
+    box-shadow: none;
     color: var(--white);
     isolation: isolate;
     transition: box-shadow var(--transition-fast);
   }
 
   .quote-hero:hover {
-    box-shadow: var(--shadow-xl);
+    box-shadow: none;
   }
 
   .quote-hero::before,
@@ -1173,7 +1175,7 @@
   .build-path__step--current {
     border-color: var(--PrimaryColor);
     background: var(--btn-easy);
-    box-shadow: inset 0 -2px 0 var(--PrimaryColor);
+    box-shadow: none;
   }
 
   .build-path__step--complete {
@@ -1242,7 +1244,7 @@
 
   .source-option:hover:not(:disabled) {
     border-color: var(--PrimaryColor-alpha-50);
-    box-shadow: var(--shadow-md);
+    box-shadow: none;
     transform: translateY(-2px);
   }
 
@@ -1257,7 +1259,7 @@
   .source-option--selected {
     border-color: var(--PrimaryColor);
     background: var(--btn-easy);
-    box-shadow: inset 0 -3px 0 var(--PrimaryColor);
+    box-shadow: none;
   }
 
   .source-option__icon {
@@ -1397,7 +1399,7 @@
     min-height: 3rem;
     padding: 0.75rem 1rem;
     border: 1px solid var(--border-weak);
-    border-radius: var(--radius-sm);
+    border-radius: var(--bh-radius-control);
     background: var(--bg-card);
     color: var(--title-card-color);
     outline: none;
@@ -1408,7 +1410,7 @@
 
     &:focus {
       border-color: var(--PrimaryColor);
-      box-shadow: 0 0 0 3px var(--PrimaryColor-alpha-10);
+      box-shadow: none;
     }
   }
 
@@ -1431,7 +1433,7 @@
     &:focus-within {
       border-color: var(--PrimaryColor-alpha-50);
       background: var(--bg-card);
-      box-shadow: 0 0 0 3px var(--PrimaryColor-alpha-10);
+      box-shadow: none;
     }
   }
 
@@ -1457,7 +1459,7 @@
   .quote-data__field :deep(.p-select),
   .quote-data__field :deep(.p-multiselect) {
     min-height: 3rem;
-    border-radius: var(--radius-sm);
+    border-radius: var(--bh-radius-control);
     background: var(--bg-card);
   }
 

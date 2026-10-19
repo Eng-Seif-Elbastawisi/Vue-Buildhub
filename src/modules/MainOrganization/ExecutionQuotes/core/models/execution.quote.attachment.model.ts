@@ -1,4 +1,5 @@
 export default class ExecutionQuoteAttachmentModel {
+  public readonly type?: number;
   public readonly id?: number;
   public readonly file?: string;
   public readonly fileSize?: string;
@@ -7,6 +8,7 @@ export default class ExecutionQuoteAttachmentModel {
   public readonly createdAt?: string;
 
   constructor(data: {
+    type?: number;
     id?: number;
     file?: string;
     fileSize?: string;
@@ -15,6 +17,7 @@ export default class ExecutionQuoteAttachmentModel {
     createdAt?: string;
   }) {
     this.id = data.id;
+    this.type = data.type;
     this.file = data.file;
     this.fileSize = data.fileSize;
     this.alt = data.alt;
@@ -26,6 +29,7 @@ export default class ExecutionQuoteAttachmentModel {
 
   static fromJson(json: Record<string, unknown>): ExecutionQuoteAttachmentModel {
     return new ExecutionQuoteAttachmentModel({
+      type: json.type as number | undefined,
       id: json.id as number | undefined,
       file: json.file as string | undefined,
       fileSize: json.file_size as string | undefined,

@@ -75,7 +75,7 @@
         </span>
         <div class="switch-btn">
           <p class="title">{{ switch_title }}</p>
-          <ToggleSwitch v-model="field.enabled" />
+          <ToggleSwitch v-model="field.enabled" :aria-label="switch_title || $t(field.label)" />
         </div>
       </div>
       <input

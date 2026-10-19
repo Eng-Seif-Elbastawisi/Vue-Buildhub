@@ -68,6 +68,7 @@
 
       {{ t('execution_quote.show.action') }}
     </AppButton>
+    
 
     <AppButton
       v-if="menuItems.length"

@@ -1,0 +1,14 @@
+{
+  "scope": "CSS-only details summary refinement",
+  "browser": "Actual quote route with synthetic API fixture; Enter opens and Space closes at 1440/1024 English/light and 390 Arabic/dark; no document overflow",
+  "lint": "Targeted ESLint and Stylelint passed",
+  "unitTests": {
+    "passed": 3,
+    "failed": 7,
+    "baselinePassed": 3,
+    "baselineFailed": 7,
+    "sameFailureOccurrences": true
+  },
+  "scriptsAndTemplatesUnchanged": true,
+  "liveBackendVerified": false
+}

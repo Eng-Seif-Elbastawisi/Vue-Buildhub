@@ -1,0 +1,32 @@
+[
+  {
+    "index": 90,
+    "path": "/admin/admin/edit/:id",
+    "component": "src/views/MainAdmin/Admin/EditAdmin.vue",
+    "screenshot": "content-route-screenshots/090.png",
+    "actual": "/admin/admin/edit/1",
+    "overflow": false,
+    "fields": 3,
+    "layouts": 2,
+    "table": false,
+    "emptyOrError": false,
+    "text": "Admin Details\n\nEnter the admin name and contact information\n\nName\ni\nEmail\ni\nPhone\ni\nNo Network Connection\nUpdate admin",
+    "errors": [],
+    "live": false
+  },
+  {
+    "index": 91,
+    "path": "/admin/brand",
+    "component": "src/views/shared/Brand/IndexBrand.vue",
+    "screenshot": "content-route-screenshots/091.png",
+    "actual": "/admin/brand",
+    "overflow": false,
+    "fields": 1,
+    "layouts": 0,
+    "table": false,
+    "emptyOrError": false,
+    "text": "Brands\n\nManage and organize all uploaded documents in one place\n\nBrand",
+    "errors": [],
+    "live": false
+  }
+]

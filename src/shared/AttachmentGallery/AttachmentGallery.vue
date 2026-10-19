@@ -101,13 +101,29 @@
 
         <div class="attachment-gallery__tools">
           <Button
-            icon="pi pi-copy"
             :label="$t('copy_link')"
             :aria-label="$t('copy_link')"
             text
             :disabled="!current?.url"
             @click="copyLink"
-          />
+          >
+            <template #icon>
+              <svg
+                class="attachment-gallery__tool-icon p-button-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.75"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+                focusable="false"
+              >
+                <rect x="9" y="9" width="11" height="11" rx="2" />
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+              </svg>
+            </template>
+          </Button>
 
           <a
             v-if="current?.url"
@@ -116,19 +132,46 @@
             class="p-button p-component p-button-text"
             :aria-label="$t('download_attachment')"
           >
-            <span class="p-button-icon pi pi-download"></span>
+            <svg
+              class="attachment-gallery__tool-icon p-button-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.75"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+              focusable="false"
+            >
+              <path d="M12 3v12m-5-5 5 5 5-5M4 16v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4" />
+            </svg>
             <span class="p-button-label">
               {{ $t('download') }}
             </span>
           </a>
 
           <Button
-            icon="pi pi-times"
             :aria-label="$t('close')"
             :title="$t('close')"
             text
             @click="attachmentGallery.close()"
-          />
+          >
+            <template #icon>
+              <svg
+                class="attachment-gallery__tool-icon p-button-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.75"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+                focusable="false"
+              >
+                <path d="m6 6 12 12M6 18 18 6" />
+              </svg>
+            </template>
+          </Button>
         </div>
       </header>
 
@@ -287,6 +330,12 @@
     align-items: center;
     flex: none;
     gap: 0.25rem;
+  }
+
+  .attachment-gallery__tool-icon {
+    width: 1.125rem;
+    height: 1.125rem;
+    flex-shrink: 0;
   }
 
   .attachment-gallery__tools .p-button {

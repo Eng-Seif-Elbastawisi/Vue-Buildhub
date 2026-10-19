@@ -85,7 +85,7 @@
 
       <div v-for="item in items" :key="item.id" class="table-row">
         <div class="table-cell">
-          <input class="table-input" :value="item.item.title" readonly />
+          <input class="table-input workspace-control" :value="item.item.title" readonly />
         </div>
 
         <div class="table-cell">
@@ -97,11 +97,19 @@
         </div>
 
         <div class="table-cell">
-          <input class="table-input table-input--center" :value="item.quantity" readonly />
+          <input
+            class="table-input table-input--center workspace-control"
+            :value="item.quantity"
+            readonly
+          />
         </div>
 
         <div class="table-cell">
-          <input class="table-input table-input--center" :value="item.price" readonly />
+          <input
+            class="table-input table-input--center workspace-control"
+            :value="item.price"
+            readonly
+          />
         </div>
 
         <div class="table-cell total-cell">
@@ -117,158 +125,158 @@
 </template>
 
 <style scoped lang="scss">
-  .items-table-card {
-    display: flex;
-    flex-direction: column;
-    gap: 0.85rem;
-    padding: 1rem;
-    border: 1px solid rgba(214, 207, 198, 0.9);
-    border-radius: 18px;
-    background: #fff;
-  }
+.items-table-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  padding: 1rem;
+  border: 1px solid var(--bh-line);
+  border-radius: var(--bh-radius-card);
+  background: var(--bh-surface);
+}
 
-  .table-summary {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 1rem;
+.table-summary {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
 
-    h3 {
-      margin: 0;
-      color: #111827;
-      font-family: 'Bold';
-      font-size: 1rem;
-    }
-
-    p {
-      margin: 0.35rem 0 0;
-      color: #64748b;
-      font-size: var(--sm-size);
-    }
-  }
-
-  .summary-total {
-    display: flex;
-    min-width: 140px;
-    flex-direction: column;
-    gap: 0.25rem;
-    padding: 0.75rem 1rem;
-    border-radius: 14px;
-    background: #f8fafc;
-    text-align: center;
-
-    span {
-      color: #64748b;
-      font-family: 'Medium';
-      font-size: var(--xs-size);
-    }
-
-    strong {
-      color: var(--PrimaryColor);
-      font-family: 'Bold';
-      font-size: 1rem;
-    }
-  }
-
-  .items-table {
-    overflow: hidden;
-    border-radius: 15px;
-    background: #fff;
-
-    &.disabled {
-      pointer-events: none;
-      opacity: 0.7;
-    }
-  }
-
-  .table-head,
-  .table-row {
-    display: grid;
-    grid-template-columns:
-      minmax(180px, 1.5fr)
-      minmax(140px, 1fr)
-      minmax(150px, 1fr)
-      minmax(100px, 0.7fr)
-      minmax(120px, 0.8fr)
-      minmax(120px, 0.8fr)
-      minmax(160px, 1fr);
-    gap: 0.75rem;
-    align-items: center;
-  }
-
-  .table-head {
-    padding: 0.85rem 1rem;
-    background: #f8fafc;
-    color: #1e293b;
+  h3 {
+    margin: 0;
+    color: var(--bh-text);
     font-family: 'Bold';
-    font-size: 0.75rem;
+    font-size: 1rem;
   }
 
-  .table-row {
-    padding: 0.7rem 1rem;
-    border-top: 1px solid rgba(214, 207, 198, 0.75);
-    color: #111827;
-    font-family: 'Medium';
+  p {
+    margin: 0.35rem 0 0;
+    color: var(--bh-muted);
     font-size: var(--sm-size);
   }
+}
 
-  .table-input {
-    width: 100%;
-    min-height: 36px;
-    padding: 0.45rem 0.7rem;
-    border: 1px solid rgba(210, 199, 187, 0.9);
-    border-radius: 9px;
-    background: #fff;
-    color: #111827;
-    text-align: right;
+.summary-total {
+  display: flex;
+  min-width: 140px;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.75rem 1rem;
+  border-radius: 14px;
+  background: var(--bh-surface);
+  text-align: center;
+
+  span {
+    color: var(--bh-muted);
     font-family: 'Medium';
-  }
-
-  .table-input--center {
-    text-align: center;
-  }
-
-  .total-cell {
-    color: var(--PrimaryColor);
-    font-family: 'Bold';
-  }
-
-  .muted-cell {
-    color: #64748b;
     font-size: var(--xs-size);
   }
 
-  .empty-row {
-    padding: 1rem;
-    border-top: 1px solid rgba(214, 207, 198, 0.75);
-    color: #64748b;
-    text-align: center;
-    font-family: 'Medium';
+  strong {
+    color: var(--PrimaryColor);
+    font-family: 'Bold';
+    font-size: 1rem;
+  }
+}
+
+.items-table {
+  overflow: hidden;
+  border-radius: var(--bh-radius-card);
+  background: var(--bh-surface);
+
+  &.disabled {
+    pointer-events: none;
+    opacity: 0.7;
+  }
+}
+
+.table-head,
+.table-row {
+  display: grid;
+  grid-template-columns:
+    minmax(180px, 1.5fr)
+    minmax(140px, 1fr)
+    minmax(150px, 1fr)
+    minmax(100px, 0.7fr)
+    minmax(120px, 0.8fr)
+    minmax(120px, 0.8fr)
+    minmax(160px, 1fr);
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.table-head {
+  padding: 0.85rem 1rem;
+  background: var(--bh-surface);
+  color: var(--bh-text);
+  font-family: 'Bold';
+  font-size: 0.75rem;
+}
+
+.table-row {
+  padding: 0.7rem 1rem;
+  border-top: 1px solid var(--bh-line);
+  color: var(--bh-text);
+  font-family: 'Medium';
+  font-size: var(--sm-size);
+}
+
+.table-input {
+  width: 100%;
+  min-height: 36px;
+  padding: 0.45rem 0.7rem;
+  border: 1px solid var(--bh-line);
+  border-radius: var(--bh-radius-control);
+  background: var(--bh-surface);
+  color: var(--bh-text);
+  text-align: right;
+  font-family: 'Medium';
+}
+
+.table-input--center {
+  text-align: center;
+}
+
+.total-cell {
+  color: var(--PrimaryColor);
+  font-family: 'Bold';
+}
+
+.muted-cell {
+  color: var(--bh-muted);
+  font-size: var(--xs-size);
+}
+
+.empty-row {
+  padding: 1rem;
+  border-top: 1px solid var(--bh-line);
+  color: var(--bh-muted);
+  text-align: center;
+  font-family: 'Medium';
+}
+
+@media (max-width: 1200px) {
+  .table-head,
+  .table-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .table-summary {
+    flex-direction: column;
   }
 
-  @media (max-width: 1200px) {
-    .table-head,
-    .table-row {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
+  .summary-total {
+    width: 100%;
   }
 
-  @media (max-width: 768px) {
-    .table-summary {
-      flex-direction: column;
-    }
-
-    .summary-total {
-      width: 100%;
-    }
-
-    .table-head {
-      display: none;
-    }
-
-    .table-row {
-      grid-template-columns: 1fr;
-      gap: 0.45rem;
-    }
+  .table-head {
+    display: none;
   }
+
+  .table-row {
+    grid-template-columns: 1fr;
+    gap: 0.45rem;
+  }
+}
 </style>

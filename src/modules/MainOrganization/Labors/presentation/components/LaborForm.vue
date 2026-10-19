@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
 import { computed, nextTick, onMounted, ref, watch } from 'vue';
 import { onBeforeRouteLeave, useRoute } from 'vue-router';
 
@@ -200,7 +201,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="labor-form-card">
+  <StandardFormLayout class="labor-form-card">
     <header class="form-header">
       <h3>{{ $t('labor.form_title') }}</h3>
       <p>{{ $t('labor.form_description') }}</p>
@@ -208,8 +209,14 @@ onMounted(() => {
 
     <div class="form-fields" :class="{ disabled: loading }">
       <div class="field-group col-span-2">
-        <MultiLangInput field-key="title" :label="$t('labor.name')" :languages="['en', 'ar']"
-          :model-value="translations" type="title" @update:model-value="updateTranslations" />
+        <MultiLangInput
+          field-key="title"
+          :label="$t('labor.name')"
+          :languages="['en', 'ar']"
+          :model-value="translations"
+          type="title"
+          @update:model-value="updateTranslations"
+        />
       </div>
 
       <div class="field-group">
@@ -222,41 +229,85 @@ onMounted(() => {
         </span>
 
         <div class="input-wrap">
-          <input id="labor-price" v-model.number="price" class="field-input" min="0" type="number"
-            :placeholder="$t('labor.price_placeholder')" @input="updateData" />
+          <input
+            id="labor-price"
+            v-model.number="price"
+            class="field-input workspace-control"
+            min="0"
+            type="number"
+            :placeholder="$t('labor.price_placeholder')"
+            @input="updateData"
+          />
           <!-- step="1" -->
         </div>
       </div>
 
       <div class="field-group">
-        <UpdatedCustomInputSelect id="labor-item-type" v-model="itemType" :controller="itemTypeController"
-          :label="$t('labor.item_type')" :params="itemTypeParams" :placeholder="$t('labor.item_type_placeholder')"
-          required @update:model-value="updateData" />
+        <UpdatedCustomInputSelect
+          id="labor-item-type"
+          v-model="itemType"
+          :controller="itemTypeController"
+          :label="$t('labor.item_type')"
+          :params="itemTypeParams"
+          :placeholder="$t('labor.item_type_placeholder')"
+          required
+          @update:model-value="updateData"
+        />
       </div>
 
       <div class="field-group">
-        <UpdatedCustomInputSelect id="labor-stage" v-model="stage" :controller="stageController"
-          :label="$t('labor.stage')" :params="stageParams" :placeholder="$t('labor.stage_placeholder')" required
-          @update:model-value="updateData" />
+        <UpdatedCustomInputSelect
+          id="labor-stage"
+          v-model="stage"
+          :controller="stageController"
+          :label="$t('labor.stage')"
+          :params="stageParams"
+          :placeholder="$t('labor.stage_placeholder')"
+          required
+          @update:model-value="updateData"
+        />
       </div>
 
       <div class="field-group">
-        <UpdatedCustomInputSelect id="labor-sub-stage" :key="`labor-sub-stage-${stage?.id ?? 'none'}`"
-          v-model="subStage" :controller="stageController" :label="$t('labor.sub_stage')" :params="subStageParams"
-          :placeholder="$t('labor.sub_stage_placeholder')" :disabled="!stage?.id" :selection-limit="5" paginated
-          required show-select-all :type="2" @update:model-value="updateSubStage" />
+        <UpdatedCustomInputSelect
+          id="labor-sub-stage"
+          :key="`labor-sub-stage-${stage?.id ?? 'none'}`"
+          v-model="subStage"
+          :controller="stageController"
+          :label="$t('labor.sub_stage')"
+          :params="subStageParams"
+          :placeholder="$t('labor.sub_stage_placeholder')"
+          :disabled="!stage?.id"
+          :selection-limit="5"
+          paginated
+          required
+          show-select-all
+          :type="2"
+          @update:model-value="updateSubStage"
+        />
       </div>
 
       <div class="field-group">
-        <UpdatedCustomInputSelect id="labor-measurement" v-model="measurement" :controller="measurementController"
-          :label="$t('labor.measurement')" :params="measurementParams"
-          :placeholder="$t('labor.measurement_placeholder')" required @update:model-value="updateData" />
+        <UpdatedCustomInputSelect
+          id="labor-measurement"
+          v-model="measurement"
+          :controller="measurementController"
+          :label="$t('labor.measurement')"
+          :params="measurementParams"
+          :placeholder="$t('labor.measurement_placeholder')"
+          required
+          @update:model-value="updateData"
+        />
       </div>
 
-      <StatusToggleField v-model="status" input-id="labor-status" :disabled="loading"
-        @update:model-value="updateData" />
+      <StatusToggleField
+        v-model="status"
+        input-id="labor-status"
+        :disabled="loading"
+        @update:model-value="updateData"
+      />
     </div>
-  </div>
+  </StandardFormLayout>
 </template>
 
 <style scoped lang="scss">
@@ -266,8 +317,8 @@ onMounted(() => {
     padding: 12px 16px;
     padding-inline-end: 50px;
     border: 1px solid var(--border-weak);
-    border-radius: 28px;
-    background: var(--white);
+    border-radius: var(--bh-radius-control);
+    background: var(--bh-surface-raised);
     outline: none;
     transition: all 0.25s ease;
     font-family: 'Medium';

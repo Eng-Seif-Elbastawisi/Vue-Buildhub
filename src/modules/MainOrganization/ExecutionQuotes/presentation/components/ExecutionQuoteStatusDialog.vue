@@ -65,21 +65,39 @@ const submit = () => {
 </script>
 
 <template>
-  <Dialog v-model:visible="visible" modal append-to="self" class="execution-quote-status-dialog"
-    :header="$t('execution_quote.status.dialog_title')" :closable="!loading" :dismissable-mask="!loading"
-    :draggable="false">
+  <Dialog
+    v-model:visible="visible"
+    modal
+    append-to="self"
+    class="execution-quote-status-dialog workspace-dialog"
+    :header="$t('execution_quote.status.dialog_title')"
+    :closable="!loading"
+    :dismissable-mask="!loading"
+    :draggable="false"
+  >
     <div class="execution-quote-status-dialog__content">
       <div class="execution-quote-status-dialog__current">
         <span>{{ $t('execution_quote.status.current') }}</span>
         <QuoteStatusBadge :status="currentStatus" />
       </div>
 
-      <fieldset class="execution-quote-status-dialog__fieldset" role="radiogroup" :disabled="loading">
+      <fieldset
+        class="execution-quote-status-dialog__fieldset"
+        role="radiogroup"
+        :disabled="loading"
+      >
         <legend>{{ $t('execution_quote.status.choose_next') }}</legend>
 
-        <button v-for="status in availableStatuses" :key="status" type="button"
-          class="execution-quote-status-dialog__option" :class="{ 'is-selected': selectedStatus === status }"
-          role="radio" :aria-checked="selectedStatus === status" @click="selectedStatus = status">
+        <button
+          v-for="status in availableStatuses"
+          :key="status"
+          type="button"
+          class="execution-quote-status-dialog__option"
+          :class="{ 'is-selected': selectedStatus === status }"
+          role="radio"
+          :aria-checked="selectedStatus === status"
+          @click="selectedStatus = status"
+        >
           <QuoteStatusBadge :status="status" />
           <i v-if="selectedStatus === status" class="pi pi-check" aria-hidden="true"></i>
         </button>
@@ -87,16 +105,26 @@ const submit = () => {
 
       <label class="execution-quote-status-dialog__note" for="execution-quote-status-note">
         <span>{{ $t('execution_quote.status.note') }}</span>
-        <textarea id="execution-quote-status-note" v-model="note" rows="3" :disabled="loading"
-          :placeholder="$t('execution_quote.status.note_placeholder')"></textarea>
+        <textarea
+          id="execution-quote-status-note"
+          v-model="note"
+          class="workspace-control"
+          rows="3"
+          :disabled="loading"
+          :placeholder="$t('execution_quote.status.note_placeholder')"
+        ></textarea>
       </label>
 
       <div class="execution-quote-status-dialog__actions">
         <AppButton theme="secondary" outline :disabled="loading" @click="close">
           {{ $t('cancel') }}
         </AppButton>
-        <AppButton class="execution-quote-status-dialog__submit" :loading="loading"
-          :disabled="selectedStatus === undefined" @click="submit">
+        <AppButton
+          class="execution-quote-status-dialog__submit"
+          :loading="loading"
+          :disabled="selectedStatus === undefined"
+          @click="submit"
+        >
           {{ $t('execution_quote.status.update') }}
         </AppButton>
       </div>
@@ -179,7 +207,7 @@ const submit = () => {
   padding: 0.75rem;
   resize: vertical;
   border: 1px solid var(--border-weak);
-  border-radius: var(--radius-md);
+  border-radius: var(--bh-radius-control);
   background: var(--bg-card);
   color: var(--title-card-color);
   font: inherit;

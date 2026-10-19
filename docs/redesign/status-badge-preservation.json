@@ -1,0 +1,164 @@
+{
+  "checks": [
+    {
+      "component": "src/modules/MainAdmin/package/presentation/components/PackageIndex.vue",
+      "scriptsUnchanged": true,
+      "templateUnchangedAfterRemovingBadgeClasses": true
+    },
+    {
+      "component": "src/modules/MainOrganization/ExecutionQuotes/Procurement/presentation/components/ProcurementPage.vue",
+      "scriptsUnchanged": true,
+      "templateUnchangedAfterRemovingBadgeClasses": true
+    },
+    {
+      "component": "src/modules/MainOrganization/ExecutionQuotes/Procurement/presentation/components/PurchaseOrderDetails.vue",
+      "scriptsUnchanged": true,
+      "templateUnchangedAfterRemovingBadgeClasses": true
+    },
+    {
+      "component": "src/modules/MainOrganization/ExecutionQuotes/Schedule/presentation/components/ProjectManagementShortcut.vue",
+      "scriptsUnchanged": true,
+      "templateUnchangedAfterRemovingBadgeClasses": true
+    },
+    {
+      "component": "src/modules/MainOrganization/ExecutionQuotes/Warehouse/presentation/components/MaterialReceiptHistory.vue",
+      "scriptsUnchanged": true,
+      "templateUnchangedAfterRemovingBadgeClasses": true
+    },
+    {
+      "component": "src/modules/MainOrganization/ExecutionQuotes/WorkItems/presentation/components/DailyReportsList.vue",
+      "scriptsUnchanged": true,
+      "templateUnchangedAfterRemovingBadgeClasses": true
+    },
+    {
+      "component": "src/modules/MainOrganization/ExecutionQuotes/presentation/components/ExecutionQuoteIndex.vue",
+      "scriptsUnchanged": true,
+      "templateUnchangedAfterRemovingBadgeClasses": true
+    },
+    {
+      "component": "src/modules/MainOrganization/ExecutionQuotes/presentation/components/ExecutionQuoteShow.vue",
+      "scriptsUnchanged": true,
+      "templateUnchangedAfterRemovingBadgeClasses": true
+    },
+    {
+      "component": "src/modules/MainOrganization/ExecutionQuotes/presentation/components/builder/ExecutionQuoteMainStages.vue",
+      "scriptsUnchanged": true,
+      "templateUnchangedAfterRemovingBadgeClasses": true
+    },
+    {
+      "component": "src/modules/MainOrganization/ExecutionQuotes/presentation/components/builder/ExecutionQuoteStageHeader.vue",
+      "scriptsUnchanged": true,
+      "templateUnchangedAfterRemovingBadgeClasses": true
+    },
+    {
+      "component": "src/modules/MainOrganization/Invoice/presentation/components/InvoiceIndex.vue",
+      "scriptsUnchanged": true,
+      "templateUnchangedAfterRemovingBadgeClasses": true
+    },
+    {
+      "component": "src/modules/MainOrganization/Invoice/presentation/components/invoice_show/InvoiceChildrenCard.vue",
+      "scriptsUnchanged": true,
+      "templateUnchangedAfterRemovingBadgeClasses": true
+    },
+    {
+      "component": "src/modules/MainOrganization/Invoice/presentation/components/invoice_show/InvoicePaymentsCard.vue",
+      "scriptsUnchanged": true,
+      "templateUnchangedAfterRemovingBadgeClasses": true
+    },
+    {
+      "component": "src/modules/MainOrganization/Invoice/presentation/components/invoice_show/InvoiceShowHeader.vue",
+      "scriptsUnchanged": true,
+      "templateUnchangedAfterRemovingBadgeClasses": true
+    },
+    {
+      "component": "src/modules/MainOrganization/Labors/presentation/components/LaborIndex.vue",
+      "scriptsUnchanged": true,
+      "templateUnchangedAfterRemovingBadgeClasses": true
+    },
+    {
+      "component": "src/modules/MainOrganization/Package/presentation/components/OrganizationPackageCard.vue",
+      "scriptsUnchanged": true,
+      "templateUnchangedAfterRemovingBadgeClasses": true
+    },
+    {
+      "component": "src/modules/MainOrganization/Package/presentation/components/OrganizationPackageSubscriptionsTable.vue",
+      "scriptsUnchanged": true,
+      "templateUnchangedAfterRemovingBadgeClasses": true
+    },
+    {
+      "component": "src/modules/MainOrganization/Products/presentation/components/ProductsIndex.vue",
+      "scriptsUnchanged": true,
+      "templateUnchangedAfterRemovingBadgeClasses": true
+    },
+    {
+      "component": "src/modules/MainOrganization/Products/presentation/components/show/ProductShowHero.vue",
+      "scriptsUnchanged": true,
+      "templateUnchangedAfterRemovingBadgeClasses": true
+    },
+    {
+      "component": "src/modules/MainOrganization/Products/presentation/components/show/ProductShowInfo.vue",
+      "scriptsUnchanged": true,
+      "templateUnchangedAfterRemovingBadgeClasses": true
+    },
+    {
+      "component": "src/modules/MainOrganization/Project/presentation/components/GlobalProjectSearch.vue",
+      "scriptsUnchanged": true,
+      "templateUnchangedAfterRemovingBadgeClasses": true
+    },
+    {
+      "component": "src/modules/MainOrganization/Project/presentation/components/ProjectHistory.vue",
+      "scriptsUnchanged": true,
+      "templateUnchangedAfterRemovingBadgeClasses": true
+    },
+    {
+      "component": "src/modules/MainOrganization/Project/presentation/components/ProjectIndex.vue",
+      "scriptsUnchanged": true,
+      "templateUnchangedAfterRemovingBadgeClasses": true
+    },
+    {
+      "component": "src/modules/MainOrganization/Project/presentation/components/project_show/ProjectFloorsSection.vue",
+      "scriptsUnchanged": true,
+      "templateUnchangedAfterRemovingBadgeClasses": true
+    },
+    {
+      "component": "src/modules/MainOrganization/Project/presentation/components/project_show/ProjectInfoSection.vue",
+      "scriptsUnchanged": true,
+      "templateUnchangedAfterRemovingBadgeClasses": true
+    },
+    {
+      "component": "src/modules/MainOrganization/Project/presentation/components/project_show/ProjectShowHeader.vue",
+      "scriptsUnchanged": true,
+      "templateUnchangedAfterRemovingBadgeClasses": true
+    },
+    {
+      "component": "src/modules/MainOrganization/TaskAssignment/presentation/components/TaskApprovedIndex.vue",
+      "scriptsUnchanged": true,
+      "templateUnchangedAfterRemovingBadgeClasses": true
+    },
+    {
+      "component": "src/modules/MainOrganization/TaskAssignment/presentation/components/task-assignments-show/TaskAssignmentsShowDetails.vue",
+      "scriptsUnchanged": true,
+      "templateUnchangedAfterRemovingBadgeClasses": true
+    },
+    {
+      "component": "src/modules/MainOrganization/TaskAssignment/presentation/components/task-assignments-show/TaskAssignmentsShowHeader.vue",
+      "scriptsUnchanged": true,
+      "templateUnchangedAfterRemovingBadgeClasses": true
+    },
+    {
+      "component": "src/modules/MainOrganization/TaskAssignment/presentation/components/task-assignments-show/TaskAssignmentsShowHistory.vue",
+      "scriptsUnchanged": true,
+      "templateUnchangedAfterRemovingBadgeClasses": true
+    },
+    {
+      "component": "src/modules/MainOrganization/ExecutionQuotes/presentation/components/ExecutionQuoteForm.vue",
+      "scriptsUnchanged": true,
+      "templateUnchangedAfterRemovingBadgeClasses": true
+    },
+    {
+      "component": "src/modules/MainOrganization/ExecutionQuotes/presentation/components/QuoteStatusBadge.vue",
+      "preserved": "status prop, computed label and class methods; delegates rendering to shared component"
+    }
+  ],
+  "apiModelsControllersRepositoriesTranslationsChanged": false
+}

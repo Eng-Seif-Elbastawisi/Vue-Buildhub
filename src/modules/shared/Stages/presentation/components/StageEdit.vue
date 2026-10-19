@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import { onMounted, ref } from 'vue';
   import { useRouter } from 'vue-router';
 
@@ -51,43 +52,45 @@
 </script>
 
 <template>
-  <div class="Stage-crud-page">
+  <StandardFormLayout mode="edit" class="Stage-crud-page">
     <StageForm :stage="controller.itemData.value!" :loading="loading" @update-data="updateData" />
-
-    <div class="form-actions form-action-pair">
-      <button
-        class="btn btn-primary"
-        :class="{ 'btn--loading': loading }"
-        type="button"
-        :disabled="loading"
-        @click="saveStage"
-      >
-        {{ $t('stage.update') }}
-      </button>
-      <button
-        class="btn btn-secondary back-button"
-        type="button"
-        @click="router.push?.({ name: 'Stages' })"
-      >
-        {{ $t('common.back') }}
-      </button>
-    </div>
 
     <div v-if="controller.errorMessage.value" class="error">
       {{ controller.errorMessage.value }}
     </div>
-  </div>
+
+    <template #actions>
+      <div class="form-actions form-action-pair">
+        <button
+          class="btn btn-primary"
+          :class="{ 'btn--loading': loading }"
+          type="button"
+          :disabled="loading"
+          @click="saveStage"
+        >
+          {{ $t('stage.update') }}
+        </button>
+        <button
+          class="btn btn-secondary back-button"
+          type="button"
+          @click="router.push?.({ name: 'Stages' })"
+        >
+          {{ $t('common.back') }}
+        </button>
+      </div>
+    </template>
+  </StandardFormLayout>
 </template>
 
 <style scoped lang="scss">
-  @use '@/styles/mixins/form_action_pair' as form-actions;
+@use '@/styles/mixins/form_action_pair' as form-actions;
 
-  .Stage-crud-page {
-    display: flex;
-    flex-direction: column;
-  }
+.Stage-crud-page {
+  display: flex;
+  flex-direction: column;
+}
 
-  .form-action-pair {
-    @include form-actions.layout;
-  }
+.form-action-pair {
+  @include form-actions.layout;
+}
 </style>

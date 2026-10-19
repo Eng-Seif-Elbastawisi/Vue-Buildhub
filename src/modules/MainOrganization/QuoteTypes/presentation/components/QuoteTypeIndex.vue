@@ -156,16 +156,28 @@ onMounted(async () => {
       <template #search>
         <div class="search-field">
           <span class="search-icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-              stroke-linecap="round">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            >
               <circle cx="11" cy="11" r="8" />
 
               <path d="m21 21-4.35-4.35" />
             </svg>
           </span>
 
-          <input v-model="word" :placeholder="$t('search_quote_types')" class="search-input" type="text"
-            @input="Search" />
+          <input
+            v-model="word"
+            :placeholder="$t('search_quote_types')"
+            class="search-input workspace-control"
+            type="text"
+            @input="Search"
+          />
         </div>
       </template>
     </IndexPageHeader>
@@ -176,13 +188,26 @@ onMounted(async () => {
       {{ $t('quote_type.add') }}
     </router-link> -->
 
-    <DataStatusBuilder :controller="state" :on-retry="async () => await fetchQuoteTypes(route.query.page ? Number(route.query.page) : 1, word)
-      ">
+    <DataStatusBuilder
+      :controller="state"
+      :on-retry="
+        async () => await fetchQuoteTypes(route.query.page ? Number(route.query.page) : 1, word)
+      "
+    >
       <template #success="{ data }">
         <div class="table-frame">
-          <AppTable :headers="headers" :items="data as QuoteTypeModel[]" :initial-sort-key="sortBy"
-            :initial-sort-direction="sortDirection" show-index hoverable striped reorderable @sort="onSort"
-            @reorder="onReorder">
+          <AppTable
+            :headers="headers"
+            :items="data as QuoteTypeModel[]"
+            :initial-sort-key="sortBy"
+            :initial-sort-direction="sortDirection"
+            show-index
+            hoverable
+            striped
+            reorderable
+            @sort="onSort"
+            @reorder="onReorder"
+          >
             <template #cell-title="{ item }">
               {{ item?.title }}
             </template>
@@ -199,12 +224,20 @@ onMounted(async () => {
 
             <template #actions="{ item }">
               <div class="row-actions">
-                <ChangeStatusButton :id="item.id!" :key="`${item.id}-${item.status}`"
-                  :initial-is-active="Boolean(item.status)" :type="StatusTypeEnum.QUOTE_TYPE" @reload="
+                <ChangeStatusButton
+                  :id="item.id!"
+                  :key="`${item.id}-${item.status}`"
+                  :initial-is-active="Boolean(item.status)"
+                  :type="StatusTypeEnum.QUOTE_TYPE"
+                  @reload="
                     async () =>
                       await fetchQuoteTypes(route.query.page ? Number(route.query.page) : 1, word)
-                  " />
-                <router-link class="action-btn edit" :to="`${routePrefix}/quote-types/edit/${item.id}`">
+                  "
+                />
+                <router-link
+                  class="action-btn edit"
+                  :to="`${routePrefix}/quote-types/edit/${item.id}`"
+                >
                   <EditIcon />
                 </router-link>
               </div>
@@ -212,14 +245,24 @@ onMounted(async () => {
           </AppTable>
         </div>
 
-        <Pagination :pagination="controller.pagination.value as any" @change-page="onPageChange"
-          @count-per-page="onPerPageChange" />
+        <Pagination
+          :pagination="controller.pagination.value as any"
+          @change-page="onPageChange"
+          @count-per-page="onPerPageChange"
+        />
       </template>
 
       <template #empty>
         <div class="empty-state">
-          <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"
-            stroke-linecap="round">
+          <svg
+            width="56"
+            height="56"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1"
+            stroke-linecap="round"
+          >
             <rect x="2" y="4" width="20" height="16" rx="2" />
 
             <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />

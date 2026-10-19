@@ -131,11 +131,11 @@
 .main-content .search-box .search-input,
 .main-content .input-search input {
   width: 100%;
-  min-height: var(--control-height) !important;
+  min-height: var(--bh-control-height);
   padding-block: 10px !important;
   padding-inline: 42px 14px !important;
-  border: 1px solid var(--border-strong) !important;
-  border-radius: var(--control-radius) !important;
+  border: 1px solid var(--bh-field-line);
+  border-radius: var(--bh-radius-control);
   outline: none;
   color: var(--gray-800);
   background-color: var(--bg-main);
@@ -313,10 +313,10 @@
     .form-input
   ) {
   width: 100%;
-  min-height: var(--control-height) !important;
-  padding: 10px 13px !important;
-  border: 1px solid var(--border-strong) !important;
-  border-radius: var(--control-radius) !important;
+  min-height: var(--bh-control-height);
+  padding: 0.7rem 0.875rem;
+  border: 1px solid var(--bh-field-line);
+  border-radius: var(--bh-radius-control);
   outline: none;
   color: var(--gray-800);
   background-color: var(--bg-main);
@@ -332,7 +332,7 @@
 
 .main-content .field-group :where(textarea, .field-textarea),
 .p-dialog .field-group :where(textarea, .field-textarea) {
-  min-height: 112px !important;
+  min-height: 112px;
   resize: vertical;
 }
 
@@ -360,7 +360,7 @@
 
 .main-content :where(.p-select, .p-multiselect, .p-datepicker) {
   min-height: var(--control-height);
-  border-radius: var(--control-radius) !important;
+  border-radius: var(--bh-radius-control);
 }
 
 .main-content :where(.p-select, .p-multiselect) {
@@ -404,16 +404,16 @@
 
 /* ── Buttons and row actions ─────────────────────────────────────── */
 .main-content .btn {
-  min-height: var(--control-height) !important;
-  border-radius: var(--control-radius) !important;
+  min-height: var(--bh-control-height);
+  border-radius: var(--bh-radius-control);
 }
 
 .main-content .btn--sm {
-  min-height: 36px !important;
+  min-height: 36px;
 }
 
 .main-content .btn--lg {
-  min-height: 50px !important;
+  min-height: 50px;
 }
 
 .main-content :where(.row-actions, .table-actions, .saved-floor-card__actions) {

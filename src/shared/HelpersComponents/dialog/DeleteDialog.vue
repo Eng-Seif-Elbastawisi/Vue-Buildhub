@@ -19,34 +19,32 @@
   <div @click="visible = true">
     <slot name="Dialog" />
   </div>
-  <Dialog v-model:visible="visible" modal :header="$t('delete_dialog')" :style="{ width: '25rem' }">
-    <h1>{{ $t('delete_item_confirmation') }}</h1>
+  <Dialog
+    v-model:visible="visible"
+    class="workspace-dialog workspace-dialog--small"
+    modal
+    :header="$t('delete_dialog')"
+    :style="{ width: '25rem' }"
+  >
+    <p class="delete-confirmation">{{ $t('delete_item_confirmation') }}</p>
     <div class="dialogs-btn-container">
-      <button @click="Cancel">{{ $t('cancel') }}</button>
-      <button @click="Delete">{{ $t('Delete') }}</button>
+      <button type="button" class="btn btn-secondary" @click="Cancel">{{ $t('cancel') }}</button>
+      <button type="button" class="btn btn-danger" @click="Delete">{{ $t('Delete') }}</button>
     </div>
   </Dialog>
 </template>
 
 <style scoped>
+  .delete-confirmation {
+    margin: 0 0 var(--bh-space-6);
+    color: var(--bh-text);
+    font-size: var(--bh-text-md);
+    line-height: 1.6;
+  }
+
   .dialogs-btn-container {
     display: flex;
-    justify-content: space-between;
-    gap: 10px;
-  }
-
-  button {
-    padding: 8px 16px;
-    background-color: var(--PrimaryColor);
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-top: 12px;
-    width: 50%;
-  }
-
-  button:hover {
-    background-color: var(--PrimaryColor-dark);
+    justify-content: flex-end;
+    gap: var(--bh-space-3);
   }
 </style>

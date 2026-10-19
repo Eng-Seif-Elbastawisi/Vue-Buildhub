@@ -1,0 +1,15 @@
+/* One frosted surface treatment shared by headings and supporting actions. */
+@mixin surface($edge: var(--bh-glass-border)) {
+  border: 1px solid $edge;
+  background: var(--bh-surface);
+
+  @supports (backdrop-filter: blur(1px)) {
+    background: var(--bh-glass-background);
+    backdrop-filter: blur(var(--bh-glass-blur)) saturate(125%);
+  }
+
+  @media (prefers-reduced-transparency: reduce) {
+    background: var(--bh-surface);
+    backdrop-filter: none;
+  }
+}

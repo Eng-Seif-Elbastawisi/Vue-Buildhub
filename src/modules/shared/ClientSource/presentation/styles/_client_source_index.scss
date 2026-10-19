@@ -19,9 +19,9 @@
     min-width: 0;
     padding: var(--surface-padding);
     border: 1px solid var(--border-weak);
-    border-radius: var(--card-radius);
+    border-radius: var(--bh-radius-card);
     background-color: var(--bg-card);
-    box-shadow: var(--shadow-sm);
+    box-shadow: none;
   }
 
   .email-form-card > .standard-form-section-header {
@@ -109,7 +109,7 @@
     height: calc($XlSize3 + 2px);
     border-radius: $XsSize2;
     border: 1px solid $WeakBorder;
-    background: var(--white);
+    background: var(--bh-surface-raised);
     color: $TextGray3;
     transition: all 0.2s ease;
 
@@ -123,8 +123,8 @@
     }
 
     &.show:hover {
-      border-color: var(--info-dark) !important;
-      color: var(--info-dark) !important;
+      border-color: var(--info-dark);
+      color: var(--info-dark);
     }
 
     &.delete:hover {

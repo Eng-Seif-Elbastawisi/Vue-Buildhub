@@ -193,7 +193,7 @@
           <input
             v-model="word"
             :placeholder="$t('search_stages')"
-            class="search-input"
+            class="search-input workspace-control"
             type="text"
             @input="Search"
           />
@@ -349,11 +349,11 @@
 </template>
 
 <style scoped lang="scss">
-  .stages-index-page {
-    display: flex;
-    flex-direction: column;
-    gap: var(--page-section-gap);
-    width: 100%;
-    min-width: 0;
-  }
+.stages-index-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--page-section-gap);
+  width: 100%;
+  min-width: 0;
+}
 </style>

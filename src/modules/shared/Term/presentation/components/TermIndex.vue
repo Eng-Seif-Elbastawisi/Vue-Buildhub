@@ -116,7 +116,7 @@
           <input
             v-model="word"
             :placeholder="$t('search_terms')"
-            class="search-input"
+            class="search-input workspace-control"
             type="text"
             @input="Search"
           />

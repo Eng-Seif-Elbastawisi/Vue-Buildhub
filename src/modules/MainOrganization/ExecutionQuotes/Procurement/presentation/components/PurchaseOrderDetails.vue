@@ -22,7 +22,7 @@
   >
     <header class="procurement-header">
       <h2>{{ $t('procurement.orders.reference', { id: order.id }) }}</h2>
-      <span class="procurement-status procurement-status--3">{{
+      <span class="procurement-status procurement-status--3 bh-status">{{
         $t('procurement.confirmed')
       }}</span>
     </header>

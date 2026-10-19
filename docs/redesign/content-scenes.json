@@ -1,0 +1,191 @@
+[
+  {
+    "name": "employee",
+    "width": 1440,
+    "path": "/organization/employee/add",
+    "overflow": false,
+    "fields": 5,
+    "forms": 2,
+    "errors": []
+  },
+  {
+    "name": "warehouse",
+    "width": 1440,
+    "path": "/organization/warehouse/add",
+    "overflow": false,
+    "fields": 1,
+    "forms": 2,
+    "errors": []
+  },
+  {
+    "name": "project",
+    "width": 1440,
+    "path": "/organization/project/add",
+    "overflow": false,
+    "fields": 14,
+    "forms": 2,
+    "errors": []
+  },
+  {
+    "name": "invoice-payment",
+    "width": 1440,
+    "path": "/organization/invoice-payment/add",
+    "overflow": false,
+    "fields": 3,
+    "forms": 2,
+    "errors": []
+  },
+  {
+    "name": "products",
+    "width": 1440,
+    "path": "/organization/products/add",
+    "overflow": false,
+    "fields": 8,
+    "forms": 2,
+    "errors": []
+  },
+  {
+    "name": "admin",
+    "width": 1440,
+    "path": "/admin/admin/add",
+    "overflow": false,
+    "fields": 4,
+    "forms": 2,
+    "errors": []
+  },
+  {
+    "name": "listing",
+    "width": 1440,
+    "path": "/organization/employee",
+    "overflow": false,
+    "fields": 1,
+    "forms": 0,
+    "errors": []
+  },
+  {
+    "name": "employee",
+    "width": 1024,
+    "path": "/organization/employee/add",
+    "overflow": false,
+    "fields": 5,
+    "forms": 2,
+    "errors": []
+  },
+  {
+    "name": "warehouse",
+    "width": 1024,
+    "path": "/organization/warehouse/add",
+    "overflow": false,
+    "fields": 1,
+    "forms": 2,
+    "errors": []
+  },
+  {
+    "name": "project",
+    "width": 1024,
+    "path": "/organization/project/add",
+    "overflow": false,
+    "fields": 14,
+    "forms": 2,
+    "errors": []
+  },
+  {
+    "name": "invoice-payment",
+    "width": 1024,
+    "path": "/organization/invoice-payment/add",
+    "overflow": false,
+    "fields": 3,
+    "forms": 2,
+    "errors": []
+  },
+  {
+    "name": "products",
+    "width": 1024,
+    "path": "/organization/products/add",
+    "overflow": false,
+    "fields": 8,
+    "forms": 2,
+    "errors": []
+  },
+  {
+    "name": "admin",
+    "width": 1024,
+    "path": "/admin/admin/add",
+    "overflow": false,
+    "fields": 4,
+    "forms": 2,
+    "errors": []
+  },
+  {
+    "name": "listing",
+    "width": 1024,
+    "path": "/organization/employee",
+    "overflow": false,
+    "fields": 1,
+    "forms": 0,
+    "errors": []
+  },
+  {
+    "name": "employee",
+    "width": 390,
+    "path": "/organization/employee/add",
+    "overflow": false,
+    "fields": 5,
+    "forms": 2,
+    "errors": []
+  },
+  {
+    "name": "warehouse",
+    "width": 390,
+    "path": "/organization/warehouse/add",
+    "overflow": false,
+    "fields": 1,
+    "forms": 2,
+    "errors": []
+  },
+  {
+    "name": "project",
+    "width": 390,
+    "path": "/organization/project/add",
+    "overflow": false,
+    "fields": 14,
+    "forms": 2,
+    "errors": []
+  },
+  {
+    "name": "invoice-payment",
+    "width": 390,
+    "path": "/organization/invoice-payment/add",
+    "overflow": false,
+    "fields": 3,
+    "forms": 2,
+    "errors": []
+  },
+  {
+    "name": "products",
+    "width": 390,
+    "path": "/organization/products/add",
+    "overflow": false,
+    "fields": 8,
+    "forms": 2,
+    "errors": []
+  },
+  {
+    "name": "admin",
+    "width": 390,
+    "path": "/admin/admin/add",
+    "overflow": false,
+    "fields": 4,
+    "forms": 2,
+    "errors": []
+  },
+  {
+    "name": "listing",
+    "width": 390,
+    "path": "/organization/employee",
+    "overflow": false,
+    "fields": 1,
+    "forms": 0,
+    "errors": []
+  }
+]

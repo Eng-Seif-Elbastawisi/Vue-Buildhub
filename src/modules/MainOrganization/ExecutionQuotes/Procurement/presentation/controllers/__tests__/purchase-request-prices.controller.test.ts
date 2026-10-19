@@ -324,3 +324,57 @@ it('authoritative verification marks an already persisted draft clean without en
   await controller.save();
   expect(stores()).toHaveLength(1);
 });
+
+it('replaces one supplier file while preserving the full Sync list and every unchanged file', async () => {
+  const first = {
+    ...priceRecord(3, 15),
+    supplier: { id: 3, title: 'Supplier 3' },
+    attachment: 'https://example.test/old.jpg',
+  };
+  const second = {
+    ...priceRecord(4, 16),
+    supplier: { id: 4, title: 'Supplier 4' },
+    attachment: 'https://example.test/unchanged.pdf',
+  };
+  post.mockResolvedValue(response({ status: true, data: [first, second] }));
+  await controller.fetchList();
+  expect(draftRow(0).savedAttachment).toBe(first.attachment);
+  expect(draftRow(0).attachment).toBeUndefined();
+  expect(draftRow(0).price).toBe('1500.00');
+  controller.updateRow(draftRow(0).key, { attachment: 'data:image/jpeg;base64,YQ==' });
+  post.mockImplementation(async (request) =>
+    response(
+      request.url.includes('store_')
+        ? { status: false, message: 'Rejected' }
+        : { status: true, data: [first, second] },
+    ),
+  );
+  expect(await controller.save()).toBeInstanceOf(DataFailed);
+  expect(draftRow(0).savedAttachment).toBe(first.attachment);
+  expect(draftRow(0).attachment).toBe('data:image/jpeg;base64,YQ==');
+  expect(stores()[0]?.[0].data.suppliers).toEqual([
+    {
+      id: 3,
+      price: 1500,
+      duration: 2,
+      duration_type: 2,
+      attachment: 'data:image/jpeg;base64,YQ==',
+    },
+    { id: 4, price: 1500, duration: 2, duration_type: 2 },
+  ]);
+  post.mockImplementation(async (request) =>
+    response(
+      request.url.includes('store_')
+        ? { status: true }
+        : {
+            status: true,
+            data: [{ ...first, attachment: 'https://example.test/new.jpg' }, second],
+          },
+    ),
+  );
+  expect(await controller.save()).toBeInstanceOf(DataSuccess);
+  expect(draftRow(0).savedAttachment).toBe('https://example.test/new.jpg');
+  expect(draftRow(0).attachment).toBeUndefined();
+  expect(draftRow(1).savedAttachment).toBe(second.attachment);
+  expect(controller.dirty.value).toBe(false);
+});

@@ -59,13 +59,13 @@
     <p v-if="!validId(quoteId)" role="alert">{{ $t('material_receipt.invalid_quote') }}</p>
     <template v-else>
       <ProjectWorkspaceNav :quote-id="quoteId" active="warehouse" />
-      <header class="material-receipt__intro">
-        <div>
+      <header class="procurement-header procurement-intro">
+        <div class="procurement-intro-copy">
           <h1>
             <i class="pi pi-upload" aria-hidden="true" />{{ $t('material_disbursement.title') }}
           </h1>
           <p>{{ $t('material_disbursement.subtitle') }}</p>
-          <RouterLink :to="quotePath(route.path, quoteId)" class="material-receipt__back">
+          <RouterLink :to="quotePath(route.path, quoteId)" class="procurement-back-link">
             <i class="pi pi-arrow-left" aria-hidden="true" />{{ $t('material_receipt.back') }}
           </RouterLink>
         </div>
@@ -125,12 +125,14 @@
               </div>
               <div
                 v-else
-                class="material-receipt__scroll"
+                class="material-receipt__scroll workspace-table-scroll"
                 role="region"
                 tabindex="0"
                 :aria-label="$t('material_disbursement.available_stock')"
               >
-                <table class="material-receipt__table material-disbursement__stock-table">
+                <table
+                  class="material-receipt__table material-disbursement__stock-table workspace-data-table"
+                >
                   <thead>
                     <tr>
                       <th scope="col">{{ $t('material_receipt.item') }}</th>

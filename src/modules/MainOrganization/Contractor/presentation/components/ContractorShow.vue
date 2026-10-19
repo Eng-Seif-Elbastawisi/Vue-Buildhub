@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import { computed, onMounted } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
@@ -22,7 +23,7 @@
 </script>
 
 <template>
-  <div class="standard-crud-page">
+  <StandardFormLayout mode="show" class="standard-crud-page">
     <template v-if="contractor">
       <h1>{{ contractor.name }}</h1>
       <div class="field-group">
@@ -47,12 +48,12 @@
     </template>
     <p v-else-if="controller.errorMessage.value">{{ controller.errorMessage.value }}</p>
     <p v-else>{{ $t('loading') }}</p>
-  </div>
+  </StandardFormLayout>
 </template>
 
 <style scoped lang="scss">
-  .row-actions {
-    display: flex;
-    gap: 1rem;
-  }
+.row-actions {
+  display: flex;
+  gap: 1rem;
+}
 </style>

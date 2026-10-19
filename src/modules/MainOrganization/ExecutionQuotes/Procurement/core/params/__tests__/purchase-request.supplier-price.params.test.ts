@@ -19,3 +19,13 @@ it.each([
     false,
   );
 });
+
+it('omits unchanged files and accepts only new Base64 replacements', () => {
+  const offer = new PurchaseRequestSupplierPriceParams(1, 200, 5, 1);
+  expect(offer.toMap()).not.toHaveProperty('attachment');
+  offer.attachment = 'https://example.test/old.jpg';
+  expect(offer.validate().isValid).toBe(false);
+  offer.attachment = 'data:image/jpeg;base64,YQ==';
+  expect(offer.validate().isValid).toBe(true);
+  expect(offer.toMap().attachment).toBe('data:image/jpeg;base64,YQ==');
+});

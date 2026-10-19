@@ -63,6 +63,8 @@
 </template>
 
 <style scoped lang="scss">
+  @use 'workspace-glass' as glass;
+
   .index-page-header {
     --quote-copper-soft: var(--PrimaryColor-light);
     --quote-copper-dark: var(--PrimaryColor);
@@ -79,13 +81,15 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 24px;
+    gap: var(--bh-space-6);
     width: 100%;
-    min-height: 64px;
-    padding: 1.5rem;
-    border-radius: var(--card-radius, 14px);
-    background: var(--SecondaryColor);
-    color: var(--secondary-text-color, var(--white));
+    min-height: 112px;
+    padding: var(--bh-space-6);
+    border-radius: var(--bh-radius-card);
+
+    @include glass.surface;
+
+    color: var(--bh-text);
     isolation: isolate;
   }
 
@@ -98,26 +102,26 @@
     display: flex;
     flex: 1 1 auto;
     align-items: center;
-    gap: 14px;
+    gap: var(--bh-space-4);
     min-width: 0;
   }
 
   .index-page-header .index-page-heading .index-page-heading__title {
     margin: 0;
-    color: var(--secondary-text-color, var(--white));
-    font-family: 'Bold', var(--font-family);
-    font-size: 1.7rem;
+    color: var(--bh-text);
+    font-family: var(--bh-font);
+    font-size: var(--bh-text-page);
     font-weight: 700;
-    line-height: 1.35;
+    line-height: 1.2;
     overflow-wrap: anywhere;
   }
 
   .index-page-header .index-page-heading .index-page-heading__subtitle {
-    max-width: 70ch;
+    max-width: 68ch;
     margin: 6px 0 0;
-    color: color-mix(in sRGB, var(--secondary-text-color, var(--white)), var(--SecondaryColor) 15%);
-    font-size: 0.85rem;
-    line-height: 1.65;
+    color: var(--bh-muted);
+    font-size: var(--bh-text-sm);
+    line-height: 1.5;
     overflow-wrap: anywhere;
   }
 
@@ -143,9 +147,8 @@
     width: 100%;
     padding: 12px;
     margin-block-start: 12px;
-    border: 1px solid var(--border-strong);
-    border-block-start: 0;
-    border-radius: var(--card-radius, 14px);
+    border: 0;
+    border-radius: var(--bh-radius-card);
     background-color: var(--bg-card);
     box-shadow: none;
   }
@@ -201,7 +204,7 @@
     outline: none;
     color: var(--SecondaryColor);
     background-color: var(--bg-card);
-    font-family: var(--font-family);
+    font-family: var(--bh-font);
     font-size: var(--sm-size);
   }
 
@@ -238,18 +241,18 @@
   }
 
   .index-page-heading__identity :deep(.page-header-icon) {
-    background: color-mix(
-      in sRGB,
-      var(--SecondaryColor),
-      var(--secondary-text-color, var(--white)) 10%
-    );
-    border: 1px solid var(--PrimaryColor);
-    color: color-mix(in sRGB, var(--PrimaryColor), var(--secondary-text-color, var(--white)) 65%);
+    border: 0;
+    width: var(--bh-control-height);
+    height: var(--bh-control-height);
+    flex-basis: var(--bh-control-height);
+    border-radius: var(--bh-radius-control);
+    background: color-mix(in sRGB, var(--bh-surface-raised) 65%, var(--bh-blue-soft));
+    color: var(--bh-blue-ink);
   }
 
   .index-page-heading__copy :deep(.breadcrumb),
   .index-page-heading__copy :deep(.breadcrumb a) {
-    color: color-mix(in sRGB, var(--secondary-text-color, var(--white)), var(--SecondaryColor) 15%);
+    color: var(--bh-muted);
   }
 
   .index-page-heading__copy :deep(.breadcrumb [aria-current='page']) {
@@ -257,52 +260,20 @@
   }
 
   .index-page-heading__copy :deep(.breadcrumb a:hover) {
-    color: var(--secondary-text-color, var(--white));
+    color: var(--bh-text);
     text-decoration: underline;
     text-underline-offset: 0.2em;
   }
 
   .index-page-header .index-page-heading__actions :deep(.btn),
   .index-page-header .index-page-heading__actions :deep(.btn-add) {
-    font-size: 0.85rem;
-  }
-
-  .index-page-heading__actions :deep(.btn-primary),
-  .index-page-heading__actions :deep(.btn-add) {
-    border: 1px solid var(--PrimaryColor);
-    background: var(--PrimaryColor);
-    color: var(--button-primary-color, var(--white));
-    box-shadow: none;
-  }
-
-  .index-page-heading__actions :deep(.btn-primary:hover),
-  .index-page-heading__actions :deep(.btn-add:hover) {
-    background: color-mix(in sRGB, var(--PrimaryColor), var(--SecondaryColor) 15%);
-  }
-
-  .index-page-heading__actions :deep(.btn-secondary) {
-    border-color: color-mix(
-      in sRGB,
-      var(--secondary-text-color, var(--white)),
-      var(--SecondaryColor) 15%
-    );
-    background: transparent;
-    color: var(--secondary-text-color, var(--white));
-  }
-
-  .index-page-heading__actions :deep(.btn-secondary:hover) {
-    background: color-mix(
-      in sRGB,
-      var(--SecondaryColor),
-      var(--secondary-text-color, var(--white)) 10%
-    );
+    font-size: var(--bh-text-sm);
   }
 
   .index-page-heading__actions :deep(a:focus-visible),
   .index-page-heading__actions :deep(button:focus-visible),
   .index-page-heading__copy :deep(a:focus-visible) {
-    outline: 2px solid
-      color-mix(in sRGB, var(--PrimaryColor), var(--secondary-text-color, var(--white)) 65%);
+    outline: 2px solid var(--bh-focus);
     outline-offset: 3px;
   }
 
@@ -316,12 +287,12 @@
       min-height: 0;
       align-items: stretch;
       flex-direction: column;
-      gap: 1.25rem;
-      padding: 1.25rem;
+      gap: var(--bh-space-4);
+      padding: var(--bh-space-5) var(--bh-space-4);
     }
 
     .index-page-header .index-page-heading .index-page-heading__title {
-      font-size: 1.45rem;
+      font-size: var(--bh-text-page);
     }
 
     .index-page-heading__actions {

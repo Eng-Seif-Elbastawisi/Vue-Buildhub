@@ -45,10 +45,10 @@ const STORAGE_KEY = 'systemIdentityPalette';
 const MAX_EXTRACTED_COLORS = 8;
 
 const defaultPalette: SystemIdentityPalette = {
-  name: 'BuildHub Copper',
-  primary: '#B87333',
-  secondary: '#101418',
-  accent: '#C47A35',
+  name: 'BuildHub Workspace',
+  primary: '#10141A',
+  secondary: '#354052',
+  accent: '#83A2DB',
 };
 
 const suggestedPalettes: SystemIdentityPalette[] = [

@@ -5,6 +5,8 @@
   import BuildHubLogo from '@/assets/images/BuildHubLogo.jpg';
   import EmployeeImage from '@/assets/images/headerIMages/employee.jpg';
   import HeaderSidebarIcon from '@/shared/icons/HeaderIcons/HeaderSidebarIcon.vue';
+  import { useThemeStore } from '@/stores/theme';
+  import { useLanguageSwitcher } from './useLanguageSwitcher';
   import { useUserStore } from '@/stores/user';
   import { useSystemIdentityTheme } from '@/modules/shared/SystemIdentity/presentation/composables/useSystemIdentityTheme';
   import GlobalProjectSearch from '@/modules/MainOrganization/Project/presentation/components/GlobalProjectSearch.vue';
@@ -13,6 +15,8 @@
     (e: 'openSidebar'): void;
   }>();
 
+  const themeStore = useThemeStore();
+  const { currentLanguage, toggleLanguage } = useLanguageSwitcher();
   const userStore = useUserStore();
   const { user } = storeToRefs(userStore);
   const { currentPalette } = useSystemIdentityTheme();
@@ -33,6 +37,23 @@
 
     <div class="mobile-actions">
       <GlobalProjectSearch compact />
+      <button
+        type="button"
+        class="mobile-menu-btn"
+        :aria-label="$t('toggle_theme')"
+        :aria-pressed="themeStore.isDark"
+        @click="themeStore.toggle"
+      >
+        <i :class="themeStore.isDark ? 'pi pi-sun' : 'pi pi-moon'" aria-hidden="true" />
+      </button>
+      <button
+        type="button"
+        class="mobile-menu-btn"
+        :aria-label="$t('change_language')"
+        @click="toggleLanguage"
+      >
+        {{ currentLanguage.toUpperCase() }}
+      </button>
       <img class="mobile-avatar" :src="user?.image || EmployeeImage" :alt="$t('user')" />
       <button
         type="button"
@@ -52,7 +73,7 @@
     top: 0;
     left: 0;
     right: 0;
-    z-index: 1400;
+    z-index: var(--bh-z-mobile-header);
     display: none;
     align-items: center;
     justify-content: space-between;
@@ -129,6 +150,27 @@
   @media (max-width: 1023px) {
     .mobile-topbar {
       display: flex;
+    }
+  }
+
+  @media (max-width: 520px) {
+    .mobile-avatar,
+    .mobile-copy span {
+      display: none;
+    }
+
+    .mobile-actions {
+      gap: 6px;
+    }
+
+    .mobile-menu-btn {
+      width: 36px;
+      height: 36px;
+    }
+
+    .mobile-logo {
+      width: 32px;
+      height: 32px;
     }
   }
 </style>

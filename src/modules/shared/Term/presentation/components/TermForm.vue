@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import { onMounted, ref, watch } from 'vue';
   import type TitleInterface from '@/base/Data/Models/titleInterface';
   import TranslationParams from '@/base/Core/Params/translationParams';
@@ -82,7 +83,7 @@
 </script>
 
 <template>
-  <div class="form-fields">
+  <StandardFormLayout class="form-fields">
     <div class="field-group col-span-2" :class="{ disabled: props.loading }">
       <MultiLangInput
         field-key="title"
@@ -106,19 +107,19 @@
         @update:model-value="updateDepartment"
       />
     </div>
-  </div>
+  </StandardFormLayout>
 </template>
 
 <style scoped lang="scss">
-  .form-fields {
-    padding: 20px;
+.form-fields {
+  padding: 20px;
 
-    .field-group {
-      &.disabled {
-        cursor: not-allowed;
-        pointer-events: none;
-        opacity: 0.7;
-      }
+  .field-group {
+    &.disabled {
+      cursor: not-allowed;
+      pointer-events: none;
+      opacity: 0.7;
     }
   }
+}
 </style>

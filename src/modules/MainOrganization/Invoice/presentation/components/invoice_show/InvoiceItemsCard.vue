@@ -25,8 +25,8 @@
       <h2>{{ $t('invoice_show.items') }}</h2>
     </div>
 
-    <div v-if="items.length" class="invoice-show-table-wrap">
-      <table class="invoice-show-table">
+    <div v-if="items.length" class="invoice-show-table-wrap workspace-table-scroll">
+      <table class="invoice-show-table workspace-data-table">
         <thead>
           <tr>
             <th>{{ $t('invoice_show.table_number') }}</th>

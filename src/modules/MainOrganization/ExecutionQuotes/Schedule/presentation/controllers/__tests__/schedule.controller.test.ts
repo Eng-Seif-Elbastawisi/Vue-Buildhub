@@ -1,3 +1,4 @@
+import ScheduleApiService from '../../../data/api/schedule.api-service';
 import ExecutionQuoteApiService from '../../../../data/api/execution.quote.api-service';
 import { beforeEach, expect, it, vi } from 'vitest';
 import {
@@ -19,6 +20,13 @@ import ScheduleOwnerParams from '../../../core/params/schedule.owner.params';
 import ScheduleGroupParams from '../../../core/params/schedule.group.params';
 import ProjectTimelineStageParams from '../../../core/params/project.timeline.stage.params';
 import { groupFixture, overviewFixture } from './fixtures';
+import ScheduleGroupModel from '../../../core/models/schedule.group.model';
+import ProjectTimelineWorkStatusModel from '../../../core/models/project.timeline.work-status.model';
+import ProjectTimelineHistoryModel from '../../../core/models/project.timeline.history.model';
+import {
+  ChangeTimelineApprovalParams,
+  ChangeTimelineWorkStatusParams,
+} from '../../../core/params/schedule.status.params';
 const controller = ScheduleController.getInstance();
 const repository = ScheduleRepository.getInstance();
 const form = () =>
@@ -36,6 +44,264 @@ beforeEach(() => {
   vi.spyOn(repository, 'readSettings').mockResolvedValue(
     new DataSuccess({ data: new ScheduleSettingsModel(undefined, []) }),
   );
+});
+it('uses the returned Quote approval and refetches actual Group statuses without starting Groups locally', async () => {
+  controller.ownerState.value = new DataSuccess({
+    data: new ExecutionQuoteShowModel({ id: 101, timelineStatus: 1 }),
+  });
+  const first = groupFixture(201);
+  const second = groupFixture(202);
+  controller.listState.value = new DataSuccess({ data: [first, second] });
+  const approval = vi.spyOn(repository, 'changeApproval').mockResolvedValue(
+    new DataSuccess({
+      data: new ExecutionQuoteShowModel({
+        id: 101,
+        timelineStatus: 3,
+        approvedByEmployeeId: 7,
+        timelineNote: 'Approved',
+      }),
+    }),
+  );
+  vi.spyOn(ExecutionQuoteRepository.getInstance(), 'show').mockResolvedValue(
+    new DataSuccess({
+      data: new ExecutionQuoteShowModel({ id: 101, timelineStatus: 3, approvedByEmployeeId: 7 }),
+    }),
+  );
+  vi.spyOn(repository, 'readOverview').mockResolvedValue(
+    new DataSuccess({
+      data: overviewFixture([
+        new ScheduleGroupModel({ ...first, workStatus: 1 }),
+        new ScheduleGroupModel({ ...second, workStatus: null }),
+      ]),
+    }),
+  );
+  const work = vi.spyOn(repository, 'changeWorkStatus');
+  expect(
+    await controller.changeApproval(new ChangeTimelineApprovalParams(101, 3, 'Approved')),
+  ).toBeInstanceOf(DataSuccess);
+  expect(approval).toHaveBeenCalledOnce();
+  expect(controller.ownerState.value.data?.approvedByEmployeeId).toBe(7);
+  expect(controller.listState.value.data?.map((group) => group.workStatus)).toEqual([1, null]);
+  expect(work).not.toHaveBeenCalled();
+});
+it('refreshes the authoritative Quote and Groups after rejecting a pending timeline', async () => {
+  controller.ownerState.value = new DataSuccess({
+    data: new ExecutionQuoteShowModel({ id: 101, timelineStatus: 1 }),
+  });
+  const group = new ScheduleGroupModel({ ...groupFixture(201), workStatus: null });
+  const mutation = vi
+    .spyOn(repository, 'changeApproval')
+    .mockResolvedValue(
+      new DataSuccess({ data: new ExecutionQuoteShowModel({ id: 101, timelineStatus: 2 }) }),
+    );
+  const quote = vi
+    .spyOn(ExecutionQuoteRepository.getInstance(), 'show')
+    .mockResolvedValue(
+      new DataSuccess({ data: new ExecutionQuoteShowModel({ id: 101, timelineStatus: 2 }) }),
+    );
+  const groups = vi
+    .spyOn(repository, 'readOverview')
+    .mockResolvedValue(new DataSuccess({ data: overviewFixture([group]) }));
+  const result = await controller.changeApproval(
+    new ChangeTimelineApprovalParams(101, 2, 'Revise'),
+  );
+  expect(result).toBeInstanceOf(DataSuccess);
+  expect(mutation.mock.calls[0][0].toMap()).toEqual({
+    quote_id: 101,
+    timeline_status: 2,
+    timeline_note: 'Revise',
+  });
+  expect(quote).toHaveBeenCalledOnce();
+  expect(groups).toHaveBeenCalledOnce();
+  expect(controller.ownerState.value.data?.timelineStatus).toBe(2);
+  expect(controller.listState.value.data?.[0].workStatus).toBeNull();
+});
+it('keeps the prior Quote status and Groups after a rejected approval request fails', async () => {
+  controller.ownerState.value = new DataSuccess({
+    data: new ExecutionQuoteShowModel({ id: 101, timelineStatus: 1 }),
+  });
+  const group = new ScheduleGroupModel({ ...groupFixture(201), workStatus: null });
+  controller.listState.value = new DataSuccess({ data: [group] });
+  vi.spyOn(repository, 'changeApproval').mockResolvedValue(
+    new DataFailed({ error: new ErrorModel('Rejection denied', ErrorType.serviceSide) }),
+  );
+  const quote = vi.spyOn(ExecutionQuoteRepository.getInstance(), 'show');
+  const groups = vi.spyOn(repository, 'readOverview');
+  const result = await controller.changeApproval(new ChangeTimelineApprovalParams(101, 2));
+  expect(result).toBeInstanceOf(DataFailed);
+  expect(controller.ownerState.value.data?.timelineStatus).toBe(1);
+  expect(controller.listState.value.data?.[0].workStatus).toBeNull();
+  expect(quote).not.toHaveBeenCalled();
+  expect(groups).not.toHaveBeenCalled();
+});
+it('updates only one Group and supports several Working Groups without sequence gating', async () => {
+  controller.ownerState.value = new DataSuccess({
+    data: new ExecutionQuoteShowModel({ id: 101, timelineStatus: 3 }),
+  });
+  const groups = [
+    new ScheduleGroupModel({ ...groupFixture(201), workStatus: 1 }),
+    new ScheduleGroupModel({ ...groupFixture(202), workStatus: 2 }),
+    new ScheduleGroupModel({ ...groupFixture(203), workStatus: 1 }),
+    new ScheduleGroupModel({ ...groupFixture(204), workStatus: null }),
+  ];
+  controller.listState.value = new DataSuccess({ data: groups });
+  let refresh!: (state: DataSuccess<ProjectTimelineOverviewModel>) => void;
+  vi.spyOn(repository, 'readOverview').mockImplementationOnce(
+    () =>
+      new Promise((resolve) => {
+        refresh = resolve;
+      }),
+  );
+  const mutation = vi.spyOn(repository, 'changeWorkStatus').mockResolvedValue(
+    new DataSuccess({
+      data: new ProjectTimelineWorkStatusModel(202, 101, 1),
+    }),
+  );
+  const pending = controller.changeWorkStatus(new ChangeTimelineWorkStatusParams(202, 1));
+  await Promise.resolve();
+  expect(controller.listState.value.data?.map((group) => group.workStatus)).toEqual([
+    1,
+    1,
+    1,
+    null,
+  ]);
+  expect(
+    await controller.changeWorkStatus(new ChangeTimelineWorkStatusParams(202, 1)),
+  ).toBeInstanceOf(DataCancelled);
+  refresh(
+    new DataSuccess({
+      data: overviewFixture(
+        groups.map((group) =>
+          group.id === 202 ? new ScheduleGroupModel({ ...group, workStatus: 1 }) : group,
+        ),
+      ),
+    }),
+  );
+  expect(await pending).toBeInstanceOf(DataSuccess);
+  expect(mutation).toHaveBeenCalledOnce();
+  expect(controller.listState.value.data?.map((group) => group.workStatus)).toEqual([
+    1,
+    1,
+    1,
+    null,
+  ]);
+  expect(
+    await controller.changeWorkStatus(new ChangeTimelineWorkStatusParams(202, 1)),
+  ).toBeInstanceOf(DataCancelled);
+});
+it('keeps Group history scoped when switching Groups or Quotes', async () => {
+  controller.listState.value = new DataSuccess({ data: [groupFixture(201), groupFixture(202)] });
+  let finishA!: (state: DataSuccess<ProjectTimelineHistoryModel[]>) => void;
+  let finishB!: (state: DataSuccess<ProjectTimelineHistoryModel[]>) => void;
+  vi.spyOn(repository, 'readHistory')
+    .mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          finishA = resolve;
+        }),
+    )
+    .mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          finishB = resolve;
+        }),
+    );
+  const first = controller.readHistory(201);
+  const second = controller.readHistory(202);
+  const entry = new ProjectTimelineHistoryModel(1, 201, 1, null, null, null, '2026-10-18 12:10:58');
+  finishA(new DataSuccess({ data: [entry] }));
+  expect(await first).toBeInstanceOf(DataCancelled);
+  expect(controller.historyState.value.data).toBeNull();
+  finishB(
+    new DataSuccess({
+      data: [new ProjectTimelineHistoryModel(2, 202, 2, 1, null, null, '2026-10-18 12:12:50')],
+    }),
+  );
+  expect(await second).toBeInstanceOf(DataSuccess);
+  expect(controller.historyState.value.data?.[0]?.projectTimelineId).toBe(202);
+  controller.activate(102);
+  expect(controller.historyState.value.data).toBeNull();
+});
+it('discards a late history response after navigating to a different Quote', async () => {
+  controller.listState.value = new DataSuccess({ data: [groupFixture(201)] });
+  let finish!: (state: DataSuccess<ProjectTimelineHistoryModel[]>) => void;
+  vi.spyOn(repository, 'readHistory').mockImplementationOnce(
+    () =>
+      new Promise((resolve) => {
+        finish = resolve;
+      }),
+  );
+  const pending = controller.readHistory(201);
+  controller.activate(102);
+  finish(
+    new DataSuccess({
+      data: [new ProjectTimelineHistoryModel(1, 201, 1, null, null, null, '2026-10-18 12:10:58')],
+    }),
+  );
+  expect(await pending).toBeInstanceOf(DataCancelled);
+  expect(controller.historyState.value.data).toBeNull();
+  expect(controller.historyGroupId.value).toBeNull();
+});
+it('prevents stale or rejected Group status responses from changing other Groups', async () => {
+  controller.ownerState.value = new DataSuccess({
+    data: new ExecutionQuoteShowModel({ id: 101, timelineStatus: 3 }),
+  });
+  controller.listState.value = new DataSuccess({
+    data: [new ScheduleGroupModel({ ...groupFixture(201), workStatus: null })],
+  });
+  let finish!: (state: DataSuccess<ProjectTimelineWorkStatusModel>) => void;
+  vi.spyOn(repository, 'changeWorkStatus').mockImplementationOnce(
+    () =>
+      new Promise((resolve) => {
+        finish = resolve;
+      }),
+  );
+  const pending = controller.changeWorkStatus(new ChangeTimelineWorkStatusParams(201, 1));
+  controller.activate(102);
+  finish(new DataSuccess({ data: new ProjectTimelineWorkStatusModel(201, 101, 1) }));
+  expect(await pending).toBeInstanceOf(DataCancelled);
+  expect(controller.workStatusState.value.data).toBeNull();
+  expect(controller.listState.value.data).toBeNull();
+});
+it('keeps known Group status on a backend failure and rejects an unchanged status', async () => {
+  controller.ownerState.value = new DataSuccess({
+    data: new ExecutionQuoteShowModel({ id: 101, timelineStatus: 3 }),
+  });
+  controller.listState.value = new DataSuccess({
+    data: [new ScheduleGroupModel({ ...groupFixture(201), workStatus: 2 })],
+  });
+  const failure = new DataFailed<ProjectTimelineWorkStatusModel>({
+    error: new ErrorModel('Transition denied', ErrorType.serviceSide),
+  });
+  const mutation = vi.spyOn(repository, 'changeWorkStatus').mockResolvedValue(failure);
+  expect(
+    await controller.changeWorkStatus(new ChangeTimelineWorkStatusParams(201, 2)),
+  ).toBeInstanceOf(DataCancelled);
+  expect(await controller.changeWorkStatus(new ChangeTimelineWorkStatusParams(201, 3))).toBe(
+    failure,
+  );
+  expect(controller.listState.value.data?.[0]?.workStatus).toBe(2);
+  expect(controller.workStatusState.value.error?.displayMessage).toBe('Transition denied');
+  expect(mutation).toHaveBeenCalledOnce();
+});
+it('does not assign a late previous-Quote approval result or refresh its Groups', async () => {
+  controller.ownerState.value = new DataSuccess({
+    data: new ExecutionQuoteShowModel({ id: 101, timelineStatus: 1 }),
+  });
+  let finish!: (state: DataSuccess<ExecutionQuoteShowModel>) => void;
+  vi.spyOn(repository, 'changeApproval').mockImplementationOnce(
+    () =>
+      new Promise((resolve) => {
+        finish = resolve;
+      }),
+  );
+  const list = vi.spyOn(repository, 'readOverview');
+  const pending = controller.changeApproval(new ChangeTimelineApprovalParams(101, 3));
+  controller.activate(102);
+  finish(new DataSuccess({ data: new ExecutionQuoteShowModel({ id: 101, timelineStatus: 3 }) }));
+  expect(await pending).toBeInstanceOf(DataCancelled);
+  expect(controller.ownerState.value.data).toBeNull();
+  expect(list).not.toHaveBeenCalled();
 });
 it('discards previous-owner list and settings results before shared state assignment', async () => {
   let completeList!: (state: DataSuccess<ProjectTimelineOverviewModel>) => void;
@@ -306,5 +572,27 @@ it('preserves the loaded Edit detail when BaseController update returns validati
   expect(await controller.update(params)).toBe(failure);
   expect(controller.itemState.value).toBe(loadedDetail);
   expect(controller.mutationState.value.error?.displayMessage).toBe('Title rejected');
+  expect(controller.busy.value).toBe(false);
+});
+
+it('blocks editing, deleting and reordering approved timelines before sending requests', async () => {
+  controller.activate(101, 201);
+  controller.ownerState.value = new DataSuccess({
+    data: new ExecutionQuoteShowModel({ id: 101, timelineStatus: 3 }),
+  });
+  controller.listState.value = new DataSuccess({ data: [groupFixture(201), groupFixture(202)] });
+  controller.completeSequence.value = true;
+  const api = ScheduleApiService.getInstance();
+  const update = vi.spyOn(api, 'update');
+  const remove = vi.spyOn(api, 'delete');
+  const sort = vi.spyOn(api, 'sort');
+  const changes = new ScheduleGroupParams({ ...form(), groupId: 201 });
+  expect(await controller.update(changes)).toBeInstanceOf(DataCancelled);
+  expect(await controller.delete(new ScheduleOwnerParams(101, 201))).toBeInstanceOf(DataCancelled);
+  expect(await controller.changeProjectTimelineOrder(201, 2)).toBeInstanceOf(DataCancelled);
+  expect(controller.canMove(201, 1)).toBe(false);
+  expect(update).not.toHaveBeenCalled();
+  expect(remove).not.toHaveBeenCalled();
+  expect(sort).not.toHaveBeenCalled();
   expect(controller.busy.value).toBe(false);
 });

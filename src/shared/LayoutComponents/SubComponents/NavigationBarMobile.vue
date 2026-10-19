@@ -55,7 +55,7 @@ const isActive = (itemRoute: string) => {
   display: flex;
   align-items: center;
   justify-content: space-around;
-  z-index: 10000;
+  z-index: var(--bh-z-mobile-header);
   padding-bottom: env(safe-area-inset-bottom, 0);
 
   .nav-item {

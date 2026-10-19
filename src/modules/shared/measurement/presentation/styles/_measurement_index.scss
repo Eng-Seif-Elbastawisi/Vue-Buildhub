@@ -12,13 +12,13 @@
 
     .email-form-card {
       background: var(--bg-main);
-      border-radius: 24px;
+      border-radius: var(--bh-radius-card);
       padding: 16px;
       overflow: hidden;
       position: relative;
       width: 100%;
       background-color: var(--color-light-gray);
-      // @include flex(row, nowrap , space-between , end );
+      /* @include flex(row, nowrap , space-between , end ); */
       display: grid;
       grid-template-columns: 4fr 1fr;
       align-items: end;
@@ -32,7 +32,7 @@
         left: 0;
         right: 0;
         height: 1px;
-        background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.15), transparent);
+        background: var(--bh-surface);
         pointer-events: none;
       }
     }
@@ -40,6 +40,7 @@
 
   .empty-state {
     @include flex-column(nowrap, center, center);
+
     gap: 20px;
     width: 100%;
     height: 75vh;
@@ -54,6 +55,7 @@
 
     .empty-state-content {
       @include flex-column(nowrap, flex-start, flex-start);
+
       gap: $XlSize2;
       width: 100%;
     }
@@ -92,7 +94,7 @@
     height: calc($XlSize3 + 2px);
     border-radius: $XsSize2;
     border: 1px solid $WeakBorder;
-    background: var(--white);
+    background: var(--bh-surface-raised);
     color: $TextGray3;
     transition: all 0.2s ease;
 
@@ -106,8 +108,8 @@
     }
 
     &.show:hover {
-      border-color: var(--info-dark) !important;
-      color: var(--info-dark) !important;
+      border-color: var(--info-dark);
+      color: var(--info-dark);
     }
 
     &.delete:hover {

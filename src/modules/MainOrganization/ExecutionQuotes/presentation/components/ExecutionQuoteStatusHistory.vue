@@ -137,281 +137,281 @@
 </template>
 
 <style scoped lang="scss">
-  .execution-quote-history {
-    overflow: hidden;
-    border: 1px solid var(--border-weak);
-    border-radius: var(--radius-md);
-    background: var(--bg-card);
-    box-shadow: var(--shadow-sm);
+.execution-quote-history {
+  overflow: hidden;
+  border: 1px solid var(--border-weak);
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  box-shadow: none;
+}
+
+.execution-quote-history :deep(.p-accordionpanel) {
+  border: 0;
+}
+
+.execution-quote-history__accordion :deep(.p-collapsible-enter-active),
+.execution-quote-history__accordion :deep(.p-collapsible-leave-active) {
+  display: grid;
+  overflow: hidden;
+  transition:
+    grid-template-rows 320ms cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 220ms ease;
+}
+
+.execution-quote-history__accordion :deep(.p-collapsible-enter-from),
+.execution-quote-history__accordion :deep(.p-collapsible-leave-to) {
+  grid-template-rows: 0fr;
+  opacity: 0;
+}
+
+.execution-quote-history__accordion :deep(.p-collapsible-enter-to),
+.execution-quote-history__accordion :deep(.p-collapsible-leave-from) {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+
+.execution-quote-history__accordion :deep(.p-accordioncontent-wrapper) {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.execution-quote-history__header {
+  width: 98%;
+  padding: 1.25rem;
+  background: var(--bg-card);
+  text-align: start;
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+.execution-quote-history__header:hover {
+  background: var(--PrimaryColor-alpha-8);
+}
+
+.execution-quote-history__header:focus-visible {
+  outline: 3px solid var(--PrimaryColor-alpha-20);
+  outline-offset: -3px;
+}
+
+.execution-quote-history__heading {
+  flex: 1;
+  min-width: 0;
+}
+
+.execution-quote-history__toggle {
+  display: grid;
+  flex: 0 0 2.5rem;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 1px solid var(--PrimaryColor-alpha-20);
+  border-radius: var(--radius-full);
+  background: var(--bg-card);
+  color: var(--PrimaryColor);
+}
+
+.execution-quote-history__toggle i {
+  transition: transform 220ms ease;
+}
+
+.execution-quote-history__toggle i.is-open {
+  transform: rotate(180deg);
+}
+
+.execution-quote-history__content :deep(.p-accordioncontent-content) {
+  padding: 0 1.25rem 1.25rem;
+  background: var(--bg-card);
+}
+
+.execution-quote-history__header,
+.execution-quote-history__entry-header,
+.execution-quote-history__transition,
+.execution-quote-history__meta {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.execution-quote-history__note {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.65rem 0.75rem;
+  border-radius: var(--radius-sm);
+  background: var(--bg-card);
+}
+
+.execution-quote-history__note i {
+  margin-block-start: 0.2rem;
+  color: var(--PrimaryColor);
+}
+
+.execution-quote-history__header h2,
+.execution-quote-history__header p,
+.execution-quote-history__entry p,
+.execution-quote-history__empty p,
+.execution-quote-history__error p {
+  margin: 0;
+}
+
+.execution-quote-history__header h2 {
+  color: var(--title-card-color);
+  font-size: 1.05rem;
+}
+
+.execution-quote-history__header p,
+.execution-quote-history__entry time,
+.execution-quote-history__empty,
+.execution-quote-history__error {
+  color: var(--subtitle-color);
+}
+
+.execution-quote-history__icon {
+  display: grid;
+  flex: 0 0 2.75rem;
+  width: 2.75rem;
+  height: 2.75rem;
+  place-items: center;
+  border-radius: var(--radius-sm);
+  background: var(--PrimaryColor-light);
+  color: var(--PrimaryColor);
+}
+
+.execution-quote-history__timeline {
+  display: grid;
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.execution-quote-history__timeline li {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1rem minmax(0, 1fr);
+  gap: 0.75rem;
+}
+
+.execution-quote-history__timeline li:not(:last-child)::after {
+  position: absolute;
+  inset-block: 1rem -1rem;
+  inset-inline-start: 0.4375rem;
+  width: 2px;
+  background: var(--border-weak);
+  content: '';
+}
+
+.execution-quote-history__marker {
+  z-index: 1;
+  width: 0.9rem;
+  height: 0.9rem;
+  margin-block-start: 1rem;
+  border: 3px solid var(--bg-card);
+  border-radius: var(--radius-full);
+  background: var(--PrimaryColor);
+  box-shadow: none;
+}
+
+.execution-quote-history__entry {
+  display: grid;
+  gap: 0.65rem;
+  padding: 0.85rem;
+  border: 1px solid var(--border-weak);
+  border-radius: var(--radius-sm);
+  background: var(--bg-section);
+}
+
+.execution-quote-history__entry-header {
+  justify-content: space-between;
+}
+
+.execution-quote-history__meta {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  color: var(--subtitle-color);
+  font-size: var(--xs-size);
+}
+
+.execution-quote-history__meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.execution-quote-history__transition > i {
+  color: var(--subtitle-color);
+  font-size: var(--xs-size);
+}
+
+.execution-quote-history__entry time {
+  font-size: var(--xs-size);
+}
+
+.execution-quote-history__entry p {
+  color: var(--title-card-color);
+}
+
+.execution-quote-history__empty,
+.execution-quote-history__error {
+  display: grid;
+  place-items: center;
+  gap: 0.75rem;
+  min-height: 7rem;
+  padding: 1rem;
+  border-radius: var(--radius-sm);
+  background: var(--bg-section);
+  text-align: center;
+}
+
+.execution-quote-history__empty i {
+  font-size: 1.5rem;
+}
+
+.execution-quote-history__loading {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.execution-quote-history__loading span {
+  display: block;
+  height: 4.5rem;
+  border-radius: var(--radius-sm);
+  background: var(--bg-section);
+  animation: execution-quote-history-pulse 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes execution-quote-history-pulse {
+  from {
+    opacity: 0.45;
   }
 
-  .execution-quote-history :deep(.p-accordionpanel) {
-    border: 0;
-  }
-
-  .execution-quote-history__accordion :deep(.p-collapsible-enter-active),
-  .execution-quote-history__accordion :deep(.p-collapsible-leave-active) {
-    display: grid;
-    overflow: hidden;
-    transition:
-      grid-template-rows 320ms cubic-bezier(0.4, 0, 0.2, 1),
-      opacity 220ms ease;
-  }
-
-  .execution-quote-history__accordion :deep(.p-collapsible-enter-from),
-  .execution-quote-history__accordion :deep(.p-collapsible-leave-to) {
-    grid-template-rows: 0fr;
-    opacity: 0;
-  }
-
-  .execution-quote-history__accordion :deep(.p-collapsible-enter-to),
-  .execution-quote-history__accordion :deep(.p-collapsible-leave-from) {
-    grid-template-rows: 1fr;
+  to {
     opacity: 1;
   }
+}
 
-  .execution-quote-history__accordion :deep(.p-accordioncontent-wrapper) {
-    min-height: 0;
-    overflow: hidden;
-  }
-
-  .execution-quote-history__header {
-    width: 98%;
-    padding: 1.25rem;
-    background: var(--bg-card);
-    text-align: start;
-    cursor: pointer;
-    transition: background-color var(--transition-fast);
-  }
-
-  .execution-quote-history__header:hover {
-    background: var(--PrimaryColor-alpha-8);
-  }
-
-  .execution-quote-history__header:focus-visible {
-    outline: 3px solid var(--PrimaryColor-alpha-20);
-    outline-offset: -3px;
-  }
-
-  .execution-quote-history__heading {
-    flex: 1;
-    min-width: 0;
-  }
-
-  .execution-quote-history__toggle {
-    display: grid;
-    flex: 0 0 2.5rem;
-    place-items: center;
-    width: 2.5rem;
-    height: 2.5rem;
-    border: 1px solid var(--PrimaryColor-alpha-20);
-    border-radius: var(--radius-full);
-    background: var(--bg-card);
-    color: var(--PrimaryColor);
-  }
-
-  .execution-quote-history__toggle i {
-    transition: transform 220ms ease;
-  }
-
-  .execution-quote-history__toggle i.is-open {
-    transform: rotate(180deg);
-  }
-
-  .execution-quote-history__content :deep(.p-accordioncontent-content) {
-    padding: 0 1.25rem 1.25rem;
-    background: var(--bg-card);
-  }
-
-  .execution-quote-history__header,
-  .execution-quote-history__entry-header,
-  .execution-quote-history__transition,
-  .execution-quote-history__meta {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-  }
-
-  .execution-quote-history__note {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.5rem;
-    padding: 0.65rem 0.75rem;
-    border-radius: var(--radius-sm);
-    background: var(--bg-card);
-  }
-
-  .execution-quote-history__note i {
-    margin-block-start: 0.2rem;
-    color: var(--PrimaryColor);
-  }
-
-  .execution-quote-history__header h2,
-  .execution-quote-history__header p,
-  .execution-quote-history__entry p,
-  .execution-quote-history__empty p,
-  .execution-quote-history__error p {
-    margin: 0;
-  }
-
-  .execution-quote-history__header h2 {
-    color: var(--title-card-color);
-    font-size: 1.05rem;
-  }
-
-  .execution-quote-history__header p,
-  .execution-quote-history__entry time,
-  .execution-quote-history__empty,
-  .execution-quote-history__error {
-    color: var(--subtitle-color);
-  }
-
-  .execution-quote-history__icon {
-    display: grid;
-    flex: 0 0 2.75rem;
-    width: 2.75rem;
-    height: 2.75rem;
-    place-items: center;
-    border-radius: var(--radius-sm);
-    background: var(--PrimaryColor-light);
-    color: var(--PrimaryColor);
-  }
-
-  .execution-quote-history__timeline {
-    display: grid;
-    gap: 1rem;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .execution-quote-history__timeline li {
-    position: relative;
-    display: grid;
-    grid-template-columns: 1rem minmax(0, 1fr);
-    gap: 0.75rem;
-  }
-
-  .execution-quote-history__timeline li:not(:last-child)::after {
-    position: absolute;
-    inset-block: 1rem -1rem;
-    inset-inline-start: 0.4375rem;
-    width: 2px;
-    background: var(--border-weak);
-    content: '';
-  }
-
-  .execution-quote-history__marker {
-    z-index: 1;
-    width: 0.9rem;
-    height: 0.9rem;
-    margin-block-start: 1rem;
-    border: 3px solid var(--bg-card);
-    border-radius: var(--radius-full);
-    background: var(--PrimaryColor);
-    box-shadow: 0 0 0 1px var(--PrimaryColor-alpha-30);
-  }
-
-  .execution-quote-history__entry {
-    display: grid;
-    gap: 0.65rem;
-    padding: 0.85rem;
-    border: 1px solid var(--border-weak);
-    border-radius: var(--radius-sm);
-    background: var(--bg-section);
-  }
-
+@media (max-width: 640px) {
   .execution-quote-history__entry-header {
-    justify-content: space-between;
+    align-items: flex-start;
+    flex-direction: column;
   }
 
   .execution-quote-history__meta {
-    flex-wrap: wrap;
-    justify-content: flex-end;
-    color: var(--subtitle-color);
-    font-size: var(--xs-size);
+    align-items: flex-start;
+    flex-direction: column;
   }
+}
 
-  .execution-quote-history__meta span {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-  }
-
-  .execution-quote-history__transition > i {
-    color: var(--subtitle-color);
-    font-size: var(--xs-size);
-  }
-
-  .execution-quote-history__entry time {
-    font-size: var(--xs-size);
-  }
-
-  .execution-quote-history__entry p {
-    color: var(--title-card-color);
-  }
-
-  .execution-quote-history__empty,
-  .execution-quote-history__error {
-    display: grid;
-    place-items: center;
-    gap: 0.75rem;
-    min-height: 7rem;
-    padding: 1rem;
-    border-radius: var(--radius-sm);
-    background: var(--bg-section);
-    text-align: center;
-  }
-
-  .execution-quote-history__empty i {
-    font-size: 1.5rem;
-  }
-
-  .execution-quote-history__loading {
-    display: grid;
-    gap: 0.75rem;
+@media (prefers-reduced-motion: reduce) {
+  .execution-quote-history__toggle i,
+  .execution-quote-history__header,
+  .execution-quote-history__accordion :deep(.p-collapsible-enter-active),
+  .execution-quote-history__accordion :deep(.p-collapsible-leave-active) {
+    transition: none;
   }
 
   .execution-quote-history__loading span {
-    display: block;
-    height: 4.5rem;
-    border-radius: var(--radius-sm);
-    background: var(--bg-section);
-    animation: execution-quote-history-pulse 1.2s ease-in-out infinite alternate;
+    animation: none;
   }
-
-  @keyframes execution-quote-history-pulse {
-    from {
-      opacity: 0.45;
-    }
-
-    to {
-      opacity: 1;
-    }
-  }
-
-  @media (max-width: 640px) {
-    .execution-quote-history__entry-header {
-      align-items: flex-start;
-      flex-direction: column;
-    }
-
-    .execution-quote-history__meta {
-      align-items: flex-start;
-      flex-direction: column;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .execution-quote-history__toggle i,
-    .execution-quote-history__header,
-    .execution-quote-history__accordion :deep(.p-collapsible-enter-active),
-    .execution-quote-history__accordion :deep(.p-collapsible-leave-active) {
-      transition: none;
-    }
-
-    .execution-quote-history__loading span {
-      animation: none;
-    }
-  }
+}
 </style>

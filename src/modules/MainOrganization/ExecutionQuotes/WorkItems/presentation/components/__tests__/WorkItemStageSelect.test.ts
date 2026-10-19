@@ -13,6 +13,7 @@ beforeEach(() => {
   controller.stagesState.value = new DataSuccess({
     data: [
       new ScheduleGroupModel({
+        workStatus: 1,
         id: 2,
         title: 'Main',
         duration: 1,
@@ -41,6 +42,7 @@ it('drawing multi-selection excludes children and stages without verified parent
   controller.stagesState.value = new DataSuccess({
     data: [
       new ScheduleGroupModel({
+        workStatus: 1,
         id: 2,
         title: 'Main',
         duration: 1,

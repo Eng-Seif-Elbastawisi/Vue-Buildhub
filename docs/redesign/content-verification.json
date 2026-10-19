@@ -1,0 +1,77 @@
+{
+  "status": "Content migration implemented; full live/populated acceptance incomplete",
+  "bundle": "pass",
+  "rootTypeCommands": "pass",
+  "build": {
+    "diagnostics": 221,
+    "newVsRecordedBaseline": 0
+  },
+  "eslint": {
+    "errors": 20,
+    "warnings": 637,
+    "baselineErrors": 20,
+    "baselineWarnings": 687
+  },
+  "changedStylelint": {
+    "errors": 0,
+    "existingWarnings": 54
+  },
+  "focusedTests": {
+    "files": 14,
+    "passed": 128
+  },
+  "correctedRegressionTests": {
+    "files": 3,
+    "passed": 18,
+    "overlapsFocused": true
+  },
+  "latestSelectOtpTests": {
+    "files": 2,
+    "passed": 26,
+    "overlapsFocused": true
+  },
+  "failureComparison": {
+    "files": 36,
+    "reportedPassed": 66,
+    "reportedFailed": 74,
+    "newFailureOccurrences": 0,
+    "existingSuiteLoadFailure": "MeasurementEdit"
+  },
+  "fullSuite": {
+    "completed": false,
+    "result": "Stopped without summary",
+    "elapsed": "08:15",
+    "reason": "Full suite did not finish; targeted suites and before/after failure comparison are recorded separately."
+  },
+  "routeReview": {
+    "uniqueViews": 137,
+    "runtimeErrors": 0,
+    "documentOverflow": 0,
+    "mode": "isolated desktop; empty lookup fixtures; five interrupted captures retried"
+  },
+  "liveRead": {
+    "httpStatus": 401,
+    "message": "Unauthenticated."
+  },
+  "liveMutationsAttempted": false,
+  "font": {
+    "requested": "Lufga",
+    "localFacesConfigured": false,
+    "bundledBinariesAvailable": true,
+    "source": "src/assets/fonts/lufga_fonts",
+    "format": "OpenType",
+    "weights": "100–900, normal and italic",
+    "legacyLatinAliases": ["Thin", "Light", "Medium", "Demi", "Bold"],
+    "arabicFallback": "existing DIN Arabic",
+    "browserEvidence": "font-verification.json",
+    "checks": "Font Stylelint and Vite production bundling passed; Chromium confirmed custom Lufga and DIN Arabic rendering"
+  },
+  "remaining": [
+    "Full populated/role acceptance",
+    "Live CRUD and financial permission matrices",
+    "Baseline build/lint/unit failures",
+    "Ten touched existing components lack hook-recognized companion filenames",
+    "Previous notification activation exception"
+  ],
+  "browserFixtureBounds": "Pass at all three widths after correcting unwrapped diagnostic output; actual module styles and application palette initialization loaded"
+}

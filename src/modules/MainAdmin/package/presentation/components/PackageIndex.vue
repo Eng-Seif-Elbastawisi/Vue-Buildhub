@@ -172,7 +172,7 @@
           <!-- Mobile -->
           <template #cell-hasmobild="{ item }">
             <span
-              class="feature-status"
+              class="feature-status bh-status"
               :class="
                 getBooleanFeature(item, FeaturesKEY.HAS_MOBILE)
                   ? 'feature-status--active'
@@ -197,7 +197,7 @@
           <!-- Portal -->
           <template #cell-hasportal="{ item }">
             <span
-              class="feature-status"
+              class="feature-status bh-status"
               :class="
                 getBooleanFeature(item, FeaturesKEY.HAS_PORTAL)
                   ? 'feature-status--active'
@@ -343,15 +343,15 @@
     font-weight: 600;
 
     &--active {
-      color: #047857;
-      border-color: #a7f3d0;
-      background: #ecfdf5;
+      color: var(--bh-green-ink);
+      border-color: var(--bh-green-soft);
+      background: var(--bh-green-soft);
     }
 
     &--inactive {
-      color: #b91c1c;
+      color: var(--bh-coral-ink);
       border-color: #fecaca;
-      background: #fef2f2;
+      background: var(--bh-coral-soft);
     }
   }
 

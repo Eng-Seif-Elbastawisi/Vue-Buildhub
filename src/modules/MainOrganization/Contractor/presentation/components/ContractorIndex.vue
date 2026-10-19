@@ -115,7 +115,7 @@
           </span>
           <input
             v-model="word"
-            class="search-input"
+            class="search-input workspace-control"
             type="text"
             :placeholder="$t('Contractor.search')"
             @input="search"
@@ -219,83 +219,83 @@
 </template>
 
 <style scoped lang="scss">
-  .contractor-page {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
+.contractor-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
 
-  .row-actions {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-  }
+.row-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
 
-  .contractor-stages {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.375rem;
-  }
+.contractor-stages {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.375rem;
+}
 
-  .contractor-stage {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
-    padding: 0.2rem 0.5rem;
-    border: 1px solid var(--gray-200);
-    border-radius: 999px;
-    background: var(--gray-50);
-    white-space: nowrap;
-  }
+.contractor-stage {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.2rem 0.5rem;
+  border: 1px solid var(--gray-200);
+  border-radius: 999px;
+  background: var(--gray-50);
+  white-space: nowrap;
+}
 
-  .contractor-stage :deep(button) {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-    border: 0;
-    background: transparent;
-    cursor: pointer;
-  }
+.contractor-stage :deep(button) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
 
-  .contractor-stage :deep(button:focus-visible) {
-    outline: 2px solid var(--PrimaryColor);
-    outline-offset: 2px;
-  }
+.contractor-stage :deep(button:focus-visible) {
+  outline: 2px solid var(--PrimaryColor);
+  outline-offset: 2px;
+}
 
-  .contractor-stage__remove {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 1rem;
-    height: 1rem;
-    color: var(--danger);
-    font-size: 1rem;
-    line-height: 1;
-  }
+.contractor-stage__remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1rem;
+  height: 1rem;
+  color: var(--danger);
+  font-size: 1rem;
+  line-height: 1;
+}
 
-  .visually-hidden {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
-  }
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
 
-  .empty-state {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    padding: 3rem 1rem;
-    text-align: center;
-  }
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 3rem 1rem;
+  text-align: center;
+}
 
-  .empty-state p {
-    color: var(--gray-5);
-  }
+.empty-state p {
+  color: var(--gray-5);
+}
 </style>

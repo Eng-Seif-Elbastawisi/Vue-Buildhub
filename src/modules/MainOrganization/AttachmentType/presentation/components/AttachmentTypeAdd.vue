@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
 import { ref } from 'vue';
 import { useRoute } from 'vue-router';
 import AttachmentTypeController from '../controllers/attachment.type.controller';
@@ -29,18 +30,21 @@ const saveAttachmentType = async () => {
 </script>
 
 <template>
-  <div class="attachment-type-crud-page">
+  <StandardFormLayout mode="create" class="attachment-type-crud-page">
     <AttachmentTypeForm :loading="loading" @update-data="params = $event" />
-    <button
-      :class="{ 'btn--loading': loading }"
-      class="btn btn-primary"
-      type="button"
-      :disabled="loading"
-      @click="saveAttachmentType"
-    >
-      {{ $t('save') }}
-    </button>
-  </div>
+
+    <template #actions>
+      <button
+        :class="{ 'btn--loading': loading }"
+        class="btn btn-primary"
+        type="button"
+        :disabled="loading"
+        @click="saveAttachmentType"
+      >
+        {{ $t('save') }}
+      </button>
+    </template>
+  </StandardFormLayout>
 </template>
 
 <style scoped>

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
   import { computed, ref, watch } from 'vue';
   import Dialog from 'primevue/dialog';
@@ -65,13 +66,13 @@
   <Dialog
     :visible="visible"
     modal
-    class="work-items-dialog"
+    class="work-items-dialog workspace-dialog"
     :header="$t('work_items.new_task')"
     :closable="!busy"
     :close-on-escape="!busy"
     @update:visible="emit('update:visible', $event)"
   >
-    <form class="work-items-form" @submit.prevent="save">
+    <StandardFormLayout as="form" embedded class="work-items-form" @submit.prevent="save">
       <WorkItemStageSelect
         id="task-stage"
         v-model="stage"
@@ -93,7 +94,7 @@
         <input
           id="task-title"
           v-model="title"
-          class="input"
+          class="input workspace-control"
           type="text"
           :disabled="busy"
           :required="true"
@@ -142,7 +143,7 @@
         <input
           id="task-endDate"
           v-model="endDate"
-          class="input"
+          class="input workspace-control"
           type="date"
           :disabled="busy"
           :aria-invalid="!!fieldError('endDate')"
@@ -161,6 +162,6 @@
           $t('work_items.save')
         }}</AppButton>
       </div>
-    </form></Dialog
+    </StandardFormLayout></Dialog
   >
 </template>

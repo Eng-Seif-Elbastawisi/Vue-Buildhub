@@ -95,7 +95,7 @@
           <input
             v-model="word"
             :placeholder="$t('search_spaces')"
-            class="search-input"
+            class="search-input workspace-control"
             type="text"
             @input="Search"
           />
@@ -217,36 +217,36 @@
 </template>
 
 <style scoped lang="scss">
-  .header-text {
-    margin-bottom: 1rem;
-  }
+.header-text {
+  margin-bottom: 1rem;
+}
 
-  .Space-page {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
+.Space-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
 
-  .toolbar {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-  }
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
 
-  .empty-state {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-  }
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
 
-  .page-header p,
-  .empty-state p {
-    color: var(--gray-5);
-  }
+.page-header p,
+.empty-state p {
+  color: var(--gray-5);
+}
 
-  .empty-state {
-    padding: 3rem 1rem;
-    text-align: center;
-  }
+.empty-state {
+  padding: 3rem 1rem;
+  text-align: center;
+}
 </style>

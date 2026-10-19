@@ -46,3 +46,9 @@ The detector reported two advisory font-ramp findings: the local 2.2rem title en
 The subsequent user correction supersedes the fixed ink/copper treatment above: header surfaces now read `--SecondaryColor`, with readable text supplied by `--secondary-text-color` from the existing System Identity theme utility. Primary actions use `--PrimaryColor` and the existing `--button-primary-color`; icon accents and focus treatments derive from primary. Component structure and route behavior remain unchanged.
 
 Verification: 46 focused tests passed across seven files, including two new secondary-foreground cases. Root type-check, focused ESLint and Stylelint passed. A standalone browser fixture verified blue/dark and green/light palettes on desktop, mobile and Arabic RTL, with no overflow or runtime errors. The fixture includes both headers, AnimatedBreadcrumb and SidebarNavigation; it does not establish live API behavior. Earlier captures document the previous palette, not this correction.
+
+## Current frosted workspace direction
+
+The latest user direction supersedes the historical ink/copper and flat treatments above. The shared feature header now uses the same workspace glass mixin as IndexPageHeader: semantic blue-gray translucency, fine edge, 18px blur, opaque Lufga title text, 24px panel corners and padding, and 44px identity icons with 12px corners. Mobile uses 20px/16px padding and stacked actions. The component selector owns these styles over compatibility layers; script, template, route resolution and action slots remain unchanged.
+
+Nine offline create-route captures cover employee, project and execution quote at desktop/tablet/mobile, including Arabic dark mode, with no overflow. The 19 existing feature/icon tests and targeted checks passed. DESIGN.md and the feature-header verification report contain current evidence and live-data limits. Earlier captures and finish verdicts describe historical versions.

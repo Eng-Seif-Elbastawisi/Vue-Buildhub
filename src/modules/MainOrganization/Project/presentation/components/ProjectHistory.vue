@@ -229,7 +229,7 @@
               <div class="project-history-entry__content">
                 <div class="project-history-entry__title">
                   <span
-                    class="status-badge status-badge--inline"
+                    class="status-badge status-badge--inline bh-status"
                     :class="getStatusMeta(history.status).className"
                   >
                     {{ getStatusMeta(history.status).label }}

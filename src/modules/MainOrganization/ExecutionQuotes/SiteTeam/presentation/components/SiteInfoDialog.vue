@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
   import { computed, ref, watch } from 'vue';
   import Dialog from 'primevue/dialog';
@@ -48,13 +49,13 @@
   <Dialog
     :visible="visible"
     modal
-    class="site-team-dialog"
+    class="site-team-dialog workspace-dialog"
     :header="$t('site_team.update_site')"
     :closable="!busy"
     :close-on-escape="!busy"
     @update:visible="emit('update:visible', $event)"
   >
-    <form class="site-team-form" @submit.prevent="save">
+    <StandardFormLayout as="form" embedded class="site-team-form" @submit.prevent="save">
       <p>{{ $t('site_team.site_help') }}</p>
       <div class="field-group input-wrapper">
         <span class="field-help-label-row field-help-label-row--block"
@@ -72,7 +73,7 @@
           id="site-delivery"
           v-model="deliveryDate"
           type="date"
-          class="input"
+          class="input workspace-control"
           :disabled="busy"
           :aria-invalid="!!fieldError('deliveryDate')"
           aria-describedby="site-delivery-error"
@@ -95,7 +96,7 @@
           id="site-condition"
           v-model="siteCondition"
           rows="5"
-          class="input"
+          class="input workspace-control"
           :disabled="busy"
           :aria-invalid="!!fieldError('siteCondition')"
           aria-describedby="site-condition-error"
@@ -109,6 +110,6 @@
         }}</AppButton>
         <AppButton type="submit" :loading="busy">{{ $t('site_team.save_changes') }}</AppButton>
       </div>
-    </form>
+    </StandardFormLayout>
   </Dialog>
 </template>

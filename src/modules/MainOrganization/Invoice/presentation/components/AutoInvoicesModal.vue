@@ -103,100 +103,100 @@
 </template>
 
 <style scoped lang="scss">
-  .auto-invoices-modal {
-    position: fixed;
-    inset: 0;
-    z-index: 1600;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 1rem;
+.auto-invoices-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.auto-invoices-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  border: 0;
+  background: var(--overlay-bg);
+}
+
+.auto-invoices-modal__panel {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 640px);
+  max-height: min(80vh, 720px);
+  overflow-y: auto;
+  padding: 1.25rem;
+  border: 1px solid var(--border-weak);
+  border-radius: var(--bh-radius-card);
+  background: var(--BgWhite);
+  box-shadow: var(--bh-shadow-popover);
+}
+
+.auto-invoices-modal__header,
+.auto-invoice-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.auto-invoices-modal__header {
+  h2,
+  p {
+    margin: 0;
   }
 
-  .auto-invoices-modal__backdrop {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    border: 0;
-    background: var(--overlay-bg);
+  p {
+    margin-top: 0.25rem;
+    color: var(--gray-500);
   }
+}
 
-  .auto-invoices-modal__panel {
-    position: relative;
-    z-index: 1;
-    width: min(100%, 640px);
-    max-height: min(80vh, 720px);
-    overflow-y: auto;
-    padding: 1.25rem;
-    border: 1px solid var(--border-weak);
-    border-radius: var(--radius-sm);
-    background: var(--BgWhite);
-    box-shadow: var(--shadow-lg);
-  }
+.auto-invoices-modal__close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--border-weak);
+  border-radius: 8px;
+  background: var(--BgWhite);
+  color: var(--gray-900);
+  cursor: pointer;
+}
 
-  .auto-invoices-modal__header,
-  .auto-invoice-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-  }
+.auto-invoices-modal__state,
+.auto-invoices-modal__error {
+  padding: 1.5rem 0;
+  text-align: center;
+}
 
-  .auto-invoices-modal__header {
-    h2,
-    p {
-      margin: 0;
-    }
+.auto-invoices-modal__error {
+  color: var(--danger-dark);
+}
 
-    p {
-      margin-top: 0.25rem;
-      color: var(--gray-500);
-    }
-  }
+.auto-invoices-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
 
-  .auto-invoices-modal__close {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    border: 1px solid var(--border-weak);
-    border-radius: 8px;
-    background: var(--BgWhite);
-    color: var(--gray-900);
-    cursor: pointer;
-  }
+.auto-invoice-row {
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--border-weak);
+  border-radius: 8px;
 
-  .auto-invoices-modal__state,
-  .auto-invoices-modal__error {
-    padding: 1.5rem 0;
-    text-align: center;
-  }
-
-  .auto-invoices-modal__error {
-    color: var(--danger-dark);
-  }
-
-  .auto-invoices-list {
+  div {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
-    margin-top: 1.25rem;
+    gap: 0.2rem;
   }
 
-  .auto-invoice-row {
-    padding: 0.9rem 1rem;
-    border: 1px solid var(--border-weak);
-    border-radius: 8px;
-
-    div {
-      display: flex;
-      flex-direction: column;
-      gap: 0.2rem;
-    }
-
-    span {
-      color: var(--gray-500);
-    }
+  span {
+    color: var(--gray-500);
   }
+}
 </style>

@@ -1,3 +1,5 @@
+@use 'workspace-intro';
+
 .material-receipt {
   --receipt-ink: var(--quote-ink, var(--title-card-color));
   --receipt-muted: var(--quote-muted, var(--subtitle-color));
@@ -9,57 +11,9 @@
   display: grid;
   gap: 1.5rem;
   min-width: 0;
-  padding: clamp(1rem, 2vw, 2rem);
+  padding: 0;
   color: var(--receipt-ink);
   accent-color: var(--receipt-copper);
-}
-
-.material-receipt__intro {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 1.5rem;
-  padding: 1.75rem 2rem;
-  border-radius: 16px;
-  background: var(--receipt-ink);
-  color: var(--receipt-paper);
-}
-
-.material-receipt__intro h1 {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin: 0;
-  font-size: 2rem;
-  line-height: 1.25;
-}
-
-.material-receipt__intro h1 .pi {
-  color: var(--quote-copper-light, var(--receipt-paper));
-  font-size: 1.5rem;
-}
-
-.material-receipt__intro p {
-  margin: 0.75rem 0 1rem;
-  color: color-mix(in sRGB, var(--receipt-paper) 85%, transparent);
-}
-
-.material-receipt__back {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: var(--receipt-paper);
-  font-size: 0.8125rem;
-  text-underline-offset: 0.3em;
-}
-
-.material-receipt__back:hover {
-  color: var(--quote-copper-light, var(--receipt-paper));
-}
-
-.material-receipt[dir='rtl'] .material-receipt__back .pi {
-  transform: rotate(180deg);
 }
 
 .warehouse-feature-nav {
@@ -103,7 +57,7 @@
   min-width: 0;
   overflow: hidden;
   border: 1px solid var(--receipt-line);
-  border-radius: 16px;
+  border-radius: var(--bh-radius-card);
   background: var(--receipt-paper);
 }
 
@@ -289,7 +243,7 @@
 .material-receipt__panel-body [role='alert'] {
   margin: 0;
   padding: 0.75rem 1rem;
-  border-radius: 10px;
+  border-radius: var(--bh-radius-card);
   background: var(--danger-light);
   color: var(--danger-dark);
   line-height: 1.5;
@@ -420,18 +374,6 @@
 }
 
 @media (max-width: 700px) {
-  .material-receipt {
-    padding: 1rem 0.75rem;
-  }
-
-  .material-receipt__intro {
-    padding: 1.5rem;
-  }
-
-  .material-receipt__intro .app-btn {
-    width: 100%;
-  }
-
   .material-receipt__panel-header,
   .material-receipt__panel-body {
     padding: 1rem;

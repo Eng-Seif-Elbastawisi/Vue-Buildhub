@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import { ref } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import ConfirmCancelDialog from '@/base/Presentation/Dialogs/ConfirmCancelDialog.vue';
@@ -25,51 +26,55 @@
 </script>
 
 <template>
-  <div class="Products-crud-page">
+  <StandardFormLayout mode="create" class="Products-crud-page">
     <ProductsForm :loading="loading" @update-data="params = $event" />
-    <div class="form-actions form-action-pair">
-      <button
-        :class="{ 'btn--loading': loading }"
-        class="btn btn-primary"
-        type="button"
-        :disabled="loading"
-        @click="saveProducts"
-      >
-        {{ $t('save') }}
-      </button>
-      <ConfirmCancelDialog
-        :title="$t('cancel_changes')"
-        :message="$t('are_you_sure_you_want_to_leave')"
-        :trigger-label="$t('common.back')"
-        trigger-class="back-button"
-        @confirm="goBack"
-      />
-    </div>
+
     <div v-if="controller.errorMessage.value" class="error">
       {{ controller.errorMessage.value }}
     </div>
-  </div>
+
+    <template #actions>
+      <div class="form-actions form-action-pair">
+        <button
+          :class="{ 'btn--loading': loading }"
+          class="btn btn-primary"
+          type="button"
+          :disabled="loading"
+          @click="saveProducts"
+        >
+          {{ $t('save') }}
+        </button>
+        <ConfirmCancelDialog
+          :title="$t('cancel_changes')"
+          :message="$t('are_you_sure_you_want_to_leave')"
+          :trigger-label="$t('common.back')"
+          trigger-class="back-button"
+          @confirm="goBack"
+        />
+      </div>
+    </template>
+  </StandardFormLayout>
 </template>
 
 <style scoped lang="scss">
-  @use '@/styles/mixins/form_action_pair' as form-actions;
+@use '@/styles/mixins/form_action_pair' as form-actions;
 
-  .Products-crud-page {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
+.Products-crud-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
 
-  .error {
-    margin-top: 20px;
-    padding: 10px;
-    background-color: var(--danger-light);
-    color: var(--danger-dark);
-    border: 1px solid #f5c6cb;
-    border-radius: 4px;
-  }
+.error {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: var(--danger-light);
+  color: var(--danger-dark);
+  border: 1px solid #f5c6cb;
+  border-radius: 4px;
+}
 
-  .form-action-pair {
-    @include form-actions.layout;
-  }
+.form-action-pair {
+  @include form-actions.layout;
+}
 </style>

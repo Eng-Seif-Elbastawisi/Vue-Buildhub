@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import { computed, onMounted, ref } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
 
@@ -168,7 +169,7 @@
 </script>
 
 <template>
-  <div class="item-crud-page">
+  <StandardFormLayout mode="create" class="item-crud-page">
     <ProjectPricingForm
       :item="projectPricing"
       :form-key="formKey"
@@ -178,13 +179,18 @@
       @update-data="params = $event"
     />
 
-    <div
-      class="actions"
-      :class="{
-        disabled: loading || itemsLoading || pricingLoading,
-      }"
-    >
-      <!-- <button
+    <div v-if="submitError || controller.errorMessage.value" class="error" role="alert">
+      {{ submitError || controller.errorMessage.value }}
+    </div>
+
+    <template #actions>
+      <div
+        class="actions"
+        :class="{
+          disabled: loading || itemsLoading || pricingLoading,
+        }"
+      >
+        <!-- <button
         class="btn btn-primary w-full"
         :class="{
           'btn--loading': loading,
@@ -200,68 +206,64 @@
         </span>
       </button> -->
 
-    <div class="buttons-container form-action-pair">
-           <button
-        class="btn btn-primary w-full"
-        :class="{
-          'btn--loading': loading,
-        }"
-        type="button"
-        :disabled="loading || itemsLoading || pricingLoading"
-        @click="saveItem"
-      >
-        <span v-if="loading" class="loader"></span>
+        <div class="buttons-container form-action-pair">
+          <button
+            class="btn btn-primary w-full"
+            :class="{
+              'btn--loading': loading,
+            }"
+            type="button"
+            :disabled="loading || itemsLoading || pricingLoading"
+            @click="saveItem"
+          >
+            <span v-if="loading" class="loader"></span>
 
-        <span v-else>
-          {{ $t('project_pricing.save') }}
-        </span>
-      </button>
+            <span v-else>
+              {{ $t('project_pricing.save') }}
+            </span>
+          </button>
 
-
-      <button
-        :class="{ 'btn--loading': loading }"
-        class="btn btn-secondary"
-        type="button"
-        :disabled="loading || !params"
-        @click="router.back()"
-      >
-        {{ $t('back_step') }}
-      </button>
+          <button
+            :class="{ 'btn--loading': loading }"
+            class="btn btn-secondary"
+            type="button"
+            :disabled="loading || !params"
+            @click="router.back()"
+          >
+            {{ $t('back_step') }}
+          </button>
         </div>
-    </div>
-
-    <div v-if="submitError || controller.errorMessage.value" class="error" role="alert">
-      {{ submitError || controller.errorMessage.value }}
-    </div>
-  </div>
+      </div>
+    </template>
+  </StandardFormLayout>
 </template>
 
 <style scoped lang="scss">
-  @use '@/styles/mixins/form_action_pair' as form-actions;
+@use '@/styles/mixins/form_action_pair' as form-actions;
 
-  .item-crud-page {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
+.item-crud-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
 
-  .actions.disabled {
-    pointer-events: none;
-    opacity: 0.7;
-  }
+.actions.disabled {
+  pointer-events: none;
+  opacity: 0.7;
+}
 
-  .error {
-    margin-top: 0.25rem;
-    padding: 0.85rem 1rem;
-    border: 1px solid var(--danger-dark);
-    border-radius: 8px;
-    background-color: var(--danger-light);
-    color: var(--danger-dark);
-    font-family: 'Medium';
-    line-height: 1.6;
-  }
+.error {
+  margin-top: 0.25rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--danger-dark);
+  border-radius: 8px;
+  background-color: var(--danger-light);
+  color: var(--danger-dark);
+  font-family: 'Medium';
+  line-height: 1.6;
+}
 
-  .form-action-pair {
-    @include form-actions.layout;
-  }
+.form-action-pair {
+  @include form-actions.layout;
+}
 </style>

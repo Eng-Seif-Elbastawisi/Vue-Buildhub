@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import { ref } from 'vue';
   import { useRouter } from 'vue-router';
 
@@ -34,39 +35,44 @@
 </script>
 
 <template>
-  <div class="Stage-crud-page">
+  <StandardFormLayout mode="create" class="Stage-crud-page">
     <StageForm
       :parent-id="parentId"
       :loading="loading"
       :is-edit="false"
       @update-data="updateData"
     />
-  
-    <div class="form-footer form-action-pair">
-      <button
-class="btn btn-primary" :class="{ 'btn--loading': loading }" type="button" :disabled="loading"
-        @click="saveStage">
-        {{ $t('save') }}
-      </button>
-      <button class="btn btn-cancel" type="button" @click="route.back()">
-        {{ $t('cancel') }}
-      </button>
-    </div>
-
 
     <div v-if="controller.errorMessage.value" class="error">
       {{ controller.errorMessage.value }}
     </div>
-  </div>
+
+    <template #actions>
+      <div class="form-footer form-action-pair">
+        <button
+          class="btn btn-primary"
+          :class="{ 'btn--loading': loading }"
+          type="button"
+          :disabled="loading"
+          @click="saveStage"
+        >
+          {{ $t('save') }}
+        </button>
+        <button class="btn btn-cancel" type="button" @click="route.back()">
+          {{ $t('cancel') }}
+        </button>
+      </div>
+    </template>
+  </StandardFormLayout>
 </template>
 
 <style scoped lang="scss">
 @use '@/styles/mixins/form_action_pair' as form-actions;
 
-  .Stage-crud-page {
-    display: flex;
-    flex-direction: column;
-  }
+.Stage-crud-page {
+  display: flex;
+  flex-direction: column;
+}
 
 .form-action-pair {
   @include form-actions.layout;

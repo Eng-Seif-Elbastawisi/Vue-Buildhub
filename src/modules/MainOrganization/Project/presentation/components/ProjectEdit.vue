@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
 import { onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute } from 'vue-router';
@@ -135,8 +136,13 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="Project-crud-page">
-    <ProjectForm :Project="controller.itemData.value!" :loading="loading" :is-edit="true" @update-data="updateData" />
+  <StandardFormLayout mode="edit" class="Project-crud-page">
+    <ProjectForm
+      :Project="controller.itemData.value!"
+      :loading="loading"
+      :is-edit="true"
+      @update-data="updateData"
+    />
 
     <fieldset class="next-step-selector" :disabled="loading">
       <legend>
@@ -145,12 +151,19 @@ onMounted(async () => {
 
       <div class="next-step-options">
         <label
-class="next-step-option" :class="{
-          'next-step-option--selected': nextStep === 'preview',
-        }" for="project-next-step-preview">
+          class="next-step-option"
+          :class="{
+            'next-step-option--selected': nextStep === 'preview',
+          }"
+          for="project-next-step-preview"
+        >
           <RadioButton
-:model-value="nextStep" input-id="project-next-step-preview" name="project-next-step"
-            value="preview" @update:model-value="updateNextStep" />
+            :model-value="nextStep"
+            input-id="project-next-step-preview"
+            name="project-next-step"
+            value="preview"
+            @update:model-value="updateNextStep"
+          />
 
           <span>
             {{ $t('Project.add_preview_first') }}
@@ -158,12 +171,19 @@ class="next-step-option" :class="{
         </label>
 
         <label
-class="next-step-option" :class="{
-          'next-step-option--selected': nextStep === 'floor',
-        }" for="project-next-step-floor">
+          class="next-step-option"
+          :class="{
+            'next-step-option--selected': nextStep === 'floor',
+          }"
+          for="project-next-step-floor"
+        >
           <RadioButton
-:model-value="nextStep" input-id="project-next-step-floor" name="project-next-step" value="floor"
-            @update:model-value="updateNextStep" />
+            :model-value="nextStep"
+            input-id="project-next-step-floor"
+            name="project-next-step"
+            value="floor"
+            @update:model-value="updateNextStep"
+          />
 
           <span>
             {{ $t('Project.continue_without_preview') }}
@@ -172,16 +192,22 @@ class="next-step-option" :class="{
       </div>
     </fieldset>
 
-    <button
-class="btn btn-primary" :class="{ 'btn--loading': loading }" type="button" :disabled="loading"
-      @click="saveProject">
-      {{ $t('Project.update') }}
-    </button>
-
     <div v-if="controller.errorMessage.value" class="error">
       {{ controller.errorMessage.value }}
     </div>
-  </div>
+
+    <template #actions>
+      <button
+        class="btn btn-primary"
+        :class="{ 'btn--loading': loading }"
+        type="button"
+        :disabled="loading"
+        @click="saveProject"
+      >
+        {{ $t('Project.update') }}
+      </button>
+    </template>
+  </StandardFormLayout>
 </template>
 
 <style scoped>
@@ -194,7 +220,7 @@ class="btn btn-primary" :class="{ 'btn--loading': loading }" type="button" :disa
 .error {
   margin-top: 20px;
   padding: 10px;
-  border: 1px solid #f5c6cb;
+  border: 1px solid var(--bh-coral-soft);
   border-radius: 4px;
   background-color: var(--danger-light);
   color: var(--danger-dark);
@@ -209,8 +235,8 @@ class="btn btn-primary" :class="{ 'btn--loading': loading }" type="button" :disa
   margin: 0;
   padding: 1rem;
   border: 1px solid var(--border-weak);
-  border-radius: 18px;
-  background: var(--white);
+  border-radius: var(--bh-radius-control);
+  background: var(--bh-surface-raised);
 }
 
 .next-step-selector legend {

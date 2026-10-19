@@ -125,47 +125,47 @@
 </template>
 
 <style scoped lang="scss">
-  .execution-builder-card {
-    padding: 1.1rem;
-    border: 1px solid var(--border-weak);
-    border-radius: var(--radius-md);
-    background: var(--bg-card);
-    box-shadow: var(--shadow-sm);
-  }
+.execution-builder-card {
+  padding: 1.1rem;
+  border: 1px solid var(--border-weak);
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  box-shadow: none;
+}
 
-  .builder-section-title {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.75rem;
-  }
+.builder-section-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
 
-  .builder-section-title h2 {
-    margin: 0;
-    color: var(--title-card-color);
-    font-size: 1.15rem;
-  }
+.builder-section-title h2 {
+  margin: 0;
+  color: var(--title-card-color);
+  font-size: 1.15rem;
+}
 
-  .builder-badge {
-    display: inline-flex;
-    width: fit-content;
-    padding: 0.25rem 0.55rem;
-    border-radius: var(--radius-full);
-    background: var(--PrimaryColor-light);
-    color: var(--PrimaryColor);
-    font-size: var(--xs-size);
-    font-weight: 700;
-  }
+.builder-badge {
+  display: inline-flex;
+  width: fit-content;
+  padding: 0.25rem 0.55rem;
+  border-radius: var(--radius-full);
+  background: var(--PrimaryColor-light);
+  color: var(--PrimaryColor);
+  font-size: var(--xs-size);
+  font-weight: 700;
+}
 
-  .quote-items-table-wrap {
-    margin-top: 0.85rem;
-    overflow-x: auto;
-  }
+.quote-items-table-wrap {
+  margin-top: 0.85rem;
+  overflow-x: auto;
+}
 
-  .quote-item-actions {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    white-space: nowrap;
-  }
+.quote-item-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+}
 </style>

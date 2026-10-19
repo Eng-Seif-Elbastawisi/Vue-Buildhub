@@ -60,7 +60,7 @@
       <article v-for="child in children" :key="child.id" class="invoice-children-card__item">
         <div class="invoice-children-card__heading">
           <h3>{{ childTitle(child) }}</h3>
-          <span class="invoice-status-badge" :class="childStatusClass(child)">
+          <span class="invoice-status-badge bh-status" :class="childStatusClass(child)">
             {{ childStatusLabel(child) }}
           </span>
         </div>

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import { computed, nextTick, reactive, ref, watch } from 'vue';
 
   import { useI18n } from 'vue-i18n';
@@ -301,7 +302,8 @@
 </script>
 
 <template>
-  <div
+  <StandardFormLayout
+    embedded
     class="task-assignment-form"
     :class="{
       'task-assignment-form--loading': props.loading,
@@ -366,7 +368,7 @@
         <input
           id="duration"
           v-model.number="form.duration"
-          class="field-input"
+          class="field-input workspace-control"
           type="number"
           min="1"
           step="1"
@@ -384,7 +386,7 @@
         <textarea
           id="task_assignment_notes"
           v-model="form.notes"
-          class="task-assignment-form__textarea"
+          class="task-assignment-form__textarea workspace-control"
           :disabled="loading"
           :placeholder="$t('task_assignment.notes_placeholder')"
         />
@@ -478,7 +480,7 @@
                 <input
                   :id="`attachment_alt_${index}`"
                   v-model="attachment.alt"
-                  class="task-assignment-form__input"
+                  class="task-assignment-form__input workspace-control"
                   type="text"
                   :disabled="loading"
                   :placeholder="$t('task_assignment.form.attachments.alt_placeholder')"
@@ -494,7 +496,7 @@
                 <input
                   :id="`attachment_link_${index}`"
                   v-model="attachment.link"
-                  class="task-assignment-form__input"
+                  class="task-assignment-form__input workspace-control"
                   type="url"
                   :disabled="loading"
                   :placeholder="$t('task_assignment.form.attachments.link_placeholder')"
@@ -517,9 +519,9 @@
         </section>
       </div>
     </div>
-  </div>
+  </StandardFormLayout>
 </template>
 
 <style lang="scss">
-  @use '../styles/task_assignment';
+@use '../styles/task_assignment';
 </style>

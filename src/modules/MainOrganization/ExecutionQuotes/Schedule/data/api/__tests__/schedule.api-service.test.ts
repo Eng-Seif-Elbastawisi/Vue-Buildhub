@@ -10,6 +10,11 @@ import ScheduleOwnerParams from '../../../core/params/schedule.owner.params';
 import ScheduleGroupParams from '../../../core/params/schedule.group.params';
 import ProjectTimelineStageParams from '../../../core/params/project.timeline.stage.params';
 import ScheduleSettingsParams from '../../../core/params/schedule.settings.params';
+import {
+  ChangeTimelineApprovalParams,
+  ChangeTimelineWorkStatusParams,
+} from '../../../core/params/schedule.status.params';
+import ChangeProjectConfigurationWorkStatusParams from '../../../core/params/change.project.configuration.work-status.params';
 import { transportProbe } from './schedule.transport.fixtures';
 
 const api = ScheduleApiService.getInstance();
@@ -66,6 +71,21 @@ const cases = [
     request: () => api.saveSettings(new ScheduleSettingsParams(101, '2026-10-09', [])),
     body: { quote_id: 101, start_date: '2026-10-09', holidays: [] },
   },
+  {
+    operation: 'approval' as const,
+    request: () => api.changeApproval(new ChangeTimelineApprovalParams(101, 3, 'Approved')),
+    body: { quote_id: 101, timeline_status: 3, timeline_note: 'Approved' },
+  },
+  {
+    operation: 'workStatus' as const,
+    request: () => api.changeWorkStatus(new ChangeTimelineWorkStatusParams(201, 2, 1, 'Paused')),
+    body: { project_timeline_id: 201, work_status: 2, reason: 1, note: 'Paused' },
+  },
+  {
+    operation: 'history' as const,
+    request: () => api.history(new ScheduleOwnerParams(101, 201)),
+    body: { project_timeline_id: 201 },
+  },
 ];
 beforeEach(() => {
   vi.restoreAllMocks();
@@ -92,6 +112,14 @@ it.each(cases)(
     expect(response.data).toEqual({ transport_probe: 'opaque' });
   },
 );
+it('uses the Quote approval endpoint for Reject with CANCEL status', async () => {
+  await api.changeApproval(new ChangeTimelineApprovalParams(140, 2, 'Needs revision'));
+  expect(vi.mocked(NetworkService.instance.post).mock.calls[0]?.[0]).toMatchObject({
+    url: new ScheduleEndpoints().approval,
+    data: { quote_id: 140, timeline_status: 2, timeline_note: 'Needs revision' },
+    isAuth: true,
+  });
+});
 it('forces JSON POST, authentication and no retries even if caller options request alternatives', async () => {
   await api.create(group(), {
     useJson: false,
@@ -142,6 +170,15 @@ it.each([
   ['delete without a group ID', () => api.delete(new ScheduleOwnerParams(101))],
   ['sort with position zero', () => api.sort(new ChangeProjectTimelineOrderParams(201, 0))],
   ['settings with a group ID', () => api.settings(new ScheduleOwnerParams(101, 201))],
+  ['history without a group ID', () => api.history(new ScheduleOwnerParams(101))],
+  [
+    'approval with invalid status',
+    () => api.changeApproval(new ChangeTimelineApprovalParams(101, 4 as 3)),
+  ],
+  [
+    'work with invalid reason',
+    () => api.changeWorkStatus(new ChangeTimelineWorkStatusParams(201, 2, 3 as 1)),
+  ],
   [
     'settings with three days off',
     () => api.saveSettings(new ScheduleSettingsParams(101, '2026-10-09', [1, 2, 3])),
@@ -159,3 +196,35 @@ it('does not retry a failed create or turn a network rejection into success', as
   await expect(api.create(group())).rejects.toBeInstanceOf(ValidationException);
   expect(NetworkService.instance.post).toHaveBeenCalledOnce();
 });
+
+it('uses the same Timeline Fetch endpoint with an optional execution work-status filter', async () => {
+  await api.index(new ScheduleOwnerParams(140, undefined, undefined, 1));
+  await api.index(new ScheduleOwnerParams(140));
+  const calls = vi.mocked(NetworkService.instance.post).mock.calls;
+  expect(calls.map(([request]) => request.data)).toEqual([
+    { quote_id: 140, work_status: 1 },
+    { quote_id: 140 },
+  ]);
+  expect(calls.every(([request]) => request.url.endsWith('fetch_project_timelines'))).toBe(true);
+});
+
+it.each([1, 2, 3] as const)(
+  'posts Project execution status %s to the confirmed organization endpoint without retry',
+  async (status) => {
+    await api.changeProjectConfigurationWorkStatus(
+      new ChangeProjectConfigurationWorkStatusParams(140, status, status === 1 ? 9 : undefined),
+    );
+    const calls = vi.mocked(NetworkService.instance.post).mock.calls;
+    expect(calls).toHaveLength(1);
+    expect(calls[0]?.[0]).toMatchObject({
+      url: 'https://api.buildhub.techlabeg.com/supervision/organization/change_project_configuration_work_status',
+      data: {
+        quote_id: 140,
+        work_status: status,
+        ...(status === 1 ? { responsible_employee_id: 9 } : {}),
+      },
+      isAuth: true,
+    });
+    expect(calls[0]?.[1]?.enableRetry).toBe(false);
+  },
+);

@@ -29,4 +29,16 @@ export class ScheduleEndpoints extends BaseEndpoints {
   get saveSettings() {
     return this.url('store_project_configuration');
   }
+  get approval() {
+    return this.url('change_project_timeline_status');
+  }
+  get workStatus() {
+    return this.url('change_project_timeline_work_status');
+  }
+  get projectExecutionWorkStatus() {
+    return `${this.baseUrl}organization/change_project_configuration_work_status`;
+  }
+  get history() {
+    return this.url('fetch_project_timeline_history');
+  }
 }

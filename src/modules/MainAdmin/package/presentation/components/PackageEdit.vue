@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import { onMounted, ref } from 'vue';
   import { useRoute } from 'vue-router';
 
@@ -62,7 +63,7 @@
 </script>
 
 <template>
-  <div class="package-crud-page">
+  <StandardFormLayout mode="edit" class="package-crud-page">
     <PackageForm
       :form-key="formKey"
       :loading="loading"
@@ -70,46 +71,48 @@
       @update-data="updatePackageParams"
     />
 
-    <div class="actions" :class="{ disabled: loading }">
-      <button
-        :class="{ 'btn--loading': loading }"
-        :disabled="loading || !params"
-        class="btn btn-primary w-full"
-        type="button"
-        @click="savePackage"
-      >
-        <span v-if="loading" class="loader"></span>
-
-        <span v-else>
-          {{ $t('package.update') }}
-        </span>
-      </button>
-    </div>
-
     <div v-if="controller.errorMessage.value" class="error">
       {{ controller.errorMessage.value }}
     </div>
-  </div>
+
+    <template #actions>
+      <div class="actions" :class="{ disabled: loading }">
+        <button
+          :class="{ 'btn--loading': loading }"
+          :disabled="loading || !params"
+          class="btn btn-primary w-full"
+          type="button"
+          @click="savePackage"
+        >
+          <span v-if="loading" class="loader"></span>
+
+          <span v-else>
+            {{ $t('package.update') }}
+          </span>
+        </button>
+      </div>
+    </template>
+  </StandardFormLayout>
 </template>
 
 <style scoped lang="scss">
-  .package-crud-page {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
+.package-crud-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
 
-  .actions.disabled {
-    pointer-events: none;
-    opacity: 0.7;
-  }
+.actions.disabled {
+  pointer-events: none;
+  opacity: 0.7;
+}
 
-  .error {
-    margin-top: 20px;
-    padding: 10px;
-    border: 1px solid var(--danger-dark);
-    border-radius: 4px;
-    background-color: var(--danger-light);
-    color: var(--danger-dark);
-  }
+.error {
+  margin-top: 20px;
+  padding: 10px;
+  border: 1px solid var(--danger-dark);
+  border-radius: 4px;
+  background-color: var(--danger-light);
+  color: var(--danger-dark);
+}
 </style>

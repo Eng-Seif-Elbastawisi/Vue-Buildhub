@@ -6,13 +6,24 @@ export default class PurchaseRequestSupplierPriceParams {
   public price: number;
   public duration: number;
   public durationType: number;
-  constructor(supplierId: number, price: number, duration: number, durationType: number) {
+  public attachment?: string;
+  constructor(
+    supplierId: number,
+    price: number,
+    duration: number,
+    durationType: number,
+    attachment?: string,
+  ) {
+    this.attachment = attachment;
     this.supplierId = supplierId;
     this.price = price;
     this.duration = duration;
     this.durationType = durationType;
   }
   private static validation = new ClassValidation().setRules({
+    attachment: {
+      custom: (value: unknown) => typeof value === 'string' && /^data:[^;]+;base64,.+/.test(value),
+    },
     supplierId: { required: true, custom: validId },
     price: {
       required: true,
@@ -31,6 +42,7 @@ export default class PurchaseRequestSupplierPriceParams {
   toMap() {
     return {
       id: this.supplierId,
+      ...(this.attachment === undefined ? {} : { attachment: this.attachment }),
       price: this.price,
       duration: this.duration,
       duration_type: this.durationType,

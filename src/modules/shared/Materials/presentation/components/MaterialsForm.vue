@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import { computed, nextTick, onMounted, ref, watch } from 'vue';
   import { onBeforeRouteLeave, useRoute } from 'vue-router';
 
@@ -219,7 +220,7 @@
 </script>
 
 <template>
-  <div class="material-form-card">
+  <StandardFormLayout class="material-form-card">
     <header class="form-header">
       <h3>{{ $t('material.form_title') }}</h3>
       <p>{{ $t('material.form_description') }}</p>
@@ -254,7 +255,7 @@
           <input
             id="material-price"
             v-model.number="price"
-            class="field-input"
+            class="field-input workspace-control"
             min="0"
             type="number"
             :placeholder="$t('material.price_placeholder')"
@@ -263,7 +264,7 @@
           <!-- step="1" -->
         </div>
       </div>
-      <!-- 
+      <!--
       <div class="field-group">
         <label class="field-label" for="material-quantity">{{ $t('material.quantity') }}</label>
         <div class="input-wrap">
@@ -356,61 +357,61 @@
         @update:model-value="updateData"
       />
     </div>
-  </div>
+  </StandardFormLayout>
 </template>
 
 <style scoped lang="scss">
-  .input-wrap {
-    input {
-      width: 100%;
-      padding: 12px 16px;
-      padding-inline-end: 50px;
-      border: 1px solid var(--border-weak);
-      border-radius: 28px;
-      background: var(--white);
-      outline: none;
-      transition: all 0.25s ease;
-      font-family: 'Medium';
-      font-weight: 400;
-      font-size: var(--sm-size);
-      color: var(--bread-crumb-color-span);
-      max-height: 200px;
-      max-width: 100%;
-    }
+.input-wrap {
+  input {
+    width: 100%;
+    padding: 12px 16px;
+    padding-inline-end: 50px;
+    border: 1px solid var(--border-weak);
+    border-radius: var(--bh-radius-control);
+    background: var(--bh-surface-raised);
+    outline: none;
+    transition: all 0.25s ease;
+    font-family: 'Medium';
+    font-weight: 400;
+    font-size: var(--sm-size);
+    color: var(--bread-crumb-color-span);
+    max-height: 200px;
+    max-width: 100%;
   }
+}
 
-  .material-form-card {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
+.material-form-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-header p {
+  color: var(--gray-5);
+}
+
+.form-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+
+  &.disabled {
+    pointer-events: none;
+    opacity: 0.7;
   }
+}
 
-  .form-header p {
-    color: var(--gray-5);
-  }
+.col-span-2 {
+  grid-column: span 2;
+}
 
+@media (max-width: 768px) {
   .form-fields {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1rem;
-
-    &.disabled {
-      pointer-events: none;
-      opacity: 0.7;
-    }
+    grid-template-columns: 1fr;
   }
 
   .col-span-2 {
-    grid-column: span 2;
+    grid-column: span 1;
   }
-
-  @media (max-width: 768px) {
-    .form-fields {
-      grid-template-columns: 1fr;
-    }
-
-    .col-span-2 {
-      grid-column: span 1;
-    }
-  }
+}
 </style>

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import { ref } from 'vue';
   import AppButton from '@/shared/HelpersComponents/AppButton.vue';
   import StandardFormSectionHeader from '@/shared/components/form/StandardFormSectionHeader.vue';
@@ -41,7 +42,7 @@
 </script>
 
 <template>
-  <section class="department-page">
+  <StandardFormLayout as="section" mode="create" class="department-page">
     <StandardFormSectionHeader
       :title="$t('Term.form_title')"
       :description="$t('Term.form_description')"
@@ -52,27 +53,31 @@
       :term="term"
       @update-data="(value) => (params = value as AddTermParams)"
     />
-    <div class="actions">
-      <AppButton :loading="loading" :title="$t('save')" type="button" @click="saveDepartment">{{
-        $t('save')
-      }}</AppButton>
-    </div>
+
     <div v-if="controller.errorMessage.value" class="error">
       {{ controller.errorMessage.value }}
     </div>
-  </section>
+
+    <template #actions>
+      <div class="actions">
+        <AppButton :loading="loading" :title="$t('save')" type="button" @click="saveDepartment">{{
+          $t('save')
+        }}</AppButton>
+      </div>
+    </template>
+  </StandardFormLayout>
 </template>
 <style scoped>
-  .actions {
-    padding: 0 0 20px 20px;
-  }
+.actions {
+  padding: 0 0 20px 20px;
+}
 
-  .error {
-    margin-top: 20px;
-    padding: 10px;
-    background-color: var(--danger-light);
-    color: var(--danger-dark);
-    border: 1px solid #f5c6cb;
-    border-radius: 4px;
-  }
+.error {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: var(--danger-light);
+  color: var(--danger-dark);
+  border: 1px solid var(--bh-coral-soft);
+  border-radius: 4px;
+}
 </style>

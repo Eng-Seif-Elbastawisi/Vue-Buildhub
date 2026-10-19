@@ -1,6 +1,7 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
-  import { computed, ref, watch, onBeforeUnmount } from 'vue';
+  import { computed, ref, watch } from 'vue';
   import Dialog from 'primevue/dialog';
   import AppButton from '@/shared/HelpersComponents/AppButton.vue';
   import type TitleInterface from '@/base/Data/Models/titleInterface';
@@ -10,8 +11,8 @@
     DataSuccess,
   } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
   import type { FieldError } from '@/base/Presentation/Utils/classValidation';
-  import { filesToBase64 } from '@/base/Presentation/Utils/file_to_base_64';
-  import { attachmentKind } from '@/shared/AttachmentGallery/attachmentGallery';
+  import HandleFilesUpload from '@/shared/FormInputs/HandleFilesUpload.vue';
+  import UpdatedCustomInputSelect from '@/shared/FormInputs/UpdatedCustomInputSelect.vue';
   import WorkItemStageSelect from './WorkItemStageSelect.vue';
   import WorkItemsController from '../controllers/work-items.controller';
   import StoreShopDrawingQuoteParams from '../../core/params/store.shop-drawing.params';
@@ -25,12 +26,13 @@
     [],
   );
   const file = ref<string | null>(null);
-  const filename = ref('');
-  const mimeType = ref('');
+  const space = ref<TitleInterface<string | number> | TitleInterface<string | number>[] | null>(
+    null,
+  );
+  const uploadKey = ref(0);
   const processing = ref(false);
   const uploadError = ref(false);
   const errors = ref<FieldError[]>([]);
-  let uploadEpoch = 0;
   const busy = computed(
     () => processing.value || controller.drawingsSaveState.value instanceof DataLoading,
   );
@@ -38,18 +40,12 @@
   const backendErrors = computed(() =>
     Object.values(controller.drawingsSaveState.value.error?.validationErrors ?? {}).flat(),
   );
-  const fileIcon = computed(() => {
-    const kind = attachmentKind({ url: '', name: filename.value, mimeType: mimeType.value });
-    return kind === 'pdf' ? 'pi pi-file-pdf' : kind === 'image' ? 'pi pi-image' : 'pi pi-file';
-  });
   function fieldError(field: string) {
     return errors.value.find((error) => error.field === field)?.message;
   }
   function clearFile() {
-    uploadEpoch++;
     file.value = null;
-    filename.value = '';
-    mimeType.value = '';
+    uploadKey.value++;
     processing.value = false;
     uploadError.value = false;
   }
@@ -57,10 +53,11 @@
     () => props.visible,
     (visible) => {
       if (!visible) {
-        uploadEpoch++;
         processing.value = false;
         return;
       }
+      space.value = null;
+      void controller.loadSpaces();
       title.value = '';
       date.value = '';
       version.value = '';
@@ -71,29 +68,6 @@
     },
     { immediate: true },
   );
-  onBeforeUnmount(() => {
-    uploadEpoch++;
-  });
-  async function selectFile(event: Event) {
-    const input = event.target as HTMLInputElement;
-    const selected = input.files?.[0];
-    input.value = '';
-    if (!selected || busy.value) return;
-    const epoch = ++uploadEpoch;
-    processing.value = true;
-    uploadError.value = false;
-    try {
-      const encoded = await filesToBase64(selected);
-      if (epoch !== uploadEpoch || Array.isArray(encoded)) return;
-      file.value = encoded.file;
-      filename.value = encoded.alt;
-      mimeType.value = selected.type;
-    } catch {
-      if (epoch === uploadEpoch) uploadError.value = true;
-    } finally {
-      if (epoch === uploadEpoch) processing.value = false;
-    }
-  }
   async function save() {
     if (busy.value) return;
     const params = new StoreShopDrawingQuoteParams({
@@ -102,6 +76,8 @@
       date: date.value || null,
       versionNumber: version.value,
       file: file.value,
+      projectFloorSpaceId:
+        space.value && !Array.isArray(space.value) ? Number(space.value.id) : null,
       projectTimelineStageIds: [
         ...new Set(
           (Array.isArray(stages.value) ? stages.value : []).map((stage) => Number(stage.id)),
@@ -118,13 +94,13 @@
   <Dialog
     :visible="visible"
     modal
-    class="work-items-dialog"
+    class="work-items-dialog workspace-dialog"
     :header="$t('work_items.new_drawing')"
     :closable="!busy"
     :close-on-escape="!busy"
     @update:visible="emit('update:visible', $event)"
   >
-    <form class="work-items-form" @submit.prevent="save">
+    <StandardFormLayout as="form" embedded class="work-items-form" @submit.prevent="save">
       <div class="field-group input-wrapper">
         <span class="field-help-label-row field-help-label-row--block"
           ><label class="field-label label" for="drawing-title"
@@ -140,7 +116,7 @@
         <input
           id="drawing-title"
           v-model="title"
-          class="input"
+          class="input workspace-control"
           type="text"
           required
           :disabled="busy"
@@ -163,7 +139,7 @@
         <input
           id="drawing-date"
           v-model="date"
-          class="input"
+          class="input workspace-control"
           type="date"
           :disabled="busy"
           :aria-invalid="!!fieldError('date')"
@@ -185,7 +161,7 @@
         <input
           id="drawing-version"
           v-model="version"
-          class="input"
+          class="input workspace-control"
           type="text"
           required
           :disabled="busy"
@@ -201,39 +177,40 @@
         :disabled="busy"
         :error="fieldError('projectTimelineStageIds')"
       />
-      <div class="field-group input-wrapper">
-        <span class="field-help-label-row field-help-label-row--block"
-          ><label class="field-label label" for="drawing-file">{{
-            $t('work_items.drawing_file')
-          }}</label>
-          <FieldHelpIcon
-            :label="$t('work_items.drawing_file')"
-            field-name="drawing_file"
-            field-id="drawing-file"
-            :help-text="$t('field_help.execution_fields.drawing_file')"
-          />
-        </span>
-        <input
-          id="drawing-file"
-          class="input"
-          type="file"
+      <div class="field-group">
+        <UpdatedCustomInputSelect
+          id="drawing-space"
+          v-model="space"
+          label="execution_updates.space"
+          :placeholder="$t('execution_updates.space')"
+          :static-options="controller.spaceOptions.value"
           :disabled="busy"
-          aria-describedby="drawing-file-help"
-          @change="selectFile"
-        /><small id="drawing-file-help" class="work-items-file-help">{{
-          $t('work_items.drawing_file_help')
-        }}</small>
-        <p v-if="processing" role="status">{{ $t('work_items.processing_file') }}</p>
-        <p v-if="uploadError" class="work-items-error" role="alert">
-          {{ $t('work_items.file_processing_error') }}
+          ><template #LabelHeader
+            ><FieldHelpIcon
+              :label="$t('execution_updates.space')"
+              field-name="space"
+              field-id="drawing-space"
+              :help-text="$t('execution_updates.space_help')" /></template
+        ></UpdatedCustomInputSelect>
+        <p v-if="controller.floorsState.value.error" role="alert">
+          {{ $t(controller.floorsState.value.error.displayMessage) }}
+          <button type="button" class="btn btn-secondary" @click="controller.loadSpaces()">
+            {{ $t('work_items.retry') }}
+          </button>
         </p>
-        <div v-if="filename" class="work-items-file-selection">
-          <i :class="fileIcon" aria-hidden="true" /><span>{{ filename }}</span>
-          <AppButton type="button" theme="secondary" :disabled="busy" @click="clearFile">{{
-            $t('work_items.remove_file')
-          }}</AppButton>
-        </div>
       </div>
+      <fieldset class="field-group" :disabled="busy">
+        <HandleFilesUpload
+          :key="uploadKey"
+          label="work_items.drawing_file"
+          :max-files="1"
+          accept=""
+          @change="file = $event[0]?.base64 ?? null"
+          @processing="processing = $event"
+          @error="uploadError = true"
+        />
+      </fieldset>
+      <p v-if="uploadError" role="alert">{{ $t('work_items.file_processing_error') }}</p>
       <p v-if="failure" class="work-items-error" role="alert">{{ $t(failure) }}</p>
       <ul v-if="backendErrors.length" class="work-items-error" role="alert">
         <li v-for="(message, index) in backendErrors" :key="index">{{ message }}</li>
@@ -252,6 +229,6 @@
           >{{ $t('work_items.save_drawing') }}</AppButton
         >
       </div>
-    </form></Dialog
+    </StandardFormLayout></Dialog
   >
 </template>

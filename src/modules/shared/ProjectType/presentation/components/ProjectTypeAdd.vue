@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import { ref } from 'vue';
   import { useRoute } from 'vue-router';
   import type AddProjectTypeParams from '../../core/params/add.project-type.params.ts';
@@ -22,21 +23,25 @@
 </script>
 
 <template>
-  <div class="project-crud-page">
+  <StandardFormLayout mode="create" class="project-crud-page">
     <ProjectTypeForm :loading="loading" @update-data="params = $event" />
-    <div class="form-actions">
-      <button
-        :class="{ 'btn--loading': loading }"
-        class="btn btn-primary"
-        type="button"
-        :disabled="loading"
-        @click="saveProject"
-      >
-        {{ $t('project.save') }}
-      </button>
-    </div>
+
     <div v-if="controller.errorMessage.value" class="error">
       {{ controller.errorMessage.value }}
     </div>
-  </div>
+
+    <template #actions>
+      <div class="form-actions">
+        <button
+          :class="{ 'btn--loading': loading }"
+          class="btn btn-primary"
+          type="button"
+          :disabled="loading"
+          @click="saveProject"
+        >
+          {{ $t('project.save') }}
+        </button>
+      </div>
+    </template>
+  </StandardFormLayout>
 </template>

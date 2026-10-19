@@ -8,6 +8,11 @@ import ExecutionQuoteAttachmentModel from './execution.quote.attachment.model';
 import ExecutionQuoteClientModel from './execution.quote.client.model';
 import ExecutionQuoteProjectModel from './execution.quote.project.model';
 import ExecutionQuoteStageModel from './execution.quote.stage.model';
+import {
+  isApprovalStatus,
+  type TimelineApprovalStatus,
+} from '../../Schedule/core/constants/timeline.status';
+import TitleModel from '@/base/Core/Models/titleModel';
 
 export default class ExecutionQuoteShowModel {
   public readonly id?: number;
@@ -28,6 +33,9 @@ export default class ExecutionQuoteShowModel {
   public readonly supervisionFee?: number;
   public readonly createdAt?: string;
   public readonly quoteStatus?: QuoteStatusEnum;
+  public readonly timelineStatus?: TimelineApprovalStatus | null;
+  public readonly approvedByEmployee?: TitleModel | null;
+  public readonly timelineNote?: string | null;
 
   constructor(data: {
     id?: number;
@@ -46,6 +54,9 @@ export default class ExecutionQuoteShowModel {
     supervisionFee?: number;
     createdAt?: string;
     quoteStatus?: QuoteStatusEnum;
+    timelineStatus?: TimelineApprovalStatus | null;
+    approvedByEmployee?: TitleModel | null;
+    timelineNote?: string | null;
   }) {
     this.id = data.id;
     this.organization = data.organization;
@@ -70,6 +81,9 @@ export default class ExecutionQuoteShowModel {
     this.supervisionFee = data.supervisionFee;
     this.createdAt = data.createdAt;
     this.quoteStatus = data.quoteStatus;
+    this.timelineStatus = data.timelineStatus;
+    this.approvedByEmployee = data.approvedByEmployee;
+    this.timelineNote = data.timelineNote;
     Object.freeze(this);
   }
 
@@ -128,6 +142,19 @@ export default class ExecutionQuoteShowModel {
       supervisionFee: supervisionFee == null ? undefined : Number(supervisionFee),
       createdAt: json.created_at as string | undefined,
       quoteStatus: Object.values(QuoteStatusEnum).includes(quoteStatus) ? quoteStatus : undefined,
+      timelineStatus:
+        json.timeline_status === null
+          ? null
+          : isApprovalStatus(json.timeline_status)
+            ? json.timeline_status
+            : undefined,
+      approvedByEmployee: TitleModel.fromMap(json.approved_by_employee_id),
+      timelineNote:
+        json.timeline_note === null
+          ? null
+          : typeof json.timeline_note === 'string'
+            ? json.timeline_note
+            : undefined,
     });
   }
 

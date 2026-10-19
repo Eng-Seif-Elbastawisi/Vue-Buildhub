@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import { onMounted, ref } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import ConfirmCancelDialog from '@/base/Presentation/Dialogs/ConfirmCancelDialog.vue';
@@ -53,7 +54,7 @@
 </script>
 
 <template>
-  <div class="Products-crud-page">
+  <StandardFormLayout mode="edit" class="Products-crud-page">
     <ProductsForm
       v-if="controller.itemData.value"
       :products="controller.itemData.value"
@@ -61,29 +62,31 @@
       @update-data="updateData"
     />
 
-    <div class="form-actions form-action-pair">
-      <button
-        :class="{ 'btn--loading': loading }"
-        class="btn btn-primary"
-        type="button"
-        :disabled="loading || !params"
-        @click="saveProducts"
-      >
-        {{ $t('update') }}
-      </button>
-      <ConfirmCancelDialog
-        :title="$t('cancel_changes')"
-        :message="$t('are_you_sure_you_want_to_leave')"
-        :trigger-label="$t('common.back')"
-        trigger-class="back-button"
-        @confirm="goBack"
-      />
-    </div>
-
     <div v-if="controller.errorMessage.value" class="error">
       {{ controller.errorMessage.value }}
     </div>
-  </div>
+
+    <template #actions>
+      <div class="form-actions form-action-pair">
+        <button
+          :class="{ 'btn--loading': loading }"
+          class="btn btn-primary"
+          type="button"
+          :disabled="loading || !params"
+          @click="saveProducts"
+        >
+          {{ $t('update') }}
+        </button>
+        <ConfirmCancelDialog
+          :title="$t('cancel_changes')"
+          :message="$t('are_you_sure_you_want_to_leave')"
+          :trigger-label="$t('common.back')"
+          trigger-class="back-button"
+          @confirm="goBack"
+        />
+      </div>
+    </template>
+  </StandardFormLayout>
 </template>
 
 <style scoped lang="scss">
@@ -100,7 +103,7 @@
     padding: 10px;
     background-color: var(--danger-light);
     color: var(--danger-dark);
-    border: 1px solid #f5c6cb;
+    border: 1px solid var(--bh-coral-soft);
     border-radius: 4px;
   }
 

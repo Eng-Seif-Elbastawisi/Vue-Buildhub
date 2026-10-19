@@ -138,10 +138,7 @@
 
 <template>
   <div class="invoice-page">
-    <IndexPageHeader
-      :title="$t(titleKey)"
-      :subtitle="$t('invoice.index.description')"
-    >
+    <IndexPageHeader :title="$t(titleKey)" :subtitle="$t('invoice.index.description')">
       <template #search>
         <div class="search-field">
           <span class="search-icon">
@@ -150,7 +147,7 @@
           <input
             v-model="word"
             :placeholder="$t('invoice.search_placeholder')"
-            class="search-input"
+            class="search-input workspace-control"
             type="text"
             @input="search"
           />
@@ -183,7 +180,7 @@
           </template>
 
           <template #cell-status="{ item }">
-            <span class="invoice-status-badge" :class="statusClassFor(item)">
+            <span class="invoice-status-badge bh-status" :class="statusClassFor(item)">
               {{ statusLabelFor(item) }}
             </span>
           </template>
@@ -258,7 +255,7 @@
 </template>
 
 <style lang="scss" scoped>
-  .row-actions {
-    justify-content: start !important;
-  }
+.row-actions {
+  justify-content: start !important;
+}
 </style>

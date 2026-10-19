@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import { inject, onUnmounted, watch } from 'vue';
   import type { Ref } from 'vue';
   import DataStatusBuilder from '@/shared/DataStatues/DataStatusBuilder.vue';
@@ -55,7 +56,7 @@
 </script>
 
 <template>
-  <div class="project-details-page project-show-page">
+  <StandardFormLayout mode="show" class="project-details-page project-show-page">
     <DataStatusBuilder
       :controller="projectController.itemState.value"
       :on-retry="
@@ -142,9 +143,9 @@
         </div>
       </template>
     </DataStatusBuilder>
-  </div>
+  </StandardFormLayout>
 </template>
 
 <style lang="scss">
-  @use '../styles/project_show';
+@use '../styles/project_show';
 </style>

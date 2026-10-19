@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import { ref } from 'vue';
   import { useRoute } from 'vue-router';
   import type AddInvoiceParams from '../../core/params/add.invoice.params';
@@ -27,7 +28,7 @@
 </script>
 
 <template>
-  <div class="invoice-crud-page">
+  <StandardFormLayout mode="create" class="invoice-crud-page">
     <InvoiceForm
       enable-grouping
       :form-key="formKey"
@@ -39,5 +40,5 @@
     <div v-if="controller.errorMessage.value" class="invoice-error" aria-live="polite">
       {{ controller.errorMessage.value }}
     </div>
-  </div>
+  </StandardFormLayout>
 </template>

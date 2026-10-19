@@ -38,3 +38,20 @@ it.each([
 ])('rejects invalid drawing fields %j', (patch) => {
   expect(new StoreShopDrawingQuoteParams({ ...fields, ...patch }).validate().isValid).toBe(false);
 });
+
+it('sends the Project Floor Space association without generating custom_number', () => {
+  const drawing = new StoreShopDrawingQuoteParams({
+    quoteId: 140,
+    title: 'MEP',
+    date: '2026-10-12',
+    versionNumber: 'V1',
+    file: 'data:image/jpeg;base64,YQ==',
+    projectTimelineStageIds: [17],
+    projectFloorSpaceId: 170,
+  });
+  expect(drawing.toMap()).toMatchObject({
+    project_floor_space_id: 170,
+    project_timeline_stage_ids: [17],
+  });
+  expect(drawing.toMap()).not.toHaveProperty('custom_number');
+});

@@ -17,7 +17,8 @@
         icon.includes('calendar') ||
         icon.includes('map-marker') ||
         icon.includes('list-check') ||
-        icon.includes('shopping-cart')
+        icon.includes('shopping-cart') ||
+        icon.includes('box')
       "
       class="project-shortcut__visual"
       aria-hidden="true"
@@ -60,6 +61,23 @@
         <circle cx="180" cy="137" r="10" />
         <circle cx="297" cy="137" r="10" />
       </svg>
+      <svg
+        v-else-if="icon.includes('box')"
+        viewBox="0 0 480 160"
+        fill="none"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path class="project-shortcut__guide" d="M108 140H372M120 24V145M360 24V145" />
+        <path class="project-shortcut__line" d="M130 62L240 20L350 62M146 56V140H334V56" />
+        <rect x="218" y="80" width="72" height="60" rx="3" />
+        <rect x="166" y="110" width="32" height="30" rx="3" />
+        <rect x="166" y="80" width="32" height="30" rx="3" />
+        <path
+          class="project-shortcut__line"
+          d="M224 94H284M224 106H284M224 118H284M182 80V91M182 110V121"
+        />
+      </svg>
       <svg v-else viewBox="0 0 480 160" fill="none" stroke-linecap="round" stroke-linejoin="round">
         <path class="project-shortcut__guide" d="M180 54H350M180 96H350M180 138H300" />
         <rect x="125" y="25" width="28" height="28" rx="5" />
@@ -79,7 +97,7 @@
       </div>
       <span
         v-if="state === 'available' && status !== undefined && status !== null"
-        class="project-shortcut__badge"
+        class="project-shortcut__badge bh-status"
         >{{ status }}</span
       >
     </div>

@@ -1,0 +1,250 @@
+{
+  "scenes": [
+    {
+      "name": "desktop",
+      "url": "/organization",
+      "width": 1440,
+      "scroll": 1440,
+      "direction": "ltr",
+      "canvas": "rgb(232, 237, 245)",
+      "headings": ["Home", "Welcome backDesign review"],
+      "errors": []
+    },
+    {
+      "name": "mobile",
+      "url": "/organization",
+      "width": 390,
+      "scroll": 390,
+      "direction": "ltr",
+      "canvas": "rgb(232, 237, 245)",
+      "headings": ["Home", "Welcome backDesign review"],
+      "errors": []
+    },
+    {
+      "name": "tablet",
+      "url": "/organization",
+      "width": 820,
+      "scroll": 820,
+      "direction": "ltr",
+      "canvas": "rgb(232, 237, 245)",
+      "headings": ["Home", "Welcome backDesign review"],
+      "errors": []
+    },
+    {
+      "name": "arabic",
+      "url": "/organization",
+      "width": 1440,
+      "scroll": 1440,
+      "direction": "rtl",
+      "canvas": "rgb(232, 237, 245)",
+      "headings": ["الرئيسية", "مرحباً بك مجدداًDesign review"],
+      "errors": []
+    },
+    {
+      "name": "arabic-mobile",
+      "url": "/organization/employee/add",
+      "width": 390,
+      "scroll": 390,
+      "direction": "rtl",
+      "canvas": "rgb(232, 237, 245)",
+      "headings": ["إضافة موظف"],
+      "errors": []
+    },
+    {
+      "name": "dark",
+      "url": "/organization/employee/add",
+      "width": 1440,
+      "scroll": 1440,
+      "direction": "ltr",
+      "canvas": "rgb(23, 30, 41)",
+      "headings": ["Add employee"],
+      "errors": []
+    },
+    {
+      "name": "form",
+      "url": "/organization/employee/add",
+      "width": 1440,
+      "scroll": 1440,
+      "direction": "ltr",
+      "canvas": "rgb(232, 237, 245)",
+      "headings": ["Add employee"],
+      "errors": []
+    },
+    {
+      "name": "table-fixture",
+      "url": "/organization/employee",
+      "width": 1440,
+      "scroll": 1440,
+      "direction": "ltr",
+      "canvas": "rgb(232, 237, 245)",
+      "headings": ["Employee", "Employees"],
+      "errors": []
+    },
+    {
+      "name": "table-mobile-fixture",
+      "url": "/organization/employee",
+      "width": 390,
+      "scroll": 390,
+      "direction": "ltr",
+      "canvas": "rgb(232, 237, 245)",
+      "headings": ["Employee", "Employees"],
+      "errors": []
+    },
+    {
+      "name": "admin",
+      "url": "/admin",
+      "width": 1440,
+      "scroll": 1440,
+      "direction": "ltr",
+      "canvas": "rgb(232, 237, 245)",
+      "headings": ["Home", "Manage the whole system from one place"],
+      "errors": []
+    },
+    {
+      "name": "admin-mobile",
+      "url": "/admin",
+      "width": 390,
+      "scroll": 390,
+      "direction": "ltr",
+      "canvas": "rgb(232, 237, 245)",
+      "headings": ["Home", "Manage the whole system from one place"],
+      "errors": []
+    },
+    {
+      "name": "login",
+      "url": "/login-organization",
+      "width": 1440,
+      "scroll": 1440,
+      "direction": "ltr",
+      "canvas": "rgb(232, 237, 245)",
+      "headings": ["Run your company from first client to final handover"],
+      "errors": []
+    },
+    {
+      "name": "login-mobile",
+      "url": "/login-organization",
+      "width": 390,
+      "scroll": 390,
+      "direction": "rtl",
+      "canvas": "rgb(232, 237, 245)",
+      "headings": ["شغّل شركتك من أول عميل لحد التسليم"],
+      "errors": []
+    },
+    {
+      "name": "admin-login",
+      "url": "/login-admin",
+      "width": 1440,
+      "scroll": 1440,
+      "direction": "ltr",
+      "canvas": "rgb(232, 237, 245)",
+      "headings": ["Full control over the system and companies"],
+      "errors": []
+    },
+    {
+      "name": "schedule-offline",
+      "url": "/organization/execution-quotes/show/1/schedule",
+      "width": 1440,
+      "scroll": 1440,
+      "direction": "ltr",
+      "canvas": "rgb(232, 237, 245)",
+      "headings": ["Schedule"],
+      "errors": []
+    },
+    {
+      "name": "project-offline",
+      "url": "/organization/project/show/1",
+      "width": 1440,
+      "scroll": 1440,
+      "direction": "ltr",
+      "canvas": "rgb(232, 237, 245)",
+      "headings": ["Project Details"],
+      "errors": []
+    },
+    {
+      "name": "not-found",
+      "url": "/not-found",
+      "width": 1440,
+      "scroll": 1440,
+      "direction": "ltr",
+      "canvas": "rgb(232, 237, 245)",
+      "headings": ["Page not found"],
+      "errors": []
+    },
+    {
+      "name": "server-error",
+      "url": "/server-error",
+      "width": 1440,
+      "scroll": 1440,
+      "direction": "ltr",
+      "canvas": "rgb(232, 237, 245)",
+      "headings": ["Something went wrong"],
+      "errors": []
+    }
+  ],
+  "blockedNonGetRequests": [
+    {
+      "url": "/supervision/organization/organization_sidebar_counts",
+      "method": "POST"
+    },
+    {
+      "url": "/supervision/organization/organization_sidebar_counts",
+      "method": "POST"
+    },
+    {
+      "url": "/supervision/organization/organization_sidebar_counts",
+      "method": "POST"
+    },
+    {
+      "url": "/supervision/organization/organization_sidebar_counts",
+      "method": "POST"
+    },
+    {
+      "url": "/supervision/organization/organization_sidebar_counts",
+      "method": "POST"
+    },
+    {
+      "url": "/supervision/organization/organization_sidebar_counts",
+      "method": "POST"
+    },
+    {
+      "url": "/supervision/organization/organization_sidebar_counts",
+      "method": "POST"
+    },
+    {
+      "url": "/supervision/organization/organization_sidebar_counts",
+      "method": "POST"
+    },
+    {
+      "url": "/supervision/organization/fetch_employees",
+      "method": "POST"
+    },
+    {
+      "url": "/supervision/organization/fetch_employees",
+      "method": "POST"
+    },
+    {
+      "url": "/supervision/mainportal/main_portal_sidebar_counts",
+      "method": "POST"
+    },
+    {
+      "url": "/supervision/mainportal/main_portal_sidebar_counts",
+      "method": "POST"
+    },
+    {
+      "url": "/supervision/mainportal/main_portal_sidebar_counts",
+      "method": "POST"
+    },
+    {
+      "url": "/supervision/mainportal/main_portal_sidebar_counts",
+      "method": "POST"
+    },
+    {
+      "url": "/supervision/organization/show_quote",
+      "method": "POST"
+    },
+    {
+      "url": "/supervision/organization/show_project",
+      "method": "POST"
+    }
+  ]
+}

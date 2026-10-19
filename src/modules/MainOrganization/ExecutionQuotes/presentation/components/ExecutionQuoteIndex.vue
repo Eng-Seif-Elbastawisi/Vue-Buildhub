@@ -564,7 +564,6 @@
             striped
             hoverable
             empty-message="execution_quote.empty_quotes"
-            @row-click="openShow"
           >
             <template #cell-quoteSource="{ item }">
               <span
@@ -627,7 +626,7 @@
 
                   <span
                     v-if="item.client?.status !== undefined"
-                    class="execution-quote-index__client-status"
+                    class="execution-quote-index__client-status bh-status bh-status--dot"
                     :class="{
                       'execution-quote-index__client-status--active': item.client.status === 1,
                     }"
@@ -696,7 +695,7 @@
             <template #cell-quoteProgress="{ item }">
               <div class="execution-quote-index__progress">
                 <span
-                  class="execution-quote-index__progress-status"
+                  class="execution-quote-index__progress-status bh-status"
                   :class="`execution-quote-index__progress-status--${quoteProgressState(item)}`"
                 >
                   <span aria-hidden="true"></span>

@@ -1,0 +1,71 @@
+{
+  "mode": "Actual route with synthetic API fixtures; no live data or server operations",
+  "results": [
+    {
+      "width": 1440,
+      "locale": "en",
+      "dark": false,
+      "errors": [],
+      "blur": "blur(18px) saturate(1.25)",
+      "radius": "24px",
+      "titleColor": "rgb(16, 20, 26)",
+      "labelColor": "rgb(93, 104, 121)",
+      "valueColor": "rgb(16, 20, 26)",
+      "badges": [
+        {
+          "color": "rgb(255, 255, 255)",
+          "background": "rgb(16, 20, 26)"
+        },
+        {
+          "color": "rgb(54, 91, 150)",
+          "background": "rgb(227, 235, 249)"
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "width": 1024,
+      "locale": "en",
+      "dark": false,
+      "errors": [],
+      "blur": "blur(18px) saturate(1.25)",
+      "radius": "24px",
+      "titleColor": "rgb(16, 20, 26)",
+      "labelColor": "rgb(93, 104, 121)",
+      "valueColor": "rgb(16, 20, 26)",
+      "badges": [
+        {
+          "color": "rgb(255, 255, 255)",
+          "background": "rgb(16, 20, 26)"
+        },
+        {
+          "color": "rgb(54, 91, 150)",
+          "background": "rgb(227, 235, 249)"
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "locale": "ar",
+      "dark": true,
+      "errors": [],
+      "blur": "blur(18px) saturate(1.25)",
+      "radius": "24px",
+      "titleColor": "rgb(237, 242, 250)",
+      "labelColor": "rgb(182, 194, 212)",
+      "valueColor": "rgb(237, 242, 250)",
+      "badges": [
+        {
+          "color": "rgb(255, 255, 255)",
+          "background": "rgb(16, 20, 26)"
+        },
+        {
+          "color": "rgb(180, 204, 250)",
+          "background": "rgb(42, 61, 90)"
+        }
+      ],
+      "overflow": false
+    }
+  ]
+}

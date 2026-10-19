@@ -46,6 +46,7 @@ export const storeParams = (
 export const timelineGroup = () => ({
   id: 2,
   title: 'Execution Timeline',
+  work_status: 1,
   duration: 1,
   duration_type: 4,
   stages: [

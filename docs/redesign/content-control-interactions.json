@@ -1,0 +1,54 @@
+[
+  {
+    "settings": {
+      "width": 1440,
+      "locale": "en"
+    },
+    "checks": [
+      "Multiselect chooses, limits and deselects existing option objects; Escape closes overlay",
+      "DatePicker opens, stays in viewport and selects a date",
+      "Checkbox, radio and existing SwitchInput respond to selection",
+      "Native file upload processes and displays a preview",
+      "Fixture page stays inside viewport",
+      "Existing site dialog opens, accepts input and closes with Escape",
+      "Existing purchase dialog adds nested item rows and displays its validation"
+    ],
+    "errors": [],
+    "live": false
+  },
+  {
+    "settings": {
+      "width": 1024,
+      "locale": "en"
+    },
+    "checks": [
+      "Multiselect chooses, limits and deselects existing option objects; Escape closes overlay",
+      "DatePicker opens, stays in viewport and selects a date",
+      "Checkbox, radio and existing SwitchInput respond to selection",
+      "Native file upload processes and displays a preview",
+      "Fixture page stays inside viewport",
+      "Existing site dialog opens, accepts input and closes with Escape",
+      "Existing purchase dialog adds nested item rows and displays its validation"
+    ],
+    "errors": [],
+    "live": false
+  },
+  {
+    "settings": {
+      "width": 390,
+      "locale": "ar",
+      "dark": true
+    },
+    "checks": [
+      "Multiselect chooses, limits and deselects existing option objects; Escape closes overlay",
+      "DatePicker opens, stays in viewport and selects a date",
+      "Checkbox, radio and existing SwitchInput respond to selection",
+      "Native file upload processes and displays a preview",
+      "Fixture page stays inside viewport",
+      "Existing site dialog opens, accepts input and closes with Escape",
+      "Existing purchase dialog adds nested item rows and displays its validation"
+    ],
+    "errors": [],
+    "live": false
+  }
+]

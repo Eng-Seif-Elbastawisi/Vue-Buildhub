@@ -1,0 +1,621 @@
+{
+  "mode": "Offline routes; external APIs blocked; create links clicked. Detail fixture mounts actual InvoiceShowHeader and AppButton; project class samples test CSS only.",
+  "results": [
+    {
+      "name": "quotes",
+      "width": 1440,
+      "locale": "en",
+      "dark": false,
+      "overflow": false,
+      "title": "Execution Quote",
+      "heading": {
+        "padding": "16px 0px 20px",
+        "border": "1px solid rgb(211, 220, 232)"
+      },
+      "action": {
+        "background": "rgb(16, 20, 26)",
+        "color": "rgb(255, 255, 255)",
+        "radius": "999px",
+        "height": "44px"
+      }
+    },
+    {
+      "name": "quotes",
+      "width": 1024,
+      "locale": "en",
+      "dark": false,
+      "overflow": false,
+      "title": "Execution Quote",
+      "heading": {
+        "padding": "16px 0px 20px",
+        "border": "1px solid rgb(211, 220, 232)"
+      },
+      "action": {
+        "background": "rgb(16, 20, 26)",
+        "color": "rgb(255, 255, 255)",
+        "radius": "999px",
+        "height": "44px"
+      }
+    },
+    {
+      "name": "quotes",
+      "width": 390,
+      "locale": "ar",
+      "dark": true,
+      "overflow": false,
+      "title": "مقايسة تنفيذ",
+      "heading": {
+        "padding": "12px 0px 16px",
+        "border": "1px solid rgb(60, 74, 95)"
+      },
+      "action": {
+        "background": "rgb(16, 20, 26)",
+        "color": "rgb(255, 255, 255)",
+        "radius": "999px",
+        "height": "44px"
+      }
+    },
+    {
+      "name": "invoices",
+      "width": 1440,
+      "locale": "en",
+      "dark": false,
+      "overflow": false,
+      "title": "Invoice",
+      "heading": {
+        "padding": "16px 0px 20px",
+        "border": "1px solid rgb(211, 220, 232)"
+      },
+      "action": {
+        "background": "rgb(16, 20, 26)",
+        "color": "rgb(255, 255, 255)",
+        "radius": "999px",
+        "height": "44px"
+      }
+    },
+    {
+      "name": "invoices",
+      "width": 1024,
+      "locale": "en",
+      "dark": false,
+      "overflow": false,
+      "title": "Invoice",
+      "heading": {
+        "padding": "16px 0px 20px",
+        "border": "1px solid rgb(211, 220, 232)"
+      },
+      "action": {
+        "background": "rgb(16, 20, 26)",
+        "color": "rgb(255, 255, 255)",
+        "radius": "999px",
+        "height": "44px"
+      }
+    },
+    {
+      "name": "invoices",
+      "width": 390,
+      "locale": "ar",
+      "dark": true,
+      "overflow": false,
+      "title": "الفاتورة",
+      "heading": {
+        "padding": "12px 0px 16px",
+        "border": "1px solid rgb(60, 74, 95)"
+      },
+      "action": {
+        "background": "rgb(16, 20, 26)",
+        "color": "rgb(255, 255, 255)",
+        "radius": "999px",
+        "height": "44px"
+      }
+    },
+    {
+      "name": "projects",
+      "width": 1440,
+      "locale": "en",
+      "dark": false,
+      "overflow": false,
+      "title": "Requests",
+      "heading": {
+        "padding": "16px 0px 20px",
+        "border": "1px solid rgb(211, 220, 232)"
+      },
+      "action": {
+        "background": "rgb(16, 20, 26)",
+        "color": "rgb(255, 255, 255)",
+        "radius": "999px",
+        "height": "44px"
+      }
+    },
+    {
+      "name": "projects",
+      "width": 1024,
+      "locale": "en",
+      "dark": false,
+      "overflow": false,
+      "title": "Requests",
+      "heading": {
+        "padding": "16px 0px 20px",
+        "border": "1px solid rgb(211, 220, 232)"
+      },
+      "action": {
+        "background": "rgb(16, 20, 26)",
+        "color": "rgb(255, 255, 255)",
+        "radius": "999px",
+        "height": "44px"
+      }
+    },
+    {
+      "name": "projects",
+      "width": 390,
+      "locale": "ar",
+      "dark": true,
+      "overflow": false,
+      "title": "طلبات",
+      "heading": {
+        "padding": "12px 0px 16px",
+        "border": "1px solid rgb(60, 74, 95)"
+      },
+      "action": {
+        "background": "rgb(16, 20, 26)",
+        "color": "rgb(255, 255, 255)",
+        "radius": "999px",
+        "height": "44px"
+      }
+    }
+  ],
+  "details": [
+    {
+      "width": 1440,
+      "downloadEvents": 1,
+      "overflow": false,
+      "buttons": [
+        {
+          "text": "",
+          "height": "40px",
+          "radius": "8px",
+          "background": "rgb(248, 250, 253)",
+          "color": "rgb(16, 20, 26)",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "height": "40px",
+          "radius": "8px",
+          "background": "rgb(248, 250, 253)",
+          "color": "rgb(16, 20, 26)",
+          "disabled": false
+        },
+        {
+          "text": "EN",
+          "height": "40px",
+          "radius": "8px",
+          "background": "rgb(248, 250, 253)",
+          "color": "rgb(16, 20, 26)",
+          "disabled": false
+        },
+        {
+          "text": "Menu",
+          "height": "40px",
+          "radius": "8px",
+          "background": "rgb(248, 250, 253)",
+          "color": "rgb(16, 20, 26)",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "height": "auto",
+          "radius": "999px",
+          "background": "rgb(248, 250, 253)",
+          "color": "rgb(93, 104, 121)",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "height": "auto",
+          "radius": "999px",
+          "background": "rgb(248, 250, 253)",
+          "color": "rgb(93, 104, 121)",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "height": "auto",
+          "radius": "999px",
+          "background": "rgb(248, 250, 253)",
+          "color": "rgb(93, 104, 121)",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "height": "auto",
+          "radius": "999px",
+          "background": "rgb(248, 250, 253)",
+          "color": "rgb(93, 104, 121)",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "height": "auto",
+          "radius": "999px",
+          "background": "rgb(16, 20, 26)",
+          "color": "rgb(255, 255, 255)",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "height": "auto",
+          "radius": "999px",
+          "background": "rgb(248, 250, 253)",
+          "color": "rgb(93, 104, 121)",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "height": "auto",
+          "radius": "999px",
+          "background": "rgb(248, 250, 253)",
+          "color": "rgb(93, 104, 121)",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "height": "auto",
+          "radius": "999px",
+          "background": "rgb(248, 250, 253)",
+          "color": "rgb(93, 104, 121)",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "height": "auto",
+          "radius": "999px",
+          "background": "rgb(248, 250, 253)",
+          "color": "rgb(162, 61, 69)",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "height": "42px",
+          "radius": "999px",
+          "background": "rgb(248, 250, 253)",
+          "color": "rgb(16, 20, 26)",
+          "disabled": false
+        },
+        {
+          "text": "EN",
+          "height": "42px",
+          "radius": "999px",
+          "background": "rgb(248, 250, 253)",
+          "color": "rgb(16, 20, 26)",
+          "disabled": false
+        },
+        {
+          "text": "UI reviewOrganization",
+          "height": "auto",
+          "radius": "999px",
+          "background": "rgb(248, 250, 253)",
+          "color": "rgb(16, 20, 26)",
+          "disabled": false
+        },
+        {
+          "text": "×",
+          "height": "24px",
+          "radius": "50%",
+          "background": "rgba(0, 0, 0, 0)",
+          "color": "rgb(93, 104, 121)",
+          "disabled": false
+        },
+        {
+          "text": "Download PDF",
+          "height": "44px",
+          "radius": "999px",
+          "background": "color(srgb 0.298039 0.364706 0.611765 / 0.12)",
+          "color": "rgb(76, 93, 156)",
+          "disabled": false
+        },
+        {
+          "text": "Export invoice",
+          "height": "44px",
+          "radius": "999px",
+          "background": "rgb(248, 250, 253)",
+          "color": "rgb(76, 93, 156)",
+          "disabled": false
+        },
+        {
+          "text": "Primary",
+          "height": "44px",
+          "radius": "999px",
+          "background": "rgb(16, 20, 26)",
+          "color": "rgb(255, 255, 255)",
+          "disabled": false
+        },
+        {
+          "text": "Secondary",
+          "height": "44px",
+          "radius": "999px",
+          "background": "rgb(248, 250, 253)",
+          "color": "rgb(16, 20, 26)",
+          "disabled": false
+        },
+        {
+          "text": "Ghost",
+          "height": "44px",
+          "radius": "999px",
+          "background": "rgba(0, 0, 0, 0)",
+          "color": "rgb(30, 41, 59)",
+          "disabled": false
+        },
+        {
+          "text": "Disabled",
+          "height": "44px",
+          "radius": "999px",
+          "background": "rgb(16, 20, 26)",
+          "color": "rgb(255, 255, 255)",
+          "disabled": true
+        },
+        {
+          "text": "Loading",
+          "height": "44px",
+          "radius": "999px",
+          "background": "rgb(16, 20, 26)",
+          "color": "rgb(255, 255, 255)",
+          "disabled": true
+        },
+        {
+          "text": "Project primary",
+          "height": "44px",
+          "radius": "999px",
+          "background": "rgb(16, 20, 26)",
+          "color": "rgb(255, 255, 255)",
+          "disabled": false
+        },
+        {
+          "text": "Project secondary",
+          "height": "44px",
+          "radius": "999px",
+          "background": "rgb(248, 250, 253)",
+          "color": "rgb(16, 20, 26)",
+          "disabled": false
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "downloadEvents": 1,
+      "overflow": false,
+      "buttons": [
+        {
+          "text": "",
+          "height": "40px",
+          "radius": "8px",
+          "background": "rgb(248, 250, 253)",
+          "color": "rgb(16, 20, 26)",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "height": "36px",
+          "radius": "50%",
+          "background": "rgb(248, 250, 253)",
+          "color": "rgb(16, 20, 26)",
+          "disabled": false
+        },
+        {
+          "text": "EN",
+          "height": "36px",
+          "radius": "50%",
+          "background": "rgb(248, 250, 253)",
+          "color": "rgb(16, 20, 26)",
+          "disabled": false
+        },
+        {
+          "text": "Menu",
+          "height": "36px",
+          "radius": "50%",
+          "background": "rgb(248, 250, 253)",
+          "color": "rgb(16, 20, 26)",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "height": "auto",
+          "radius": "999px",
+          "background": "rgb(248, 250, 253)",
+          "color": "rgb(93, 104, 121)",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "height": "auto",
+          "radius": "999px",
+          "background": "rgb(248, 250, 253)",
+          "color": "rgb(93, 104, 121)",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "height": "auto",
+          "radius": "999px",
+          "background": "rgb(248, 250, 253)",
+          "color": "rgb(93, 104, 121)",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "height": "auto",
+          "radius": "999px",
+          "background": "rgb(248, 250, 253)",
+          "color": "rgb(93, 104, 121)",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "height": "auto",
+          "radius": "999px",
+          "background": "rgb(16, 20, 26)",
+          "color": "rgb(255, 255, 255)",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "height": "auto",
+          "radius": "999px",
+          "background": "rgb(248, 250, 253)",
+          "color": "rgb(93, 104, 121)",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "height": "auto",
+          "radius": "999px",
+          "background": "rgb(248, 250, 253)",
+          "color": "rgb(93, 104, 121)",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "height": "auto",
+          "radius": "999px",
+          "background": "rgb(248, 250, 253)",
+          "color": "rgb(93, 104, 121)",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "height": "auto",
+          "radius": "999px",
+          "background": "rgb(248, 250, 253)",
+          "color": "rgb(162, 61, 69)",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "height": "42px",
+          "radius": "999px",
+          "background": "rgb(248, 250, 253)",
+          "color": "rgb(16, 20, 26)",
+          "disabled": false
+        },
+        {
+          "text": "EN",
+          "height": "42px",
+          "radius": "999px",
+          "background": "rgb(248, 250, 253)",
+          "color": "rgb(16, 20, 26)",
+          "disabled": false
+        },
+        {
+          "text": "UI reviewOrganization",
+          "height": "auto",
+          "radius": "999px",
+          "background": "rgb(248, 250, 253)",
+          "color": "rgb(16, 20, 26)",
+          "disabled": false
+        },
+        {
+          "text": "Download PDF",
+          "height": "44px",
+          "radius": "999px",
+          "background": "color(srgb 0.298039 0.364706 0.611765 / 0.12)",
+          "color": "rgb(76, 93, 156)",
+          "disabled": false
+        },
+        {
+          "text": "Export invoice",
+          "height": "44px",
+          "radius": "999px",
+          "background": "rgb(248, 250, 253)",
+          "color": "rgb(76, 93, 156)",
+          "disabled": false
+        },
+        {
+          "text": "Primary",
+          "height": "44px",
+          "radius": "999px",
+          "background": "rgb(16, 20, 26)",
+          "color": "rgb(255, 255, 255)",
+          "disabled": false
+        },
+        {
+          "text": "Secondary",
+          "height": "44px",
+          "radius": "999px",
+          "background": "rgb(248, 250, 253)",
+          "color": "rgb(16, 20, 26)",
+          "disabled": false
+        },
+        {
+          "text": "Ghost",
+          "height": "44px",
+          "radius": "999px",
+          "background": "rgba(0, 0, 0, 0)",
+          "color": "rgb(30, 41, 59)",
+          "disabled": false
+        },
+        {
+          "text": "Disabled",
+          "height": "44px",
+          "radius": "999px",
+          "background": "rgb(16, 20, 26)",
+          "color": "rgb(255, 255, 255)",
+          "disabled": true
+        },
+        {
+          "text": "Loading",
+          "height": "44px",
+          "radius": "999px",
+          "background": "rgb(16, 20, 26)",
+          "color": "rgb(255, 255, 255)",
+          "disabled": true
+        },
+        {
+          "text": "Project primary",
+          "height": "44px",
+          "radius": "999px",
+          "background": "rgb(16, 20, 26)",
+          "color": "rgb(255, 255, 255)",
+          "disabled": false
+        },
+        {
+          "text": "Project secondary",
+          "height": "44px",
+          "radius": "999px",
+          "background": "rgb(248, 250, 253)",
+          "color": "rgb(16, 20, 26)",
+          "disabled": false
+        }
+      ]
+    }
+  ],
+  "variantGuard": [
+    {
+      "name": "Outline",
+      "background": "rgba(0, 0, 0, 0)",
+      "borderStyle": "solid",
+      "borderColor": "rgb(16, 20, 26)",
+      "height": "44px"
+    },
+    {
+      "name": "Ghost",
+      "background": "rgba(0, 0, 0, 0)",
+      "borderStyle": "none",
+      "borderColor": "rgb(30, 41, 59)",
+      "height": "44px"
+    },
+    {
+      "name": "Compact",
+      "background": "rgb(16, 20, 26)",
+      "borderStyle": "solid",
+      "borderColor": "rgb(16, 20, 26)",
+      "height": "34px"
+    },
+    {
+      "name": "Add",
+      "background": "rgb(16, 20, 26)",
+      "borderStyle": "solid",
+      "borderColor": "rgb(16, 20, 26)",
+      "height": "44px"
+    }
+  ]
+}

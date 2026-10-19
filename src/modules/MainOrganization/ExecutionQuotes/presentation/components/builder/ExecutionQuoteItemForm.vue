@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import { computed, ref, watch } from 'vue';
   import { useI18n } from 'vue-i18n';
 
@@ -497,7 +498,7 @@
 </script>
 
 <template>
-  <section class="execution-quote__card workflow-section">
+  <StandardFormLayout as="section" class="execution-quote__card workflow-section">
     <div class="section-title">
       <h2>
         {{
@@ -628,7 +629,7 @@
           <input
             id="execution-quote-item-quantity"
             v-model.number="quantity"
-            class="item-control"
+            class="item-control workspace-control"
             type="number"
             min="1"
             step="1"
@@ -647,7 +648,7 @@
           <input
             id="execution-quote-item-unit-price"
             v-model.number="unitPrice"
-            class="item-control"
+            class="item-control workspace-control"
             type="number"
             min="0"
             step="0.01"
@@ -687,212 +688,212 @@
         </div>
       </div>
     </div>
-  </section>
+  </StandardFormLayout>
 </template>
 
 <style scoped lang="scss">
-  .execution-quote__card {
-    padding: 1.1rem;
-    background: var(--bg-card);
-    border: 1px solid var(--border-weak);
-    border-radius: var(--radius-md);
-    box-shadow: var(--shadow-sm);
-  }
+.execution-quote__card {
+  padding: 1.1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-weak);
+  border-radius: var(--radius-md);
+  box-shadow: none;
+}
 
-  .section-title {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.75rem;
-  }
+.section-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
 
-  .section-title h2 {
-    margin: 0;
-    font-size: 1.15rem;
-  }
+.section-title h2 {
+  margin: 0;
+  font-size: 1.15rem;
+}
 
-  .section-title__badge {
-    border-radius: var(--radius-full);
-    background: var(--PrimaryColor-light);
-    color: var(--PrimaryColor);
-    font-size: var(--xs-size);
-    font-weight: 700;
-    padding: 0.25rem 0.55rem;
-  }
+.section-title__badge {
+  border-radius: var(--radius-full);
+  background: var(--PrimaryColor-light);
+  color: var(--PrimaryColor);
+  font-size: var(--xs-size);
+  font-weight: 700;
+  padding: 0.25rem 0.55rem;
+}
 
-  .stage-empty {
-    border: 1px dashed var(--border-weak);
-    border-radius: var(--radius-sm);
-    color: var(--subtitle-color);
-    font-size: var(--xs-size);
-    margin-top: 0.85rem;
-    padding: 1.25rem;
-    text-align: center;
-  }
+.stage-empty {
+  border: 1px dashed var(--border-weak);
+  border-radius: var(--radius-sm);
+  color: var(--subtitle-color);
+  font-size: var(--xs-size);
+  margin-top: 0.85rem;
+  padding: 1.25rem;
+  text-align: center;
+}
 
-  .item-form {
-    display: flex;
-    flex-direction: column;
-    gap: 0.9rem;
-    margin-top: 0.85rem;
-  }
+.item-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  margin-top: 0.85rem;
+}
 
-  .item-form__selector {
-    min-width: 0;
-  }
+.item-form__selector {
+  min-width: 0;
+}
 
-  .item-guidance {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.75rem;
-    padding: 0.8rem 0.9rem;
-    border: 1px solid var(--PrimaryColor-alpha-20);
-    border-radius: var(--radius-md);
-    background: var(--info-light);
-    color: var(--title-card-color);
-  }
+.item-guidance {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.8rem 0.9rem;
+  border: 1px solid var(--PrimaryColor-alpha-20);
+  border-radius: var(--radius-md);
+  background: var(--info-light);
+  color: var(--title-card-color);
+}
 
-  .item-guidance--ready {
-    border-color: var(--PrimaryColor-alpha-30);
-    background: var(--light-green-bg);
-  }
+.item-guidance--ready {
+  border-color: var(--PrimaryColor-alpha-30);
+  background: var(--light-green-bg);
+}
 
-  .item-guidance__icon {
-    display: grid;
-    flex: 0 0 auto;
-    place-items: center;
-    width: 2rem;
-    height: 2rem;
-    border-radius: var(--radius-full);
-    background: var(--PrimaryColor-alpha-10);
-    color: var(--PrimaryColor);
-  }
+.item-guidance__icon {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--radius-full);
+  background: var(--PrimaryColor-alpha-10);
+  color: var(--PrimaryColor);
+}
 
-  .item-guidance strong,
-  .item-guidance p {
-    display: block;
-    margin: 0;
-  }
+.item-guidance strong,
+.item-guidance p {
+  display: block;
+  margin: 0;
+}
 
-  .item-guidance strong {
-    font-size: var(--sm-size);
-  }
+.item-guidance strong {
+  font-size: var(--sm-size);
+}
 
-  .item-guidance p {
-    margin-top: 0.2rem;
-    color: var(--subtitle-color);
-    font-size: var(--xs-size);
-    line-height: 1.55;
-  }
+.item-guidance p {
+  margin-top: 0.2rem;
+  color: var(--subtitle-color);
+  font-size: var(--xs-size);
+  line-height: 1.55;
+}
 
-  .item-form__fields {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr)) auto;
-    align-items: end;
-    gap: 0.75rem;
-  }
+.item-form__fields {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) auto;
+  align-items: end;
+  gap: 0.75rem;
+}
 
+.item-form__fields--product {
+  grid-template-columns: repeat(5, minmax(0, 1fr)) auto;
+}
+
+.item-display-field,
+.item-input-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.item-display-control {
+  display: flex;
+  align-items: center;
+  min-height: 2.65rem;
+  padding: 0.5rem 0.7rem;
+  border: 1px solid var(--input-border-color);
+  border-radius: var(--radius-sm);
+  background: var(--bg-card);
+}
+
+.item-field-label {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: var(--subtitle-color);
+  font-size: var(--xs-size);
+  font-weight: 600;
+}
+
+.item-display-control strong {
+  overflow: hidden;
+  color: var(--title-card-color);
+  font-size: var(--sm-size);
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.item-control {
+  width: 100%;
+  min-height: 2.65rem;
+  border: 1px solid var(--input-border-color);
+  border-radius: var(--radius-sm);
+  background: var(--bg-card);
+  color: var(--Title-input-Color);
+  padding: 0.55rem 0.7rem;
+  outline: none;
+}
+
+.item-control:focus {
+  border-color: var(--PrimaryColor);
+}
+
+.item-control:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.add-item-button {
+  min-height: 2.65rem;
+  white-space: nowrap;
+}
+
+.item-form__actions {
+  display: flex;
+  align-items: center;
+  align-self: end;
+  gap: 0.5rem;
+}
+
+@media (max-width: 1200px) {
+  .item-form__fields,
   .item-form__fields--product {
-    grid-template-columns: repeat(5, minmax(0, 1fr)) auto;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .item-form__fields,
+  .item-form__fields--product {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 520px) {
+  .item-form__fields,
+  .item-form__fields--product {
+    grid-template-columns: 1fr;
   }
 
-  .item-display-field,
-  .item-input-field {
-    display: flex;
-    flex-direction: column;
-    gap: 0.35rem;
-    min-width: 0;
-  }
-
-  .item-display-control {
-    display: flex;
-    align-items: center;
-    min-height: 2.65rem;
-    padding: 0.5rem 0.7rem;
-    border: 1px solid var(--input-border-color);
-    border-radius: var(--radius-sm);
-    background: var(--bg-card);
-  }
-
-  .item-field-label {
-    display: flex;
-    align-items: center;
-    gap: 0.3rem;
-    color: var(--subtitle-color);
-    font-size: var(--xs-size);
-    font-weight: 600;
-  }
-
-  .item-display-control strong {
-    overflow: hidden;
-    color: var(--title-card-color);
-    font-size: var(--sm-size);
-    font-weight: 700;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .item-control {
+  .item-form__actions,
+  .add-item-button,
+  .cancel-edit-button {
     width: 100%;
-    min-height: 2.65rem;
-    border: 1px solid var(--input-border-color);
-    border-radius: var(--radius-sm);
-    background: var(--bg-card);
-    color: var(--Title-input-Color);
-    padding: 0.55rem 0.7rem;
-    outline: none;
-  }
-
-  .item-control:focus {
-    border-color: var(--PrimaryColor);
-  }
-
-  .item-control:disabled {
-    cursor: not-allowed;
-    opacity: 0.65;
-  }
-
-  .add-item-button {
-    min-height: 2.65rem;
-    white-space: nowrap;
   }
 
   .item-form__actions {
-    display: flex;
-    align-items: center;
-    align-self: end;
-    gap: 0.5rem;
+    align-items: stretch;
+    flex-direction: column-reverse;
   }
-
-  @media (max-width: 1200px) {
-    .item-form__fields,
-    .item-form__fields--product {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-  }
-
-  @media (max-width: 760px) {
-    .item-form__fields,
-    .item-form__fields--product {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-  }
-
-  @media (max-width: 520px) {
-    .item-form__fields,
-    .item-form__fields--product {
-      grid-template-columns: 1fr;
-    }
-
-    .item-form__actions,
-    .add-item-button,
-    .cancel-edit-button {
-      width: 100%;
-    }
-
-    .item-form__actions {
-      align-items: stretch;
-      flex-direction: column-reverse;
-    }
-  }
+}
 </style>

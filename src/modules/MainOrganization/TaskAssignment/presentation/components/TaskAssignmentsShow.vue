@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
 import { computed, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
@@ -294,7 +295,7 @@ watch(
 </script>
 
 <template>
-  <section class="task-assignment-show-page">
+  <StandardFormLayout as="section" mode="show" class="task-assignment-show-page">
     <TaskAssignmentsShowHeader
       :model="itemData"
       :item-id="projectDepartmentItemId"
@@ -302,30 +303,15 @@ watch(
       :status-meta="insideStatusMeta"
     />
 
-    <div
-      v-if="itemLoading"
-      class="
-        task-assignment-card
-        task-assignment-card--loading
-      "
-    >
+    <div v-if="itemLoading" class="task-assignment-card task-assignment-card--loading">
       <p>{{ $t('loading_data') }}</p>
     </div>
 
-    <div
-      v-else-if="itemError"
-      class="
-        task-assignment-card
-        task-assignment-card--error
-      "
-    >
+    <div v-else-if="itemError" class="task-assignment-card task-assignment-card--error">
       <p>{{ itemError }}</p>
     </div>
 
-    <article
-      v-else
-      class="task-assignment-card"
-    >
+    <article v-else class="task-assignment-card">
       <TaskAssignmentsShowDetails :model="itemData" />
 
       <TaskAssignmentsShowHistory :model="itemData" />
@@ -339,7 +325,7 @@ watch(
         @update:attachments="updateAttachments"
       />
     </article>
-  </section>
+  </StandardFormLayout>
 </template>
 
 <!-- <style lang="scss">
@@ -366,7 +352,7 @@ watch(
     gap: 0.45rem;
 
     &__label {
-      color: #6b7280;
+      color: var(--bh-muted);
       font-size: 0.75rem;
       font-weight: 700;
       letter-spacing: 0.06em;
@@ -424,23 +410,23 @@ watch(
     }
 
     &--assigned {
-      color: #1d4ed8;
-      border-color: #bfdbfe;
+      color: var(--bh-blue-ink);
+      border-color: var(--bh-blue-soft);
       background:
         linear-gradient(
           135deg,
-          #eff6ff,
+          var(--bh-blue-soft),
           #dbeafe
         );
     }
 
     &--working {
-      color: #047857;
-      border-color: #a7f3d0;
+      color: var(--bh-green-ink);
+      border-color: var(--bh-green-soft);
       background:
         linear-gradient(
           135deg,
-          #ecfdf5,
+          var(--bh-green-soft),
           #d1fae5
         );
 
@@ -450,13 +436,13 @@ watch(
     }
 
     &--held {
-      color: #b45309;
-      border-color: #fde68a;
+      color: var(--bh-amber-ink);
+      border-color: var(--bh-amber-soft);
       background:
         linear-gradient(
           135deg,
-          #fffbeb,
-          #fef3c7
+          var(--bh-amber-soft),
+          var(--bh-amber-soft)
         );
     }
 
@@ -472,13 +458,13 @@ watch(
     }
 
     &--default {
-      color: #475569;
-      border-color: #e2e8f0;
+      color: var(--bh-muted);
+      border-color: var(--bh-line);
       background:
         linear-gradient(
           135deg,
-          #f8fafc,
-          #f1f5f9
+          var(--bh-surface),
+          var(--bh-canvas)
         );
     }
   }
@@ -486,11 +472,11 @@ watch(
   .task-details-section {
     padding: 1.5rem;
     border-bottom: 1px solid
-      var(--border-color, #e5e7eb);
+      var(--border-color, var(--bh-line));
 
     h3 {
       margin: 0 0 1rem;
-      color: #111827;
+      color: var(--bh-text);
       font-size: 1.1rem;
       font-weight: 700;
     }
@@ -511,9 +497,9 @@ watch(
       gap: 0.5rem;
       min-height: 5rem;
       padding: 1rem;
-      border: 1px solid #eef0f4;
+      border: 1px solid var(--bh-canvas);
       border-radius: 0.875rem;
-      background: #fff;
+      background: var(--bh-surface);
       transition:
         border-color 0.2s ease,
         box-shadow 0.2s ease,
@@ -527,13 +513,13 @@ watch(
       }
 
       .detail-label {
-        color: #6b7280;
+        color: var(--bh-muted);
         font-size: 0.8rem;
         font-weight: 600;
       }
 
       .detail-value {
-        color: #1f2937;
+        color: var(--bh-text);
         font-size: 0.95rem;
         font-weight: 600;
         line-height: 1.6;
@@ -554,21 +540,21 @@ watch(
     font-weight: 700;
 
     &.task-status-chip--assigned {
-      color: #1d4ed8;
-      border-color: #bfdbfe;
-      background: #eff6ff;
+      color: var(--bh-blue-ink);
+      border-color: var(--bh-blue-soft);
+      background: var(--bh-blue-soft);
     }
 
     &.task-status-chip--working {
-      color: #047857;
-      border-color: #a7f3d0;
-      background: #ecfdf5;
+      color: var(--bh-green-ink);
+      border-color: var(--bh-green-soft);
+      background: var(--bh-green-soft);
     }
 
     &.task-status-chip--held {
-      color: #b45309;
-      border-color: #fde68a;
-      background: #fffbeb;
+      color: var(--bh-amber-ink);
+      border-color: var(--bh-amber-soft);
+      background: var(--bh-amber-soft);
     }
 
     &.task-status-chip--review {
@@ -578,27 +564,27 @@ watch(
     }
 
     &.task-status-chip--default {
-      color: #475569;
-      border-color: #e2e8f0;
-      background: #f8fafc;
+      color: var(--bh-muted);
+      border-color: var(--bh-line);
+      background: var(--bh-surface);
     }
 
     &--success {
-      color: #047857;
-      border-color: #a7f3d0;
-      background: #ecfdf5;
+      color: var(--bh-green-ink);
+      border-color: var(--bh-green-soft);
+      background: var(--bh-green-soft);
     }
 
     &--muted {
-      color: #64748b;
-      border-color: #e2e8f0;
-      background: #f8fafc;
+      color: var(--bh-muted);
+      border-color: var(--bh-line);
+      background: var(--bh-surface);
     }
 
     &--history {
-      color: #4338ca;
+      color: var(--bh-blue-ink);
       border-color: #c7d2fe;
-      background: #eef2ff;
+      background: var(--bh-blue-soft);
     }
   }
 
@@ -616,7 +602,7 @@ watch(
 
   .task-history-empty {
     padding: 2rem;
-    color: #64748b;
+    color: var(--bh-muted);
     text-align: center;
   }
 
@@ -672,8 +658,8 @@ watch(
       background:
         linear-gradient(
           135deg,
-          #2563eb,
-          #1d4ed8
+          var(--bh-blue-ink),
+          var(--bh-blue-ink)
         );
     }
 
@@ -682,7 +668,7 @@ watch(
         linear-gradient(
           135deg,
           #f59e0b,
-          #d97706
+          var(--bh-amber-ink)
         );
     }
 
@@ -690,8 +676,8 @@ watch(
       background:
         linear-gradient(
           135deg,
-          #16a34a,
-          #047857
+          var(--bh-green-ink),
+          var(--bh-green-ink)
         );
     }
   }
@@ -711,9 +697,9 @@ watch(
     &__item {
       overflow: hidden;
       padding: 0.5rem;
-      border: 1px solid #e5e7eb;
+      border: 1px solid var(--bh-line);
       border-radius: 0.875rem;
-      background: #fff;
+      background: var(--bh-surface);
 
       img {
         display: block;
@@ -731,14 +717,14 @@ watch(
   overflow: hidden;
   border: none;
   border-radius: 1rem;
-  background: #fff;
-  color: #111827;
+  background: var(--bh-surface);
+  color: var(--bh-text);
   box-shadow: 0 24px 70px
     rgb(15 23 42 / 22%);
 
   .p-dialog-header {
     padding: 1.25rem 1.5rem;
-    border-bottom: 1px solid #eef0f4;
+    border-bottom: 1px solid var(--bh-canvas);
   }
 
   .p-dialog-content {
@@ -747,7 +733,7 @@ watch(
 
   .p-dialog-footer {
     padding: 1rem 1.5rem 1.5rem;
-    border-top: 1px solid #eef0f4;
+    border-top: 1px solid var(--bh-canvas);
   }
 }
 
@@ -764,14 +750,14 @@ watch(
     height: 3.5rem;
     margin: 0 auto;
     border-radius: 50%;
-    color: #2563eb;
-    background: #eff6ff;
+    color: var(--bh-blue-ink);
+    background: var(--bh-blue-soft);
     font-size: 1.35rem;
   }
 
   .confirm-message {
     margin: 0;
-    color: #374151;
+    color: var(--bh-text);
     font-size: 1rem;
     line-height: 1.7;
     text-align: center;
@@ -785,7 +771,7 @@ watch(
     margin-top: 0.5rem;
 
     label {
-      color: #374151;
+      color: var(--bh-text);
       font-size: 0.875rem;
       font-weight: 700;
     }
@@ -794,11 +780,11 @@ watch(
       width: 100%;
       min-height: 6.5rem;
       padding: 0.75rem 1rem;
-      border: 1px solid #d1d5db;
+      border: 1px solid var(--bh-field-line);
       border-radius: 0.75rem;
       outline: none;
-      background: #fff;
-      color: #111827;
+      background: var(--bh-surface);
+      color: var(--bh-text);
       font-family: inherit;
       resize: vertical;
       transition:
@@ -806,7 +792,7 @@ watch(
         box-shadow 0.2s ease;
 
       &:focus {
-        border-color: #2563eb;
+        border-color: var(--bh-blue-ink);
         box-shadow: 0 0 0 3px
           rgb(37 99 235 / 12%);
       }
@@ -846,19 +832,19 @@ watch(
   }
 
   .btn-secondary {
-    color: #374151;
-    border-color: #d1d5db;
-    background: #f9fafb;
+    color: var(--bh-text);
+    border-color: var(--bh-field-line);
+    background: var(--bh-surface);
   }
 
   .btn-primary {
     color: #fff;
-    border-color: #2563eb;
+    border-color: var(--bh-blue-ink);
     background:
       linear-gradient(
         135deg,
-        #2563eb,
-        #1d4ed8
+        var(--bh-blue-ink),
+        var(--bh-blue-ink)
       );
   }
 }

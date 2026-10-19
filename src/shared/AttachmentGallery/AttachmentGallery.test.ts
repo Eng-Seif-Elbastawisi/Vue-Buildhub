@@ -30,6 +30,12 @@ describe('AttachmentGallery', () => {
     await nextTick();
 
     expect(wrapper.find('img[alt="photo.jpg"]').exists()).toBe(true);
+    const tools = wrapper.get('.attachment-gallery__tools');
+    for (const label of ['Copy link', 'Download attachment', 'Close']) {
+      const control = tools.get(`[aria-label="${label}"]`);
+      expect(control.find('svg[aria-hidden="true"]').exists()).toBe(true);
+      expect(control.find('.pi').exists()).toBe(false);
+    }
     await wrapper.get('button[aria-label="Next"]').trigger('click');
     await nextTick();
     expect(wrapper.text()).toContain('2 / 3');

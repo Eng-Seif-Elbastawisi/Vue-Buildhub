@@ -20,7 +20,10 @@
 <template>
   <SchedulePage mode="edit" @ready="load">
     <template #default="{ quoteId, indexRoute, formKey, saved, reload }">
-      <DataStatusBuilder :controller="state" :on-retry="reload">
+      <p v-if="controller.timelineApproved.value" role="alert">
+        {{ $t('schedule.approved_read_only') }}
+      </p>
+      <DataStatusBuilder v-else :controller="state" :on-retry="reload">
         <template #success>
           <ScheduleGroupForm
             v-if="group?.selectionsAvailable"

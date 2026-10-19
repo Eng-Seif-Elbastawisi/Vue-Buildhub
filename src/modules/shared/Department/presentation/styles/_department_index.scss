@@ -28,14 +28,14 @@
       border-color: var(--PrimaryColor);
       color: var(--PrimaryColor);
       background: var(--PrimaryColor-light);
-      box-shadow: 0 3px 10px rgba(99, 102, 241, 0.2);
+      box-shadow: none;
     }
 
     &.delete:hover {
       border-color: var(--Red);
       color: var(--Red);
       background: var(--danger-light);
-      box-shadow: 0 3px 10px rgba(220, 38, 38, 0.15);
+      box-shadow: none;
     }
   }
 }

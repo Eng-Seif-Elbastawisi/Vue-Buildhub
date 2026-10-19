@@ -112,7 +112,7 @@
           <input
             v-model="word"
             :placeholder="$t('search_supplies')"
-            class="search-input"
+            class="search-input workspace-control"
             type="text"
             @input="Search"
           />
@@ -237,42 +237,42 @@
 </template>
 
 <style scoped lang="scss">
-  .toolbar {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-  }
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
 
-  .supply-page,
-  .supply-header,
-  .row-actions {
-    display: flex;
-  }
+.supply-page,
+.supply-header,
+.row-actions {
+  display: flex;
+}
 
-  .supply-page {
-    flex-direction: column;
-    gap: 1.5rem;
-  }
+.supply-page {
+  flex-direction: column;
+  gap: 1.5rem;
+}
 
-  .supply-header {
-    align-items: start;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: 1rem;
-  }
+.supply-header {
+  align-items: start;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1rem;
+}
 
-  .supply-header p,
-  .empty-state p {
-    color: var(--gray-5);
-  }
+.supply-header p,
+.empty-state p {
+  color: var(--gray-5);
+}
 
-  .row-actions {
-    align-items: center;
-    gap: 0.75rem;
-  }
+.row-actions {
+  align-items: center;
+  gap: 0.75rem;
+}
 
-  .empty-state {
-    padding: 3rem 1rem;
-    text-align: center;
-  }
+.empty-state {
+  padding: 3rem 1rem;
+  text-align: center;
+}
 </style>

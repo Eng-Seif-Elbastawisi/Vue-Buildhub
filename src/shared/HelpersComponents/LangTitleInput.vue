@@ -375,7 +375,7 @@
     <input
       v-else
       v-model="fieldValue"
-      class="lang-input"
+      class="lang-input workspace-control"
       :type="type"
       v-bind="inputAttrs"
       :required="props.required"

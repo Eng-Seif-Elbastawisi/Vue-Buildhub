@@ -91,80 +91,80 @@
 </template>
 
 <style scoped lang="scss">
-  .system-identity-settings {
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-    padding: 1.5rem;
-  }
+.system-identity-settings {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 1.5rem;
+}
 
-  .settings-header {
-    border: 1px solid var(--border-weak);
-    border-radius: var(--radius-sm);
-    padding: 1.25rem;
-    background: var(--BgWhite);
-    box-shadow: var(--shadow-sm);
+.settings-header {
+  border: 1px solid var(--border-weak);
+  border-radius: var(--radius-sm);
+  padding: 1.25rem;
+  background: var(--BgWhite);
+  box-shadow: none;
 
-    h1,
-    p {
-      margin: 0;
-    }
-
-    h1 {
-      margin: 0.25rem 0;
-      color: var(--gray-900);
-      font-size: 1.75rem;
-      font-weight: 800;
-    }
-
-    p:not(.eyebrow) {
-      color: var(--gray-500);
-    }
-  }
-
-  .eyebrow {
-    color: var(--PrimaryColor);
-    font-size: 0.78rem;
-    font-weight: 800;
-    text-transform: uppercase;
-  }
-
-  .identity-status,
-  .identity-error {
+  h1,
+  p {
     margin: 0;
-    border-radius: var(--radius-sm);
-    padding: 0.85rem 1rem;
-    font-weight: 700;
   }
 
-  .identity-status {
-    border: 1px solid var(--PrimaryColor-alpha-20);
-    background: var(--PrimaryColor-light);
-    color: var(--PrimaryColor);
-  }
-
-  .identity-error {
-    border: 1px solid var(--danger);
-    background: var(--danger-light);
-    color: var(--danger-dark);
-  }
-
-  .settings-actions {
-    &.disabled {
-      cursor: not-allowed;
-      pointer-events: none;
-      opacity: 0.7;
-    }
-  }
-
-  .identity-save-button {
-    width: 100%;
-    min-height: 46px;
-    border: 1px solid var(--button-primary-bg, var(--PrimaryColor));
-    border-radius: var(--radius-sm);
-    background: var(--button-primary-bg, var(--PrimaryColor));
-    color: var(--button-primary-color, var(--BgWhite));
+  h1 {
+    margin: 0.25rem 0;
+    color: var(--gray-900);
+    font-size: 1.75rem;
     font-weight: 800;
-    cursor: pointer;
   }
+
+  p:not(.eyebrow) {
+    color: var(--gray-500);
+  }
+}
+
+.eyebrow {
+  color: var(--PrimaryColor);
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.identity-status,
+.identity-error {
+  margin: 0;
+  border-radius: var(--radius-sm);
+  padding: 0.85rem 1rem;
+  font-weight: 700;
+}
+
+.identity-status {
+  border: 1px solid var(--PrimaryColor-alpha-20);
+  background: var(--PrimaryColor-light);
+  color: var(--PrimaryColor);
+}
+
+.identity-error {
+  border: 1px solid var(--danger);
+  background: var(--danger-light);
+  color: var(--danger-dark);
+}
+
+.settings-actions {
+  &.disabled {
+    cursor: not-allowed;
+    pointer-events: none;
+    opacity: 0.7;
+  }
+}
+
+.identity-save-button {
+  width: 100%;
+  min-height: 46px;
+  border: 1px solid var(--button-primary-bg, var(--PrimaryColor));
+  border-radius: var(--radius-sm);
+  background: var(--button-primary-bg, var(--PrimaryColor));
+  color: var(--button-primary-color, var(--BgWhite));
+  font-weight: 800;
+  cursor: pointer;
+}
 </style>

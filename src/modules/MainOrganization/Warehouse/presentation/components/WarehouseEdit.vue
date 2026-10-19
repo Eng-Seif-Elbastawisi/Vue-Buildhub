@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import { onMounted, ref } from 'vue';
   import { useRoute } from 'vue-router';
   import type AddWarehouseParams from '../../core/params/add.warehouse.params.ts';
@@ -33,44 +34,48 @@
 </script>
 
 <template>
-  <div class="Warehouse-crud-page">
+  <StandardFormLayout mode="edit" class="Warehouse-crud-page">
     <WarehouseForm
       :warehouse="controller.itemData.value!"
       :loading="loading"
       @update-data="updateData"
     />
-    <button
-      :class="{ 'btn--loading': loading }"
-      class="btn btn-primary"
-      type="button"
-      :disabled="loading"
-      @click="saveWarehouse"
-    >
-      {{ $t('Warehouse.update') }}
-    </button>
+
     <div v-if="controller.errorMessage.value" class="error">
       {{ controller.errorMessage.value }}
     </div>
-  </div>
+
+    <template #actions>
+      <button
+        :class="{ 'btn--loading': loading }"
+        class="btn btn-primary"
+        type="button"
+        :disabled="loading"
+        @click="saveWarehouse"
+      >
+        {{ $t('Warehouse.update') }}
+      </button>
+    </template>
+  </StandardFormLayout>
 </template>
 
 <style scoped>
-  .Warehouse-crud-page {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
+.Warehouse-crud-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
 
-  .error {
-    margin-top: 20px;
-    padding: 10px;
-    background-color: var(--danger-light);
-    color: var(--danger-dark);
-    border: 1px solid #f5c6cb;
-    border-radius: 4px;
-  }
+.error {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: var(--danger-light);
+  color: var(--danger-dark);
+  border: 1px solid var(--bh-coral-soft);
+  border-radius: 4px;
+}
 
-  .btn-primary {
-    width: 100%;
-  }
+.btn-primary {
+  width: 100%;
+}
 </style>

@@ -8,14 +8,23 @@ const fields = {
   description: 'Irrelevant',
   employeeId: 7,
 };
-it('meeting sends date and omits employee and description', () => {
-  const meeting = new StoreActivityParams(fields);
+it('meeting sends description, audience, result and primitive attendee IDs', () => {
+  const meeting = new StoreActivityParams({
+    ...fields,
+    meetingAudienceType: 2,
+    result: 'Agreed',
+    attendees: [7, 8],
+  });
   expect(meeting.validate().isValid).toBe(true);
   expect(meeting.toMap()).toEqual({
     project_timeline_stage_id: 18,
     type: 1,
     title: 'Weekly Meeting',
     date: '2026-10-15',
+    description: 'Irrelevant',
+    meeting_audience_type: 2,
+    result: 'Agreed',
+    attendees: [7, 8],
   });
 });
 it.each([2, 3, 4])('type %i omits date and preserves null optional fields', (type) => {

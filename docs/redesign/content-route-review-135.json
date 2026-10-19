@@ -1,0 +1,32 @@
+[
+  {
+    "index": 135,
+    "path": "/admin/package/subscriptions",
+    "component": "src/views/MainAdmin/Package/PackageSubscriptions.vue",
+    "screenshot": "content-route-screenshots/135.png",
+    "actual": "/admin/package/subscriptions",
+    "overflow": false,
+    "fields": 0,
+    "layouts": 0,
+    "table": false,
+    "emptyOrError": false,
+    "text": "Package subscriptions\n\nReview organization package subscriptions and update their approval status\n\nTry Again\nNo package subscriptions yet",
+    "errors": [],
+    "live": false
+  },
+  {
+    "index": 136,
+    "path": "/admin/package/edit/:id",
+    "component": "src/views/MainAdmin/Package/EditPackage.vue",
+    "screenshot": "content-route-screenshots/136.png",
+    "actual": "/admin/package/edit/1",
+    "overflow": false,
+    "fields": 12,
+    "layouts": 2,
+    "table": false,
+    "emptyOrError": false,
+    "text": "Package Details\n\nEnter the package duration, access, limits, and price\n\nTitle\ni\nAR\nEN\nAR\nDuration\ni\nDuration type\n*\nSelect duration type\nPrice\ni\nDiscount type\n*\nSelect discount type\nDiscount value\ni\nProject limit\nEmployee limit\nMobile access\nPortal a",
+    "errors": [],
+    "live": false
+  }
+]

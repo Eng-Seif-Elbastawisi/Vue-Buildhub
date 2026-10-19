@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { ref, computed, watch } from 'vue';
+  import { ref, computed, useId, watch } from 'vue';
   import { useI18n } from 'vue-i18n';
 
   import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
@@ -32,6 +32,7 @@
   });
 
   const { t } = useI18n();
+  const inputId = useId();
 
   const emit = defineEmits<{
     (e: 'update:modelValue', value: Record<string, string>): void;
@@ -87,7 +88,7 @@
   <div class="multi-lang-input">
     <div class="header-input">
       <span v-if="label" class="field-help-label-row">
-        <label class="field-label">
+        <label class="field-label" :for="inputId">
           <span v-if="required" class="required-indicator" aria-hidden="true">*</span>
           {{ label }}
         </label>
@@ -95,6 +96,7 @@
         <FieldHelpIcon
           :label="label"
           :field-name="fieldKey"
+          :field-id="inputId"
           :help-title="helpTitle"
           :help-text="helpText"
           :help-examples="helpExamples"
@@ -120,7 +122,9 @@
     <div class="input-wrap" :class="activeLang === 'ar' ? 'input-wrap--rtl' : 'input-wrap--ltr'">
       <textarea
         v-if="type === 'description'"
+        :id="inputId"
         v-model="currentValue"
+        :aria-required="required"
         :placeholder="inputPlaceholder"
         class="field-input field-input--textarea"
         :dir="activeLang === 'ar' ? 'rtl' : 'ltr'"
@@ -128,7 +132,9 @@
 
       <input
         v-else
+        :id="inputId"
         v-model="currentValue"
+        :aria-required="required"
         type="text"
         :placeholder="inputPlaceholder"
         class="field-input field-input--text"
@@ -142,15 +148,15 @@
 <style scoped>
   .field-input {
     width: 100%;
-    border: 1px solid var(--border-weak);
-    border-radius: 28px;
-    background: var(--white);
+    border: 1px solid var(--bh-field-line);
+    border-radius: var(--bh-radius-control);
+    background: var(--bh-surface-raised);
     outline: none;
     transition: all 0.25s ease;
     font-family: 'Medium';
     font-weight: 400;
     font-size: var(--sm-size);
-    color: var(--bread-crumb-color-span);
+    color: var(--bh-text);
   }
 
   .required-indicator {
@@ -158,15 +164,15 @@
   }
 
   .field-input--text {
-    height: 48px;
+    min-height: var(--bh-control-height);
     padding: 0 16px;
   }
 
   .field-input--textarea {
     height: 100px;
     padding: 12px 16px;
-    resize: none;
-    border-radius: 28px;
+    resize: vertical;
+    border-radius: var(--bh-radius-control);
   }
 
   .input-wrap--ltr > .field-input {

@@ -1,0 +1,15 @@
+{
+  "missing": [
+    "src/shared/DataStatues/TableLoader.vue",
+    "src/modules/shared/Stages/presentation/components/subStage/SubStageAdd.vue",
+    "src/modules/shared/Stages/presentation/components/subStage/SubStageForm.vue",
+    "src/modules/shared/Stages/presentation/components/subStage/SubStageEdit.vue",
+    "src/modules/shared/Materials/presentation/components/cards/MaterialStatsCard.vue",
+    "src/modules/MainOrganization/QuoteTypes/presentation/components/QuoteTypeAdd.vue",
+    "src/modules/MainOrganization/QuoteTypes/presentation/components/QuoteTypeEdit.vue",
+    "src/modules/MainOrganization/Products/presentation/components/ProductsAdd.vue",
+    "src/modules/MainOrganization/ItemTypes/presentation/components/ItemTypesAdd.vue",
+    "src/modules/MainOrganization/ExecutionQuotes/presentation/components/builder/ExecutionQuoteTotals.vue"
+  ],
+  "scope": "Changed files in the content migration; no files staged"
+}

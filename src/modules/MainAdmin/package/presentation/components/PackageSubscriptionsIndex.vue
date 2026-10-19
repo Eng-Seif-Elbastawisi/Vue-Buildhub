@@ -424,6 +424,7 @@
               <textarea
                 id="subscription-status-notes"
                 v-model="notes"
+                class="workspace-control"
                 rows="5"
                 :disabled="statusUpdating"
                 :placeholder="$t('package.notes_placeholder')"
@@ -482,340 +483,340 @@
 </template>
 
 <style scoped lang="scss">
-  .package-subscriptions-page,
-  .package-subscriptions-header {
-    display: flex;
+.package-subscriptions-page,
+.package-subscriptions-header {
+  display: flex;
+}
+
+.package-subscriptions-page {
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.package-subscriptions-header {
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+
+  h4,
+  p {
+    margin: 0;
   }
 
-  .package-subscriptions-page {
-    flex-direction: column;
-    gap: 1.5rem;
+  p {
+    margin-top: 0.25rem;
+    color: var(--gray-5);
+  }
+}
+
+.decision-actions {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.decision-btn {
+  position: relative;
+  z-index: 6;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 50%;
+  cursor: pointer;
+  pointer-events: auto !important;
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
   }
 
-  .package-subscriptions-header {
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-
-    h4,
-    p {
-      margin: 0;
-    }
-
-    p {
-      margin-top: 0.25rem;
-      color: var(--gray-5);
-    }
+  &--accept {
+    border-color: var(--success, var(--bh-green-ink));
+    color: var(--success-dark, var(--bh-green-ink));
+    background: var(--success-light, var(--bh-green-soft));
   }
 
-  .decision-actions {
-    position: relative;
-    z-index: 5;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
+  &--reject {
+    border-color: var(--danger, var(--bh-coral-ink));
+    color: var(--danger-dark, #991b1b);
+    background: var(--danger-light, var(--bh-coral-soft));
   }
 
-  .decision-btn {
-    position: relative;
-    z-index: 6;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 2.4rem;
-    height: 2.4rem;
-    padding: 0;
-    border: 1px solid transparent;
-    border-radius: 50%;
-    cursor: pointer;
-    pointer-events: auto !important;
-    transition:
-      transform 0.2s ease,
-      opacity 0.2s ease;
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+}
 
-    &:hover:not(:disabled) {
-      transform: translateY(-2px);
-    }
+.decision-completed {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  min-height: 2.4rem;
+  padding: 0.4rem 0.75rem;
+  border: 1px solid var(--success, var(--bh-green-ink));
+  border-radius: 50px;
+  color: var(--success-dark, var(--bh-green-ink));
+  background: var(--success-light, var(--bh-green-soft));
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
 
-    &--accept {
-      border-color: var(--success, #16a34a);
-      color: var(--success-dark, #166534);
-      background: var(--success-light, #dcfce7);
-    }
+.subscription-decision-modal {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 2147483647 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  padding: 1rem;
+  pointer-events: auto !important;
+}
 
-    &--reject {
-      border-color: var(--danger, #dc2626);
-      color: var(--danger-dark, #991b1b);
-      background: var(--danger-light, #fee2e2);
-    }
+.subscription-decision-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgb(15 23 42 / 60%);
+  backdrop-filter: blur(3px);
+}
 
-    &:disabled {
-      cursor: not-allowed;
-      opacity: 0.5;
-    }
+.subscription-decision-modal__panel {
+  position: relative;
+  z-index: 1;
+  width: min(520px, calc(100vw - 2rem));
+  max-height: calc(100vh - 2rem);
+  overflow: hidden;
+  border: 1px solid var(--border-weak);
+  border-radius: var(--bh-radius-card);
+  background: var(--BgWhite, #fff);
+  box-shadow: var(--bh-shadow-popover);
+}
+
+.subscription-decision-modal__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.25rem;
+  border-bottom: 1px solid var(--border-weak);
+}
+
+.modal-title-group {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+
+  h2 {
+    margin: 0;
+    color: var(--gray-900);
+    font-family: 'Bold';
+    font-size: 1.05rem;
   }
 
-  .decision-completed {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.35rem;
-    min-height: 2.4rem;
-    padding: 0.4rem 0.75rem;
-    border: 1px solid var(--success, #16a34a);
-    border-radius: 50px;
-    color: var(--success-dark, #166534);
-    background: var(--success-light, #dcfce7);
-    font-size: 0.8rem;
-    font-weight: 600;
-    white-space: nowrap;
-  }
-
-  .subscription-decision-modal {
-    position: fixed !important;
-    inset: 0 !important;
-    z-index: 2147483647 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    width: 100vw !important;
-    height: 100vh !important;
-    padding: 1rem;
-    pointer-events: auto !important;
-  }
-
-  .subscription-decision-modal__backdrop {
-    position: absolute;
-    inset: 0;
-    background: rgb(15 23 42 / 60%);
-    backdrop-filter: blur(3px);
-  }
-
-  .subscription-decision-modal__panel {
-    position: relative;
-    z-index: 1;
-    width: min(520px, calc(100vw - 2rem));
-    max-height: calc(100vh - 2rem);
-    overflow: hidden;
-    border: 1px solid var(--border-weak);
-    border-radius: 20px;
-    background: var(--BgWhite, #fff);
-    box-shadow: 0 25px 80px rgb(0 0 0 / 30%);
-  }
-
-  .subscription-decision-modal__header {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 1rem;
-    padding: 1.25rem;
-    border-bottom: 1px solid var(--border-weak);
-  }
-
-  .modal-title-group {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.75rem;
-
-    h2 {
-      margin: 0;
-      color: var(--gray-900);
-      font-family: 'Bold';
-      font-size: 1.05rem;
-    }
-
-    p {
-      margin: 0.35rem 0 0;
-      color: var(--gray-500);
-      font-size: 0.85rem;
-    }
-  }
-
-  .modal-status-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    flex: 0 0 42px;
-    width: 42px;
-    height: 42px;
-    border-radius: 50%;
-    color: #fff;
-
-    &--accept {
-      background: var(--success, #16a34a);
-    }
-
-    &--reject {
-      background: var(--danger, #dc2626);
-    }
-  }
-
-  .modal-close-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-    border: 1px solid var(--border-weak);
-    border-radius: 50%;
+  p {
+    margin: 0.35rem 0 0;
     color: var(--gray-500);
-    background: var(--BgWhite, #fff);
-    cursor: pointer;
+    font-size: 0.85rem;
+  }
+}
+
+.modal-status-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 42px;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  color: #fff;
+
+  &--accept {
+    background: var(--success, var(--bh-green-ink));
   }
 
-  .subscription-decision-modal__body {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    padding: 1.25rem;
+  &--reject {
+    background: var(--danger, var(--bh-coral-ink));
+  }
+}
+
+.modal-close-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--border-weak);
+  border-radius: 50%;
+  color: var(--gray-500);
+  background: var(--BgWhite, #fff);
+  cursor: pointer;
+}
+
+.subscription-decision-modal__body {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.25rem;
+}
+
+.subscription-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--border-weak);
+  border-radius: 12px;
+  background: var(--gray-50);
+
+  small {
+    display: block;
+    color: var(--gray-500);
   }
 
-  .subscription-card {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.85rem 1rem;
+  strong {
+    display: block;
+    color: var(--gray-900);
+  }
+}
+
+.subscription-card__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  color: var(--PrimaryColor);
+  background: var(--PrimaryColor-light);
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  label {
+    color: var(--gray-700);
+    font-weight: 600;
+  }
+
+  textarea {
+    width: 100%;
+    min-height: 120px;
+    padding: 0.8rem 1rem;
     border: 1px solid var(--border-weak);
-    border-radius: 12px;
-    background: var(--gray-50);
+    border-radius: var(--bh-radius-control);
+    color: var(--gray-900);
+    background: var(--BgWhite, #fff);
+    outline: none;
+    resize: vertical;
 
-    small {
-      display: block;
-      color: var(--gray-500);
-    }
-
-    strong {
-      display: block;
-      color: var(--gray-900);
+    &:focus {
+      border-color: var(--PrimaryColor);
+      box-shadow: none;
     }
   }
+}
 
-  .subscription-card__icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    border-radius: 12px;
-    color: var(--PrimaryColor);
-    background: var(--PrimaryColor-light);
+.field-error {
+  color: var(--danger, var(--bh-coral-ink));
+  font-size: 0.8rem;
+}
+
+.subscription-decision-modal__footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  border-top: 1px solid var(--border-weak);
+  background: var(--gray-50);
+}
+
+.modal-cancel-btn,
+.modal-confirm-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  min-height: 44px;
+  padding: 0.65rem 1.1rem;
+  border-radius: 50px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.modal-cancel-btn {
+  border: 1px solid var(--border-weak);
+  color: var(--gray-700);
+  background: var(--BgWhite, #fff);
+}
+
+.modal-confirm-btn {
+  border: 0;
+  color: #fff;
+
+  &--accept {
+    background: var(--success, var(--bh-green-ink));
   }
 
-  .field-group {
-    display: flex;
+  &--reject {
+    background: var(--danger, var(--bh-coral-ink));
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+}
+
+.empty-state,
+.error-state {
+  padding: 3rem 1rem;
+  text-align: center;
+
+  h3,
+  p {
+    margin: 0;
+  }
+
+  p {
+    margin-top: 0.5rem;
+    color: var(--gray-5);
+  }
+
+  .btn {
+    margin: 1rem auto 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .package-subscriptions-header {
+    align-items: flex-start;
     flex-direction: column;
-    gap: 0.5rem;
-
-    label {
-      color: var(--gray-700);
-      font-weight: 600;
-    }
-
-    textarea {
-      width: 100%;
-      min-height: 120px;
-      padding: 0.8rem 1rem;
-      border: 1px solid var(--border-weak);
-      border-radius: 12px;
-      color: var(--gray-900);
-      background: var(--BgWhite, #fff);
-      outline: none;
-      resize: vertical;
-
-      &:focus {
-        border-color: var(--PrimaryColor);
-        box-shadow: 0 0 0 3px var(--PrimaryColor-light);
-      }
-    }
-  }
-
-  .field-error {
-    color: var(--danger, #dc2626);
-    font-size: 0.8rem;
   }
 
   .subscription-decision-modal__footer {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 0.75rem;
-    padding: 1rem 1.25rem;
-    border-top: 1px solid var(--border-weak);
-    background: var(--gray-50);
+    align-items: stretch;
+    flex-direction: column-reverse;
   }
 
   .modal-cancel-btn,
   .modal-confirm-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.4rem;
-    min-height: 44px;
-    padding: 0.65rem 1.1rem;
-    border-radius: 50px;
-    cursor: pointer;
-    font-weight: 600;
+    width: 100%;
   }
-
-  .modal-cancel-btn {
-    border: 1px solid var(--border-weak);
-    color: var(--gray-700);
-    background: var(--BgWhite, #fff);
-  }
-
-  .modal-confirm-btn {
-    border: 0;
-    color: #fff;
-
-    &--accept {
-      background: var(--success, #16a34a);
-    }
-
-    &--reject {
-      background: var(--danger, #dc2626);
-    }
-
-    &:disabled {
-      cursor: not-allowed;
-      opacity: 0.6;
-    }
-  }
-
-  .empty-state,
-  .error-state {
-    padding: 3rem 1rem;
-    text-align: center;
-
-    h3,
-    p {
-      margin: 0;
-    }
-
-    p {
-      margin-top: 0.5rem;
-      color: var(--gray-5);
-    }
-
-    .btn {
-      margin: 1rem auto 0;
-    }
-  }
-
-  @media (max-width: 768px) {
-    .package-subscriptions-header {
-      align-items: flex-start;
-      flex-direction: column;
-    }
-
-    .subscription-decision-modal__footer {
-      align-items: stretch;
-      flex-direction: column-reverse;
-    }
-
-    .modal-cancel-btn,
-    .modal-confirm-btn {
-      width: 100%;
-    }
-  }
+}
 </style>

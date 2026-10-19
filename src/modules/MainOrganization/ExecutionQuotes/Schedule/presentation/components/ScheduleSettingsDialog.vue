@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
   import { ref } from 'vue';
   import Dialog from 'primevue/dialog';
@@ -30,7 +31,12 @@
   }
 </script>
 <template>
-  <Dialog class="schedule-settings" :visible="true" modal @update:visible="emit('close')">
+  <Dialog
+    class="schedule-settings workspace-dialog"
+    :visible="true"
+    modal
+    @update:visible="emit('close')"
+  >
     <template #header>
       <div class="schedule__dialog-heading">
         <span class="schedule__heading-icon"><i class="pi pi-cog" aria-hidden="true"></i></span>
@@ -39,7 +45,7 @@
         </div>
       </div>
     </template>
-    <form class="schedule__form" @submit.prevent="save">
+    <StandardFormLayout as="form" embedded class="schedule__form" @submit.prevent="save">
       <section class="schedule__settings-section">
         <div class="field-group input-wrapper">
           <span class="field-help-label-row field-help-label-row--block"
@@ -56,7 +62,7 @@
           <input
             id="schedule-start"
             v-model="startDate"
-            class="input"
+            class="input workspace-control"
             type="date"
             :disabled="controller.busy.value"
           />
@@ -103,6 +109,6 @@
           $t('schedule.cancel')
         }}</AppButton>
       </div>
-    </form>
+    </StandardFormLayout>
   </Dialog>
 </template>

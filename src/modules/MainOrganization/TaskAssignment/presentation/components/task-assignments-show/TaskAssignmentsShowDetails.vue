@@ -85,7 +85,7 @@ const durationTypeName = (durationType: TaskDurationType): string => {
         <span class="detail-label">{{ $t('attachments') }}</span>
         <span class="detail-value">
           <span
-            class="status-badge"
+            class="status-badge bh-status"
             :class="model?.has_attached ? 'status-badge--success' : 'status-badge--muted'"
           >
             <i
@@ -102,7 +102,7 @@ const durationTypeName = (durationType: TaskDurationType): string => {
         <span class="detail-label">{{ $t('task_assignment.title') }}</span>
         <span class="detail-value">
           <span
-            class="status-badge"
+            class="status-badge bh-status"
             :class="model?.is_assign_employee ? 'status-badge--success' : 'status-badge--muted'"
           >
             <i

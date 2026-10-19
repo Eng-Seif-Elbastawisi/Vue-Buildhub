@@ -1,0 +1,149 @@
+{
+  "mode": "Offline create routes; external APIs blocked; no live CRUD acceptance",
+  "results": [
+    {
+      "name": "employee",
+      "width": 1440,
+      "locale": "en",
+      "dark": false,
+      "overflow": false,
+      "title": "Add employee",
+      "heading": {
+        "padding": "24px",
+        "border": "1px solid color(srgb 0.922039 0.936314 0.95498)",
+        "background": "linear-gradient(115deg, color(srgb 0.890196 0.921569 0.976471 / 0.48), rgba(0, 0, 0, 0) 75%) repeat scroll 0% 0% / auto padding-box border-box, color(srgb 0.972549 0.980392 0.992157 / 0.82) none repeat scroll 0% 0% / auto padding-box border-box",
+        "blur": "blur(18px) saturate(1.25)",
+        "radius": "24px"
+      },
+      "action": null
+    },
+    {
+      "name": "employee",
+      "width": 1024,
+      "locale": "en",
+      "dark": false,
+      "overflow": false,
+      "title": "Add employee",
+      "heading": {
+        "padding": "24px",
+        "border": "1px solid color(srgb 0.922039 0.936314 0.95498)",
+        "background": "linear-gradient(115deg, color(srgb 0.890196 0.921569 0.976471 / 0.48), rgba(0, 0, 0, 0) 75%) repeat scroll 0% 0% / auto padding-box border-box, color(srgb 0.972549 0.980392 0.992157 / 0.82) none repeat scroll 0% 0% / auto padding-box border-box",
+        "blur": "blur(18px) saturate(1.25)",
+        "radius": "24px"
+      },
+      "action": null
+    },
+    {
+      "name": "employee",
+      "width": 390,
+      "locale": "ar",
+      "dark": true,
+      "overflow": false,
+      "title": "إضافة موظف",
+      "heading": {
+        "padding": "20px 16px",
+        "border": "1px solid color(srgb 0.221647 0.273098 0.345726)",
+        "background": "linear-gradient(115deg, color(srgb 0.164706 0.239216 0.352941 / 0.48), rgba(0, 0, 0, 0) 75%) repeat scroll 0% 0% / auto padding-box border-box, color(srgb 0.12549 0.164706 0.219608 / 0.82) none repeat scroll 0% 0% / auto padding-box border-box",
+        "blur": "blur(18px) saturate(1.25)",
+        "radius": "24px"
+      },
+      "action": null
+    },
+    {
+      "name": "project",
+      "width": 1440,
+      "locale": "en",
+      "dark": false,
+      "overflow": false,
+      "title": "Add Project",
+      "heading": {
+        "padding": "24px",
+        "border": "1px solid color(srgb 0.922039 0.936314 0.95498)",
+        "background": "linear-gradient(115deg, color(srgb 0.890196 0.921569 0.976471 / 0.48), rgba(0, 0, 0, 0) 75%) repeat scroll 0% 0% / auto padding-box border-box, color(srgb 0.972549 0.980392 0.992157 / 0.82) none repeat scroll 0% 0% / auto padding-box border-box",
+        "blur": "blur(18px) saturate(1.25)",
+        "radius": "24px"
+      },
+      "action": null
+    },
+    {
+      "name": "project",
+      "width": 1024,
+      "locale": "en",
+      "dark": false,
+      "overflow": false,
+      "title": "Add Project",
+      "heading": {
+        "padding": "24px",
+        "border": "1px solid color(srgb 0.922039 0.936314 0.95498)",
+        "background": "linear-gradient(115deg, color(srgb 0.890196 0.921569 0.976471 / 0.48), rgba(0, 0, 0, 0) 75%) repeat scroll 0% 0% / auto padding-box border-box, color(srgb 0.972549 0.980392 0.992157 / 0.82) none repeat scroll 0% 0% / auto padding-box border-box",
+        "blur": "blur(18px) saturate(1.25)",
+        "radius": "24px"
+      },
+      "action": null
+    },
+    {
+      "name": "project",
+      "width": 390,
+      "locale": "ar",
+      "dark": true,
+      "overflow": false,
+      "title": "إضافة مشروع",
+      "heading": {
+        "padding": "20px 16px",
+        "border": "1px solid color(srgb 0.221647 0.273098 0.345726)",
+        "background": "linear-gradient(115deg, color(srgb 0.164706 0.239216 0.352941 / 0.48), rgba(0, 0, 0, 0) 75%) repeat scroll 0% 0% / auto padding-box border-box, color(srgb 0.12549 0.164706 0.219608 / 0.82) none repeat scroll 0% 0% / auto padding-box border-box",
+        "blur": "blur(18px) saturate(1.25)",
+        "radius": "24px"
+      },
+      "action": null
+    },
+    {
+      "name": "quote",
+      "width": 1440,
+      "locale": "en",
+      "dark": false,
+      "overflow": false,
+      "title": "Execution Quote",
+      "heading": {
+        "padding": "24px",
+        "border": "1px solid color(srgb 0.922039 0.936314 0.95498)",
+        "background": "linear-gradient(115deg, color(srgb 0.890196 0.921569 0.976471 / 0.48), rgba(0, 0, 0, 0) 75%) repeat scroll 0% 0% / auto padding-box border-box, color(srgb 0.972549 0.980392 0.992157 / 0.82) none repeat scroll 0% 0% / auto padding-box border-box",
+        "blur": "blur(18px) saturate(1.25)",
+        "radius": "24px"
+      },
+      "action": null
+    },
+    {
+      "name": "quote",
+      "width": 1024,
+      "locale": "en",
+      "dark": false,
+      "overflow": false,
+      "title": "Execution Quote",
+      "heading": {
+        "padding": "24px",
+        "border": "1px solid color(srgb 0.922039 0.936314 0.95498)",
+        "background": "linear-gradient(115deg, color(srgb 0.890196 0.921569 0.976471 / 0.48), rgba(0, 0, 0, 0) 75%) repeat scroll 0% 0% / auto padding-box border-box, color(srgb 0.972549 0.980392 0.992157 / 0.82) none repeat scroll 0% 0% / auto padding-box border-box",
+        "blur": "blur(18px) saturate(1.25)",
+        "radius": "24px"
+      },
+      "action": null
+    },
+    {
+      "name": "quote",
+      "width": 390,
+      "locale": "ar",
+      "dark": true,
+      "overflow": false,
+      "title": "مقايسة تنفيذ",
+      "heading": {
+        "padding": "20px 16px",
+        "border": "1px solid color(srgb 0.221647 0.273098 0.345726)",
+        "background": "linear-gradient(115deg, color(srgb 0.164706 0.239216 0.352941 / 0.48), rgba(0, 0, 0, 0) 75%) repeat scroll 0% 0% / auto padding-box border-box, color(srgb 0.12549 0.164706 0.219608 / 0.82) none repeat scroll 0% 0% / auto padding-box border-box",
+        "blur": "blur(18px) saturate(1.25)",
+        "radius": "24px"
+      },
+      "action": null
+    }
+  ]
+}

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import { computed, ref, watch } from 'vue';
   import { onBeforeRouteLeave } from 'vue-router';
   import { convertToBase64 } from '@/base/Presentation/Utils/convertToBase64';
@@ -149,7 +150,7 @@
 </script>
 
 <template>
-  <div class="system-identity-form" :class="{ disabled: props.loading }">
+  <StandardFormLayout class="system-identity-form" :class="{ disabled: props.loading }">
     <header class="form-header">
       <div>
         <h4>{{ $t('system_identity.form_title') }}</h4>
@@ -172,7 +173,7 @@
             id="system-identity-name"
             v-model="name"
             type="text"
-            class="field-input"
+            class="field-input workspace-control"
             @input="buildParams"
           />
         </div>
@@ -325,200 +326,200 @@
         </button>
       </section>
     </div>
-  </div>
+  </StandardFormLayout>
 </template>
 
 <style scoped lang="scss">
-  .system-identity-form,
-  .form-grid,
-  .form-card,
-  .logo-upload,
-  .field-group,
-  .extracted-colors {
-    display: flex;
-    flex-direction: column;
+.system-identity-form,
+.form-grid,
+.form-card,
+.logo-upload,
+.field-group,
+.extracted-colors {
+  display: flex;
+  flex-direction: column;
+}
+
+.system-identity-form {
+  gap: 1rem;
+
+  &.disabled {
+    pointer-events: none;
+    opacity: 0.7;
+  }
+}
+
+.form-header {
+  h4,
+  p {
+    margin: 0;
   }
 
-  .system-identity-form {
-    gap: 1rem;
-
-    &.disabled {
-      pointer-events: none;
-      opacity: 0.7;
-    }
+  p {
+    margin-top: 0.35rem;
+    color: var(--gray-500);
   }
+}
 
-  .form-header {
-    h4,
-    p {
-      margin: 0;
-    }
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
 
-    p {
-      margin-top: 0.35rem;
-      color: var(--gray-500);
-    }
+.form-card {
+  gap: 1rem;
+  border: 1px solid var(--border-weak);
+  border-radius: var(--bh-radius-card);
+  padding: 1rem;
+  background: var(--BgWhite);
+  box-shadow: none;
+}
+
+.field-group,
+.logo-upload,
+.extracted-colors {
+  gap: 0.55rem;
+  color: var(--gray-700);
+  font-weight: 800;
+}
+
+.field-input {
+  width: 100%;
+  border: 1px solid var(--border-weak);
+  border-radius: var(--bh-radius-control);
+  padding: 0.75rem 1rem;
+  background: var(--BgWhite);
+  color: var(--gray-800);
+}
+
+.logo-preview {
+  display: grid;
+  min-height: 170px;
+  place-items: center;
+  overflow: hidden;
+  border: 1px dashed var(--PrimaryColor-alpha-40);
+  border-radius: var(--radius-sm);
+  background: var(--PrimaryColor-light);
+  color: var(--PrimaryColor);
+
+  img {
+    max-width: 100%;
+    max-height: 170px;
+    object-fit: contain;
   }
+}
 
-  .form-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1rem;
-  }
+.file-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  opacity: 0;
+}
 
-  .form-card {
-    gap: 1rem;
+.toggle-row,
+.color-row,
+.button-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.color-row {
+  justify-content: space-between;
+  border: 1px solid var(--border-weak);
+  border-radius: var(--radius-sm);
+  padding: 0.75rem;
+  background: var(--gray-50);
+
+  input {
+    width: 48px;
+    height: 36px;
     border: 1px solid var(--border-weak);
-    border-radius: var(--radius-sm);
-    padding: 1rem;
+    border-radius: var(--bh-radius-control);
     background: var(--BgWhite);
-    box-shadow: var(--shadow-sm);
   }
 
-  .field-group,
-  .logo-upload,
-  .extracted-colors {
-    gap: 0.55rem;
-    color: var(--gray-700);
-    font-weight: 800;
+  strong {
+    color: var(--gray-600);
+    font-family: monospace;
   }
+}
 
-  .field-input {
-    width: 100%;
-    border: 1px solid var(--border-weak);
-    border-radius: var(--radius-sm);
-    padding: 0.75rem 1rem;
-    background: var(--BgWhite);
-    color: var(--gray-800);
-  }
+.swatch-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
 
-  .logo-preview {
-    display: grid;
-    min-height: 170px;
-    place-items: center;
-    overflow: hidden;
-    border: 1px dashed var(--PrimaryColor-alpha-40);
-    border-radius: var(--radius-sm);
-    background: var(--PrimaryColor-light);
-    color: var(--PrimaryColor);
+.color-swatch {
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--border-weak);
+  border-radius: var(--radius-sm);
+  background: var(--swatch-color);
+  cursor: pointer;
 
-    img {
-      max-width: 100%;
-      max-height: 170px;
-      object-fit: contain;
-    }
-  }
-
-  .file-input {
+  span {
     position: absolute;
     width: 1px;
     height: 1px;
     overflow: hidden;
-    opacity: 0;
+  }
+}
+
+.identity-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  border: 1px solid var(--button-primary-bg, var(--PrimaryColor));
+  border-radius: var(--radius-sm);
+  padding: 0.7rem 1rem;
+  background: var(--button-primary-bg, var(--PrimaryColor));
+  color: var(--button-primary-color, var(--BgWhite));
+  font-weight: 800;
+  cursor: pointer;
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
   }
 
-  .toggle-row,
-  .color-row,
-  .button-row {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
+  &.secondary {
+    background: var(--BgWhite);
+    color: var(--PrimaryColor);
+  }
+}
+
+.preview-card {
+  grid-column: 1 / -1;
+}
+
+.preview-strip {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  overflow: hidden;
+  height: 56px;
+  border-radius: var(--radius-sm);
+
+  .primary {
+    background: var(--palette-primary);
   }
 
-  .color-row {
-    justify-content: space-between;
-    border: 1px solid var(--border-weak);
-    border-radius: var(--radius-sm);
-    padding: 0.75rem;
-    background: var(--gray-50);
-
-    input {
-      width: 48px;
-      height: 36px;
-      border: 1px solid var(--border-weak);
-      border-radius: var(--radius-sm);
-      background: var(--BgWhite);
-    }
-
-    strong {
-      color: var(--gray-600);
-      font-family: monospace;
-    }
+  .secondary {
+    background: var(--palette-secondary);
   }
 
-  .swatch-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
+  .accent {
+    background: var(--palette-accent);
   }
+}
 
-  .color-swatch {
-    width: 40px;
-    height: 40px;
-    border: 1px solid var(--border-weak);
-    border-radius: var(--radius-sm);
-    background: var(--swatch-color);
-    cursor: pointer;
-
-    span {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      overflow: hidden;
-    }
+@media (max-width: 900px) {
+  .form-grid {
+    grid-template-columns: 1fr;
   }
-
-  .identity-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 42px;
-    border: 1px solid var(--button-primary-bg, var(--PrimaryColor));
-    border-radius: var(--radius-sm);
-    padding: 0.7rem 1rem;
-    background: var(--button-primary-bg, var(--PrimaryColor));
-    color: var(--button-primary-color, var(--BgWhite));
-    font-weight: 800;
-    cursor: pointer;
-
-    &:disabled {
-      cursor: not-allowed;
-      opacity: 0.55;
-    }
-
-    &.secondary {
-      background: var(--BgWhite);
-      color: var(--PrimaryColor);
-    }
-  }
-
-  .preview-card {
-    grid-column: 1 / -1;
-  }
-
-  .preview-strip {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    overflow: hidden;
-    height: 56px;
-    border-radius: var(--radius-sm);
-
-    .primary {
-      background: var(--palette-primary);
-    }
-
-    .secondary {
-      background: var(--palette-secondary);
-    }
-
-    .accent {
-      background: var(--palette-accent);
-    }
-  }
-
-  @media (max-width: 900px) {
-    .form-grid {
-      grid-template-columns: 1fr;
-    }
-  }
+}
 </style>

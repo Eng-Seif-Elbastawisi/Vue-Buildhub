@@ -7,8 +7,11 @@ import {
   employeeReference,
   optionalEmployee,
 } from './work-items.response';
-import { type WorkActivityType } from '../constants/work-items.constants';
+import { type WorkActivityType, type MeetingAudienceType } from '../constants/work-items.constants';
 export default class WorkActivityModel {
+  readonly meetingAudienceType: MeetingAudienceType | null;
+  readonly result: string | null;
+  readonly attendees: EmployeeModel[];
   public readonly id: number;
   public readonly projectTimelineStageId: number;
   public readonly employee: EmployeeModel;
@@ -19,6 +22,9 @@ export default class WorkActivityModel {
   public readonly assignedEmployee: EmployeeModel | null;
   public readonly type: WorkActivityType;
   constructor(record: {
+    meetingAudienceType?: MeetingAudienceType | null;
+    result?: string | null;
+    attendees?: EmployeeModel[];
     id: number;
     projectTimelineStageId: number;
     employee: EmployeeModel;
@@ -30,6 +36,9 @@ export default class WorkActivityModel {
     type: WorkActivityType;
   }) {
     this.id = record.id;
+    this.meetingAudienceType = record.meetingAudienceType ?? null;
+    this.result = record.result ?? null;
+    this.attendees = record.attendees ?? [];
     this.projectTimelineStageId = record.projectTimelineStageId;
     this.employee = record.employee;
     this.createdAt = record.createdAt;
@@ -43,7 +52,19 @@ export default class WorkActivityModel {
     const record = responseObject(payload);
     if (![1, 2, 3, 4].includes(Number(record.type)) || typeof record.type !== 'number')
       throw new Error('work_items.invalid_response');
+    if (
+      record.meeting_audience_type != null &&
+      record.meeting_audience_type !== 1 &&
+      record.meeting_audience_type !== 2
+    )
+      throw new Error('work_items.invalid_response');
+    if (record.attendees != null && !Array.isArray(record.attendees))
+      throw new Error('work_items.invalid_response');
     return new WorkActivityModel({
+      meetingAudienceType:
+        (record.meeting_audience_type as MeetingAudienceType | null | undefined) ?? null,
+      result: nullableText(record.result),
+      attendees: (record.attendees ?? []).map(employeeReference),
       id: responseId(record.id),
       projectTimelineStageId: responseId(record.project_timeline_stage_id),
       employee: employeeReference(record.employee),

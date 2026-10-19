@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
   import { computed, ref } from 'vue';
   import { useI18n } from 'vue-i18n';
@@ -84,7 +85,7 @@
   }
 </script>
 <template>
-  <form class="schedule__form" @submit.prevent="save">
+  <StandardFormLayout as="form" class="schedule__form" @submit.prevent="save">
     <div class="document-form-card">
       <header class="document-form-header">
         <span class="schedule__heading-icon"
@@ -111,7 +112,7 @@
           <input
             id="schedule-title"
             v-model="title"
-            class="input"
+            class="input workspace-control"
             type="text"
             :disabled="controller.busy.value || saved"
           />
@@ -131,7 +132,7 @@
           <input
             id="schedule-duration"
             v-model.number="duration"
-            class="input"
+            class="input workspace-control"
             type="number"
             step="any"
             :disabled="controller.busy.value || saved"
@@ -179,5 +180,5 @@
         $t('schedule.cancel')
       }}</AppButton>
     </div>
-  </form>
+  </StandardFormLayout>
 </template>

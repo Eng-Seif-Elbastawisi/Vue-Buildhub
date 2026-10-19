@@ -1,0 +1,271 @@
+{
+  "scope": "Actual dashboard shell with custom fixed overlay fixtures and real PrimeVue Dialog/Select components; synthetic read-only API responses; no live CRUD verification",
+  "before": [
+    {
+      "width": 1440,
+      "direction": "ltr",
+      "theme": "light",
+      "custom": [
+        {
+          "location": "content",
+          "aboveShell": false,
+          "aboveRail": false
+        },
+        {
+          "location": "body",
+          "aboveShell": false,
+          "aboveRail": false
+        }
+      ],
+      "modalAbove": true,
+      "dropdownAbove": true,
+      "selectionWorks": true,
+      "nestedAbove": true,
+      "escapeCloses": true
+    },
+    {
+      "width": 1440,
+      "direction": "rtl",
+      "theme": "dark",
+      "custom": [
+        {
+          "location": "content",
+          "aboveShell": false,
+          "aboveRail": true
+        },
+        {
+          "location": "body",
+          "aboveShell": false,
+          "aboveRail": true
+        }
+      ],
+      "modalAbove": true,
+      "dropdownAbove": true,
+      "selectionWorks": true,
+      "nestedAbove": true,
+      "escapeCloses": true
+    },
+    {
+      "width": 1024,
+      "direction": "ltr",
+      "theme": "light",
+      "custom": [
+        {
+          "location": "content",
+          "aboveShell": false,
+          "aboveRail": false
+        },
+        {
+          "location": "body",
+          "aboveShell": false,
+          "aboveRail": false
+        }
+      ],
+      "modalAbove": true,
+      "dropdownAbove": true,
+      "selectionWorks": true,
+      "nestedAbove": true,
+      "escapeCloses": true
+    },
+    {
+      "width": 1024,
+      "direction": "rtl",
+      "theme": "dark",
+      "custom": [
+        {
+          "location": "content",
+          "aboveShell": false,
+          "aboveRail": true
+        },
+        {
+          "location": "body",
+          "aboveShell": false,
+          "aboveRail": true
+        }
+      ],
+      "modalAbove": true,
+      "dropdownAbove": true,
+      "selectionWorks": true,
+      "nestedAbove": true,
+      "escapeCloses": true
+    },
+    {
+      "width": 390,
+      "direction": "ltr",
+      "theme": "light",
+      "custom": [
+        {
+          "location": "content",
+          "aboveShell": false,
+          "aboveRail": true
+        },
+        {
+          "location": "body",
+          "aboveShell": false,
+          "aboveRail": true
+        }
+      ],
+      "modalAbove": true,
+      "dropdownAbove": true,
+      "selectionWorks": true,
+      "nestedAbove": true,
+      "escapeCloses": true
+    },
+    {
+      "width": 390,
+      "direction": "rtl",
+      "theme": "dark",
+      "custom": [
+        {
+          "location": "content",
+          "aboveShell": false,
+          "aboveRail": true
+        },
+        {
+          "location": "body",
+          "aboveShell": false,
+          "aboveRail": true
+        }
+      ],
+      "modalAbove": true,
+      "dropdownAbove": true,
+      "selectionWorks": true,
+      "nestedAbove": true,
+      "escapeCloses": true
+    }
+  ],
+  "after": [
+    {
+      "width": 1440,
+      "direction": "ltr",
+      "theme": "light",
+      "custom": [
+        {
+          "location": "content",
+          "aboveShell": true,
+          "aboveRail": true
+        },
+        {
+          "location": "body",
+          "aboveShell": true,
+          "aboveRail": true
+        }
+      ],
+      "modalAbove": true,
+      "dropdownAbove": true,
+      "selectionWorks": true,
+      "nestedAbove": true,
+      "escapeCloses": true
+    },
+    {
+      "width": 1440,
+      "direction": "rtl",
+      "theme": "dark",
+      "custom": [
+        {
+          "location": "content",
+          "aboveShell": true,
+          "aboveRail": true
+        },
+        {
+          "location": "body",
+          "aboveShell": true,
+          "aboveRail": true
+        }
+      ],
+      "modalAbove": true,
+      "dropdownAbove": true,
+      "selectionWorks": true,
+      "nestedAbove": true,
+      "escapeCloses": true
+    },
+    {
+      "width": 1024,
+      "direction": "ltr",
+      "theme": "light",
+      "custom": [
+        {
+          "location": "content",
+          "aboveShell": true,
+          "aboveRail": true
+        },
+        {
+          "location": "body",
+          "aboveShell": true,
+          "aboveRail": true
+        }
+      ],
+      "modalAbove": true,
+      "dropdownAbove": true,
+      "selectionWorks": true,
+      "nestedAbove": true,
+      "escapeCloses": true
+    },
+    {
+      "width": 1024,
+      "direction": "rtl",
+      "theme": "dark",
+      "custom": [
+        {
+          "location": "content",
+          "aboveShell": true,
+          "aboveRail": true
+        },
+        {
+          "location": "body",
+          "aboveShell": true,
+          "aboveRail": true
+        }
+      ],
+      "modalAbove": true,
+      "dropdownAbove": true,
+      "selectionWorks": true,
+      "nestedAbove": true,
+      "escapeCloses": true
+    },
+    {
+      "width": 390,
+      "direction": "ltr",
+      "theme": "light",
+      "custom": [
+        {
+          "location": "content",
+          "aboveShell": true,
+          "aboveRail": true
+        },
+        {
+          "location": "body",
+          "aboveShell": true,
+          "aboveRail": true
+        }
+      ],
+      "modalAbove": true,
+      "dropdownAbove": true,
+      "selectionWorks": true,
+      "nestedAbove": true,
+      "escapeCloses": true
+    },
+    {
+      "width": 390,
+      "direction": "rtl",
+      "theme": "dark",
+      "custom": [
+        {
+          "location": "content",
+          "aboveShell": true,
+          "aboveRail": true
+        },
+        {
+          "location": "body",
+          "aboveShell": true,
+          "aboveRail": true
+        }
+      ],
+      "modalAbove": true,
+      "dropdownAbove": true,
+      "selectionWorks": true,
+      "nestedAbove": true,
+      "escapeCloses": true
+    }
+  ]
+}

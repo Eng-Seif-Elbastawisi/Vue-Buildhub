@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import { computed, onMounted, ref } from 'vue';
   import { useI18n } from 'vue-i18n';
   import { useRoute } from 'vue-router';
@@ -138,7 +139,7 @@
 </script>
 
 <template>
-  <div class="ProjectPreviewEdit-crud-page">
+  <StandardFormLayout mode="edit" class="ProjectPreviewEdit-crud-page">
     <div v-if="initialLoading" class="project-preview-state" aria-busy="true">
       {{ $t('loading') }}
     </div>
@@ -176,44 +177,44 @@
     <div v-else class="project-preview-state project-preview-state--error">
       {{ $t('no_data') }}
     </div>
-  </div>
+  </StandardFormLayout>
 </template>
 
 <style scoped>
-  .ProjectPreviewEdit-crud-page {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
+.ProjectPreviewEdit-crud-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
 
-  .project-preview-state {
-    display: flex;
-    min-height: 160px;
-    align-items: center;
-    justify-content: center;
-    gap: 1rem;
-    padding: 1.5rem;
-    border: 1px solid var(--border-weak);
-    border-radius: 12px;
-    background: var(--white);
-    color: var(--gray-700);
-  }
+.project-preview-state {
+  display: flex;
+  min-height: 160px;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  border: 1px solid var(--border-weak);
+  border-radius: 12px;
+  background: var(--bh-surface-raised);
+  color: var(--gray-700);
+}
 
-  .project-preview-state--error {
-    flex-direction: column;
-    color: var(--danger-dark);
-  }
+.project-preview-state--error {
+  flex-direction: column;
+  color: var(--danger-dark);
+}
 
-  .error {
-    margin-top: 20px;
-    padding: 10px;
-    background-color: var(--danger-light);
-    color: var(--danger-dark);
-    border: 1px solid #f5c6cb;
-    border-radius: 4px;
-  }
+.error {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: var(--danger-light);
+  color: var(--danger-dark);
+  border: 1px solid var(--bh-coral-soft);
+  border-radius: 4px;
+}
 
-  .btn-primary {
-    width: 100%;
-  }
+.btn-primary {
+  width: 100%;
+}
 </style>

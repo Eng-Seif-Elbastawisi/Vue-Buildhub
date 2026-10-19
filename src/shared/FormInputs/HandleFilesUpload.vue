@@ -291,7 +291,7 @@
       :for="inputId"
       :class="[className ?? 'upload-area', { disabled: isMaxReached }]"
     >
-      <span class="upload-icon">↑</span>
+      <i class="upload-icon pi pi-cloud-upload" aria-hidden="true"></i>
       <span class="upload-text">
         {{ isMaxReached ? $t('max_files_reached', { max: maxFiles }) : $t('click_to_upload') }}
       </span>
@@ -303,7 +303,7 @@
         :multiple="multiple"
         :required="required"
         :aria-required="required || undefined"
-        hidden
+        class="upload-native-input"
         @change="handleFileUpload"
       />
     </label>
@@ -317,7 +317,7 @@
         :multiple="multiple"
         :required="required"
         :aria-required="required || undefined"
-        hidden
+        class="upload-native-input"
         @change="handleFileUpload"
       />
     </label>
@@ -378,6 +378,20 @@
     cursor: pointer;
   }
 
+  .upload-native-input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  label:has(.upload-native-input:focus-visible) {
+    outline: 2px solid var(--bh-focus);
+    outline-offset: 3px;
+  }
+
   .file-upload-wrapper {
     display: flex;
     flex-direction: column;
@@ -385,8 +399,8 @@
   }
 
   .upload-label {
-    color: var(--gray-5);
-    font-size: 16px;
+    color: var(--bh-text);
+    font-size: var(--bh-text-sm);
     font-weight: 600;
   }
 
@@ -401,13 +415,13 @@
     justify-content: center;
     gap: 6px;
     padding: 20px;
-    border: 1.5px dashed var(--gray-300);
-    border-radius: 10px;
+    border: 1.5px dashed var(--bh-field-line);
+    border-radius: var(--bh-radius-control);
     cursor: pointer;
     transition:
       border-color 0.15s,
       background 0.15s;
-    background: var(--bg-section);
+    background: var(--bh-surface);
   }
 
   .upload-area:hover:not(.disabled) {
@@ -421,13 +435,13 @@
   }
 
   .upload-icon {
-    font-size: 16px;
-    color: var(--gray-400);
+    font-size: var(--bh-text-sm);
+    color: var(--bh-muted);
   }
 
   .upload-text {
     font-size: 13px;
-    color: var(--gray-500);
+    color: var(--bh-muted);
   }
 
   .preview-grid {
@@ -471,7 +485,7 @@
     justify-content: center;
     font-size: 12px;
     font-weight: 700;
-    color: var(--gray-500);
+    color: var(--bh-muted);
     letter-spacing: 0.05em;
   }
 
@@ -509,8 +523,8 @@
 
   .remove-btn {
     position: absolute;
-    top: 4px;
-    right: 4px;
+    inset-block-start: 4px;
+    inset-inline-end: 4px;
     width: 20px;
     height: 20px;
     border-radius: 50%;
@@ -522,7 +536,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    opacity: 0;
+    opacity: 1;
     transition:
       opacity 0.15s,
       background 0.15s;

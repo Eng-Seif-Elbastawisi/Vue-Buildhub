@@ -1,0 +1,613 @@
+{
+  "filesCompared": 36,
+  "baselineReportedTests": {
+    "numTotalTests": 140,
+    "numPassedTests": 66,
+    "numFailedTests": 74
+  },
+  "currentReportedTests": {
+    "numTotalTests": 140,
+    "numPassedTests": 66,
+    "numFailedTests": 74
+  },
+  "newFailedOccurrences": [],
+  "baselineFailureOccurrences": [
+    [
+      "modules/MainAdmin/package/presentation/components/__tests__/PackageForm.test.ts",
+      "PackageForm emits the exact package fields from form inputs"
+    ],
+    [
+      "modules/MainAdmin/package/presentation/components/__tests__/PackageForm.test.ts",
+      "PackageForm prefills package data for editing"
+    ],
+    [
+      "modules/MainAdmin/package/presentation/components/__tests__/PackageSubscriptionStatusDialog.test.ts",
+      "PackageSubscriptionStatusDialog submits only the package subscription status payload"
+    ],
+    [
+      "modules/MainAdmin/package/presentation/components/__tests__/PackageSubscriptionsIndex.test.ts",
+      "PackageSubscriptionsIndex opens the change-status dialog and submits the selected subscription status"
+    ],
+    [
+      "modules/MainOrganization/ExecutionQuotes/presentation/components/__tests__/ExecutionQuoteShow.test.ts",
+      "ExecutionQuoteShow shows an unset stage client price as a placeholder"
+    ],
+    [
+      "modules/MainOrganization/ExecutionQuotes/presentation/components/__tests__/ExecutionQuoteShow.test.ts",
+      "ExecutionQuoteShow shows the quote returned by the show endpoint"
+    ],
+    [
+      "modules/MainOrganization/ExecutionQuotes/presentation/components/__tests__/ExecutionQuoteShow.test.ts",
+      "ExecutionQuoteShow omits the attachment section when the API returns null"
+    ],
+    [
+      "modules/MainOrganization/ExecutionQuotes/presentation/components/__tests__/ExecutionQuoteShow.test.ts",
+      "ExecutionQuoteShow omits the attachment section when the API returns undefined"
+    ],
+    [
+      "modules/MainOrganization/ExecutionQuotes/presentation/components/__tests__/ExecutionQuoteShow.test.ts",
+      "ExecutionQuoteShow omits the attachment section when the API returns undefined"
+    ],
+    [
+      "modules/MainOrganization/ExecutionQuotes/presentation/components/__tests__/ExecutionQuoteShow.test.ts",
+      "ExecutionQuoteShow updates the full quote item row through edit_quote_item, then refreshes"
+    ],
+    [
+      "modules/MainOrganization/ExecutionQuotes/presentation/components/__tests__/ExecutionQuoteShow.test.ts",
+      "ExecutionQuoteShow deletes only after confirmation, then refreshes the quote"
+    ],
+    [
+      "modules/MainOrganization/Invoice/presentation/components/__tests__/InvoiceForm.test.ts",
+      "InvoiceForm defaults to SINGLE, renders the standard fields, and hides the invoices selector"
+    ],
+    [
+      "modules/MainOrganization/Invoice/presentation/components/__tests__/InvoiceForm.test.ts",
+      "InvoiceForm selects GROUP and keeps the project-filtered invoices field as a multi-select"
+    ],
+    [
+      "modules/MainOrganization/Invoice/presentation/components/__tests__/InvoiceForm.test.ts",
+      "InvoiceForm clears group-only invoice values when switching back to SINGLE"
+    ],
+    [
+      "modules/MainOrganization/Contractor/presentation/components/__tests__/ContractorEdit.test.ts",
+      "ContractorEdit loads the contractor and submits its ID in the update body"
+    ],
+    [
+      "modules/MainOrganization/Labors/presentation/components/__tests__/LaborIndex.test.ts",
+      "LaborIndex applies multi-select filters across all labor filter groups"
+    ],
+    [
+      "modules/MainOrganization/Labors/presentation/components/__tests__/LaborIndex.test.ts",
+      "LaborIndex restores labor filters and page size while ignoring unsupported sorting"
+    ],
+    [
+      "modules/MainOrganization/Project/presentation/components/__tests__/ProjectIndex.test.ts",
+      "ProjectIndex deletes a project from the row action"
+    ],
+    [
+      "modules/MainOrganization/Products/presentation/components/__tests__/ProductsForm.test.ts",
+      "ProductsForm keeps grades fields visible when the product status is deactivated"
+    ],
+    [
+      "modules/MainOrganization/Products/presentation/components/__tests__/ProductsForm.test.ts",
+      "ProductsForm preserves grades when an edited product is deactivated"
+    ],
+    [
+      "modules/MainOrganization/Products/presentation/components/__tests__/ProductsForm.test.ts",
+      "ProductsForm prefills returned quantity and sends it in edit params"
+    ],
+    [
+      "modules/MainOrganization/Products/presentation/components/__tests__/ProductsIndex.test.ts",
+      "ProductsIndex shows the backend success message after a product is deleted"
+    ],
+    [
+      "modules/MainOrganization/ProjectFloor/presentation/components/__tests__/ProjectFloorEdit.test.ts",
+      "ProjectFloorEdit maps the shared add form payload into a complete update request"
+    ],
+    [
+      "modules/MainOrganization/ProjectFloor/presentation/components/__tests__/ProjectFloorEdit.test.ts",
+      "ProjectFloorEdit works from a direct refreshed edit URL without optional query ids"
+    ],
+    [
+      "modules/MainOrganization/ProjectFloor/presentation/components/__tests__/ProjectFloorEdit.test.ts",
+      "ProjectFloorEdit renders initial loading and prevents repeated updates while saving"
+    ],
+    [
+      "modules/MainOrganization/ProjectFloor/presentation/components/__tests__/ProjectFloorEdit.test.ts",
+      "ProjectFloorEdit maps API validation errors back to the shared form fields"
+    ],
+    [
+      "modules/MainOrganization/QuoteTypes/presentation/components/__tests__/QuoteTypeForm.test.ts",
+      "QuoteTypeForm allows entering a type code when adding a quote type"
+    ],
+    [
+      "modules/MainOrganization/Suppliers/presentation/components/__tests__/SuppliersIndex.test.ts",
+      "SuppliersIndex renders supplier labels and fetches the first page on mount"
+    ],
+    [
+      "modules/MainOrganization/TaskAssignment/presentation/components/__tests__/EmployeeTasksList.test.ts",
+      "EmployeeTasksList forwards the accept review decision"
+    ],
+    [
+      "modules/MainOrganization/TaskAssignment/presentation/components/__tests__/EmployeeTasksList.test.ts",
+      "EmployeeTasksList forwards the reject review decision"
+    ],
+    [
+      "modules/MainOrganization/TaskAssignment/presentation/components/__tests__/TaskAssignmentForm.test.ts",
+      "TaskAssignmentForm emits params with the selected row id and TitleInterface ids"
+    ],
+    [
+      "modules/MainOrganization/TaskAssignment/presentation/components/__tests__/TaskAssignmentsShow.test.ts",
+      "TaskAssignmentsShow renders project item details and handles status action workflow"
+    ],
+    [
+      "modules/MainOrganization/TaskAssignment/presentation/components/__tests__/TaskStatusAction.test.ts",
+      "TaskStatusAction renders readonly text when no status action is available"
+    ],
+    [
+      "modules/shared/Brand/presentation/components/__tests__/BrandEdit.test.ts",
+      "BrandEdit loads all translations and updates the selected brand"
+    ],
+    [
+      "modules/shared/Brand/presentation/components/__tests__/BrandIndex.test.ts",
+      "BrandIndex renders brand labels and fetches the first page on mount"
+    ],
+    [
+      "modules/shared/Materials/presentation/components/__tests__/MaterialsForm.test.ts",
+      "MaterialsForm emits translated title, price, brand, and unit in the material params"
+    ],
+    [
+      "modules/shared/Materials/presentation/components/__tests__/MaterialsForm.test.ts",
+      "MaterialsForm emits EditMaterialParams with the material ID on the edit route"
+    ],
+    [
+      "modules/shared/Stages/presentation/components/__tests__/StageAdd.test.ts",
+      "StageAdd renders without crashing"
+    ],
+    [
+      "modules/shared/Stages/presentation/components/__tests__/StageAdd.test.ts",
+      "StageAdd does not show error section when there is no error"
+    ],
+    [
+      "modules/shared/Stages/presentation/components/__tests__/StageAdd.test.ts",
+      "StageAdd renders the AppButton for saving"
+    ],
+    [
+      "modules/shared/Stages/presentation/components/__tests__/StageAdd.test.ts",
+      "StageAdd calls update with edit params when a fetched stage is saved"
+    ],
+    [
+      "modules/shared/Stages/presentation/components/__tests__/StageAdd.test.ts",
+      "StageAdd emits cancel when editing and the cancel button is clicked"
+    ],
+    [
+      "modules/shared/Stages/presentation/components/__tests__/StageEdit.test.ts",
+      "StageEdit renders without crashing"
+    ],
+    [
+      "modules/shared/Stages/presentation/components/__tests__/StageEdit.test.ts",
+      "StageEdit contains the save button"
+    ],
+    [
+      "modules/shared/Stages/presentation/components/__tests__/StageEdit.test.ts",
+      "StageEdit does not show error section when there is no error"
+    ],
+    [
+      "modules/shared/Stages/presentation/components/__tests__/StageForm.test.ts",
+      "StageForm emits edit params when a stage is provided"
+    ],
+    [
+      "modules/shared/Stages/presentation/components/__tests__/StageForm.test.ts",
+      "StageForm disables the field group while loading"
+    ],
+    [
+      "modules/shared/Stages/presentation/components/__tests__/StageForm.test.ts",
+      "StageForm clears multilingual values when resetKey changes"
+    ],
+    [
+      "modules/shared/measurement/presentation/components/__tests__/MeasurementAdd.test.ts",
+      "MeasurementAdd renders and saves measurement params including status"
+    ],
+    [
+      "modules/shared/measurement/presentation/components/__tests__/MeasurementAdd.test.ts",
+      "MeasurementAdd navigates to measurement list on cancel"
+    ],
+    [
+      "modules/shared/measurement/presentation/components/__tests__/MeasurementForm.test.ts",
+      "MeasurementForm emits add params with default status active when no measurement is provided"
+    ],
+    [
+      "modules/shared/measurement/presentation/components/__tests__/MeasurementForm.test.ts",
+      "MeasurementForm emits edit params when a measurement is provided with correct status"
+    ],
+    [
+      "modules/shared/measurement/presentation/components/__tests__/MeasurementIndex.test.ts",
+      "MeasurementIndex fetches one measurement before entering edit mode"
+    ],
+    [
+      "modules/MainOrganization/ExecutionQuotes/Procurement/presentation/components/__tests__/ProcurementPage.test.ts",
+      "filters requests by status and search locally while preserving the complete request owner state"
+    ],
+    [
+      "modules/MainOrganization/ExecutionQuotes/Procurement/presentation/components/__tests__/PurchaseRequestFormDialog.test.ts",
+      "supports multiple independent item rows and validates every row before transport"
+    ],
+    [
+      "modules/MainOrganization/ExecutionQuotes/Procurement/presentation/components/__tests__/SupplierPriceOffersDialog.test.ts",
+      "clear-all requires explicit confirmation and includes omitted suppliers by name"
+    ],
+    [
+      "modules/MainOrganization/ExecutionQuotes/Procurement/presentation/components/__tests__/SupplierPriceOffersDialog.test.ts",
+      "failed Fetch disables Save and offers a read-only retry"
+    ],
+    [
+      "modules/MainOrganization/ExecutionQuotes/Procurement/presentation/components/__tests__/SupplierPriceOffersDialog.test.ts",
+      "failed save keeps all prices and shows actual feedback"
+    ],
+    [
+      "modules/MainOrganization/ExecutionQuotes/Procurement/presentation/components/__tests__/SupplierPriceOffersDialog.test.ts",
+      "does not silently discard unsaved edits on Cancel"
+    ],
+    [
+      "modules/MainOrganization/ExecutionQuotes/Procurement/presentation/components/__tests__/SupplierPriceOffersDialog.test.ts",
+      "rejects duplicate Supplier selection and resets the visible dropdown to its draft selection"
+    ],
+    [
+      "modules/MainOrganization/ExecutionQuotes/Procurement/presentation/components/__tests__/SupplierPriceOffersDialog.test.ts",
+      "unconfirmed Sync and failed verification never display confirmed persistence feedback"
+    ],
+    [
+      "modules/MainOrganization/ExecutionQuotes/Procurement/presentation/components/__tests__/SupplierPriceOffersPanel.test.ts",
+      "shows saved comparisons and localized labels with en layout"
+    ],
+    [
+      "modules/MainOrganization/ExecutionQuotes/Procurement/presentation/components/__tests__/SupplierPriceOffersPanel.test.ts",
+      "shows saved comparisons and localized labels with ar layout"
+    ],
+    [
+      "modules/MainOrganization/ExecutionQuotes/SiteTeam/presentation/components/__tests__/EngineerSelectionDialog.test.ts",
+      "restores multiple assignments, supports additions and deduplicates the submission"
+    ],
+    [
+      "modules/MainOrganization/ExecutionQuotes/SiteTeam/presentation/components/__tests__/EngineerSelectionDialog.test.ts",
+      "allows deselection but prevents unverified removal of saved assignments"
+    ],
+    [
+      "modules/MainOrganization/ExecutionQuotes/Warehouse/presentation/components/__tests__/MaterialReceiptDetailsDialog.test.ts",
+      "shows resolved item names and quantities read-only when no receiving employee was recorded"
+    ],
+    [
+      "modules/MainOrganization/Project/presentation/components/project_preview/__tests__/ProjectPreviewForm.test.ts",
+      "ProjectPreviewForm.vue hydrates edit values and emits preview params"
+    ],
+    [
+      "modules/MainOrganization/Project/presentation/components/project_preview/__tests__/ProjectPreviewForm.test.ts",
+      "ProjectPreviewForm.vue uses employee params filtered by engineer and pricing responsible types"
+    ],
+    [
+      "modules/MainOrganization/Project/presentation/components/project_preview/__tests__/ProjectPreviewForm.test.ts",
+      "ProjectPreviewForm.vue formats changed date and time values without a timezone day shift"
+    ],
+    [
+      "modules/MainOrganization/Project/presentation/components/project_preview/__tests__/ProjectPreviewForm.test.ts",
+      "ProjectPreviewForm.vue does not overwrite nullable optional edit values with defaults"
+    ],
+    [
+      "modules/MainOrganization/Project/presentation/components/project_show/__tests__/ProjectSideColumn.test.ts",
+      "ProjectSideColumn renders preview details"
+    ],
+    [
+      "modules/MainOrganization/Project/presentation/components/project_show/__tests__/ProjectSideColumn.test.ts",
+      "ProjectSideColumn keeps all preview entries accessible through the compact selector"
+    ],
+    [
+      "modules/MainOrganization/Project/presentation/components/project_show/__tests__/ProjectSideColumn.test.ts",
+      "ProjectSideColumn expands source-like addresses as escaped text and rejects unsafe site links"
+    ],
+    [
+      "modules/MainOrganization/Project/presentation/components/project_show/__tests__/ProjectSideColumn.test.ts",
+      "ProjectSideColumn routes to add preview when no preview exists"
+    ]
+  ],
+  "currentFailureOccurrences": [
+    [
+      "modules/MainAdmin/package/presentation/components/__tests__/PackageForm.test.ts",
+      "PackageForm emits the exact package fields from form inputs"
+    ],
+    [
+      "modules/MainAdmin/package/presentation/components/__tests__/PackageForm.test.ts",
+      "PackageForm prefills package data for editing"
+    ],
+    [
+      "modules/MainAdmin/package/presentation/components/__tests__/PackageSubscriptionStatusDialog.test.ts",
+      "PackageSubscriptionStatusDialog submits only the package subscription status payload"
+    ],
+    [
+      "modules/MainAdmin/package/presentation/components/__tests__/PackageSubscriptionsIndex.test.ts",
+      "PackageSubscriptionsIndex opens the change-status dialog and submits the selected subscription status"
+    ],
+    [
+      "modules/MainOrganization/Contractor/presentation/components/__tests__/ContractorEdit.test.ts",
+      "ContractorEdit loads the contractor and submits its ID in the update body"
+    ],
+    [
+      "modules/MainOrganization/ExecutionQuotes/presentation/components/__tests__/ExecutionQuoteShow.test.ts",
+      "ExecutionQuoteShow shows an unset stage client price as a placeholder"
+    ],
+    [
+      "modules/MainOrganization/ExecutionQuotes/presentation/components/__tests__/ExecutionQuoteShow.test.ts",
+      "ExecutionQuoteShow shows the quote returned by the show endpoint"
+    ],
+    [
+      "modules/MainOrganization/ExecutionQuotes/presentation/components/__tests__/ExecutionQuoteShow.test.ts",
+      "ExecutionQuoteShow omits the attachment section when the API returns null"
+    ],
+    [
+      "modules/MainOrganization/ExecutionQuotes/presentation/components/__tests__/ExecutionQuoteShow.test.ts",
+      "ExecutionQuoteShow omits the attachment section when the API returns undefined"
+    ],
+    [
+      "modules/MainOrganization/ExecutionQuotes/presentation/components/__tests__/ExecutionQuoteShow.test.ts",
+      "ExecutionQuoteShow omits the attachment section when the API returns undefined"
+    ],
+    [
+      "modules/MainOrganization/ExecutionQuotes/presentation/components/__tests__/ExecutionQuoteShow.test.ts",
+      "ExecutionQuoteShow updates the full quote item row through edit_quote_item, then refreshes"
+    ],
+    [
+      "modules/MainOrganization/ExecutionQuotes/presentation/components/__tests__/ExecutionQuoteShow.test.ts",
+      "ExecutionQuoteShow deletes only after confirmation, then refreshes the quote"
+    ],
+    [
+      "modules/MainOrganization/Invoice/presentation/components/__tests__/InvoiceForm.test.ts",
+      "InvoiceForm defaults to SINGLE, renders the standard fields, and hides the invoices selector"
+    ],
+    [
+      "modules/MainOrganization/Invoice/presentation/components/__tests__/InvoiceForm.test.ts",
+      "InvoiceForm selects GROUP and keeps the project-filtered invoices field as a multi-select"
+    ],
+    [
+      "modules/MainOrganization/Invoice/presentation/components/__tests__/InvoiceForm.test.ts",
+      "InvoiceForm clears group-only invoice values when switching back to SINGLE"
+    ],
+    [
+      "modules/MainOrganization/Labors/presentation/components/__tests__/LaborIndex.test.ts",
+      "LaborIndex applies multi-select filters across all labor filter groups"
+    ],
+    [
+      "modules/MainOrganization/Labors/presentation/components/__tests__/LaborIndex.test.ts",
+      "LaborIndex restores labor filters and page size while ignoring unsupported sorting"
+    ],
+    [
+      "modules/MainOrganization/Products/presentation/components/__tests__/ProductsForm.test.ts",
+      "ProductsForm keeps grades fields visible when the product status is deactivated"
+    ],
+    [
+      "modules/MainOrganization/Products/presentation/components/__tests__/ProductsForm.test.ts",
+      "ProductsForm preserves grades when an edited product is deactivated"
+    ],
+    [
+      "modules/MainOrganization/Products/presentation/components/__tests__/ProductsForm.test.ts",
+      "ProductsForm prefills returned quantity and sends it in edit params"
+    ],
+    [
+      "modules/MainOrganization/Products/presentation/components/__tests__/ProductsIndex.test.ts",
+      "ProductsIndex shows the backend success message after a product is deleted"
+    ],
+    [
+      "modules/MainOrganization/Project/presentation/components/__tests__/ProjectIndex.test.ts",
+      "ProjectIndex deletes a project from the row action"
+    ],
+    [
+      "modules/MainOrganization/ProjectFloor/presentation/components/__tests__/ProjectFloorEdit.test.ts",
+      "ProjectFloorEdit maps the shared add form payload into a complete update request"
+    ],
+    [
+      "modules/MainOrganization/ProjectFloor/presentation/components/__tests__/ProjectFloorEdit.test.ts",
+      "ProjectFloorEdit works from a direct refreshed edit URL without optional query ids"
+    ],
+    [
+      "modules/MainOrganization/ProjectFloor/presentation/components/__tests__/ProjectFloorEdit.test.ts",
+      "ProjectFloorEdit renders initial loading and prevents repeated updates while saving"
+    ],
+    [
+      "modules/MainOrganization/ProjectFloor/presentation/components/__tests__/ProjectFloorEdit.test.ts",
+      "ProjectFloorEdit maps API validation errors back to the shared form fields"
+    ],
+    [
+      "modules/MainOrganization/QuoteTypes/presentation/components/__tests__/QuoteTypeForm.test.ts",
+      "QuoteTypeForm allows entering a type code when adding a quote type"
+    ],
+    [
+      "modules/MainOrganization/Suppliers/presentation/components/__tests__/SuppliersIndex.test.ts",
+      "SuppliersIndex renders supplier labels and fetches the first page on mount"
+    ],
+    [
+      "modules/MainOrganization/TaskAssignment/presentation/components/__tests__/EmployeeTasksList.test.ts",
+      "EmployeeTasksList forwards the accept review decision"
+    ],
+    [
+      "modules/MainOrganization/TaskAssignment/presentation/components/__tests__/EmployeeTasksList.test.ts",
+      "EmployeeTasksList forwards the reject review decision"
+    ],
+    [
+      "modules/MainOrganization/TaskAssignment/presentation/components/__tests__/TaskAssignmentForm.test.ts",
+      "TaskAssignmentForm emits params with the selected row id and TitleInterface ids"
+    ],
+    [
+      "modules/MainOrganization/TaskAssignment/presentation/components/__tests__/TaskAssignmentsShow.test.ts",
+      "TaskAssignmentsShow renders project item details and handles status action workflow"
+    ],
+    [
+      "modules/MainOrganization/TaskAssignment/presentation/components/__tests__/TaskStatusAction.test.ts",
+      "TaskStatusAction renders readonly text when no status action is available"
+    ],
+    [
+      "modules/shared/Brand/presentation/components/__tests__/BrandEdit.test.ts",
+      "BrandEdit loads all translations and updates the selected brand"
+    ],
+    [
+      "modules/shared/Brand/presentation/components/__tests__/BrandIndex.test.ts",
+      "BrandIndex renders brand labels and fetches the first page on mount"
+    ],
+    [
+      "modules/shared/Materials/presentation/components/__tests__/MaterialsForm.test.ts",
+      "MaterialsForm emits translated title, price, brand, and unit in the material params"
+    ],
+    [
+      "modules/shared/Materials/presentation/components/__tests__/MaterialsForm.test.ts",
+      "MaterialsForm emits EditMaterialParams with the material ID on the edit route"
+    ],
+    [
+      "modules/shared/Stages/presentation/components/__tests__/StageAdd.test.ts",
+      "StageAdd renders without crashing"
+    ],
+    [
+      "modules/shared/Stages/presentation/components/__tests__/StageAdd.test.ts",
+      "StageAdd does not show error section when there is no error"
+    ],
+    [
+      "modules/shared/Stages/presentation/components/__tests__/StageAdd.test.ts",
+      "StageAdd renders the AppButton for saving"
+    ],
+    [
+      "modules/shared/Stages/presentation/components/__tests__/StageAdd.test.ts",
+      "StageAdd calls update with edit params when a fetched stage is saved"
+    ],
+    [
+      "modules/shared/Stages/presentation/components/__tests__/StageAdd.test.ts",
+      "StageAdd emits cancel when editing and the cancel button is clicked"
+    ],
+    [
+      "modules/shared/Stages/presentation/components/__tests__/StageEdit.test.ts",
+      "StageEdit renders without crashing"
+    ],
+    [
+      "modules/shared/Stages/presentation/components/__tests__/StageEdit.test.ts",
+      "StageEdit contains the save button"
+    ],
+    [
+      "modules/shared/Stages/presentation/components/__tests__/StageEdit.test.ts",
+      "StageEdit does not show error section when there is no error"
+    ],
+    [
+      "modules/shared/Stages/presentation/components/__tests__/StageForm.test.ts",
+      "StageForm emits edit params when a stage is provided"
+    ],
+    [
+      "modules/shared/Stages/presentation/components/__tests__/StageForm.test.ts",
+      "StageForm disables the field group while loading"
+    ],
+    [
+      "modules/shared/Stages/presentation/components/__tests__/StageForm.test.ts",
+      "StageForm clears multilingual values when resetKey changes"
+    ],
+    [
+      "modules/shared/measurement/presentation/components/__tests__/MeasurementAdd.test.ts",
+      "MeasurementAdd renders and saves measurement params including status"
+    ],
+    [
+      "modules/shared/measurement/presentation/components/__tests__/MeasurementAdd.test.ts",
+      "MeasurementAdd navigates to measurement list on cancel"
+    ],
+    [
+      "modules/shared/measurement/presentation/components/__tests__/MeasurementForm.test.ts",
+      "MeasurementForm emits add params with default status active when no measurement is provided"
+    ],
+    [
+      "modules/shared/measurement/presentation/components/__tests__/MeasurementForm.test.ts",
+      "MeasurementForm emits edit params when a measurement is provided with correct status"
+    ],
+    [
+      "modules/shared/measurement/presentation/components/__tests__/MeasurementIndex.test.ts",
+      "MeasurementIndex fetches one measurement before entering edit mode"
+    ],
+    [
+      "modules/MainOrganization/ExecutionQuotes/Procurement/presentation/components/__tests__/ProcurementPage.test.ts",
+      "filters requests by status and search locally while preserving the complete request owner state"
+    ],
+    [
+      "modules/MainOrganization/ExecutionQuotes/Procurement/presentation/components/__tests__/PurchaseRequestFormDialog.test.ts",
+      "supports multiple independent item rows and validates every row before transport"
+    ],
+    [
+      "modules/MainOrganization/ExecutionQuotes/Procurement/presentation/components/__tests__/SupplierPriceOffersDialog.test.ts",
+      "clear-all requires explicit confirmation and includes omitted suppliers by name"
+    ],
+    [
+      "modules/MainOrganization/ExecutionQuotes/Procurement/presentation/components/__tests__/SupplierPriceOffersDialog.test.ts",
+      "failed Fetch disables Save and offers a read-only retry"
+    ],
+    [
+      "modules/MainOrganization/ExecutionQuotes/Procurement/presentation/components/__tests__/SupplierPriceOffersDialog.test.ts",
+      "failed save keeps all prices and shows actual feedback"
+    ],
+    [
+      "modules/MainOrganization/ExecutionQuotes/Procurement/presentation/components/__tests__/SupplierPriceOffersDialog.test.ts",
+      "does not silently discard unsaved edits on Cancel"
+    ],
+    [
+      "modules/MainOrganization/ExecutionQuotes/Procurement/presentation/components/__tests__/SupplierPriceOffersDialog.test.ts",
+      "rejects duplicate Supplier selection and resets the visible dropdown to its draft selection"
+    ],
+    [
+      "modules/MainOrganization/ExecutionQuotes/Procurement/presentation/components/__tests__/SupplierPriceOffersDialog.test.ts",
+      "unconfirmed Sync and failed verification never display confirmed persistence feedback"
+    ],
+    [
+      "modules/MainOrganization/ExecutionQuotes/Procurement/presentation/components/__tests__/SupplierPriceOffersPanel.test.ts",
+      "shows saved comparisons and localized labels with en layout"
+    ],
+    [
+      "modules/MainOrganization/ExecutionQuotes/Procurement/presentation/components/__tests__/SupplierPriceOffersPanel.test.ts",
+      "shows saved comparisons and localized labels with ar layout"
+    ],
+    [
+      "modules/MainOrganization/ExecutionQuotes/SiteTeam/presentation/components/__tests__/EngineerSelectionDialog.test.ts",
+      "restores multiple assignments, supports additions and deduplicates the submission"
+    ],
+    [
+      "modules/MainOrganization/ExecutionQuotes/SiteTeam/presentation/components/__tests__/EngineerSelectionDialog.test.ts",
+      "allows deselection but prevents unverified removal of saved assignments"
+    ],
+    [
+      "modules/MainOrganization/ExecutionQuotes/Warehouse/presentation/components/__tests__/MaterialReceiptDetailsDialog.test.ts",
+      "shows resolved item names and quantities read-only when no receiving employee was recorded"
+    ],
+    [
+      "modules/MainOrganization/Project/presentation/components/project_preview/__tests__/ProjectPreviewForm.test.ts",
+      "ProjectPreviewForm.vue hydrates edit values and emits preview params"
+    ],
+    [
+      "modules/MainOrganization/Project/presentation/components/project_preview/__tests__/ProjectPreviewForm.test.ts",
+      "ProjectPreviewForm.vue uses employee params filtered by engineer and pricing responsible types"
+    ],
+    [
+      "modules/MainOrganization/Project/presentation/components/project_preview/__tests__/ProjectPreviewForm.test.ts",
+      "ProjectPreviewForm.vue formats changed date and time values without a timezone day shift"
+    ],
+    [
+      "modules/MainOrganization/Project/presentation/components/project_preview/__tests__/ProjectPreviewForm.test.ts",
+      "ProjectPreviewForm.vue does not overwrite nullable optional edit values with defaults"
+    ],
+    [
+      "modules/MainOrganization/Project/presentation/components/project_show/__tests__/ProjectSideColumn.test.ts",
+      "ProjectSideColumn renders preview details"
+    ],
+    [
+      "modules/MainOrganization/Project/presentation/components/project_show/__tests__/ProjectSideColumn.test.ts",
+      "ProjectSideColumn keeps all preview entries accessible through the compact selector"
+    ],
+    [
+      "modules/MainOrganization/Project/presentation/components/project_show/__tests__/ProjectSideColumn.test.ts",
+      "ProjectSideColumn expands source-like addresses as escaped text and rejects unsafe site links"
+    ],
+    [
+      "modules/MainOrganization/Project/presentation/components/project_show/__tests__/ProjectSideColumn.test.ts",
+      "ProjectSideColumn routes to add preview when no preview exists"
+    ]
+  ],
+  "suiteLoadFailures": [
+    "modules/shared/measurement/presentation/components/__tests__/MeasurementEdit.test.ts"
+  ]
+}

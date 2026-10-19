@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import { onMounted, ref, watch } from 'vue';
   import { onBeforeRouteLeave, useRoute } from 'vue-router';
   import { useFormsStore } from '@/stores/formsStore';
@@ -81,7 +82,7 @@
 </script>
 
 <template>
-  <div class="email-form-card">
+  <StandardFormLayout class="email-form-card">
     <!-- ── Card Header ───────────────────────────────────── -->
     <header class="form-header">
       <div class="header-text">
@@ -110,7 +111,7 @@
             v-model="title"
             type="text"
             :placeholder="$t('Country Title')"
-            class="field-input"
+            class="field-input workspace-control"
             @input="updateData"
           />
         </div>
@@ -127,7 +128,7 @@
             v-model="code"
             type="text"
             :placeholder="$t('Country Code')"
-            class="field-input"
+            class="field-input workspace-control"
             @input="updateData"
           />
         </div>
@@ -144,21 +145,21 @@
             v-model="flag"
             type="text"
             :placeholder="$t('Country Flag')"
-            class="field-input"
+            class="field-input workspace-control"
             @input="updateData"
           />
         </div>
       </div>
     </div>
-  </div>
+  </StandardFormLayout>
 </template>
 
 <style scoped lang="scss">
-  .field-group {
-    &.disabled {
-      cursor: not-allowed;
-      pointer-events: none;
-      opacity: 0.7;
-    }
+.field-group {
+  &.disabled {
+    cursor: not-allowed;
+    pointer-events: none;
+    opacity: 0.7;
   }
+}
 </style>

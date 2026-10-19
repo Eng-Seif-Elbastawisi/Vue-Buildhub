@@ -1,5 +1,7 @@
 # Procurement → Requirements
 
+October 19 update: see [execution integration changes](../../../../../docs/execution-october-19-integration.md) for START-only new-work selection, the fixed alert, updated fields/attachments, legacy handling, and outstanding backend questions.
+
 The Quote workspace opens Requirements at
 `/{organization|mainportal}/execution-quotes/show/:id/procurement`.
 The Quote Show app shortcut and shared workspace navigation retain the same Quote ID.
@@ -32,7 +34,7 @@ late response before changing state. Store retries and replay callbacks are disa
 
 - Employee, Materials and Products repositories, models and index params supply
   paginated lookup options with independent search/loading state.
-- Schedule's `readOverview()` and mapped timeline groups supply stage choices.
+- Schedule's `fetchStartedProjectTimelines()` supplies START Group main-stage choices for new items; ordinary Schedule management still uses unfiltered `readOverview()`.
   The selected association is `ProjectTimelineStageModel.id`, not its master
   `stage.id` or `quoteStageId`.
 - The existing `ShopDrawingTimelineStageModel` maps the compatible timeline-stage

@@ -1,107 +1,195 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-12T08:48:52.067181+00:00",
-  "title": "Design System: BuildHub project workspace",
+  "generatedAt": "2026-10-18T08:22:35.886397+00:00",
+  "title": "Design System: BuildHub application workspace",
   "extensions": {
+    "colorMeta": {
+      "primary": {
+        "role": "primary",
+        "displayName": "Workspace ink"
+      },
+      "periwinkle": {
+        "role": "secondary",
+        "displayName": "Reference periwinkle"
+      },
+      "canvas": {
+        "role": "neutral",
+        "displayName": "Cool workspace canvas"
+      },
+      "coral-ink": {
+        "role": "secondary",
+        "displayName": "Destructive coral"
+      }
+    },
+    "typographyMeta": {
+      "page": {
+        "displayName": "Page heading",
+        "purpose": "Fluid operational page heading; retain bilingual local fonts."
+      }
+    },
+    "shadows": [
+      {
+        "name": "popover",
+        "value": "0 12px 36px rgb(16 20 26 / 12%)",
+        "purpose": "Menus, popovers and expanded rail."
+      },
+      {
+        "name": "dialog",
+        "value": "0 24px 72px rgb(16 20 26 / 20%)",
+        "purpose": "Modal surfaces."
+      }
+    ],
     "motion": [
       {
-        "name": "app-trace",
-        "value": "700ms cubic-bezier(0.16, 1, 0.3, 1)",
-        "purpose": "Decorative app line tracing on hover and focus; disabled for reduced motion."
+        "name": "fast",
+        "value": "140ms",
+        "purpose": "Shared state feedback."
       },
       {
-        "name": "app-scale",
-        "value": "500ms cubic-bezier(0.16, 1, 0.3, 1)",
-        "purpose": "Small SVG hover scale; removed for reduced motion."
+        "name": "base",
+        "value": "200ms",
+        "purpose": "Rail width transition."
       },
       {
-        "name": "navigation-state",
-        "value": "180ms ease",
-        "purpose": "Navigation background and text feedback; disabled for reduced motion."
+        "name": "ease",
+        "value": "cubic-bezier(0.22, 1, 0.36, 1)",
+        "purpose": "Shared workspace easing."
       }
     ],
     "breakpoints": [
       {
-        "name": "navigation-mobile",
-        "value": "600px"
+        "name": "mobile-shell",
+        "value": "1023px"
       },
       {
-        "name": "quote-header-mobile",
-        "value": "640px"
+        "name": "compact-surfaces",
+        "value": "680px"
       },
       {
-        "name": "summary-inset",
-        "value": "700px"
+        "name": "auth-stack",
+        "value": "800px"
       },
       {
-        "name": "site-team-summary-stack",
-        "value": "900px"
+        "name": "directory-two-columns",
+        "value": "1100px"
+      },
+      {
+        "name": "schedule-connectors-hidden",
+        "value": "768px"
       }
-    ]
+    ],
+    "fontAvailability": {
+      "Lufga": "Bundled supplied OpenType files, weights 100–900, upright and italic; legacy Latin aliases mapped",
+      "Arabic": "Existing local URW DIN Arabic files retained"
+    },
+    "glassSurfaces": {
+      "fill": "color-mix(in srgb, var(--bh-surface) 82%, transparent)",
+      "tint": "color-mix(in srgb, var(--bh-blue-soft) 48%, transparent)",
+      "border": "color-mix(in srgb, var(--bh-surface-raised) 72%, var(--bh-field-line))",
+      "blur": "18px",
+      "mixin": "src/styles/_workspace-glass.scss",
+      "fallback": "Opaque workspace surface without backdrop support or with reduced transparency",
+      "scope": "Shared index and feature/page-intro headings, supporting buttons, invoice/project/execution quote detail heroes"
+    },
+    "statusBadges": {
+      "height": "22px",
+      "radius": "6px",
+      "padding": "2px 8px",
+      "font": "12px/18px, 600",
+      "success": "#16803f",
+      "danger": "#c83d46",
+      "warning": "#efb74b / #443006",
+      "info": "#2b62bf",
+      "neutral": "#e2e5ea / #485366",
+      "darkNeutral": "#354052 / #edf2fa",
+      "recipe": "src/styles/_status-badges.scss",
+      "component": "src/shared/ConstructionStates/StatusBadge.vue",
+      "coverage": "docs/redesign/STATUS_BADGES.md"
+    }
   },
   "components": [
     {
-      "name": "Workspace app link",
-      "kind": "custom",
-      "refersTo": "workspace-app",
-      "description": "Router-link presentation with decorative timeline geometry and an ink action footer.",
-      "html": "<a class=\"ds-app\" href=\"#schedule\"><div class=\"ds-app-visual\" aria-hidden=\"true\"><svg viewBox=\"0 0 480 160\" fill=\"none\"><path class=\"ds-guide\" d=\"M40 30H440M40 80H440M40 130H440M100 16V144M200 16V144M300 16V144M400 16V144\"/><path class=\"ds-line\" d=\"M65 43H215V80H315V117H410\"/><rect x=\"65\" y=\"33\" width=\"150\" height=\"20\" rx=\"5\"/><rect x=\"215\" y=\"70\" width=\"100\" height=\"20\" rx=\"5\"/><rect x=\"315\" y=\"107\" width=\"95\" height=\"20\" rx=\"5\"/></svg></div><div class=\"ds-app-heading\"><h3>Schedule</h3><p>Project schedule</p></div><span class=\"ds-app-cta\">Open Schedule <svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" aria-hidden=\"true\"><path d=\"M6 18 18 6M6 6h12v12\"/></svg></span></a>",
-      "css": ".ds-app{font-family:var(--font-family, 'Medium', 'Segoe UI', sans-serif);display:flex;flex-direction:column;border:1px solid var(--border-weak,#e2e8f0);border-radius:16px;overflow:hidden;background:var(--bg-card,#fff);color:var(--title-card-color,rgba(17,24,39,1));text-decoration:none;transition:border-color 220ms ease,background-color 220ms ease}.ds-app:hover{border-color:var(--PrimaryColor,#c47a35)}.ds-app:focus-visible{outline:2px solid var(--PrimaryColor,#c47a35);outline-offset:4px}.ds-app-visual{height:10rem;background:var(--PrimaryColor-alpha-8,rgba(79,175,124,.08));color:var(--PrimaryColor,#c47a35)}.ds-app-visual svg{width:100%;height:100%;stroke:currentColor;stroke-width:1.5;transition:transform 500ms cubic-bezier(.16,1,.3,1)}.ds-app-visual rect{fill:var(--bg-card,#fff);stroke-width:2}.ds-guide{opacity:.3}.ds-line{stroke-width:2.5;stroke-dasharray:1100}.ds-app:hover .ds-line,.ds-app:focus-visible .ds-line{animation:ds-trace 700ms cubic-bezier(.16,1,.3,1)}.ds-app:hover .ds-app-visual svg{transform:scale(1.035)}.ds-app-heading{padding:1.5rem 1.5rem 1rem}.ds-app h3{margin:0 0 .4rem;font-size:1.25rem;font-weight:600}.ds-app p{margin:0;color:var(--subtitle-color,#64748b);font-size:.8rem;line-height:1.65}.ds-app-cta{display:flex;justify-content:space-between;padding:1rem 1.5rem;border-top:1px solid var(--border-weak,#e2e8f0);font-size:.85rem;font-weight:600}@keyframes ds-trace{from{stroke-dashoffset:1100}to{stroke-dashoffset:0}}@media(prefers-reduced-motion:reduce){.ds-app,.ds-app-visual svg{transition:none}.ds-app:hover .ds-app-visual svg{transform:none}.ds-app:hover .ds-line,.ds-app:focus-visible .ds-line{animation:none}}"
+      "name": "Primary button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Standard CRUD action presentation; customer branding remains configurable.",
+      "html": "<button class=\"ds-primary\">Save changes</button>",
+      "css": ".ds-primary{font-family:var(--bh-font,'Lufga','Medium','Segoe UI',sans-serif);min-height:44px;padding:0 24px;border:1px solid var(--PrimaryColor,#10141a);border-radius:var(--bh-radius-pill,999px);background:var(--PrimaryColor,#10141a);color:var(--button-primary-color,#fff);font-size:.875rem;font-weight:500;cursor:pointer;transition:background 140ms,color 140ms}.ds-primary:hover:not(:disabled){background:var(--SecondaryColor,#354052);color:var(--secondary-text-color,#fff)}.ds-primary:focus-visible{outline:2px solid var(--bh-focus,#4169a9);outline-offset:3px;}.ds-primary:active:not(:disabled){transform:translateY(1px)}.ds-primary:disabled{opacity:.66;cursor:not-allowed}@media(prefers-reduced-motion:reduce){.ds-primary{transition:none}.ds-primary:active{transform:none}}"
     },
     {
-      "name": "Workspace navigation",
+      "name": "Secondary button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Standard CRUD action presentation; customer branding remains configurable.",
+      "html": "<button class=\"ds-secondary\">Save changes</button>",
+      "css": ".ds-secondary{font-family:var(--bh-font,'Lufga','Medium','Segoe UI',sans-serif);min-height:44px;padding:0 24px;border:1px solid var(--SecondaryColor,#354052);border-radius:var(--bh-radius-pill,999px);background:var(--bh-surface,#f8fafd);color:var(--SecondaryColor,#354052);font-size:.875rem;font-weight:500;cursor:pointer;transition:background 140ms,color 140ms}.ds-secondary:hover:not(:disabled){background:var(--SecondaryColor,#354052);color:var(--secondary-text-color,#fff)}.ds-secondary:focus-visible{outline:2px solid var(--bh-focus,#4169a9);outline-offset:3px;}.ds-secondary:active:not(:disabled){transform:translateY(1px)}.ds-secondary:disabled{opacity:.66;cursor:not-allowed}@media(prefers-reduced-motion:reduce){.ds-secondary{transition:none}.ds-secondary:active{transform:none}}"
+    },
+    {
+      "name": "Text field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Shared raised field with semantic focus and invalid states.",
+      "html": "<label class=\"ds-field\">Name<input class=\"ds-input\" placeholder=\"Enter name\"></label>",
+      "css": ".ds-field{font-family:var(--bh-font,'Lufga','Medium','Segoe UI',sans-serif);display:grid;gap:8px;color:var(--bh-text,#10141a);font-size:.875rem;font-weight:500}.ds-input{font:inherit;min-height:44px;padding:0 14px;border:1px solid var(--bh-field-line,#b8c5d6);border-radius:var(--bh-radius-control,12px);background:var(--bh-surface-raised,#fff);color:var(--bh-text,#10141a);transition:border-color 140ms}.ds-input::placeholder{color:var(--bh-muted,#5d6879)}.ds-input:hover{border-color:var(--bh-blue-ink,#365b96)}.ds-input:focus-visible{outline:2px solid var(--bh-focus,#4169a9);outline-offset:3px;}.ds-input[aria-invalid=true]{border-color:var(--bh-coral-ink,#a23d45)}.ds-input:disabled{background:var(--bh-surface-secondary,#dfe7f3);color:var(--bh-muted,#5d6879)}@media(prefers-reduced-motion:reduce){.ds-input{transition:none}}"
+    },
+    {
+      "name": "Contextual navigation",
       "kind": "nav",
-      "refersTo": "workspace-navigation",
-      "description": "Quote-owned app navigation with an active-page fill.",
-      "html": "<nav class=\"ds-nav\" aria-label=\"Project apps\"><a class=\"ds-home\" href=\"#apps\">Apps</a><span class=\"ds-divider\" aria-hidden=\"true\"></span><a href=\"#schedule\" aria-current=\"page\">Schedule</a><a href=\"#site-team\">Site &amp; Team</a></nav>",
-      "css": ".ds-nav{font-family:var(--font-family, 'Medium', 'Segoe UI', sans-serif);display:flex;align-items:center;flex-wrap:wrap;gap:.4rem;padding:.5rem;border:1px solid var(--border-weak,#e2e8f0);border-radius:14px;background:var(--bg-card,#fff)}.ds-nav a{padding:.75rem 1rem;border-radius:10px;color:var(--subtitle-color,#64748b);font-size:.85rem;font-weight:600;text-decoration:none;transition:background-color 180ms ease,color 180ms ease}.ds-nav a:hover{background:var(--bg-section,#f8fafc);color:var(--title-card-color,rgba(17,24,39,1))}.ds-nav a[aria-current=\"page\"]{background:var(--PrimaryColor-alpha-8,rgba(79,175,124,.08));color:var(--title-card-color,rgba(17,24,39,1))}.ds-nav a:focus-visible{outline:2px solid var(--PrimaryColor,#c47a35);outline-offset:2px}.ds-divider{width:1px;height:1.5rem;background:var(--border-weak,#e2e8f0)}@media(max-width:600px){.ds-home{width:100%}.ds-divider{display:none}.ds-nav a{padding:.65rem .8rem}}@media(prefers-reduced-motion:reduce){.ds-nav a{transition:none}}"
+      "refersTo": "navigation-active",
+      "description": "Horizontal module destinations under the account row.",
+      "html": "<nav class=\"ds-nav\" aria-label=\"Workspace\"><a href=\"#records\" aria-current=\"page\">Records</a><a href=\"#settings\">Settings</a></nav>",
+      "css": ".ds-nav{font-family:var(--bh-font,'Lufga','Medium','Segoe UI',sans-serif);display:flex;gap:8px;overflow-x:auto;padding:8px;background:var(--bh-canvas,#e8edf5)}.ds-nav a{display:inline-flex;align-items:center;min-height:40px;padding:8px 18px;border-radius:var(--bh-radius-pill,999px);color:var(--bh-muted,#5d6879);text-decoration:none;white-space:nowrap;font-size:.875rem}.ds-nav a:hover{background:var(--bh-hover,#e0e7f1);color:var(--bh-text,#10141a)}.ds-nav a[aria-current=page]{background:var(--bh-active,#10141a);color:var(--bh-on-active,#fff)}.ds-nav a:focus-visible{outline:2px solid var(--bh-focus,#4169a9);outline-offset:3px;}"
     },
     {
-      "name": "Project details disclosure",
-      "kind": "custom",
-      "description": "Initially closed native disclosure retaining the project details.",
-      "html": "<details class=\"ds-details\"><summary>Project details <svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" aria-hidden=\"true\"><path d=\"m6 9 6 6 6-6\"/></svg></summary><p>Quote type and creation date</p></details>",
-      "css": ".ds-details{font-family:var(--font-family, 'Medium', 'Segoe UI', sans-serif);border-top:1px solid var(--border-weak,#e2e8f0);padding-block:1.25rem;color:var(--title-card-color,rgba(17,24,39,1))}.ds-details summary{display:flex;align-items:center;gap:.75rem;cursor:pointer;font-weight:600;list-style:none}.ds-details summary::-webkit-details-marker{display:none}.ds-details summary svg{margin-inline-start:auto;transition:transform 220ms ease}.ds-details[open] summary{margin-block-end:1.5rem}.ds-details[open] summary svg{transform:rotate(180deg)}.ds-details summary:focus-visible{outline:2px solid var(--PrimaryColor,#c47a35);outline-offset:6px}@media(prefers-reduced-motion:reduce){.ds-details summary svg{transition:none}}"
-    },
-    {
-      "name": "Site & Team initials",
+      "name": "Navigation badge",
       "kind": "chip",
-      "description": "Noninteractive member initials marker with ink text.",
-      "html": "<span class=\"ds-initials\" aria-label=\"Member initials\">AB</span>",
-      "css": ".ds-initials{font-family:var(--font-family, 'Medium', 'Segoe UI', sans-serif);display:grid;place-items:center;width:2.75rem;height:2.75rem;border-radius:var(--radius-full,9999px);background:var(--PrimaryColor-alpha-8,rgba(79,175,124,.08));color:var(--title-card-color,rgba(17,24,39,1));font-weight:600}"
+      "refersTo": "badge",
+      "description": "Noninteractive count badge; the value is an illustrative preview.",
+      "html": "<span class=\"ds-badge\">3</span>",
+      "css": ".ds-badge{font-family:var(--bh-font,'Lufga','Medium','Segoe UI',sans-serif);display:inline-block;padding:2px 7px;border-radius:var(--bh-radius-pill,999px);background:var(--bh-blue-soft,#e3ebf9);color:var(--bh-blue-ink,#365b96);font-size:.7rem;font-variant-numeric:tabular-nums}"
     },
     {
-      "name": "Schedule timeline card",
+      "name": "Working card",
       "kind": "card",
-      "refersTo": "schedule-card",
-      "description": "Warm task card with accent border and soft focus fill.",
-      "html": "<article class=\"ds-timeline\"><h3>Schedule group</h3><a href=\"#group\">Open group</a></article>",
-      "css": ".ds-timeline{font-family:var(--font-family, 'Medium', 'Segoe UI', sans-serif);display:flex;flex-direction:column;gap:1.25rem;padding:clamp(1.25rem,2vw,2rem);border:1px solid var(--quote-line,#e7e1da);border-radius:14px;background:var(--quote-paper,#fffdfa);color:var(--quote-ink,#272a2b);transition:border-color 180ms ease,background-color 180ms ease}.ds-timeline:hover,.ds-timeline:focus-within{border-color:var(--quote-copper,#a45e39)}.ds-timeline:focus-within{background:var(--quote-copper-soft,#f4e8df)}.ds-timeline h3{margin:0;font-size:1.25rem;font-weight:600;line-height:1.4}.ds-timeline a{color:var(--quote-copper-dark,#854725)}.ds-timeline a:focus-visible{outline:2px solid var(--quote-copper,#a45e39);outline-offset:4px}@media(prefers-reduced-motion:reduce){.ds-timeline{transition:opacity 100ms ease,border-color 100ms ease}}"
+      "refersTo": "card",
+      "description": "Flat surface container with an example action.",
+      "html": "<article class=\"ds-card\"><h3>Project details</h3><a href=\"#details\">Open details</a></article>",
+      "css": ".ds-card{font-family:var(--bh-font,'Lufga','Medium','Segoe UI',sans-serif);padding:24px;border:0;border-radius:var(--bh-radius-card,24px);background:var(--bh-surface,#f8fafd);color:var(--bh-text,#10141a);box-shadow:none}.ds-card h3{margin:0 0 16px;font-size:1.125rem}.ds-card a{color:var(--bh-blue-ink,#365b96)}.ds-card a:hover{color:var(--bh-text,#10141a)}.ds-card a:focus-visible{outline:2px solid var(--bh-focus,#4169a9);outline-offset:3px;}"
     }
   ],
   "narrative": {
-    "overview": "Scoped incumbent identity for Quote Show, Schedule, and Site & Team. The warm ink/copper dashboard surrounds legacy white task surfaces; this record does not replace other BuildHub modules' design rules.",
+    "northStar": "The Contextual Workspace",
+    "overview": "BuildHub adapts the user-pinned RonDesignLab Customer Journey CRM reference into an application-wide operational workspace. A slim icon rail identifies global sections; horizontal pills expose their contextual destinations. Cool blue-gray canvas, near-white surfaces, dark ink, periwinkle accents and restrained coral feedback establish the shared visual language.\n\nThis record replaces the former scoped warm copper identity. The direction contract is [DIRECTION.md](docs/redesign/DIRECTION.md). Palette values are approximate adaptations from supplied raster references, not original Figma tokens. Existing BuildHub branding, customer palette controls and bilingual local fonts remain authoritative.",
     "keyCharacteristics": [
-      "Architectural inline SVG app illustrations",
-      "Flat rounded task surfaces",
-      "Bilingual incumbent typography",
-      "Visible focus and reduced-motion handling"
+      "Separate global selection from contextual navigation.",
+      "Use rounded modular surfaces with tonal depth.",
+      "Keep operational records, forms and tables readable in English and Arabic.",
+      "Use short state feedback and respect reduced motion."
     ],
     "rules": [
       {
-        "name": "Source precedence",
-        "body": "Shell quote tokens and legacy module tokens coexist. Read the final matching declarations and imported styles before changing values.",
+        "name": "The Palette Ownership Rule",
+        "body": "Keep customer branding variables configurable; use workspace semantic tokens for shared surfaces, text, focus and status feedback.",
         "section": "colors"
+      },
+      {
+        "name": "The Tonal Surface Rule",
+        "body": "Group persistent working content with surface tone and spacing; reserve the shared elevation tokens for overlays.",
+        "section": "elevation"
       }
     ],
     "dos": [
-      "Do preserve real routes and quote ownership.",
-      "Do keep native disclosures, logical spacing, translations, and keyboard focus."
+      "Do use semantic workspace tokens and existing shared controls for new surfaces.",
+      "Do preserve saved customer palettes, BuildHub branding and the local bilingual fonts.",
+      "Do keep translated labels, logical spacing, visible focus and reduced-motion behavior.",
+      "Do connect navigation, summaries and schedules to their existing routes and real data owners.",
+      "Do inspect final matching declarations when a legacy module overrides a shared primitive."
     ],
     "donts": [
-      "Don't impose the launcher composition on unrelated screens.",
-      "Don't reinterpret the green legacy alpha family as copper.",
-      "Don't invent metrics or raster imagery."
+      "Don't restore the obsolete scoped copper identity as the application default.",
+      "Don't promote one page composition into a mandatory layout for every module.",
+      "Don't invent customer records, metrics, dependencies or approval states to fill a visual.",
+      "Don't describe fixture screenshots or source inspection as full live acceptance."
     ]
   }
 }

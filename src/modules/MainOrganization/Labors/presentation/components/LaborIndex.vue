@@ -357,10 +357,7 @@
 
 <template>
   <div class="labor-page">
-    <IndexPageHeader
-      :title="$t('labor.list_title')"
-      :subtitle="$t('labor.list_description')"
-    >
+    <IndexPageHeader :title="$t('labor.list_title')" :subtitle="$t('labor.list_description')">
       <template #search>
         <div class="search-field">
           <span class="search-icon">
@@ -380,7 +377,7 @@
           <input
             v-model="word"
             :placeholder="$t('labor.search_placeholder')"
-            class="search-input"
+            class="search-input workspace-control"
             type="text"
             @input="search"
           />
@@ -528,7 +525,7 @@
 
           <template #cell-pricingMode="{ item }">
             <div class="pricing-mode">
-              <span :class="['status-badge', item.pricingMode]">
+              <span class="bh-status" :class="['status-badge', item.pricingMode]">
                 {{ $t(`labor.${item.pricingMode}`) }}
               </span>
               <span v-if="item.pricingMode === 'configured'" class="configured-rate">
@@ -542,7 +539,7 @@
           </template>
 
           <template #cell-mappingReady="{ item }">
-            <span :class="['status-badge', item.mappingReady ? 'ready' : 'not-ready']">
+            <span class="bh-status" :class="['status-badge', item.mappingReady ? 'ready' : 'not-ready']">
               {{ $t(item.mappingReady ? 'labor.ready' : 'labor.not_ready') }}
             </span>
           </template>
@@ -642,328 +639,328 @@
 </template>
 
 <style scoped lang="scss">
-  .labor-header {
-    flex-direction: column !important;
+.labor-header {
+  flex-direction: column !important;
+}
+
+.labor-page,
+.labor-header,
+.row-actions {
+  display: flex;
+}
+
+.toolbar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.toolbar-filters {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.labor-page {
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.labor-header {
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.labor-header p,
+.empty-state p {
+  color: var(--gray-5);
+}
+
+.row-actions {
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.pricing-mode {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
+}
+
+.status-badge,
+.mapping-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 1.75rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.status-badge.configured,
+.status-badge.ready {
+  color: var(--success-dark);
+  background: var(--success-light);
+}
+
+.status-badge.manual_entry,
+.mapping-count {
+  color: var(--gray-700);
+  background: var(--gray-100);
+}
+
+.status-badge.not-ready {
+  color: var(--danger-dark);
+  background: var(--danger-light);
+}
+
+.configured-rate {
+  color: var(--gray-600);
+  font-size: 0.78rem;
+  white-space: nowrap;
+}
+
+.labor-filter {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.labor-filter-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--xs-size-4);
+  min-height: 40px;
+  padding: var(--xs-size) var(--md-size);
+  color: var(--title-card-color);
+  background: var(--bg-card);
+  border: 1px solid var(--input-border-color);
+  border-radius: var(--radius-sm);
+  font-size: var(--sm-size);
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: var(--transition-fast);
+
+  &:hover,
+  &.active {
+    color: var(--PrimaryColor);
+    background: var(--PrimaryColor-light);
+    border-color: var(--PrimaryColor);
   }
 
-  .labor-page,
-  .labor-header,
-  .row-actions {
-    display: flex;
+  &:focus-visible {
+    outline: none;
+    box-shadow: none;
+  }
+}
+
+.labor-filter-total {
+  display: inline-grid;
+  min-width: 1.4rem;
+  min-height: 1.4rem;
+  padding-inline: var(--xs-size-5);
+  color: var(--standard-white);
+  background: var(--PrimaryColor);
+  border-radius: var(--radius-full);
+  font-size: var(--xs-size-2);
+  place-items: center;
+}
+
+.labor-filter-backdrop {
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
+  display: grid;
+  padding: var(--md-size);
+  background: var(--overlay-bg);
+  place-items: center;
+}
+
+.labor-filter-dialog {
+  display: flex;
+  width: min(46rem, 100%);
+  max-height: calc(100vh - (var(--md-size) * 2));
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--bg-card);
+  border: 1px solid var(--border-weak);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--bh-shadow-popover);
+}
+
+.labor-filter-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--sm-size);
+  padding: var(--md-size);
+  border-bottom: 1px solid var(--border-weak);
+
+  h3,
+  p {
+    margin: 0;
   }
 
-  .toolbar {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 1rem;
+  h3 {
+    color: var(--title-card-color);
+    font-size: var(--md-size);
   }
 
-  .toolbar-filters {
-    display: flex;
-    align-items: flex-end;
-    gap: 0.75rem;
-    flex-wrap: wrap;
+  p {
+    margin-top: var(--xs-size-4);
+    color: var(--subtitle-color);
+    font-size: var(--xs-size);
+  }
+}
+
+.labor-filter-close {
+  display: grid;
+  flex: 0 0 2rem;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  color: var(--gray-600);
+  background: var(--gray-100);
+  border: 0;
+  border-radius: var(--radius-full);
+  font-size: var(--lg-size);
+  cursor: pointer;
+  place-items: center;
+}
+
+.labor-filter-content {
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--md-size);
+}
+
+.labor-filter-state,
+.labor-filter-empty {
+  color: var(--subtitle-color);
+  font-size: var(--sm-size);
+  text-align: center;
+}
+
+.labor-filter-groups {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--sm-size);
+}
+
+.labor-filter-group {
+  min-width: 0;
+  padding: var(--sm-size);
+  background: var(--bg-section);
+  border: 1px solid var(--border-weak);
+  border-radius: var(--radius-md);
+
+  legend {
+    padding-inline: var(--xs-size-4);
+    color: var(--title-card-color);
+    font-size: var(--sm-size);
+    font-weight: 700;
+  }
+}
+
+.labor-filter-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--xs-size-4);
+  max-height: 9rem;
+  overflow-y: auto;
+}
+
+.labor-filter-option {
+  display: flex;
+  align-items: center;
+  gap: var(--xs-size-3);
+  min-width: 0;
+  padding: var(--xs-size-4);
+  color: var(--gray-700);
+  background: var(--bg-card);
+  border-radius: var(--radius-xs);
+  font-size: var(--xs-size);
+  cursor: pointer;
+
+  span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
-  .labor-page {
-    flex-direction: column;
-    gap: 1.5rem;
+  input {
+    flex: 0 0 1rem;
+    width: 1rem;
+    height: 1rem;
+    margin: 0;
+    accent-color: var(--PrimaryColor);
+    cursor: pointer;
   }
+}
 
-  .labor-header {
-    justify-content: space-between;
-    gap: 1rem;
-  }
+.labor-filter-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--xs-size-3);
+  padding: var(--sm-size);
+  background: var(--bg-section);
+  border-top: 1px solid var(--border-weak);
 
-  .labor-header p,
-  .empty-state p {
-    color: var(--gray-5);
-  }
-
-  .row-actions {
-    align-items: center;
-    gap: 0.75rem;
-  }
-
-  .pricing-mode {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.35rem;
-  }
-
-  .status-badge,
-  .mapping-count {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 1.75rem;
-    padding: 0.25rem 0.65rem;
-    border-radius: 999px;
-    font-size: 0.8rem;
+  button {
+    min-height: 2.5rem;
+    border-radius: var(--radius-xs);
+    font-size: var(--sm-size);
     font-weight: 600;
-    white-space: nowrap;
+    cursor: pointer;
   }
+}
 
-  .status-badge.configured,
-  .status-badge.ready {
-    color: var(--success-dark);
-    background: var(--success-light);
-  }
+.labor-filter-apply {
+  color: var(--standard-white);
+  background: var(--PrimaryColor);
+  border: 1px solid var(--PrimaryColor);
+}
 
-  .status-badge.manual_entry,
-  .mapping-count {
-    color: var(--gray-700);
-    background: var(--gray-100);
-  }
+.labor-filter-clear {
+  color: var(--gray-700);
+  background: var(--bg-card);
+  border: 1px solid var(--border-weak);
+}
 
-  .status-badge.not-ready {
-    color: var(--danger-dark);
-    background: var(--danger-light);
-  }
+.empty-state {
+  padding: 3rem 1rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+}
 
-  .configured-rate {
-    color: var(--gray-600);
-    font-size: 0.78rem;
-    white-space: nowrap;
-  }
-
-  .labor-filter {
-    position: relative;
-    flex-shrink: 0;
+@media (max-width: 768px) {
+  .toolbar,
+  .toolbar-filters {
+    align-items: stretch;
+    flex-direction: column;
   }
 
   .labor-filter-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--xs-size-4);
-    min-height: 40px;
-    padding: var(--xs-size) var(--md-size);
-    color: var(--title-card-color);
-    background: var(--bg-card);
-    border: 1px solid var(--input-border-color);
-    border-radius: var(--radius-sm);
-    font-size: var(--sm-size);
-    font-weight: 600;
-    white-space: nowrap;
-    cursor: pointer;
-    transition: var(--transition-fast);
-
-    &:hover,
-    &.active {
-      color: var(--PrimaryColor);
-      background: var(--PrimaryColor-light);
-      border-color: var(--PrimaryColor);
-    }
-
-    &:focus-visible {
-      outline: none;
-      box-shadow: 0 0 0 3px var(--PrimaryColor-alpha-15);
-    }
-  }
-
-  .labor-filter-total {
-    display: inline-grid;
-    min-width: 1.4rem;
-    min-height: 1.4rem;
-    padding-inline: var(--xs-size-5);
-    color: var(--standard-white);
-    background: var(--PrimaryColor);
-    border-radius: var(--radius-full);
-    font-size: var(--xs-size-2);
-    place-items: center;
+    width: 100%;
   }
 
   .labor-filter-backdrop {
-    position: fixed;
-    z-index: 1000;
-    inset: 0;
-    display: grid;
-    padding: var(--md-size);
-    background: var(--overlay-bg);
-    place-items: center;
-  }
-
-  .labor-filter-dialog {
-    display: flex;
-    width: min(46rem, 100%);
-    max-height: calc(100vh - (var(--md-size) * 2));
-    flex-direction: column;
-    overflow: hidden;
-    background: var(--bg-card);
-    border: 1px solid var(--border-weak);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-md);
-  }
-
-  .labor-filter-header {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: var(--sm-size);
-    padding: var(--md-size);
-    border-bottom: 1px solid var(--border-weak);
-
-    h3,
-    p {
-      margin: 0;
-    }
-
-    h3 {
-      color: var(--title-card-color);
-      font-size: var(--md-size);
-    }
-
-    p {
-      margin-top: var(--xs-size-4);
-      color: var(--subtitle-color);
-      font-size: var(--xs-size);
-    }
-  }
-
-  .labor-filter-close {
-    display: grid;
-    flex: 0 0 2rem;
-    width: 2rem;
-    height: 2rem;
-    padding: 0;
-    color: var(--gray-600);
-    background: var(--gray-100);
-    border: 0;
-    border-radius: var(--radius-full);
-    font-size: var(--lg-size);
-    cursor: pointer;
-    place-items: center;
-  }
-
-  .labor-filter-content {
-    min-height: 0;
-    overflow-y: auto;
-    padding: var(--md-size);
-  }
-
-  .labor-filter-state,
-  .labor-filter-empty {
-    color: var(--subtitle-color);
-    font-size: var(--sm-size);
-    text-align: center;
-  }
-
-  .labor-filter-groups {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--sm-size);
-  }
-
-  .labor-filter-group {
-    min-width: 0;
     padding: var(--sm-size);
-    background: var(--bg-section);
-    border: 1px solid var(--border-weak);
-    border-radius: var(--radius-md);
-
-    legend {
-      padding-inline: var(--xs-size-4);
-      color: var(--title-card-color);
-      font-size: var(--sm-size);
-      font-weight: 700;
-    }
   }
 
+  .labor-filter-groups,
   .labor-filter-options {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--xs-size-4);
-    max-height: 9rem;
-    overflow-y: auto;
+    grid-template-columns: 1fr;
   }
-
-  .labor-filter-option {
-    display: flex;
-    align-items: center;
-    gap: var(--xs-size-3);
-    min-width: 0;
-    padding: var(--xs-size-4);
-    color: var(--gray-700);
-    background: var(--bg-card);
-    border-radius: var(--radius-xs);
-    font-size: var(--xs-size);
-    cursor: pointer;
-
-    span {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    input {
-      flex: 0 0 1rem;
-      width: 1rem;
-      height: 1rem;
-      margin: 0;
-      accent-color: var(--PrimaryColor);
-      cursor: pointer;
-    }
-  }
-
-  .labor-filter-actions {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--xs-size-3);
-    padding: var(--sm-size);
-    background: var(--bg-section);
-    border-top: 1px solid var(--border-weak);
-
-    button {
-      min-height: 2.5rem;
-      border-radius: var(--radius-xs);
-      font-size: var(--sm-size);
-      font-weight: 600;
-      cursor: pointer;
-    }
-  }
-
-  .labor-filter-apply {
-    color: var(--standard-white);
-    background: var(--PrimaryColor);
-    border: 1px solid var(--PrimaryColor);
-  }
-
-  .labor-filter-clear {
-    color: var(--gray-700);
-    background: var(--bg-card);
-    border: 1px solid var(--border-weak);
-  }
-
-  .empty-state {
-    padding: 3rem 1rem;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    align-items: center;
-  }
-
-  @media (max-width: 768px) {
-    .toolbar,
-    .toolbar-filters {
-      align-items: stretch;
-      flex-direction: column;
-    }
-
-    .labor-filter-button {
-      width: 100%;
-    }
-
-    .labor-filter-backdrop {
-      padding: var(--sm-size);
-    }
-
-    .labor-filter-groups,
-    .labor-filter-options {
-      grid-template-columns: 1fr;
-    }
-  }
+}
 </style>

@@ -1,3 +1,5 @@
+@use 'workspace-glass' as glass;
+
 .project-info-contant {
   display: flex;
   flex-direction: column;
@@ -22,8 +24,8 @@
 .image-card {
   border: 1px solid var(--border-weak);
   border-radius: 16px;
-  background: var(--white);
-  box-shadow: var(--shadow-sm);
+  background: var(--bh-surface-raised);
+  box-shadow: none;
 }
 
 .project-state-card {
@@ -144,7 +146,7 @@
   min-height: 46px;
   border: 1px solid var(--border-weak);
   border-radius: 8px;
-  background: var(--white);
+  background: var(--bh-surface-raised);
   color: var(--gray-900);
   cursor: pointer;
   font-family: 'Bold';
@@ -178,7 +180,7 @@
   min-width: 138px;
   border-color: var(--border-strong);
   background: var(--gray-50);
-  box-shadow: var(--shadow-sm);
+  box-shadow: none;
 }
 
 .project-actions__menu {
@@ -193,8 +195,8 @@
   padding: 0.55rem;
   border: 1px solid var(--border-weak);
   border-radius: 8px;
-  background: var(--white);
-  box-shadow: var(--shadow-lg);
+  background: var(--bh-surface-raised);
+  box-shadow: var(--bh-shadow-popover);
 }
 
 .project-actions-popover {
@@ -335,9 +337,9 @@
   width: min(100%, 560px);
   padding: 1.25rem;
   border: 1px solid var(--border-weak);
-  border-radius: 8px;
-  background: var(--white);
-  box-shadow: var(--shadow-lg);
+  border-radius: var(--bh-radius-card);
+  background: var(--bh-surface-raised);
+  box-shadow: var(--bh-shadow-popover);
 }
 
 .project-status-modal__header,
@@ -363,7 +365,7 @@
   height: 40px;
   border: 1px solid var(--border-weak);
   border-radius: 8px;
-  background: var(--white);
+  background: var(--bh-surface-raised);
   color: var(--gray-900);
   cursor: pointer;
 }
@@ -395,8 +397,8 @@
   min-height: 44px;
   padding: 0.75rem 0.9rem;
   border: 1px solid var(--border-weak);
-  border-radius: 8px;
-  background: var(--white);
+  border-radius: var(--bh-radius-control);
+  background: var(--bh-surface-raised);
   color: var(--gray-900);
   font-family: 'Regular';
   font-size: var(--sm-size);
@@ -477,8 +479,7 @@
 .project-card--active-section {
   border-color: var(--PrimaryColor);
   box-shadow:
-    0 0 0 3px var(--PrimaryColor-light),
-    var(--shadow-sm);
+    none;
 }
 
 .project-history-page {
@@ -581,7 +582,7 @@
   border: 3px solid var(--white);
   border-radius: 999px;
   background: var(--PrimaryColor);
-  box-shadow: 0 0 0 3px var(--PrimaryColor-light);
+  box-shadow: none;
 }
 
 .project-history-entry__content {
@@ -592,7 +593,7 @@
   padding: 0.9rem;
   border: 1px solid var(--border-weak);
   border-radius: 8px;
-  background: var(--white);
+  background: var(--bh-surface-raised);
 }
 
 .project-history-entry__title {
@@ -659,7 +660,7 @@
 
 .info-item {
   display: grid;
-  // grid-template-columns: 22px minmax(0, 1fr);
+  /* grid-template-columns: 22px minmax(0, 1fr); */
   gap: 0.4rem;
   min-height: 76px;
   padding: 0.85rem 1rem;
@@ -807,7 +808,7 @@
   height: 56px;
   place-items: center;
   border-radius: 12px;
-  background: var(--white);
+  background: var(--bh-surface-raised);
   color: var(--PrimaryColor);
   font-size: 1.5rem;
 }
@@ -884,12 +885,12 @@
   overflow: hidden;
   border: 1px solid var(--border-weak);
   border-radius: 10px;
-  background: var(--white);
+  background: var(--bh-surface-raised);
 }
 
 .department-panel.p-accordionpanel-active {
   border-color: var(--PrimaryColor);
-  box-shadow: 0 10px 30px var(--PrimaryColor-alpha-8);
+  box-shadow: none;
 }
 
 .department-panel__header.p-accordionheader {
@@ -1003,7 +1004,7 @@
   max-width: 100%;
   overflow: hidden;
   padding: 0.85rem 1rem 1rem;
-  background: var(--white);
+  background: var(--bh-surface-raised);
 }
 
 .department-table-wrap {
@@ -1092,11 +1093,11 @@
 }
 
 .preview-card {
-  background: var(--white);
+  background: var(--bh-surface-raised);
 }
 
 .terms-card {
-  background: var(--white);
+  background: var(--bh-surface-raised);
 }
 
 .terms-list {
@@ -1256,15 +1257,13 @@
 .project-side-column--active-preview .preview-card {
   border-color: var(--PrimaryColor);
   box-shadow:
-    0 0 0 3px var(--PrimaryColor-light),
-    var(--shadow-sm);
+    none;
 }
 
 .project-side-column--active-terms .terms-card {
   border-color: var(--PrimaryColor);
   box-shadow:
-    0 0 0 3px var(--PrimaryColor-light),
-    var(--shadow-sm);
+    none;
 }
 
 /* Project Show presentation stays scoped to the authenticated page. */
@@ -1352,7 +1351,7 @@
     border: 0;
     border-radius: 18px;
     background: var(--quote-graphite-deep, var(--gray-900));
-    box-shadow: 0 12px 30px var(--project-hero-shadow);
+    box-shadow: none;
   }
 
   .project-hero__background,
@@ -1491,7 +1490,7 @@
     border-radius: 10px;
     background: var(--quote-copper, var(--PrimaryColor));
     color: var(--white);
-    box-shadow: 0 7px 17px color-mix(in sRGB, var(--gray-900) 20%, transparent);
+    box-shadow: none;
     transition:
       transform var(--transition-fast),
       box-shadow var(--transition-fast),
@@ -1502,7 +1501,7 @@
     border-color: var(--white-alpha-40);
     background: var(--quote-copper-dark, var(--PrimaryColor));
     color: var(--white);
-    box-shadow: 0 10px 20px color-mix(in sRGB, var(--gray-900) 25%, transparent);
+    box-shadow: none;
     transform: translateY(-1px);
   }
 
@@ -1532,7 +1531,7 @@
     border-radius: 9px;
     background: linear-gradient(145deg, var(--PrimaryColor-light), var(--BgWhite));
     color: var(--PrimaryColor-dark);
-    box-shadow: var(--shadow-sm);
+    box-shadow: none;
   }
 
   .project-actions__item:focus-visible,
@@ -1560,7 +1559,7 @@
     min-height: 56px;
     border-radius: 13px;
     background: var(--quote-paper, var(--BgWhite));
-    box-shadow: 0 9px 24px var(--project-hero-shadow);
+    box-shadow: none;
     scrollbar-width: thin;
   }
 
@@ -1669,14 +1668,14 @@
     border: 1px solid var(--quote-line, var(--border-weak));
     border-radius: 16px;
     background: var(--BgWhite);
-    box-shadow: 0 3px 12px color-mix(in sRGB, var(--gray-900) 5%, transparent);
+    box-shadow: none;
     transition:
       transform var(--transition-fast),
       box-shadow var(--transition-fast);
   }
 
   .project-stat-card:hover {
-    box-shadow: 0 6px 18px color-mix(in sRGB, var(--gray-900) 9%, transparent);
+    box-shadow: none;
     transform: translateY(-1px);
   }
 
@@ -1766,7 +1765,7 @@
     border-color: var(--quote-line, var(--border-weak));
     border-radius: 16px;
     background: var(--quote-paper, var(--BgWhite));
-    box-shadow: 0 4px 15px color-mix(in sRGB, var(--gray-900) 5%, transparent);
+    box-shadow: none;
     scroll-margin-top: 7rem;
     transition:
       border-color var(--transition-fast),
@@ -1774,14 +1773,13 @@
   }
 
   .project-card:hover {
-    box-shadow: 0 6px 18px color-mix(in sRGB, var(--gray-900) 7%, transparent);
+    box-shadow: none;
   }
 
   .project-card--active-section {
     border-color: color-mix(in sRGB, var(--project-accent) 46%, var(--border-weak));
     box-shadow:
-      0 0 0 2px color-mix(in sRGB, var(--project-accent) 10%, transparent),
-      0 6px 18px color-mix(in sRGB, var(--gray-900) 7%, transparent);
+      none;
   }
 
   .card-title {
@@ -1939,7 +1937,7 @@
     border: 1px solid var(--quote-line, var(--border-weak));
     border-radius: 14px;
     background: var(--quote-paper, var(--BgWhite));
-    box-shadow: 0 4px 15px color-mix(in sRGB, var(--gray-900) 5%, transparent);
+    box-shadow: none;
   }
 
   .project-info-disclosure {
@@ -2094,7 +2092,7 @@
     place-items: center;
     border-radius: 10px;
     background: var(--BgWhite);
-    box-shadow: var(--shadow-sm);
+    box-shadow: none;
   }
 
   .info-item strong,
@@ -2167,11 +2165,7 @@
     gap: 0.7rem;
     border: 1px solid color-mix(in sRGB, var(--PrimaryColor) 18%, var(--border-weak));
     border-radius: 14px;
-    background: linear-gradient(
-      160deg,
-      var(--PrimaryColor-light),
-      color-mix(in sRGB, var(--BgWhite) 84%, var(--PrimaryColor-light))
-    );
+    background: var(--bh-surface);
   }
 
   .summary-panel > div:not(.summary-cube) {
@@ -2241,7 +2235,7 @@
     margin-block-end: 0.45rem;
     padding-inline: 0.45rem;
     border: 1px solid var(--border-weak);
-    border-radius: 8px;
+    border-radius: var(--bh-radius-control);
     background: var(--BgWhite);
     color: var(--gray-700);
     font-size: 0.68rem;
@@ -2372,7 +2366,7 @@
     border-radius: 10px;
     background: var(--PrimaryColor-light);
     color: var(--project-accent);
-    box-shadow: var(--shadow-sm);
+    box-shadow: none;
     text-decoration: none;
     transform: translateY(-50%);
   }
@@ -2821,5 +2815,81 @@
 @keyframes project-skeleton-shimmer {
   to {
     background-position: -200% 0;
+  }
+}
+
+/* Project metadata and actions retain their original visibility and data sources. */
+.project-show-page {
+  --project-surface: var(--bh-canvas);
+  --project-glass: var(--bh-surface-raised);
+  --project-glass-border: var(--bh-line);
+
+  .project-hero {
+    min-height: 0;
+    border-radius: var(--bh-radius-card);
+    box-shadow: none;
+
+    @include glass.surface;
+  }
+
+  .project-hero__background,
+  .project-hero__overlay {
+    display: none;
+  }
+
+  .project-hero__inner {
+    padding: 28px;
+  }
+
+  .project-title-row h2 {
+    color: var(--bh-text);
+    font-size: var(--bh-text-page);
+    text-shadow: none;
+  }
+
+  .project-meta-row {
+    color: var(--bh-muted);
+  }
+
+  .project-meta-row i {
+    color: var(--bh-blue-ink);
+  }
+
+  .project-type-badge {
+    color: var(--bh-blue-ink);
+    background: var(--bh-blue-soft);
+  }
+
+  .project-actions__trigger {
+    border: 0;
+    border-radius: var(--bh-radius-pill);
+    color: var(--bh-on-active);
+    background: var(--bh-active);
+    box-shadow: none;
+  }
+
+  .project-actions__trigger:hover {
+    background: var(--bh-active);
+    color: var(--bh-on-active);
+    box-shadow: none;
+  }
+
+  .project-card {
+    border: 0;
+    border-radius: var(--bh-radius-card);
+    background: var(--bh-surface);
+    box-shadow: none;
+  }
+
+  .project-card--active-section {
+    border: 1px solid var(--bh-blue);
+  }
+
+  .project-actions-popover {
+    background: var(--bh-surface-raised);
+    color: var(--bh-text);
+    border: 0;
+    border-radius: var(--bh-radius-card);
+    box-shadow: var(--bh-shadow-popover);
   }
 }

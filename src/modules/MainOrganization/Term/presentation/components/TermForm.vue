@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import { ref, watch } from 'vue';
 
   import TranslationParams from '@/base/Core/Params/translationParams';
@@ -78,7 +79,7 @@
 </script>
 
 <template>
-  <div class="Term-form-card">
+  <StandardFormLayout class="Term-form-card">
     <header>
       <h3>{{ $t('Term.form_title') }}</h3>
       <p>{{ $t('Term.form_description') }}</p>
@@ -107,35 +108,35 @@
         />
       </div>
     </div>
-  </div>
+  </StandardFormLayout>
 </template>
 
 <style scoped lang="scss">
-  .Term-form-card {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
+.Term-form-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
 
-  header p {
-    color: var(--gray-5);
-  }
+header p {
+  color: var(--gray-5);
+}
 
+.form-fields {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: 1rem;
+  align-items: end;
+
+  &.disabled {
+    pointer-events: none;
+    opacity: 0.7;
+  }
+}
+
+@media (max-width: 768px) {
   .form-fields {
-    display: grid;
-    grid-template-columns: repeat(1, minmax(0, 1fr));
-    gap: 1rem;
-    align-items: end;
-
-    &.disabled {
-      pointer-events: none;
-      opacity: 0.7;
-    }
+    grid-template-columns: 1fr;
   }
-
-  @media (max-width: 768px) {
-    .form-fields {
-      grid-template-columns: 1fr;
-    }
-  }
+}
 </style>

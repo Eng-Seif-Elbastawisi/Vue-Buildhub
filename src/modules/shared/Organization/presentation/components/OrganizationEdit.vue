@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import { onMounted, ref } from 'vue';
   import { useRoute } from 'vue-router';
   import IconAccept from '@/shared/icons/IconAccept.vue';
@@ -44,7 +45,7 @@
 </script>
 
 <template>
-  <div class="document-crud-example">
+  <StandardFormLayout mode="edit" class="document-crud-example">
     <OrganizationForm
       :organization="controller.itemData.value!"
       :form-key="formKey"
@@ -67,69 +68,72 @@
         </template>
 </AppButton>
 </div> -->
-    <div class="actions" :class="{ disabled: loading }">
-      <button
-        :disabled="loading"
-        :class="{ 'btn--loading': loading }"
-        class="btn btn-primary w-full"
-        type="submit"
-        @click="saveOrganization"
-      >
-        <span v-if="loading" class="loader"></span>
-        <span v-else>
-          {{ $t('organization.update') }}
-          <IconAccept />
-        </span>
-      </button>
-    </div>
 
     <div v-if="controller.errorMessage.value" class="error">
       {{ controller.errorMessage.value }}
     </div>
-  </div>
+
+    <template #actions>
+      <div class="actions" :class="{ disabled: loading }">
+        <button
+          :disabled="loading"
+          :class="{ 'btn--loading': loading }"
+          class="btn btn-primary w-full"
+          type="submit"
+          @click="saveOrganization"
+        >
+          <span v-if="loading" class="loader"></span>
+          <span v-else>
+            {{ $t('organization.update') }}
+            <IconAccept />
+          </span>
+        </button>
+      </div>
+    </template>
+  </StandardFormLayout>
 </template>
 
 <style scoped lang="scss">
-  .loader {
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
-    border: 8px solid;
-    border-color: #000 #0000;
-    animation: l1 1s infinite;
-  }
+.loader {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  border: 8px solid;
+  border-color: #000 #0000;
+  animation: l1 1s infinite;
+}
 
-  @keyframes l1 {
-    to {
-      transform: rotate(0.5turn);
-    }
+@keyframes l1 {
+  to {
+    transform: rotate(0.5turn);
   }
+}
 
-  @keyframes l7 {
-    to {
-      transform: rotate(0.5turn);
-    }
+@keyframes l7 {
+  to {
+    transform: rotate(0.5turn);
   }
+}
 
-  .email-crud-example {
-    padding: 20px;
-    margin: 0 auto;
-  }
+.email-crud-example {
+  padding: 20px;
+  margin: 0 auto;
+}
 
-  .actions {
-    &.disabled {
-      cursor: not-allowed;
-      pointer-events: none;
-      opacity: 0.7;
-    }
+.actions {
+  &.disabled {
+    cursor: not-allowed;
+    pointer-events: none;
+    opacity: 0.7;
   }
+}
 
-  .error {
-    margin-top: 20px;
-    padding: 10px;
-    background-color: var(--danger-light);
-    color: var(--danger-dark);
-    border: 1px solid #f5c6cb;
-    border-radius: 4px;
-  }
+.error {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: var(--danger-light);
+  color: var(--danger-dark);
+  border: 1px solid var(--bh-coral-soft);
+  border-radius: 4px;
+}
 </style>

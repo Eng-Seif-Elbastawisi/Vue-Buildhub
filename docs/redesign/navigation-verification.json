@@ -1,0 +1,74 @@
+{
+  "mode": "Offline navigation and layout checks; external API requests blocked",
+  "results": [
+    {
+      "width": 1440,
+      "locale": "en",
+      "path": "/organization/execution-quotes",
+      "nav": {
+        "top": 78,
+        "bottom": 138,
+        "height": 60
+      },
+      "breadcrumb": {
+        "top": 152,
+        "bottom": 189,
+        "height": 37
+      },
+      "topbar": {
+        "top": 0,
+        "bottom": 0,
+        "height": 0
+      },
+      "expanded": false,
+      "toggle": false,
+      "overflow": false
+    },
+    {
+      "width": 1024,
+      "locale": "ar",
+      "path": "/organization/execution-quotes",
+      "nav": {
+        "top": 78,
+        "bottom": 138,
+        "height": 60
+      },
+      "breadcrumb": {
+        "top": 152,
+        "bottom": 189,
+        "height": 37
+      },
+      "topbar": {
+        "top": 0,
+        "bottom": 0,
+        "height": 0
+      },
+      "expanded": false,
+      "toggle": false,
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "locale": "en",
+      "path": "/organization/employee/add",
+      "nav": {
+        "top": 0,
+        "bottom": 0,
+        "height": 0
+      },
+      "breadcrumb": {
+        "top": 80,
+        "bottom": 117,
+        "height": 37
+      },
+      "topbar": {
+        "top": 0,
+        "bottom": 64,
+        "height": 64
+      },
+      "expanded": false,
+      "toggle": false,
+      "overflow": false
+    }
+  ]
+}

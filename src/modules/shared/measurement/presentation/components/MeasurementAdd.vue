@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import { ref } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
 
@@ -39,66 +40,68 @@
 </script>
 
 <template>
-  <div class="Measurement-crud-page">
+  <StandardFormLayout mode="create" class="Measurement-crud-page">
     <StandardFormSectionHeader :title="$t('measurement')" icon="pi pi-sliders-h" />
     <MeasurementForm :loading="loading" @update-data="params = $event" />
-
-    <div class="actions form-action-pair" :class="{ disabled: loading }">
-      <AppButton
-        :loading="loading"
-        class="btn-save"
-        :title="$t('save')"
-        size="sm"
-        icon="right"
-        type="submit"
-        @click="saveMeasurement"
-      >
-        {{ $t('save') }}
-
-        <template #icon>
-          <IconAccept />
-        </template>
-      </AppButton>
-
-      <ConfirmCancelDialog
-        ref="confirmCancelRef"
-        :title="$t('cancel_changes')"
-        :message="$t('are_you_sure_you_want_to_leave')"
-        @confirm="cancelMeasurement"
-      />
-    </div>
 
     <div v-if="controller.errorMessage.value" class="error">
       {{ controller.errorMessage.value }}
     </div>
-  </div>
+
+    <template #actions>
+      <div class="actions form-action-pair" :class="{ disabled: loading }">
+        <AppButton
+          :loading="loading"
+          class="btn-save"
+          :title="$t('save')"
+          size="sm"
+          icon="right"
+          type="submit"
+          @click="saveMeasurement"
+        >
+          {{ $t('save') }}
+
+          <template #icon>
+            <IconAccept />
+          </template>
+        </AppButton>
+
+        <ConfirmCancelDialog
+          ref="confirmCancelRef"
+          :title="$t('cancel_changes')"
+          :message="$t('are_you_sure_you_want_to_leave')"
+          @confirm="cancelMeasurement"
+        />
+      </div>
+    </template>
+  </StandardFormLayout>
 </template>
 
 <style scoped lang="scss">
-  @use '@/styles/mixins/form_action_pair' as form-actions;
+@use '@/styles/mixins/form_action_pair' as form-actions;
 
-  .Measurement-crud-page {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
+.Measurement-crud-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
 
-  .actions.disabled {
-    cursor: not-allowed;
-    pointer-events: none;
-    opacity: 0.7;
-  }
+.actions.disabled {
+  cursor: not-allowed;
+  pointer-events: none;
+  opacity: 0.7;
+}
 
-  .error {
-    margin-top: 20px;
-    padding: 10px;
-    background-color: var(--danger-light);
-    color: var(--danger-dark);
-    border: 1px solid #f5c6cb;
-    border-radius: 4px;
-  }
+.error {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: var(--danger-light);
+  color: var(--danger-dark);
+  border: 1px solid var(--bh-coral-soft);
+  border-radius: 4px;
+}
 
-  .form-action-pair {
-    @include form-actions.layout;
-  }
+.form-action-pair {
+  @include form-actions.layout;
+}
 </style>

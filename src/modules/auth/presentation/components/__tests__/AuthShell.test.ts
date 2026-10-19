@@ -35,13 +35,13 @@ describe('AuthShell.vue', () => {
       props: { mode: 'organization' },
     });
 
-    expect(wrapper.classes()).toContain('auth-shell--organization');
+    expect(wrapper.classes()).toContain('auth-workspace--organization');
     expect(wrapper.attributes('dir')).toBe('rtl');
     expect(wrapper.text()).toContain('auth_organization_headline_first_accent');
     expect(wrapper.text()).toContain('auth_organization_headline_second_accent');
     expect(wrapper.text()).toContain('auth_organization_description');
-    expect(wrapper.find('.organization-construction').exists()).toBe(true);
-    expect(wrapper.find('.admin-estimation').exists()).toBe(false);
+    expect(wrapper.get('h1').attributes('id')).toBe('organization-login-title');
+    expect(wrapper.get('img').attributes('alt')).toBe('buildhub_logo');
     expect(wrapper.find('form.login-form').exists()).toBe(true);
   });
 
@@ -51,13 +51,12 @@ describe('AuthShell.vue', () => {
       props: { mode: 'admin' },
     });
 
-    expect(wrapper.classes()).toContain('auth-shell--admin');
+    expect(wrapper.classes()).toContain('auth-workspace--admin');
     expect(wrapper.attributes('dir')).toBe('rtl');
     expect(wrapper.text()).toContain('auth_admin_headline_first_accent');
     expect(wrapper.text()).toContain('auth_admin_headline_second_accent');
-    expect(wrapper.text()).toContain('auth_visual_admin_title');
-    expect(wrapper.find('.organization-construction').exists()).toBe(false);
-    expect(wrapper.find('.admin-estimation').exists()).toBe(true);
+    expect(wrapper.get('h1').attributes('id')).toBe('admin-login-title');
+    expect(wrapper.find('form.login-form').exists()).toBe(true);
   });
 
   it('uses LTR direction when English is selected', () => {

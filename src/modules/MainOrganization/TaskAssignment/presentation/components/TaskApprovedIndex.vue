@@ -176,7 +176,7 @@
 
           <template #cell-isAssign="{ item }">
             <span
-              class="assignment-status"
+              class="assignment-status bh-status"
               :class="{
                 assigned: item.isAssign,
               }"
@@ -243,7 +243,7 @@
       modal
       :draggable="false"
       :style="{ width: '850px', maxWidth: '95vw' }"
-      class="task-assignment-dialog"
+      class="task-assignment-dialog workspace-dialog"
       @hide="closeAssignmentDialog"
     >
       <template #header>
@@ -326,157 +326,157 @@
 </template>
 
 <style scoped lang="scss">
-  .task-assignment-approved-page {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
+.task-assignment-approved-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
 
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.page-header p,
+.empty-state p {
+  color: var(--gray-5);
+}
+
+.empty-state {
+  padding: 3rem 1rem;
+  text-align: center;
+}
+
+.assignment-status {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.625rem;
+  border-radius: 0.375rem;
+  background: var(--gray-100);
+  color: var(--gray-700);
+  font-family: 'Medium';
+}
+
+.assignment-status.assigned {
+  background: var(--PrimaryColor-light);
+  color: var(--PrimaryColor);
+}
+
+/* Dialog internal content */
+
+.assignment-dialog__header,
+.assignment-dialog__body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.assignment-dialog__header h4,
+.assignment-dialog__header p,
+.assignment-dialog__summary {
+  margin: 0;
+}
+
+.assignment-dialog__header h4 {
+  color: var(--gray-900);
+  font-family: 'Bold';
+}
+
+.assignment-dialog__header p,
+.assignment-dialog__summary-item dt {
+  color: var(--gray-600);
+  font-family: 'Medium';
+  font-size: var(--xs-size);
+}
+
+/* Selected task summary */
+
+.assignment-dialog__summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+  padding: 0.85rem;
+  border: 1px solid var(--border-weak);
+  border-radius: var(--radius-sm);
+  background: var(--gray-50);
+}
+
+.assignment-dialog__summary-item {
+  min-width: 0;
+}
+
+.assignment-dialog__summary-item dd {
+  overflow: hidden;
+  margin: 0.25rem 0 0;
+  color: var(--gray-900);
+  font-family: 'Bold';
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Actions */
+
+.assignment-dialog__actions {
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* Assign button */
+
+.task-assignment-action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--PrimaryColor);
+  border-radius: 0.5rem;
+  background: transparent;
+  color: var(--PrimaryColor);
+  font-family: 'Medium';
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.task-assignment-action-btn:hover:not(:disabled) {
+  background: var(--PrimaryColor);
+  color: #ffffff;
+}
+
+.task-assignment-action-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Responsive */
+
+@media (max-width: 760px) {
   .page-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-  }
-
-  .page-header p,
-  .empty-state p {
-    color: var(--gray-5);
-  }
-
-  .empty-state {
-    padding: 3rem 1rem;
-    text-align: center;
-  }
-
-  .assignment-status {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.25rem 0.625rem;
-    border-radius: 0.375rem;
-    background: var(--gray-100);
-    color: var(--gray-700);
-    font-family: 'Medium';
-  }
-
-  .assignment-status.assigned {
-    background: var(--PrimaryColor-light);
-    color: var(--PrimaryColor);
-  }
-
-  /* Dialog internal content */
-
-  .assignment-dialog__header,
-  .assignment-dialog__body {
-    display: flex;
+    align-items: stretch;
     flex-direction: column;
-    gap: 0.75rem;
   }
-
-  .assignment-dialog__header h4,
-  .assignment-dialog__header p,
-  .assignment-dialog__summary {
-    margin: 0;
-  }
-
-  .assignment-dialog__header h4 {
-    color: var(--gray-900);
-    font-family: 'Bold';
-  }
-
-  .assignment-dialog__header p,
-  .assignment-dialog__summary-item dt {
-    color: var(--gray-600);
-    font-family: 'Medium';
-    font-size: var(--xs-size);
-  }
-
-  /* Selected task summary */
-
-  .assignment-dialog__summary {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 0.75rem;
-    padding: 0.85rem;
-    border: 1px solid var(--border-weak);
-    border-radius: var(--radius-sm);
-    background: var(--gray-50);
-  }
-
-  .assignment-dialog__summary-item {
-    min-width: 0;
-  }
-
-  .assignment-dialog__summary-item dd {
-    overflow: hidden;
-    margin: 0.25rem 0 0;
-    color: var(--gray-900);
-    font-family: 'Bold';
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  /* Actions */
 
   .assignment-dialog__actions {
-    display: flex;
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .assignment-dialog__actions .btn {
     width: 100%;
-    justify-content: flex-end;
-    align-items: center;
-    gap: 0.75rem;
   }
 
-  /* Assign button */
-
-  .task-assignment-action-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.4rem;
-    padding: 0.5rem 0.75rem;
-    border: 1px solid var(--PrimaryColor);
-    border-radius: 0.5rem;
-    background: transparent;
-    color: var(--PrimaryColor);
-    font-family: 'Medium';
-    cursor: pointer;
-    transition:
-      background 0.2s ease,
-      color 0.2s ease,
-      opacity 0.2s ease;
+  .assignment-dialog__summary {
+    grid-template-columns: 1fr;
   }
-
-  .task-assignment-action-btn:hover:not(:disabled) {
-    background: var(--PrimaryColor);
-    color: #ffffff;
-  }
-
-  .task-assignment-action-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-
-  /* Responsive */
-
-  @media (max-width: 760px) {
-    .page-header {
-      align-items: stretch;
-      flex-direction: column;
-    }
-
-    .assignment-dialog__actions {
-      align-items: stretch;
-      flex-direction: column;
-    }
-
-    .assignment-dialog__actions .btn {
-      width: 100%;
-    }
-
-    .assignment-dialog__summary {
-      grid-template-columns: 1fr;
-    }
-  }
+}
 </style>
 
 <!--
@@ -486,200 +486,198 @@
 -->
 
 <style lang="scss">
-  /* ==============================
+/* ==============================
    PrimeVue Dialog
    ============================== */
 
-  .task-assignment-dialog.p-dialog {
-    --p-dialog-background: #ffffff;
-    --p-dialog-color: #111827;
+.task-assignment-dialog.p-dialog {
+  --p-dialog-background: #ffffff;
+  --p-dialog-color: #111827;
 
-    overflow: hidden;
-    background: #ffffff !important;
-    color: #111827 !important;
-    border: 1px solid #e5e7eb !important;
-    border-radius: 12px !important;
-    box-shadow:
-      0 20px 25px -5px rgba(0, 0, 0, 0.1),
-      0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
-  }
+  overflow: hidden;
+  background: var(--bh-surface) !important;
+  color: var(--bh-text) !important;
+  border: 1px solid var(--bh-line) !important;
+  border-radius: 12px !important;
+  box-shadow: var(--bh-shadow-popover) !important;
+}
 
-  /* Dialog header */
+/* Dialog header */
 
-  .task-assignment-dialog .p-dialog-header {
-    padding: 1.25rem 1.5rem !important;
-    background: #ffffff !important;
-    color: #111827 !important;
-    border-bottom: 1px solid #e5e7eb !important;
-  }
+.task-assignment-dialog .p-dialog-header {
+  padding: 1.25rem 1.5rem !important;
+  background: var(--bh-surface) !important;
+  color: var(--bh-text) !important;
+  border-bottom: 1px solid var(--bh-line) !important;
+}
 
-  /* Dialog content */
+/* Dialog content */
 
-  .task-assignment-dialog .p-dialog-content {
-    padding: 1.5rem !important;
-    background: #ffffff !important;
-    color: #111827 !important;
-  }
+.task-assignment-dialog .p-dialog-content {
+  padding: 1.5rem !important;
+  background: var(--bh-surface) !important;
+  color: var(--bh-text) !important;
+}
 
-  /* Dialog footer */
+/* Dialog footer */
 
-  .task-assignment-dialog .p-dialog-footer {
-    padding: 1rem 1.5rem !important;
-    background: #ffffff !important;
-    color: #111827 !important;
-    border-top: 1px solid #e5e7eb !important;
-  }
+.task-assignment-dialog .p-dialog-footer {
+  padding: 1rem 1.5rem !important;
+  background: var(--bh-surface) !important;
+  color: var(--bh-text) !important;
+  border-top: 1px solid var(--bh-line) !important;
+}
 
-  /* Close button */
+/* Close button */
 
-  .task-assignment-dialog .p-dialog-header-close {
-    width: 2.25rem;
-    height: 2.25rem;
-    background: transparent !important;
-    color: #6b7280 !important;
-    border-radius: 50%;
-    transition:
-      background 0.2s ease,
-      color 0.2s ease;
-  }
+.task-assignment-dialog .p-dialog-header-close {
+  width: 2.25rem;
+  height: 2.25rem;
+  background: transparent !important;
+  color: var(--bh-muted) !important;
+  border-radius: 50%;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
 
-  .task-assignment-dialog .p-dialog-header-close:hover {
-    background: #f3f4f6 !important;
-    color: #111827 !important;
-  }
+.task-assignment-dialog .p-dialog-header-close:hover {
+  background: var(--bh-canvas) !important;
+  color: var(--bh-text) !important;
+}
 
-  /* PrimeVue close icon */
+/* PrimeVue close icon */
 
-  .task-assignment-dialog .p-dialog-header-close svg,
-  .task-assignment-dialog .p-dialog-header-close .p-icon {
-    color: inherit !important;
-  }
+.task-assignment-dialog .p-dialog-header-close svg,
+.task-assignment-dialog .p-dialog-header-close .p-icon {
+  color: inherit !important;
+}
 
-  /* ==============================
+/* ==============================
    Dialog overlay / mask
    ============================== */
 
-  .p-dialog-mask {
-    background: rgba(15, 23, 42, 0.28) !important;
-    backdrop-filter: blur(2px);
-  }
+.p-dialog-mask {
+  background: rgba(15, 23, 42, 0.28) !important;
+  backdrop-filter: blur(2px);
+}
 
-  /* ==============================
+/* ==============================
    Make form white as well
    ============================== */
 
-  .task-assignment-dialog .task-assignment-form {
-    background: #ffffff !important;
-    color: #111827 !important;
-  }
+.task-assignment-dialog .task-assignment-form {
+  background: var(--bh-surface) !important;
+  color: var(--bh-text) !important;
+}
 
-  .task-assignment-dialog .task-assignment-form__grid {
-    background: #ffffff !important;
-  }
+.task-assignment-dialog .task-assignment-form__grid {
+  background: var(--bh-surface) !important;
+}
 
-  /* Inputs */
+/* Inputs */
 
-  .task-assignment-dialog .task-assignment-form__input,
-  .task-assignment-dialog .task-assignment-form__textarea {
-    background: #ffffff !important;
-    color: #111827 !important;
-    border-color: #d1d5db !important;
-  }
+.task-assignment-dialog .task-assignment-form__input,
+.task-assignment-dialog .task-assignment-form__textarea {
+  background: var(--bh-surface) !important;
+  color: var(--bh-text) !important;
+  border-color: var(--bh-field-line) !important;
+}
 
-  .task-assignment-dialog .task-assignment-form__input::placeholder,
-  .task-assignment-dialog .task-assignment-form__textarea::placeholder {
-    color: #9ca3af !important;
-  }
+.task-assignment-dialog .task-assignment-form__input::placeholder,
+.task-assignment-dialog .task-assignment-form__textarea::placeholder {
+  color: #9ca3af !important;
+}
 
-  /* Labels */
+/* Labels */
 
-  .task-assignment-dialog .task-assignment-form__label,
-  .task-assignment-dialog .task-assignment-form__checkbox {
-    color: #374151 !important;
-  }
+.task-assignment-dialog .task-assignment-form__label,
+.task-assignment-dialog .task-assignment-form__checkbox {
+  color: var(--bh-text) !important;
+}
 
-  /* ==============================
+/* ==============================
    Attachments
    ============================== */
 
-  .task-assignment-dialog .task-assignment-attachments {
-    background: #ffffff !important;
-    color: #111827 !important;
-  }
+.task-assignment-dialog .task-assignment-attachments {
+  background: var(--bh-surface) !important;
+  color: var(--bh-text) !important;
+}
 
-  .task-assignment-dialog .task-assignment-attachments__header {
-    background: #ffffff !important;
-  }
+.task-assignment-dialog .task-assignment-attachments__header {
+  background: var(--bh-surface) !important;
+}
 
-  .task-assignment-dialog .task-assignment-attachments__header h2 {
-    color: #111827 !important;
-  }
+.task-assignment-dialog .task-assignment-attachments__header h2 {
+  color: var(--bh-text) !important;
+}
 
-  .task-assignment-dialog .task-assignment-attachments__header p {
-    color: #6b7280 !important;
-  }
+.task-assignment-dialog .task-assignment-attachments__header p {
+  color: var(--bh-muted) !important;
+}
 
-  .task-assignment-dialog .task-assignment-attachments__empty {
-    background: #f9fafb !important;
-    color: #6b7280 !important;
-    border-color: #e5e7eb !important;
-  }
+.task-assignment-dialog .task-assignment-attachments__empty {
+  background: var(--bh-surface) !important;
+  color: var(--bh-muted) !important;
+  border-color: var(--bh-line) !important;
+}
 
-  .task-assignment-dialog .task-assignment-attachment {
-    background: #ffffff !important;
-    color: #111827 !important;
-    border-color: #e5e7eb !important;
-  }
+.task-assignment-dialog .task-assignment-attachment {
+  background: var(--bh-surface) !important;
+  color: var(--bh-text) !important;
+  border-color: var(--bh-line) !important;
+}
 
-  .task-assignment-dialog .task-assignment-attachment__fields label {
-    color: #374151 !important;
-  }
+.task-assignment-dialog .task-assignment-attachment__fields label {
+  color: var(--bh-text) !important;
+}
 
-  .task-assignment-dialog .task-assignment-attachment__meta strong {
-    color: #111827 !important;
-  }
+.task-assignment-dialog .task-assignment-attachment__meta strong {
+  color: var(--bh-text) !important;
+}
 
-  .task-assignment-dialog .task-assignment-attachment__meta small {
-    color: #6b7280 !important;
-  }
+.task-assignment-dialog .task-assignment-attachment__meta small {
+  color: var(--bh-muted) !important;
+}
 
-  /* ==============================
+/* ==============================
    PrimeVue select inside dialog
    ============================== */
 
-  .task-assignment-dialog .p-select,
-  .task-assignment-dialog .p-multiselect {
-    background: #ffffff !important;
-    color: #111827 !important;
-    border-color: #d1d5db !important;
-  }
+.task-assignment-dialog .p-select,
+.task-assignment-dialog .p-multiselect {
+  background: var(--bh-surface) !important;
+  color: var(--bh-text) !important;
+  border-color: var(--bh-field-line) !important;
+}
 
-  .task-assignment-dialog .p-select-label,
-  .task-assignment-dialog .p-multiselect-label {
-    color: #111827 !important;
-  }
+.task-assignment-dialog .p-select-label,
+.task-assignment-dialog .p-multiselect-label {
+  color: var(--bh-text) !important;
+}
 
-  .task-assignment-dialog .p-select-dropdown,
-  .task-assignment-dialog .p-multiselect-dropdown {
-    color: #6b7280 !important;
-  }
+.task-assignment-dialog .p-select-dropdown,
+.task-assignment-dialog .p-multiselect-dropdown {
+  color: var(--bh-muted) !important;
+}
 
-  /* ==============================
+/* ==============================
    Responsive Dialog
    ============================== */
 
-  @media (max-width: 760px) {
-    .task-assignment-dialog.p-dialog {
-      width: calc(100vw - 1rem) !important;
-      max-width: calc(100vw - 1rem) !important;
-      margin: 0.5rem;
-    }
-
-    .task-assignment-dialog .p-dialog-header,
-    .task-assignment-dialog .p-dialog-content,
-    .task-assignment-dialog .p-dialog-footer {
-      padding-left: 1rem !important;
-      padding-right: 1rem !important;
-    }
+@media (max-width: 760px) {
+  .task-assignment-dialog.p-dialog {
+    width: calc(100vw - 1rem) !important;
+    max-width: calc(100vw - 1rem) !important;
+    margin: 0.5rem;
   }
+
+  .task-assignment-dialog .p-dialog-header,
+  .task-assignment-dialog .p-dialog-content,
+  .task-assignment-dialog .p-dialog-footer {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+}
 </style>

@@ -1,3 +1,4 @@
+import { startedOverview } from '../../../__tests__/timeline-fixtures';
 import { beforeEach, expect, it, vi } from 'vitest';
 import { flushPromises } from '@vue/test-utils';
 import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
@@ -17,6 +18,7 @@ beforeEach(() => {
   controller.stagesState.value = new DataSuccess({
     data: [
       new ScheduleGroupModel({
+        workStatus: 1,
         id: 2,
         title: 'Main',
         duration: 1,
@@ -38,11 +40,13 @@ it('converts actual file bytes, preserves failed input and refreshes before clos
   let attempts = 0;
   post.mockImplementation(async (request) =>
     response(
-      request.url.includes('store_shop_drawing_quote')
-        ? ++attempts === 1
-          ? { status: false, message: 'Rejected' }
-          : { status: true }
-        : { status: true, data: [] },
+      request.url.includes('fetch_project_timelines')
+        ? startedOverview([7])
+        : request.url.includes('store_shop_drawing_quote')
+          ? ++attempts === 1
+            ? { status: false, message: 'Rejected' }
+            : { status: true }
+          : { status: true, data: [] },
     ),
   );
   const wrapper = mountDialog(ShopDrawingFormDialog);
@@ -54,21 +58,23 @@ it('converts actual file bytes, preserves failed input and refreshes before clos
       new TitleInterface({ id: 7, title: 'Main' }),
       new TitleInterface({ id: 7, title: 'Main' }),
     ]);
-  const input = wrapper.get('#drawing-file');
+  const input = wrapper.get('input[type=file]');
   Object.defineProperty(input.element, 'files', {
     value: [new File(['drawing'], 'drawing.pdf', { type: 'application/pdf' })],
     configurable: true,
   });
   await input.trigger('change');
-  await vi.waitFor(() => expect(wrapper.text()).toContain('drawing.pdf'));
+  await vi.waitFor(() => expect(wrapper.html()).toContain('drawing.pdf'));
   await flushPromises();
-  expect(wrapper.text()).toContain('drawing.pdf');
+  expect(wrapper.html()).toContain('drawing.pdf');
   await wrapper.get('form').trigger('submit');
   await flushPromises();
   expect(wrapper.emitted('update:visible')).toBeUndefined();
   expect(wrapper.text()).toContain('Rejected');
   expect((wrapper.get('#drawing-title').element as HTMLInputElement).value).toBe('MEP');
-  expect(post.mock.calls[0]?.[0].data).toEqual({
+  expect(
+    post.mock.calls.find((call) => call[0].url.includes('store_shop_drawing_quote'))?.[0].data,
+  ).toEqual({
     quote_id: 140,
     title: 'MEP',
     date: null,
@@ -85,27 +91,29 @@ it('converts actual file bytes, preserves failed input and refreshes before clos
 it('requires title, version and stages while keeping file and date optional', async () => {
   const wrapper = mountDialog(ShopDrawingFormDialog);
   await wrapper.get('form').trigger('submit');
-  expect(post).not.toHaveBeenCalled();
+  expect(post.mock.calls.some((call) => call[0].url.includes('store_'))).toBe(false);
   expect(wrapper.findAll('[role="alert"]').length).toBeGreaterThan(0);
-  expect(wrapper.get('label[for="drawing-file"]').text()).toBeTruthy();
-  expect(wrapper.get('#drawing-file').attributes('required')).toBeUndefined();
+  expect(wrapper.get('.upload-label').text()).toBeTruthy();
+  expect(wrapper.get('input[type=file]').attributes('required')).toBeUndefined();
   wrapper.unmount();
 });
 
 it('removes a selected attachment without resetting other drawing fields', async () => {
   const wrapper = mountDialog(ShopDrawingFormDialog);
   await wrapper.get('#drawing-title').setValue('MEP');
-  const input = wrapper.get('#drawing-file');
+  const input = wrapper.get('input[type=file]');
   Object.defineProperty(input.element, 'files', {
     value: [new File(['drawing'], 'drawing.dwg', { type: 'application/octet-stream' })],
     configurable: true,
   });
   await input.trigger('change');
-  await vi.waitFor(() => expect(wrapper.text()).toContain('drawing.dwg'));
-  const remove = wrapper.findAll('button').find((button) => button.text() === 'Remove file');
+  await vi.waitFor(() => expect(wrapper.html()).toContain('drawing.dwg'));
+  const remove = wrapper
+    .findAll('button')
+    .find((button) => button.attributes('title') === 'Remove file');
   if (!remove) throw new Error('Missing remove button');
   await remove.trigger('click');
-  expect(wrapper.text()).not.toContain('drawing.dwg');
+  expect(wrapper.html()).not.toContain('drawing.dwg');
   expect((wrapper.get('#drawing-title').element as HTMLInputElement).value).toBe('MEP');
   wrapper.unmount();
 });

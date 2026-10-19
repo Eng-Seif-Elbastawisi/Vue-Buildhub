@@ -510,8 +510,11 @@
       <div class="flex items-center">
         <slot name="reloadHeader" />
 
-        <span
+        <button
           v-if="enableReload"
+          type="button"
+          :disabled="disabled"
+          :aria-label="`${$t('try_again')} ${$t(label ?? '')}`"
           class="reload-icon flex items-center gap-sm me-2 w-full"
           :class="{
             'reload-icon--disabled': disabled,
@@ -522,12 +525,15 @@
           <span v-if="optional" class="optional-text"> ({{ $t('optional') }}) </span>
 
           <IconBackStage />
-        </span>
+        </button>
       </div>
 
       <div class="label-container">
-        <div
+        <button
           v-if="onclick"
+          type="button"
+          :disabled="disabled"
+          :aria-label="`${$t('add')} ${$t(label ?? '')}`"
           class="add-dialog"
           :class="{
             'add-dialog--disabled': disabled,
@@ -535,7 +541,7 @@
           @click="handleAddClick"
         >
           <PlusIcon />
-        </div>
+        </button>
 
         <span class="field-help-label-row">
           <label
@@ -659,7 +665,11 @@
   }
 
   .reload-icon {
-    z-index: 9999;
+    position: relative;
+    padding: 0;
+    border: 0;
+    color: var(--bh-muted);
+    background: transparent;
 
     &--disabled {
       cursor: not-allowed;
@@ -669,6 +679,10 @@
   }
 
   .add-dialog {
+    padding: 0;
+    border: 0;
+    color: var(--bh-text);
+    background: transparent;
     width: 20px;
     height: 20px;
     margin-inline-end: 6px;
@@ -715,13 +729,13 @@
     padding: 0.65rem 0.75rem;
     border: 0;
     background: transparent;
-    color: var(--bread-crumb-color-span);
+    color: var(--bh-text);
     cursor: pointer;
     text-align: start;
 
     &:hover,
     &:focus-visible {
-      background: var(--PrimaryColor-light);
+      background: var(--bh-blue-soft);
     }
 
     &:disabled {
@@ -730,7 +744,7 @@
     }
 
     &--selected {
-      color: var(--PrimaryColor);
+      color: var(--bh-blue-ink);
       font-weight: 600;
     }
   }
@@ -741,7 +755,7 @@
     justify-content: center;
     width: 1.15rem;
     height: 1.15rem;
-    border: 1px solid var(--PrimaryColor);
+    border: 1px solid var(--bh-blue-ink);
     border-radius: 0.25rem;
     font-size: 0.8rem;
   }
@@ -758,7 +772,7 @@
   .multiselect-pagination__button {
     border: 0;
     background: transparent;
-    color: var(--PrimaryColor);
+    color: var(--bh-blue-ink);
     cursor: pointer;
     font-size: var(--xs-size);
 

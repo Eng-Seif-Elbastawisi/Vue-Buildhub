@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import { onMounted, ref, watch } from 'vue';
   import { onBeforeRouteLeave } from 'vue-router';
   import type TitleInterface from '@/base/Data/Models/titleInterface';
@@ -78,7 +79,7 @@
 </script>
 
 <template>
-  <div class="material-form-card">
+  <StandardFormLayout class="material-form-card">
     <div class="document-form-header">
       <DocumentIcon />
       <header class="form-header">
@@ -124,67 +125,67 @@
         </div>
       </div> -->
     </div>
-  </div>
+  </StandardFormLayout>
 </template>
 
 <style scoped lang="scss">
-  .document-form-header {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 1.5rem;
-  }
+.document-form-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
 
-  .field-input {
-    width: 100%;
-    padding: 12px 16px;
-    padding-inline-end: 50px;
-    border: 1px solid var(--border-weak);
-    border-radius: 28px;
-    background: var(--white);
-    outline: none;
-    transition: all 0.25s ease;
-    font-family: 'Medium';
-    font-weight: 400;
-    font-size: var(--sm-size);
-    color: var(--bread-crumb-color-span);
-    max-height: 200px;
-    max-width: 100%;
-  }
+.field-input {
+  width: 100%;
+  padding: 12px 16px;
+  padding-inline-end: 50px;
+  border: 1px solid var(--border-weak);
+  border-radius: var(--bh-radius-control);
+  background: var(--bh-surface-raised);
+  outline: none;
+  transition: all 0.25s ease;
+  font-family: 'Medium';
+  font-weight: 400;
+  font-size: var(--sm-size);
+  color: var(--bread-crumb-color-span);
+  max-height: 200px;
+  max-width: 100%;
+}
 
-  .material-form-card {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
+.material-form-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
 
-  .form-header p {
-    color: var(--gray-5);
-  }
+.form-header p {
+  color: var(--gray-5);
+}
 
+.form-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  align-items: end;
+
+  &.disabled {
+    pointer-events: none;
+    opacity: 0.7;
+  }
+}
+
+.col-span-2 {
+  grid-column: span 2;
+}
+
+@media (max-width: 768px) {
   .form-fields {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1rem;
-    align-items: end;
-
-    &.disabled {
-      pointer-events: none;
-      opacity: 0.7;
-    }
+    grid-template-columns: 1fr;
   }
 
   .col-span-2 {
-    grid-column: span 2;
+    grid-column: span 1;
   }
-
-  @media (max-width: 768px) {
-    .form-fields {
-      grid-template-columns: 1fr;
-    }
-
-    .col-span-2 {
-      grid-column: span 1;
-    }
-  }
+}
 </style>

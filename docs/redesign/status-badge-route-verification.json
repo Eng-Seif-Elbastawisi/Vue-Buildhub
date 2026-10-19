@@ -1,0 +1,128 @@
+{
+  "mode": "Actual InvoiceIndex route with synthetic read-only API fixture; not live backend acceptance",
+  "results": [
+    {
+      "width": 1440,
+      "locale": "en",
+      "dark": false,
+      "errors": [],
+      "overflow": false,
+      "badges": [
+        {
+          "label": "Unpaid",
+          "height": 22,
+          "radius": "6px",
+          "background": "rgb(200, 61, 70)",
+          "color": "rgb(255, 255, 255)",
+          "classes": "invoice-status-badge bh-status is-unpaid"
+        },
+        {
+          "label": "Partial",
+          "height": 22,
+          "radius": "6px",
+          "background": "rgb(239, 183, 75)",
+          "color": "rgb(68, 48, 6)",
+          "classes": "invoice-status-badge bh-status is-partial"
+        },
+        {
+          "label": "Paid",
+          "height": 22,
+          "radius": "6px",
+          "background": "rgb(22, 128, 63)",
+          "color": "rgb(255, 255, 255)",
+          "classes": "invoice-status-badge bh-status is-paid"
+        },
+        {
+          "label": "Extra paid",
+          "height": 22,
+          "radius": "6px",
+          "background": "rgb(43, 98, 191)",
+          "color": "rgb(255, 255, 255)",
+          "classes": "invoice-status-badge bh-status is-extra-paid"
+        }
+      ]
+    },
+    {
+      "width": 1024,
+      "locale": "en",
+      "dark": false,
+      "errors": [],
+      "overflow": false,
+      "badges": [
+        {
+          "label": "Unpaid",
+          "height": 22,
+          "radius": "6px",
+          "background": "rgb(200, 61, 70)",
+          "color": "rgb(255, 255, 255)",
+          "classes": "invoice-status-badge bh-status is-unpaid"
+        },
+        {
+          "label": "Partial",
+          "height": 22,
+          "radius": "6px",
+          "background": "rgb(239, 183, 75)",
+          "color": "rgb(68, 48, 6)",
+          "classes": "invoice-status-badge bh-status is-partial"
+        },
+        {
+          "label": "Paid",
+          "height": 22,
+          "radius": "6px",
+          "background": "rgb(22, 128, 63)",
+          "color": "rgb(255, 255, 255)",
+          "classes": "invoice-status-badge bh-status is-paid"
+        },
+        {
+          "label": "Extra paid",
+          "height": 22,
+          "radius": "6px",
+          "background": "rgb(43, 98, 191)",
+          "color": "rgb(255, 255, 255)",
+          "classes": "invoice-status-badge bh-status is-extra-paid"
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "locale": "ar",
+      "dark": true,
+      "errors": [],
+      "overflow": false,
+      "badges": [
+        {
+          "label": "غير مدفوعة",
+          "height": 22,
+          "radius": "6px",
+          "background": "rgb(200, 61, 70)",
+          "color": "rgb(255, 255, 255)",
+          "classes": "invoice-status-badge bh-status is-unpaid"
+        },
+        {
+          "label": "مدفوعة جزئياً",
+          "height": 22,
+          "radius": "6px",
+          "background": "rgb(239, 183, 75)",
+          "color": "rgb(68, 48, 6)",
+          "classes": "invoice-status-badge bh-status is-partial"
+        },
+        {
+          "label": "مدفوعة",
+          "height": 22,
+          "radius": "6px",
+          "background": "rgb(22, 128, 63)",
+          "color": "rgb(255, 255, 255)",
+          "classes": "invoice-status-badge bh-status is-paid"
+        },
+        {
+          "label": "مدفوعة بزيادة",
+          "height": 22,
+          "radius": "6px",
+          "background": "rgb(43, 98, 191)",
+          "color": "rgb(255, 255, 255)",
+          "classes": "invoice-status-badge bh-status is-extra-paid"
+        }
+      ]
+    }
+  ]
+}

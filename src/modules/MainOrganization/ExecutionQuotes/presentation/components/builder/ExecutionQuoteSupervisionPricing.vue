@@ -88,6 +88,7 @@
         </span>
         <span class="supervision-pricing__input-wrap">
           <input
+            class="workspace-control"
             :value="modelValue ?? ''"
             type="number"
             :min="EXECUTION_QUOTE_STAGE_PRICING_MINIMUM"
@@ -134,175 +135,175 @@
 </template>
 
 <style scoped lang="scss">
-  .supervision-pricing {
-    overflow: hidden;
-    padding: 1.15rem;
-    border: 1px solid var(--PrimaryColor-alpha-30);
-    border-radius: var(--radius-lg);
-    background: var(--bg-card);
-    box-shadow: var(--shadow-sm);
-    transition:
-      border-color var(--transition-fast),
-      background-color var(--transition-fast),
-      box-shadow var(--transition-fast);
-  }
+.supervision-pricing {
+  overflow: hidden;
+  padding: 1.15rem;
+  border: 1px solid var(--PrimaryColor-alpha-30);
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+  box-shadow: none;
+  transition:
+    border-color var(--transition-fast),
+    background-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
 
-  .supervision-pricing--disabled {
-    border-color: var(--border-weak);
-    background: var(--bg-light);
-    box-shadow: none;
-  }
+.supervision-pricing--disabled {
+  border-color: var(--border-weak);
+  background: var(--bg-light);
+  box-shadow: none;
+}
 
-  .supervision-pricing__header,
+.supervision-pricing__header,
+.supervision-pricing__content,
+.supervision-pricing__summary {
+  display: flex;
+}
+
+.supervision-pricing__header {
+  align-items: flex-start;
+  gap: 0.8rem;
+}
+
+.supervision-pricing__icon {
+  display: grid;
+  flex: 0 0 2.6rem;
+  place-items: center;
+  width: 2.6rem;
+  height: 2.6rem;
+  border-radius: var(--radius-md);
+  background: var(--PrimaryColor);
+  color: var(--bg-card);
+}
+
+.supervision-pricing__badge {
+  color: var(--PrimaryColor);
+  font-size: var(--xs-size);
+  font-weight: 700;
+}
+
+.supervision-pricing h2 {
+  margin: 0.2rem 0;
+  color: var(--title-card-color);
+  font-size: 1.2rem;
+}
+
+.supervision-pricing p,
+.supervision-pricing__field small,
+.supervision-pricing dt {
+  color: var(--subtitle-color);
+  font-size: var(--xs-size);
+}
+
+.supervision-pricing p {
+  margin: 0;
+}
+
+.supervision-pricing__content {
+  align-items: stretch;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.supervision-pricing__field {
+  display: flex;
+  flex: 0 1 22rem;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-weight: 700;
+}
+
+.supervision-pricing__field b {
+  color: var(--danger);
+}
+
+.supervision-pricing__disabled-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--PrimaryColor);
+  font-weight: 700;
+}
+
+.supervision-pricing__input-wrap {
+  position: relative;
+}
+
+.supervision-pricing__input-wrap input {
+  width: 100%;
+  min-height: 3.1rem;
+  padding-inline: 0.8rem 2.8rem;
+  border: 1px solid var(--input-border-color);
+  border-radius: var(--bh-radius-control);
+  background: var(--bg-card);
+  color: var(--Title-input-Color);
+  font: inherit;
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.supervision-pricing__input-wrap input:focus {
+  border-color: var(--PrimaryColor);
+  outline: none;
+  box-shadow: none;
+}
+
+.supervision-pricing__input-wrap strong {
+  position: absolute;
+  top: 50%;
+  inset-inline-end: 0.85rem;
+  color: var(--PrimaryColor);
+  transform: translateY(-50%);
+}
+
+.supervision-pricing__summary {
+  flex: 1;
+  gap: 0.7rem;
+  margin: 0;
+}
+
+.supervision-pricing__summary > div {
+  display: flex;
+  flex: 1;
+  min-width: 8rem;
+  padding: 0.85rem;
+  border: 1px solid var(--border-weak);
+  border-radius: var(--radius-md);
+  background: var(--bg-light);
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.35rem;
+}
+
+.supervision-pricing dd {
+  margin: 0;
+  color: var(--title-card-color);
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+
+.supervision-pricing__summary .supervision-pricing__total {
+  border-color: var(--PrimaryColor-alpha-30);
+  background: var(--PrimaryColor-light);
+}
+
+.supervision-pricing__total dd {
+  color: var(--PrimaryColor);
+}
+
+.supervision-pricing__total dd small {
+  font-size: var(--xs-size);
+}
+
+@media (max-width: 900px) {
   .supervision-pricing__content,
   .supervision-pricing__summary {
-    display: flex;
-  }
-
-  .supervision-pricing__header {
-    align-items: flex-start;
-    gap: 0.8rem;
-  }
-
-  .supervision-pricing__icon {
-    display: grid;
-    flex: 0 0 2.6rem;
-    place-items: center;
-    width: 2.6rem;
-    height: 2.6rem;
-    border-radius: var(--radius-md);
-    background: var(--PrimaryColor);
-    color: var(--bg-card);
-  }
-
-  .supervision-pricing__badge {
-    color: var(--PrimaryColor);
-    font-size: var(--xs-size);
-    font-weight: 700;
-  }
-
-  .supervision-pricing h2 {
-    margin: 0.2rem 0;
-    color: var(--title-card-color);
-    font-size: 1.2rem;
-  }
-
-  .supervision-pricing p,
-  .supervision-pricing__field small,
-  .supervision-pricing dt {
-    color: var(--subtitle-color);
-    font-size: var(--xs-size);
-  }
-
-  .supervision-pricing p {
-    margin: 0;
-  }
-
-  .supervision-pricing__content {
-    align-items: stretch;
-    gap: 1rem;
-    margin-top: 1rem;
+    flex-direction: column;
   }
 
   .supervision-pricing__field {
-    display: flex;
-    flex: 0 1 22rem;
-    flex-direction: column;
-    gap: 0.4rem;
-    font-weight: 700;
+    flex-basis: auto;
   }
-
-  .supervision-pricing__field b {
-    color: var(--danger);
-  }
-
-  .supervision-pricing__disabled-hint {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    color: var(--PrimaryColor);
-    font-weight: 700;
-  }
-
-  .supervision-pricing__input-wrap {
-    position: relative;
-  }
-
-  .supervision-pricing__input-wrap input {
-    width: 100%;
-    min-height: 3.1rem;
-    padding-inline: 0.8rem 2.8rem;
-    border: 1px solid var(--input-border-color);
-    border-radius: var(--radius-md);
-    background: var(--bg-card);
-    color: var(--Title-input-Color);
-    font: inherit;
-    transition:
-      border-color var(--transition-fast),
-      box-shadow var(--transition-fast);
-  }
-
-  .supervision-pricing__input-wrap input:focus {
-    border-color: var(--PrimaryColor);
-    outline: none;
-    box-shadow: 0 0 0 3px var(--PrimaryColor-alpha-10);
-  }
-
-  .supervision-pricing__input-wrap strong {
-    position: absolute;
-    top: 50%;
-    inset-inline-end: 0.85rem;
-    color: var(--PrimaryColor);
-    transform: translateY(-50%);
-  }
-
-  .supervision-pricing__summary {
-    flex: 1;
-    gap: 0.7rem;
-    margin: 0;
-  }
-
-  .supervision-pricing__summary > div {
-    display: flex;
-    flex: 1;
-    min-width: 8rem;
-    padding: 0.85rem;
-    border: 1px solid var(--border-weak);
-    border-radius: var(--radius-md);
-    background: var(--bg-light);
-    flex-direction: column;
-    justify-content: center;
-    gap: 0.35rem;
-  }
-
-  .supervision-pricing dd {
-    margin: 0;
-    color: var(--title-card-color);
-    font-size: 1.15rem;
-    font-weight: 800;
-  }
-
-  .supervision-pricing__summary .supervision-pricing__total {
-    border-color: var(--PrimaryColor-alpha-30);
-    background: var(--PrimaryColor-light);
-  }
-
-  .supervision-pricing__total dd {
-    color: var(--PrimaryColor);
-  }
-
-  .supervision-pricing__total dd small {
-    font-size: var(--xs-size);
-  }
-
-  @media (max-width: 900px) {
-    .supervision-pricing__content,
-    .supervision-pricing__summary {
-      flex-direction: column;
-    }
-
-    .supervision-pricing__field {
-      flex-basis: auto;
-    }
-  }
+}
 </style>

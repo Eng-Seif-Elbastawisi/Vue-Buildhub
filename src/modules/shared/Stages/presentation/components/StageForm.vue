@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import { onMounted, ref, watch } from 'vue';
 
   import TranslationParams from '@/base/Core/Params/translationParams';
@@ -53,7 +54,7 @@
 </script>
 
 <template>
-  <div class="Stage-form-card">
+  <StandardFormLayout class="Stage-form-card">
     <header>
       <h3>{{ $t('stage.form_title') }}</h3>
       <p>{{ $t('stage.form_description') }}</p>
@@ -84,40 +85,40 @@
         </span>
       </div>
     </div>
-  </div>
+  </StandardFormLayout>
 </template>
 
 <style scoped lang="scss">
-  .Stage-form-card {
-    display: flex;
-    flex-direction: column;
-  }
+.Stage-form-card {
+  display: flex;
+  flex-direction: column;
+}
 
-  .status-toggle-wrapper {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    height: 46px;
-  }
+.status-toggle-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  height: 46px;
+}
 
-  .form-fields {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1rem;
+.form-fields {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
 
-    &.disabled {
-      pointer-events: none;
-      opacity: 0.7;
-    }
+  &.disabled {
+    pointer-events: none;
+    opacity: 0.7;
   }
+}
 
-  .field-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
 
-  .full-row {
-    grid-column: 1 / -1;
-  }
+.full-row {
+  grid-column: 1 / -1;
+}
 </style>

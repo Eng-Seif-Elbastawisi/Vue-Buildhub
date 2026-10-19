@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
 import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import MultiLangInput from '@/shared/MultiLangInput.vue';
@@ -71,27 +72,32 @@ watch(
 </script>
 
 <template>
-  <div class="attachment-type-form-card">
+  <StandardFormLayout class="attachment-type-form-card">
     <header>
       <h3>
         {{ isEdit ? $t('attachment_type.edit_title') : $t('attachment_type.add_title') }}
       </h3>
       <p>
         {{
-          isEdit
-            ? $t('attachment_type.edit_description')
-            : $t('attachment_type.add_description')
+          isEdit ? $t('attachment_type.edit_description') : $t('attachment_type.add_description')
         }}
       </p>
     </header>
 
     <div class="form-fields" :class="{ disabled: loading }">
       <div id="attachment-type-title-field" class="field-group">
-        <MultiLangInput field-key="title" :label="$t('title')" :languages="['ar', 'en']"
-          :model-value="titleTranslations" type="title" required @update:model-value="updateTitleTranslations" />
+        <MultiLangInput
+          field-key="title"
+          :label="$t('title')"
+          :languages="['ar', 'en']"
+          :model-value="titleTranslations"
+          type="title"
+          required
+          @update:model-value="updateTitleTranslations"
+        />
       </div>
     </div>
-  </div>
+  </StandardFormLayout>
 </template>
 
 <style scoped lang="scss">

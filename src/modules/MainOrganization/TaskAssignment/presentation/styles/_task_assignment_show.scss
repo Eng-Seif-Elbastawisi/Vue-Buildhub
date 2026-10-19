@@ -1,5 +1,5 @@
 @use '../styles/task_assignment';
- 
+
 .task-assignment-show-page {
   display: flex;
   flex-direction: column;
@@ -21,7 +21,7 @@
     gap: 0.45rem;
 
     &__label {
-      color: #6b7280;
+      color: var(--bh-muted);
       font-size: 0.75rem;
       font-weight: 700;
       letter-spacing: 0.06em;
@@ -42,14 +42,14 @@
     font-size: 0.9rem;
     font-weight: 700;
     white-space: nowrap;
-    box-shadow: 0 8px 24px rgb(15 23 42 / 8%);
+    box-shadow: none;
     transition:
       transform 0.2s ease,
       box-shadow 0.2s ease;
 
     &:hover {
       transform: translateY(-1px);
-      box-shadow: 0 12px 30px rgb(15 23 42 / 12%);
+      box-shadow: none;
     }
 
     &__icon {
@@ -60,7 +60,7 @@
       height: 1.8rem;
       border-radius: 50%;
       background: rgb(255 255 255 / 70%);
-      box-shadow: 0 2px 8px rgb(15 23 42 / 8%);
+      box-shadow: none;
     }
 
     &__text {
@@ -75,29 +75,19 @@
       border: 2px solid rgb(255 255 255 / 90%);
       border-radius: 50%;
       background: currentColor;
-      box-shadow: 0 0 0 3px rgb(255 255 255 / 30%);
+      box-shadow: none;
     }
 
     &--assigned {
-      color: #1d4ed8;
-      border-color: #bfdbfe;
-      background:
-        linear-gradient(
-          135deg,
-          #eff6ff,
-          #dbeafe
-        );
+      color: var(--bh-blue-ink);
+      border-color: var(--bh-blue-soft);
+      background: linear-gradient(135deg, var(--bh-blue-soft), #dbeafe);
     }
 
     &--working {
-      color: #047857;
-      border-color: #a7f3d0;
-      background:
-        linear-gradient(
-          135deg,
-          #ecfdf5,
-          #d1fae5
-        );
+      color: var(--bh-green-ink);
+      border-color: var(--bh-green-soft);
+      background: linear-gradient(135deg, var(--bh-green-soft), #d1fae5);
 
       .task-status-chip__icon i {
         animation: status-rotate 3s linear infinite;
@@ -105,47 +95,31 @@
     }
 
     &--held {
-      color: #b45309;
-      border-color: #fde68a;
-      background:
-        linear-gradient(
-          135deg,
-          #fffbeb,
-          #fef3c7
-        );
+      color: var(--bh-amber-ink);
+      border-color: var(--bh-amber-soft);
+      background: linear-gradient(135deg, var(--bh-amber-soft), var(--bh-amber-soft));
     }
 
     &--review {
       color: #7c3aed;
       border-color: #ddd6fe;
-      background:
-        linear-gradient(
-          135deg,
-          #f5f3ff,
-          #ede9fe
-        );
+      background: linear-gradient(135deg, #f5f3ff, #ede9fe);
     }
 
     &--default {
-      color: #475569;
-      border-color: #e2e8f0;
-      background:
-        linear-gradient(
-          135deg,
-          #f8fafc,
-          #f1f5f9
-        );
+      color: var(--bh-muted);
+      border-color: var(--bh-line);
+      background: linear-gradient(135deg, var(--bh-surface), var(--bh-canvas));
     }
   }
 
   .task-details-section {
     padding: 1.5rem;
-    border-bottom: 1px solid
-      var(--border-color, #e5e7eb);
+    border-bottom: 1px solid var(--border-color, var(--bh-line));
 
     h3 {
       margin: 0 0 1rem;
-      color: #111827;
+      color: var(--bh-text);
       font-size: 1.1rem;
       font-weight: 700;
     }
@@ -153,11 +127,7 @@
 
   .task-details-grid {
     display: grid;
-    grid-template-columns:
-      repeat(
-        auto-fill,
-        minmax(210px, 1fr)
-      );
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
     gap: 1rem;
 
     .detail-item {
@@ -166,9 +136,9 @@
       gap: 0.5rem;
       min-height: 5rem;
       padding: 1rem;
-      border: 1px solid #eef0f4;
+      border: 1px solid var(--bh-canvas);
       border-radius: 0.875rem;
-      background: #fff;
+      background: var(--bh-surface);
       transition:
         border-color 0.2s ease,
         box-shadow 0.2s ease,
@@ -177,22 +147,21 @@
       &:hover {
         transform: translateY(-2px);
         border-color: #dbe3ef;
-        box-shadow: 0 8px 24px
-          rgb(15 23 42 / 6%);
+        box-shadow: none;
       }
 
       .detail-label {
-        color: #6b7280;
+        color: var(--bh-muted);
         font-size: 0.8rem;
         font-weight: 600;
       }
 
       .detail-value {
-        color: #1f2937;
+        color: var(--bh-text);
         font-size: 0.95rem;
         font-weight: 600;
         line-height: 1.6;
-        word-break: break-word;
+        overflow-wrap: anywhere;
       }
     }
   }
@@ -209,21 +178,21 @@
     font-weight: 700;
 
     &.task-status-chip--assigned {
-      color: #1d4ed8;
-      border-color: #bfdbfe;
-      background: #eff6ff;
+      color: var(--bh-blue-ink);
+      border-color: var(--bh-blue-soft);
+      background: var(--bh-blue-soft);
     }
 
     &.task-status-chip--working {
-      color: #047857;
-      border-color: #a7f3d0;
-      background: #ecfdf5;
+      color: var(--bh-green-ink);
+      border-color: var(--bh-green-soft);
+      background: var(--bh-green-soft);
     }
 
     &.task-status-chip--held {
-      color: #b45309;
-      border-color: #fde68a;
-      background: #fffbeb;
+      color: var(--bh-amber-ink);
+      border-color: var(--bh-amber-soft);
+      background: var(--bh-amber-soft);
     }
 
     &.task-status-chip--review {
@@ -233,27 +202,27 @@
     }
 
     &.task-status-chip--default {
-      color: #475569;
-      border-color: #e2e8f0;
-      background: #f8fafc;
+      color: var(--bh-muted);
+      border-color: var(--bh-line);
+      background: var(--bh-surface);
     }
 
     &--success {
-      color: #047857;
-      border-color: #a7f3d0;
-      background: #ecfdf5;
+      color: var(--bh-green-ink);
+      border-color: var(--bh-green-soft);
+      background: var(--bh-green-soft);
     }
 
     &--muted {
-      color: #64748b;
-      border-color: #e2e8f0;
-      background: #f8fafc;
+      color: var(--bh-muted);
+      border-color: var(--bh-line);
+      background: var(--bh-surface);
     }
 
     &--history {
-      color: #4338ca;
+      color: var(--bh-blue-ink);
       border-color: #c7d2fe;
-      background: #eef2ff;
+      background: var(--bh-blue-soft);
     }
   }
 
@@ -271,7 +240,7 @@
 
   .task-history-empty {
     padding: 2rem;
-    color: #64748b;
+    color: var(--bh-muted);
     text-align: center;
   }
 
@@ -305,8 +274,7 @@
     font-size: 0.9rem;
     font-weight: 700;
     cursor: pointer;
-    box-shadow: 0 6px 18px
-      rgb(15 23 42 / 10%);
+    box-shadow: none;
     transition:
       transform 0.2s ease,
       box-shadow 0.2s ease,
@@ -314,8 +282,7 @@
 
     &:hover:not(:disabled) {
       transform: translateY(-2px);
-      box-shadow: 0 10px 24px
-        rgb(15 23 42 / 16%);
+      box-shadow: none;
     }
 
     &:disabled {
@@ -324,40 +291,21 @@
     }
 
     &--start {
-      background:
-        linear-gradient(
-          135deg,
-          #2563eb,
-          #1d4ed8
-        );
+      background: linear-gradient(135deg, var(--bh-blue-ink), var(--bh-blue-ink));
     }
 
     &--hold {
-      background:
-        linear-gradient(
-          135deg,
-          #f59e0b,
-          #d97706
-        );
+      background: linear-gradient(135deg, #f59e0b, var(--bh-amber-ink));
     }
 
     &--finish {
-      background:
-        linear-gradient(
-          135deg,
-          #16a34a,
-          #047857
-        );
+      background: linear-gradient(135deg, var(--bh-green-ink), var(--bh-green-ink));
     }
   }
 
   .attachments-list {
     display: grid;
-    grid-template-columns:
-      repeat(
-        auto-fill,
-        minmax(220px, 1fr)
-      );
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     gap: 1rem;
     padding: 0;
     margin: 0;
@@ -366,9 +314,9 @@
     &__item {
       overflow: hidden;
       padding: 0.5rem;
-      border: 1px solid #e5e7eb;
+      border: 1px solid var(--bh-line);
       border-radius: 0.875rem;
-      background: #fff;
+      background: var(--bh-surface);
 
       img {
         display: block;
@@ -386,14 +334,13 @@
   overflow: hidden;
   border: none;
   border-radius: 1rem;
-  background: #fff;
-  color: #111827;
-  box-shadow: 0 24px 70px
-    rgb(15 23 42 / 22%);
+  background: var(--bh-surface);
+  color: var(--bh-text);
+  box-shadow: var(--bh-shadow-popover);
 
   .p-dialog-header {
     padding: 1.25rem 1.5rem;
-    border-bottom: 1px solid #eef0f4;
+    border-bottom: 1px solid var(--bh-canvas);
   }
 
   .p-dialog-content {
@@ -402,7 +349,7 @@
 
   .p-dialog-footer {
     padding: 1rem 1.5rem 1.5rem;
-    border-top: 1px solid #eef0f4;
+    border-top: 1px solid var(--bh-canvas);
   }
 }
 
@@ -426,7 +373,7 @@
 
   .confirm-message {
     margin: 0;
-    color: #374151;
+    color: var(--bh-text);
     font-size: 1rem;
     line-height: 1.7;
     text-align: center;
@@ -440,7 +387,7 @@
     margin-top: 0.5rem;
 
     label {
-      color: #374151;
+      color: var(--bh-text);
       font-size: 0.875rem;
       font-weight: 700;
     }
@@ -449,11 +396,11 @@
       width: 100%;
       min-height: 6.5rem;
       padding: 0.75rem 1rem;
-      border: 1px solid #d1d5db;
+      border: 1px solid var(--bh-field-line);
       border-radius: 0.75rem;
       outline: none;
-      background: #fff;
-      color: #111827;
+      background: var(--bh-surface);
+      color: var(--bh-text);
       font-family: inherit;
       resize: vertical;
       transition:
@@ -461,9 +408,8 @@
         box-shadow 0.2s ease;
 
       &:focus {
-        border-color: #2563eb;
-        box-shadow: 0 0 0 3px
-          rgb(37 99 235 / 12%);
+        border-color: var(--bh-blue-ink);
+        box-shadow: var(--bh-shadow-popover);
       }
     }
   }
@@ -490,9 +436,9 @@
       transform 0.2s ease,
       opacity 0.2s ease;
 
-    // &:hover:not(:disabled) {
-    //   transform: translateY(-1px);
-    // }
+    /* &:hover:not(:disabled) { */
+    /*   transform: translateY(-1px); */
+    /* } */
 
     &:disabled {
       cursor: not-allowed;
@@ -509,24 +455,19 @@
   .btn-primary {
     color: #fff;
     border-color: transparent;
-    background: 
-      linear-gradient(
-        135deg,
-        var(--PrimaryColor-light),
-        var(--PrimaryColor)
-      );
-      &:hover:not(:disabled){
-       box-shadow: none; 
-       border: white;
-      }
+    background: var(--bh-surface);
+
+    &:hover:not(:disabled) {
+      box-shadow: none;
+      border: white;
+    }
   }
 }
 
 .button-loader {
   width: 1.1rem;
   height: 1.1rem;
-  border: 2px solid
-    rgb(255 255 255 / 40%);
+  border: 2px solid rgb(255 255 255 / 40%);
   border-top-color: #fff;
   border-radius: 50%;
   animation: status-rotate 0.7s linear infinite;

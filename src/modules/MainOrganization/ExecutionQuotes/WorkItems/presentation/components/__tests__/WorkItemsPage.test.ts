@@ -60,6 +60,16 @@ it.each(['en', 'ar'])(
       'Record 3',
       'Record 4',
     ]);
+    const messages = locale === 'ar' ? ar : en;
+    expect(
+      wrapper.findAll('.work-items-section').map((section) => section.attributes('aria-label')),
+    ).not.toContain(messages['work_items.drawings']);
+    expect(wrapper.findAll('button').map((button) => button.text())).not.toContain(
+      messages['work_items.new_drawing'],
+    );
+    expect(
+      post.mock.calls.some(([request]) => request.url.includes('fetch_shop_drawing_quotes')),
+    ).toBe(false);
     const filters = wrapper.findAll('.work-items-filters button');
     for (let type = 1; type <= 4; type++) {
       await filters[type]?.trigger('click');
@@ -82,7 +92,9 @@ it.each(['en', 'ar'])(
       '/organization/execution-quotes/show/140/schedule',
       '/organization/execution-quotes/show/140/site-team',
       '/organization/execution-quotes/show/140/work-items',
+      '/organization/execution-quotes/show/140/drawings',
       '/organization/execution-quotes/show/140/procurement',
+      '/organization/execution-quotes/show/140/warehouse/material-receipt',
     ]);
     await router.push('/organization/execution-quotes/show/141/work-items');
     await flushPromises();

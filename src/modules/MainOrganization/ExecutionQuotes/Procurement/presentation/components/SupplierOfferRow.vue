@@ -1,4 +1,9 @@
 <script setup lang="ts">
+  import HandleFilesUpload from '@/shared/FormInputs/HandleFilesUpload.vue';
+  import {
+    attachmentGallery,
+    toGalleryAttachment,
+  } from '@/shared/AttachmentGallery/attachmentGallery';
   import FieldHelpIcon from '@/shared/components/form/FieldHelpIcon.vue';
   import { computed, ref, nextTick } from 'vue';
   import { useI18n } from 'vue-i18n';
@@ -55,10 +60,24 @@
   }
 </script>
 <template>
-  <fieldset class="procurement-item" :disabled="disabled">
-    <legend>{{ $t('procurement.offers.supplier_number', { number: index + 1 }) }}</legend>
+  <fieldset class="procurement-item supplier-prices-row" :disabled="disabled">
+    <legend class="procurement-sr-only">
+      {{ $t('procurement.offers.supplier_number', { number: index + 1 }) }}
+    </legend>
+    <div class="procurement-item__header">
+      <strong>{{ $t('procurement.offers.supplier_number', { number: index + 1 }) }}</strong>
+      <AppButton
+        type="button"
+        theme="secondary"
+        size="sm"
+        :disabled="disabled"
+        :aria-label="$t('procurement.offers.remove_supplier', { number: index + 1 })"
+        @click="emit('remove')"
+        >{{ $t('procurement.remove') }}</AppButton
+      >
+    </div>
     <div class="procurement-fields">
-      <div class="field-group">
+      <div class="field-group" :class="{ 'procurement-field-invalid': !!error('supplierId') }">
         <UpdatedCustomInputSelect
           :id="`${prefix}-supplier`"
           :key="supplierSelectionVersion"
@@ -103,7 +122,7 @@
         <input
           :id="`${prefix}-price`"
           :value="row.price"
-          class="input"
+          class="input workspace-control"
           type="text"
           inputmode="decimal"
           :disabled="disabled"
@@ -130,7 +149,7 @@
         <input
           :id="`${prefix}-duration`"
           :value="row.duration"
-          class="input"
+          class="input workspace-control"
           type="number"
           step="1"
           min="0"
@@ -143,7 +162,7 @@
           error('duration') ? $t(error('duration')!) : ''
         }}</small>
       </div>
-      <div class="field-group">
+      <div class="field-group" :class="{ 'procurement-field-invalid': !!error('durationType') }">
         <UpdatedCustomInputSelect
           :id="`${prefix}-unit`"
           :model-value="unit"
@@ -169,15 +188,24 @@
           $t(error('durationType')!)
         }}</small>
       </div>
+      <div class="field-group">
+        <button
+          v-if="row.savedAttachment"
+          type="button"
+          class="btn btn-secondary"
+          @click="attachmentGallery.open([toGalleryAttachment({ file: row.savedAttachment })], 0)"
+        >
+          {{ $t('work_items.view_attachment') }}
+        </button>
+        <HandleFilesUpload
+          :key="`${row.key}-${row.supplier?.id}`"
+          label="attachments"
+          :max-files="1"
+          accept=""
+          @change="emit('update', { attachment: $event[0]?.base64 || undefined })"
+          @processing="emit('update', { processing: $event })"
+        />
+      </div>
     </div>
-    <AppButton
-      type="button"
-      theme="secondary"
-      size="sm"
-      :disabled="disabled"
-      :aria-label="$t('procurement.offers.remove_supplier', { number: index + 1 })"
-      @click="emit('remove')"
-      >{{ $t('procurement.remove') }}</AppButton
-    >
   </fieldset>
 </template>

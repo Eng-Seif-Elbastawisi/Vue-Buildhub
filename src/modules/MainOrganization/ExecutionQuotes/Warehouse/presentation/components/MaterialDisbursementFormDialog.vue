@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import { computed, ref, watch } from 'vue';
   import { useI18n } from 'vue-i18n';
   import Dialog from 'primevue/dialog';
@@ -106,14 +107,20 @@
     :visible="visible"
     modal
     append-to="self"
-    class="material-receipt__dialog"
+    class="material-receipt__dialog workspace-dialog"
     :header="$t('material_disbursement.issue_materials')"
     :closable="!controller.isStoring.value"
     :close-on-escape="!controller.isStoring.value"
     :dismissable-mask="false"
     @update:visible="!$event && close()"
   >
-    <form class="material-receipt__form" novalidate @submit.prevent="save">
+    <StandardFormLayout
+      as="form"
+      embedded
+      class="material-receipt__form"
+      novalidate
+      @submit.prevent="save"
+    >
       <p class="material-receipt__form-intro">{{ $t('material_disbursement.immediate_notice') }}</p>
       <DataStatusBuilder
         :controller="controller.listState.value"
@@ -149,12 +156,14 @@
               <h2>{{ $t('material_disbursement.select_items') }}</h2>
             </div>
             <div
-              class="material-receipt__scroll"
+              class="material-receipt__scroll workspace-table-scroll"
               role="region"
               tabindex="0"
               :aria-label="$t('material_disbursement.select_items')"
             >
-              <table class="material-receipt__table material-disbursement__stock-table">
+              <table
+                class="material-receipt__table material-disbursement__stock-table workspace-data-table"
+              >
                 <thead>
                   <tr>
                     <th scope="col">{{ $t('material_disbursement.select') }}</th>
@@ -210,7 +219,7 @@
                         ><input
                           :id="`issue-${row.purchaseRequestItem.id}`"
                           v-model="quantities[row.purchaseRequestItem.id]"
-                          class="input"
+                          class="input workspace-control"
                           type="number"
                           min="0"
                           step="0.01"
@@ -273,7 +282,7 @@
           ><input
             id="disbursement-date"
             v-model="date"
-            class="input"
+            class="input workspace-control"
             type="date"
             :disabled="!canEdit || !hasAvailable"
             required
@@ -340,6 +349,6 @@
           >{{ $t('material_disbursement.issue_materials') }}</AppButton
         >
       </div>
-    </form>
+    </StandardFormLayout>
   </Dialog>
 </template>

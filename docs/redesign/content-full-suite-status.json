@@ -1,0 +1,6 @@
+{
+  "completed": false,
+  "result": "Stopped without summary",
+  "elapsed": "08:15",
+  "reason": "Full suite did not finish; targeted suites and before/after failure comparison are recorded separately."
+}

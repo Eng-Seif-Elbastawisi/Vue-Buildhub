@@ -1,5 +1,7 @@
 # Supplier Price Offers integration
 
+October 19 update: see [execution integration changes](../../../../../docs/execution-october-19-integration.md) for START-only new-work selection, the fixed alert, updated fields/attachments, legacy handling, and outstanding backend questions.
+
 Procurement now presents two distinct steps and tables: Purchase Requests, then Supplier Prices for a selected saved request. New Purchase Request opens the request form. View Prices selects a saved request and shows its read-only supplier-price table. Add Supplier Prices / Manage Prices opens a separate editor dialog for that request. Purchase Orders, Client Product Offers, client approval, and supplier award decisions are outside this delivery.
 
 ## Confirmed contracts and references
@@ -7,7 +9,8 @@ Procurement now presents two distinct steps and tables: Purchase Requests, then 
 Read `/home/elsayed-hassan/Downloads/purchase_request_prices_api.md` and `/home/elsayed-hassan/Downloads/purchase_request_api_documentation (1).md`. The latter is the supplied second guide with a space before `(1)`. Neither exact requested filename was present in the worktree; the original Procurement request guide remains unchanged.
 
 - Authenticated employee POST `fetch_purchase_request_prices`: `{ purchase_request_id }`; unpaginated `data` array. The request ID is `purchase_requests.id`, not Quote, Project, item, timeline-stage, or offer-record ID.
-- Authenticated employee POST `store_purchase_request_prices`: `{ purchase_request_id, suppliers: [{ id, price, duration, duration_type }] }`. No duplicate owner fields are sent.
+- Authenticated employee POST `store_purchase_request_prices`: `{ purchase_request_id, suppliers: [{ id, price, duration, duration_type, attachment? }] }`. No duplicate owner fields are sent.
+- October 19: each supplier accepts an optional Base64 `attachment`. Omission preserves the saved file; a new Data URI replaces it. Fetch returns one URL or null per offer, and the draft keeps that preview separate from a replacement. Supplier summaries use `supplier.title`, with compatibility for legacy names.
 - Sync replaces the complete collection: omitted supplier offers are removed, included offers updated, new suppliers receive offers. Supplier master records remain untouched. An explicitly confirmed empty list removes every saved offer.
 - `data[].id` identifies the price-offer record. `data[].supplier.id` identifies the existing Supplier and becomes `suppliers[].id` during Sync.
 - Reused shared Package `DurationType`: Day 1, Week 2, Month 3, Year 4. Transport values remain numeric.

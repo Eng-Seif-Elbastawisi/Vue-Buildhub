@@ -1,9 +1,11 @@
+import { nullableText } from '../../../WorkItems/core/models/work-items.response';
 import {
   DurationType,
   type DurationType as DurationUnit,
 } from '@/modules/shared/Package/core/constants/duration.type.enum';
 import PurchaseRequestSupplierReferenceModel from './purchase-request.supplier-reference.model';
 export default class PurchaseRequestPriceModel {
+  readonly attachment: string | null;
   readonly id: number;
   readonly purchaseRequestId: number;
   readonly supplier: PurchaseRequestSupplierReferenceModel | null;
@@ -12,6 +14,7 @@ export default class PurchaseRequestPriceModel {
   readonly durationType: DurationUnit | null;
   readonly createdAt: string | null;
   constructor(fields: {
+    attachment?: string | null;
     id: number;
     purchaseRequestId: number;
     supplier: PurchaseRequestSupplierReferenceModel | null;
@@ -21,6 +24,7 @@ export default class PurchaseRequestPriceModel {
     createdAt: string | null;
   }) {
     this.id = fields.id;
+    this.attachment = fields.attachment ?? null;
     this.purchaseRequestId = fields.purchaseRequestId;
     this.supplier = fields.supplier;
     this.price = fields.price;
@@ -48,6 +52,7 @@ export default class PurchaseRequestPriceModel {
     )
       throw new Error('procurement.offers.invalid_response');
     return new PurchaseRequestPriceModel({
+      attachment: nullableText(record.attachment),
       id: record.id as number,
       purchaseRequestId: record.purchase_request_id as number,
       supplier:

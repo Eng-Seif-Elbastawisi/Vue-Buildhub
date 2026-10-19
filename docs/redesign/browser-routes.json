@@ -1,0 +1,2082 @@
+[
+  {
+    "path": "/organization/system-identity",
+    "actualPath": "/organization/system-identity",
+    "screen": "System Identity",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/suppliers",
+    "actualPath": "/organization/suppliers",
+    "screen": "Suppliers",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/suppliers/add",
+    "actualPath": "/organization/suppliers/add",
+    "screen": "Add Suppliers",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/suppliers/edit/:id",
+    "actualPath": "/organization/suppliers/edit/1",
+    "screen": "Edit Suppliers",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/client",
+    "actualPath": "/organization/client",
+    "screen": "Client",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/client/add",
+    "actualPath": "/organization/client/add",
+    "screen": "Add Client",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/client/edit/:client_id",
+    "actualPath": "/organization/client/edit/1",
+    "screen": "Edit Client",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/employee",
+    "actualPath": "/organization/employee",
+    "screen": "Employee",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/employee/add",
+    "actualPath": "/organization/employee/add",
+    "screen": "Add Employee",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/employee/edit/:employee_id",
+    "actualPath": "/organization/employee/edit/1",
+    "screen": "Edit Employee",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/specialization",
+    "actualPath": "/organization/specialization",
+    "screen": "Specialization",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/specialization/add",
+    "actualPath": "/organization/specialization/add",
+    "screen": "Add Specialization",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/specialization/edit/:specialization_id",
+    "actualPath": "/organization/specialization/edit/1",
+    "screen": "Edit Specialization",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/warehouse",
+    "actualPath": "/organization/warehouse",
+    "screen": "Warehouse",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/warehouse/add",
+    "actualPath": "/organization/warehouse/add",
+    "screen": "Add Warehouse",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/warehouse/edit/:warehouse_id",
+    "actualPath": "/organization/warehouse/edit/1",
+    "screen": "Edit Warehouse",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/warehouse/show/:warehouse_id",
+    "actualPath": "/organization/warehouse/show/1",
+    "screen": "Show Warehouse",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/contractors",
+    "actualPath": "/organization/contractors",
+    "screen": "Contractors",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/contractors/add",
+    "actualPath": "/organization/contractors/add",
+    "screen": "Add Contractor",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/contractors/edit/:contractor_id",
+    "actualPath": "/organization/contractors/edit/1",
+    "screen": "Edit Contractor",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/contractors/show/:contractor_id",
+    "actualPath": "/organization/contractors/show/1",
+    "screen": "Show Contractor",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/term",
+    "actualPath": "/organization/term",
+    "screen": "Term",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/term/add",
+    "actualPath": "/organization/term/add",
+    "screen": "Add Term",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/term/edit/:term_id",
+    "actualPath": "/organization/term/edit/1",
+    "screen": "Edit Term",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/project",
+    "actualPath": "/organization/project",
+    "screen": "project",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/converted-projects",
+    "actualPath": "/organization/converted-projects",
+    "screen": "converted-projects",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/offers-projects",
+    "actualPath": "/organization/offers-projects",
+    "screen": "offers-projects",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/project/add",
+    "actualPath": "/organization/project/add",
+    "screen": "add-project",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/project/edit/:project_id",
+    "actualPath": "/organization/project/edit/1",
+    "screen": "edit-project",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/project/show/:project_id",
+    "actualPath": "/organization/project/show/1",
+    "screen": "show-project",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/project/show/:project_id/price-percentage",
+    "actualPath": "/organization/project/show/1/price-percentage",
+    "screen": "project-price-percentage",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/project/show/:project_id/invoice-action/add",
+    "actualPath": "/organization/project/show/1/invoice-action/add",
+    "screen": "project-invoice-action-add",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/project/history/:project_id",
+    "actualPath": "/organization/project/history/1",
+    "screen": "project-history",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/task-assignment",
+    "actualPath": "/organization/task-assignment",
+    "screen": "mainorganization-task-assignment-index",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/task-assignment/create",
+    "actualPath": "/organization/task-assignment/approved",
+    "screen": "mainorganization-task-assignment-approved",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/task-assignment/show/:id",
+    "actualPath": "/organization/task-assignment/show/1",
+    "screen": "mainorganization-task-assignment-show",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/task-assignment/approved",
+    "actualPath": "/organization/task-assignment/approved",
+    "screen": "mainorganization-task-assignment-approved",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/project_preview/add",
+    "actualPath": "/organization/project_preview/add",
+    "screen": "add-project_preview",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/project_preview/edit/:project_preview_id",
+    "actualPath": "/organization/project_preview/edit/1",
+    "screen": "edit-project_preview",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/project-pricing",
+    "actualPath": "/organization/project-pricing",
+    "screen": "Project Pricing",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/project-pricing/add",
+    "actualPath": "/organization/project-pricing/add",
+    "screen": "Add Project Pricing",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/project-pricing/edit/:id",
+    "actualPath": "/organization/project-pricing/edit/1",
+    "screen": "Edit Project Pricing",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/project_floor/add",
+    "actualPath": "/organization/project_floor/add",
+    "screen": "add-project_floor",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/project_floor/edit/:project_floor_id",
+    "actualPath": "/organization/project_floor/edit/1",
+    "screen": "edit-project_floor",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/project_floor/show/:project_floor_id",
+    "actualPath": "/organization/project_floor/show/1",
+    "screen": "show-project_floor",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/invoice",
+    "actualPath": "/organization/invoice",
+    "screen": "Invoice",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/invoices/:id",
+    "actualPath": "/organization/invoices/1",
+    "screen": "Show Invoice",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/invoice/add",
+    "actualPath": "/organization/invoice/add",
+    "screen": "Add Invoice",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/invoice/edit/:id",
+    "actualPath": "/organization/invoice/edit/1",
+    "screen": "Edit Invoice",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/invoice-payment",
+    "actualPath": "/organization/invoice-payment",
+    "screen": "Invoice Payment",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/invoice-payment/add",
+    "actualPath": "/organization/invoice-payment/add",
+    "screen": "Add Invoice Payment",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/invoice-payment/edit/:id",
+    "actualPath": "/organization/invoice-payment/edit/1",
+    "screen": "Edit Invoice Payment",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/packages",
+    "actualPath": "/organization/packages",
+    "screen": "mainorganization-packages",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/item_types",
+    "actualPath": "/organization/item_types",
+    "screen": "ItemTypes",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/item_types/add",
+    "actualPath": "/organization/item_types/add",
+    "screen": "Add ItemTypes",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/item_types/edit/:item_types_id",
+    "actualPath": "/organization/item_types/edit/1",
+    "screen": "Edit ItemTypes",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/products",
+    "actualPath": "/organization/products",
+    "screen": "Products",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/products/add",
+    "actualPath": "/organization/products/add",
+    "screen": "Add Products",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/products/edit/:products_id",
+    "actualPath": "/organization/products/edit/1",
+    "screen": "Edit Products",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/products/show/:products_id",
+    "actualPath": "/organization/products/show/1",
+    "screen": "Show Products",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/quote-types",
+    "actualPath": "/organization/quote-types",
+    "screen": "Quote Types",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/quote-types/add",
+    "actualPath": "/organization/quote-types/add",
+    "screen": "Add Quote Type",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/quote-types/edit/:id",
+    "actualPath": "/organization/quote-types/edit/1",
+    "screen": "Edit Quote Type",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/labor",
+    "actualPath": "/organization/labor",
+    "screen": "Labor",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/labor/add",
+    "actualPath": "/organization/labor/add",
+    "screen": "add_labor",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/labor/edit/:labor_id",
+    "actualPath": "/organization/labor/edit/1",
+    "screen": "edit_labor",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/execution-quotes/show/:id(\\d+)/warehouse/material-disbursement",
+    "actualPath": "/organization/execution-quotes/show/1/warehouse/material-disbursement",
+    "screen": "Quote Material Disbursement",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/execution-quotes/show/:id(\\d+)/warehouse/material-receipt",
+    "actualPath": "/organization/execution-quotes/show/1/warehouse/material-receipt",
+    "screen": "Quote Material Receipt",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/execution-quotes/show/:id(\\d+)/procurement",
+    "actualPath": "/organization/execution-quotes/show/1/procurement",
+    "screen": "Quote Procurement",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/execution-quotes/show/:id(\\d+)/work-items",
+    "actualPath": "/organization/execution-quotes/show/1/work-items",
+    "screen": "Quote Work Items",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/execution-quotes",
+    "actualPath": "/organization/execution-quotes",
+    "screen": "Execution Quotes",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/execution-quotes/add",
+    "actualPath": "/organization/execution-quotes/add",
+    "screen": "Add Execution Quote",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/execution-quotes/show/:id(\\d+)",
+    "actualPath": "/organization/execution-quotes/show/1",
+    "screen": "Show Execution Quote",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/execution-quotes/add/stages/:stageId(\\d+)?",
+    "actualPath": "/organization/execution-quotes/add",
+    "screen": "Add Execution Quote",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/execution-quotes/show/:id(\\d+)/site-team",
+    "actualPath": "/organization/execution-quotes/show/1/site-team",
+    "screen": "Quote Site Team",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/execution-quotes/show/:id(\\d+)/schedule",
+    "actualPath": "/organization/execution-quotes/show/1/schedule",
+    "screen": "Quote Schedule",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/execution-quotes/show/:id(\\d+)/schedule/add",
+    "actualPath": "/organization/execution-quotes/show/1/schedule/add",
+    "screen": "Add Schedule Group",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/execution-quotes/show/:id(\\d+)/schedule/:groupId(\\d+)",
+    "actualPath": "/organization/execution-quotes/show/1/schedule/1",
+    "screen": "Show Schedule Group",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/execution-quotes/show/:id(\\d+)/schedule/:groupId(\\d+)/edit",
+    "actualPath": "/organization/execution-quotes/show/1/schedule/1/edit",
+    "screen": "Edit Schedule Group",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/attachment-types",
+    "actualPath": "/organization/attachment-types",
+    "screen": "attachment-types",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/attachment-types/add",
+    "actualPath": "/organization/attachment-types/add",
+    "screen": "add-attachment-type",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/attachment-types/edit/:id(\\d+)",
+    "actualPath": "/organization/attachment-types/edit/1",
+    "screen": "edit-attachment-type",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/organization",
+    "actualPath": "/organization/organization",
+    "screen": "Organization Organization",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/organization/add",
+    "actualPath": "/organization/organization/add",
+    "screen": "Add Organization Organization",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/organization/edit/:id",
+    "actualPath": "/organization/organization/edit/1",
+    "screen": "Edit Organization Organization",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/organization-toggle",
+    "actualPath": "/organization/organization-toggle",
+    "screen": "Organization Toggle Organization",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/item",
+    "actualPath": "/organization/item",
+    "screen": "Item Organization",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/item/add",
+    "actualPath": "/organization/item/add",
+    "screen": "Add Item Organization",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/item/edit/:id",
+    "actualPath": "/organization/item/edit/1",
+    "screen": "Edit Item Organization",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/admins",
+    "actualPath": "/organization/admins",
+    "screen": "Admin Organization",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/admin/add",
+    "actualPath": "/organization/admin/add",
+    "screen": "Add Admin Organization",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/admin/edit/:id",
+    "actualPath": "/organization/admin/edit/1",
+    "screen": "Edit Admin Organization",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/brand",
+    "actualPath": "/organization/brand",
+    "screen": "Brand Organization",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/brand/add",
+    "actualPath": "/organization/brand/add",
+    "screen": "Add Brand Organization",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/brand/edit/:id?",
+    "actualPath": "/organization/brand/edit/1",
+    "screen": "Edit Brand Organization",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/departments",
+    "actualPath": "/organization/departments",
+    "screen": "Departments Organization",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/departments/add",
+    "actualPath": "/organization/departments/add",
+    "screen": "Add Department Organization",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/departments/edit/:id",
+    "actualPath": "/organization/departments/edit/1",
+    "screen": "Edit Department Organization",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/projectType",
+    "actualPath": "/organization/projectType",
+    "screen": "Projects Organization",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/projectType/add",
+    "actualPath": "/organization/projectType/add",
+    "screen": "Add Project Organization",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/projectType/edit/:project_id",
+    "actualPath": "/organization/projectType/edit/1",
+    "screen": "Edit Project Organization",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/stages",
+    "actualPath": "/organization/stages",
+    "screen": "Stages Organization",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/stages/add",
+    "actualPath": "/organization/stages/add",
+    "screen": "Add Stage Organization",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/stages/edit/:id",
+    "actualPath": "/organization/stages/edit/1",
+    "screen": "Edit Stage Organization",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/stages/:parent_id/sub-stages",
+    "actualPath": "/organization/stages/1/sub-stages",
+    "screen": "Sub Stages Organization",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/stages/:parent_id/sub-stages/add",
+    "actualPath": "/organization/stages/1/sub-stages/add",
+    "screen": "Add Sub Stage Organization",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/stages/:parent_id/sub-stages/edit/:id",
+    "actualPath": "/organization/stages/1/sub-stages/edit/1",
+    "screen": "Edit Sub Stage Organization",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/terms",
+    "actualPath": "/organization/terms",
+    "screen": "Terms Organization",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/terms/add",
+    "actualPath": "/organization/terms/add",
+    "screen": "Add Term Organization",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/terms/edit/:id",
+    "actualPath": "/organization/terms/edit/1",
+    "screen": "Edit Term Organization",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/material",
+    "actualPath": "/organization/material",
+    "screen": "Material Organization",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/material/add",
+    "actualPath": "/organization/material/add",
+    "screen": "Add Material Organization",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/material/edit/:material_id",
+    "actualPath": "/organization/material/edit/1",
+    "screen": "Edit Material Organization",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/supply",
+    "actualPath": "/organization/supply",
+    "screen": "Supply Organization",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/supply/add",
+    "actualPath": "/organization/supply/add",
+    "screen": "Add Supply Organization",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/supply/edit/:supply_id",
+    "actualPath": "/organization/supply/edit/1",
+    "screen": "Edit Supply Organization",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/location",
+    "actualPath": "/organization/location",
+    "screen": "location Organization",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/location/add",
+    "actualPath": "/organization/location/add",
+    "screen": "Add Location Organization",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/location/edit/:id",
+    "actualPath": "/organization/location/edit/1",
+    "screen": "Edit Location Organization",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/measurement",
+    "actualPath": "/organization/measurement",
+    "screen": "Measurement Organization",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/measurement/add",
+    "actualPath": "/organization/measurement/add",
+    "screen": "Add Measurement Organization",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/measurement/edit/:id",
+    "actualPath": "/organization/measurement/edit/1",
+    "screen": "Edit Measurement Organization",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/client-source",
+    "actualPath": "/organization/client-source",
+    "screen": "Client Source Organization",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/client-source/add",
+    "actualPath": "/organization/client-source/add",
+    "screen": "Add Client Source Organization",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/client-source/edit/:id",
+    "actualPath": "/organization/client-source/edit/1",
+    "screen": "Edit Client Source Organization",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/location-governorate",
+    "actualPath": "/organization/location-governorate",
+    "screen": "location-governorate Organization",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/location-governorate/add",
+    "actualPath": "/organization/location-governorate/add",
+    "screen": "Add Location Governorate Organization",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/location-governorate/edit/:id",
+    "actualPath": "/organization/location-governorate/edit/1",
+    "screen": "Edit Location Governorate Organization",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/location-city",
+    "actualPath": "/organization/location-city",
+    "screen": "location-city Organization",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/location-city/add",
+    "actualPath": "/organization/location-city/add",
+    "screen": "Add Location City Organization",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/location-city/edit/:id",
+    "actualPath": "/organization/location-city/edit/1",
+    "screen": "Edit Location City Organization",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/system-identity",
+    "actualPath": "/organization/system-identity",
+    "screen": "System Identity",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/space",
+    "actualPath": "/organization/space",
+    "screen": "Space Organization",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/space/add",
+    "actualPath": "/organization/space/add",
+    "screen": "Add Space Organization",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/space/edit/:space_id",
+    "actualPath": "/organization/space/edit/1",
+    "screen": "Edit Space Organization",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/project-item",
+    "actualPath": "/organization/project-item",
+    "screen": "Project Item Organization",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/project-item/add",
+    "actualPath": "/organization/project-item/add",
+    "screen": "Add Project Item Organization",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/organization/project-item/edit/:id",
+    "actualPath": "/organization/project-item/edit/1",
+    "screen": "Edit Project Item Organization",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/organization",
+    "actualPath": "/admin/organization",
+    "screen": "Organization",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/organization/add",
+    "actualPath": "/admin/organization/add",
+    "screen": "Add Organization",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/organization/edit/:id",
+    "actualPath": "/admin/organization/edit/1",
+    "screen": "Edit Organization",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/organization-toggle",
+    "actualPath": "/admin/organization-toggle",
+    "screen": "Organization Toggle",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/item",
+    "actualPath": "/admin/item",
+    "screen": "Item",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/item/add",
+    "actualPath": "/admin/item/add",
+    "screen": "Add Item",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/item/edit/:id",
+    "actualPath": "/admin/item/edit/1",
+    "screen": "Edit Item",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/admins",
+    "actualPath": "/admin/admins",
+    "screen": "Admin",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/admin/add",
+    "actualPath": "/admin/admin/add",
+    "screen": "Add Admin",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/admin/edit/:id",
+    "actualPath": "/admin/admin/edit/1",
+    "screen": "Edit Admin",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/package",
+    "actualPath": "/admin/package",
+    "screen": "Packages",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/package/add",
+    "actualPath": "/admin/package/add",
+    "screen": "Add Package",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/package/subscriptions",
+    "actualPath": "/admin/package/subscriptions",
+    "screen": "Package Subscriptions",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/package/edit/:id",
+    "actualPath": "/admin/package/edit/1",
+    "screen": "Edit Package",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/organization",
+    "actualPath": "/admin/organization",
+    "screen": "Organization",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/organization/add",
+    "actualPath": "/admin/organization/add",
+    "screen": "Add Organization",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/organization/edit/:id",
+    "actualPath": "/admin/organization/edit/1",
+    "screen": "Edit Organization",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/organization-toggle",
+    "actualPath": "/admin/organization-toggle",
+    "screen": "Organization Toggle",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/item",
+    "actualPath": "/admin/item",
+    "screen": "Item",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/item/add",
+    "actualPath": "/admin/item/add",
+    "screen": "Add Item",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/item/edit/:id",
+    "actualPath": "/admin/item/edit/1",
+    "screen": "Edit Item",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/admins",
+    "actualPath": "/admin/admins",
+    "screen": "Admin",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/admin/add",
+    "actualPath": "/admin/admin/add",
+    "screen": "Add Admin",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/admin/edit/:id",
+    "actualPath": "/admin/admin/edit/1",
+    "screen": "Edit Admin",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/brand",
+    "actualPath": "/admin/brand",
+    "screen": "Brand Admin",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/brand/add",
+    "actualPath": "/admin/brand/add",
+    "screen": "Add Brand Admin",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/brand/edit/:id?",
+    "actualPath": "/admin/brand/edit/1",
+    "screen": "Edit Brand Admin",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/departments",
+    "actualPath": "/admin/departments",
+    "screen": "Departments Admin",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/departments/add",
+    "actualPath": "/admin/departments/add",
+    "screen": "Add Department Admin",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/departments/edit/:id",
+    "actualPath": "/admin/departments/edit/1",
+    "screen": "Edit Department Admin",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/projectType",
+    "actualPath": "/admin/projectType",
+    "screen": "Projects Admin",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/projectType/add",
+    "actualPath": "/admin/projectType/add",
+    "screen": "Add Project Admin",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/projectType/edit/:project_id",
+    "actualPath": "/admin/projectType/edit/1",
+    "screen": "Edit Project Admin",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/stages",
+    "actualPath": "/admin/stages",
+    "screen": "Stages Admin",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/stages/add",
+    "actualPath": "/admin/stages/add",
+    "screen": "Add Stage Admin",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/stages/edit/:id",
+    "actualPath": "/admin/stages/edit/1",
+    "screen": "Edit Stage Admin",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/stages/:parent_id/sub-stages",
+    "actualPath": "/admin/stages/1/sub-stages",
+    "screen": "Sub Stages Admin",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/stages/:parent_id/sub-stages/add",
+    "actualPath": "/admin/stages/1/sub-stages/add",
+    "screen": "Add Sub Stage Admin",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/stages/:parent_id/sub-stages/edit/:id",
+    "actualPath": "/admin/stages/1/sub-stages/edit/1",
+    "screen": "Edit Sub Stage Admin",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/terms",
+    "actualPath": "/admin/terms",
+    "screen": "Terms Admin",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/terms/add",
+    "actualPath": "/admin/terms/add",
+    "screen": "Add Term Admin",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/terms/edit/:id",
+    "actualPath": "/admin/terms/edit/1",
+    "screen": "Edit Term Admin",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/material",
+    "actualPath": "/admin/material",
+    "screen": "Material Admin",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/material/add",
+    "actualPath": "/admin/material/add",
+    "screen": "Add Material Admin",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/material/edit/:material_id",
+    "actualPath": "/admin/material/edit/1",
+    "screen": "Edit Material Admin",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/supply",
+    "actualPath": "/admin/supply",
+    "screen": "Supply Admin",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/supply/add",
+    "actualPath": "/admin/supply/add",
+    "screen": "Add Supply Admin",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/supply/edit/:supply_id",
+    "actualPath": "/admin/supply/edit/1",
+    "screen": "Edit Supply Admin",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/location",
+    "actualPath": "/admin/location",
+    "screen": "location Admin",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/location/add",
+    "actualPath": "/admin/location/add",
+    "screen": "Add Location Admin",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/location/edit/:id",
+    "actualPath": "/admin/location/edit/1",
+    "screen": "Edit Location Admin",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/measurement",
+    "actualPath": "/admin/measurement",
+    "screen": "Measurement Admin",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/measurement/add",
+    "actualPath": "/admin/measurement/add",
+    "screen": "Add Measurement Admin",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/measurement/edit/:id",
+    "actualPath": "/admin/measurement/edit/1",
+    "screen": "Edit Measurement Admin",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/client-source",
+    "actualPath": "/admin/client-source",
+    "screen": "Client Source Admin",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/client-source/add",
+    "actualPath": "/admin/client-source/add",
+    "screen": "Add Client Source Admin",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/client-source/edit/:id",
+    "actualPath": "/admin/client-source/edit/1",
+    "screen": "Edit Client Source Admin",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/location-governorate",
+    "actualPath": "/admin/location-governorate",
+    "screen": "location-governorate Admin",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/location-governorate/add",
+    "actualPath": "/admin/location-governorate/add",
+    "screen": "Add Location Governorate Admin",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/location-governorate/edit/:id",
+    "actualPath": "/admin/location-governorate/edit/1",
+    "screen": "Edit Location Governorate Admin",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/location-city",
+    "actualPath": "/admin/location-city",
+    "screen": "location-city Admin",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/location-city/add",
+    "actualPath": "/admin/location-city/add",
+    "screen": "Add Location City Admin",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/location-city/edit/:id",
+    "actualPath": "/admin/location-city/edit/1",
+    "screen": "Edit Location City Admin",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/system-identity",
+    "actualPath": "/admin/system-identity",
+    "screen": "System Identity Admin",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/space",
+    "actualPath": "/admin/space",
+    "screen": "Space Admin",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/space/add",
+    "actualPath": "/admin/space/add",
+    "screen": "Add Space Admin",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/space/edit/:space_id",
+    "actualPath": "/admin/space/edit/1",
+    "screen": "Edit Space Admin",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/project-item",
+    "actualPath": "/admin/project-item",
+    "screen": "Project Item Admin",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/project-item/add",
+    "actualPath": "/admin/project-item/add",
+    "screen": "Add Project Item Admin",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  },
+  {
+    "path": "/admin/project-item/edit/:id",
+    "actualPath": "/admin/project-item/edit/1",
+    "screen": "Edit Project Item Admin",
+    "shell": true,
+    "canvas": "#e8edf5",
+    "overflow": false,
+    "errors": [],
+    "mode": "offline-shell-check"
+  }
+]

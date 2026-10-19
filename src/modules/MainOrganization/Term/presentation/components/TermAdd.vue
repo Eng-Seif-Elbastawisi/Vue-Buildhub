@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import { ref } from 'vue';
   import { useRoute } from 'vue-router';
   import type AddTermParams from '../../core/params/add.term.params.ts';
@@ -22,40 +23,44 @@
 </script>
 
 <template>
-  <div class="Term-crud-page">
+  <StandardFormLayout mode="create" class="Term-crud-page">
     <TermForm :loading="loading" @update-data="params = $event" />
-    <button
-      :class="{ 'btn--loading': loading }"
-      class="btn btn-primary"
-      type="button"
-      :disabled="loading"
-      @click="saveTerm"
-    >
-      {{ $t('save') }}
-    </button>
+
     <div v-if="controller.errorMessage.value" class="error">
       {{ controller.errorMessage.value }}
     </div>
-  </div>
+
+    <template #actions>
+      <button
+        :class="{ 'btn--loading': loading }"
+        class="btn btn-primary"
+        type="button"
+        :disabled="loading"
+        @click="saveTerm"
+      >
+        {{ $t('save') }}
+      </button>
+    </template>
+  </StandardFormLayout>
 </template>
 
 <style scoped>
-  .Term-crud-page {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
+.Term-crud-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
 
-  .error {
-    margin-top: 20px;
-    padding: 10px;
-    background-color: var(--danger-light);
-    color: var(--danger-dark);
-    border: 1px solid #f5c6cb;
-    border-radius: 4px;
-  }
+.error {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: var(--danger-light);
+  color: var(--danger-dark);
+  border: 1px solid var(--bh-coral-soft);
+  border-radius: 4px;
+}
 
-  .btn-primary {
-    width: 100%;
-  }
+.btn-primary {
+  width: 100%;
+}
 </style>

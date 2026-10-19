@@ -1,4 +1,8 @@
 <script setup lang="ts">
+  import {
+    attachmentGallery,
+    toGalleryAttachment,
+  } from '@/shared/AttachmentGallery/attachmentGallery';
   import { computed, ref, onBeforeUnmount } from 'vue';
   import Skeleton from 'primevue/skeleton';
   import AppButton from '@/shared/HelpersComponents/AppButton.vue';
@@ -7,10 +11,10 @@
   import PurchaseRequestPricesController from '../controllers/purchase-request-prices.controller';
   import PurchaseOrderController from '../controllers/purchase.order.controller';
   import type PurchaseRequestPriceModel from '../../core/models/purchase-request.price.model';
-  import SupplierPriceOffersDialog from './SupplierPriceOffersDialog.vue';
   const props = defineProps<{ quoteId: number; purchaseRequestId: number }>();
   const emit = defineEmits<{
     storeOrder: [purchaseRequestId: number, purchaseRequestPriceId?: number];
+    manageOffers: [purchaseRequestId: number];
   }>();
   const controller = PurchaseRequestPricesController.getInstance();
   const orders = PurchaseOrderController.getInstance();
@@ -37,8 +41,6 @@
       return;
     emit('storeOrder', offer.purchaseRequestId, offer.id);
   }
-  const editorVisible = ref(false);
-  const editor = ref<InstanceType<typeof SupplierPriceOffersDialog> | null>(null);
   const filter = ref('');
   const state = computed(() => controller.listState.value);
   const saving = computed(() => controller.isSyncing.value);
@@ -53,12 +55,8 @@
   if (controller.activate(props.quoteId, props.purchaseRequestId)) {
     void controller.fetchList();
   }
-  function closeEditor() {
-    controller.discardDraft();
-    editorVisible.value = false;
-  }
   function requestClose() {
-    return editor.value ? editor.value.requestClose() : Promise.resolve(!saving.value);
+    return Promise.resolve(!saving.value);
   }
   onBeforeUnmount(() => controller.release());
   defineExpose({ requestClose, refreshAfterOrder });
@@ -87,11 +85,11 @@
               saving ||
               controller.refreshRequired.value
             "
-            @click="editorVisible = true"
+            @click="emit('manageOffers', purchaseRequestId)"
             >{{
               $t(
                 controller.savedOffers.value.length
-                  ? 'procurement.offers.manage'
+                  ? 'procurement.offers.page_title'
                   : 'procurement.add_prices',
               )
             }}</AppButton
@@ -102,7 +100,7 @@
             :disabled="!canOpenStore || !offers.length"
             @click="emit('storeOrder', purchaseRequestId)"
             ><i class="pi pi-file-edit" aria-hidden="true" />{{
-              $t('procurement.orders.store')
+              $t('procurement.orders.issue')
             }}</AppButton
           >
         </div>
@@ -142,12 +140,12 @@
       </p>
       <template v-if="controller.loaded.value || controller.savedOffers.value.length">
         <div
-          class="procurement-table-scroll"
+          class="procurement-table-scroll workspace-table-scroll"
           tabindex="0"
           role="region"
           :aria-label="$t('procurement.offers.saved_offers')"
         >
-          <table class="procurement-table">
+          <table class="procurement-table workspace-data-table">
             <caption class="procurement-sr-only">
               {{
                 $t('procurement.offers.saved_offers')
@@ -171,6 +169,16 @@
               <tr v-for="offer in offers" :key="offer.id">
                 <th scope="row">{{ offer.supplier?.name ?? $t('procurement.unavailable') }}</th>
                 <td class="procurement-price">
+                  <button
+                    v-if="offer.attachment"
+                    type="button"
+                    class="btn btn-secondary"
+                    @click="
+                      attachmentGallery.open([toGalleryAttachment({ file: offer.attachment })], 0)
+                    "
+                  >
+                    {{ $t('work_items.view_attachment') }}
+                  </button>
                   {{ offer.price ?? $t('procurement.unavailable') }}
                 </td>
                 <td>
@@ -189,7 +197,7 @@
                     size="sm"
                     :disabled="!canOpenStore || !offer.supplier"
                     @click="storeOrder(offer)"
-                    >{{ $t('procurement.orders.store') }}</AppButton
+                    >{{ $t('procurement.orders.issue') }}</AppButton
                   >
                 </td>
               </tr>
@@ -222,12 +230,5 @@
         >{{ $t('procurement.offers.retry_fetch') }}</AppButton
       >
     </div>
-    <SupplierPriceOffersDialog
-      v-if="editorVisible"
-      ref="editor"
-      :quote-id="quoteId"
-      :purchase-request-id="purchaseRequestId"
-      @close="closeEditor"
-    />
   </section>
 </template>

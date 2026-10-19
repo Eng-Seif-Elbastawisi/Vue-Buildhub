@@ -7,6 +7,13 @@
 
   const { locale } = useI18n();
   const route = useRoute();
+  const pageFamily = computed(() => {
+    const name = String(route.name ?? '').toLowerCase();
+    if (/^(add|edit|build|create)(?:[ -]|$)/.test(name)) return 'form';
+    if (/^(show|quote)(?:[ -]|$)/.test(name)) return 'detail';
+    if (/system identity/.test(name)) return 'settings';
+    return 'listing';
+  });
   const homeWorkspace = computed(() => {
     if (/^\/admin\/?$/.test(route.path)) return 'admin';
     if (/^\/(organization|mainportal)\/?$/.test(route.path)) return 'organization';
@@ -21,6 +28,13 @@
       :key="`${homeWorkspace}-${locale}`"
       :workspace="homeWorkspace"
     />
-    <RouterView v-else :key="locale" />
+    <div
+      v-else
+      class="workspace-page"
+      :class="`workspace-page--${pageFamily}`"
+      :data-screen="route.name"
+    >
+      <RouterView :key="locale" />
+    </div>
   </DashboardLayout>
 </template>

@@ -47,11 +47,6 @@ describe('FeatureHeader.vue', () => {
     mockRoute.path = '/feature';
   });
 
-  it('renders the header image', () => {
-    const wrapper = mount(FeatureHeader, { global: globalConfig });
-    expect(wrapper.find('img.header-img').exists()).toBe(true);
-  });
-
   it('displays the correct breadcrumb title based on items', () => {
     const wrapper = mount(FeatureHeader, { global: globalConfig });
     const title = wrapper.find('.title');

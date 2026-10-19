@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
   import { ref, watch } from 'vue';
   import { onBeforeRouteLeave } from 'vue-router';
   import type TitleInterface from '@/base/Data/Models/titleInterface';
@@ -92,7 +93,7 @@
 </script>
 
 <template>
-  <section class="invoice-payment-form-card">
+  <StandardFormLayout as="section" class="invoice-payment-form-card">
     <header>
       <h3>{{ $t('invoice_payment.form_title') }}</h3>
       <p>{{ $t('invoice_payment.form_description') }}</p>
@@ -125,7 +126,7 @@
         <input
           id="payment_amount"
           v-model.number="paymentAmount"
-          class="field-input"
+          class="field-input workspace-control"
           min="0"
           step="1"
           type="number"
@@ -148,7 +149,7 @@
         <input
           id="payment_date"
           v-model="paymentDate"
-          class="field-input"
+          class="field-input workspace-control"
           type="date"
           @input="updateData"
         />
@@ -168,7 +169,7 @@
         <select
           id="payment_method"
           v-model.number="paymentMethod"
-          class="field-input"
+          class="field-input workspace-control"
           @change="updateData"
         >
           <option disabled :value="null">
@@ -192,11 +193,11 @@
         <textarea
           id="payment_notes"
           v-model="notes"
-          class="field-input field-textarea"
+          class="field-input field-textarea workspace-control"
           :placeholder="$t('invoice_payment.notes_placeholder')"
           @input="updateData"
         />
       </div>
     </div>
-  </section>
+  </StandardFormLayout>
 </template>

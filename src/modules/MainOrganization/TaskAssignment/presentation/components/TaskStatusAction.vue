@@ -65,7 +65,7 @@
 
     <select
       v-if="task.statusUpdateAction && task.availableStatuses?.length"
-      class="task-status-action__select"
+      class="task-status-action__select workspace-control"
       :value="statusValue"
       :disabled="disabled"
       @change="handleStatusChange"

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import StandardFormLayout from '@/shared/components/form/StandardFormLayout.vue';
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
@@ -53,22 +54,31 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="Stage-crud-page">
-
+  <StandardFormLayout mode="edit" class="Stage-crud-page">
     <StageForm
-:stage="controller.itemData.value!" :parent-id="parentId" :loading="loading" :is-edit="true"
-      @update-data="updateData" />
-
-    <div class="form-actions">
-      <button
-class="btn btn-primary" :class="{ 'btn--loading': loading }" type="button" :disabled="loading"
-        @click="saveStage">
-        {{ $t('stage.update') }}
-      </button>
-    </div>
+      :stage="controller.itemData.value!"
+      :parent-id="parentId"
+      :loading="loading"
+      :is-edit="true"
+      @update-data="updateData"
+    />
 
     <div v-if="controller.errorMessage.value" class="error">
       {{ controller.errorMessage.value }}
     </div>
-  </div>
+
+    <template #actions>
+      <div class="form-actions">
+        <button
+          class="btn btn-primary"
+          :class="{ 'btn--loading': loading }"
+          type="button"
+          :disabled="loading"
+          @click="saveStage"
+        >
+          {{ $t('stage.update') }}
+        </button>
+      </div>
+    </template>
+  </StandardFormLayout>
 </template>

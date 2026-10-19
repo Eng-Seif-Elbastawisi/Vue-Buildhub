@@ -38,9 +38,15 @@ const childrenCount = (stage: StageModel) => {
     </div>
 
     <div v-else class="stage-grid">
-      <button v-for="stage in stages" :key="stage.id" type="button" class="stage-card" @click="emit('open', stage)">
+      <button
+        v-for="stage in stages"
+        :key="stage.id"
+        type="button"
+        class="stage-card"
+        @click="emit('open', stage)"
+      >
         <span class="stage-card__topline">
-          <span class="stage-card__status" :class="{ 'stage-card__status--active': stage.status }">
+          <span class="stage-card__status bh-status" :class="{ 'stage-card__status--active': stage.status }">
             {{ stage.status ? $t('active') : $t('inactive') }}
           </span>
           <span class="stage-card__children">
@@ -61,9 +67,7 @@ const childrenCount = (stage: StageModel) => {
         <span v-if="showPricing" class="stage-card__footer">
           <span>{{ $t('execution_quote.client_stage_price') }}</span>
           <b>
-            {{
-              stageStates[String(stage.id)]?.client_price ?? $t('execution_quote.not_started')
-            }}
+            {{ stageStates[String(stage.id)]?.client_price ?? $t('execution_quote.not_started') }}
           </b>
         </span>
 
@@ -82,7 +86,7 @@ const childrenCount = (stage: StageModel) => {
   border: 1px solid var(--border-weak);
   border-radius: var(--radius-md);
   background: var(--bg-card);
-  box-shadow: var(--shadow-sm);
+  box-shadow: none;
 }
 
 .builder-section-title,
@@ -162,7 +166,7 @@ const childrenCount = (stage: StageModel) => {
 
 .stage-card:hover {
   border-color: var(--PrimaryColor);
-  box-shadow: var(--shadow-sm);
+  box-shadow: none;
   transform: translateY(-1px);
 }
 

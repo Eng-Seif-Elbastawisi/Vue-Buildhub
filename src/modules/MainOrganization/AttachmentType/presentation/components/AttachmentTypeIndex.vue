@@ -127,7 +127,7 @@ onMounted(async () => {
           <input
             v-model="word"
             :placeholder="$t('search_attachment_type')"
-            class="search-input"
+            class="search-input workspace-control"
             type="text"
             @input="Search"
           />
@@ -225,10 +225,7 @@ onMounted(async () => {
         <div class="empty-state">
           <h3>{{ $t('attachment_type.empty_title') }}</h3>
           <p>{{ $t('attachment_type.empty_description') }}</p>
-          <router-link
-            class="btn btn-primary"
-            :to="`${routePrefix}/attachment-types/add`"
-          >
+          <router-link class="btn btn-primary" :to="`${routePrefix}/attachment-types/add`">
             {{ $t('attachment_type.add') }}
           </router-link>
         </div>
@@ -300,7 +297,7 @@ onMounted(async () => {
   border-radius: 9999px;
   border: 1px solid var(--border-weak);
   outline: none;
-  background-color: var(--white);
+  background-color: var(--bh-surface-raised);
   font-size: 0.875rem;
   transition: border-color 0.2s;
 
@@ -342,7 +339,7 @@ onMounted(async () => {
   height: 32px;
   border-radius: 8px;
   border: 1px solid var(--border-weak);
-  background: var(--white);
+  background: var(--bh-surface-raised);
   color: var(--gray-6);
   cursor: pointer;
   text-decoration: none;

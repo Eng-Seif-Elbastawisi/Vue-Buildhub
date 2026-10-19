@@ -501,7 +501,7 @@
             <input
               v-model="word"
               :placeholder="$t('search_request')"
-              class="search-input"
+              class="search-input workspace-control"
               type="text"
               @input="Search"
             />
@@ -630,7 +630,7 @@
           <!-- =================================================== -->
 
           <template #cell-status="{ item }">
-            <span v-if="item.status" class="status-badge" :class="`status-${item.status}`">
+            <span v-if="item.status" class="status-badge bh-status" :class="`status-${item.status}`">
               {{ $t(getConvertStatusNameKey(item.status)) }}
             </span>
 
@@ -826,208 +826,208 @@
 </template>
 
 <style scoped lang="scss">
-  @use '../styles/project_status_badge' as project-status-badge;
+@use '../styles/project_status_badge' as project-status-badge;
 
-  @include project-status-badge.project-status-badges;
+@include project-status-badge.project-status-badges;
 
-  /*
+/*
 |--------------------------------------------------------------------------
 | Page
 |--------------------------------------------------------------------------
 */
 
-  .Project-page {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
+.Project-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
 
-  .project-offers-skeleton {
-    display: flex;
-    flex-direction: column;
-    flex: 1 1 100%;
-    gap: 1rem;
-    width: 100%;
-    min-width: 0;
-    min-height: calc(100dvh - 17rem);
-  }
+.project-offers-skeleton {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 100%;
+  gap: 1rem;
+  width: 100%;
+  min-width: 0;
+  min-height: calc(100dvh - 17rem);
+}
 
-  .project-offers-skeleton :deep(.skeleton-wrapper) {
-    display: flex;
-    flex: 1 1 auto;
-    width: 100%;
-    min-width: 0;
-  }
+.project-offers-skeleton :deep(.skeleton-wrapper) {
+  display: flex;
+  flex: 1 1 auto;
+  width: 100%;
+  min-width: 0;
+}
 
-  .project-offers-skeleton :deep(.table-responsive) {
-    display: flex;
-    flex: 1 1 auto;
-    width: 100%;
-    min-width: 0;
-  }
+.project-offers-skeleton :deep(.table-responsive) {
+  display: flex;
+  flex: 1 1 auto;
+  width: 100%;
+  min-width: 0;
+}
 
-  .project-offers-skeleton :deep(.skeleton-table) {
-    flex: 1 0 auto;
-    min-width: 70rem;
-    height: 100%;
-  }
+.project-offers-skeleton :deep(.skeleton-table) {
+  flex: 1 0 auto;
+  min-width: 70rem;
+  height: 100%;
+}
 
-  .project-offers-skeleton__pagination {
-    flex: 0 0 auto;
-  }
+.project-offers-skeleton__pagination {
+  flex: 0 0 auto;
+}
 
-  .project-offers-skeleton__summary,
-  .project-offers-skeleton__page-size,
-  .project-offers-skeleton__pages span {
-    display: block;
-    height: 0.9rem;
-    border-radius: var(--radius-sm);
-    background: var(--gray-200);
-  }
+.project-offers-skeleton__summary,
+.project-offers-skeleton__page-size,
+.project-offers-skeleton__pages span {
+  display: block;
+  height: 0.9rem;
+  border-radius: var(--radius-sm);
+  background: var(--gray-200);
+}
 
-  .project-offers-skeleton__summary {
-    width: 8rem;
-  }
+.project-offers-skeleton__summary {
+  width: 8rem;
+}
 
-  .project-offers-skeleton__page-size {
-    width: 6rem;
-  }
+.project-offers-skeleton__page-size {
+  width: 6rem;
+}
 
-  .project-offers-skeleton__pages {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-  }
+.project-offers-skeleton__pages {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
 
-  .project-offers-skeleton__pages span {
-    width: 2.25rem;
-    height: 2.25rem;
-  }
+.project-offers-skeleton__pages span {
+  width: 2.25rem;
+  height: 2.25rem;
+}
 
-  @media (prefers-reduced-motion: reduce) {
-    .project-offers-skeleton :deep(.skeleton::after) {
-      animation: none;
-    }
+@media (prefers-reduced-motion: reduce) {
+  .project-offers-skeleton :deep(.skeleton::after) {
+    animation: none;
   }
+}
 
-  /*
+/*
 |--------------------------------------------------------------------------
 | Header Filters
 |--------------------------------------------------------------------------
 */
 
-  .project-header-filters {
-    display: flex;
-    align-items: flex-end;
-    gap: 0.75rem;
-    flex-wrap: wrap;
+.project-header-filters {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.service-type-filter {
+  min-width: 12rem;
+
+  :deep(.input-select) {
+    min-height: 2.75rem;
   }
+}
 
-  .service-type-filter {
-    min-width: 12rem;
-
-    :deep(.input-select) {
-      min-height: 2.75rem;
-    }
-  }
-
-  /*
+/*
 |--------------------------------------------------------------------------
 | Service Type
 |--------------------------------------------------------------------------
 */
 
-  .service-type-badge {
-    display: inline-flex;
-    width: fit-content;
-    padding: 0.3rem 0.6rem;
-    border-radius: var(--radius-full);
-    background: var(--PrimaryColor-light);
-    color: var(--PrimaryColor);
-    font-size: var(--xs-size);
-    font-weight: 700;
-  }
+.service-type-badge {
+  display: inline-flex;
+  width: fit-content;
+  padding: 0.3rem 0.6rem;
+  border-radius: var(--radius-full);
+  background: var(--PrimaryColor-light);
+  color: var(--PrimaryColor);
+  font-size: var(--xs-size);
+  font-weight: 700;
+}
 
-  /*
+/*
 |--------------------------------------------------------------------------
 | Actions
 |--------------------------------------------------------------------------
 */
 
-  .row-actions {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 1rem;
+.row-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 1rem;
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 1px solid var(--border-weak);
+  border-radius: var(--radius-sm);
+  background: var(--bg-main);
+  color: var(--gray-400);
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+
+  &:hover {
+    transform: translateY(-2px);
   }
 
-  .action-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 34px;
-    height: 34px;
-    padding: 0;
-    border: 1px solid var(--border-weak);
-    border-radius: var(--radius-sm);
-    background: var(--bg-main);
-    color: var(--gray-400);
-    cursor: pointer;
-    text-decoration: none;
-    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-
-    &:hover {
-      transform: translateY(-2px);
-    }
-
-    &.edit:hover {
-      border-color: var(--PrimaryColor);
-      color: var(--PrimaryColor);
-      background: var(--PrimaryColor-light);
-      box-shadow: 0 3px 10px rgba(99, 102, 241, 0.2);
-    }
-
-    &.delete:hover {
-      border-color: var(--Red);
-      color: var(--Red);
-      background: var(--danger-light);
-      box-shadow: 0 3px 10px rgba(220, 38, 38, 0.15);
-    }
-
-    &.execution-btn:hover {
-      border-color: var(--PrimaryColor);
-      color: var(--PrimaryColor);
-      background: var(--PrimaryColor-light);
-      box-shadow: 0 3px 10px rgba(99, 102, 241, 0.2);
-    }
+  &.edit:hover {
+    border-color: var(--PrimaryColor);
+    color: var(--PrimaryColor);
+    background: var(--PrimaryColor-light);
+    box-shadow: none;
   }
 
-  /*
+  &.delete:hover {
+    border-color: var(--Red);
+    color: var(--Red);
+    background: var(--danger-light);
+    box-shadow: none;
+  }
+
+  &.execution-btn:hover {
+    border-color: var(--PrimaryColor);
+    color: var(--PrimaryColor);
+    background: var(--PrimaryColor-light);
+    box-shadow: none;
+  }
+}
+
+/*
 |--------------------------------------------------------------------------
 | Empty
 |--------------------------------------------------------------------------
 */
 
-  .empty-state {
-    padding: 3rem 1rem;
-    text-align: center;
+.empty-state {
+  padding: 3rem 1rem;
+  text-align: center;
 
-    p {
-      color: var(--gray-5);
-    }
+  p {
+    color: var(--gray-5);
   }
+}
 
-  /*
+/*
 |--------------------------------------------------------------------------
 | Responsive
 |--------------------------------------------------------------------------
 */
 
-  @media (max-width: 640px) {
-    .project-header-filters,
-    .search-field,
-    .service-type-filter {
-      width: 100%;
-    }
+@media (max-width: 640px) {
+  .project-header-filters,
+  .search-field,
+  .service-type-filter {
+    width: 100%;
   }
+}
 </style>

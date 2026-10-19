@@ -70,7 +70,7 @@
   >
     <template #cell-status="{ item }">
       <span
-        class="package-subscription-status"
+        class="package-subscription-status bh-status"
         :class="getPackageSubscriptionStatusClass(item.status)"
       >
         {{ $t(getPackageSubscriptionStatusLabelKey(item.status)) }}
