@@ -3,7 +3,6 @@
   import { useRoute } from 'vue-router';
   import { useI18n } from 'vue-i18n';
   import AppButton from '@/shared/HelpersComponents/AppButton.vue';
-  import TimelineStartRequiredAlert from '../../../shared/components/TimelineStartRequiredAlert.vue';
   import ProjectWorkspaceNav from '../../../presentation/components/ProjectWorkspaceNav.vue';
   import WorkItemsController from '../controllers/work-items.controller';
   import { positiveId, WorkActivityType } from '../../core/constants/work-items.constants';
@@ -99,11 +98,6 @@
       :key="`activity-${quoteId}`"
       v-model:visible="activityOpen"
       :initial-type="initialType"
-    />
-    <TimelineStartRequiredAlert
-      :quote-id="quoteId"
-      :state="controller.stagesState.value"
-      @refresh="controller.loadStages()"
     />
   </div>
 </template>

@@ -25,7 +25,6 @@
   import PurchaseRequestItemParams from '../../core/params/purchase-request.item.params';
   import PurchaseRequestController from '../controllers/purchase-request.controller';
   import { procurementPath } from '../procurement.routes';
-  import TimelineStartRequiredAlert from '../../../shared/components/TimelineStartRequiredAlert.vue';
   import ProjectWorkspaceNav from '../../../presentation/components/ProjectWorkspaceNav.vue';
   import PurchaseRequestItemRow, {
     type PurchaseRequestItemDraft,
@@ -601,10 +600,5 @@
         @discard="resolveLeave(true)"
       />
     </template>
-    <TimelineStartRequiredAlert
-      :quote-id="quoteId"
-      :state="controller.stagesState.value"
-      @refresh="controller.loadStages()"
-    />
   </section>
 </template>

@@ -1,4 +1,7 @@
 {
+  "execution_updates.manage_schedule": "Manage Schedule",
+  "execution_updates.start_group": "Start timeline group: {title}",
+
   "validation.fields.workStatus": "Timeline Group work status",
   "validation.fields.reportScopeType": "Report Scope",
   "validation.fields.projectFloorSpaceId": "Project Floor Space",
@@ -3694,5 +3697,7 @@
   "material_disbursement.duplicate_item": "The same purchase request item cannot appear twice.",
   "material_disbursement.invalid_type": "Unsupported disbursement type.",
   "material_disbursement.invalid_notes": "Enter valid notes or leave them blank.",
-  "material_disbursement.invalid_response": "Warehouse disbursement data did not match the expected format. Refresh and try again."
+  "material_disbursement.invalid_response": "Warehouse disbursement data did not match the expected format. Refresh and try again.",
+  "execution_updates.toggle_timeline": "Timeline Groups",
+  "execution_updates.close_timeline": "Close Timeline Groups"
 }

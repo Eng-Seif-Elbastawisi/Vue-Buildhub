@@ -95,13 +95,14 @@ it.each([
       post.mock.calls
         .filter(([request]) => request.url.includes('fetch_project_timelines'))
         .map(([request]) => request.data),
-    ).toEqual([{ quote_id: 140, work_status: 1 }, { quote_id: 140 }]);
+    ).toEqual([{ quote_id: 140, work_status: 1 }]);
     expect(
       post.mock.calls.filter(([request]) => request.url.includes('fetch_shop_drawing_quotes')),
     ).toHaveLength(1);
     expect(post.mock.calls.filter(([request]) => request.url.includes('show_quote'))).toHaveLength(
-      1,
+      0,
     );
+    expect(wrapper.find('.timeline-start-alert').exists()).toBe(false);
     await wrapper.get('.work-items-header button').trigger('click');
     expect(wrapper.find('[role="dialog"]').exists()).toBe(true);
     expect(wrapper.find('#drawing-title').exists()).toBe(true);

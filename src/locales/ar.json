@@ -1,4 +1,7 @@
 {
+  "execution_updates.manage_schedule": "إدارة الجدول الزمني",
+  "execution_updates.start_group": "بدء مجموعة الجدول الزمني: {title}",
+
   "validation.fields.workStatus": "حالة عمل مجموعة الجدول الزمني",
   "validation.fields.reportScopeType": "نطاق التقرير",
   "validation.fields.projectFloorSpaceId": "مساحة طابق المشروع",
@@ -3689,5 +3692,7 @@
   "material_disbursement.duplicate_item": "لا يمكن تكرار صنف طلب الشراء في عملية الصرف نفسها.",
   "material_disbursement.invalid_type": "نوع صرف المواد غير مدعوم.",
   "material_disbursement.invalid_notes": "أدخل ملاحظات صالحة أو اتركها فارغة.",
-  "material_disbursement.invalid_response": "بيانات صرف المواد لا تطابق الصيغة المتوقعة. حدّث البيانات وحاول مجدداً."
+  "material_disbursement.invalid_response": "بيانات صرف المواد لا تطابق الصيغة المتوقعة. حدّث البيانات وحاول مجدداً.",
+  "execution_updates.toggle_timeline": "مجموعات الجدول الزمني",
+  "execution_updates.close_timeline": "إغلاق مجموعات الجدول الزمني"
 }

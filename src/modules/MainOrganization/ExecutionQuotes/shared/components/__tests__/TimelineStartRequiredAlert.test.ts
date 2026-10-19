@@ -3,19 +3,13 @@ import { flushPromises, mount } from '@vue/test-utils';
 import { createRouter, createMemoryHistory } from 'vue-router';
 import { createI18n } from 'vue-i18n';
 import PrimeVue from 'primevue/config';
-import {
-  DataSuccess,
-  DataLoading,
-  DataFailed,
-} from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
-import { ErrorModel, ErrorType } from '@/base/Core/NetworkStructure/Resources/errors/errorModel';
 import TitleInterface from '@/base/Data/Models/titleInterface';
 import UpdatedCustomInputSelect from '@/shared/FormInputs/UpdatedCustomInputSelect.vue';
 import en from '@/locales/en.json';
 import ar from '@/locales/ar.json';
 import { mockNetwork, response } from '../../../SiteTeam/__tests__/network';
 import { timelineGroup } from '../../../Procurement/__tests__/fixtures';
-import ScheduleGroupModel from '../../../Schedule/core/models/schedule.group.model';
+import WorkItemsController from '../../../WorkItems/presentation/controllers/work-items.controller';
 import ScheduleController from '../../../Schedule/presentation/controllers/schedule.controller';
 import TimelineStartRequiredAlert from '../TimelineStartRequiredAlert.vue';
 let post: ReturnType<typeof mockNetwork>;
@@ -28,6 +22,7 @@ beforeEach(() => {
   );
 });
 afterEach(() => {
+  WorkItemsController.getInstance().release();
   vi.unstubAllGlobals();
 });
 const group = (id: number, status: 1 | 2 | 3 | null = null) => ({
@@ -39,15 +34,15 @@ const overview = (groups: unknown[]) => ({
   status: true,
   data: { basicData: { count_timeline: groups.length }, data: groups },
 });
-async function render(state = new DataSuccess<ScheduleGroupModel[]>({ data: [] }), locale = 'en') {
+async function render(locale = 'en') {
   const router = createRouter({
     history: createMemoryHistory(),
     routes: [{ path: '/:pathMatch(.*)*', component: { template: '<div />' } }],
   });
   await router.push('/organization/execution-quotes/show/140/work-items');
   const wrapper = mount(TimelineStartRequiredAlert, {
+    props: { quoteId: 140 },
     attachTo: document.body,
-    props: { quoteId: 140, state },
     global: {
       mocks: { $t: (key: string) => (locale === 'ar' ? ar : en)[key] ?? key },
       plugins: [
@@ -66,47 +61,64 @@ async function render(state = new DataSuccess<ScheduleGroupModel[]>({ data: [] }
       },
     },
   });
+  expect(post).not.toHaveBeenCalled();
+  await wrapper.get('.timeline-widget__trigger').trigger('click');
   await flushPromises();
   return wrapper;
 }
-it('loading stays quiet and a failed Fetch shows Retry without a false empty warning', async () => {
-  const wrapper = await render(new DataLoading());
-  expect(wrapper.find('aside').exists()).toBe(false);
-  expect(post).not.toHaveBeenCalled();
-  await wrapper.setProps({
-    state: new DataFailed({ error: new ErrorModel('Offline', ErrorType.networkConnection) }),
-  });
-  expect(wrapper.text()).toContain('Offline');
-  expect(wrapper.text()).not.toContain(en['execution_updates.no_active']);
-  await wrapper.get('button').trigger('click');
-  expect(wrapper.emitted('refresh')).toHaveLength(1);
-  expect(post).not.toHaveBeenCalled();
-  wrapper.unmount();
-});
-it.each([
-  ['no-groups', 3, []],
-  ['approval', 1, [group(2)]],
-])('directs %s to Schedule without starting a Group', async (_scenario, approval, groups) => {
+it('keeps the panel visible and exposes Retry after a failed fetch', async () => {
+  let fail = true;
   post.mockImplementation(async (request) =>
     response(
       request.url.includes('fetch_project_timelines')
-        ? overview(groups as unknown[])
-        : { status: true, data: { id: 140, timeline_status: approval } },
+        ? fail
+          ? { status: false, message: 'Offline' }
+          : overview([])
+        : { status: true, data: { id: 140, timeline_status: 3 } },
     ),
   );
   const wrapper = await render();
+  expect(wrapper.find('.timeline-start-alert').exists()).toBe(true);
+  expect(wrapper.text()).toContain(en['schedule.load_error'] ?? 'schedule.load_error');
+  expect(
+    post.mock.calls.filter(([request]) => request.url.includes('fetch_project_timelines')),
+  ).toHaveLength(1);
+  expect(wrapper.text()).not.toContain(en['execution_updates.no_active']);
+  fail = false;
+  const retry = wrapper
+    .findAll('button')
+    .find((button) => button.text() === en['work_items.retry']);
+  if (!retry) throw new Error('Missing Retry action');
+  await retry.trigger('click');
+  await flushPromises();
+  expect(wrapper.text()).toContain(en['execution_updates.create_schedule']);
+  expect(wrapper.find('form').exists()).toBe(false);
+  wrapper.unmount();
+});
+it('shows every Group status without dialogs and prevents starting before approval', async () => {
+  post.mockImplementation(async (request) =>
+    response(
+      request.url.includes('fetch_project_timelines')
+        ? overview([group(2), group(3, 1), group(4, 2), group(5, 3)])
+        : { status: true, data: { id: 140, timeline_status: 1 } },
+    ),
+  );
+  const wrapper = await render();
+  expect(wrapper.findAll('[data-group-id]')).toHaveLength(4);
+  expect(wrapper.findAll('form')).toHaveLength(3);
+  expect(wrapper.text()).toContain(en['execution_updates.approval_required']);
   expect(wrapper.get('a').attributes('href')).toBe(
     '/organization/execution-quotes/show/140/schedule',
   );
-  expect(wrapper.text()).toContain(
-    _scenario === 'no-groups'
-      ? en['execution_updates.create_schedule']
-      : en['execution_updates.approval_required'],
-  );
-  expect(post.mock.calls.some((call) => call[0].url.includes('change_'))).toBe(false);
+  for (const form of wrapper.findAll('form')) {
+    expect(form.get('button[type="submit"]').attributes('disabled')).toBeDefined();
+    await form.trigger('submit');
+  }
+  expect(post.mock.calls.some(([request]) => request.url.includes('change_'))).toBe(false);
+  expect(wrapper.findComponent({ name: 'Dialog' }).exists()).toBe(false);
   wrapper.unmount();
 });
-it('starts only the selected Group through Schedule, then hides after an authoritative active refetch', async () => {
+it('starts only the chosen Group inline and retains the list after authoritative refresh', async () => {
   let started = false;
   post.mockImplementation(async (request) => {
     if (request.url.includes('change_project_timeline_work_status')) {
@@ -122,51 +134,48 @@ it('starts only the selected Group through Schedule, then hides after an authori
         : { status: true, data: { id: 140, timeline_status: 3 } },
     );
   });
+  const workItems = WorkItemsController.getInstance();
+  workItems.activate(140);
   const wrapper = await render();
   expect(wrapper.text()).toContain(en['execution_updates.no_active']);
-  await wrapper.setProps({ quoteId: 140 });
   expect(
-    post.mock.calls.filter((call) => call[0].url.includes('fetch_project_timelines')),
+    post.mock.calls.filter(([request]) => request.url.includes('fetch_project_timelines')),
   ).toHaveLength(1);
-  await wrapper.get('aside button').trigger('click');
-  wrapper
+  const row = wrapper.get('[data-group-id="3"]');
+  row
     .getComponent(UpdatedCustomInputSelect)
-    .vm.$emit('update:modelValue', new TitleInterface({ id: 3, title: 'Chosen Group' }));
+    .vm.$emit('update:modelValue', new TitleInterface({ id: 1, title: 'Client' }));
+  await row.get('#timeline-note-140-3').setValue('Resume this group');
+  await Promise.all([row.get('form').trigger('submit'), row.get('form').trigger('submit')]);
   await flushPromises();
-  const startAction = wrapper
-    .findAll('button')
-    .filter((button) => button.text() === en['execution_updates.start'])
-    .at(-1);
-  if (!startAction) throw new Error('Missing Start Timeline action');
-  await startAction.trigger('click');
-  await flushPromises();
-  await wrapper.get('form').trigger('submit');
-  await flushPromises();
-  const writes = post.mock.calls.filter((call) =>
-    call[0].url.includes('change_project_timeline_work_status'),
+  const writes = post.mock.calls.filter(([request]) =>
+    request.url.includes('change_project_timeline_work_status'),
   );
   expect(writes).toHaveLength(1);
   expect(writes[0]?.[0].data).toEqual({
     project_timeline_id: 3,
     work_status: 1,
-    reason: null,
-    note: null,
+    reason: 1,
+    note: 'Resume this group',
   });
+  expect(
+    post.mock.calls.some(
+      ([request]) =>
+        request.url.includes('fetch_project_timelines') && request.data.work_status === 1,
+    ),
+  ).toBe(true);
+  expect(workItems.stages.value.map((stage) => stage.id)).toContain(17);
+  expect(wrapper.findAll('[data-group-id]')).toHaveLength(2);
+  expect(wrapper.find('[data-group-id="3"] form').exists()).toBe(false);
+  expect(wrapper.find('[data-group-id="2"] form').exists()).toBe(true);
+  expect(wrapper.text()).not.toContain(en['execution_updates.no_active']);
   expect(
     ScheduleController.getInstance().listState.value.data?.find((entry) => entry.id === 2)
       ?.workStatus,
   ).toBeNull();
-  expect(wrapper.emitted('refresh')).toHaveLength(1);
-  await wrapper.setProps({
-    state: new DataSuccess({ data: [ScheduleGroupModel.fromJson(group(3, 1))] }),
-  });
-  expect(wrapper.find('aside').exists()).toBe(false);
-  await wrapper.setProps({ state: new DataSuccess({ data: [] }) });
-  await flushPromises();
-  expect(wrapper.find('aside').exists()).toBe(true);
   wrapper.unmount();
 });
-it('uses RTL direction and a focusable action while showing a failed start without automatic retries', async () => {
+it('preserves inline values and a focusable RTL action after backend rejection without retries', async () => {
   post.mockImplementation(async (request) =>
     response(
       request.url.includes('change_project_timeline_work_status')
@@ -176,30 +185,60 @@ it('uses RTL direction and a focusable action while showing a failed start witho
           : { status: true, data: { id: 140, timeline_status: 3 } },
     ),
   );
-  const wrapper = await render(undefined, 'ar');
-  expect(wrapper.get('aside').attributes('dir')).toBe('rtl');
-  const action = wrapper.get('aside button');
-  expect(action.attributes('disabled')).toBeUndefined();
+  const wrapper = await render('ar');
+  expect(wrapper.get('.timeline-widget').attributes('dir')).toBe('rtl');
+  const action = wrapper.get('button[type="submit"]');
   (action.element as HTMLButtonElement).focus();
   expect(document.activeElement).toBe(action.element);
-  await action.trigger('click');
-  wrapper
-    .getComponent(UpdatedCustomInputSelect)
-    .vm.$emit('update:modelValue', new TitleInterface({ id: 2, title: 'Chosen Group' }));
-  await flushPromises();
-  const startAction = wrapper
-    .findAll('button')
-    .filter((button) => button.text() === ar['execution_updates.start'])
-    .at(-1);
-  if (!startAction) throw new Error('Missing Start Timeline action');
-  await startAction.trigger('click');
-  await flushPromises();
+  await wrapper.get('#timeline-note-140-2').setValue('Keep this note');
   await wrapper.get('form').trigger('submit');
   await flushPromises();
   expect(wrapper.text()).toContain('Permission denied');
-  expect(wrapper.find('form').exists()).toBe(true);
-  expect(wrapper.find('aside').exists()).toBe(true);
-  expect(post.mock.calls.filter((call) => call[0].url.includes('change_'))).toHaveLength(1);
-  expect(wrapper.emitted('refresh')).toBeUndefined();
+  expect((wrapper.get('#timeline-note-140-2').element as HTMLInputElement).value).toBe(
+    'Keep this note',
+  );
+  expect(wrapper.find('[data-group-id="2"] form').exists()).toBe(true);
+  expect(post.mock.calls.filter(([request]) => request.url.includes('change_'))).toHaveLength(1);
+  wrapper.unmount();
+});
+
+it('opens only on click and Escape closes the panel and returns focus to the fixed icon', async () => {
+  post.mockImplementation(async (request) =>
+    response(
+      request.url.includes('fetch_project_timelines')
+        ? overview([group(2, 1)])
+        : { status: true, data: { id: 140, timeline_status: 3 } },
+    ),
+  );
+  const wrapper = await render();
+  const trigger = wrapper.get('.timeline-widget__trigger');
+  expect(trigger.attributes('aria-expanded')).toBe('true');
+  expect(wrapper.get('.timeline-start-alert').attributes('id')).toBe(
+    trigger.attributes('aria-controls'),
+  );
+  await wrapper.get('.timeline-start-alert').trigger('keydown', { key: 'Escape' });
+  expect(wrapper.find('.timeline-start-alert').exists()).toBe(false);
+  expect(trigger.attributes('aria-expanded')).toBe('false');
+  expect(document.activeElement).toBe(trigger.element);
+  wrapper.unmount();
+});
+
+it('shows loading without a false no-active warning while the opened panel fetch is pending', async () => {
+  let finish: ((result: ReturnType<typeof response>) => void) | undefined;
+  const pending = new Promise<ReturnType<typeof response>>((resolve) => {
+    finish = resolve;
+  });
+  post.mockImplementation(async (request) =>
+    request.url.includes('fetch_project_timelines')
+      ? pending
+      : response({ status: true, data: { id: 140, timeline_status: 3 } }),
+  );
+  const wrapper = await render();
+  expect(wrapper.get('[role="status"]').text()).toBe(en['work_items.loading_stages']);
+  expect(wrapper.text()).not.toContain(en['execution_updates.no_active']);
+  if (!finish) throw new Error('Missing pending Timeline fetch');
+  finish(response(overview([])));
+  await flushPromises();
+  expect(wrapper.text()).toContain(en['execution_updates.create_schedule']);
   wrapper.unmount();
 });

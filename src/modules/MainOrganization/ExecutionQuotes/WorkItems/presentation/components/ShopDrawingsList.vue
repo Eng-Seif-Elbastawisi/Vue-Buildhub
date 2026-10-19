@@ -133,7 +133,10 @@
                   .join(' · ')
               }}
             </p>
-            <p v-if="drawing.projectFloorSpace">{{ drawing.projectFloorSpace.space.title }}</p>
+            <!-- {{ drawing.projectFloorSpace }} -->
+            <p v-if="drawing.projectFloorSpace">
+              space: {{ drawing.projectFloorSpace.space.title }}
+            </p>
             <dl>
               <div>
                 <dt>{{ $t('work_items.custom_number') }}</dt>

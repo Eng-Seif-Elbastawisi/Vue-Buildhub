@@ -12,6 +12,7 @@ import {
   isApprovalStatus,
   type TimelineApprovalStatus,
 } from '../../Schedule/core/constants/timeline.status';
+import TitleModel from '@/base/Core/Models/titleModel';
 
 export default class ExecutionQuoteShowModel {
   public readonly id?: number;
@@ -33,7 +34,7 @@ export default class ExecutionQuoteShowModel {
   public readonly createdAt?: string;
   public readonly quoteStatus?: QuoteStatusEnum;
   public readonly timelineStatus?: TimelineApprovalStatus | null;
-  public readonly approvedByEmployeeId?: number | null;
+  public readonly approvedByEmployee?: TitleModel | null;
   public readonly timelineNote?: string | null;
 
   constructor(data: {
@@ -54,7 +55,7 @@ export default class ExecutionQuoteShowModel {
     createdAt?: string;
     quoteStatus?: QuoteStatusEnum;
     timelineStatus?: TimelineApprovalStatus | null;
-    approvedByEmployeeId?: number | null;
+    approvedByEmployee?: TitleModel | null;
     timelineNote?: string | null;
   }) {
     this.id = data.id;
@@ -81,7 +82,7 @@ export default class ExecutionQuoteShowModel {
     this.createdAt = data.createdAt;
     this.quoteStatus = data.quoteStatus;
     this.timelineStatus = data.timelineStatus;
-    this.approvedByEmployeeId = data.approvedByEmployeeId;
+    this.approvedByEmployee = data.approvedByEmployee;
     this.timelineNote = data.timelineNote;
     Object.freeze(this);
   }
@@ -117,22 +118,22 @@ export default class ExecutionQuoteShowModel {
         : undefined,
       quoteType: Number.isFinite(quoteTypeId)
         ? new TitleInterface<number>({
-            id: quoteTypeId,
-            title: quoteType?.title as string | undefined,
-          })
+          id: quoteTypeId,
+          title: quoteType?.title as string | undefined,
+        })
         : undefined,
       priceEmployee: json.price_employee
         ? EmployeeModel.fromJson(json.price_employee as Record<string, unknown>)
         : undefined,
       quoteStages: json.quote_stages
         ? (json.quote_stages as Record<string, unknown>[]).map((quoteStage) =>
-            ExecutionQuoteStageModel.fromJson(quoteStage),
-          )
+          ExecutionQuoteStageModel.fromJson(quoteStage),
+        )
         : [],
       attachments: Array.isArray(json.attachments)
         ? (json.attachments as Record<string, unknown>[]).map(
-            ExecutionQuoteAttachmentModel.fromJson,
-          )
+          ExecutionQuoteAttachmentModel.fromJson,
+        )
         : [],
       totalQuotePrice: json.total_quote_price == null ? undefined : Number(json.total_quote_price),
       clientQuotePrice: clientQuotePrice == null ? undefined : Number(clientQuotePrice),
@@ -147,12 +148,7 @@ export default class ExecutionQuoteShowModel {
           : isApprovalStatus(json.timeline_status)
             ? json.timeline_status
             : undefined,
-      approvedByEmployeeId:
-        json.approved_by_employee_id === null
-          ? null
-          : typeof json.approved_by_employee_id === 'number'
-            ? json.approved_by_employee_id
-            : undefined,
+      approvedByEmployee: TitleModel.fromMap(json.approved_by_employee_id),
       timelineNote:
         json.timeline_note === null
           ? null

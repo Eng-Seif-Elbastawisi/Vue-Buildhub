@@ -81,13 +81,15 @@
               ? $t('schedule.not_available')
               : $t(`schedule.approval_${controller.ownerState.value.data.timelineStatus}`)
           }}</strong>
-          <span v-if="controller.ownerState.value.data?.approvedByEmployeeId">
+          <span v-if="controller.ownerState.value.data?.approvedByEmployee?.title">
             {{
               $t('schedule.approved_by_id', {
-                id: controller.ownerState.value.data.approvedByEmployeeId,
+                id: controller.ownerState.value.data.approvedByEmployee.title,
               })
             }}
           </span>
+          <!-- {{ console.log(groups) }} -->
+          <!-- {{ controller.ownerState.value?.data?.approvedByEmployee }} -->
           <p v-if="controller.ownerState.value.data?.timelineNote">
             {{ controller.ownerState.value.data.timelineNote }}
           </p>

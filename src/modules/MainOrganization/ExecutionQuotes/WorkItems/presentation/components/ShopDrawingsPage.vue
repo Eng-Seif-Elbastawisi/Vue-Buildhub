@@ -2,7 +2,6 @@
   import { computed, onBeforeUnmount, ref, watch } from 'vue';
   import { useRoute } from 'vue-router';
   import AppButton from '@/shared/HelpersComponents/AppButton.vue';
-  import TimelineStartRequiredAlert from '../../../shared/components/TimelineStartRequiredAlert.vue';
   import ProjectWorkspaceNav from '../../../presentation/components/ProjectWorkspaceNav.vue';
   import { positiveId } from '../../core/constants/work-items.constants';
   import WorkItemsController from '../controllers/work-items.controller';
@@ -50,11 +49,6 @@
       v-if="positiveId(quoteId)"
       :key="`drawing-${quoteId}`"
       v-model:visible="drawingOpen"
-    />
-    <TimelineStartRequiredAlert
-      :quote-id="quoteId"
-      :state="controller.stagesState.value"
-      @refresh="controller.loadStages()"
     />
   </div>
 </template>
