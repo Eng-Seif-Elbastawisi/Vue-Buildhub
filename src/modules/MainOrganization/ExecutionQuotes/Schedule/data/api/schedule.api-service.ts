@@ -7,6 +7,10 @@ import ScheduleGroupParams from '../../core/params/schedule.group.params';
 import ScheduleOwnerParams from '../../core/params/schedule.owner.params';
 import ScheduleSettingsParams from '../../core/params/schedule.settings.params';
 import ChangeProjectTimelineOrderParams from '../../core/params/change.project.timeline.order.params';
+import {
+  ChangeTimelineApprovalParams,
+  ChangeTimelineWorkStatusParams,
+} from '../../core/params/schedule.status.params';
 import { ScheduleEndpoints } from './schedule.api.endpoints';
 
 // Confirmed requests. Unknown response bodies are never coerced into mutation success.
@@ -121,6 +125,37 @@ export default class ScheduleApiService extends BaseApiService {
     return this.custom<unknown>(
       { url: this.endpoints.saveSettings, method: CrudType.POST, params },
       this.requestOptions(options),
+      false,
+    );
+  }
+  async changeApproval(params: ChangeTimelineApprovalParams): Promise<ApiResponse<unknown>> {
+    if (!(params instanceof ChangeTimelineApprovalParams))
+      throw new ValidationException('schedule.invalid_form');
+    this.validateParams(params);
+    return this.custom<unknown>(
+      { url: this.endpoints.approval, method: CrudType.POST, params },
+      this.requestOptions(),
+      false,
+    );
+  }
+  async changeWorkStatus(params: ChangeTimelineWorkStatusParams): Promise<ApiResponse<unknown>> {
+    if (!(params instanceof ChangeTimelineWorkStatusParams))
+      throw new ValidationException('schedule.invalid_form');
+    this.validateParams(params);
+    return this.custom<unknown>(
+      { url: this.endpoints.workStatus, method: CrudType.POST, params },
+      this.requestOptions(),
+      false,
+    );
+  }
+  async history(params: ScheduleOwnerParams): Promise<ApiResponse<unknown>> {
+    return this.custom<unknown>(
+      {
+        url: this.endpoints.history,
+        method: CrudType.POST,
+        params: this.ownerParams(params, 'timeline'),
+      },
+      this.requestOptions(),
       false,
     );
   }

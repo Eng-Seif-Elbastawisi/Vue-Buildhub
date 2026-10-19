@@ -16,11 +16,18 @@ import type ProjectTimelineOverviewModel from '../../core/models/project.timelin
 import type ExecutionQuoteShowModel from '../../../core/models/execution.quote.show.model';
 import ShowExecutionQuoteParams from '../../../core/params/show.execution.quote.params';
 import ExecutionQuoteRepository from '../../../data/repositories/execution.quote.repository';
-import type ScheduleGroupModel from '../../core/models/schedule.group.model';
 import type ScheduleSettingsModel from '../../core/models/schedule.settings.model';
 import ScheduleOwnerParams from '../../core/params/schedule.owner.params';
 import ScheduleGroupParams from '../../core/params/schedule.group.params';
 import type ScheduleSettingsParams from '../../core/params/schedule.settings.params';
+import type {
+  ChangeTimelineApprovalParams,
+  ChangeTimelineWorkStatusParams,
+} from '../../core/params/schedule.status.params';
+import { TimelineApprovalStatus } from '../../core/constants/timeline.status';
+import ScheduleGroupModel from '../../core/models/schedule.group.model';
+import type ProjectTimelineWorkStatusModel from '../../core/models/project.timeline.work-status.model';
+import type ProjectTimelineHistoryModel from '../../core/models/project.timeline.history.model';
 import { validId } from '../../core/constants/schedule.constants';
 import ScheduleRepository from '../../data/repositories/schedule.repository';
 
@@ -30,6 +37,7 @@ export default class ScheduleController extends BaseController<ScheduleGroupMode
   private listRequest = 0;
   private detailRequest = 0;
   private settingsRequest = 0;
+  private historyRequest = 0;
   private lookupRequests = new Map<number | null, number>();
   private childParents = new Map<number, number>();
   private overviewRequest = 0;
@@ -39,6 +47,12 @@ export default class ScheduleController extends BaseController<ScheduleGroupMode
   private group: number | null = null;
   readonly settingsState = shallowRef<DataState<ScheduleSettingsModel>>(new DataInitial());
   readonly ownerState = shallowRef<DataState<ExecutionQuoteShowModel>>(new DataInitial());
+  readonly approvalState = shallowRef<DataState<ExecutionQuoteShowModel>>(new DataInitial());
+  readonly workStatusState = shallowRef<DataState<ProjectTimelineWorkStatusModel>>(
+    new DataInitial(),
+  );
+  readonly historyState = shallowRef<DataState<ProjectTimelineHistoryModel[]>>(new DataInitial());
+  readonly historyGroupId = shallowRef<number | null>(null);
   readonly childLabels = shallowRef(new Map<number, TitleModel>());
   readonly stageLabels = shallowRef(new Map<number, TitleModel>());
   readonly lookups = shallowRef(new Map<number | null, DataState<TitleModel[]>>());
@@ -100,6 +114,7 @@ export default class ScheduleController extends BaseController<ScheduleGroupMode
   }
   invalidateRequests() {
     this.epoch++;
+    this.closeHistory();
     this.busy.value = false;
     this.overviewPending = null;
     if (this.overviewState.value instanceof DataLoading)
@@ -121,6 +136,9 @@ export default class ScheduleController extends BaseController<ScheduleGroupMode
     this.listState.value = new DataInitial();
     this.settingsState.value = new DataInitial();
     this.ownerState.value = new DataInitial();
+    this.approvalState.value = new DataInitial();
+    this.workStatusState.value = new DataInitial();
+    this.closeHistory();
     this.lookups.value = new Map();
     this.childParents.clear();
     this.stageLabels.value = new Map();
@@ -149,6 +167,128 @@ export default class ScheduleController extends BaseController<ScheduleGroupMode
       ownerState instanceof DataSuccess && ownerState.data?.id !== this.owner
         ? new DataFailed({ error: new ErrorModel('schedule.owner_error', ErrorType.dataDirty) })
         : ownerState;
+  }
+  async changeApproval(
+    params: ChangeTimelineApprovalParams,
+  ): Promise<DataState<ExecutionQuoteShowModel>> {
+    if (
+      params.quoteId !== this.owner ||
+      this.busy.value ||
+      !params.validate().isValid ||
+      this.ownerState.value.data?.timelineStatus === params.timelineStatus
+    )
+      return new DataCancelled();
+    const epoch = this.epoch;
+    this.busy.value = true;
+    this.refreshFailed.value = false;
+    this.approvalState.value = new DataLoading();
+    try {
+      const result = await this.repository.changeApproval(params);
+      if (epoch !== this.epoch) return new DataCancelled();
+      this.approvalState.value = result;
+      if (result instanceof DataSuccess && result.data) {
+        this.ownerState.value = new DataSuccess({ data: result.data });
+        const [, refreshed] = await Promise.all([
+          this.readOwner(),
+          this.fetchList(new ScheduleOwnerParams(params.quoteId)),
+        ]);
+        if (epoch !== this.epoch) return new DataCancelled();
+        if (!(this.ownerState.value instanceof DataSuccess))
+          this.ownerState.value = new DataSuccess({ data: result.data });
+        this.refreshFailed.value = !(refreshed instanceof DataSuccess);
+      }
+      return result;
+    } finally {
+      if (epoch === this.epoch) this.busy.value = false;
+    }
+  }
+  async changeWorkStatus(
+    params: ChangeTimelineWorkStatusParams,
+  ): Promise<DataState<ProjectTimelineWorkStatusModel>> {
+    const groups = this.listState.value.data;
+    const group = groups?.find((entry) => entry.id === params.projectTimelineId);
+    if (
+      this.owner === null ||
+      this.busy.value ||
+      !params.validate().isValid ||
+      !group ||
+      this.ownerState.value.data?.timelineStatus !== TimelineApprovalStatus.APPROVED ||
+      group.workStatus === params.workStatus
+    )
+      return new DataCancelled();
+    const owner = this.owner;
+    const epoch = this.epoch;
+    this.busy.value = true;
+    this.refreshFailed.value = false;
+    this.workStatusState.value = new DataLoading();
+    try {
+      const result = await this.repository.changeWorkStatus(params);
+      if (epoch !== this.epoch) return new DataCancelled();
+      if (
+        result instanceof DataSuccess &&
+        result.data &&
+        (result.data.quoteId !== owner ||
+          result.data.projectTimelineId !== params.projectTimelineId ||
+          result.data.workStatus !== params.workStatus)
+      ) {
+        const invalid = new DataFailed<ProjectTimelineWorkStatusModel>({
+          error: new ErrorModel('schedule.invalid_response', ErrorType.dataDirty),
+        });
+        this.workStatusState.value = invalid;
+        return invalid;
+      }
+      this.workStatusState.value = result;
+      if (result instanceof DataSuccess && result.data) {
+        const current = this.listState.value.data ?? groups ?? [];
+        this.listState.value = new DataSuccess({
+          data: current.map((entry) =>
+            entry.id === result.data?.projectTimelineId
+              ? new ScheduleGroupModel({ ...entry, workStatus: result.data.workStatus })
+              : entry,
+          ),
+          pagination: this.listState.value.pagination,
+        });
+        const refreshed = await this.fetchList(new ScheduleOwnerParams(owner));
+        if (epoch !== this.epoch) return new DataCancelled();
+        this.refreshFailed.value = !(refreshed instanceof DataSuccess);
+      }
+      return result;
+    } finally {
+      if (epoch === this.epoch) this.busy.value = false;
+    }
+  }
+  async readHistory(groupId: number): Promise<DataState<ProjectTimelineHistoryModel[]>> {
+    if (
+      this.owner === null ||
+      !validId(groupId) ||
+      !this.listState.value.data?.some((group) => group.id === groupId)
+    )
+      return new DataCancelled();
+    const owner = this.owner;
+    const epoch = this.epoch;
+    const request = ++this.historyRequest;
+    this.historyGroupId.value = groupId;
+    this.historyState.value = new DataLoading();
+    const result = await this.repository.readHistory(new ScheduleOwnerParams(owner, groupId));
+    if (
+      epoch !== this.epoch ||
+      request !== this.historyRequest ||
+      this.historyGroupId.value !== groupId
+    )
+      return new DataCancelled();
+    this.historyState.value =
+      result instanceof DataSuccess &&
+      result.data?.some((entry: ProjectTimelineHistoryModel) => entry.projectTimelineId !== groupId)
+        ? new DataFailed({
+            error: new ErrorModel('schedule.invalid_response', ErrorType.dataDirty),
+          })
+        : result;
+    return this.historyState.value;
+  }
+  closeHistory() {
+    this.historyRequest++;
+    this.historyGroupId.value = null;
+    this.historyState.value = new DataInitial();
   }
   async fetchList(params?: Params): Promise<DataState<ScheduleGroupModel[]>> {
     if (!this.scoped(params)) return new DataCancelled();

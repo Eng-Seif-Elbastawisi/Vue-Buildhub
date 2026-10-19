@@ -1,7 +1,6 @@
 import type TitleModel from '@/base/Core/Models/titleModel';
 import ProjectTimelineSubStageModel, { mappedLabel } from './project.timeline.sub-stage.model';
 import { responseObject } from './schedule.response';
-import { validId } from '../constants/schedule.constants';
 export default class ProjectTimelineStageModel {
   readonly parentId?: number | null;
   readonly id: number;

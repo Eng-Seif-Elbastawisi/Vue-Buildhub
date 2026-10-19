@@ -1,5 +1,6 @@
 import BaseRepository from '@/base/Domain/Repositories/baseRepository';
 import type { ApiCallOptions } from '@/base/Data/ApiService/baseApiService';
+import type { ApiResponse } from '@/base/Data/ApiService/baseApiService';
 import ScheduleOwnerParams from '../../core/params/schedule.owner.params';
 import type Params from '@/base/Core/Params/params';
 import {
@@ -15,6 +16,14 @@ import type ChangeProjectTimelineOrderParams from '../../core/params/change.proj
 import ScheduleSettingsModel from '../../core/models/schedule.settings.model';
 import type ScheduleSettingsParams from '../../core/params/schedule.settings.params';
 import ScheduleApiService from '../api/schedule.api-service';
+import ExecutionQuoteShowModel from '../../../core/models/execution.quote.show.model';
+import ProjectTimelineWorkStatusModel from '../../core/models/project.timeline.work-status.model';
+import ProjectTimelineHistoryModel from '../../core/models/project.timeline.history.model';
+import { isApprovalStatus } from '../../core/constants/timeline.status';
+import type {
+  ChangeTimelineApprovalParams,
+  ChangeTimelineWorkStatusParams,
+} from '../../core/params/schedule.status.params';
 
 export default class ScheduleRepository extends BaseRepository<ScheduleGroupModel> {
   private static instance: ScheduleRepository;
@@ -43,8 +52,7 @@ export default class ScheduleRepository extends BaseRepository<ScheduleGroupMode
         return new DataFailed({
           error: new ErrorModel('schedule.load_error', ErrorType.dataDirty),
         });
-      // console.log('response.data', response.data);
-      return new DataSuccess({ data: this.parseItem(response.data?.data as unknown) });
+      return new DataSuccess({ data: this.parseItem(responseObject(response.data).data) });
     } catch (error: unknown) {
       return this.handleError(error);
     }
@@ -113,6 +121,67 @@ export default class ScheduleRepository extends BaseRepository<ScheduleGroupMode
   ): Promise<DataState<void>> {
     try {
       return this.processVoidResponse(await this.apiService.sort(params));
+    } catch (error: unknown) {
+      return this.handleError(error);
+    }
+  }
+  private mappedResponse<T>(
+    response: ApiResponse<unknown>,
+    mapper: (value: unknown) => T,
+  ): DataState<T> {
+    try {
+      const envelope = responseObject(response.data);
+      if (![200, 201, 202].includes(response.statusCode) || envelope.status !== true)
+        return new DataFailed({
+          error: new ErrorModel(
+            typeof envelope.message === 'string' ? envelope.message : 'schedule.load_error',
+            ErrorType.serviceSide,
+          ),
+        });
+      return new DataSuccess({
+        data: mapper(envelope.data),
+        message: typeof envelope.message === 'string' ? envelope.message : undefined,
+      });
+    } catch {
+      return new DataFailed({
+        error: new ErrorModel('schedule.invalid_response', ErrorType.dataDirty),
+      });
+    }
+  }
+  async changeApproval(
+    params: ChangeTimelineApprovalParams,
+  ): Promise<DataState<ExecutionQuoteShowModel>> {
+    try {
+      const response = await this.apiService.changeApproval(params);
+      return this.mappedResponse(response, (value) => {
+        const quote = responseObject(value);
+        if (quote.id !== params.quoteId || !isApprovalStatus(quote.timeline_status))
+          throw new Error('schedule.invalid_response');
+        return ExecutionQuoteShowModel.fromJson(quote);
+      });
+    } catch (error: unknown) {
+      return this.handleError(error);
+    }
+  }
+  async changeWorkStatus(
+    params: ChangeTimelineWorkStatusParams,
+  ): Promise<DataState<ProjectTimelineWorkStatusModel>> {
+    try {
+      const response = await this.apiService.changeWorkStatus(params);
+      return this.mappedResponse(response, ProjectTimelineWorkStatusModel.fromJson);
+    } catch (error: unknown) {
+      return this.handleError(error);
+    }
+  }
+  async readHistory(
+    params: ScheduleOwnerParams,
+  ): Promise<DataState<ProjectTimelineHistoryModel[]>> {
+    try {
+      const response = await this.apiService.history(params);
+      return this.mappedResponse(response, (value) => {
+        if (!Array.isArray(value)) throw new Error('schedule.invalid_response');
+        return value.map(ProjectTimelineHistoryModel.fromJson);
+      });
     } catch (error: unknown) {
       return this.handleError(error);
     }

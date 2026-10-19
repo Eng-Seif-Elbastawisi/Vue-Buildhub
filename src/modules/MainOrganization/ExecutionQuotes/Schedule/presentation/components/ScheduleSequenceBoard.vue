@@ -7,8 +7,13 @@
   import type ScheduleGroupModel from '../../core/models/schedule.group.model';
   import ScheduleController from '../controllers/schedule.controller';
   import ScheduleGroupCard from './ScheduleGroupCard.vue';
-  const props = defineProps<{ groups: ScheduleGroupModel[]; basePath: string; quoteId: number }>();
-  defineEmits<{ delete: [number] }>();
+  const props = defineProps<{
+    groups: ScheduleGroupModel[];
+    basePath: string;
+    quoteId: number;
+    timelineApproved?: boolean;
+  }>();
+  defineEmits<{ delete: [number]; manageWork: [number]; viewHistory: [number] }>();
   const controller = ScheduleController.getInstance();
   const preview = ref<ScheduleGroupModel[] | null>(null);
   const draggedId = ref<number | null>(null);
@@ -110,8 +115,11 @@
             :busy="controller.busy.value"
             :earlier="controller.canMove(entry.id, -1)"
             :later="controller.canMove(entry.id, 1)"
+            :timeline-approved="timelineApproved"
             @move="step(entry.id, $event)"
             @delete="$emit('delete', entry.id)"
+            @manage-work="$emit('manageWork', entry.id)"
+            @view-history="$emit('viewHistory', entry.id)"
           >
             <template #handle>
               <button

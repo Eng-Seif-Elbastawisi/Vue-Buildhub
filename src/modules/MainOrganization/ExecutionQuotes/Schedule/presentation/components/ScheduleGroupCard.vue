@@ -10,8 +10,9 @@
     busy: boolean;
     earlier: boolean;
     later: boolean;
+    timelineApproved?: boolean;
   }>();
-  defineEmits<{ move: [-1 | 1]; delete: [] }>();
+  defineEmits<{ move: [-1 | 1]; delete: []; manageWork: []; viewHistory: [] }>();
 </script>
 <template>
   <article class="schedule__panel schedule__timeline-card">
@@ -20,6 +21,15 @@
         <span class="schedule__sequence-number">{{ String(sequence).padStart(2, '0') }}</span>
         <h3>{{ group.title }}</h3>
       </div>
+      <span class="schedule__work-badge" :data-status="group.workStatus ?? 'unstarted'">{{
+        $t(
+          group.workStatus === undefined
+            ? 'schedule.not_available'
+            : group.workStatus === null
+              ? 'schedule.work_unstarted'
+              : `schedule.work_${group.workStatus}`,
+        )
+      }}</span>
       <slot name="handle" />
     </div>
     <details class="schedule__group-details" open>
@@ -48,6 +58,16 @@
       <ScheduleStageTable :stages="group.stages" />
     </details>
     <div class="schedule__actions">
+      <AppButton
+        type="button"
+        theme="secondary"
+        :disabled="busy || !timelineApproved"
+        @click="$emit('manageWork')"
+        >{{ $t('schedule.manage_work') }}</AppButton
+      >
+      <AppButton type="button" theme="secondary" :disabled="busy" @click="$emit('viewHistory')">{{
+        $t('schedule.view_work_history')
+      }}</AppButton>
       <AppButton :to="`${basePath}/${group.id}`" :disabled="busy">{{
         $t('schedule.show')
       }}</AppButton>

@@ -61,7 +61,7 @@
   });
 </script>
 <template>
-  <section class="schedule">
+  <section class="schedule" :dir="$i18n.locale === 'ar' ? 'rtl' : 'ltr'">
     <ProjectWorkspaceNav :quote-id="quoteId" active="schedule" />
     <header class="schedule__header">
       <div class="schedule__owner">
