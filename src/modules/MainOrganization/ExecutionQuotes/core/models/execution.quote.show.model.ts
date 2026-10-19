@@ -8,6 +8,10 @@ import ExecutionQuoteAttachmentModel from './execution.quote.attachment.model';
 import ExecutionQuoteClientModel from './execution.quote.client.model';
 import ExecutionQuoteProjectModel from './execution.quote.project.model';
 import ExecutionQuoteStageModel from './execution.quote.stage.model';
+import {
+  isApprovalStatus,
+  type TimelineApprovalStatus,
+} from '../../Schedule/core/constants/timeline.status';
 
 export default class ExecutionQuoteShowModel {
   public readonly id?: number;
@@ -28,6 +32,9 @@ export default class ExecutionQuoteShowModel {
   public readonly supervisionFee?: number;
   public readonly createdAt?: string;
   public readonly quoteStatus?: QuoteStatusEnum;
+  public readonly timelineStatus?: TimelineApprovalStatus | null;
+  public readonly approvedByEmployeeId?: number | null;
+  public readonly timelineNote?: string | null;
 
   constructor(data: {
     id?: number;
@@ -46,6 +53,9 @@ export default class ExecutionQuoteShowModel {
     supervisionFee?: number;
     createdAt?: string;
     quoteStatus?: QuoteStatusEnum;
+    timelineStatus?: TimelineApprovalStatus | null;
+    approvedByEmployeeId?: number | null;
+    timelineNote?: string | null;
   }) {
     this.id = data.id;
     this.organization = data.organization;
@@ -70,6 +80,9 @@ export default class ExecutionQuoteShowModel {
     this.supervisionFee = data.supervisionFee;
     this.createdAt = data.createdAt;
     this.quoteStatus = data.quoteStatus;
+    this.timelineStatus = data.timelineStatus;
+    this.approvedByEmployeeId = data.approvedByEmployeeId;
+    this.timelineNote = data.timelineNote;
     Object.freeze(this);
   }
 
@@ -104,22 +117,22 @@ export default class ExecutionQuoteShowModel {
         : undefined,
       quoteType: Number.isFinite(quoteTypeId)
         ? new TitleInterface<number>({
-          id: quoteTypeId,
-          title: quoteType?.title as string | undefined,
-        })
+            id: quoteTypeId,
+            title: quoteType?.title as string | undefined,
+          })
         : undefined,
       priceEmployee: json.price_employee
         ? EmployeeModel.fromJson(json.price_employee as Record<string, unknown>)
         : undefined,
       quoteStages: json.quote_stages
         ? (json.quote_stages as Record<string, unknown>[]).map((quoteStage) =>
-          ExecutionQuoteStageModel.fromJson(quoteStage),
-        )
+            ExecutionQuoteStageModel.fromJson(quoteStage),
+          )
         : [],
       attachments: Array.isArray(json.attachments)
         ? (json.attachments as Record<string, unknown>[]).map(
-          ExecutionQuoteAttachmentModel.fromJson,
-        )
+            ExecutionQuoteAttachmentModel.fromJson,
+          )
         : [],
       totalQuotePrice: json.total_quote_price == null ? undefined : Number(json.total_quote_price),
       clientQuotePrice: clientQuotePrice == null ? undefined : Number(clientQuotePrice),
@@ -128,6 +141,24 @@ export default class ExecutionQuoteShowModel {
       supervisionFee: supervisionFee == null ? undefined : Number(supervisionFee),
       createdAt: json.created_at as string | undefined,
       quoteStatus: Object.values(QuoteStatusEnum).includes(quoteStatus) ? quoteStatus : undefined,
+      timelineStatus:
+        json.timeline_status === null
+          ? null
+          : isApprovalStatus(json.timeline_status)
+            ? json.timeline_status
+            : undefined,
+      approvedByEmployeeId:
+        json.approved_by_employee_id === null
+          ? null
+          : typeof json.approved_by_employee_id === 'number'
+            ? json.approved_by_employee_id
+            : undefined,
+      timelineNote:
+        json.timeline_note === null
+          ? null
+          : typeof json.timeline_note === 'string'
+            ? json.timeline_note
+            : undefined,
     });
   }
 

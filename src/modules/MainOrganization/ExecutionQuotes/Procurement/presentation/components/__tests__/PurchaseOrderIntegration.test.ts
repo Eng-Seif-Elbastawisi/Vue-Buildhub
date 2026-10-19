@@ -9,6 +9,7 @@ import Orders from '../../controllers/purchase.order.controller';
 import { mockNetwork, response } from '../../../../SiteTeam/__tests__/network';
 import { requestRecord, overviewRecord } from '../../../__tests__/fixtures';
 import { orderRecord } from '../../../__tests__/order-fixtures';
+import { priceRecord } from '../../../__tests__/price-fixtures';
 import en from '@/locales/en.json';
 import ar from '@/locales/ar.json';
 enableAutoUnmount(afterEach);
@@ -50,7 +51,13 @@ it('integrates contextual actions without fetching an order for every row, and c
   );
   const router = createRouter({
     history: createMemoryHistory(),
-    routes: [{ path: '/organization/execution-quotes/show/:id/procurement', component: Page }],
+    routes: [
+      { path: '/organization/execution-quotes/show/:id/procurement', component: Page },
+      {
+        path: '/organization/execution-quotes/show/:id/procurement/purchase-orders/add',
+        component: { template: '<main class="purchase-order-page" />' },
+      },
+    ],
   });
   await router.push('/organization/execution-quotes/show/140/procurement');
   const localization = createI18n({ legacy: false, locale: 'en', messages: { en, ar } });
@@ -90,7 +97,7 @@ it('integrates contextual actions without fetching an order for every row, and c
   );
 });
 
-it('issues from the clicked saved Supplier Prices row using both request and offer IDs', async () => {
+it('navigates from the clicked saved offer with both request and offer IDs', async () => {
   vi.stubGlobal(
     'matchMedia',
     vi.fn(() => ({ matches: false, addEventListener: vi.fn(), removeEventListener: vi.fn() })),
@@ -141,7 +148,13 @@ it('issues from the clicked saved Supplier Prices row using both request and off
   });
   const router = createRouter({
     history: createMemoryHistory(),
-    routes: [{ path: '/organization/execution-quotes/show/:id/procurement', component: Page }],
+    routes: [
+      { path: '/organization/execution-quotes/show/:id/procurement', component: Page },
+      {
+        path: '/organization/execution-quotes/show/:id/procurement/purchase-orders/add',
+        component: { template: '<main class="purchase-order-page" />' },
+      },
+    ],
   });
   await router.push('/organization/execution-quotes/show/140/procurement');
   const localization = createI18n({ legacy: false, locale: 'en', messages: { en, ar } });
@@ -165,24 +178,13 @@ it('issues from the clicked saved Supplier Prices row using both request and off
   if (!offerRow) throw new Error('Missing saved supplier offer');
   await offerRow.get('button').trigger('click');
   await flushPromises();
-  expect(wrapper.get('#order-offer-4').element).toHaveProperty('checked', true);
-  expect(wrapper.get('#order-offer-5').element).toHaveProperty('checked', false);
-  await wrapper.get('#purchase-order-date').setValue('2026-10-14');
-  await wrapper.get('form').trigger('submit');
-  await flushPromises();
-  const stores = post.mock.calls.filter((call) => call[0].url.endsWith('/store_purchase_order'));
-  expect(stores).toHaveLength(1);
-  expect(stores[0]?.[0].data).toEqual({
-    purchase_request_id: 2,
-    purchase_request_price_id: 4,
-    note: null,
-    date: '2026-10-14',
-  });
+  expect(router.currentRoute.value.path).toBe(
+    '/organization/execution-quotes/show/140/procurement/purchase-orders/add',
+  );
+  expect(router.currentRoute.value.query).toEqual({ requestId: '2', offerId: '4' });
+  expect(wrapper.find('.purchase-order-page').exists()).toBe(true);
   expect(wrapper.find('form').exists()).toBe(false);
-  expect(post.mock.calls.some((call) => call[0].url.endsWith('/fetch_purchase_order'))).toBe(false);
-  expect(wrapper.get('#purchase-request-prices').text()).not.toContain('Store Purchase Order');
-  expect(wrapper.get('#purchase-request-prices').text()).not.toContain('View Purchase Order');
-  expect(wrapper.get('#purchase-request-prices button').attributes('disabled')).toBeDefined();
+  expect(post.mock.calls.some((call) => call[0].url.endsWith('/store_purchase_order'))).toBe(false);
 });
 
 it('fetches an empty order from a Pending Purchase Request row using only its ID, without opening issuance', async () => {
@@ -201,7 +203,13 @@ it('fetches an empty order from a Pending Purchase Request row using only its ID
   });
   const router = createRouter({
     history: createMemoryHistory(),
-    routes: [{ path: '/organization/execution-quotes/show/:id/procurement', component: Page }],
+    routes: [
+      { path: '/organization/execution-quotes/show/:id/procurement', component: Page },
+      {
+        path: '/organization/execution-quotes/show/:id/procurement/purchase-orders/add',
+        component: { template: '<main class="purchase-order-page" />' },
+      },
+    ],
   });
   await router.push('/organization/execution-quotes/show/140/procurement');
   const wrapper = mount(
@@ -224,7 +232,7 @@ it('fetches an empty order from a Pending Purchase Request row using only its ID
   ).toEqual({ purchase_request_id: 2 });
   expect(wrapper.text()).toContain('No confirmed purchase order exists yet.');
   expect(wrapper.find('form').exists()).toBe(false);
-  expect(wrapper.findAll('button').some((button) => button.text() === 'Store Purchase Order')).toBe(
+  expect(wrapper.findAll('button').some((button) => button.text() === 'Issue Purchase Order')).toBe(
     false,
   );
   expect(
@@ -236,7 +244,7 @@ it('fetches an empty order from a Pending Purchase Request row using only its ID
   ).toBe(false);
 });
 
-it('opens the issue dialog from the Supplier Prices header and stores the offer selected inside it', async () => {
+it('opens the create page from the Supplier Prices header with the selected request', async () => {
   vi.stubGlobal(
     'matchMedia',
     vi.fn(() => ({ matches: false, addEventListener: vi.fn(), removeEventListener: vi.fn() })),
@@ -277,7 +285,13 @@ it('opens the issue dialog from the Supplier Prices header and stores the offer 
   });
   const router = createRouter({
     history: createMemoryHistory(),
-    routes: [{ path: '/organization/execution-quotes/show/:id/procurement', component: Page }],
+    routes: [
+      { path: '/organization/execution-quotes/show/:id/procurement', component: Page },
+      {
+        path: '/organization/execution-quotes/show/:id/procurement/purchase-orders/add',
+        component: { template: '<main class="purchase-order-page" />' },
+      },
+    ],
   });
   await router.push('/organization/execution-quotes/show/140/procurement');
   const wrapper = mount(
@@ -296,29 +310,83 @@ it('opens the issue dialog from the Supplier Prices header and stores the offer 
   await flushPromises();
   const issue = wrapper
     .findAll('#purchase-request-prices header button')
-    .find((button) => button.text() === 'Store Purchase Order');
+    .find((button) => button.text() === 'Issue Purchase Order');
   if (!issue) throw new Error('Missing Supplier Prices header action');
   await issue.trigger('click');
   await flushPromises();
-  expect(wrapper.find('form').exists()).toBe(true);
-  expect(wrapper.findAll('input[type="radio"]')).toHaveLength(2);
-  await wrapper.get('#order-offer-4').setValue(true);
-  await wrapper.get('#purchase-order-date').setValue('2026-10-14');
-  await wrapper
-    .get('#purchase-order-note')
-    .setValue('Purchase order approved for electrical materials.');
-  await wrapper.get('form').trigger('submit');
-  await flushPromises();
-  expect(
-    post.mock.calls.find((call) => call[0].url.endsWith('/store_purchase_order'))?.[0].data,
-  ).toEqual({
-    purchase_request_id: 20,
-    purchase_request_price_id: 4,
-    note: 'Purchase order approved for electrical materials.',
-    date: '2026-10-14',
+  expect(router.currentRoute.value.path).toBe(
+    '/organization/execution-quotes/show/140/procurement/purchase-orders/add',
+  );
+  expect(router.currentRoute.value.query).toEqual({ requestId: '20' });
+  expect(wrapper.find('.purchase-order-page').exists()).toBe(true);
+  expect(wrapper.find('form').exists()).toBe(false);
+  expect(post.mock.calls.some((call) => call[0].url.endsWith('/store_purchase_order'))).toBe(false);
+});
+
+it('opens the create page from Add Purchase Order without a dialog', async () => {
+  const post = mockNetwork();
+  post.mockImplementation(async (request) =>
+    response(
+      request.url.includes('fetch_purchase_requests')
+        ? { status: true, data: [requestRecord()] }
+        : request.url.includes('fetch_project_timelines')
+          ? overviewRecord()
+          : { status: true, data: { id: 140 } },
+    ),
+  );
+  const router = createRouter({
+    history: createMemoryHistory(),
+    routes: [
+      { path: '/organization/execution-quotes/show/:id/procurement', component: Page },
+      {
+        path: '/organization/execution-quotes/show/:id/procurement/purchase-orders/add',
+        component: { template: '<main class="purchase-order-page" />' },
+      },
+    ],
   });
-  expect(post.mock.calls.some((call) => call[0].url.endsWith('/fetch_purchase_order'))).toBe(false);
-  expect(
-    post.mock.calls.filter((call) => call[0].url.endsWith('/store_purchase_order')),
-  ).toHaveLength(1);
+  await router.push('/organization/execution-quotes/show/140/procurement');
+  const wrapper = mount(
+    { template: '<RouterView />' },
+    { global: { plugins: [router, PrimeVue], stubs: { ProjectWorkspaceNav: true } } },
+  );
+  await flushPromises();
+  const add = wrapper.findAll('button').find((button) => button.text() === 'Add Purchase Order');
+  if (!add) throw new Error('Missing Add Purchase Order action');
+  await add.trigger('click');
+  await flushPromises();
+  expect(router.currentRoute.value.path).toBe(
+    '/organization/execution-quotes/show/140/procurement/purchase-orders/add',
+  );
+  expect(router.currentRoute.value.query).toEqual({});
+  expect(wrapper.find('.purchase-order-page').exists()).toBe(true);
+  expect(post.mock.calls.some((call) => call[0].url.endsWith('/store_purchase_order'))).toBe(false);
+  wrapper.unmount();
+});
+
+it('restores the selected request when returning to Procurement', async () => {
+  const post = mockNetwork();
+  post.mockImplementation(async (request) =>
+    response(
+      request.url.includes('fetch_purchase_requests')
+        ? { status: true, data: [requestRecord()] }
+        : request.url.includes('fetch_purchase_request_prices')
+          ? { status: true, data: [priceRecord(3, 15, 1)] }
+          : request.url.includes('fetch_project_timelines')
+            ? overviewRecord()
+            : { status: true, data: { id: 140 } },
+    ),
+  );
+  const router = createRouter({
+    history: createMemoryHistory(),
+    routes: [{ path: '/organization/execution-quotes/show/:id/procurement', component: Page }],
+  });
+  await router.push('/organization/execution-quotes/show/140/procurement?requestId=1');
+  const wrapper = mount(
+    { template: '<RouterView />' },
+    { global: { plugins: [router, PrimeVue], stubs: { ProjectWorkspaceNav: true } } },
+  );
+  await flushPromises();
+  expect(wrapper.get('.procurement-offers').text()).toContain('Purchase Request #1');
+  expect(post.mock.calls.some((call) => call[0].url.endsWith('/fetch_purchase_request_prices'))).toBe(true);
+  wrapper.unmount();
 });

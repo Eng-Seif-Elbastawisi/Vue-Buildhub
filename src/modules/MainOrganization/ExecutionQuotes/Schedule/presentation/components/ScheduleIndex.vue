@@ -14,6 +14,11 @@
   import ScheduleTimeline from './ScheduleTimeline.vue';
   import ScheduleSettingsDialog from './ScheduleSettingsDialog.vue';
   import ScheduleConfigurationDialog from './ScheduleConfigurationDialog.vue';
+  import ScheduleApprovalDialog from './ScheduleApprovalDialog.vue';
+  import ScheduleWorkStatusDialog from './ScheduleWorkStatusDialog.vue';
+  import ScheduleWorkHistoryDialog from './ScheduleWorkHistoryDialog.vue';
+  import { TimelineApprovalStatus } from '../../core/constants/timeline.status';
+  import type ScheduleGroupModel from '../../core/models/schedule.group.model';
 
   const controller = ScheduleController.getInstance();
   const state = computed(() => controller.listState.value);
@@ -26,11 +31,25 @@
   const showSettings = ref(false);
   const showConfiguration = ref(false);
   const deleteId = ref<number | null>(null);
+  const approvalTarget = ref<
+    typeof TimelineApprovalStatus.APPROVED | typeof TimelineApprovalStatus.CANCEL | null
+  >(null);
+  const workId = ref<number | null>(null);
+  const historyId = ref<number | null>(null);
+  const workGroup = computed(() =>
+    groups.value?.find((group: ScheduleGroupModel) => group.id === workId.value),
+  );
+  const historyGroup = computed(() =>
+    groups.value?.find((group: ScheduleGroupModel) => group.id === historyId.value),
+  );
 
   function reset() {
     showSettings.value = false;
     showConfiguration.value = false;
     deleteId.value = null;
+    approvalTarget.value = null;
+    workId.value = null;
+    historyId.value = null;
   }
   async function load(quoteId: number) {
     await Promise.all([
@@ -54,6 +73,48 @@
         ></span>
         <h1>{{ $t('schedule.title') }}</h1>
       </header>
+      <section class="schedule__approval" :aria-label="$t('schedule.timeline_approval')">
+        <div>
+          <span class="schedule__eyebrow">{{ $t('schedule.timeline_approval') }}</span>
+          <strong class="schedule__approval-status">{{
+            controller.ownerState.value.data?.timelineStatus == null
+              ? $t('schedule.not_available')
+              : $t(`schedule.approval_${controller.ownerState.value.data.timelineStatus}`)
+          }}</strong>
+          <span v-if="controller.ownerState.value.data?.approvedByEmployeeId">
+            {{
+              $t('schedule.approved_by_id', {
+                id: controller.ownerState.value.data.approvedByEmployeeId,
+              })
+            }}
+          </span>
+          <p v-if="controller.ownerState.value.data?.timelineNote">
+            {{ controller.ownerState.value.data.timelineNote }}
+          </p>
+        </div>
+        <div
+          v-if="controller.ownerState.value.data?.timelineStatus === TimelineApprovalStatus.PENDING"
+          class="schedule__approval-controls"
+        >
+          <div class="schedule__approval-actions">
+            <AppButton
+              type="button"
+              theme="secondary"
+              action-tone="approve"
+              :disabled="controller.busy.value"
+              @click="approvalTarget = TimelineApprovalStatus.APPROVED"
+              >{{ $t('schedule.accept') }}</AppButton
+            >
+            <AppButton
+              type="button"
+              theme="danger"
+              :disabled="controller.busy.value"
+              @click="approvalTarget = TimelineApprovalStatus.CANCEL"
+              >{{ $t('schedule.reject') }}</AppButton
+            >
+          </div>
+        </div>
+      </section>
       <div class="schedule__actions schedule__tools">
         <AppButton :to="`${indexRoute}/add`" :disabled="controller.busy.value" icon="left">
           <template #icon><i class="pi pi-plus" aria-hidden="true"></i></template>
@@ -119,7 +180,12 @@
               :groups="groups"
               :base-path="indexRoute"
               :quote-id="quoteId"
+              :timeline-approved="
+                controller.ownerState.value.data?.timelineStatus === TimelineApprovalStatus.APPROVED
+              "
               @delete="deleteId = $event"
+              @manage-work="workId = $event"
+              @view-history="historyId = $event"
             />
             <ScheduleTimeline :groups="groups" />
           </template>
@@ -133,6 +199,33 @@
       <p v-if="controller.mutationState.value.error" role="alert">
         {{ $t(controller.mutationState.value.error.displayMessage) }}
       </p>
+      <p v-if="controller.refreshFailed.value" role="alert">
+        {{ $t('schedule.saved_refresh_failed') }}
+      </p>
+      <p v-if="controller.approvalState.value instanceof DataSuccess" role="status">
+        {{ $t('schedule.approval_saved') }}
+      </p>
+      <p v-if="controller.workStatusState.value instanceof DataSuccess" role="status">
+        {{ $t('schedule.work_saved') }}
+      </p>
+      <ScheduleApprovalDialog
+        v-if="approvalTarget !== null"
+        :quote-id="quoteId"
+        :target-status="approvalTarget"
+        @close="approvalTarget = null"
+      />
+      <ScheduleWorkStatusDialog
+        v-if="workGroup"
+        :key="workGroup.id"
+        :group="workGroup"
+        @close="workId = null"
+      />
+      <ScheduleWorkHistoryDialog
+        v-if="historyGroup"
+        :key="historyGroup.id"
+        :group="historyGroup"
+        @close="historyId = null"
+      />
       <ScheduleConfigurationDialog
         v-if="showConfiguration && settings"
         :settings="settings"

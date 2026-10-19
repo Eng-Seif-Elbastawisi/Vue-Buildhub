@@ -8,6 +8,7 @@ import Controller from '../../controllers/purchase.order.controller';
 import Requests from '../../controllers/purchase-request.controller';
 import RequestModel from '../../../core/models/purchase-request.model';
 import { DataSuccess } from '@/base/Core/NetworkStructure/Resources/dataState/dataState';
+import { ValidationException } from '@/base/Core/Constants/exceptionConstants';
 import { mockNetwork, response } from '../../../../SiteTeam/__tests__/network';
 import { requestRecord } from '../../../__tests__/fixtures';
 import { priceRecord } from '../../../__tests__/price-fixtures';
@@ -19,10 +20,12 @@ let id = 50;
 let post: ReturnType<typeof mockNetwork>;
 let saved = false;
 let failed = false;
+let validationFailed = false;
 beforeEach(() => {
   id++;
   saved = false;
   failed = false;
+  validationFailed = false;
   post = mockNetwork();
   const requests = Requests.getInstance();
   requests.activate(140);
@@ -42,6 +45,8 @@ beforeEach(() => {
     if (request.url.endsWith('/fetch_purchase_requests'))
       return response({ status: true, data: [{ ...requestRecord(), id, status: saved ? 3 : 1 }] });
     if (request.url.endsWith('/store_purchase_order')) {
+      if (validationFailed)
+        throw new ValidationException('Invalid date', { date: ['Date is invalid'] });
       if (failed) return response({ status: false, message: 'Status conflict' });
       saved = true;
       return response({ status: true });
@@ -61,11 +66,11 @@ afterEach(() => {
 function mountForm(locale = 'en') {
   const localization = createI18n({ legacy: false, locale, messages: { en, ar } });
   return mount(Form, {
+    attachTo: document.body,
     props: { quoteId: 140, purchaseRequestId: id },
     global: {
       plugins: [PrimeVue, localization],
       mocks: { $t: localization.global.t },
-      stubs: { Dialog: { template: '<section><slot /></section>' } },
     },
   });
 }
@@ -75,11 +80,11 @@ async function choose(wrapper: ReturnType<typeof mountForm>) {
   await wrapper.get('#purchase-order-date').setValue('2026-10-14');
 }
 it.each(['en', 'ar'])(
-  'uses shared uploader and selects offer ID in %s, then shows fetched details',
+  'uses shared uploader and selects offer ID in %s, then confirms the refreshed order',
   async (locale) => {
     const wrapper = mountForm(locale);
     await choose(wrapper);
-    expect(wrapper.get('div[dir]').attributes('dir')).toBe(locale === 'ar' ? 'rtl' : 'ltr');
+    expect(wrapper.get('form').attributes('dir')).toBe(locale === 'ar' ? 'rtl' : 'ltr');
     expect(wrapper.findComponent(HandleFilesUpload).props('maxFiles')).toBe(1);
     const uploader = wrapper.getComponent(HandleFilesUpload);
     uploader.vm.$emit('change', [
@@ -103,13 +108,13 @@ it.each(['en', 'ar'])(
       file: 'data:application/pdf;base64,JVBERg==',
       date: '2026-10-14',
     });
-    expect(wrapper.find('form').exists()).toBe(false);
+    expect(wrapper.emitted('created')).toHaveLength(1);
     expect(wrapper.text()).toContain(
       locale === 'ar' ? 'تم حفظ أمر الشراء' : 'Purchase order created',
     );
     expect(wrapper.text()).not.toContain('Techlab Employee');
     expect(post.mock.calls.some((call) => call[0].url.endsWith('/fetch_purchase_order'))).toBe(
-      false,
+      true,
     );
     wrapper.unmount();
   },
@@ -130,6 +135,81 @@ it('requires date and offer but permits absent notes and attachment', async () =
     note: null,
     date: '2026-10-14',
   });
+  wrapper.unmount();
+});
+it('shows field errors and focuses the missing offer before the date', async () => {
+  const wrapper = mountForm();
+  await flushPromises();
+  await wrapper.get('form').trigger('submit');
+  await flushPromises();
+  expect(wrapper.text()).toContain('Select a supplier price offer');
+  expect(wrapper.text()).toContain('Enter a valid purchase order date');
+  expect(wrapper.get('.purchase-order-offers').attributes('aria-invalid')).toBe('true');
+  expect(document.activeElement?.getAttribute('name')).toBe('purchase-order-offer');
+  await wrapper.get('input[type="radio"]').setValue(true);
+  await wrapper.get('form').trigger('submit');
+  await flushPromises();
+  expect(document.activeElement?.id).toBe('purchase-order-date');
+  wrapper.unmount();
+});
+it('focuses a backend date error and preserves the selected offer', async () => {
+  const wrapper = mountForm();
+  await choose(wrapper);
+  validationFailed = true;
+  await wrapper.get('form').trigger('submit');
+  await flushPromises();
+  expect(wrapper.text()).toContain('Date is invalid');
+  expect(document.activeElement?.id).toBe('purchase-order-date');
+  expect(wrapper.get('input[type="radio"]').element).toHaveProperty('checked', true);
+  wrapper.unmount();
+});
+it('compares offers and submits the selected price-offer ID', async () => {
+  const normal = post.getMockImplementation();
+  if (!normal) throw new Error('Missing network mock');
+  post.mockImplementation((request) =>
+    request.url.endsWith('/fetch_purchase_request_prices')
+      ? Promise.resolve(
+          response({
+            status: true,
+            data: [
+              { ...priceRecord(3, 15, id), supplier: { id: 3, title: 'Vendor A' } },
+              {
+                ...priceRecord(4, 16, id),
+                supplier: { id: 4, title: 'Vendor B' },
+                price: '1700.00',
+              },
+            ],
+          }),
+        )
+      : normal(request),
+  );
+  const wrapper = mountForm();
+  await flushPromises();
+  expect(wrapper.findAll('.purchase-order-offer')).toHaveLength(2);
+  expect(wrapper.get('.purchase-order-offers').attributes('role')).toBe('radiogroup');
+  await wrapper.get('#order-offer-16').setValue(true);
+  expect(wrapper.get('label[for="order-offer-16"]').classes()).toContain('is-selected');
+  await wrapper.get('#purchase-order-date').setValue('2026-10-14');
+  await wrapper.get('form').trigger('submit');
+  await flushPromises();
+  expect(
+    post.mock.calls.find((call) => call[0].url.endsWith('/store_purchase_order'))?.[0].data
+      .purchase_request_price_id,
+  ).toBe(16);
+  wrapper.unmount();
+});
+it('explains when no supplier offers are available', async () => {
+  const normal = post.getMockImplementation();
+  if (!normal) throw new Error('Missing network mock');
+  post.mockImplementation((request) =>
+    request.url.endsWith('/fetch_purchase_request_prices')
+      ? Promise.resolve(response({ status: true, data: [] }))
+      : normal(request),
+  );
+  const wrapper = mountForm();
+  await flushPromises();
+  expect(wrapper.get('.purchase-order-offers-empty').text()).toContain('No supplier price offers');
+  expect(wrapper.find('button[type="submit"]').attributes('disabled')).toBeDefined();
   wrapper.unmount();
 });
 it('preserves form and shared attachment selection on Store failure and blocks replay', async () => {

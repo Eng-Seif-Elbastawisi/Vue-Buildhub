@@ -27,3 +27,11 @@ it('does not turn nullable or omitted calculation dates into synthetic dates', (
   expect(group.startDate).toBeNull();
   expect(group.finishDate).toBeUndefined();
 });
+it('preserves null as Not Started and maps known independent work statuses', () => {
+  expect(
+    ScheduleGroupModel.fromJson({ ...timelineResponse(), work_status: null }).workStatus,
+  ).toBeNull();
+  expect(ScheduleGroupModel.fromJson({ ...timelineResponse(), work_status: 2 }).workStatus).toBe(2);
+  expect(ScheduleGroupModel.fromJson(timelineResponse()).workStatus).toBeUndefined();
+  expect(() => ScheduleGroupModel.fromJson({ ...timelineResponse(), work_status: 4 })).toThrow();
+});

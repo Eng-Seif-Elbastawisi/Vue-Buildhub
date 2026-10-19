@@ -73,8 +73,9 @@ it('uses the offer record ID, refreshes authoritative state and blocks a second 
   );
   expect(post.mock.calls.some((call) => call[0].url.endsWith('/store_purchase_order'))).toBe(false);
   expect(await controller.create(params())).toBeInstanceOf(DataSuccess);
-  expect(controller.fetchState.value.data).toBeNull();
-  expect(post.mock.calls.some((call) => call[0].url.endsWith('/fetch_purchase_order'))).toBe(false);
+  expect(controller.fetchState.value.data?.purchaseRequest.id).toBe(id);
+  expect(post.mock.calls.some((call) => call[0].url.endsWith('/fetch_purchase_order'))).toBe(true);
+  expect(controller.refreshRequired.value).toBe(false);
   expect(requests.listState.value.data?.[0]?.status).toBe(3);
   expect(controller.canStore.value).toBe(false);
   await controller.create(params());
@@ -86,6 +87,26 @@ it('uses the offer record ID, refreshes authoritative state and blocks a second 
     note: 'Note',
     date: '2026-10-14',
   });
+});
+it('keeps a confirmed order on the page until its authoritative read succeeds', async () => {
+  const normal = post.getMockImplementation();
+  if (!normal) throw new Error('Missing network mock');
+  let orderReadFailed = true;
+  post.mockImplementation((request) =>
+    request.url.endsWith('/fetch_purchase_order') && orderReadFailed
+      ? Promise.resolve(response({ status: false, message: 'Order unavailable' }))
+      : normal(request),
+  );
+  expect(await controller.create(params())).toBeInstanceOf(DataSuccess);
+  expect(controller.issued.value).toBe(true);
+  expect(controller.refreshRequired.value).toBe(true);
+  orderReadFailed = false;
+  await controller.retryLastOperation();
+  expect(controller.refreshRequired.value).toBe(false);
+  expect(controller.fetchState.value.data?.purchaseRequest.id).toBe(id);
+  expect(
+    post.mock.calls.filter((call) => call[0].url.endsWith('/store_purchase_order')),
+  ).toHaveLength(1);
 });
 it('existing order disables issue even if the request list is stale pending', async () => {
   stored = true;

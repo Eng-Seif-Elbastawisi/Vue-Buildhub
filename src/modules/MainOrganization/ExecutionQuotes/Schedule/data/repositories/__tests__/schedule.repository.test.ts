@@ -12,10 +12,93 @@ import ProjectTimelineStageParams from '../../../core/params/project.timeline.st
 import ScheduleSettingsParams from '../../../core/params/schedule.settings.params';
 import ChangeProjectTimelineOrderParams from '../../../core/params/change.project.timeline.order.params';
 import {
+  ChangeTimelineApprovalParams,
+  ChangeTimelineWorkStatusParams,
+} from '../../../core/params/schedule.status.params';
+import {
   overviewResponse,
   timelineResponse,
 } from '../../../core/models/__tests__/backend.fixtures';
 afterEach(() => vi.restoreAllMocks());
+it('maps the full Quote approval, small Group status, and per-Group history response shapes', async () => {
+  const api = ScheduleApiService.getInstance();
+  vi.spyOn(api, 'changeApproval').mockResolvedValue({
+    statusCode: 200,
+    data: {
+      status: true,
+      message: 'Approved',
+      data: {
+        id: 140,
+        timeline_status: 3,
+        approved_by_employee_id: 1,
+        timeline_note: 'Timeline approved.',
+        total_quote_price: 76,
+        quote_stages: [],
+      },
+    },
+  });
+  vi.spyOn(api, 'changeWorkStatus').mockResolvedValue({
+    statusCode: 200,
+    data: {
+      status: true,
+      data: { project_timeline_id: 2, quote_id: 140, work_status: 2 },
+    },
+  });
+  vi.spyOn(api, 'history').mockResolvedValue({
+    statusCode: 200,
+    data: {
+      status: true,
+      data: [
+        {
+          id: 1,
+          project_timeline_id: 2,
+          status: 1,
+          reason: null,
+          note: null,
+          organization_employee: null,
+          created_at: '2026-10-18 12:10:58',
+        },
+      ],
+    },
+  });
+  const repository = ScheduleRepository.getInstance();
+  const quote = await repository.changeApproval(new ChangeTimelineApprovalParams(140, 3));
+  expect(quote.data).toMatchObject({ id: 140, timelineStatus: 3, totalQuotePrice: 76 });
+  const work = await repository.changeWorkStatus(new ChangeTimelineWorkStatusParams(2, 2));
+  expect(work.data).toMatchObject({ quoteId: 140, projectTimelineId: 2, workStatus: 2 });
+  const history = await repository.readHistory(new ScheduleOwnerParams(140, 2));
+  expect(history.data?.[0]).toMatchObject({
+    projectTimelineId: 2,
+    reason: null,
+    organizationEmployee: null,
+  });
+});
+it('preserves backend rejection and rejects malformed status responses', async () => {
+  const api = ScheduleApiService.getInstance();
+  vi.spyOn(api, 'changeApproval').mockResolvedValue({
+    statusCode: 200,
+    data: {
+      status: false,
+      message: 'Forbidden',
+      data: { id: 140, timeline_status: 3 },
+    },
+  });
+  const repository = ScheduleRepository.getInstance();
+  expect(
+    (await repository.changeApproval(new ChangeTimelineApprovalParams(140, 3))).error
+      ?.displayMessage,
+  ).toBe('Forbidden');
+  vi.spyOn(api, 'changeWorkStatus').mockResolvedValue({
+    statusCode: 200,
+    data: {
+      status: true,
+      data: { project_timeline_id: 2, quote_id: 140 },
+    },
+  });
+  expect(
+    await repository.changeWorkStatus(new ChangeTimelineWorkStatusParams(2, 2)),
+  ).toBeInstanceOf(DataFailed);
+});
 it('fetches the confirmed overview envelope and real timeline identity, with no static fallback', async () => {
   const index = vi
     .spyOn(ScheduleApiService.getInstance(), 'index')

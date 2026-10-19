@@ -23,6 +23,27 @@ export const executionQuoteRoutes: RouteRecordRaw[] = [
     meta: { breadcrumb: 'procurement.title', parent: 'execution_quote.show.title' },
   },
   {
+    path: 'execution-quotes/show/:id(\\d+)/procurement/purchase-orders/add',
+    name: 'Quote Purchase Order Add',
+    component: () =>
+      import('@/views/MainOrganization/ExecutionQuotes/Procurement/PurchaseOrderAdd.vue'),
+    meta: { breadcrumb: 'procurement.orders.add', parent: 'procurement.title' },
+  },
+  {
+    path: 'execution-quotes/show/:id(\\d+)/procurement/purchase-requests/add',
+    name: 'Quote Purchase Request Add',
+    component: () =>
+      import('@/views/MainOrganization/ExecutionQuotes/Procurement/PurchaseRequestAdd.vue'),
+    meta: { breadcrumb: 'procurement.new_requirement', parent: 'procurement.title' },
+  },
+  {
+    path: 'execution-quotes/show/:id(\\d+)/procurement/purchase-requests/:purchaseRequestId(\\d+)/supplier-prices',
+    name: 'Quote Supplier Prices',
+    component: () =>
+      import('@/views/MainOrganization/ExecutionQuotes/Procurement/SupplierPrices.vue'),
+    meta: { breadcrumb: 'procurement.offers.page_title', parent: 'procurement.title' },
+  },
+  {
     path: 'execution-quotes/show/:id(\\d+)/work-items',
     name: 'Quote Work Items',
     component: () =>

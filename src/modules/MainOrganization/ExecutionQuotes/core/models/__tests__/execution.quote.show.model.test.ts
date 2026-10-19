@@ -4,6 +4,19 @@ import { QuoteStatusEnum } from '../../constants/quote.status.enum';
 import ExecutionQuoteShowModel from '../execution.quote.show.model';
 
 describe('ExecutionQuoteShowModel', () => {
+  it('maps Quote-wide timeline approval alongside existing Quote fields', () => {
+    const model = ExecutionQuoteShowModel.fromJson({
+      id: 140, timeline_status: 3, approved_by_employee_id: 1,
+      timeline_note: 'Timeline approved.', total_quote_price: 76, quote_stages: [],
+    });
+    expect(model).toMatchObject({
+      id: 140, timelineStatus: 3, approvedByEmployeeId: 1,
+      timelineNote: 'Timeline approved.', totalQuotePrice: 76,
+    });
+    expect(ExecutionQuoteShowModel.fromJson({ timeline_status: null, approved_by_employee_id: null, timeline_note: null })).toMatchObject({
+      timelineStatus: null, approvedByEmployeeId: null, timelineNote: null,
+    });
+  });
   it.each([
     [QuoteStatusEnum.DRAFT, QuoteStatusEnum.DRAFT],
     [String(QuoteStatusEnum.REVISION_REQUIRED), QuoteStatusEnum.REVISION_REQUIRED],

@@ -4,6 +4,7 @@ import ProjectTimelineStageModel from './project.timeline.stage.model';
 import { mappedLabel } from './project.timeline.sub-stage.model';
 import { responseObject } from './schedule.response';
 import type { TaskDurationType } from '../constants/schedule.constants';
+import { isWorkStatus, type TimelineWorkStatus } from '../constants/timeline.status';
 export default class ScheduleGroupModel {
   public readonly id: number;
   public readonly title: string;
@@ -15,6 +16,7 @@ export default class ScheduleGroupModel {
   public readonly createdAt?: string | null;
   public readonly selectionsAvailable: boolean;
   public readonly finishDate?: string | null;
+  public readonly workStatus?: TimelineWorkStatus | null;
   constructor(group: {
     id: number;
     title: string;
@@ -26,6 +28,7 @@ export default class ScheduleGroupModel {
     durationType: TaskDurationType;
     startDate?: string | null;
     finishDate?: string | null;
+    workStatus?: TimelineWorkStatus | null;
   }) {
     this.id = group.id;
     this.title = group.title;
@@ -37,6 +40,7 @@ export default class ScheduleGroupModel {
     this.durationType = group.durationType;
     this.startDate = group.startDate;
     this.finishDate = group.finishDate;
+    this.workStatus = group.workStatus;
   }
   static fromJson(value: unknown): ScheduleGroupModel {
     const payload = responseObject(value);
@@ -58,7 +62,10 @@ export default class ScheduleGroupModel {
         typeof payload.start_date !== 'string') ||
       (payload.finish_date !== undefined &&
         payload.finish_date !== null &&
-        typeof payload.finish_date !== 'string')
+        typeof payload.finish_date !== 'string') ||
+      (payload.work_status !== undefined &&
+        payload.work_status !== null &&
+        !isWorkStatus(payload.work_status))
     )
       throw new Error('schedule.invalid_response');
     return new ScheduleGroupModel({
@@ -72,6 +79,10 @@ export default class ScheduleGroupModel {
       selectionsAvailable: true,
       startDate: payload.start_date ?? undefined,
       finishDate: payload.finish_date ?? undefined,
+      workStatus:
+        payload.work_status === null
+          ? null
+          : (payload.work_status as TimelineWorkStatus | undefined),
     });
   }
 }

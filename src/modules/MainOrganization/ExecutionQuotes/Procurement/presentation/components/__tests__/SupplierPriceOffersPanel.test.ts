@@ -16,7 +16,13 @@ beforeEach(() => {
   post.mockImplementation(async (request) =>
     response(
       request.url.includes('fetch_purchase_request_prices')
-        ? { status: true, data: [priceRecord(3, 15), priceRecord(4, 16)] }
+        ? {
+            status: true,
+            data: [priceRecord(3, 15), priceRecord(4, 16)].map((offer) => ({
+              ...offer,
+              supplier: { id: offer.supplier.id, title: offer.supplier.name },
+            })),
+          }
         : { status: true, data: [] },
     ),
   );
@@ -56,18 +62,15 @@ it.each(['en', 'ar'])(
     expect(wrapper.find('form').exists()).toBe(false);
     const manage = wrapper
       .findAll('button')
-      .find((button) => button.text() === (locale === 'ar' ? 'إدارة الأسعار' : 'Manage Prices'));
+      .find(
+        (button) =>
+          button.text() === (locale === 'ar' ? 'إدارة أسعار الموردين' : 'Manage Supplier Prices'),
+      );
     await manage?.trigger('click');
-    await flushPromises();
-    expect(wrapper.findAll('.procurement-item')).toHaveLength(2);
+    expect(wrapper.emitted('manageOffers')).toEqual([[1]]);
+    expect(wrapper.find('form').exists()).toBe(false);
     expect(wrapper.text()).not.toContain('procurement.offers.');
-    await wrapper.get('#supplier-comparison-filter').setValue('Supplier 4');
-    expect(wrapper.findAll('tbody tr')).toHaveLength(1);
-    expect(
-      wrapper
-        .findAll('form input[inputmode="decimal"]')
-        .map((input) => (input.element as HTMLInputElement).value),
-    ).toEqual(['1500.00', '1500.00']);
+    expect(wrapper.findAll('tbody tr')).toHaveLength(2);
     wrapper.unmount();
   },
 );
@@ -95,14 +98,14 @@ it('disables the editor after failed Fetch and enables it only after a successfu
   await flushPromises();
   expect(manage?.attributes('disabled')).toBeUndefined();
   await manage?.trigger('click');
-  await flushPromises();
-  expect(wrapper.find('form').exists()).toBe(true);
+  expect(wrapper.emitted('manageOffers')).toEqual([[1]]);
+  expect(wrapper.find('form').exists()).toBe(false);
   expect(
     post.mock.calls.some((call) => call[0].url.includes('store_purchase_request_prices')),
   ).toBe(false);
   wrapper.unmount();
 });
-it('discarding editor changes restores the saved collection when reopening', async () => {
+it('opening the management page does not mutate saved offers', async () => {
   const wrapper = mount(SupplierPriceOffersPanel, {
     props: { quoteId: 140, purchaseRequestId: 1 },
     global: {
@@ -113,29 +116,13 @@ it('discarding editor changes restores the saved collection when reopening', asy
   await flushPromises();
   await wrapper
     .findAll('button')
-    .find((button) => button.text() === 'Manage Prices')
+    .find((button) => button.text() === 'Manage Supplier Prices')
     ?.trigger('click');
-  await flushPromises();
-  await wrapper.get('input[inputmode="decimal"]').setValue('123.45');
-  await wrapper
-    .findAll('button')
-    .find((button) => button.text() === 'Cancel')
-    ?.trigger('click');
-  await flushPromises();
-  await wrapper
-    .findAll('button')
-    .find((button) => button.text() === 'Discard Changes')
-    ?.trigger('click');
-  await flushPromises();
+  expect(wrapper.emitted('manageOffers')).toEqual([[1]]);
   expect(wrapper.find('form').exists()).toBe(false);
   expect(wrapper.get('table').text()).toContain('1500.00');
-  await wrapper
-    .findAll('button')
-    .find((button) => button.text() === 'Manage Prices')
-    ?.trigger('click');
-  await flushPromises();
-  expect((wrapper.get('input[inputmode="decimal"]').element as HTMLInputElement).value).toBe(
-    '1500.00',
-  );
+  expect(
+    post.mock.calls.some((call) => call[0].url.includes('store_purchase_request_prices')),
+  ).toBe(false);
   wrapper.unmount();
 });
