@@ -22,12 +22,10 @@ export async function mountScheduleRoute(component: Component, path: string, tim
     'matchMedia',
     vi.fn(() => ({ matches: false, addEventListener: vi.fn(), removeEventListener: vi.fn() })),
   );
-  const quoteRequest = vi
-    .spyOn(ExecutionQuoteApiService.getInstance(), 'show')
-    .mockResolvedValue({
-      statusCode: 200,
-      data: { status: true, data: { id: 101, timeline_status: timelineStatus } },
-    });
+  const quoteRequest = vi.spyOn(ExecutionQuoteApiService.getInstance(), 'show').mockResolvedValue({
+    statusCode: 200,
+    data: { status: true, data: { id: 101, timeline_status: timelineStatus } },
+  });
   vi.spyOn(ScheduleApiService.getInstance(), 'index').mockResolvedValue({
     statusCode: 200,
     data: overviewResponse(),
@@ -46,6 +44,7 @@ export async function mountScheduleRoute(component: Component, path: string, tim
     history: createMemoryHistory(),
     routes: [
       { path: '/schedule/:id/:groupId?', component, name: 'test-schedule' },
+      { path: '/organization/execution-quotes/show/:id/schedule', component },
       { path: '/quote/:id', name: 'Show Execution Quote', component: { template: '<div />' } },
       { path: '/index/:id', name: 'Quote Schedule', component: { template: '<div />' } },
       { path: '/add/:id', name: 'Add Schedule Group', component: { template: '<div />' } },

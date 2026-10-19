@@ -1,3 +1,4 @@
+import type ChangeProjectConfigurationWorkStatusParams from '../../core/params/change.project.configuration.work-status.params';
 import BaseRepository from '@/base/Domain/Repositories/baseRepository';
 import type { ApiCallOptions } from '@/base/Data/ApiService/baseApiService';
 import type { ApiResponse } from '@/base/Data/ApiService/baseApiService';
@@ -106,7 +107,18 @@ export default class ScheduleRepository extends BaseRepository<ScheduleGroupMode
           error: new ErrorModel('schedule.load_error', ErrorType.dataDirty),
         });
       const envelope = responseObject(response.data);
-      return new DataSuccess({ data: ScheduleSettingsModel.fromJson(envelope.data) });
+      if (envelope.data === null && envelope.status === undefined)
+        throw new Error('schedule.invalid_response');
+      if (envelope.status === false)
+        return new DataFailed({
+          error: new ErrorModel(
+            typeof envelope.message === 'string' ? envelope.message : 'schedule.load_error',
+            ErrorType.serviceSide,
+          ),
+        });
+      return new DataSuccess({
+        data: envelope.data === null ? null : ScheduleSettingsModel.fromJson(envelope.data),
+      });
     } catch (error: unknown) {
       if (error instanceof Error && error.message === 'schedule.invalid_response')
         return new DataFailed({
@@ -152,6 +164,21 @@ export default class ScheduleRepository extends BaseRepository<ScheduleGroupMode
       return new DataFailed({
         error: new ErrorModel('schedule.invalid_response', ErrorType.dataDirty),
       });
+    }
+  }
+  async changeProjectConfigurationWorkStatus(
+    params: ChangeProjectConfigurationWorkStatusParams,
+  ): Promise<DataState<ScheduleSettingsModel>> {
+    try {
+      const response = await this.apiService.changeProjectConfigurationWorkStatus(params);
+      return this.mappedResponse(response, (value) => {
+        const configuration = ScheduleSettingsModel.fromJson(value);
+        if (configuration.workStatus !== params.workStatus)
+          throw new Error('schedule.invalid_response');
+        return configuration;
+      });
+    } catch (error: unknown) {
+      return this.handleError(error);
     }
   }
   async changeApproval(

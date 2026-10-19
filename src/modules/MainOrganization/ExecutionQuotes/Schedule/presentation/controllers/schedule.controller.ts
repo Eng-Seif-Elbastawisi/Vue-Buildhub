@@ -1,4 +1,6 @@
 import { computed, shallowRef } from 'vue';
+import type ChangeProjectConfigurationWorkStatusParams from '../../core/params/change.project.configuration.work-status.params';
+import { ProjectWorkStatus } from '../../core/constants/project.work-status';
 import BaseController from '@/base/Presentation/Controller/baseController';
 import {
   DataInitial,
@@ -46,6 +48,9 @@ export default class ScheduleController extends BaseController<ScheduleGroupMode
   private owner: number | null = null;
   private group: number | null = null;
   readonly settingsState = shallowRef<DataState<ScheduleSettingsModel>>(new DataInitial());
+  readonly projectExecutionState = shallowRef<DataState<ScheduleSettingsModel>>(new DataInitial());
+  readonly projectExecutionBusy = shallowRef(false);
+  readonly projectExecutionRefreshFailed = shallowRef(false);
   readonly ownerState = shallowRef<DataState<ExecutionQuoteShowModel>>(new DataInitial());
   readonly timelineApproved = computed(
     () => this.ownerState.value.data?.timelineStatus === TimelineApprovalStatus.APPROVED,
@@ -105,6 +110,9 @@ export default class ScheduleController extends BaseController<ScheduleGroupMode
     if (this.group !== groupId) {
       this.epoch++;
       this.detailRequest++;
+      this.projectExecutionBusy.value = false;
+      this.projectExecutionState.value = new DataInitial();
+      this.projectExecutionRefreshFailed.value = false;
       this.group = groupId;
       this.overviewPending = null;
       if (this.overviewState.value instanceof DataLoading)
@@ -117,6 +125,8 @@ export default class ScheduleController extends BaseController<ScheduleGroupMode
   }
   invalidateRequests() {
     this.epoch++;
+    this.projectExecutionBusy.value = false;
+    this.projectExecutionState.value = new DataInitial();
     this.closeHistory();
     this.busy.value = false;
     this.overviewPending = null;
@@ -138,6 +148,9 @@ export default class ScheduleController extends BaseController<ScheduleGroupMode
     this.overviewPending = null;
     this.listState.value = new DataInitial();
     this.settingsState.value = new DataInitial();
+    this.projectExecutionState.value = new DataInitial();
+    this.projectExecutionBusy.value = false;
+    this.projectExecutionRefreshFailed.value = false;
     this.ownerState.value = new DataInitial();
     this.approvalState.value = new DataInitial();
     this.workStatusState.value = new DataInitial();
@@ -340,6 +353,60 @@ export default class ScheduleController extends BaseController<ScheduleGroupMode
     this.settingsState.value = settingsState;
     return settingsState;
   }
+  clearProjectExecutionFeedback() {
+    if (this.projectExecutionBusy.value) return;
+    this.projectExecutionState.value = new DataInitial();
+    this.projectExecutionRefreshFailed.value = false;
+  }
+
+  async changeProjectConfigurationWorkStatus(
+    params: ChangeProjectConfigurationWorkStatusParams,
+  ): Promise<DataState<ScheduleSettingsModel>> {
+    const configuration =
+      this.settingsState.value instanceof DataSuccess ? this.settingsState.value.data : null;
+    if (params.quoteId !== this.owner || this.projectExecutionBusy.value)
+      return new DataCancelled();
+    if (
+      !configuration ||
+      !params.validate().isValid ||
+      configuration.workStatus === undefined ||
+      configuration.workStatus === params.workStatus ||
+      (configuration.workStatus === null &&
+        (params.workStatus !== ProjectWorkStatus.START ||
+          !validId(params.responsibleEmployeeId ?? 0))) ||
+      (params.workStatus === ProjectWorkStatus.START &&
+        !validId(params.responsibleEmployeeId ?? configuration.responsibleEmployeeId ?? 0))
+    ) {
+      const failure = new DataFailed<ScheduleSettingsModel>({
+        error: new ErrorModel('project_execution.invalid_transition', ErrorType.validation),
+      });
+      this.projectExecutionState.value = failure;
+      return failure;
+    }
+    const epoch = this.epoch;
+    // Invalidate an earlier configuration read before applying the returned mutation resource.
+    this.settingsRequest++;
+    this.projectExecutionBusy.value = true;
+    this.projectExecutionRefreshFailed.value = false;
+    this.projectExecutionState.value = new DataLoading();
+    try {
+      const result = await this.repository.changeProjectConfigurationWorkStatus(params);
+      if (epoch !== this.epoch) return new DataCancelled();
+      this.projectExecutionState.value = result;
+      if (result instanceof DataSuccess && result.data) {
+        this.settingsState.value = new DataSuccess({ data: result.data });
+        const refreshed = await this.readSettings(new ScheduleOwnerParams(params.quoteId));
+        if (epoch !== this.epoch) return new DataCancelled();
+        this.projectExecutionRefreshFailed.value = !(refreshed instanceof DataSuccess);
+        if (!(refreshed instanceof DataSuccess))
+          this.settingsState.value = new DataSuccess({ data: result.data });
+      }
+      return result;
+    } finally {
+      if (epoch === this.epoch) this.projectExecutionBusy.value = false;
+    }
+  }
+
   async readOverview(
     quoteId: number,
     refresh = false,

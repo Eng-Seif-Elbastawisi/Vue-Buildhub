@@ -18,3 +18,7 @@ export {
 } from './core/params/schedule.status.params';
 export { default as ProjectTimelineWorkStatusModel } from './core/models/project.timeline.work-status.model';
 export { default as ProjectTimelineHistoryModel } from './core/models/project.timeline.history.model';
+
+export { default as ProjectConfigurationModel } from './core/models/schedule.settings.model';
+export { ProjectWorkStatus } from './core/constants/project.work-status';
+export { default as ChangeProjectConfigurationWorkStatusParams } from './core/params/change.project.configuration.work-status.params';

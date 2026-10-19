@@ -1,4 +1,27 @@
 {
+  "project_execution": {
+    "title": "Project Execution Status",
+    "not_started": "Not Started",
+    "status_1": "In Progress",
+    "status_2": "On Hold",
+    "status_3": "Stopped",
+    "start": "Start Project",
+    "hold": "Hold Project",
+    "stop": "Stop Project",
+    "resume": "Resume Project",
+    "employee": "Responsible Employee",
+    "choose_employee": "Select an existing employee",
+    "employee_required": "Select a responsible employee.",
+    "delivery_date": "Delivery date",
+    "loading": "Loading project configuration…",
+    "configuration_required": "Create the Project Configuration before starting execution.",
+    "dialog_title": "Start Project Execution",
+    "requirements": "Requirements are checked when you submit.",
+    "payment_requirement": "At least one actual invoice payment greater than zero is required for this Project in the current Organization. An invoice alone is insufficient; full payment is not required.",
+    "drawing_requirement": "At least one Shop Drawing is required for this Quote and Project in the current Organization.",
+    "saved": "Project execution status updated.",
+    "invalid_transition": "This Project execution status change is not available."
+  },
   "execution_updates.manage_schedule": "Manage Schedule",
   "execution_updates.start_group": "Start timeline group: {title}",
 

@@ -1,5 +1,6 @@
 <script setup lang="ts">
   import { computed, ref } from 'vue';
+  import { useRoute } from 'vue-router';
   import Dialog from 'primevue/dialog';
   import {
     DataLoading,
@@ -10,6 +11,7 @@
   import ScheduleOwnerParams from '../../core/params/schedule.owner.params';
   import ScheduleController from '../controllers/schedule.controller';
   import SchedulePage from './SchedulePage.vue';
+  import ProjectExecutionStatus from './ProjectExecutionStatus.vue';
   import ScheduleSequenceBoard from './ScheduleSequenceBoard.vue';
   import ScheduleTimeline from './ScheduleTimeline.vue';
   import ScheduleSettingsDialog from './ScheduleSettingsDialog.vue';
@@ -20,6 +22,7 @@
   import { TimelineApprovalStatus } from '../../core/constants/timeline.status';
   import type ScheduleGroupModel from '../../core/models/schedule.group.model';
 
+  const route = useRoute();
   const controller = ScheduleController.getInstance();
   const state = computed(() => controller.listState.value);
   const groups = computed(() => (state.value instanceof DataSuccess ? state.value.data : null));
@@ -73,6 +76,12 @@
         ></span>
         <h1>{{ $t('schedule.title') }}</h1>
       </header>
+      <ProjectExecutionStatus
+        v-if="route.path.startsWith('/organization/')"
+        :key="quoteId"
+        :quote-id="quoteId"
+        @configure="showSettings = true"
+      />
       <section class="schedule__approval" :aria-label="$t('schedule.timeline_approval')">
         <div>
           <span class="schedule__eyebrow">{{ $t('schedule.timeline_approval') }}</span>

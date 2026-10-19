@@ -1,3 +1,4 @@
+import ChangeProjectConfigurationWorkStatusParams from '../../../core/params/change.project.configuration.work-status.params';
 import NetworkService from '@/base/Core/NetworkStructure/networking/networkService';
 import { afterEach, expect, it, vi } from 'vitest';
 import {
@@ -255,4 +256,53 @@ it.each([
   expect(state.error?.displayMessage).toBe(
     response.statusCode === 200 ? 'schedule.invalid_response' : 'schedule.load_error',
   );
+});
+
+it('keeps missing configuration as null instead of manufacturing saved settings', async () => {
+  vi.spyOn(ScheduleApiService.getInstance(), 'settings').mockResolvedValue({
+    statusCode: 200,
+    data: { status: true, data: null },
+  });
+  const state = await ScheduleRepository.getInstance().readSettings(new ScheduleOwnerParams(140));
+  expect(state).toBeInstanceOf(DataSuccess);
+  expect(state.data).toBeNull();
+});
+
+it('maps the Project status mutation with no quote_id and refuses a missing returned status', async () => {
+  const response = {
+    status: true,
+    message: 'Updated',
+    data: {
+      id: 1,
+      work_status: 1,
+      responsible_employee_id: 9,
+      responsible_employee: { id: 9, name: 'Engineer', type: 4 },
+      start_date: '2026-10-29',
+      delivery_date: null,
+      holidays: [4],
+    },
+  };
+  const api = vi
+    .spyOn(ScheduleApiService.getInstance(), 'changeProjectConfigurationWorkStatus')
+    .mockResolvedValue({ statusCode: 200, data: response });
+  const state = await ScheduleRepository.getInstance().changeProjectConfigurationWorkStatus(
+    new ChangeProjectConfigurationWorkStatusParams(140, 1, 9),
+  );
+  expect(state).toBeInstanceOf(DataSuccess);
+  expect(state.data).toMatchObject({
+    id: 1,
+    workStatus: 1,
+    responsibleEmployeeId: 9,
+    startDate: '2026-10-29',
+  });
+  expect(state.message).toBe('Updated');
+  api.mockResolvedValue({
+    statusCode: 200,
+    data: { ...response, data: { start_date: '2026-10-29', holidays: [4] } },
+  });
+  expect(
+    await ScheduleRepository.getInstance().changeProjectConfigurationWorkStatus(
+      new ChangeProjectConfigurationWorkStatusParams(140, 1, 9),
+    ),
+  ).toBeInstanceOf(DataFailed);
 });

@@ -1,3 +1,4 @@
+import ChangeProjectConfigurationWorkStatusParams from '../../core/params/change.project.configuration.work-status.params';
 import BaseApiService from '@/base/Data/ApiService/baseApiService';
 import type { ApiCallOptions, ApiResponse } from '@/base/Data/ApiService/baseApiService';
 import { CrudType } from '@/base/Data/ApiService/apiServiceInterface';
@@ -155,6 +156,18 @@ export default class ScheduleApiService extends BaseApiService {
     this.validateParams(params);
     return this.custom<unknown>(
       { url: this.endpoints.workStatus, method: CrudType.POST, params },
+      this.requestOptions(),
+      false,
+    );
+  }
+  async changeProjectConfigurationWorkStatus(
+    params: ChangeProjectConfigurationWorkStatusParams,
+  ): Promise<ApiResponse<unknown>> {
+    if (!(params instanceof ChangeProjectConfigurationWorkStatusParams))
+      throw new ValidationException('schedule.invalid_form');
+    this.validateParams(params);
+    return this.custom<unknown>(
+      { url: this.endpoints.projectExecutionWorkStatus, method: CrudType.POST, params },
       this.requestOptions(),
       false,
     );

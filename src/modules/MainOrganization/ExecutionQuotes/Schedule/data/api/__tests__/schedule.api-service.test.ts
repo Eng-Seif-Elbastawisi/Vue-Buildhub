@@ -14,6 +14,7 @@ import {
   ChangeTimelineApprovalParams,
   ChangeTimelineWorkStatusParams,
 } from '../../../core/params/schedule.status.params';
+import ChangeProjectConfigurationWorkStatusParams from '../../../core/params/change.project.configuration.work-status.params';
 import { transportProbe } from './schedule.transport.fixtures';
 
 const api = ScheduleApiService.getInstance();
@@ -206,3 +207,24 @@ it('uses the same Timeline Fetch endpoint with an optional execution work-status
   ]);
   expect(calls.every(([request]) => request.url.endsWith('fetch_project_timelines'))).toBe(true);
 });
+
+it.each([1, 2, 3] as const)(
+  'posts Project execution status %s to the confirmed organization endpoint without retry',
+  async (status) => {
+    await api.changeProjectConfigurationWorkStatus(
+      new ChangeProjectConfigurationWorkStatusParams(140, status, status === 1 ? 9 : undefined),
+    );
+    const calls = vi.mocked(NetworkService.instance.post).mock.calls;
+    expect(calls).toHaveLength(1);
+    expect(calls[0]?.[0]).toMatchObject({
+      url: 'https://api.buildhub.techlabeg.com/supervision/organization/change_project_configuration_work_status',
+      data: {
+        quote_id: 140,
+        work_status: status,
+        ...(status === 1 ? { responsible_employee_id: 9 } : {}),
+      },
+      isAuth: true,
+    });
+    expect(calls[0]?.[1]?.enableRetry).toBe(false);
+  },
+);
