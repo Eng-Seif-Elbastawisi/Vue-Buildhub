@@ -1,94 +1,152 @@
-import { describe, expect, it, vi } from 'vitest';
-import {
-  attachmentExtension,
-  attachmentKind,
-  downloadAttachment,
-  toGalleryAttachment,
-} from './attachmentGallery';
+import { flushPromises, mount } from '@vue/test-utils';
+import PrimeVue from 'primevue/config';
+import ToastService from 'primevue/toastservice';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { nextTick } from 'vue';
+import AttachmentGallery from './AttachmentGallery.vue';
+import { attachmentGallery } from './attachmentGallery';
 
-describe('attachment media rules', () => {
-  it.each([
-    ['https://cdn.example.com/photo.jpg?token=abc', 'image'],
-    ['https://cdn.example.com/quote.pdf#page=2', 'pdf'],
-    ['https://cdn.example.com/demo.mp4', 'video'],
-    ['https://cdn.example.com/archive.zip', 'file'],
-  ] as const)('identifies %s as %s', (url, kind) => {
-    expect(attachmentKind(toGalleryAttachment({ url }))).toBe(kind);
+const group = [
+  { url: 'https://cdn.example.com/photo.jpg', name: 'photo.jpg' },
+  { url: 'https://cdn.example.com/manual.pdf', name: 'manual.pdf' },
+  { url: 'https://cdn.example.com/archive.zip', name: 'archive.zip' },
+];
+
+const mountGallery = () =>
+  mount(AttachmentGallery, {
+    attachTo: document.body,
+    global: { plugins: [PrimeVue, ToastService], stubs: { Teleport: true, Transition: true } },
   });
 
-  it('uses the MIME type before the backend type and extension', () => {
-    expect(
-      attachmentKind({
-        url: '/image.jpg',
-        name: 'image.jpg',
-        mimeType: 'application/pdf',
-        type: 1,
-      }),
-    ).toBe('pdf');
-    expect(
-      attachmentKind({
-        url: '/image.jpg',
-        name: 'image.jpg',
-        mimeType: 'application/zip',
-        type: 1,
-      }),
-    ).toBe('file');
-    expect(attachmentExtension('image.jpg?token=abc')).toBe('jpg');
+beforeEach(() => {
+  attachmentGallery.close();
+  document.body.innerHTML = '';
+});
+
+describe('AttachmentGallery', () => {
+  it('shows the selected image and navigates the group', async () => {
+    const wrapper = mountGallery();
+    attachmentGallery.open(group, 0);
+    await nextTick();
+
+    expect(wrapper.find('img[alt="photo.jpg"]').exists()).toBe(true);
+    const tools = wrapper.get('.attachment-gallery__tools');
+    for (const label of ['Copy link', 'Download attachment', 'Close']) {
+      const control = tools.get(`[aria-label="${label}"]`);
+      expect(control.find('svg[aria-hidden="true"]').exists()).toBe(true);
+      expect(control.find('.pi').exists()).toBe(false);
+    }
+    await wrapper.get('button[aria-label="Next"]').trigger('click');
+    await nextTick();
+    expect(wrapper.text()).toContain('2 / 3');
+    expect(wrapper.find('iframe[title="manual.pdf"]').exists()).toBe(true);
+    await wrapper.get('button[aria-label="Previous"]').trigger('click');
+    await nextTick();
+    expect(wrapper.text()).toContain('1 / 3');
+    wrapper.unmount();
   });
 
-  it('resolves backend paths and rejects unsafe URL schemes', () => {
-    expect(toGalleryAttachment({ file: '/attachments/report.pdf?token=abc' }).url).toMatch(
-      /^https?:\/\/[^/]+\/attachments\/report\.pdf\?token=abc$/,
-    );
-    expect(toGalleryAttachment({ file: 'javascript:alert(1)' }).url).toBe('');
+  it('shows a file placeholder when an image cannot load', async () => {
+    attachmentGallery.open(group, 0);
+    const wrapper = mountGallery();
+    await nextTick();
+
+    await wrapper.get('.attachment-gallery__stage img').trigger('error');
+    expect(wrapper.find('.attachment-gallery__stage img').exists()).toBe(false);
+    expect(wrapper.text()).toContain('Preview not available');
+    wrapper.unmount();
   });
 
-  it('uses the existing URL and original filename without opening a tab', async () => {
-    let clickedLink: { href: string; download: string; target: string } | undefined;
+  it('shows an unsupported file fallback and closes without navigation', async () => {
+    attachmentGallery.open(group, 2);
+    const wrapper = mountGallery();
+    await nextTick();
+
+    expect(wrapper.text()).toContain('Preview not available');
+    expect(wrapper.text()).toContain('archive.zip');
+    await wrapper.get('button[aria-label="Close"]').trigger('click');
+    expect(attachmentGallery.visible.value).toBe(false);
+    wrapper.unmount();
+  });
+
+  it('uses native controls for a video without autoplay', async () => {
+    attachmentGallery.open([{ url: 'https://cdn.example.com/clip.mp4', name: 'clip.mp4' }], 0);
+    const wrapper = mountGallery();
+    await nextTick();
+
+    const video = wrapper.get('video');
+    expect(video.attributes('controls')).toBeDefined();
+    expect(video.attributes('autoplay')).toBeUndefined();
+    wrapper.unmount();
+  });
+
+  it('copies and downloads the currently selected PDF while staying open', async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    vi.stubGlobal('navigator', { ...navigator, clipboard: { writeText } });
+    let downloadedLink: { href: string; download: string; target: string } | undefined;
     const clickSpy = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(function () {
-      clickedLink = { href: this.href, download: this.download, target: this.target };
+      downloadedLink = { href: this.href, download: this.download, target: this.target };
     });
+    attachmentGallery.open(group, 1);
+    const wrapper = mountGallery();
 
     try {
-      await downloadAttachment({ url: 'https://cdn.example.com/report.pdf', name: 'report.pdf' });
+      await nextTick();
+      await wrapper.get('button[aria-label="Copy link"]').trigger('click');
+      await wrapper.get('button[aria-label="Download attachment"]').trigger('click');
+      await flushPromises();
 
-      expect(clickedLink).toEqual({
-        href: 'https://cdn.example.com/report.pdf',
-        download: 'report.pdf',
+      expect(writeText).toHaveBeenCalledWith(group[1]?.url);
+      expect(downloadedLink).toEqual({
+        href: group[1]?.url,
+        download: 'manual.pdf',
         target: '',
       });
-      expect(document.querySelector('a[download="report.pdf"]')).toBeNull();
+      expect(attachmentGallery.visible.value).toBe(true);
     } finally {
       clickSpy.mockRestore();
+      vi.unstubAllGlobals();
+      wrapper.unmount();
     }
   });
 
-  it('uses the URL filename when the attachment has no name', async () => {
-    let downloadedName = '';
-    const clickSpy = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(function () {
-      downloadedName = this.download;
-    });
-
-    try {
-      await downloadAttachment({ url: 'https://cdn.example.com/report.pdf?token=abc', name: '' });
-      expect(downloadedName).toBe('report.pdf');
-    } finally {
-      clickSpy.mockRestore();
-    }
-  });
-
-  it('removes the temporary link if the browser click fails', async () => {
+  it('shows the existing error toast when starting the download fails', async () => {
     const clickSpy = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {
       throw new Error('Click failed');
     });
+    attachmentGallery.open(group, 1);
+    const wrapper = mountGallery();
+    const toastSpy = vi.spyOn(wrapper.vm.$toast, 'add');
 
     try {
-      await expect(
-        downloadAttachment({ url: 'https://cdn.example.com/report.pdf', name: 'report.pdf' }),
-      ).rejects.toThrow('Click failed');
-      expect(document.querySelector('a[download="report.pdf"]')).toBeNull();
+      await nextTick();
+      await wrapper.get('button[aria-label="Download attachment"]').trigger('click');
+      await flushPromises();
+
+      expect(toastSpy).toHaveBeenCalledWith({
+        severity: 'error',
+        summary: 'Could not download the attachment',
+        life: 3000,
+      });
+      expect(attachmentGallery.visible.value).toBe(true);
     } finally {
+      toastSpy.mockRestore();
       clickSpy.mockRestore();
+      wrapper.unmount();
     }
+  });
+
+  it('reverses arrow navigation in Arabic and keeps content in RTL', async () => {
+    attachmentGallery.open(group, 1);
+    const wrapper = mountGallery();
+    await nextTick();
+    wrapper.vm.$i18n.locale = 'ar';
+    await nextTick();
+    expect(wrapper.get('.attachment-gallery').attributes('dir')).toBe('rtl');
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowLeft', bubbles: true }));
+    await nextTick();
+    expect(wrapper.text()).toContain('3 / 3');
+    wrapper.vm.$i18n.locale = 'en';
+    wrapper.unmount();
   });
 });
