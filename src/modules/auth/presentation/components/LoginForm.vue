@@ -48,10 +48,9 @@
         <h2>{{ $t('Welcome Back') }}</h2>
         <p>{{ $t('Access your dashboard to manage platform content and data') }}</p>
       </div>
-
       <div class="inputs">
         <div class="input-wrapper">
-          <span class="field-help-label-row field-help-label-row--block">
+          <span class="field-help-label-row text-black field-help-label-row--block">
             <label for="email">{{ $t('Email') }}</label>
             <!-- <FieldHelpIcon :label="$t('Email')" field-name="email" field-id="email" /> -->
           </span>

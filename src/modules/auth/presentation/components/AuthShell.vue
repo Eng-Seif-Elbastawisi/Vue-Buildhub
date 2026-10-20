@@ -17,6 +17,45 @@
 </script>
 
 <template>
+  <!--------------------(show password an email)-->
+  <div class="demo-credentials" role="note" aria-label="Demo login credentials">
+    <div class="demo-credentials__header">
+      <span class="demo-credentials__icon">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <rect x="3" y="11" width="18" height="11" rx="2" />
+          <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+        </svg>
+      </span>
+
+      <div class="demo-credentials__heading">
+        <h3>Demo Credentials</h3>
+        <p>Use these accounts to explore the system</p>
+      </div>
+    </div>
+
+    <div class="demo-credentials__account">
+      <span class="demo-credentials__label">Email</span>
+      <code>employee@techlab.com</code>
+      <span class="demo-credentials__hint"></span>
+    </div>
+    <div class="demo-credentials__account">
+      <span class="demo-credentials__label">Password</span>
+      <code>123123123</code>
+      <span class="demo-credentials__hint"></span>
+    </div>
+  </div>
+
+  <!-- --------------------------------------------- -->
   <main class="auth-workspace" :class="`auth-workspace--${mode}`" :dir="direction">
     <div class="auth-workspace__layout">
       <section class="auth-workspace__intro" :aria-labelledby="`${mode}-login-title`">
@@ -44,6 +83,107 @@
 </template>
 
 <style scoped lang="scss">
+  //---------------------------------(show password an email)
+
+  .demo-credentials {
+    width: min(100%, 1280px);
+    margin: 0 auto 20px;
+    padding: 20px 24px;
+    border: 1px solid var(--bh-field-line);
+    border-radius: var(--bh-radius-panel);
+    background: var(--bh-surface);
+    color: var(--bh-text);
+    box-shadow: 0 4px 18px rgb(15 23 42 / 4%);
+  }
+
+  .demo-credentials__header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+
+  .demo-credentials__icon {
+    display: grid;
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+    place-items: center;
+    border-radius: 12px;
+    color: var(--bh-blue-ink);
+    background: var(--bh-surface-secondary);
+  }
+
+  .demo-credentials__heading h3 {
+    margin: 0;
+    color: var(--bh-text);
+    font-size: var(--bh-text-md);
+    font-weight: 700;
+  }
+
+  .demo-credentials__heading p {
+    margin: 4px 0 0;
+    color: var(--bh-muted);
+    font-size: var(--bh-text-sm);
+    line-height: 1.5;
+  }
+
+  .demo-credentials__accounts {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .demo-credentials__account {
+    display: flex;
+    min-width: 0;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 12px;
+    padding: 14px 16px;
+    border: 1px solid var(--bh-field-line);
+    border-radius: var(--bh-radius-control);
+    background: var(--bh-surface-raised);
+  }
+
+  .demo-credentials__label {
+    width: 100%;
+    color: var(--bh-muted);
+    font-size: var(--bh-text-xs);
+    font-weight: 600;
+  }
+
+  .demo-credentials__account code {
+    overflow-wrap: anywhere;
+    color: var(--bh-text);
+    font-family: monospace;
+    font-size: var(--bh-text-sm);
+    font-weight: 600;
+    user-select: all;
+  }
+
+  .demo-credentials__hint {
+    margin-inline-start: auto;
+    color: var(--bh-blue-ink);
+    font-size: var(--bh-text-xs);
+  }
+
+  @media (max-width: 520px) {
+    .demo-credentials {
+      padding: 16px;
+      grid-column: 1 / -1;
+      margin-bottom: 0;
+    }
+
+    .demo-credentials__accounts {
+      grid-template-columns: 1fr;
+    }
+
+    .demo-credentials__account {
+      padding: 12px;
+    }
+  }
+  //---------------------------------
   .auth-workspace {
     display: grid;
     min-height: 100dvh;
